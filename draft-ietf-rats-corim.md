@@ -3,7 +3,7 @@ v: 3
 
 title: Concise Reference Integrity Manifest
 abbrev: CoRIM
-docname: draft-birkholz-rats-corim-latest
+docname: draft-ietf-rats-corim-latest
 category: std
 consensus: true
 submissiontype: IETF
