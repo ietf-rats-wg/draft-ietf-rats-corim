@@ -97,7 +97,7 @@ bundled in a CoRIM document.
 
 # Introduction
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/86
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/4
 
 ## Terminology and Requirements Language
 
@@ -225,7 +225,7 @@ identifier {{-cbor-oids}}.
 
 ### Tagged Integer Type {#sec-common-tagged-int}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/87
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/5
 
 ~~~ cddl
 {::include cddl/tagged-int.cddl}
@@ -246,8 +246,7 @@ hash-entry = [
 
 # CoRIM
 
-[^issue]
-https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/98
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/6
 
 At the top-level, a CoRIM can either be a CBOR-tagged `corim-map`
 ({{sec-corim-map}}) or a COSE signed `corim-map` ({{sec-corim-signed}}).
@@ -448,7 +447,7 @@ The following describes each child item of this group.
 
 # CoMID {#sec-comid}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/88
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/7
 
 ## Structure
 
@@ -826,7 +825,7 @@ $version-scheme /= int / text
 
 ###### Security Version Number {#sec-comid-svn}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/89
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/8
 
 ~~~ cddl
 {::include cddl/svn-type-choice.cddl}
@@ -864,7 +863,7 @@ The following describes each member of the `flags-map`:
 
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/90
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/9
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
@@ -997,7 +996,7 @@ measurements for the Target Environment.
 
 ## Extensibility
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/91
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10
 
 # Implementation Status
 
@@ -1056,25 +1055,25 @@ groups to use this information as they see fit".
 
 # Security and Privacy Considerations {#sec-sec}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/92
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
 
 # IANA Considerations {#sec-iana-cons}
 
 ## New COSE Header Parameters
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/96
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12
 
 ## New CBOR Tags {#sec-iana-cbor-tags}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/93
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/13
 
 ## New CoRIM Registries {#sec-iana-corim}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/94
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/14
 
 ## New CoMID Registries {#sec-iana-comid}
 
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/95
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/15
 
 ## New Media Types {#sec-iana-media-types}
 
@@ -1221,8 +1220,6 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 --- back
 
 # Full CoRIM CDDL
-
-[^issue] https://github.com/ietf-rats/draft-birkholz-rats-corim/issues/80
 
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
