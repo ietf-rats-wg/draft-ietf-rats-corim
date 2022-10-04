@@ -39,5 +39,6 @@ COMID_FRAGS += ueid.cddl
 COMID_FRAGS += uuid.cddl
 COMID_FRAGS += version-map.cddl
 COMID_FRAGS += concise-swid-tag.cddl
+COMID_FRAGS += reference-endorsed-triple.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
