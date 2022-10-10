@@ -4,41 +4,31 @@
 ;
 ; Triples map extension
 ;
+;
+; Triple subject: Target Environment ($TE)
+; Triple object: Reference Values 'refvals' ($RV) + Endorsed Values 'endvals' ($EV)
+; Triple predicate: When $TE matches evidence, the $RV claims are accepted 
+;                   and subsequently the $EV claims are also accepted
+;
  $$triples-map-extension //= (
-<<<<<<< Updated upstream
   &(reference-endorsed-triples: 7) => [ + reference-endorsed-triple-record]
 )
 
-;
-; Triple subject: Target Environment (TE)
-; Triple object: refvals (RV) + endvals (EV)
-; Triple predicate: When TE matches evidence RV claims are accepted 
-;                   and when RV claims are accepted EV claims are also accepted
-;
-=======
-  &(reference-endorsed-triples: 7) => [+ reference-endorsed-triple-record]
-)
-
->>>>>>> Stashed changes
 reference-endorsed-triple-record = [
   environment-map ; target environment
   [ + reference-endorsed-map ] ; reference values with endorsed values
 ]
-; Multiple instances of reference-endorsed-map are positionally significant
-<<<<<<< Updated upstream
-; The map at position 0 will always be at position 0 and so forth for all positions 0 - n
 
+; Multiple instances of reference-endorsed-map are positionally significant
+; The map at position 0 will always be at position 0 and so forth for all positions 0 - n
 reference-endorsed-map = {
   &(refvals: 0) => measurement-map / measurement-values-map, ; reference values
   &(endvals: 1) => measurement-map / measurement-values-map ; conditionally endorsed values
 }
-; The Verifier verifies refvals are within Evidence, upon successful verification, endvals are accepted
-=======
-; The map at position 0 will always be at position 0 and so forth for positions 1 - n
 
+; The Verifier verifies refvals are within Evidence, upon successful verification, endvals are accepted
 reference-endorsed-map = {
-  &(refvals: 0) => measurement-map, ; reference values
+  &(refvals: 0) => measurement-map / measurement-values-map, ; reference values
   &(endvals: 1) => measurement-map / measurement-values-map ; conditionally endorsed values
 }
-; The Verifier verifies refvals are within Evidence, upon successful verification, endvals are accepted
->>>>>>> Stashed changes
+
