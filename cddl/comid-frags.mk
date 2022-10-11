@@ -27,6 +27,7 @@ COMID_FRAGS += measurement-values-map.cddl
 COMID_FRAGS += non-empty.cddl
 COMID_FRAGS += oid.cddl
 COMID_FRAGS += raw-value.cddl
+COMID_FRAGS += reference-endorsed-triple-record.cddl
 COMID_FRAGS += reference-triple-record.cddl
 COMID_FRAGS += svn-type-choice.cddl
 COMID_FRAGS += tag-id-type-choice.cddl
@@ -39,6 +40,5 @@ COMID_FRAGS += ueid.cddl
 COMID_FRAGS += uuid.cddl
 COMID_FRAGS += version-map.cddl
 COMID_FRAGS += concise-swid-tag.cddl
-COMID_FRAGS += reference-endorsed-triple.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
