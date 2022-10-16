@@ -1,0 +1,734 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2022-10-16T02:50:29.367520+00:00",
+  "repo": "ietf-rats-wg/draft-ietf-rats-corim",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 2,
+      "id": "I_kwDOH6-tI85RFlTP",
+      "title": "endorsed-reference-triple",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/2",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "To handle a class of endorsements that are conditionally asserted based on acceptance of specific reference value(s), a new triple is needed.\r\n```\r\n;\r\n; Triples map extension\r\n;\r\n $$triples-map-extension //= (\r\n  comid.endorsed-reference-triples => [+ endorsed-reference-triple-record]\r\n)\r\ncomid.endorsed-reference-triples = 7\r\n\r\nendorsed-reference-triple-record = [\r\n  environment-map ; target environment\r\n  [ + endorsed-reference-map ] ; reference values with endorsed values\r\n]\r\nendorsed-reference-map = non-empty<{\r\n  ? comid.pos => uint ; position - avoids using mkey\r\n  ? comid.refv => measurement-map, ; reference values\r\n  ? comid.endv => measurement-map / measurement-values-map ; endorsed values\r\n}>\r\ncomid.refv = 0\r\ncomid.endv = 1\r\ncomid.pos = 2\r\n```",
+      "createdAt": "2022-09-02T16:48:05Z",
+      "updatedAt": "2022-10-12T19:28:35Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "refinement proposal:\r\n\r\n* remove `pos`: the order in the array matters\r\n* remove optionality of refv and endv\r\n* also, flip the reference/endorsed\r\n\r\n```\r\n$$triples-map-extension //= (\r\n  comid.reference-endorsed-triples => [ + reference-endorsed-triple-record ]\r\n)\r\ncomid.reference-endorsed-triples = 7\r\n\r\nreference-endorsed-triple-record = [\r\n  environment-map ; target environment\r\n  [ + reference-endorsed-record ] ; reference values with endorsed values\r\n]\r\n\r\nreference-endorsed-record = [\r\n  reference-values : measurement-map\r\n  endorsed-values : measurement-map / measurement-values-map\r\n]\r\n```",
+          "createdAt": "2022-09-22T16:38:43Z",
+          "updatedAt": "2022-09-22T16:55:05Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Noting the point that if mkey and pos are removed and position semantics are inferred from the array context which is part of the triple object. Then there is a possibility for Verifier undecidability if two or more tags are created for the same triple subject that have the same type measurements in the triple object. If the measurements are intended NOT as time series data but as set data the Verifier would accept the Evidence if it matched one of the reference values in the set. If the measurements are intended as series data then the Verifier is undecided as to which measurement is first, second etc... as each tag would have a measurement at position 0. \r\n\r\nIf 'pos' is retained, then existence of pos addresses both forms of ambiguity. Namely, if pos is omitted, then set semantics are applied across all measurements from multiple tags (for the same environment e.g., class-map/class-id is the same across multiple tags). If pos is supplied then there should be a strict ordering 0 to n even though there may be multiple tags supplying measurements. If not (e.g., two measurements at pos = 0) should result in an error. \r\n\r\nI don't know if there is a use case for mkey where mkey type isn't time series related. If time series use case is the only motivation for mkey, then I prefer adding 'pos' to reference-endorsed-map/-record vs. mkey. ",
+          "createdAt": "2022-09-22T17:20:52Z",
+          "updatedAt": "2022-09-22T17:23:25Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Here is additional use case context for conditional endorsement. A vendor might monitor target environment (TE) vulnerabilities over a period of time and maintain a vulnerabilities database (e.g., https://cve.mitre.org/ ). They might use SVN (or version #) to track changes to the TE where a vulnerability is fixed. When the vendor produces a RV for the TE, it also may provide a list of known vulnerabilities (CVE). Since the verifier needs to obtain current / fresh RVs, it is convenient to have known CVEs included as endorsed values. \r\n\r\nPragmatically, the CoRIM / CoMID schema using only reference-values-triple and endorsed-values-triple doesn't allow conditional endorsements to be correlated easily. When an evidence / RV match is found, the verifier must perform a more detailed query (one that includes matching on specific measurement values) to know if a given endorsed-value applies. This is like an inner-loop function that many implementation will want to optimize. If the reference-values-triple is pre-loaded with the endorsements for the inner-loop processing the verifier doesn't need to fetch, parse, pre-process and stage endorsed-values for inner-loop optimization. \r\nFor many vendors, they are most aware of which vulnerabilities affect the TE they mfr and know which patches / updates to apply to resolve them. They're motivated to ensure verifiers are equipped with vulnerability and other info needed for an accurate and timely appraisal. ",
+          "createdAt": "2022-10-03T21:10:40Z",
+          "updatedAt": "2022-10-03T21:10:40Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note: removal of 'pos' would cause reference-endorsed-triple-record to only support time series use case. Another viable use of multi-valued reference-endorsed-map structures is when there are multiple evidence values in the form of reference-endorsed-map structures that would match similar structures in reference-endorsed-triple-record. Having an explicit mechanism for treating the multi-valued triple object as time series would avoid this confusion.",
+          "createdAt": "2022-10-12T19:28:35Z",
+          "updatedAt": "2022-10-12T19:28:35Z"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOH6-tI85SfTEh",
+      "title": "create and \"introduction\" section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/4",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "It should contain at least:\r\n\r\n* An overview of the CoRIM model\r\n* A big-picture pic of the data structures and their relationships",
+      "createdAt": "2022-09-23T14:58:57Z",
+      "updatedAt": "2022-09-23T16:35:50Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There are UML class diagrams available for reference.",
+          "createdAt": "2022-09-23T16:35:50Z",
+          "updatedAt": "2022-09-23T16:35:50Z"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "I_kwDOH6-tI85SfTa9",
+      "title": "What is a \"tagged integer\"?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/5",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Provide a description of a \"tagged integer\", in particular what purposes it serves.\r\n\r\nAlso, consider maybe a more evocative name.",
+      "createdAt": "2022-09-23T14:59:51Z",
+      "updatedAt": "2022-09-23T16:24:13Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "From Ned's original comment: _\"It is used in connection with $class-id-type-choice /= tagged-int-type where vendor ID is required. It can be used in cases where there are a small number of object classes and limited storage for larger class IDs such as OID and UUID.\"_",
+          "createdAt": "2022-09-23T15:00:22Z",
+          "updatedAt": "2022-09-23T15:00:22Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "How about \"constrained object identifier\". A typical use case for constrained environments might use a PEN as the vendor and an integer value corresponding to the modules / submodules that makes up the device.",
+          "createdAt": "2022-09-23T16:24:13Z",
+          "updatedAt": "2022-09-23T16:24:13Z"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "I_kwDOH6-tI85SfT2z",
+      "title": "rework the CoRIM Intro",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/6",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Text (temporarily) expunged:\r\n\r\n```\r\nConcise Reference Integrity Manifests (CoRIM) contain tags that describe the\r\ncomposition and measurements of a platform, device, component, or software.\r\n\r\nCoRIM is an envelope to carry information typically exchanged between Endorsers\r\nand Verifiers {{-rats-arch}}. Endorsements are information produced by\r\nEndorsers and consumed by Verifiers. CoRIM contains Endorsement Claims. Inside\r\nCoRIM, Claims about hardware or firmware are described using CoMID tags.\r\nSoftware Claims are described using CoSWID tags.\r\n\r\nCoRIM can be integrity protected and authenticated using cryptography. The\r\nCoRIM signer is the entity that asserts Endorsement Claims.  In a complex\r\nsupply chain, it is likely multiple Endorsers will produce CoRIMs, pertaining\r\nto individual components they produce, at different times. Hence a CoRIM can\r\nprovide a link to other CoRIMs such that a combination of CoRIMs describe a\r\ndevice class.\r\n```\r\n\r\nThere are a couple of problems with that text:\r\n\r\n1. it mentions RATS-ARCH but does not use the vocabulary correctly (specifically, it squashes together endorsements and ref-values into endorsements -- and their providers are merged accordingly)\r\n2. there are some other clarity issues that popped up in a quick skimming session before submission of -03",
+      "createdAt": "2022-09-23T15:01:12Z",
+      "updatedAt": "2022-09-23T15:01:12Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 7,
+      "id": "I_kwDOH6-tI85SfUMO",
+      "title": "CoMID intro",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/7",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Provide an introduction to CoMID that contain at least:\r\n\r\n* An overview of the CoMID model\r\n* A big-picture pic of the data structures and their relationships\r\n\r\nAlso think of where to put the triples high level description. Does that go only here or also detailed in \u00a73.1.4 ?",
+      "createdAt": "2022-09-23T15:02:16Z",
+      "updatedAt": "2022-09-23T16:32:05Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm not sure what a 'category' is in \u00a73.1.4. Also category should be categories in second sentence. The section 3 issue#88 seems to suggest that an overview of the structures / big picture belongs here.",
+          "createdAt": "2022-09-23T16:32:05Z",
+          "updatedAt": "2022-09-23T16:32:05Z"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "I_kwDOH6-tI85SfuaR",
+      "title": "provide description of SVN",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/8",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Describe SVN and \"min\" SVN.",
+      "createdAt": "2022-09-23T16:37:40Z",
+      "updatedAt": "2022-09-23T16:37:40Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 9,
+      "id": "I_kwDOH6-tI85Sfuo5",
+      "title": "Describe raw values types",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/9",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Provide a description of the Raw Values types. Also clarify why we need a type choice instead of just raw bytes.",
+      "createdAt": "2022-09-23T16:38:41Z",
+      "updatedAt": "2022-09-23T16:38:41Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 10,
+      "id": "I_kwDOH6-tI85Sfuxe",
+      "title": "Describe extensibility",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Provide a description of the extensibility features of CoRIM & CoMID.",
+      "createdAt": "2022-09-23T16:39:19Z",
+      "updatedAt": "2022-09-23T16:39:19Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 11,
+      "id": "I_kwDOH6-tI85Sfu8b",
+      "title": "Security and privacy considerations",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Add security and privacy considerations.",
+      "createdAt": "2022-09-23T16:40:06Z",
+      "updatedAt": "2022-09-23T16:40:06Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 12,
+      "id": "I_kwDOH6-tI85SfvF0",
+      "title": "Add meta to the COSE Header Parameters",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "",
+      "createdAt": "2022-09-23T16:40:45Z",
+      "updatedAt": "2022-09-23T16:40:45Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 13,
+      "id": "I_kwDOH6-tI85SfvYo",
+      "title": "CBOR tags registrations",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/13",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Populate the table from the contents found in [cbor-tags.txt](https://github.com/ietf-rats/ietf-corim-cddl/blob/main/cbor-tags.txt).  Use the template below.\r\n\r\n| Tag | Data Item | Semantics | Reference |\r\n| --- | --------- | --------- | --------- |\r\n| | | | {{&SELF}} |\r\n",
+      "createdAt": "2022-09-23T16:42:02Z",
+      "updatedAt": "2022-09-23T16:42:02Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 14,
+      "id": "I_kwDOH6-tI85Sfvkm",
+      "title": "CoRIM registries",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/14",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Add needed CoRIM registries. Most likely this needs to be just copy-pasted from [-02](https://www.ietf.org/archive/id/draft-birkholz-rats-corim-02.html#section-7).",
+      "createdAt": "2022-09-23T16:42:52Z",
+      "updatedAt": "2022-09-23T16:42:52Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 15,
+      "id": "I_kwDOH6-tI85Sfvs_",
+      "title": "CoMID registries",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/15",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Add needed CoMID registries. Most likely this needs to be just copy-pasted from [-02](https://www.ietf.org/archive/id/draft-birkholz-rats-corim-02.html#section-7).",
+      "createdAt": "2022-09-23T16:43:25Z",
+      "updatedAt": "2022-09-23T16:43:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOH6-tI85SfwYb",
+      "title": "Terminology",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/16",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "We should provide clear and unambiguous definitions for (at least) the following terms:\r\n\r\n* endorsed values\r\n* reference values\r\n* environments\r\n* triple",
+      "createdAt": "2022-09-23T16:46:25Z",
+      "updatedAt": "2022-09-23T19:05:50Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Consider adding 'measurements' and 'class ID' and 'instance ID' as well. \r\n",
+          "createdAt": "2022-09-23T19:05:50Z",
+          "updatedAt": "2022-09-23T19:05:50Z"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOH6-tI85Sfw8I",
+      "title": "\"update\" triple / linked tag relationship needed ",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/17",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "enhancement"
+      ],
+      "body": "Applying an update requires a way to represent the update to the CoRIM community. The linked-tag-relationship is an existing mechanism that probably should include 'update' as we currently have 'supplements' and 'replaces'. However, the specific details of how to apply the update may require a triple record.",
+      "createdAt": "2022-09-23T16:48:43Z",
+      "updatedAt": "2022-09-23T16:48:43Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 18,
+      "id": "I_kwDOH6-tI85SfxNd",
+      "title": "profile should include a digest?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/18",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "question"
+      ],
+      "body": "The profile-type-choice is an identifier (uri / oid) only. It should allow for a digest of the profile that can be integrity checked. Alternatively, the profile could be included directly in the RIM. This approach might extend $concise-tag-type-choice that defines a profile structure in which case the corim.profile element might be omitted.\r\n\r\nIf the profile is realized as a machine readable file (e.g. cddl) then the profile ID also should have a locator which may require a digest for integrity checking.\r\nNote: Profile could extend CoRIM and could be included in the CoRIM.",
+      "createdAt": "2022-09-23T16:49:55Z",
+      "updatedAt": "2022-09-23T16:49:55Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 20,
+      "id": "I_kwDOH6-tI85ShEzE",
+      "title": "measurement authorization support",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/20",
+      "state": "CLOSED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "It is possible for not-well-behaved suppliers (endorsers / ref-val-providers) could assert authorship of reference values over another supplier who believes they have authorship privilege. A Verifier can detect this situation if the RIM issuing CA (or a higher level CA) ensures that the entity authorized to author reference values is named by the RIM. \r\n\r\nThe measurement-map can be extended with a statement that names the authoring entity as in:\r\n```\r\nmeasurement-map = {\r\n...\r\n? comid.authorized-by => [ + $crypto-key-type-choice ]\r\n}\r\n$crypto-key-type-choice /= tagged-pkix-base64-key-type\r\n$crypto-key-type-choice /= tagged-pkix-base64-cert-type\r\n$crypto-key-type-choice /= tagged-pkix-base64-cert-path-type\r\n```\r\nGiven the $crypto-key-type-choice names the supply chain entity that is authorized to provide measurements. If the certificate path used to sign the RIM includes a statement that acknowledges that entity as the measurement authoring authority, then Verifiers can check for consistency. \r\n\r\nAn attacker would have to convince the top level CA to grant it measurement issuing authority for the same set of measurements as the the other supplier or compromise the top level CA. ",
+      "createdAt": "2022-09-23T22:47:00Z",
+      "updatedAt": "2022-10-04T18:35:41Z",
+      "closedAt": "2022-10-04T18:35:41Z",
+      "comments": []
+    },
+    {
+      "number": 21,
+      "id": "I_kwDOH6-tI85S4_RF",
+      "title": "Provide a CDDL definition of SW Update Flow",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/21",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently the existing CoRIM schema does not lend itself to natural expression for Providing Endorsements for SW updates.\r\n\r\nThis issue tracks the further work required in this area!",
+      "createdAt": "2022-09-29T10:57:22Z",
+      "updatedAt": "2022-10-03T21:23:05Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Here is the proposed flow:\r\n\r\n1) Each Measured Component/Layer within the device has its Reference Values expressed in a Reference Triple Record as below:\r\n\r\n```\r\n; REFERENCE-VALUE triple\r\n; \"target environment $TE\" \"has reference measurements\" \"$RV\"\r\nreference-triple-record = [\r\n  environment-map ; target environment\r\n  [ + measurement-map ] ; reference measurements\r\n]\r\n```\r\nHere \"Target Environment\" is the Identifier for the Reference Measurements\r\n\r\n2) A Device is composed of a set of Components/layers which is expressed with Domain Membership Triple\r\n\r\n```\r\n; DOMAIN-MEMBERSHIP-TRIPLE-RECORD\r\n; Predicate: $TD Target domain has member environment(s) $EV\r\n\r\n$$triples-map-extension //= ( \r\ncomid.domain-membership-triples => domain-membership-triple-record \r\n)\r\ncomid.domain-membership-triples = 5\r\n\r\ndomain-membership-triple-record = [\r\n $domain-type-choice, [ + environment-map ]\r\n]\r\n```\r\n\r\n3) When a Device Component/layer has a SW Update: It first pushes a new REFERENCE VALUE Triple Record, as below:\r\n\r\n```\r\n; REFERENCE-VALUE triple\r\n; \"target environment $TE\" \"has reference measurements\" \"$RV\"\r\nreference-triple-record = [\r\n  environment-map ; target environment\r\n  [ + measurement-map ] ; reference measurements\r\n]\r\n```\r\n\r\n4) Then it pushes a new Update Triple Record which associates new Environment to the Old Environment.\r\n```\r\n$$triples-map-extension //= ( \r\ncomid.environment-update-triples => environment-update-triple-record \r\n)\r\n\r\ncomid.environment-update-triples = 6\r\n\r\n; \"target environment $TE\" updates one or more existing environments.\r\nenvironment-update-triple-record  = [\r\nenvironment-map ; target environment\r\n [ +environment-map   ]\r\n]\r\n```\r\n**TBD:** Should we restrict update from just one environment or to allow update of 1+ environments\r\n\r\n5) After a successful Update in 4 an explicit \"Environment Blocklist Triple\" might be sent by Endorser to remove certain Environments from the Domain, after a successful Update.  CDDL for the same is listed below:\r\n\r\n```\r\n; ENVIRONMENT-BLOCKLIST-TRIPLE-RECORD\r\n; Predicate: $TD Target domain has member environment(s) removed from the supply chain $EV\r\n\r\n$$triples-map-extension //= ( \r\ncomid.environment-blocklist-triples => environment-blocklist-triple-record \r\n)\r\ncomid.environment-blocklist-triples = 7\r\n\r\nenvironment-blocklist-triple-record = [\r\n $domain-type-choice, [ + environment-map ]\r\n]\r\n```",
+          "createdAt": "2022-09-29T12:54:48Z",
+          "updatedAt": "2022-09-29T14:50:49Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Possibly user can use the Ref Triple with same Env ID and different Measurements, and update it to Verifier\r\nThen use the Updates Triple with same Env ID in both target and source",
+          "createdAt": "2022-09-29T17:03:05Z",
+          "updatedAt": "2022-09-29T17:03:05Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There is potentially a 'CRUD' lifecycle consideration for each structure described by CoRIM (e.g., RIM, tag, domain, environment, measurement and triple). An \"update\" potentially could change any of these structures. It makes sense to describe updates in terms of CRUD semantics for each statement in the schema. Maybe only C and D are valid lifecycle considerations? Given U semantics means 'changes' rather than 'adds', an \"update\" might include any of C, U and D for a given statement. \r\n\r\nMaybe this suggestion exceeds the scope of this issue, but maybe there should be separate issues created for each statement type in CoRIM that considers CRUD semantics? Then this issue could address mapping an \"update\" to the various places within CoRIM that define CRUD semantics.",
+          "createdAt": "2022-09-29T18:01:35Z",
+          "updatedAt": "2022-09-29T18:01:35Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Currently the existing CoRIM schema does not lend itself to natural expression for Providing Endorsements for SW updates.\r\n> \r\n> This issue tracks the further work required in this area!\r\n\r\nI think there should be separate issues for CoMID and CoSWID related update handling. CoSWID already uses a relationship approach and defines a number of relationship types (supplemental, patch, update, etc...). ",
+          "createdAt": "2022-09-29T18:08:00Z",
+          "updatedAt": "2022-09-29T18:51:49Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It should be possible to update a component and corresponding measurement without rolling class-id. The class-id may describe the component's long-lived (strawman) relationship to other components. The strawman definition should not be forced to change every time a measurement value changes. In this use case, different class-map identifiers are essentially aliases for the original. Aliases indicate that some sort of measurement change occurred, but greater analysis is needed to determine if substantive change to the strawman definition of the component has not changed. Another reason to allow 'alias' class-maps is the way an organization manages class identifiers could change over time moving from say ('vendor', 'model', 'index') to ('class-id'=UUID) or ('class-id'=OID). These are alias changes that don't affect the strawman definition.\r\n\r\nAllowing the strawman to change is also a valid use case. If it is determined that the strawman should add / remove a feature (e.g., add a finger or remove a finger). Then a new class-map value indicates an addition, removal of a class-map value indicates deletion. It is important that this type of addition/deletion isn't confused with the above paragraph alias use case.\r\n",
+          "createdAt": "2022-10-03T21:23:04Z",
+          "updatedAt": "2022-10-03T21:23:04Z"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "I_kwDOH6-tI85T2MnO",
+      "title": "multi-valued vs. time series measurements",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/24",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "reference, endorsed, and reference-endorsed triples support the idea that the object of the triple can be multi-valued. There are two use cases for its use. (a) when there are multiple of the same type measurements. For example, 'digest' or 'raw-value-group' where evidence is constructed so that the first digest is in the first array position and the second digest is in the second array position. Otherwise, the digests are not named (that is they share the same environment-map identity).\r\n\r\nIn the time series use case there is a single evidence value that is compared across multiple reference values. Reference values are ordered according to the series semantics (e.g., time) such that the measurement at position 0 is compared first, then the measurement at position 1 and so forth. \r\n\r\nThe verifier is undecided which comparison algorithm to apply unless the triple contains extra information. It is possible to use mkey to supply the extra information, but mkey (as part of measurement-map) should expect to match an mkey in Evidence as it becomes part of the evidence matching logic. Additionally, if mkey is deprecated this approach is no longer available to disambiguate the use cases. \r\n\r\nA solution should include, at least, a boolean that indicates whether to apply time series vs. multi-valued attributes semantics. \r\nIt is best to keep it independent from the environment-map and the measurement-map structures as these carry matching semantics overhead.\r\n\r\nPossible solutions:\r\n(a) Add a flag for series:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  [ + measurement-map ]\r\n]\r\n```\r\n\r\n```\r\nmeasurement-map = {\r\n  ? &(series: 0) => bool .default false\r\n  &(mval: 1) => measurement-values-map\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\n\r\n(b) Add another level of array:\r\n```\r\nmeasurement-map = {\r\n  &(mval: 1) => [ + measurement-values-map ] ; If multiple array entries exist then apply series comparison semantics\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\n(c) Don't deprecate mkey:\r\n```\r\nmeasurement-map = {\r\n  ? &(mkey: 0) => $measured-element-type-choice\r\n  &(mval: 1) => measurement-values-map\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n$measured-element-type-choice /= bool .default true ; only use the flag when series semantics are desired\r\n```\r\n",
+      "createdAt": "2022-10-12T19:40:13Z",
+      "updatedAt": "2022-10-14T20:18:01Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOH6-tI84-PkEB",
+      "title": "hook the cddl assemble & test machinery into the default build",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/1",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Signed-off-by: Thomas Fossati <thomas.fossati@arm.com>",
+      "createdAt": "2022-09-01T21:54:48Z",
+      "updatedAt": "2022-09-06T07:36:46Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "5ef5d6c0b5ff0af372141f33b4977a6a41cbc92a",
+      "headRepository": "thomas-fossati/draft-ietf-rats-corim",
+      "headRefName": "main",
+      "headRefOid": "80e05c264e541fb8dd081b53478f80af8b9bf005",
+      "closedAt": "2022-09-06T07:36:46Z",
+      "mergedAt": "2022-09-06T07:36:46Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "0f586969564e4e6ea93295416fb9eb742e4a73dc"
+      },
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith the build is OK locally, but there are troubles with the CI as you can see from the \"checks\" menu.  Apparently the ruby environment in the Docker image does not allow installing the json package that cddl and cbor-diag depend on.",
+          "createdAt": "2022-09-01T22:15:46Z",
+          "updatedAt": "2022-09-01T22:15:46Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "passes my local tool-chain. As an author please try to branch instead of forking. That keeps my management overhead lower ;-)",
+          "createdAt": "2022-09-06T07:31:26Z",
+          "updatedAt": "2022-09-06T07:31:26Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85BNs8Z",
+          "commit": {
+            "abbreviatedOid": "e1152e3"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-09-01T21:59:58Z",
+          "updatedAt": "2022-09-01T21:59:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85BNxyp",
+          "commit": {
+            "abbreviatedOid": "0fc89ea"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-09-01T22:30:01Z",
+          "updatedAt": "2022-09-01T22:30:01Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85BZBG7",
+          "commit": {
+            "abbreviatedOid": "80e05c2"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "could worse. thx!",
+          "createdAt": "2022-09-06T07:31:55Z",
+          "updatedAt": "2022-09-06T07:31:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOH6-tI84-fyXw",
+      "title": "Ci fixes",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/3",
+      "state": "MERGED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-09-07T09:44:28Z",
+      "updatedAt": "2022-09-07T11:20:49Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "0f586969564e4e6ea93295416fb9eb742e4a73dc",
+      "headRepository": "martinthomson/draft-ietf-rats-corim",
+      "headRefName": "ci-fixes",
+      "headRefOid": "182144786a63ea05b1bdab3d081c443172ffce2d",
+      "closedAt": "2022-09-07T11:20:49Z",
+      "mergedAt": "2022-09-07T11:20:49Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "003249ffe067e6c14e4ea344be4709cc7e7b29aa"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOH6-tI84_gzAY",
+      "title": "Update draft-ietf-rats-corim.md",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/19",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Updated refs to the issues post migration from the individual I-D repo.",
+      "createdAt": "2022-09-23T17:01:56Z",
+      "updatedAt": "2022-10-06T13:05:55Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "003249ffe067e6c14e4ea344be4709cc7e7b29aa",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "update-issues",
+      "headRefOid": "c544c7ca7e9ce4e1e1f5b45286593a1b779c67b9",
+      "closedAt": "2022-10-06T13:05:55Z",
+      "mergedAt": "2022-10-06T13:05:54Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "b99d9ae5d1486ae32cea5471bd08b3c9af2f7d4e"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85CsYKl",
+          "commit": {
+            "abbreviatedOid": "c544c7c"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-09-23T19:01:47Z",
+          "updatedAt": "2022-09-23T19:01:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85Dh7T4",
+          "commit": {
+            "abbreviatedOid": "c544c7c"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-10-06T13:05:23Z",
+          "updatedAt": "2022-10-06T13:05:23Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "id": "PR_kwDOH6-tI85AJ0R5",
+      "title": "Update measurement-map.cddl",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/22",
+      "state": "MERGED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Add 'authorized-by' field.",
+      "createdAt": "2022-10-04T17:33:15Z",
+      "updatedAt": "2022-10-04T18:35:40Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "003249ffe067e6c14e4ea344be4709cc7e7b29aa",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "20-measurement-authorization-support",
+      "headRefOid": "96c9614df726c9e8a5bc3a731dba1049b24030d7",
+      "closedAt": "2022-10-04T18:35:40Z",
+      "mergedAt": "2022-10-04T18:35:40Z",
+      "mergedBy": "nedmsmith",
+      "mergeCommit": {
+        "oid": "539d53fc1e113339f7bf6673b2be56bb7a052dda"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85DYJEa",
+          "commit": {
+            "abbreviatedOid": "96c9614"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2022-10-04T18:01:48Z",
+          "updatedAt": "2022-10-04T18:01:48Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "id": "PR_kwDOH6-tI85AKuh4",
+      "title": "Reference endorsed branch",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/23",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "created branch to define reference-endorsed-triples ",
+      "createdAt": "2022-10-04T22:01:22Z",
+      "updatedAt": "2022-10-11T20:36:14Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "539d53fc1e113339f7bf6673b2be56bb7a052dda",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "reference-endorsed-branch",
+      "headRefOid": "d4de1a9082c467a6db7f4544a90dc87f1ea5faf1",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
