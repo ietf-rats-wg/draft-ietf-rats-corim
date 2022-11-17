@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-03T02:09:43.793347+00:00",
+  "timestamp": "2022-11-17T02:00:50.321894+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -434,7 +434,7 @@
       "labels": [],
       "body": "Currently the existing CoRIM schema does not lend itself to natural expression for Providing Endorsements for SW updates.\r\n\r\nThis issue tracks the further work required in this area!",
       "createdAt": "2022-09-29T10:57:22Z",
-      "updatedAt": "2022-10-03T21:23:05Z",
+      "updatedAt": "2022-11-16T20:21:33Z",
       "closedAt": null,
       "comments": [
         {
@@ -471,6 +471,76 @@
           "body": "It should be possible to update a component and corresponding measurement without rolling class-id. The class-id may describe the component's long-lived (strawman) relationship to other components. The strawman definition should not be forced to change every time a measurement value changes. In this use case, different class-map identifiers are essentially aliases for the original. Aliases indicate that some sort of measurement change occurred, but greater analysis is needed to determine if substantive change to the strawman definition of the component has not changed. Another reason to allow 'alias' class-maps is the way an organization manages class identifiers could change over time moving from say ('vendor', 'model', 'index') to ('class-id'=UUID) or ('class-id'=OID). These are alias changes that don't affect the strawman definition.\r\n\r\nAllowing the strawman to change is also a valid use case. If it is determined that the strawman should add / remove a feature (e.g., add a finger or remove a finger). Then a new class-map value indicates an addition, removal of a class-map value indicates deletion. It is important that this type of addition/deletion isn't confused with the above paragraph alias use case.\r\n",
           "createdAt": "2022-10-03T21:23:04Z",
           "updatedAt": "2022-10-03T21:23:04Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @henkbirkholz @thomas-fossati Based on our earlier discussion I propose an alternative better strategy which addresses some of the concerns above and tries to capture the SW Update Flow in a more coherent manner!\r\n\r\n```\r\n$identifier-type-choice /= tstr\r\n$identifier-type-choice /= \"reference-value\"\r\n$identifier-type-choice /= \"endorsed-value\"\r\n\r\n; it is expected that when the user uses this map \r\n; in the subject environment map needs to be present\r\nidentifier-map = non-empty<{\r\n  &(type:0) => $identifier-type-choice\r\n  ? &(env: 1) => environment-map\r\n  &(mkey : 2) ==> $measured-element-type-choice\r\n}>\r\n\r\n; for a given supply chain entity an identifier updates one or more identifiers\r\n; if this triple record is not supplied in a CoRIM then it is assumed that the \r\n; newly added reference or endorsed value (via reference-triple-record/endorsed-triple-record)\r\n; Has an Update path to any other ref/end value in the Verifier.\r\n\r\n; The triple below sets the relationship explicitly \r\nupdate-triple-record = [\r\n    identifier-map\r\n    [+ identifier-map]\r\n]\r\n\r\n==============================================================================\r\n; explicit removal of old reference values or endorsed values \r\nblacklist-triple-record = non-empty<{\r\n  environment-map\r\n  [+ identifier-map]\r\n}\r\n```\r\n",
+          "createdAt": "2022-11-16T14:16:12Z",
+          "updatedAt": "2022-11-16T20:21:33Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The proposed solution above is aligned with the core principles laid down in Attestation Architecture.\r\n\r\nA domain has Multiple Environments  - identified uniquely by Environment Identifiers ( Example Class Id)\r\nIt is the individual Environments which are measured by a set of Reference Values and Endorsed Values\r\n\r\nFor a particular Environment, Say `Env-X` A particular Reference Value may Change. Stated Alternatively for a Reference Value Identified by a Id, the value of Reference may change. \r\n\r\nOne does not need to change Environment Identifier even if any Endorsed Value or Reference Value changes.\r\n\r\nThe new approach approach solves the issue identified in the earlier solution (Stated at the top of the issue), where each measurement is associated with Id identified as Environment. Thus each time a measurement changes, will introduce a new Environment ID, which is unsustainable, as highlighted below:\r\n _The class-id may describe the component's long-lived (strawman) relationship to other components. The strawman definition should not be forced to change every time a measurement value changes. This would lead to a sea of Environments which are constantly changing. This makes the Device Composition Impractical and impossible to compose_\r\n",
+          "createdAt": "2022-11-16T16:31:10Z",
+          "updatedAt": "2022-11-16T16:37:48Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "a bunch of fly-by comments\r\n\r\n> $identifier-type-choice /= tstr $identifier-type-choice /= \"reference-value\" $identifier-type-choice /= \"endorsed-value\"\r\n\r\nthese could/should be numeric identifiers\r\n\r\n> ; it is expected that when the user uses this map ; in the subject environment map needs to be present identifier-map = non-empty<{ &(type:0) => $identifier-type-choice ? &(env: 1) => environment-map &(mkey : 2) ==> $measured-element-type-choice }>\r\n\r\nusing the term \"identifier\" has very little meaning, identifier of what exactly?\r\n\r\n> ; for a given supply chain entity an identifier updates one or more identifiers ; if this triple record is not supplied in a CoRIM then it is assumed that the ; newly added reference or endorsed value (via reference-triple-record/endorsed-triple-record) ; Has an Update path to any other ref/end value in the Verifier.\r\n> \r\n> ; The triple below sets the relationship explicitly update-triple-record = [ identifier-map [+ identifier-map] ]\r\n> \r\n> ============================================================================== ; explicit removal of old reference values or endorsed values blacklist-triple-record = non-empty<{ environment-map [+ identifier-map] }\r\n\r\nyou haven't followed the \"terminology\" thread in the IETF :-)",
+          "createdAt": "2022-11-16T17:42:27Z",
+          "updatedAt": "2022-11-16T17:42:27Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> terminology\r\n\r\nusing the term \"identifier\" has very little meaning, identifier of what exactly?\r\nOne has to unpack the identifier-map to understand for what this identifier belongs to:\r\n\r\nIt is the identifier type ==> that establishes the identifier name, it could be either the reference-value or endorsed-value\r\nAnd the Environment and Measurement Identity completes its value\r\n\r\n\r\n",
+          "createdAt": "2022-11-16T17:50:48Z",
+          "updatedAt": "2022-11-16T17:50:48Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> One has to unpack the identifier-map to understand for what this identifier belongs to:\r\n> It is the identifier type ==> that establishes the identifier name, it could be either the reference-value or endorsed-value\r\n> And the Environment and Measurement Identity completes its value\r\n\r\nmeasurement identifier then?",
+          "createdAt": "2022-11-16T18:27:24Z",
+          "updatedAt": "2022-11-16T18:27:24Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "```\r\nidentifier-map = non-empty<{\r\n  &(type:0) => $identifier-type-choice\r\n  ? &(env: 1) => environment-map\r\n  &(mkey : 2) ==> $measured-element-type-choice\r\n}>\r\n```\r\n\r\nis a stray/unqualified mkey ok?",
+          "createdAt": "2022-11-16T18:28:01Z",
+          "updatedAt": "2022-11-16T18:28:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > One has to unpack the identifier-map to understand for what this identifier belongs to:\r\n> > It is the identifier type ==> that establishes the identifier name, it could be either the reference-value or endorsed-value\r\n> > And the Environment and Measurement Identity completes its value\r\n> \r\n> measurement identifier then?\r\n\r\nok, we can think of a name that is applicable to both ref values and endorsed values",
+          "createdAt": "2022-11-16T18:30:18Z",
+          "updatedAt": "2022-11-16T18:30:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> ```\r\n> identifier-map = non-empty<{\r\n>   &(type:0) => $identifier-type-choice\r\n>   ? &(env: 1) => environment-map\r\n>   &(mkey : 2) ==> $measured-element-type-choice\r\n> }>\r\n> ```\r\n> \r\n> is a stray/unqualified mkey ok?\r\n\r\nNot sure I fully understood the question?\r\n\r\nIt is expected that the Supply Chain entity will use the same `mkey`  that it used to provision the updated ref-val or end-val\r\n",
+          "createdAt": "2022-11-16T18:34:52Z",
+          "updatedAt": "2022-11-16T18:34:52Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > ```\r\n> > identifier-map = non-empty<{\r\n> >   &(type:0) => $identifier-type-choice\r\n> >   ? &(env: 1) => environment-map\r\n> >   &(mkey : 2) ==> $measured-element-type-choice\r\n> > }>\r\n> > ```\r\n> >   \r\n> > is a stray/unqualified mkey ok?\r\n> \r\n> Not sure I fully understood the question?\r\n\r\nI meant: if `env` is optional, it seems you want to allow `mkey`s that are not anchored onto a parent environment.\r\n",
+          "createdAt": "2022-11-16T18:49:12Z",
+          "updatedAt": "2022-11-16T18:49:53Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ah now I got the point. Thanks. Yes, I wanted to make the Env-map mandatory! Happy to do that in fact!\r\nBut when the new update id updates many id's on th right then Env-map becomes repetitive which is a slight distraction.\r\n\r\nAnd I do not want to have many more maps, so this is a dilemma\r\n\r\nHappy to make it mandatory!",
+          "createdAt": "2022-11-16T18:52:34Z",
+          "updatedAt": "2022-11-16T18:52:34Z"
         }
       ]
     },
