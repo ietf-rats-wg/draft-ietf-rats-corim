@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-17T02:00:50.321894+00:00",
+  "timestamp": "2022-11-20T02:05:23.030197+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "To handle a class of endorsements that are conditionally asserted based on acceptance of specific reference value(s), a new triple is needed.\r\n```\r\n;\r\n; Triples map extension\r\n;\r\n $$triples-map-extension //= (\r\n  comid.endorsed-reference-triples => [+ endorsed-reference-triple-record]\r\n)\r\ncomid.endorsed-reference-triples = 7\r\n\r\nendorsed-reference-triple-record = [\r\n  environment-map ; target environment\r\n  [ + endorsed-reference-map ] ; reference values with endorsed values\r\n]\r\nendorsed-reference-map = non-empty<{\r\n  ? comid.pos => uint ; position - avoids using mkey\r\n  ? comid.refv => measurement-map, ; reference values\r\n  ? comid.endv => measurement-map / measurement-values-map ; endorsed values\r\n}>\r\ncomid.refv = 0\r\ncomid.endv = 1\r\ncomid.pos = 2\r\n```",
       "createdAt": "2022-09-02T16:48:05Z",
-      "updatedAt": "2022-10-12T19:28:35Z",
+      "updatedAt": "2022-11-17T19:02:26Z",
       "closedAt": null,
       "comments": [
         {
@@ -92,6 +92,20 @@
           "body": "Note: removal of 'pos' would cause reference-endorsed-triple-record to only support time series use case. Another viable use of multi-valued reference-endorsed-map structures is when there are multiple evidence values in the form of reference-endorsed-map structures that would match similar structures in reference-endorsed-triple-record. Having an explicit mechanism for treating the multi-valued triple object as time series would avoid this confusion.",
           "createdAt": "2022-10-12T19:28:35Z",
           "updatedAt": "2022-10-12T19:28:35Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Considering issue #24, if the scope of #24 is limited to new triples only, and there are use cases for time-series data with endorsed values (only) or reference values (only), then the decision to make both `reference-values` and `endorsed-values` optional should be reconsidered as the new triple would be needed to cover all the forms involving time series data.",
+          "createdAt": "2022-11-17T18:53:08Z",
+          "updatedAt": "2022-11-17T18:53:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The current proposal is therefore:\r\n```\r\n$$triples-map-extension //= (\r\n  comid.reference-endorsed-triples => [ + reference-endorsed-triple-record ]\r\n)\r\ncomid.reference-endorsed-triples = 7\r\n\r\nreference-endorsed-triple-record = [\r\n  environment-map ; identifies the target environment\r\n  [ + reference-endorsed-map ] ; reference values with endorsed values\r\n]\r\n\r\nreference-endorsed-map = {\r\n  &(ref-vals :0) => [ + measurement-map / measurement-values-map ]\r\n  &(end-vals :1) => [ + measurement-map / measurement-values-map ]\r\n}\r\n```",
+          "createdAt": "2022-11-17T19:02:26Z",
+          "updatedAt": "2022-11-17T19:02:26Z"
         }
       ]
     },
@@ -556,7 +570,7 @@
       "labels": [],
       "body": "reference, endorsed, and reference-endorsed triples support the idea that the object of the triple can be multi-valued. There are two use cases for its use. (a) when there are multiple of the same type measurements. For example, 'digest' or 'raw-value-group' where evidence is constructed so that the first digest is in the first array position and the second digest is in the second array position. Otherwise, the digests are not named (that is they share the same environment-map identity).\r\n\r\nIn the time series use case there is a single evidence value that is compared across multiple reference values. Reference values are ordered according to the series semantics (e.g., time) such that the measurement at position 0 is compared first, then the measurement at position 1 and so forth. \r\n\r\nThe verifier is undecided which comparison algorithm to apply unless the triple contains extra information. It is possible to use mkey to supply the extra information, but mkey (as part of measurement-map) should expect to match an mkey in Evidence as it becomes part of the evidence matching logic. Additionally, if mkey is deprecated this approach is no longer available to disambiguate the use cases. \r\n\r\nA solution should include, at least, a boolean that indicates whether to apply time series vs. multi-valued attributes semantics. \r\nIt is best to keep it independent from the environment-map and the measurement-map structures as these carry matching semantics overhead.\r\n\r\nPossible solutions:\r\n(a) Add a flag for series:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  [ + measurement-map ]\r\n]\r\n```\r\n\r\n```\r\nmeasurement-map = {\r\n  ? &(series: 0) => bool .default false\r\n  &(mval: 1) => measurement-values-map\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\n\r\n(b) Add another level of array:\r\n```\r\nmeasurement-map = {\r\n  &(mval: 1) => [ + measurement-values-map ] ; If multiple array entries exist then apply series comparison semantics\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\n(c) Don't deprecate mkey:\r\n```\r\nmeasurement-map = {\r\n  ? &(mkey: 0) => $measured-element-type-choice\r\n  &(mval: 1) => measurement-values-map\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n$measured-element-type-choice /= bool .default true ; only use the flag when series semantics are desired\r\n```\r\n",
       "createdAt": "2022-10-12T19:40:13Z",
-      "updatedAt": "2022-11-02T18:10:12Z",
+      "updatedAt": "2022-11-19T18:10:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -565,6 +579,34 @@
           "body": "There is another possible solution, to have an optional dedicated second list of measurement-maps dedicated for time series:\r\n\r\n(d) Dedicated time series list:\r\n\r\nreference-triple-record = [\r\n  environment-map\r\n  [ * measurement-map ] ; multi-valued list, which can be an empty list\r\n  ? [ + measurement-map ] ; If this second list is present, it contains a time series of measurement-maps\r\n]\r\n\r\nIf each entry in a time series should be a multi-valued list, then the definition will be:\r\n\r\nreference-triple-record = [\r\n  environment-map\r\n  [ * measurement-map ] ; multi-valued list, which can be an empty list\r\n  ? [ + [ + measurement-map] ] ; If this second list is present, it contains a time series of measurement-map lists.\r\n]\r\n\r\nTo minimize change to the existing reference-trip-record definition, one option is to only add time series support in the new reference-endorsed-triple-record in pull-request 23.",
           "createdAt": "2022-10-28T22:36:32Z",
           "updatedAt": "2022-11-02T18:10:12Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Issue #24 should be considered in context with issue #2 as both conditional endorsements and time series use cases can exist simultaneously.",
+          "createdAt": "2022-11-17T18:47:51Z",
+          "updatedAt": "2022-11-17T18:47:51Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "After today's discussion, people are leaning toward option (b) - adding a nested array that contains time series and relying on array indies for sequencing. However, the exact triple definition should incorporate thinking from issue #2.",
+          "createdAt": "2022-11-17T18:57:21Z",
+          "updatedAt": "2022-11-17T18:57:21Z"
+        },
+        {
+          "author": "shnwc",
+          "authorAssociation": "NONE",
+          "body": "Option (b) sounds fine. With issue #2 incorporated, will the triple definitions be something like below?\r\n\r\n```\r\n$$triples-map-extension //= (\r\n  comid.reference-endorsed-triples => [ + reference-endorsed-triple-record ]\r\n)\r\ncomid.reference-endorsed-triples = 7\r\n\r\nreference-endorsed-triple-record = [\r\n  environment-map ; identifies the target environment\r\n  [ + reference-endorsed-measurement-map ] ; reference values with endorsed values\r\n]\r\n\r\nreference-endorsed-measurement-map = {\r\n  &(mval: 1) => [ + measurement-values-map ] ; If multiple array entries exist then apply series comparison semantics\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n\r\nreference-endorsed-measurement-map = {\r\n  &(ref-vals :0) => [ +  measurement-values-map ]\r\n  &(end-vals :1) => [ + measurement-values-map ]\r\n}\r\n```\r\n",
+          "createdAt": "2022-11-19T05:02:14Z",
+          "updatedAt": "2022-11-19T05:02:14Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There\u2019s a definition similar to that in a branch but it lacks ref/end-Val\u2019s as array for time series use case.",
+          "createdAt": "2022-11-19T18:10:40Z",
+          "updatedAt": "2022-11-19T18:10:40Z"
         }
       ]
     }
