@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-24T01:53:07.077963+00:00",
+  "timestamp": "2022-11-27T01:55:27.618436+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -634,6 +634,44 @@
       "updatedAt": "2022-11-23T21:18:56Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 29,
+      "id": "I_kwDOH6-tI85XTPuT",
+      "title": "CoRIM should allow at most one profile",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/29",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently we allow 0..n profile(s) in the CoRIM.\r\n\r\nThere is no way a receiver can unambiguously identify which profile applies to which of the embedded CoMIDs / CoSWIDs, which makes the ingestion process unnecessarily brittle.\r\n\r\nWe should allow 0..1 instead, and explain that - if present - the profile applies to *all* the embedded CoMIDs & CoSWIDs.",
+      "createdAt": "2022-11-25T15:03:53Z",
+      "updatedAt": "2022-11-26T02:21:48Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If profile A and profile B are part of the same Attester then an implementation that supports A also must support B. In this scenario, the subset of tags/triples that aligns with B would be required to be placed in a separate RIM. The verifier would check signatures for both and bring both into its internal set given some evidence conforms to A and some to B. \r\nThe net is verifier does extra work checking signatures for no reduction in complexity. ",
+          "createdAt": "2022-11-25T19:39:27Z",
+          "updatedAt": "2022-11-25T19:39:27Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "A profile defines the domain of interpretation of what's found in the CoRIM bag.  If a CoRIM declares profile A as well as B then, when processing the embedded CoMID/CoSWID, the ingest logics needs to apply heuristics to decide whether the CoMID is to be interpreted according to A or B.  This becomes a real pain in the neck especially when A and B are quite but not exactly the same, in which case the risk for the heuristic to fire a false positive are pretty high.  Given the potential security risk associated with erroneous ingest of ref-vals & co, I'd rather err on the side of caution and accept the potential double signature penalty.\r\n",
+          "createdAt": "2022-11-25T20:55:06Z",
+          "updatedAt": "2022-11-25T20:55:06Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Right. That\u2019s a reasonable trade off.\r\n\r\nSent from my iPhone\r\n\r\nOn Nov 25, 2022, at 12:55 PM, Thomas Fossati ***@***.***> wrote:\r\n\r\n\ufeff\r\n\r\nA profile defines the domain of interpretation of what's found in the CoRIM bag. If a CoRIM declares profile A as well as B then, when processing the embedded CoMID/CoSWID, the ingest logics needs to apply heuristics to decide whether the CoMID is to be interpreted according to A or B. This becomes a real pain in the neck especially when A and B are quite but not exactly the same, in which case the risk for the heuristic to fire a false positive are pretty high. Given the potential security risk associated with erroneous ingest of ref-vals & co, I'd rather err on the side of caution and accept the potential double signature penalty.\r\n\r\n\u2014\r\nReply to this email directly, view it on GitHub<https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/29#issuecomment-1327881302>, or unsubscribe<https://github.com/notifications/unsubscribe-auth/ABPMCSAGNQ5TWSEVURUCPOTWKERTJANCNFSM6AAAAAASLMZD4A>.\r\nYou are receiving this because you commented.Message ID: ***@***.***>\r\n",
+          "createdAt": "2022-11-26T02:21:48Z",
+          "updatedAt": "2022-11-26T02:21:48Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -965,24 +1003,26 @@
       "id": "PR_kwDOH6-tI85DlSw_",
       "title": "BEST PR EVER: allow one measurement-map only in RVs and EVs",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/26",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "As discussed in our call today.\r\n\r\nSigned-off-by: Thomas Fossati <thomas.fossati@arm.com>",
       "createdAt": "2022-11-23T17:25:47Z",
-      "updatedAt": "2022-11-23T21:08:05Z",
+      "updatedAt": "2022-11-24T11:29:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "93aa69fafc71fea95005f80e508c0f35e1275868",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "drop-multi-measurements",
       "headRefOid": "d0a254a54aafe5eaf0abd1c0fef998c3fb6cd441",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2022-11-24T11:29:41Z",
+      "mergedAt": "2022-11-24T11:29:41Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "d0514fcb2fc433a1d8f6c4d6fe0f9aba2ea9cf0b"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -1034,6 +1074,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 28,
+      "id": "PR_kwDOH6-tI85DrIbJ",
+      "title": "fix bad ref",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/28",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Signed-off-by: Thomas Fossati <thomas.fossati@arm.com>",
+      "createdAt": "2022-11-24T22:49:27Z",
+      "updatedAt": "2022-11-24T22:49:27Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d0514fcb2fc433a1d8f6c4d6fe0f9aba2ea9cf0b",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "fix-wrong-ref",
+      "headRefOid": "59d09418bd6174b700f19b9284602cb6a559a77c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
