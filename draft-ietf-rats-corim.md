@@ -45,9 +45,11 @@ author:
 normative:
   RFC4122: uuid
   RFC7468: pkix-text
-  RFC8152: cose
   RFC8610: cddl
   RFC9090: cbor-oids
+  STD96:
+    -: cose
+    =: RFC9052
   STD94:
     -: cbor
     =: RFC8949
