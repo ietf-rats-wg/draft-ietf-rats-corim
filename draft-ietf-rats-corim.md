@@ -44,10 +44,12 @@ author:
 
 normative:
   RFC4122: uuid
-  RFC7468: cose
-  RFC8152: cose
+  RFC7468: pkix-text
   RFC8610: cddl
   RFC9090: cbor-oids
+  STD96:
+    -: cose
+    =: RFC9052
   STD94:
     -: cbor
     =: RFC8949
@@ -884,10 +886,10 @@ The types or associating addressing information to a measured environment are:
 A cryptographic key can be one of the following formats:
 
 * `tagged-pkix-base64-key-type`: PEM encoded SubjectPublicKeyInfo.
-  Defined in {{Section 13 of RFC7468}}.
+  Defined in {{Section 13 of -pkix-text}}.
 
 * `tagged-pkix-base64-cert-type`: PEM encoded X.509 public key certificate.
-  Defined in {{Section 5 of RFC7468}}.
+  Defined in {{Section 5 of -pkix-text}}.
 
 * `tagged-pkix-base64-cert-path-type`: X.509 certificate chain created by the
   concatenation of as many PEM encoded X.509 certificates as needed.  The
