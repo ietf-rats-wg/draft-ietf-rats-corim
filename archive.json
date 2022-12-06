@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-11-27T01:55:27.618436+00:00",
+  "timestamp": "2022-12-06T01:40:03.488644+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -643,11 +643,13 @@
       "state": "OPEN",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "thomas-fossati"
+      ],
       "labels": [],
       "body": "Currently we allow 0..n profile(s) in the CoRIM.\r\n\r\nThere is no way a receiver can unambiguously identify which profile applies to which of the embedded CoMIDs / CoSWIDs, which makes the ingestion process unnecessarily brittle.\r\n\r\nWe should allow 0..1 instead, and explain that - if present - the profile applies to *all* the embedded CoMIDs & CoSWIDs.",
       "createdAt": "2022-11-25T15:03:53Z",
-      "updatedAt": "2022-11-26T02:21:48Z",
+      "updatedAt": "2022-12-04T21:27:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -672,6 +674,94 @@
           "updatedAt": "2022-11-26T02:21:48Z"
         }
       ]
+    },
+    {
+      "number": 30,
+      "id": "I_kwDOH6-tI85YClUO",
+      "title": "clarify CoRIM scope and their relationship with HBOM/SBOM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/30",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Systems that build CoRIM might also be involved in building BOMs.  We should make it clear that although such systems are likely to use the same input data, CoRIM and BOMs are different objects, with separate scope/applicability.  A CoRIM serves the quite specific purpose of describing RATS target and attesting environments, in terms of their shape and aggregation, to attestation verifiers.  This generally involves a different level of abstraction than that required for a BOM.\r\n\r\n\r\n",
+      "createdAt": "2022-12-05T17:37:03Z",
+      "updatedAt": "2022-12-05T17:37:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 31,
+      "id": "I_kwDOH6-tI85YCsDj",
+      "title": "clarify handling of unknown triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/31",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We must clarify how a receiver is supposed to process unknown semantics.\r\n\r\nCurrently CoRIM does not have a way to say: _\"if you don\u2019t understand this triple you should abort processing, because it contains critical semantics.\"_\r\n\r\nThe implicit assumption (which we should clearly state) is that any such decision belongs to the definition of a CoRIM profile.\r\n\r\nAdditionally, we need to say\r\n1. what is the default behaviour that all profiles should implement\r\n2. what to do if a profile is not specified",
+      "createdAt": "2022-12-05T17:56:03Z",
+      "updatedAt": "2022-12-05T17:56:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 32,
+      "id": "I_kwDOH6-tI85YDIOK",
+      "title": "Triple lifecycle - revocation at triple-level granularity",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/32",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "xcorim is current method for revoking statements in a CoRIM. It is applied at RIM granularity, meaning all tags (and by extension all triples) in the RIM will be marked by Verifiers as 'revoked'. \r\nRevocation at triple-level granularity in the form of \u2018x-<triple-name>\u2019 would offer greater precision in revoking statements (assertions) that are no longer true. \r\n\r\nThe current semantics for additional triples over the same triple subject (e.g., environment) are that these statements are additive to any previously asserted statements. Hence, issuing a 'new' triple doesn't have the semantics of replacing/invalidating the previous triple.\r\n\r\nWhile it may be possible to use x-triples to revoke all triples in a RIM, don\u2019t yet know if it makes sense to stop supporting xcorim as it addresses the use case where a RIM signing key is abused (but not where a private key is compromised), and an efficient method for walking back the abuse is needed / desirable.\r\n\r\nThe x-triple method is roughly characterized by creating a triple record that is identical to an existing triple record except for prepending 'x-' to the triple name and adding the field `x-reason` that identifies the reason for revoking the statement.\r\n\r\nFor example the triple:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n]\r\n```\r\nmight have a revocation triple of the form:\r\n```\r\nx-reference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n  ? refval-x-reason\r\n]\r\n```\r\nThere should be a discussion as to whether x-reason should be optional.",
+      "createdAt": "2022-12-05T18:58:53Z",
+      "updatedAt": "2022-12-05T21:38:13Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As an aside the lifecycle for triples might be:\r\n\r\nCreate\r\nRevoke\r\nEvaluate\r\nDelete",
+          "createdAt": "2022-12-05T21:24:00Z",
+          "updatedAt": "2022-12-05T21:24:00Z"
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "id": "I_kwDOH6-tI85YDNpR",
+      "title": "Triple lifecycle - deletion",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/33",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There is a need to consider triple lifecycle e.g., CRUD where deletion at the triple level of granularity may be appropriate.\r\n\r\nDelete should happen only if there is an error in the production of the CoRIM. Revocation is used when a triple assertion is de-asserted. \r\n\r\nThe existing CoMID has a \u2018replaces\u2019 relationship reason at the tag level of granularity. Is this adequate, or do we need a triple level deletion mechanism?\r\n\r\nAs an aside the lifecycle for triples might be:\r\n- Create\r\n- Revoke\r\n- Evaluate\r\n- Delete",
+      "createdAt": "2022-12-05T19:11:19Z",
+      "updatedAt": "2022-12-05T21:37:41Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 34,
+      "id": "I_kwDOH6-tI85YEKzC",
+      "title": "Triple lifecycle - Evaluation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/34",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In the context of defining a triples lifecycle model such as:\r\n- create\r\n- revoke\r\n- evaluate\r\n- delete \r\nThe Evaluate step is probably least well defined. There is a recurrent debate around the static/dynamic nature of CoRIM. \r\nThere may be two cases for Evaluate semantics, \r\n\r\n1. Reference values are not \u2018exact match\u2019 wrt evidence values. That is to say reference measurements are of a different form than evidence measurements and Verifier matching is 'exact' matching. For example, a match could be true if evidence is with in a range of values.\r\n2. One triple is used to define evidence while a different triple is needed for reference values.The \u2018reference\u2019 triple has predicate semantics and possibly subject / object syntax that are inappropriate for both reference and evidence.\r\n\r\nThere could be more to the evaluation as a result of Appraisal Policy for Evidence but use cases are needed.  Possibly the trust anchors addition to CoRIM is one? \r\n\r\nGiven there may be a small collection of related triples - a 'family' of triples, the logic that relates the \u2018family\u2019 of triples may appropriately be  Evaluation stage.\r\n\r\nA state transition diagram might be:\r\nC -> D, R, E\r\nR -> D\r\nE -> R, D",
+      "createdAt": "2022-12-05T21:37:01Z",
+      "updatedAt": "2022-12-05T21:37:01Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -1080,26 +1170,42 @@
       "id": "PR_kwDOH6-tI85DrIbJ",
       "title": "fix bad ref",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/28",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Signed-off-by: Thomas Fossati <thomas.fossati@arm.com>",
       "createdAt": "2022-11-24T22:49:27Z",
-      "updatedAt": "2022-11-24T22:49:27Z",
+      "updatedAt": "2022-12-05T18:23:06Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d0514fcb2fc433a1d8f6c4d6fe0f9aba2ea9cf0b",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fix-wrong-ref",
-      "headRefOid": "59d09418bd6174b700f19b9284602cb6a559a77c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "d1ddab4c5a09e43b01ac0983c455cd1e92b1650e",
+      "closedAt": "2022-12-05T18:23:03Z",
+      "mergedAt": "2022-12-05T18:23:03Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "cd6cd96f3a2e73bcd109e5c5db6374133c643e85"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85H0uPo",
+          "commit": {
+            "abbreviatedOid": "d1ddab4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-12-05T17:56:31Z",
+          "updatedAt": "2022-12-05T17:56:31Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
