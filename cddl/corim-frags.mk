@@ -39,6 +39,7 @@ CORIM_FRAGS += oid.cddl
 CORIM_FRAGS += profile-type-choice.cddl
 CORIM_FRAGS += protected-corim-header-map.cddl
 CORIM_FRAGS += raw-value.cddl
+CORIM_FRAGS += reference-endorsed-triple-record.cddl
 CORIM_FRAGS += reference-triple-record.cddl
 CORIM_FRAGS += signed-corim.cddl
 CORIM_FRAGS += svn-type-choice.cddl
