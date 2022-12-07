@@ -5,6 +5,7 @@ COMID_FRAGS += class-map.cddl
 COMID_FRAGS += comid-entity-map.cddl
 COMID_FRAGS += comid-role-type-choice.cddl
 COMID_FRAGS += concise-mid-tag.cddl
+COMID_FRAGS += conditional-reference-series-triple-record.cddl
 COMID_FRAGS += coswid-triple-record.cddl
 COMID_FRAGS += crypto-key-type-choice.cddl
 COMID_FRAGS += domain-dependency-triple-record.cddl
