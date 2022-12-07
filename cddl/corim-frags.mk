@@ -6,6 +6,7 @@ CORIM_FRAGS += comid-entity-map.cddl
 CORIM_FRAGS += comid-role-type-choice.cddl
 CORIM_FRAGS += concise-mid-tag.cddl
 CORIM_FRAGS += concise-tag-type-choice.cddl
+CORIM_FRAGS += conditional-reference-series-triple-record.cddl
 CORIM_FRAGS += corim-entity-map.cddl
 CORIM_FRAGS += corim-id-type-choice.cddl
 CORIM_FRAGS += corim-locator-map.cddl
