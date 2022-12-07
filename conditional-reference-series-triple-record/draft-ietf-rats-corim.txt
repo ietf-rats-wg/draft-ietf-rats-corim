@@ -1496,6 +1496,24 @@ Appendix A.  Full CoRIM CDDL
    $concise-tag-type-choice /= #6.505(bytes .cbor concise-swid-tag)
    $concise-tag-type-choice /= #6.506(bytes .cbor concise-mid-tag)
 
+   $$triples-map-extension //= (
+     &(conditional-reference-series-triples: 8) => [ + conditional-reference-series-triple-record ]
+   )
+
+
+   conditional-reference-series-triple-record = [
+     [
+       environment-map,
+       measurement-map / measurement-values-map
+     ] ; triple subject is a compound statement
+     [ + reference-endorsed-record ] ; triple object is a series
+   ]
+
+   reference-endorsed-record = [
+     measurement-map / measurement-values-map  ; reference values
+     ? measurement-map / measurement-values-map  ; conditionally endorsed values, could be empty, but still a valid expression in a series
+   ]
+
    corim-entity-map =
      entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
 
