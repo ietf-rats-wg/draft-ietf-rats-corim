@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 8 June 2023                                        Y. Deshpande
+Expires: 11 June 2023                                       Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         5 December 2022
+                                                         8 December 2022
 
 
                   Concise Reference Integrity Manifest
@@ -57,7 +57,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 June 2023.
+   This Internet-Draft will expire on 11 June 2023.
 
 Copyright Notice
 
@@ -1495,6 +1495,24 @@ Appendix A.  Full CoRIM CDDL
 
    $concise-tag-type-choice /= #6.505(bytes .cbor concise-swid-tag)
    $concise-tag-type-choice /= #6.506(bytes .cbor concise-mid-tag)
+
+   $$triples-map-extension //= (
+     &(conditional-reference-series-triples: 8) => [ + conditional-reference-series-triple-record ]
+   )
+
+
+   conditional-reference-series-triple-record = [
+     [
+       environment-map,
+       measurement-map / measurement-values-map
+     ] ; triple subject is a compound statement
+     [ + reference-endorsed-record ] ; triple object is a series
+   ]
+
+   reference-endorsed-record = [
+     measurement-map / measurement-values-map  ; reference values
+     ? measurement-map / measurement-values-map  ; conditionally endorsed values, could be empty, but still a valid expression in a series
+   ]
 
    corim-entity-map =
      entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
