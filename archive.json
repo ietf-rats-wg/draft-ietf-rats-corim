@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-12-06T01:40:03.488644+00:00",
+  "timestamp": "2022-12-08T01:41:14.079823+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -62,7 +62,7 @@
       "labels": [],
       "body": "To handle a class of endorsements that are conditionally asserted based on acceptance of specific reference value(s), a new triple is needed.\r\n```\r\n;\r\n; Triples map extension\r\n;\r\n $$triples-map-extension //= (\r\n  comid.endorsed-reference-triples => [+ endorsed-reference-triple-record]\r\n)\r\ncomid.endorsed-reference-triples = 7\r\n\r\nendorsed-reference-triple-record = [\r\n  environment-map ; target environment\r\n  [ + endorsed-reference-map ] ; reference values with endorsed values\r\n]\r\nendorsed-reference-map = non-empty<{\r\n  ? comid.pos => uint ; position - avoids using mkey\r\n  ? comid.refv => measurement-map, ; reference values\r\n  ? comid.endv => measurement-map / measurement-values-map ; endorsed values\r\n}>\r\ncomid.refv = 0\r\ncomid.endv = 1\r\ncomid.pos = 2\r\n```",
       "createdAt": "2022-09-02T16:48:05Z",
-      "updatedAt": "2022-11-23T19:33:17Z",
+      "updatedAt": "2022-12-07T22:46:23Z",
       "closedAt": null,
       "comments": [
         {
@@ -113,6 +113,13 @@
           "body": "Updating proposed CDDL to reflect convention that we disallow multiple instances of the same type measurement.\r\n\r\n```\r\nreference-endorsed-triple-record = [\r\n  environment-map ; identifies the target environment\r\n  ref-map ; reference measurements that match evidence\r\n  end-map ; endorsements that are accepted if above reference values match evidence\r\n]\r\n \r\nref-map = {\r\n  &(ref-vals :0) =>  measurement-map / measurement-values-map ; no time series data as reference values is possible\r\n}\r\n \r\nend-map = {\r\n  &(end-vals :0) => [ + measurement-map / measurement-values-map ] ; array denotes time series data \u2013 array index 0 is the most recent value, index n is most historical value\r\n}\r\n```\r\nNote: the use of ref-map and end-map may be pedestrian, but helps to illustrate the part handles time series and the part that handles conditional endorsement. ",
           "createdAt": "2022-11-23T19:33:17Z",
           "updatedAt": "2022-11-23T19:33:17Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "resolved by PR #36 ",
+          "createdAt": "2022-12-07T22:46:22Z",
+          "updatedAt": "2022-12-07T22:46:22Z"
         }
       ]
     },
@@ -394,7 +401,7 @@
       "id": "I_kwDOH6-tI85Sfw8I",
       "title": "\"update\" triple / linked tag relationship needed ",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/17",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -403,9 +410,17 @@
       ],
       "body": "Applying an update requires a way to represent the update to the CoRIM community. The linked-tag-relationship is an existing mechanism that probably should include 'update' as we currently have 'supplements' and 'replaces'. However, the specific details of how to apply the update may require a triple record.",
       "createdAt": "2022-09-23T16:48:43Z",
-      "updatedAt": "2022-09-23T16:48:43Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-12-06T09:58:49Z",
+      "closedAt": "2022-12-06T09:58:41Z",
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This discussion is now moved to #32",
+          "createdAt": "2022-12-06T09:58:41Z",
+          "updatedAt": "2022-12-06T09:58:49Z"
+        }
+      ]
     },
     {
       "number": 18,
@@ -448,15 +463,15 @@
       "id": "I_kwDOH6-tI85S4_RF",
       "title": "Provide a CDDL definition of SW Update Flow",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/21",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Currently the existing CoRIM schema does not lend itself to natural expression for Providing Endorsements for SW updates.\r\n\r\nThis issue tracks the further work required in this area!",
       "createdAt": "2022-09-29T10:57:22Z",
-      "updatedAt": "2022-11-16T20:21:33Z",
-      "closedAt": null,
+      "updatedAt": "2022-12-06T10:00:40Z",
+      "closedAt": "2022-12-06T10:00:40Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -562,6 +577,13 @@
           "body": "Ah now I got the point. Thanks. Yes, I wanted to make the Env-map mandatory! Happy to do that in fact!\r\nBut when the new update id updates many id's on th right then Env-map becomes repetitive which is a slight distraction.\r\n\r\nAnd I do not want to have many more maps, so this is a dilemma\r\n\r\nHappy to make it mandatory!",
           "createdAt": "2022-11-16T18:52:34Z",
           "updatedAt": "2022-11-16T18:52:34Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This has now morphed into the x- triples discussion (see #32)",
+          "createdAt": "2022-12-06T10:00:40Z",
+          "updatedAt": "2022-12-06T10:00:40Z"
         }
       ]
     },
@@ -577,7 +599,7 @@
       "labels": [],
       "body": "reference, endorsed, and reference-endorsed triples support the idea that the object of the triple can be multi-valued. There are two use cases for its use. (a) when there are multiple of the same type measurements. For example, 'digest' or 'raw-value-group' where evidence is constructed so that the first digest is in the first array position and the second digest is in the second array position. Otherwise, the digests are not named (that is they share the same environment-map identity).\r\n\r\nIn the time series use case there is a single evidence value that is compared across multiple reference values. Reference values are ordered according to the series semantics (e.g., time) such that the measurement at position 0 is compared first, then the measurement at position 1 and so forth. \r\n\r\nThe verifier is undecided which comparison algorithm to apply unless the triple contains extra information. It is possible to use mkey to supply the extra information, but mkey (as part of measurement-map) should expect to match an mkey in Evidence as it becomes part of the evidence matching logic. Additionally, if mkey is deprecated this approach is no longer available to disambiguate the use cases. \r\n\r\nA solution should include, at least, a boolean that indicates whether to apply time series vs. multi-valued attributes semantics. \r\nIt is best to keep it independent from the environment-map and the measurement-map structures as these carry matching semantics overhead.\r\n\r\nPossible solutions:\r\n(a) Add a flag for series:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  [ + measurement-map ]\r\n]\r\n```\r\n\r\n```\r\nmeasurement-map = {\r\n  ? &(series: 0) => bool .default false\r\n  &(mval: 1) => measurement-values-map\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\n\r\n(b) Add another level of array:\r\n```\r\nmeasurement-map = {\r\n  &(mval: 1) => [ + measurement-values-map ] ; If multiple array entries exist then apply series comparison semantics\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\n(c) Don't deprecate mkey:\r\n```\r\nmeasurement-map = {\r\n  ? &(mkey: 0) => $measured-element-type-choice\r\n  &(mval: 1) => measurement-values-map\r\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n}\r\n$measured-element-type-choice /= bool .default true ; only use the flag when series semantics are desired\r\n```\r\n",
       "createdAt": "2022-10-12T19:40:13Z",
-      "updatedAt": "2022-11-19T18:10:40Z",
+      "updatedAt": "2022-12-07T22:45:27Z",
       "closedAt": null,
       "comments": [
         {
@@ -614,6 +636,27 @@
           "body": "There\u2019s a definition similar to that in a branch but it lacks ref/end-Val\u2019s as array for time series use case.",
           "createdAt": "2022-11-19T18:10:40Z",
           "updatedAt": "2022-11-19T18:10:40Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another refinement round.\r\n\r\nThe triple _subject_ is a compound structure consisting of an environment identifier plus measurements that, when matched to evidence, is a condition of the _object_.\r\nThe _object_ is a time series of conditional reference and endorsed triples\r\n```\r\nconditional-reference-series-triple-record = [\r\n  [ \r\n    environment-map,\r\n    measurement-map / measurement-values-map\r\n  ] ; triple subject is a compound statement\r\n  [ + reference-endorsed-record ] ; triple object is a series\r\n]\r\n \r\nreference-endorsed-record = [\r\n  measurement-map / measurement-values-map  ; reference values\r\n  ? measurement-map / measurement-values-map  ; conditionally endorsed values, could be empty, but still a valid expression in a series\r\n]\r\n```",
+          "createdAt": "2022-12-07T18:45:52Z",
+          "updatedAt": "2022-12-07T18:45:52Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "An `x-conditional-reference-series-triple-record` should be defined also",
+          "createdAt": "2022-12-07T18:47:22Z",
+          "updatedAt": "2022-12-07T18:47:22Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "resolved by PR #36",
+          "createdAt": "2022-12-07T22:45:14Z",
+          "updatedAt": "2022-12-07T22:45:27Z"
         }
       ]
     },
@@ -694,7 +737,7 @@
     {
       "number": 31,
       "id": "I_kwDOH6-tI85YCsDj",
-      "title": "clarify handling of unknown triples",
+      "title": "define matching rules for the \"base\" profile (i.e., DICE)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/31",
       "state": "OPEN",
       "author": "thomas-fossati",
@@ -703,9 +746,17 @@
       "labels": [],
       "body": "We must clarify how a receiver is supposed to process unknown semantics.\r\n\r\nCurrently CoRIM does not have a way to say: _\"if you don\u2019t understand this triple you should abort processing, because it contains critical semantics.\"_\r\n\r\nThe implicit assumption (which we should clearly state) is that any such decision belongs to the definition of a CoRIM profile.\r\n\r\nAdditionally, we need to say\r\n1. what is the default behaviour that all profiles should implement\r\n2. what to do if a profile is not specified",
       "createdAt": "2022-12-05T17:56:03Z",
-      "updatedAt": "2022-12-05T17:56:03Z",
+      "updatedAt": "2022-12-07T15:23:49Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed.  We should define the \"default profile\" matching rules in the CoRIM base spec.  Other CoRIM profiles MUST define their own matching rules, including handling optionality, cardinality, etc. in their own spec.",
+          "createdAt": "2022-12-07T15:23:20Z",
+          "updatedAt": "2022-12-07T15:23:20Z"
+        }
+      ]
     },
     {
       "number": 32,
@@ -719,7 +770,7 @@
       "labels": [],
       "body": "xcorim is current method for revoking statements in a CoRIM. It is applied at RIM granularity, meaning all tags (and by extension all triples) in the RIM will be marked by Verifiers as 'revoked'. \r\nRevocation at triple-level granularity in the form of \u2018x-<triple-name>\u2019 would offer greater precision in revoking statements (assertions) that are no longer true. \r\n\r\nThe current semantics for additional triples over the same triple subject (e.g., environment) are that these statements are additive to any previously asserted statements. Hence, issuing a 'new' triple doesn't have the semantics of replacing/invalidating the previous triple.\r\n\r\nWhile it may be possible to use x-triples to revoke all triples in a RIM, don\u2019t yet know if it makes sense to stop supporting xcorim as it addresses the use case where a RIM signing key is abused (but not where a private key is compromised), and an efficient method for walking back the abuse is needed / desirable.\r\n\r\nThe x-triple method is roughly characterized by creating a triple record that is identical to an existing triple record except for prepending 'x-' to the triple name and adding the field `x-reason` that identifies the reason for revoking the statement.\r\n\r\nFor example the triple:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n]\r\n```\r\nmight have a revocation triple of the form:\r\n```\r\nx-reference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n  ? refval-x-reason\r\n]\r\n```\r\nThere should be a discussion as to whether x-reason should be optional.",
       "createdAt": "2022-12-05T18:58:53Z",
-      "updatedAt": "2022-12-05T21:38:13Z",
+      "updatedAt": "2022-12-07T15:39:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -728,6 +779,13 @@
           "body": "As an aside the lifecycle for triples might be:\r\n\r\nCreate\r\nRevoke\r\nEvaluate\r\nDelete",
           "createdAt": "2022-12-05T21:24:00Z",
           "updatedAt": "2022-12-05T21:24:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed:\r\n\r\n* x-reasons are specific to each `x-` triple\r\n* x-reason is mandatory for each `x-` triple\r\n* all x-reason type choices are extensible\r\n* when a triple is defined, its `x-` twin must also be defined (or at least considered)\r\n\r\n\r\nSome examples for existing triples:\r\n```\r\nx-reference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n  $refval-x-reason\r\n]\r\n \r\n$refval-x-reason /= obsolete\r\n$refval-x-reason /= insecure\r\n[...]\r\n```\r\n \r\nFor verification keys:\r\n```\r\nx-attest-key-triple-record = [\r\n  environment-map\r\n  [ + $crypto-key-type-choice ]\r\n  $attest-key-x-reason\r\n]\r\n \r\n$attest-key-x-reason /= decommissioned\r\n$attest-key-x-reason /= compromised\r\n[...]\r\n```",
+          "createdAt": "2022-12-07T15:38:20Z",
+          "updatedAt": "2022-12-07T15:39:06Z"
         }
       ]
     },
@@ -743,9 +801,17 @@
       "labels": [],
       "body": "There is a need to consider triple lifecycle e.g., CRUD where deletion at the triple level of granularity may be appropriate.\r\n\r\nDelete should happen only if there is an error in the production of the CoRIM. Revocation is used when a triple assertion is de-asserted. \r\n\r\nThe existing CoMID has a \u2018replaces\u2019 relationship reason at the tag level of granularity. Is this adequate, or do we need a triple level deletion mechanism?\r\n\r\nAs an aside the lifecycle for triples might be:\r\n- Create\r\n- Revoke\r\n- Evaluate\r\n- Delete",
       "createdAt": "2022-12-05T19:11:19Z",
-      "updatedAt": "2022-12-05T21:37:41Z",
+      "updatedAt": "2022-12-07T15:51:09Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "ACTION: document the semantic effects at the triple level of a \"replaces\" at the tag level (i.e., delete + create).",
+          "createdAt": "2022-12-07T15:51:09Z",
+          "updatedAt": "2022-12-07T15:51:09Z"
+        }
+      ]
     },
     {
       "number": 34,
@@ -762,6 +828,30 @@
       "updatedAt": "2022-12-05T21:37:01Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 35,
+      "id": "I_kwDOH6-tI85YLHkm",
+      "title": "Triple lifecycle - full vs delta updates",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/35",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We should have a way to indicate whether a CoRIM provides a delta update -- i.e., an entry in the update sequence (e.g., $\\delta_n$ in the chain: $\\delta_{1} \\leftarrow \\delta_{2} \\leftarrow \\ldots \\leftarrow \\delta_{n}$) --, or the full set of deltas in one go, i.e. the whole chain.\r\nThe `updates` link relation should be used to create the linked CoRIMs list in the former case.\r\n\r\n",
+      "createdAt": "2022-12-06T14:58:35Z",
+      "updatedAt": "2022-12-07T16:01:12Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Off-topic test:\r\n\r\nSolid solution strenghtening: $\\Delta \\sigma_y = Gb{\\sqrt {C}}\\epsilon^{(3/2)}$",
+          "createdAt": "2022-12-07T16:01:12Z",
+          "updatedAt": "2022-12-07T16:01:12Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -986,10 +1076,12 @@
       "assignees": [
         "nedmsmith"
       ],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "created branch to define reference-endorsed-triples ",
       "createdAt": "2022-10-04T22:01:22Z",
-      "updatedAt": "2022-11-02T18:23:53Z",
+      "updatedAt": "2022-12-07T22:38:47Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "539d53fc1e113339f7bf6673b2be56bb7a052dda",
@@ -1000,7 +1092,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR is superseded by PR#36 ",
+          "createdAt": "2022-12-07T22:37:07Z",
+          "updatedAt": "2022-12-07T22:37:07Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI85FfKsC",
@@ -1206,6 +1306,34 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 36,
+      "id": "PR_kwDOH6-tI85EstJq",
+      "title": "Conditional reference series triple record",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/36",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Added conditional-reference-series-triples extension with test case.",
+      "createdAt": "2022-12-07T22:35:10Z",
+      "updatedAt": "2022-12-07T22:38:23Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "cd6cd96f3a2e73bcd109e5c5db6374133c643e85",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "conditional-reference-series-triple-record",
+      "headRefOid": "0ca34977253e07c61d810277821c875bde797e93",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
