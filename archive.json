@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-12-11T01:48:50.276721+00:00",
+  "timestamp": "2022-12-15T01:45:55.689126+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -747,11 +747,13 @@
       "state": "OPEN",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith"
+      ],
       "labels": [],
       "body": "We must clarify how a receiver is supposed to process unknown semantics.\r\n\r\nCurrently CoRIM does not have a way to say: _\"if you don\u2019t understand this triple you should abort processing, because it contains critical semantics.\"_\r\n\r\nThe implicit assumption (which we should clearly state) is that any such decision belongs to the definition of a CoRIM profile.\r\n\r\nAdditionally, we need to say\r\n1. what is the default behaviour that all profiles should implement\r\n2. what to do if a profile is not specified",
       "createdAt": "2022-12-05T17:56:03Z",
-      "updatedAt": "2022-12-07T15:23:49Z",
+      "updatedAt": "2022-12-14T15:53:24Z",
       "closedAt": null,
       "comments": [
         {
@@ -760,6 +762,13 @@
           "body": "As discussed.  We should define the \"default profile\" matching rules in the CoRIM base spec.  Other CoRIM profiles MUST define their own matching rules, including handling optionality, cardinality, etc. in their own spec.",
           "createdAt": "2022-12-07T15:23:20Z",
           "updatedAt": "2022-12-07T15:23:20Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "todo: document a verification flow that treats DICE matching as the default profile where DICE tcbinfo and concise-evidence are evidence inputs and corim is the endorsement and reference values inputs.",
+          "createdAt": "2022-12-14T15:53:15Z",
+          "updatedAt": "2022-12-14T15:53:15Z"
         }
       ]
     },
@@ -775,7 +784,7 @@
       "labels": [],
       "body": "xcorim is current method for revoking statements in a CoRIM. It is applied at RIM granularity, meaning all tags (and by extension all triples) in the RIM will be marked by Verifiers as 'revoked'. \r\nRevocation at triple-level granularity in the form of \u2018x-<triple-name>\u2019 would offer greater precision in revoking statements (assertions) that are no longer true. \r\n\r\nThe current semantics for additional triples over the same triple subject (e.g., environment) are that these statements are additive to any previously asserted statements. Hence, issuing a 'new' triple doesn't have the semantics of replacing/invalidating the previous triple.\r\n\r\nWhile it may be possible to use x-triples to revoke all triples in a RIM, don\u2019t yet know if it makes sense to stop supporting xcorim as it addresses the use case where a RIM signing key is abused (but not where a private key is compromised), and an efficient method for walking back the abuse is needed / desirable.\r\n\r\nThe x-triple method is roughly characterized by creating a triple record that is identical to an existing triple record except for prepending 'x-' to the triple name and adding the field `x-reason` that identifies the reason for revoking the statement.\r\n\r\nFor example the triple:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n]\r\n```\r\nmight have a revocation triple of the form:\r\n```\r\nx-reference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n  ? refval-x-reason\r\n]\r\n\r\n$refval-x-reason /= obsolete\r\n$refval-x-reason /= insecure\r\n```\r\nThere should be a discussion as to whether x-reason should be optional.",
       "createdAt": "2022-12-05T18:58:53Z",
-      "updatedAt": "2022-12-08T17:30:06Z",
+      "updatedAt": "2022-12-14T16:00:05Z",
       "closedAt": null,
       "comments": [
         {
@@ -798,6 +807,13 @@
           "body": "The range of possible reason codes is infinite and the semantics behind each reason code is defined by a specification, whether it is a standards document, profile, or other. \r\n\r\nDo it make sense to leave it this open ended? Ideally the reason doesn't affect Verifier behavior except when an Appraisal policy for Evidence is used that keys off of the reason code. \r\nIf the reason code implies changed Verifier behavior independent of a policy, then there should be some way to indicate this so that verifiers can all have consistent behavior. The examples above all have the same outcome, which is the 'x-' form of the triple causes Evidence matching to fail if matched. Compare this to 'delete' where the triple is removed from the Verifier's list. Evidence that doesn't match a Reference Value doesn't necessarily result in appraisal failure. Instead, they are held in reserve until the appraisal concludes and if the Attester is trusted the unmatched Evidence measurements are added to the appraised claims list and accepted as truth. ",
           "createdAt": "2022-12-08T17:30:06Z",
           "updatedAt": "2022-12-08T17:30:06Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed (12/14/2022) it is ok to have an open type for the x-reason.  The policy must be written so that it catches an unknown x-reason and, when it does, it defaults to some sensible behaviour.",
+          "createdAt": "2022-12-14T16:00:05Z",
+          "updatedAt": "2022-12-14T16:00:05Z"
         }
       ]
     },
@@ -811,9 +827,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "There is a need to consider triple lifecycle e.g., CRUD where deletion at the triple level of granularity may be appropriate.\r\n\r\nDelete should happen only if there is an error in the production of the CoRIM. Revocation is used when a triple assertion is de-asserted. \r\n\r\nThe existing CoMID has a \u2018replaces\u2019 relationship reason at the tag level of granularity. Is this adequate, or do we need a triple level deletion mechanism?\r\n\r\nAs an aside the lifecycle for triples might be:\r\n- Create\r\n- Revoke\r\n- Evaluate\r\n- Delete",
+      "body": "There is a need to consider triple lifecycle e.g., CRUD where deletion at the triple level of granularity may be appropriate.\r\n\r\nDelete should happen only if there is an error in the production of the CoRIM. Revocation is used when a triple assertion is de-asserted. \r\n\r\nThe existing CoMID has a \u2018replaces\u2019 relationship reason at the tag level of granularity. Is this adequate, or do we need a triple level deletion mechanism?\r\n\r\nAs an aside the lifecycle for triples might be:\r\n- Create\r\n- Revoke\r\n- Update\r\n- Delta update\r\n- Evaluate?\r\n- Delete",
       "createdAt": "2022-12-05T19:11:19Z",
-      "updatedAt": "2022-12-08T17:31:45Z",
+      "updatedAt": "2022-12-14T15:28:24Z",
       "closedAt": null,
       "comments": [
         {
