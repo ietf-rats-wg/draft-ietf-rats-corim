@@ -1000,6 +1000,36 @@ measurements for the Target Environment.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10
 
+# CoBOM {#sec-cobom}
+
+A BOM object represents the signal for the verifier to activate the listed
+tags. Data contained in a tag MUST NOT be used for appraisal until a BOM which
+activates that tag has been received and successfully processed. All the tags
+listed in the BOM must be activated in the same transaction, i.e., either all
+or none.
+
+## Structure
+
+The CDDL specification for the `concise-bom-tag` map is as follows and this
+rule and its constraints MUST be followed when creating or validating a CoBOM
+tag:
+
+~~~ cddl
+{::include cddl/concise-bom-tag.cddl}
+~~~
+
+The following describes each member of the `concise-bom-tag` map.
+
+* `tag-identity` (index 0): A `tag-identity-map` containing unique
+  identification information for the CoBOM. Described in {{sec-comid-tag-id}}.
+
+* `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
+  the CoMID and CoSWID tags that constistute the bill of material (BOM), i.e.,
+  a complete set of verification-related information.
+
+* `bom-validity` (index 2): Specifies the validity period of the CoBOM.
+  Described in {{sec-common-validity}}
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol

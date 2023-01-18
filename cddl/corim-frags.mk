@@ -56,5 +56,6 @@ CORIM_FRAGS += uuid.cddl
 CORIM_FRAGS += validity-map.cddl
 CORIM_FRAGS += version-map.cddl
 CORIM_FRAGS += concise-swid-tag.cddl
+CORIM_FRAGS += concise-bom-tag.cddl
 
 CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
