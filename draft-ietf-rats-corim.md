@@ -1030,6 +1030,11 @@ The following describes each member of the `concise-bom-tag` map.
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
   Described in {{sec-common-validity}}
 
+* `$$concise-bom-tag-extension`: This CDDL socket is used to add new
+  information structures to the `concise-bom-tag`.  See {{sec-iana-cobom}}.
+  The `$$concise-bom-tag-extension` extension socket is empty in this
+  specification.
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
@@ -1106,6 +1111,10 @@ groups to use this information as they see fit".
 ## New CoMID Registries {#sec-iana-comid}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/15
+
+## New CoBOM Registries {#sec-iana-cobom}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/45
 
 ## New Media Types {#sec-iana-media-types}
 
