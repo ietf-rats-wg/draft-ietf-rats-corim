@@ -1044,18 +1044,15 @@ If the verifier fails then it returns an appropriate error code.
 
 The internal state of a CoMID verifier instance includes a single concise-mid-tag.
 Triples within this map include claims representing information associated with the
-device being measured or its measured state.
-
-Other documents describe this state as an ***accepted claims map***. 
+device being measured or its measured state. Other documents describe this state as
+an ***accepted claims map***. 
 
 Most of the measurements in the accepted claims map are held as entries within the
 Endorsed Values Triples map. Other types of triples may also be included in the
 accepted claims map.
 
-The accepted claims map SHOULD NOT contain Reference Triples or Linked Tags.
-
-The verifier MAY output attestation results as a serialisation of the accepted
-claims map.
+The accepted claims map SHOULD NOT contain Reference Triples, CoMID-CoSwid Linking Triples
+or Linked Tags.
 
 ### Collecting Evidence
 
@@ -1102,44 +1099,217 @@ The verifier SHALL translate each DICE TcbInfo into an endorsed-triple-record as
 
 The verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record 
 
-- The TcbInfo `type` field shall be copied to the field named `environment-map / comid.class / comid.class-id`
-- The TcbInfo `vendor` field shall be copied to the field named `environment-map / comid.class / comid.vendor`
-- The TcbInfo `model` field shall be copied to the field named `environment-map / comid.class / comid.model`
-- The TcbInfo `layer` field shall be copied to the field named `environment-map / comid.class / comid.layer`
-- The TcbInfo `index` field shall be copied to the field named `environment-map / comid.class / comid.index`
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / comid.class / comid.class-id`
+- The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / comid.class / comid.vendor`
+- The TcbInfo `model` field SHALL be copied to the field named `environment-map / comid.class / comid.model`
+- The TcbInfo `layer` field SHALL be copied to the field named `environment-map / comid.class / comid.layer`
+- The TcbInfo `index` field SHALL be copied to the field named `environment-map / comid.class / comid.index`
 
-- The TcbInfo `version` field shall be translated to the field named `measurement-map / comid.mval / comid.ver`
-  - TODO: Details of translation
-- The TcbInfo `svn` field shall be copied to the field named `measurement-map / comid.mval / comid.svn`
-- The TcbInfo `fwids` field shall be translated to the field named `measurement-map / comid.mval / comid.digests`
-  - TODO: Details of translation
-- The TcbInfo `flags` field shall be translated to the field named `measurement-map / comid.mval / comid.flags`
-  - TODO: Details of translation
-- The TcbInfo `vendorInfo` field shall be copied to the field named `measurement-map / comid.mval / comid.raw-value`
+- The TcbInfo `version` field SHALL be translated to the field named `measurement-map / comid.mval / comid.ver`
+> TODO: Details of translation
+- The TcbInfo `svn` field SHALL be copied to the field named `measurement-map / comid.mval / comid.svn`
+- The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / comid.mval / comid.digests`
+> TODO: Details of translation
+- The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / comid.mval / comid.flags`
+> TODO: Details of translation
+- The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / comid.mval / comid.raw-value`
+
+#### Adding evidence from SPDM measurements
+
+> TODO: Use the measurement manifest
 
 ### Verifying correctness of RIMs
 
-TODO: Verify that each CoRIM file provided is signed by a suitable trust anchor, if it is then add all tags from the file to a verified-tags structure
+> TODO: Verify that each CoRIM file provided is signed by a suitable trust anchor, if it is then add all CoMIDs from the file to the set of candidate CoMIDs
 
 ### Accepting CoMIDs Which Match Existing Evidence
 
-TODO: For each verified tag which matches the accepted claims map, add all fields from the verified tag except reference-values to the accepted claims map
+The description in this section is very inefficient, a verifier is not required
+to follow these steps as written providing it returns the same result as a
+verifier which followed these steps. Several significant optimisations are
+possible.
+
+The verifier SHALL compare every candidate CoMID in its set against the endorsements
+in its internal state. 
+
+If the candidate CoMID matches the device measurements in the
+accepted claims map then the verifier SHALL merge all information in the matching
+candidate CoMID into the accepted claims map.
+
+The verifier SHALL NOT merge the Reference Triples, CoMID-CoSwid Linking Triples
+or Linked Tags from the matching candidate CoMID into the accepted claims map.
+
+After merging a tag from the candidate set into the accepted claims map the
+verifier SHALL check each candiate tag again. Endorsements from the merged CoMID
+may allow other candidate CoMIDs to further describe the device.
+
+The order in which candidate CoMIDs are compared is significant for performance.
+In most cases the verifier can order the tags so that all verification can be
+performed with a single pass through the candidate CoMIDs set.
+
+When a CoMID contains a `linked-tag` field, the verifier SHOULD process the CoMID
+whose identifiers are in the linked-tag field before the CoMID containing that field.
+
+A verifier may pre-process the candidate CoMIDs into an optimum order. Processing
+CoMIDs which provide an endorsement with environment-map E before CoMIDs which
+match against an endorsement with the same name will normally reduce the number
+of times the candidate CoMID set must be traversed.
 
 #### Matching a reference value against an accepted claim
 
-TODO: All fields in the environment-map are compared against the same field in the measurement-map. If the same fields are present in .
+This section describes the algorithm used by the verifier to match a candidate
+CoMID against the accepted claims map. If the candidate CoMID does not match
+it is silently ignored during this pass. It may need to be compared again on
+a future pass.
 
-Measurements which fill other fields within environment-map can be stored in the accepted claims map but do not affect the protocol. These measurements may be emitted as part of the attestation results.
+The verifier SHALL iterate through each reference values triple in the candidate
+CoMID, comparing that triple against the accepted claims map. 
 
-### Accepted Claims Map Values
+If the accepted claims map does not contain an endorsement triple with the
+same environment-map as the reference values triple then the verifier
+SHALL silently ignore the candidate CoMID until the next pass (if any).
 
+The verifier SHALL compare the environment-maps using exact match. The
+environment maps match only if exactly the same fields are present in both
+environment-maps and they have exactly the same values.
 
+If the two environment-maps are well formed then a binary compare of the
+canonical CBOR encoding of both environment maps will indicate whether they
+are the same.
 
-TODO: Describe matching rules
+Having located an entry in the accepted claims map whose environment-map matches
+that in the reference value triple, the verifier compares the contents of their
+measurement-maps to see whether they are compatible.
+
+The verifier SHALL compare the fields in the measurement map of the reference
+value triple and the matching accepted claim.
+
+If the reference measurement map or the accepted measurement map contain the
+mkey field then the verifier SHALL silently ignore the candidate CoMID until
+the next pass.
+
+> TODO: I do not know how to compare mkeys. If someone can provide a
+> description of how to compare mkeys then it should replace the paragraph
+> above.
+
+If the mval in the refernce triple does not match the mval in the accepted
+values triple then the verifier SHALL silently ignore the candidate CoMID until
+the next pass.
+
+If the reference triple contains an authorized-by field and the
+public key in the authorized-by field is not one of the keys which signed the
+corresponding entry in the accepted values triple then the verifier SHALL
+silently ignore the candidate CoMID until the next pass.
+
+##### Comparing measurement-values-maps
+
+The verifier SHALL iterate through the values in the reference measurement-values-map,
+comparing each reference field against the corresponding field in the
+accepted claims evidence.
+
+If the reference value is tagged then the tag may indicate a special comparison
+algorithm to be used. In this case the verifier SHOULD use the rules indicated
+by the tag to perform the field comparison.
+
+> TODO: What's the behaviour if the verifier does not recognise the tag? Fail?
+
+The verifier SHALL locate the accepted value with the same map key as the
+reference value.
+
+If the reference value is not tagged with a tag which selectes special processing
+rules and there is no accepted value with the same map key as the reference
+value then the verifier SHALL silently ignore the candidate CoMID until
+the next pass.
+
+If the reference value is not tagged and the accepted value is tagged then
+the verifier shall compare the reference value against the accepted value
+with all initial tags removed.
+
+If both the reference value and the accepted value are tagged and the tags have
+different values then the verifier SHALL silently ignore the candidate CoMID until
+the next pass.
+
+> TODO: Should the verifier fail if the reference value is tagged with a value
+> which the verifer does not recognise, or if it is double tagged?
+
+For some keys the verifier will contain special processing using special
+processing rules. These rules are described below.
+
+Each remaining refernce value is compared against the accepted value with
+the same map key using the default comparison.
+
+##### Default comparison 
+
+The default comparison canonicalises the reference field against the candidate
+field, checking for an exact match. If the types or values of the fields do
+not match exactly then the verifier SHALL silently ignore the candidate CoMID
+until the next pass.
+
+The verifier SHALL convert both fields into canonical CBOR before performing
+the comparison. if the encoded bytes are not binary identical then the values
+do not match.
+
+##### Comparing masked raw values
+
+The masked raw value rule is used when comparing a reference raw-value field
+and raw-value-map field against an accepted raw-value field. Before comparison
+temporary copies of the three fields are modified to make them the same length.
+
+The verifier SHALL make temporary copies of the three fields. If the fields
+are different lengths then the verifier SHALL append zero bytes to the end
+of the shorter fields until they are the same length as the longest field.
+
+The verifier SHALL compare the fields one bit at a time. If any bit in the 
+reference raw-value-mask field is 1 and the corresponding bits in the
+raw-value fields do not have the same value then the verifier SHALL silently
+ignore the candidate CoMID until the next pass.
+
+##### Comparing digests
+
+Digests measurements can be calculated with several different hash algorithms.
+For a match there must be at least one algorithm which is present in both
+measurements, and every algorithm which is present in both measurements
+must have the same digest.
+
+If there is no algorithm which is present in the reference digests field and
+in the accepted digests field then the verifier SHALL silently ignore the
+candidate CoMID until the next pass.
+
+If there is an algorithm which is present in both reference digest and
+accepted digest then the verifier SHALL compare the values for that algorithm.
+If the hash value for refernce algorithm A is not the same as the hash value
+for accepted algorithm A are not the same then the verifier SHALL silently
+ignore the candidate CoMID until the next pass.
+
+##### Comparing SVNs
+
+If the reference svn field is tagged with tag `&(tagged-svn: 552)` or the
+reference value is not tagged, and the values of the reference field and the
+accepted field are different, then the verifier SHALL silently
+ignore the candidate CoMID until the next pass.
+
+If the reference svn field is tagged with tag `&(min-svn: 553)` or the
+reference value is not tagged, and the accepted value is lower than the
+reference value, then the verifier SHALL silently ignore the candidate
+CoMID until the next pass.
+
+##### Comparing flags
+
+> TODO: Describe about how to compare flags.
+
+#### Merging candidate tags
+
+> TODO: If two tag sets do not merge correctly then the candidate tag is silently ignored
 
 ## Reporting attestation results
 
-TODO: 
+The verifier MAY output attestation results as a serialisation of the accepted
+claims map.
+
+If the correct CoRIM files have been used then the relying party can check for
+specific endorsements in the results, if they are present then the attester is
+in the expected state.
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
