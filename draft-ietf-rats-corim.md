@@ -41,10 +41,6 @@ author:
   name: Wei Pan
   org: Huawei Technologies
   email: william.panwei@huawei.com
-- ins: A. Draper
-  name: Andrew Draper
-  org: Intel
-  email: andrew.draper@intel.com
 
 normative:
   RFC4122: uuid
@@ -1004,6 +1000,146 @@ measurements for the Target Environment.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10
 
+## Verifier Processing
+
+A CoMID verifier takes as input evidence, CoRIM files and policies. The output from
+the verifier is the same evidence, supplemented with endorsements from CoRIM files
+which match the device providing the evidence.
+
+For example, a verifier may be provided with evidence that the firmware hash has a
+particular numeric value, and may add to this evidence an endorsement that this is the
+hash of Example Corp. Firmware version 1.0.
+
+A relying party may be configured with the policy that it only works with devices which
+have been endorsed by Example Corp. and are running Firmware version 1.0.
+
+The Verifier performs five steps as part of the verification operation:
+1. Collect Evidence from the attestor(s)
+1. Verify measurement authenticity
+1. Verify correctness of candidate RIMS
+1. Accept the candidate RIMS which apply to the device and Endorsement Values from these RIMs
+1. Report Evidence and accepted Endorsement Values as attestation results
+
+Each step is described in a separate sub-section below
+
+### Verifier Environment
+
+The example verifier described in this document is created by the relying
+party, used once as part of attesting a single device and then discarded.
+(How to say that this does not prescribe other implementation styles)
+
+A verifier instance is provisioned with CoRIM files containing CoMID tags, trusted root keys, and
+policies. The authority keys may be used for authenticating evidence or CoRIM files.
+
+The verifier is provided with input evidence or with a set of attesters from which it must
+collect evidence.
+
+If the verifier runs successfully then the output is a set of output evidence, 
+consisting of the input evidence plus endorsements from RIM files which match
+the device being verified.
+
+If the verifier fails then it returns an appropriate error code.
+
+### Verifier Internal State
+
+The internal state of a CoMID verifier instance includes a single concise-mid-tag.
+Triples within this map include claims representing information associated with the
+device being measured or its measured state.
+
+Other documents describe this state as an ***accepted claims map***. 
+
+Most of the measurements in the accepted claims map are held as entries within the
+Endorsed Values Triples map. Other types of triples may also be included in the
+accepted claims map.
+
+The accepted claims map SHOULD NOT contain Reference Triples or Linked Tags.
+
+The verifier MAY output attestation results as a serialisation of the accepted
+claims map.
+
+### Collecting Evidence
+
+If the verifier is initialised with attestaton results from a previous verifier
+then after verifying the authenticity of that evidence it is copied into the
+accepted claims map.
+
+If the verifier is provided with a list of attesters to query then it first uses
+appropriate protocols (eg RATS, DICE, SPDM etc) to read evidence from the attesters. After
+checking the authenticity of that evidence it is copied into the accepted claims
+map.
+
+The part of the Verifier which collects Evidence does not need to be trusted as
+the autheniticy checkins step will reject unwanted evidence.
+
+The Verifier SHALL ensure that nonce values used as part of the Evidence collection
+protocols are unique. A Verifier which reuses a nonce value is open to a replay attack.
+
+The Evidence collection step may need to know which trust anchors will be accepted
+by the validator – for example an SPDM requestor will need to select the certificate
+chain with a root key which is part of the verifiers set of trust anchors.
+
+### Adding verified evidence to the accepted claims map
+
+The verifier SHALL check that each input set of evidence or attestation results is
+signed by a signature chain from one of the trust anchors in its policy.
+
+Each set of verified evidence is translated to CoRIM format before being added to the accepted
+claims map.
+
+If any evidence in a set being added does not match does not match evidence already
+in the accepted claims map then the verifier SHALL report failure.
+
+For example, if the accepted claims map contains an endorsement that the measurement
+of type class=1.2.3.4 has hash 0x5678 and an authenticated set being added indicates
+that the same measurement has hash 0xABCD then the verifier must fail since it does
+not know which evidence is correct.
+
+TODO: Where does information about the signature chain over each object get put?
+
+#### Adding evidence from DICE TcbInfo extensions
+
+The verifier SHALL translate each DICE TcbInfo into an endorsed-triple-record as described in this section. The verifier SHALL split each DICE MultiTcbInfo extension into separate TcbInfo object and translate each one into an endorsed-triple-record in the same way.
+
+The verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record 
+
+- The TcbInfo `type` field shall be copied to the field named `environment-map / comid.class / comid.class-id`
+- The TcbInfo `vendor` field shall be copied to the field named `environment-map / comid.class / comid.vendor`
+- The TcbInfo `model` field shall be copied to the field named `environment-map / comid.class / comid.model`
+- The TcbInfo `layer` field shall be copied to the field named `environment-map / comid.class / comid.layer`
+- The TcbInfo `index` field shall be copied to the field named `environment-map / comid.class / comid.index`
+
+- The TcbInfo `version` field shall be translated to the field named `measurement-map / comid.mval / comid.ver`
+  - TODO: Details of translation
+- The TcbInfo `svn` field shall be copied to the field named `measurement-map / comid.mval / comid.svn`
+- The TcbInfo `fwids` field shall be translated to the field named `measurement-map / comid.mval / comid.digests`
+  - TODO: Details of translation
+- The TcbInfo `flags` field shall be translated to the field named `measurement-map / comid.mval / comid.flags`
+  - TODO: Details of translation
+- The TcbInfo `vendorInfo` field shall be copied to the field named `measurement-map / comid.mval / comid.raw-value`
+
+### Verifying correctness of RIMs
+
+TODO: Verify that each CoRIM file provided is signed by a suitable trust anchor, if it is then add all tags from the file to a verified-tags structure
+
+### Accepting CoMIDs Which Match Existing Evidence
+
+TODO: For each verified tag which matches the accepted claims map, add all fields from the verified tag except reference-values to the accepted claims map
+
+#### Matching a reference value against an accepted claim
+
+TODO: All fields in the environment-map are compared against the same field in the measurement-map. If the same fields are present in .
+
+Measurements which fill other fields within environment-map can be stored in the accepted claims map but do not affect the protocol. These measurements may be emitted as part of the attestation results.
+
+### Accepted Claims Map Values
+
+
+
+TODO: Describe matching rules
+
+## Reporting attestation results
+
+TODO: 
 # Implementation Status
 
 This section records the status of known implementations of the protocol
