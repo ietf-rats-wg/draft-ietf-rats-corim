@@ -41,6 +41,10 @@ author:
   name: Wei Pan
   org: Huawei Technologies
   email: william.panwei@huawei.com
+- ins: A. Draper
+  name: Andrew Draper
+  org: Intel
+  email: andrew.draper@intel.com
 
 normative:
   RFC4122: uuid
