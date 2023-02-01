@@ -996,6 +996,12 @@ measurements for the Target Environment.
 {::include cddl/coswid-triple-record.cddl}
 ~~~
 
+#### Conditional Reference Series Triple {#sec-comid-triple-cond-ref}
+
+~~~ cddl
+{::include cddl/conditional-reference-series-triple-record.cddl}
+~~~
+
 ## Extensibility
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10
