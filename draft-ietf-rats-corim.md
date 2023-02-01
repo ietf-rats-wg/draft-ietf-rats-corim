@@ -1002,11 +1002,11 @@ measurements for the Target Environment.
 
 # CoBOM {#sec-cobom}
 
-A BOM object represents the signal for the verifier to activate the listed
-tags. Data contained in a tag MUST NOT be used for appraisal until a BOM which
-activates that tag has been received and successfully processed. All the tags
-listed in the BOM must be activated in the same transaction, i.e., either all
-or none.
+A Concise Bill of Material (CoBOM) object represents the signal for the
+verifier to activate the listed tags. Data contained in a tag MUST NOT be used
+for appraisal until a CoBOM which activates that tag has been received and
+successfully processed. All the tags listed in the CoBOM must be activated in
+the same transaction, i.e., either all or none.
 
 ## Structure
 
@@ -1024,8 +1024,12 @@ The following describes each member of the `concise-bom-tag` map.
   identification information for the CoBOM. Described in {{sec-comid-tag-id}}.
 
 * `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
-  the CoMID and CoSWID tags that constistute the bill of material (BOM), i.e.,
-  a complete set of verification-related information.
+  the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
+  a complete set of verification-related information.  The `tags-list` behaves
+  like a signaling mechanism from the supply chain (e.g., a product vendor) to
+  a Verifier that activates the tags in `tags-list` for use in the Evidence
+  appraisal process. The activation is atomic: all tags listed in `tags-list`
+  MUST be activated or no tags are activated.
 
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
   Described in {{sec-common-validity}}
