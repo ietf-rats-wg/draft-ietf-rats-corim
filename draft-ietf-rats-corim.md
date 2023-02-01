@@ -620,6 +620,10 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID
   tags. Described in {{sec-comid-triple-coswid}}.
 
+* `conditional-reference-series-triples` (index 8) Triples describing conditional
+  Endorsement based on acceptance of a particular set of Reference Values. Described
+  in {{sec-comid-triple-cond-ref}}.
+
 #### Common Types
 
 ##### Environment
@@ -997,6 +1001,20 @@ measurements for the Target Environment.
 ~~~
 
 #### Conditional Reference Series Triple {#sec-comid-triple-cond-ref}
+
+A Conditional Reference Series triple relates reference measurements to a Target
+Environment where endorsed measurements are accepted given all reference measurements
+are accepted. The triple subject is a compound statement consisting of a Target Environment
+and initial Reference Values that MUST be satisfied before evaluating the triple object.
+
+The triple object is a series of additional measurements that are evaluated in the order
+they appear in an array. The series has one or more records containing additional Reference
+Values that may contain Endorsement values. If Evidence matches the additional Reference
+Values, both the additional Reference Values and the Endorsed values, if any, are accepted.
+
+The first successfully accepted record from the `reference-endorsed-record` series terminates
+evaluation. If none of the additional Reference Values are accepted, then the entire triple
+fails to accept any Claims.
 
 ~~~ cddl
 {::include cddl/conditional-reference-series-triple-record.cddl}
