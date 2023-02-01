@@ -1034,7 +1034,7 @@ policies. The authority keys may be used for authenticating evidence or CoRIM fi
 The verifier is provided with input evidence or with a set of attesters from which it must
 collect evidence.
 
-If the verifier runs successfully then the output is a set of output evidence, 
+If the verifier runs successfully then the output is a set of output evidence,
 consisting of the input evidence plus endorsements from RIM files which match
 the device being verified.
 
@@ -1045,7 +1045,7 @@ If the verifier fails then it returns an appropriate error code.
 The internal state of a CoMID verifier instance includes a single concise-mid-tag.
 Triples within this map include claims representing information associated with the
 device being measured or its measured state. Other documents describe this state as
-an ***accepted claims map***. 
+an ***accepted claims map***.
 
 Most of the measurements in the accepted claims map are held as entries within the
 Endorsed Values Triples map. Other types of triples may also be included in the
@@ -1097,7 +1097,7 @@ TODO: Where does information about the signature chain over each object get put?
 
 The verifier SHALL translate each DICE TcbInfo into an endorsed-triple-record as described in this section. The verifier SHALL split each DICE MultiTcbInfo extension into separate TcbInfo object and translate each one into an endorsed-triple-record in the same way.
 
-The verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record 
+The verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record
 
 - The TcbInfo `type` field SHALL be copied to the field named `environment-map / comid.class / comid.class-id`
 - The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / comid.class / comid.vendor`
@@ -1130,7 +1130,7 @@ verifier which followed these steps. Several significant optimisations are
 possible.
 
 The verifier SHALL compare every candidate CoMID in its set against the endorsements
-in its internal state. 
+in its internal state.
 
 If the candidate CoMID matches the device measurements in the
 accepted claims map then the verifier SHALL merge all information in the matching
@@ -1163,7 +1163,7 @@ it is silently ignored during this pass. It may need to be compared again on
 a future pass.
 
 The verifier SHALL iterate through each reference values triple in the candidate
-CoMID, comparing that triple against the accepted claims map. 
+CoMID, comparing that triple against the accepted claims map.
 
 If the accepted claims map does not contain an endorsement triple with the
 same environment-map as the reference values triple then the verifier
@@ -1238,7 +1238,7 @@ processing rules. These rules are described below.
 Each remaining refernce value is compared against the accepted value with
 the same map key using the default comparison.
 
-##### Default comparison 
+##### Default comparison
 
 The default comparison canonicalises the reference field against the candidate
 field, checking for an exact match. If the types or values of the fields do
@@ -1259,7 +1259,7 @@ The verifier SHALL make temporary copies of the three fields. If the fields
 are different lengths then the verifier SHALL append zero bytes to the end
 of the shorter fields until they are the same length as the longest field.
 
-The verifier SHALL compare the fields one bit at a time. If any bit in the 
+The verifier SHALL compare the fields one bit at a time. If any bit in the
 reference raw-value-mask field is 1 and the corresponding bits in the
 raw-value fields do not have the same value then the verifier SHALL silently
 ignore the candidate CoMID until the next pass.
