@@ -1000,6 +1000,45 @@ measurements for the Target Environment.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10
 
+# CoBOM {#sec-cobom}
+
+A Concise Bill of Material (CoBOM) object represents the signal for the
+verifier to activate the listed tags. Data contained in a tag MUST NOT be used
+for appraisal until a CoBOM which activates that tag has been received and
+successfully processed. All the tags listed in the CoBOM must be activated in
+the same transaction, i.e., either all or none.
+
+## Structure
+
+The CDDL specification for the `concise-bom-tag` map is as follows and this
+rule and its constraints MUST be followed when creating or validating a CoBOM
+tag:
+
+~~~ cddl
+{::include cddl/concise-bom-tag.cddl}
+~~~
+
+The following describes each member of the `concise-bom-tag` map.
+
+* `tag-identity` (index 0): A `tag-identity-map` containing unique
+  identification information for the CoBOM. Described in {{sec-comid-tag-id}}.
+
+* `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
+  the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
+  a complete set of verification-related information.  The `tags-list` behaves
+  like a signaling mechanism from the supply chain (e.g., a product vendor) to
+  a Verifier that activates the tags in `tags-list` for use in the Evidence
+  appraisal process. The activation is atomic: all tags listed in `tags-list`
+  MUST be activated or no tags are activated.
+
+* `bom-validity` (index 2): Specifies the validity period of the CoBOM.
+  Described in {{sec-common-validity}}
+
+* `$$concise-bom-tag-extension`: This CDDL socket is used to add new
+  information structures to the `concise-bom-tag`.  See {{sec-iana-cobom}}.
+  The `$$concise-bom-tag-extension` extension socket is empty in this
+  specification.
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
@@ -1076,6 +1115,10 @@ groups to use this information as they see fit".
 ## New CoMID Registries {#sec-iana-comid}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/15
+
+## New CoBOM Registries {#sec-iana-cobom}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/45
 
 ## New Media Types {#sec-iana-media-types}
 
