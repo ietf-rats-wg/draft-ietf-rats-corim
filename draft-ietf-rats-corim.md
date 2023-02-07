@@ -1008,7 +1008,7 @@ are accepted. The triple subject is a compound statement consisting of a Target 
 and initial Reference Values that MUST be satisfied before evaluating the triple object.
 
 The triple object is a series of additional measurements that are evaluated in the order
-they appear in an array. The series has one or more records containing additional Reference
+they appear in an array. The series has one or more member-records containing additional Reference
 Values that may contain Endorsement values. If Evidence matches the additional Reference
 Values, both the additional Reference Values and the Endorsed values, if any, are accepted.
 
