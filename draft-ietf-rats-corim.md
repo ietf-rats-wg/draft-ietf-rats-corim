@@ -1010,7 +1010,7 @@ and initial Reference Values that MUST be satisfied before evaluating the triple
 The triple object is a series of additional measurements that are evaluated in the order
 they appear in an array. The series has one or more member-records containing additional Reference
 Values that may contain Endorsement values. If Evidence matches the additional Reference
-Values, both the additional Reference Values and the Endorsed values, if any, are accepted.
+Values in a member-record, the Endorsed values in that member-record, if any, are accepted.
 
 The first successfully matched member-record from the `reference-endorsed-record` series terminates
 evaluation. If none of the member-records in this series is matched, then the entire triple
