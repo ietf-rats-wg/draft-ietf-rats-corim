@@ -1012,7 +1012,7 @@ they appear in an array. The series has one or more member-records containing ad
 Values that may contain Endorsement values. If Evidence matches the additional Reference
 Values, both the additional Reference Values and the Endorsed values, if any, are accepted.
 
-The first successfully accepted record from the `reference-endorsed-record` series terminates
+The first successfully matched member-record from the `reference-endorsed-record` series terminates
 evaluation. If none of the additional Reference Values are accepted, then the entire triple
 fails to accept any Claims.
 
