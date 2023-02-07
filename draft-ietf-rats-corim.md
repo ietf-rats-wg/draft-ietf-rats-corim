@@ -1013,7 +1013,7 @@ Values that may contain Endorsement values. If Evidence matches the additional R
 Values, both the additional Reference Values and the Endorsed values, if any, are accepted.
 
 The first successfully matched member-record from the `reference-endorsed-record` series terminates
-evaluation. If none of the additional Reference Values are accepted, then the entire triple
+evaluation. If none of the member-records in this series is matched, then the entire triple
 fails to accept any Claims.
 
 ~~~ cddl
