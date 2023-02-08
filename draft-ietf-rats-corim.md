@@ -72,6 +72,7 @@ normative:
   I-D.ietf-sacm-coswid: coswid
   I-D.ietf-rats-architecture: rats-arch
   I-D.ietf-rats-eat: eat
+  I-D.ietf-rats-concise-ta-stores: ta-store
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -101,20 +102,25 @@ trustworthiness of a remote Attester and therefore to decide whether to engage
 in secure interactions with it. Evidence about trustworthiness can be rather
 complex and it is deemed unrealistic that every Relying Party is capable of the
 appraisal of Evidence. Therefore that burden is typically offloaded to a
-Verifier.  In order to conduct Evidence appraisal, a Verifier requires not only
+Verifier. In order to conduct Evidence appraisal, a Verifier requires not only
 fresh Evidence from an Attester, but also trusted Endorsements and Reference
 Values from Endorsers and Reference Value Providers, such as manufacturers,
-distributors, or device owners.  This document specifies Concise Reference
-Integrity Manifests (CoRIM) that represent Endorsements and Reference Values in
-CBOR format.  Composite devices or systems are represented by a collection of
-Concise Module Identifiers (CoMID) and Concise Software Identifiers (CoSWID)
-bundled in a CoRIM document.
+distributors, or device owners. This document specifies the information elements for
+conveying Endorsements and Reference Values in CBOR format.
 
 --- middle
 
 # Introduction
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/4
+In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) associated with the Attester.
+Such Endorsements and Reference Values are obtained from the relevant supply chain actors, such as manufacturers, distributors, or device owners.
+In a complex supply chain, it is likely that multiple actors will produce these values at different points in time.
+Besides, one supply chain actor will only provide the subset of characteristics that they know about the Attester.
+Attesters vary from one vendor to another, and within a vendor from one product to another.
+Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
+
+This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challanges by using an extensible format common to all supply chain actors and Verifiers.
+CoRIM enables Verifiers to reconcile a complex and scattered supply chain into a single homogeneous view.
 
 ## Terminology and Requirements Language
 
@@ -178,7 +184,7 @@ The following describes each member of the `entity-map`.
 
 * `entity-name` (index 0): The name of entity which is responsible for the
   action(s) as defined by the role. `$entity-name-type-choice` can only be
-  Other specifications can extend the `$entity-name-type-choice` (see
+  text.  Other specifications can extend the `$entity-name-type-choice` (see
   {{sec-iana-comid}}).
 
 * `reg-id` (index 1): A URI associated with the organization that owns the
@@ -267,12 +273,39 @@ convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
 {::include cddl/digest.cddl}
 ~~~
 
-# CoRIM
+# Concise Reference Integrity Manifest (CoRIM) {#sec-corim}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/6
+A CoRIM is a collection of tags and related metadata as described below.
 
-At the top-level, a CoRIM can either be a CBOR-tagged `corim-map`
-({{sec-corim-map}}) or a COSE signed `corim-map` ({{sec-corim-signed}}).
+Tags can be of different types:
+
+* Concise Module ID (CoMID) tags ({{sec-comid}}) contain metadata and claims about the hardware and firmware modules.
+
+* CoSWID tags {{-coswid}} describe software components.
+
+* Concise Bill of Material (CoBOM) tags ({{sec-cobom}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
+
+The set of tags is extensible so that future specifications can add new kinds of information.
+For example, Concise Trust Anchor Stores (CoTS) {{-ta-store}} is currently being defined as a standard CoRIM extension.
+
+Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
+[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73
+
+CoRIM can also carry the following optional metadata:
+
+* A locator, which allows discovery of possibly related RIMs
+
+* A profile identifier, which is used to interpret the information contained in the enclosed tags. A profile allows the base CoRIM schema to be customised to fit a specific Attester.  For example, see {{-psa-endorsements}}.
+
+* A validity period, which indicates the time period for which the CoRIM contents are valid.
+
+* Information about the supply chain entities responsible for the contents of the CoRIM and their associated roles.
+
+A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
+When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
+Alternatively, CoRIM can be encoded as a CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
+
+The following CDDL describes the top-level CoRIM.
 
 ~~~ cddl
 {::include cddl/corim.cddl}
@@ -296,7 +329,7 @@ The following describes each child item of this map.
   in {{sec-corim-tags}}
 
 * `dependent-rims` (index 2): One or more services supplying additional,
-  possibly dependent, manifests or related files.  Described in
+  possibly dependent, manifests or related files. Described in
   {{sec-corim-locator-map}}
 
 * `profile` (index 3): An optional profile identifier for the tags contained in
@@ -320,8 +353,8 @@ The following describes each child item of this map.
 
 ### Identity {#sec-corim-id}
 
-A CoRIM id can be either a text string or a UUID type that uniquely identifies
-a CoRIM.
+A CoRIM Identifier uniquely identifies a CoRIM instance. The base schema allows UUID and text
+identifiers. Other types of identifiers could be defined as needed.
 
 ~~~ cddl
 {::include cddl/corim-id-type-choice.cddl}
@@ -469,9 +502,28 @@ The following describes each child item of this group.
 ~~~
 
 
-# CoMID {#sec-comid}
+# Concise Module Identifier (CoMID) {#sec-comid}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/7
+A CoMID tag contains information about hardware, firmware, or module composition.
+
+Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
+
+A CoMID defines several types of Claims, using "triples" semantics.
+
+At a high level, a triple is a statement that links a subject to an object via a predicate.
+CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
+
+The set of triples is extensible.
+The following triples are currently defined:
+
+* Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
+* Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence and are used by Verifiers to infer more information about the Attester ({{sec-comid-triple-endval}}).
+Specific examples include testing or certification data pertaining to a module.
+* Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
+* Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
+* Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
+* Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
+* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
 
 ## Structure
 
@@ -654,7 +706,7 @@ The following describes each member of the `triples-map`:
 
 ##### Environment
 
-An `environment-map` may be used to represent a whole attester, an attesting
+An `environment-map` may be used to represent a whole Attester, an attesting
 environment, or a target environment.  The exact semantic depends on the
 context (triple) in which the environment is used.
 
@@ -714,7 +766,7 @@ The following describes each member of the `class-map`:
 ##### Instance {#sec-comid-instance}
 
 An instance carries a unique identifier that is reliably bound to an instance
-of the attester.
+of the Attester.
 
 The types defined for an instance identifier are UEID or UUID.
 
@@ -725,7 +777,7 @@ The types defined for an instance identifier are UEID or UUID.
 ##### Group
 
 A group carries a unique identifier that is reliably bound to a group of
-attesters, for example when a number of attester are hidden in the same
+Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
 The type defined for a group identified is UUID.
@@ -746,8 +798,8 @@ dedicated measurement or multiple elements could be combined into a single
 measurement. Measurements can have class, instance or group scope.  This is
 typically determined by the triple's environment.
 
-Class measurements apply generally to all the attesters in the given class.
-Instance measurements apply to a specific attester instances.  Environments
+Class measurements apply generally to all the Attesters in the given class.
+Instance measurements apply to a specific Attester instances.  Environments
 identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
@@ -1082,8 +1134,7 @@ A Conditional Endorsement triple uses a stateful environment, (i.e., `stateful-e
 that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
 that have matching Evidence.
 
-The stateful Target Environment is a triple subject that MUST be satisfied before the Endorsed Values in the
-triple object are accepted.
+The stateful Target Environment is a triple subject that MUST be satisfied before the Endorsed Values in the triple object are accepted.
 
 ~~~ cddl
 {::include cddl/stateful-environment-record.cddl}
@@ -1103,7 +1154,7 @@ applies to all measurements in the triple, including those in `measurement-value
 # CoBOM {#sec-cobom}
 
 A Concise Bill of Material (CoBOM) object represents the signal for the
-verifier to activate the listed tags. Data contained in a tag MUST NOT be used
+Verifier to activate the listed tags. Data contained in a tag MUST NOT be used
 for appraisal until a CoBOM which activates that tag has been received and
 successfully processed. All the tags listed in the CoBOM must be activated in
 the same transaction, i.e., either all or none.
@@ -1143,7 +1194,7 @@ The following describes each member of the `concise-bom-tag` map.
 
 This section records the status of known implementations of the protocol
 defined by this specification at the time of posting of this Internet-Draft,
-and is based on a proposal described in {{RFC7942}}.  The description of
+and is based on a proposal described in {{RFC7942}}. The description of
 implementations in this section is intended to assist the IETF in its decision
 processes in progressing drafts to RFCs.  Please note that the listing of any
 individual implementation here does not imply endorsement by the IETF.
@@ -1154,7 +1205,7 @@ Readers are advised to note that other implementations may exist.
 
 According to {{RFC7942}}, "this will allow reviewers and working groups to
 assign due consideration to documents that have the benefit of running code,
-which may serve as evidence of valuable experimentation and feedback that have
+which may serve as Evidence of valuable experimentation and feedback that have
 made the implemented protocols more mature.  It is up to the individual working
 groups to use this information as they see fit".
 
@@ -1409,3 +1460,5 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 [^todo]: (Needed content missing. Consider adding an issue into the tracker)
 
 [^issue]: Content missing. Tracked at:
+
+[^tracked-at]: Tracked at:
