@@ -1002,19 +1002,29 @@ measurements for the Target Environment.
 
 #### Conditional Reference Series Triple {#sec-comid-triple-cond-ref}
 
-A Conditional Reference Series triple relates reference measurements to a Target
-Environment where endorsed measurements are accepted if all reference measurements
-are accepted. The triple subject is a compound statement consisting of a Target Environment
-and initial Reference Values that MUST be satisfied before evaluating the triple object.
+A Conditional Reference Series triple associates conditional Reference Value measurements,
+and optionally Endorsement measurements to a Target Environment, where the endorsed measurements
+are accepted if all of the reference measurements are accepted.
 
-The triple object is a series of additional measurements that are evaluated in the order
-they appear in an array. The series has one or more member-records containing additional Reference
-Values that may contain Endorsement values. If Evidence matches the additional Reference
-Values in a member-record, the Endorsed values in that member-record, if any, are accepted.
+The triple subject is a compound statement consisting of a Target Environment defined
+by `measurement-map`, and initial Reference Values, defined by `measurement-map`,
+that MUST be matched to Evidence before evaluating the triple object.
+If the initial Reference Values do not match Evidence, the triple is not matched
+and no Claims are accepted.
 
-The first successfully matched member-record from the `reference-endorsed-record` series terminates
-evaluation. If none of the member-records in this series is matched, then the entire triple
-fails to accept any Claims.
+The `authorized-by` value in `measurement-map`, if present, applies to all measurements
+in the triple including those in `conditional-series-record` records.
+
+The triple object is a series of additional measurements expressed as an array of
+`conditional-series-record` records that are evaluated in the order they appear in the array.
+The additional Reference Values, in each record, are evaluated against Evidence. If the
+Reference Values, in the first `measurement-values-map`, matches Evidence then the
+optional Endorsement values, in the second `measurement-values-map`, are also accepted.
+The first successfully matched record from the `conditional-series-record` array
+terminates evaluation retaining the accepted Claims.
+
+If none of the records in the series are matched then no Claims are accepted and
+evaluation terminates.
 
 ~~~ cddl
 {::include cddl/conditional-reference-series-triple-record.cddl}
