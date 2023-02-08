@@ -21,38 +21,39 @@
               / comid.model / 2 : "ACME RoadRunner Firmware"
             }
           },          
-          { / *** subject measurements - measurement-values-map *** /
-            / comid.ver / 0 : {
-              / comid.version / 0 : "1.0.0",
-              / comid.version-scheme / 1 : 16384 / semver /
-            }
-          }
-        ], /*** end of subject ***/
-        [ / *** Reference Endorsed series *** /
-          / reference-endorsed-record #1 / [
-            / *** ref vals - measurement-map *** / 
-            {
-              / comid.mval / 1 : {
-                / comid.digests / 2 : [[
-                / hash-alg-id / 6, / sha-256-32 /
-                / hash-value /  h'ABCDEF01' ]]
+          { / *** subject measurements - measurement-map *** /
+            / mval / 1 : / measurement-values-map / {
+              / comid.ver / 0 : {
+                / comid.version / 0 : "1.0.0",
+                / comid.version-scheme / 1 : 16384 / semver /
               }
             },
-            / *** end vals - measurement-values-map *** / 
+            / authorized-by / 2 : [
+              / tagged-pkix-base64-key-type / 554("base64_key_X")
+            ]
+          }
+        ], /*** end of subject ***/
+        [ / *** Series data *** /
+          / conditional-series-record #1 / [
+            / *** ref vals - measurement-values-map *** / 
+            {
+              / comid.digests / 2 : [[
+              / hash-alg-id / 6, / sha-256-32 /
+              / hash-value /  h'ABCDEF01' ]]
+            },
+            / *** endorsed vals - measurement-values-map *** / 
             {
               / comid.name / 11: "CVE_ACME_777"
             }
           ],
-          / reference-endorsed-record #2 / [
-            / *** ref vals - measurement-map *** / 
+          / conditional-series-record #2 / [
+            / *** ref vals - measurement-values-map *** / 
             {
-              / comid.mval / 1 : {
-                / comid.digests / 2 : [[
-                / hash-alg-id / 6, / sha-256-32 /
-                / hash-value /  h'BCDEF01A' ]]
-              }
+              / comid.digests / 2 : [[
+              / hash-alg-id / 6, / sha-256-32 /
+              / hash-value /  h'BCDEF01A' ]]
             },
-            / *** end vals - measurement-values-map *** / 
+            / *** endorsed vals - measurement-values-map *** / 
             {
               / comid.name / 11: "CVE_ACME_555"
             }
