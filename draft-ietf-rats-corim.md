@@ -1007,7 +1007,7 @@ and optionally Endorsement measurements, to a Target Environment, where the endo
 are accepted if all of the reference measurements are accepted.
 
 The triple subject is a compound statement consisting of a Target Environment defined
-by `measurement-map`, and initial Reference Values, defined by `measurement-map`,
+by `environment-map`, and initial Reference Values defined by `measurement-map`,
 that MUST be matched to Evidence before evaluating the triple object.
 If the initial Reference Values do not match Evidence, the triple is not matched
 and no Claims are accepted.
