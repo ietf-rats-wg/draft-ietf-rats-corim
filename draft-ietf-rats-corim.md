@@ -1003,7 +1003,7 @@ measurements for the Target Environment.
 #### Conditional Reference Series Triple {#sec-comid-triple-cond-ref}
 
 A Conditional Reference Series triple relates reference measurements to a Target
-Environment where endorsed measurements are accepted given all reference measurements
+Environment where endorsed measurements are accepted if all reference measurements
 are accepted. The triple subject is a compound statement consisting of a Target Environment
 and initial Reference Values that MUST be satisfied before evaluating the triple object.
 
