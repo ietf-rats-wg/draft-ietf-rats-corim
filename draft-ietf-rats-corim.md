@@ -233,17 +233,13 @@ identifier {{-cbor-oids}}.
 {::include cddl/tagged-int.cddl}
 ~~~
 
-### Hash Entry {#sec-common-hash-entry}
+### Digest {#sec-common-hash-entry}
 
-A hash entry represents the value of a hashing operation together with the hash
-algorithm used. Defined in {{Section 2.9.1 of -coswid}}. The CDDL is copied
-below for convenience.
+A digest represents the value of a hashing operation together with the hash
+algorithm used.
 
 ~~~ cddl
-hash-entry = [
-  hash-alg-id: int
-  hash-value: bytes
-]
+{::include cddl/digest.cddl}
 ~~~
 
 # CoRIM
