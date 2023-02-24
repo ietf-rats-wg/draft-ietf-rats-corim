@@ -55,6 +55,7 @@ CORIM_FRAGS += unprotected-corim-header-map.cddl
 CORIM_FRAGS += uuid.cddl
 CORIM_FRAGS += validity-map.cddl
 CORIM_FRAGS += version-map.cddl
+CORIM_FRAGS += digest.cddl
 CORIM_FRAGS += concise-swid-tag.cddl
 CORIM_FRAGS += concise-bom-tag.cddl
 
