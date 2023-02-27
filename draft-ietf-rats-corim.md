@@ -825,6 +825,12 @@ $version-scheme /= int / text
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/8
 
+The following describes details the security version number (svn) and the minimum security version number (min-svn). A security version number is used to track changes to an object that are security relevant. Rollback of a security relevant change is considered to be an attack vector, as such, svn values can't be decremented. If a security relevant flaw is discovered in an object, the object is updated with a fix and the svn value is incremented. 
+
+There may be several versions of an object that are in production use as a given time. If there are multiple versions having different svn values, the object with a lower svn value may or may not be in a security critical condition. The Endorser may specificy a minimum svn value (min-svn) to specify the lowest svn value that is acceptable. Objects with svn values that are equal to or greater than min-svn do not signal a secrity critical condition. Objects that are below the min-svn value are in a security critical condition that is unsafe for normal operations.
+
+The `svn-type-choice` measurement consists of a `tagged-svn` or `tagged-min-svn` value. The `tagged-svn` and `tagged-min-svn` tags are CBOR tags <tobe assigned by IANA CBOR Tag Registry> `#6.552` and `#6.553`. 
+
 ~~~ cddl
 {::include cddl/svn-type-choice.cddl}
 ~~~
