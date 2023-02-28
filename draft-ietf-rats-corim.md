@@ -830,7 +830,7 @@ If a security relevant flaw is discovered in the Target Environment and subseque
 
 There may be several revisions to a Target Environment that are in use at the same time.
 If there are multiple revisions with different `svn` values, the revision with a lower `svn` value may
-or may not be in a security critical condition. The Endorser may provide a minimum security version number 
+or may not be in a security critical condition. The Endorser may provide a minimum security version number
 using `min-svn` to specify the lowest `svn` value that is acceptable.
 `svn` values that are equal to or greater than `min-svn` do not signal a security critical condition.
 `svn` values that are below `min-svn` are in a security critical condition that is unsafe for normal use.
