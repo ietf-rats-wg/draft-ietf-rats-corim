@@ -834,7 +834,7 @@ There may be several versions of an object that are in production use at a given
 If there are multiple versions having different svn values, the object with a lower svn value may
 or may not be in a security critical condition. The Endorser may provide a minimum svn value using `min-svn`
 to specify the lowest svn value that is acceptable.
-Objects with svn values that are equal to or greater than min-svn do not signal a secrity critical condition.
+Objects with svn values that are equal to or greater than `min-svn` do not signal a security critical condition.
 Objects that are below the min-svn value are in a security critical condition that is unsafe for normal operations.
 
 The `svn-type-choice` measurement consists of a `tagged-svn` or `tagged-min-svn` value.
