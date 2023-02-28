@@ -274,10 +274,11 @@ The following describes each child item of this map.
   possibly dependent, manifests or related files.  Described in
   {{sec-corim-locator-map}}
 
-* `profile` (index 3): One or more unique identifiers for the profiles of the
-  tags contained in this CoRIM.  All the listed profiles MUST be understood.
-  Failure to recognize a profile identifier MUST result in the rejection of the
-  entire processing.  Described in {{sec-corim-profile-types}}
+* `profile` (index 3): An optional profile identifier for the tags contained in
+  this CoRIM.  The profile MUST be understood by the CoRIM processor.  Failure
+  to recognize the profile identifier MUST result in the rejection of the
+  entire CoRIM.  If missing, the profile defaults to DICE.
+  Described in {{sec-corim-profile-types}}
 
 * `rim-validity` (index 4): Specifies the validity period of the CoRIM.
   Described in {{sec-common-validity}}
