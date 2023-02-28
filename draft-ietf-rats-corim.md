@@ -227,7 +227,10 @@ identifier {{-cbor-oids}}.
 
 ### Tagged Integer Type {#sec-common-tagged-int}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/5
+Used as a class identifier for the environment.  It is expected that the
+integer value is vendor specific rather than globally meaningful.  Therefore,
+the sibling `vendor` field in the `class-map` MUST be populated to define the
+namespace under which the value must be understood.
 
 ~~~ cddl
 {::include cddl/tagged-int.cddl}
