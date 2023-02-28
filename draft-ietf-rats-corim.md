@@ -893,6 +893,11 @@ A cryptographic key can be one of the following formats:
   certificates MUST be concatenated in order so that each directly certifies
   the one preceding.
 
+A fourth format is used to represent thumbprints of raw keys or certificated
+keys:
+
+* `tagged-thumbprint-type`: hash of a certificate or raw public key.
+
 ~~~ cddl
 {:include cddl/crypto-key-type-choice.cddl}
 ~~~
