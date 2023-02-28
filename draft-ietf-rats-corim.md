@@ -824,7 +824,7 @@ $version-scheme /= int / text
 ###### Security Version Number {#sec-comid-svn}
 
 The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
-A security version number is used to track changes to an object (e.g., OBJECT_INSTANCE_1, OBJECT_INSTANCE_2, ...) that are security relevant.
+A security version number is used to track changes to an object (e.g., a Secure Enclave, a boot loader executable, a configuration file, etc.) that are security relevant.
 Rollback of a security relevant change is considered to be an attack vector, as such, security version numbers can't be decremented.
 If a security relevant flaw is discovered in the Target Environment and subsequently fiexed, the `svn` value is typically incremented.
 
