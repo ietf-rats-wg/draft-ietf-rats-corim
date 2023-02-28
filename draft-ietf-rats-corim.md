@@ -229,10 +229,10 @@ identifier {{-cbor-oids}}.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/5
 
-Used in connection with `$class-id-type-choice /= tagged-int-type` when the class identifer is
-an integer value. The CBOR tag `#6.551` signifies the integer is to be used to idenfy a CoMID class.
-If the class definition is vendor specific, the `class-map` `vendor` field should be populated.
-
+Used as a class identifier for the environment.  It is expected that the
+integer value is vendor specific rather than globally meaningful.  Therefore,
+the sibling `vendor` field in the `class-map` MUST be populated to define the
+namespace under which the value must be understood.
 ~~~ cddl
 {::include cddl/tagged-int.cddl}
 ~~~
