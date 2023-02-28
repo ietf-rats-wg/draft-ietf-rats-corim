@@ -823,19 +823,17 @@ $version-scheme /= int / text
 
 ###### Security Version Number {#sec-comid-svn}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/8
-
-The following describes details the security version number (svn) and the minimum security version number (min-svn).
+The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
 A security version number is used to track changes to an object that are security relevant.
-Rollback of a security relevant change is considered to be an attack vector, as such, svn values can't be decremented.
-If a security relevant flaw is discovered in an object, the object is updated with a fix and the svn value is incremented.
+Rollback of a security relevant change is considered to be an attack vector, as such, security version numbers can't be decremented.
+If a security relevant flaw is discovered in the Target Environment and subsequently fiexed, the `svn` value is typically incremented.
 
-There may be several versions of an object that are in production use at a given time.
-If there are multiple versions having different svn values, the object with a lower svn value may
-or may not be in a security critical condition. The Endorser may provide a minimum svn value using `min-svn`
-to specify the lowest svn value that is acceptable.
-Objects with svn values that are equal to or greater than `min-svn` do not signal a security critical condition.
-Objects that are below the `min-svn` value are in a security critical condition that is unsafe for normal operations.
+There may be several revisions to a Target Environment that are in use at the same time.
+If there are multiple revisions with different `svn` values, the revision with a lower `svn` value may
+or may not be in a security critical condition. The Endorser may provide a minimum security version number 
+using `min-svn` to specify the lowest `svn` value that is acceptable.
+`svn` values that are equal to or greater than `min-svn` do not signal a security critical condition.
+`svn` values that are below `min-svn` are in a security critical condition that is unsafe for normal use.
 
 The `svn-type-choice` measurement consists of a `tagged-svn` or `tagged-min-svn` value.
 The `tagged-svn` and `tagged-min-svn` tags are CBOR tags with the values `#6.552` and `#6.553` respectively.
