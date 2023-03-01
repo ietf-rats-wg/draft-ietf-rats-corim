@@ -243,7 +243,7 @@ namespace under which the value must be understood.
 A digest represents the value of a hashing operation together with the hash
 algorithm used.  The type of the digest algorithm identifier can be either
 `int` or `text`.  When carried as an integer value, it is interpreted according
-to the "Named Information Hash Algorithm Registry" {{-named-info}} registry.
+to the "Named Information Hash Algorithm Registry" {{-named-info}}.
 When it is carried as `text`, there are no requirements with regards to its
 format.  In general, the `int` encoding is RECOMMENDED.  The `text` encoding
 should only be used when the `digest` type conveys reference value
