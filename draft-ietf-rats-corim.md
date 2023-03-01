@@ -247,7 +247,7 @@ to the "Named Information Hash Algorithm Registry" {{-named-info}} registry.
 When it is carried as `text`, there are no requirements with regards to its
 format.  In general, the `int` encoding is RECOMMENDED.  The `text` encoding
 should only be used when the `digest` type conveys reference value
-measurements that must be matched verbatim with evidence that uses the same
+measurements that are matched verbatim with Evidence that uses the same
 convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
 
 ~~~ cddl
