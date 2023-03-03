@@ -1066,6 +1066,181 @@ The following describes each member of the `concise-bom-tag` map.
   The `$$concise-bom-tag-extension` extension socket is empty in this
   specification.
 
+# CoRIM-based Evidence Verification
+
+The verification procedure is divided into three separate phases:
+
+* Appraisal Context initialisation
+* Evidence collection
+* Evidence appraisal
+
+At a few well-defined points in the procedure, the Verifier behaviour will depend on the specific CoRIM profile.
+Each CoRIM profile SHALL fully describe the expected Verifier behaviour for each of those well-defined points.
+
+Note that what follows is not meant to describe a real implementation.
+In particular, it is expected that the cost associated with the initialisation phase can be amortised across multiple appraisals.
+Implementers are free to do as they please, as long as the stated invariants are not broken.
+
+In the following, if a MUST-level requirement is violated, the entire procedure is aborted.
+
+## Appraisal Context initialisation
+
+The goal of the initialisation phase is to load the CoRIM Appraisal Context with objects such as CoRIM tags, cryptographic validation key material (e.g., raw public keys, root certificates, intermediate CA certificate chains, etc.) etc. that will be used in the subsequent Evidence Appraisal phase.
+
+### CoRIM Selection
+
+All available Concise Reference Integrity Manifests (CoRIMs) are collected. A verifier may be pre-configured with a large number of tags describing many types of device. All CoRIMs are loaded at this stage, later stages will select the CoRIMs appropriate to the evidence appraisal step.
+
+CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
+
+Other selection criteria MAY be applied.
+For example, if the Evidence format is known in advance, CoRIMs that do not match the expected profile can be readily discarded.
+
+The selection process MUST yield at least one usable CoRIM.
+
+### CoBOMs Extraction
+
+All the available Concise Bill Of Material tags (CoBOMs) are collected from the selected CoRIMs.
+
+The collection process MUST yield, at least, one CoBOM.
+
+### Tags Identification and Validation
+
+The CoBOM(s) are used to locate and collect the listed tags -- i.e., Concise Module Identifiers (CoMID) and/or Concise Software Identifiers (CoSWID) and/or Concise Trust Anchor Stores (CoTS) -- from the selected CoRIMs.
+
+All the listed tags MUST be successfully located and be syntactically and semantically valid.
+In particular, any internal cross-reference (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+
+### Appraisal Context Construction
+
+All Reference Values, Endorsed Values and cryptographic verification key material found in the listed tags are extracted and loaded into the Appraisal Context.
+
+This concludes the initialisation phase.
+
+## Evidence Collection
+
+In the evidence collection phase the verifier communicates with attesters to collect evidence. 
+
+The first part of the evidence collection phase does not perform any crypographic validation. This allows verifiers to use untrusted code for their initial evidence collection.
+
+The results of the evidence collection are protocol specific data and transcripts which can be processed by the verifier.
+
+### Cryptographic validation of Evidence
+
+If the authenticity of Evidence is secured by a cryptographic mechanism such as a signature, the first step in the Evidence Appraisal is to perform cryptographic validation of the Evidence.
+
+The exact cryptographic signature validation mechanics depend on the specific Evidence collection protocol.
+
+For example:
+In DICE, a proof of liveness is performed on the final key in the certificate chain. If this passes then a suitable certification path anchored on a trusted root certificate is looked up -- e.g., based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of [DICE Layering Architecture](https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf))-- in the Appraisal Context.  If found, then usual X.509 certificate validation is performed.
+In PSA, the verification public key is looked up in the appraisal context using the `euid` claim found in the PSA claims-set (see [Section 4.2.1 of I-D.tschofenig-rats-psa-token](https://www.ietf.org/archive/id/draft-tschofenig-rats-psa-token-10.html#name-instance-id).  If found, COSE Sign1 verification is performed accordingly.
+
+Independent of the specific method, the cryptographic integrity of Evidence MUST be successfully verified.
+
+> A CoRIM profile MUST describe:
+>
+> * How cryptographic verification key material is conveyed (e.g., using Attestation Keys triples, or CoTS tags)
+> * How key material is associated with the Attesting Environment
+> * How the Attesting Environment is identified in Evidence
+
+### Transforming SPDM Evidence to a format usable for matching
+
+***Evidence Binding For SPDM*** describes the process by which evidence in a SPDM MEASUREMENTS response is converted to Evidence suitable for matching using the rules below. The converted evidence is held in evidence triples which have a similar format to reference-triples (their semantics is described below).
+
+### Transforming DICE Evidence to a format usable for matching
+
+DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension. Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an evidence triple using the rules below.
+
+The verifier SHALL translate each DICE TcbInfo into an evidence-triple as described in this section. The verifier SHALL split each DICE MultiTcbInfo extension into separate TcbInfo object and translate each one into an evidence-triple in the same way.
+
+The verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record
+
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / comid.class / comid.class-id`
+- The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / comid.class / comid.vendor`
+- The TcbInfo `model` field SHALL be copied to the field named `environment-map / comid.class / comid.model`
+- The TcbInfo `layer` field SHALL be copied to the field named `environment-map / comid.class / comid.layer`
+- The TcbInfo `index` field SHALL be copied to the field named `environment-map / comid.class / comid.index`
+
+- The TcbInfo `version` field SHALL be translated to the field named `measurement-map / comid.mval / comid.ver`
+> TODO: Details of translation
+- The TcbInfo `svn` field SHALL be copied to the field named `measurement-map / comid.mval / comid.svn`
+- The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / comid.mval / comid.digests`
+> TODO: Details of translation
+- The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / comid.mval / comid.flags`
+> TODO: Details of translation
+- The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / comid.mval / comid.raw-value`
+
+
+>>> TODO: Insert DICE/SPDM specific stuff here
+
+If there are multiple evidence triples with the same environment map then ...
+
+### The Accepted Claims Set
+
+>>> Start review this part
+
+At the end of the Evidence collection process evidence has been converted into a format suitable for appraisal. Verifiers are not required to use this as their internal state, but for the purposes of this document a sample verifier is discussed which uses this format.
+
+The Internal structure is based on ...
+
+## Evidence appraisal
+
+In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used to convert the received Evidence from its raw form into a more usable form. This phase may be repeated multiple times .
+The outcome of the appraisal process is summarised in an Attestation Result.
+
+>>> Start need to review
+
+The Attestation Result provides a set of trust metrics associated with the appraised Evidence together with any information that can be derived by the Verifier about the Attester via supply chain endorsements.
+The Relying Party application uses the content of the Attestation Result to make its own policy decisions.
+
+We make no assumptions on the specific shape of the Attestation Result, except for its optional ability to include Endorsed Values associated with the appraised Attester that the Verifier has been able to infer from Evidence and the Appraisal Context.
+
+### Matching Evidence against Reference Values
+
+The second step consists in matching Reference Values in the Appraisal Context against Evidence.
+
+The Target Environment associated with Evidence needs to be identified.
+Typically, this is done by extracting the relevant claims from the Evidence claims-set.
+The exact mechanics depend on the specific Evidence format.
+
+For example:
+In PSA, the Verifier extracts the `euid` and `psa-implementation-id` claims from the PSA claims-set.
+In DICE, the Target Environment identifiers are sourced from the `DiceTcbInfo` X.509 extension.
+
+The Target Environment identifier is used to lookup the relevant Reference Values from the Appraisal Context.
+
+Evidence MUST match the identified Reference Values.
+
+> A CoRIM profile MUST describe:
+>
+> * How Reference Values are conveyed (e.g., using Reference Value triples, or CoSWID tags)
+> * How Reference Values are associated with the Target Environment
+> * How the Target Environment is identified in Evidence
+> * How measurements from Evidence are matched against Reference Values
+
+### Adding Endorsed Values to the Accepted Claims
+
+>>> TODO
+
+The third step consists in matching Endorsed Values in the Appraisal Context with Evidence.
+
+The Target and Attested Environment associated with Evidence need to be identified.
+
+Again, this is typically done by extracting the relevant claims from the Evidence claims-set.
+The exact mechanics depend on the specific Evidence format.
+
+Alongside the environment identifiers, the matched Reference Values MAY also be used in selecting applicable Endorsed Values.
+
+Any matched Endorsed Value can be added to the Attestation Result.
+
+> A CoRIM profile MUST describe:
+>
+> * How Endorsed Values are conveyed (e.g., using Endorsed Value triples, or Device Identity triples)
+> * How Endorsed Values are associated with the Target and Attesting Environments
+> * How the Target and Attesting Environments are identified in Evidence
+
+>>> End need to review
+ 
 # Implementation Status
 
 This section records the status of known implementations of the protocol
