@@ -629,6 +629,14 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID
   tags. Described in {{sec-comid-triple-coswid}}.
 
+* `conditional-endorsement-series-triples` (index 8) Triples describing a series of
+  conditional Endorsements based on the acceptance of a stateful environment. Described
+  in {{sec-comid-triple-cond-series}}.
+
+* `conditional-endorsement-triples` (index 9) Triples describing conditional
+  Endorsement based on the acceptance of a stateful environment. Described
+  in {{sec-comid-triple-cond-end}}.
+
 #### Common Types
 
 ##### Environment
@@ -1021,6 +1029,58 @@ measurements for the Target Environment.
 
 ~~~ cddl
 {::include cddl/coswid-triple-record.cddl}
+~~~
+
+#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
+
+A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
+that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
+that have matching Evidence.
+
+The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
+matched.
+
+~~~ cddl
+{::include cddl/stateful-environment-record.cddl}
+~~~
+
+The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
+Each `conditional-series-record` record is evaluated in the order it appears in the series array.
+The Endorsed Values are accepted if the Reference Values in a `conditional-series-record` matches Evidence.
+The first `conditional-series-record` that sucessfully matches Evidence terminates the series and
+the matching Reference Values as well as the Endorsed Values are accepted.
+If none of the Reference Values in the series match Evidence, the triple is not matched,
+and no Claims are accepted.
+
+The `authorized-by` value in `measurement-map` in the stateful environment, if present,
+applies to all measurements in the triple, including `conditional-series-record` records.
+
+~~~ cddl
+{::include cddl/conditional-endorsement-series-triple-record.cddl}
+~~~
+
+~~~ cddl
+{::include cddl/conditional-series-record.cddl}
+~~~
+
+#### Conditional Endorsement Triple {#sec-comid-triple-cond-end}
+
+A Conditional Endorsement triple uses a stateful environment, (i.e., `stateful-environment-record`),
+that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
+that have matching Evidence.
+
+The stateful Target Environment is a triple subject that MUST be satisfied before the Endorsed Values in the
+triple object are accepted.
+
+~~~ cddl
+{::include cddl/stateful-environment-record.cddl}
+~~~
+
+The `authorized-by` value in `measurement-map` in the stateful environment, if present,
+applies to all measurements in the triple, including those in `measurement-values-map`.
+
+~~~ cddl
+{::include cddl/conditional-endorsement-triple-record.cddl}
 ~~~
 
 ## Extensibility
