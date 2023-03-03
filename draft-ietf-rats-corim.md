@@ -1038,7 +1038,7 @@ applies to all measurements in the triple, including `conditional-series-record`
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-end}
 
-A Conditional Endorsement triple uses a stateful environment,`(i.e., stateful-environment-record`),
+A Conditional Endorsement triple uses a stateful environment, (i.e., `stateful-environment-record`),
 that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
 that have matching Evidence.
 
