@@ -1,0 +1,61 @@
+/ concise-mid-tag / {
+  / tag-identity / 1 : {
+    / tag-id / 0 : "my-ns:acme-roadrunner-supplement"
+  },
+  / entity / 2 : [ {
+    / entity-name / 0 : "ACME Inc.",
+    / reg-id / 1 : 32("https://acme.example"),
+    / role / 2 : [ 1,0,2 ] / creator, tag-creator, maintainer /
+  } ],
+  / triples / 4 : {
+    / conditional-endorsement-series-triples / 8 : [
+      [
+        [ / *** stateful-environment-record *** /
+          / environment-map / {
+            / comid.class / 0 : {
+              / comid.class-id / 0 :
+                / tagged-oid-type / 111(
+                  h'5502C000'
+                ),
+              / comid.vendor / 1 : "ACME Inc.",
+              / comid.model / 2 : "ACME RoadRunner Firmware"
+            }
+          },          
+          { / *** measurement-map *** /
+            / mval / 1 : / measurement-values-map / {
+              / comid.ver / 0 : {
+                / comid.version / 0 : "1.0.0",
+                / comid.version-scheme / 1 : 16384 / semver /
+              }
+            },
+            / authorized-by / 2 : [
+              / tagged-pkix-base64-key-type / 554("base64_key_X")
+            ]
+          }
+        ], /*** end stateful-environment-record ***/
+        [ / *** series *** /
+          [ / conditional-series-record #1 / 
+            { / * refv * / 
+              / comid.digests / 2 : [[
+              / hash-alg-id / 6, / sha-256-32 /
+              / hash-value /  h'ABCDEF01' ]]
+            },
+            { / * endv * / 
+              / name / 11: "CVE_ACME_777"
+            }
+          ],
+          [ / conditional-series-record #2 /
+            { / * refv * / 
+              / comid.digests / 2 : [[
+              / hash-alg-id / 6, / sha-256-32 /
+              / hash-value /  h'BCDEF01A' ]]
+            },
+            { / * endv * / 
+              / name / 11: "CVE_ACME_555"
+            }
+          ]
+        ] / *** end series *** /
+      ]
+    ]
+  }
+}
