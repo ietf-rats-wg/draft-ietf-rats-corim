@@ -40,12 +40,9 @@ CLEANFILES += $(3:.diag=.pretty)
 
 endef # cddl_check_template
 
-include comid-frags.mk
-
-$(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES)))
-
 include corim-frags.mk
 
+$(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES)))
 
 GITHUB := https://raw.githubusercontent.com/

@@ -11,7 +11,6 @@ else
 endif
 
 include cddl/corim-frags.mk
-include cddl/comid-frags.mk
 
 define cddl_targets
 
@@ -19,6 +18,7 @@ $(drafts_xml):: cddl/$(1)-autogen.cddl
 
 cddl/$(1)-autogen.cddl: $(addprefix cddl/,$(2))
 	$(MAKE) -C cddl check-$(1)
+	$(MAKE) -C cddl check-$(1)-examples
 
 endef # cddl_targets
 
