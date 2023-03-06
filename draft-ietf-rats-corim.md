@@ -42,6 +42,19 @@ author:
   org: Huawei Technologies
   email: william.panwei@huawei.com
 
+contributor:
+  - ins: C. Bormann
+    name: Carsten Bormann
+    org: Universität Bremen TZI
+    street: Postfach 330440
+    city: Bremen
+    code: D-28359
+    country: Germany
+    phone: +49-421-218-63921
+    email: cabo@tzi.org
+    contribution: >
+      Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
+
 normative:
   RFC4122: uuid
   RFC7468: pkix-text
@@ -1194,6 +1207,33 @@ groups to use this information as they see fit".
 ## New CBOR Tags {#sec-iana-cbor-tags}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/13
+
+IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!IANA.cbor-tags}}, preferably with the specific CBOR tag value requested:
+
+|     Tag | Data Item                           | Semantics                                    | Reference |
+|     --- | ---------                           | ---------                                    | --------- |
+|     500 | tag                                 | A corim, one out of $concise-rim-type-choice | {{&SELF}} |
+|     501 | map                                 | A corim-map                                  | {{&SELF}} |
+|     502 | tag                                 | A signed-corim                               | {{&SELF}} |
+| 503-504 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
+|     505 | bytes                               | An encoded concise-swid-tag                  | {{&SELF}} |
+|     506 | bytes                               | An encoded concise-mid-tag                   | {{&SELF}} |
+|     507 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
+|     508 | bytes                               | An encoded concise-bom-tag                   | {{&SELF}} |
+| 509-549 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
+|     550 | bytes .size 33                      | tagged-ueid-type                             | {{&SELF}} |
+|     551 | int                                 | tagged-int-type                              | {{&SELF}} |
+|     552 | uint                                | tagged-svn                                   | {{&SELF}} |
+|     553 | uint                                | tagged-min-svn                               | {{&SELF}} |
+|     554 | text                                | tagged-pkix-base64-key-type                  | {{&SELF}} |
+|     555 | text                                | tagged-pkix-base64-cert-type                 | {{&SELF}} |
+|     556 | text                                | tagged-pkix-base64-cert-path-type            | {{&SELF}} |
+|     557 | digest: [alg: int/text, val: bytes] | tagged-thumbprint-type                       | {{&SELF}} |
+| 558-559 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
+|     560 | bytes                               | $raw-value-type-choice                       | {{&SELF}} |
+| 561-599 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
+
+Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
 ## New CoRIM Registries {#sec-iana-corim}
 
