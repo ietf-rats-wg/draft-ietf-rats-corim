@@ -924,7 +924,7 @@ The types or associating addressing information to a measured environment are:
 {::include cddl/mac-addr-type-choice.cddl}
 ~~~
 
-##### Crypto Keys
+##### Crypto Keys {#sec-crypto-keys}
 
 A cryptographic key can be one of the following formats:
 
@@ -1210,28 +1210,28 @@ groups to use this information as they see fit".
 
 IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!IANA.cbor-tags}}, preferably with the specific CBOR tag value requested:
 
-|     Tag | Data Item                           | Semantics                                    | Reference |
-|     --- | ---------                           | ---------                                    | --------- |
-|     500 | tag                                 | A corim, one out of $concise-rim-type-choice | {{&SELF}} |
-|     501 | map                                 | A corim-map                                  | {{&SELF}} |
-|     502 | tag                                 | A signed-corim                               | {{&SELF}} |
-| 503-504 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
-|     505 | bytes                               | An encoded concise-swid-tag                  | {{&SELF}} |
-|     506 | bytes                               | An encoded concise-mid-tag                   | {{&SELF}} |
-|     507 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
-|     508 | bytes                               | An encoded concise-bom-tag                   | {{&SELF}} |
-| 509-549 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
-|     550 | bytes .size 33                      | tagged-ueid-type                             | {{&SELF}} |
-|     551 | int                                 | tagged-int-type                              | {{&SELF}} |
-|     552 | uint                                | tagged-svn                                   | {{&SELF}} |
-|     553 | uint                                | tagged-min-svn                               | {{&SELF}} |
-|     554 | text                                | tagged-pkix-base64-key-type                  | {{&SELF}} |
-|     555 | text                                | tagged-pkix-base64-cert-type                 | {{&SELF}} |
-|     556 | text                                | tagged-pkix-base64-cert-path-type            | {{&SELF}} |
-|     557 | digest: [alg: int/text, val: bytes] | tagged-thumbprint-type                       | {{&SELF}} |
-| 558-559 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
-|     560 | bytes                               | $raw-value-type-choice                       | {{&SELF}} |
-| 561-599 | any                                 | Earmarked for CoRIM                          | {{&SELF}} |
+|     Tag | Data Item                           | Semantics                                                            | Reference |
+|     --- | ---------                           | ---------                                                            | --------- |
+|     500 | tag                                 | A corim, one out of $concise-rim-type-choice, see {{sec-corim-tags}} | {{&SELF}} |
+|     501 | map                                 | A corim-map, see {{sec-corim-map}}                                   | {{&SELF}} |
+|     502 | tag                                 | A signed-corim, see {{sec-corim-signed}}                             | {{&SELF}} |
+| 503-504 | any                                 | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     505 | bytes                               | An encoded concise-swid-tag, see {{sec-corim-tags}}                  | {{&SELF}} |
+|     506 | bytes                               | An encoded concise-mid-tag, see {{sec-corim-tags}}}                  | {{&SELF}} |
+|     507 | any                                 | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     508 | bytes                               | An encoded concise-bom-tag, see {{sec-corim-tags}}}                  | {{&SELF}} |
+| 509-549 | any                                 | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     550 | bytes .size 33                      | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
+|     551 | int                                 | tagged-int-type, see {{sec-common-tagged-int}}                       | {{&SELF}} |
+|     552 | uint                                | tagged-svn, see {{sec-comid-svn}}                                    | {{&SELF}} |
+|     553 | uint                                | tagged-min-svn, see {{sec-comid-svn}}                                | {{&SELF}} |
+|     554 | text                                | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
+|     555 | text                                | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}                | {{&SELF}} |
+|     556 | text                                | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}           | {{&SELF}} |
+|     557 | digest: [alg: int/text, val: bytes] | tagged-thumbprint-type, see {{sec-common-hash-entry}}                | {{&SELF}} |
+| 558-559 | any                                 | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     560 | bytes                               | $raw-value-type-choice, see {{sec-comid-raw-value-types}}            | {{&SELF}} |
+| 561-599 | any                                 | Earmarked for CoRIM                                                  | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
