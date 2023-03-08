@@ -1121,7 +1121,7 @@ This concludes the initialisation phase.
 
 ## Evidence Collection
 
-In the evidence collection phase the verifier communicates with attesters to collect evidence. 
+In the evidence collection phase the verifier communicates with attesters to collect evidence.
 
 The first part of the evidence collection phase does not perform any crypographic validation. This allows verifiers to use untrusted code for their initial evidence collection.
 
@@ -1153,7 +1153,7 @@ The accepted claims set will be matched against CoMID reference values, so this 
 
 Each entry in the measurement-values-map is a separate piece of evidence describing the environment named by the environment-map. An attestor can provide multiple environment-maps each containing a single values measurement-values map, a single environment-map containing multiple entries in its measurement-values-map, or a combination of these approaches.
 
-If evidence from different sources has the same environment-map then the measurement-values-maps are merged. If both measurement-value-maps being merged contain the same key then the values associated with that key MUST be binary identical. 
+If evidence from different sources has the same environment-map then the measurement-values-maps are merged. If both measurement-value-maps being merged contain the same key then the values associated with that key MUST be binary identical.
 
 ### Transforming SPDM Evidence to a format usable for matching
 
@@ -1176,7 +1176,7 @@ The verifier SHALL translate each field in the TcbInfo into a field in the creat
 - The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / mval / digests`
   - Each digest within fwids is translated to a CoMID digest object, with an appropriate algorithm identifier
 - The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / mval / flags`
-  - Each flag is translated independently 
+  - Each flag is translated independently
 - The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
 
 If there are multiple evidence triples with the same environment map then ...
@@ -1241,7 +1241,7 @@ If the reference valus is not tagged, and the key is not a special value describ
 If a CoMID tag matches the Accepted Claims Set then the verifier must attempt to add Endorsed values from that tag to the Accepted Claims Set.
 
 If Endorsed values being added have the same name and measurement-values-map key, but a different measurement-value-map entry from the existing value.
- 
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
