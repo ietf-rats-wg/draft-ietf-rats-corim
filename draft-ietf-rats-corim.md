@@ -1075,9 +1075,9 @@ The verification procedure is divided into three separate phases:
 * Evidence appraisal
 
 At a few well-defined points in the procedure, the Verifier behaviour will depend on the specific CoRIM profile.
-Each CoRIM profile SHALL fully describe the expected Verifier behaviour for each of those well-defined points.
+Each CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.
 
-Note that what follows is not meant to describe a real implementation.
+The following text illustrates an example.
 In particular, it is expected that the cost associated with the initialisation phase can be amortised across multiple appraisals.
 Implementers are free to do as they please, as long as the stated invariants are not broken.
 
@@ -1085,11 +1085,11 @@ In the following, if a MUST-level requirement is violated, the entire procedure 
 
 ## Appraisal Context initialisation
 
-The goal of the initialisation phase is to load the CoRIM Appraisal Context with objects such as CoRIM tags, cryptographic validation key material (e.g., raw public keys, root certificates, intermediate CA certificate chains, etc.) etc. that will be used in the subsequent Evidence Appraisal phase.
+The goal of the initialisation phase is to load the CoRIM Appraisal Context with objects such as CoRIM tags, cryptographic validation key material (e.g., raw public keys, root certificates, intermediate CA certificate chains), etc. that will be used in the subsequent Evidence Appraisal phase.
 
 ### CoRIM Selection
 
-All available Concise Reference Integrity Manifests (CoRIMs) are collected. A verifier may be pre-configured with a large number of tags describing many types of device. All CoRIMs are loaded at this stage, later stages will select the CoRIMs appropriate to the evidence appraisal step.
+All available CoRIMs are collected. A Verifier may be pre-configured with a large number of tags describing many types of device. All CoRIMs are loaded at this stage, later stages will select the CoRIMs appropriate to the Evidence Appraisal step.
 
 CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
 
@@ -1123,7 +1123,7 @@ This concludes the initialisation phase.
 
 In the evidence collection phase the verifier communicates with attesters to collect evidence.
 
-The first part of the evidence collection phase does not perform any crypographic validation. This allows verifiers to use untrusted code for their initial evidence collection.
+The first part of the Evidence collection phase does not perform any cryptographic validation. This allows verifiers to use untrusted code for their initial Evidence collection.
 
 The results of the evidence collection are protocol specific data and transcripts which can be processed by the verifier.
 
@@ -1134,8 +1134,8 @@ If the authenticity of Evidence is secured by a cryptographic mechanism such as 
 The exact cryptographic signature validation mechanics depend on the specific Evidence collection protocol.
 
 For example:
-In DICE, a proof of liveness is performed on the final key in the certificate chain. If this passes then a suitable certification path anchored on a trusted root certificate is looked up -- e.g., based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of [DICE Layering Architecture](https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf))-- in the Appraisal Context.  If found, then usual X.509 certificate validation is performed.
-In PSA, the verification public key is looked up in the appraisal context using the `euid` claim found in the PSA claims-set (see [Section 4.2.1 of I-D.tschofenig-rats-psa-token](https://www.ietf.org/archive/id/draft-tschofenig-rats-psa-token-10.html#name-instance-id).  If found, COSE Sign1 verification is performed accordingly.
+In DICE, a proof of liveness is performed on the final key in the certificate chain. If this passes then a suitable certification path anchored on a trusted root certificate is looked up -- e.g., based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}})-- in the Appraisal Context.  If found, then usual X.509 certificate validation is performed.
+In PSA, the verification public key is looked up in the appraisal context using the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).  If found, COSE Sign1 verification is performed accordingly.
 
 Independent of the specific method, the cryptographic integrity of Evidence MUST be successfully verified.
 
@@ -1149,7 +1149,7 @@ Independent of the specific method, the cryptographic integrity of Evidence MUST
 
 At the end of the Evidence collection process evidence has been converted into a format suitable for appraisal. Verifiers are not required to use this as their internal state, but for the purposes of this document a sample verifier is discussed which uses this format.
 
-The accepted claims set will be matched against CoMID reference values, so this document describes an evidence structure which can be easily matched against these reference values. Each set of evidence contains an environment map providing a namespace, and a measurement-values-map containing one or more entries.
+The accepted claims set will be matched against CoMID reference values, as per the appraisal policy of the verifier. This document describes an example evidence structure which can be easily matched against these reference values. Each set of evidence contains an environment map providing a namespace, and a measurement-values-map containing one or more entries.
 
 Each entry in the measurement-values-map is a separate piece of evidence describing the environment named by the environment-map. An attestor can provide multiple environment-maps each containing a single values measurement-values map, a single environment-map containing multiple entries in its measurement-values-map, or a combination of these approaches.
 
@@ -1183,7 +1183,7 @@ If there are multiple evidence triples with the same environment map then ...
 
 ## Evidence appraisal
 
-In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used to convert the received Evidence from its raw form into a more usable form. This phase may be repeated multiple times .
+In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used to convert the received Evidence from its raw form into a more usable form. This phase may be repeated multiple times.
 The outcome of the appraisal process is summarised in an Attestation Result.
 The Relying Party application uses the content of the Attestation Result to make its own policy decisions.
 
