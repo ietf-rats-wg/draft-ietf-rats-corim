@@ -1226,7 +1226,7 @@ Note that while specifications may extend the matching semantics using tags, the
 
 If a CoMID tag matches the Accepted Claims Set then the verifier must attempt to add Endorsed values from that tag to the Accepted Claims Set.
 
-If any of the Endorsed values being added have the same `environment-map` and `measurement-values-map` key, but a different`measurement-values-map` entry from the existing value then the verifier MUST NOT add any part of the tag to the Accepted Claims Map.
+If any of the Endorsed values being added have the same `environment-map` and `measurement-values-map` key, but a different`measurement-values-map` value from the value in the Accepted Claims Map then the verifier MUST NOT add any part of the tag to the Accepted Claims Map.
 
 ## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
 
