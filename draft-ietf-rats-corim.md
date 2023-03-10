@@ -1086,7 +1086,6 @@ Each CoRIM profile MUST provide a description of the expected Verifier behavior 
 In particular, it is expected that the resources used during the initialisation phase can be amortised across multiple appraisals.
 Verifiers claiming compliance with this specification must exhibit the same externally visible behavior as described here, they are not required to use the same internal data structures.
 
-In the following, if a MUST-level requirement is violated, the entire procedure is aborted.
 
 ## Appraisal Context initialisation
 
@@ -1098,7 +1097,7 @@ All available CoRIMs are collected. A Verifier may be pre-configured with a larg
 
 CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
 
-CoRIM that are secured by a cryptographic mechanism such as a signature MUST be discarded if the signature chain does not validate successfully.
+CoRIM that are secured by a cryptographic mechanism such as a signature MUST be discarded if the signature does not validate successfully.
 
 Other selection criteria MAY be applied.
 
@@ -1108,7 +1107,7 @@ The selection process MUST yield at least one usable tag.
 
 ### CoBOM Extraction
 
-CoBOMs are processed after all tags have been loaded from CoRIMs. All the available Concise Bill Of Material tags (CoBOMs) are collected from the selected CoRIMs.
+All the available Concise Bill Of Material (CoBOMs) tags are then collected from the selected CoRIMs.
 
 The verifier MUST check each CoBOM to see whether it can be activated. The verifier MUST activate all tags referenced by an activated CoBOM.
 
