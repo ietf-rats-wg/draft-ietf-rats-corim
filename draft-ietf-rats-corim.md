@@ -1083,9 +1083,9 @@ The verification procedure is divided into three separate phases:
 At a few well-defined points in the procedure, the Verifier behaviour will depend on the specific CoRIM profile.
 Each CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.
 
-In particular, it is expected that the resources used during the initialisation phase can be amortised across multiple appraisals.
+Note that what follows describes a simplified implementation.
 Verifiers claiming compliance with this specification must exhibit the same externally visible behavior as described here, they are not required to use the same internal data structures.
-
+For example, it is expected that the resources used during the initialisation phase can be amortised across multiple appraisals.
 
 ## Appraisal Context initialisation
 
