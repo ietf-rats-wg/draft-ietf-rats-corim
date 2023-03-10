@@ -72,7 +72,11 @@ normative:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
   DICE-Layering-Architecture:
-    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
+    author:
+      org: "Trusted Computing Group"
+    title: "DICE Layering Architecture"
+     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
+    date: July, 2020
   IANA.named-information: named-info
 
 informative:
