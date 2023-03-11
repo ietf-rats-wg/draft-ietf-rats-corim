@@ -1109,7 +1109,7 @@ The selection process MUST yield at least one usable tag.
 
 All the available Concise Bill Of Material (CoBOMs) tags are then collected from the selected CoRIMs.
 
-The verifier MUST check each CoBOM to see whether it can be activated. The verifier MUST activate all tags referenced by an activated CoBOM.
+The verifier MUST activate all tags referenced by a CoBOM.
 
 After the verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
@@ -1118,7 +1118,7 @@ After the verifier has processed all CoBOMs it MUST discard any tags which have 
 The verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}), Concise Software ID Tags (CoSWID, {{-coswid}}), and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) -- from the selected CoRIMs.
 
 The verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any internal cross-reference (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
 
 ### Appraisal Context Construction
 
@@ -1144,7 +1144,7 @@ For example:
 In DICE, a proof of liveness is performed on the final key in the certificate chain. If this passes then a suitable certification path anchored on a trusted root certificate is looked up -- e.g., based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}})-- in the Appraisal Context.  If found, then usual X.509 certificate validation is performed.
 In PSA, the verification public key is looked up in the appraisal context using the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).  If found, COSE Sign1 verification is performed accordingly.
 
-Independent of the specific method, the cryptographic integrity of Evidence MUST be successfully verified.
+Independent of the specific integrity protection method used, the integrity of Evidence MUST be successfully verified.
 
 > A CoRIM profile MUST describe:
 >
@@ -1175,7 +1175,7 @@ In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appra
 The outcome of the appraisal process is summarised in an Attestation Result.
 The Relying Party application uses the content of the Attestation Result to make its own policy decisions.
 
-We make no assumptions on the specific shape of the Attestation Result, except for its optional ability to include Evidence from the attestor and Endorsed Values that the Verifier has been able to infer from Evidence and the Appraisal Context.
+This specification makes no assumptions on the specific shape of the Attestation Result, except for its optional ability to include Evidence from the attestor and Endorsed Values that the Verifier has been able to infer from Evidence and the Appraisal Context.
 
 > A CoRIM profile MUST describe:
 >
@@ -1223,7 +1223,7 @@ Note that while specifications may extend the matching semantics using tags, the
 
 #### Comparing svn entries
 
-#### Comparing digest entries
+#### Comparing digests entries
 
 #### Defining handling for new tags
 
