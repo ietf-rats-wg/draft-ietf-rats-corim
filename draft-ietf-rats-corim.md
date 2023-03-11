@@ -1122,7 +1122,8 @@ In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples)
 
 ### Appraisal Context Construction
 
-All of the potential tags are loaded into the Appraisal Context. The complete contents of each tag are loaded together, including Reference Values, Endorsed Values and cryptographic verification key material.
+All of the validated and potentially useful tags are loaded into the Appraisal Context. 
+Each tag is loaded into the Appraisal Context as a single unit, later stages will accept or ignore the whole tag.
 
 This concludes the initialisation phase.
 
@@ -1203,7 +1204,7 @@ A later pass may match Reference Values from the CoMID against Endorsements from
 
 ### Matching Evidence against Reference Values
 
-This section describes the process performed by the verifier to determine whether a candidate CoMID tag matches the Accepted Claims Set. If a tag does not match the Accepted Claims Set then it is silently ignored for this pass, processing continues with the remaining candidate tags.
+This section describes the process performed by the verifier to determine whether a candidate CoMID tag matches the Accepted Claims Set. If a tag does not match the Accepted Claims Set then it is silently ignored for this pass, the Verifiers continues to iterate over the remaining candidate tags.
 
 The Verifier iterates over the Reference Values in the CoMID tag. If the Accepted Claims Set does not contain an entry with the same `environment-map` as the Reference Value then the tag does not match. Comparison of `environment-map` is performed using a binary comparison. A Verifier SHOULD convert `environment-map` to the canonical format before performing the binary comparison.
 
