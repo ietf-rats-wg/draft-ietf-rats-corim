@@ -1115,7 +1115,7 @@ After the verifier has processed all CoBOMs it MUST discard any tags which have 
 
 ### Tags Identification and Validation
 
-The verifier chooses tags -- including Concise Module ID Tags ([CoMID]({sec-comid})), Concise Software ID Tags ([CoSWID]), and/or Concise Trust Anchor Stores ([CoTS](I-D.ietf-rats-concise-ta-stores)) -- from the selected CoRIMs.
+The verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}), Concise Software ID Tags (CoSWID, {{-coswid}}), and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) -- from the selected CoRIMs.
 
 The verifier MUST discard all tags which are not syntactically and semantically valid.
 In particular, any internal cross-reference (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
