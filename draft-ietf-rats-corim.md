@@ -1172,7 +1172,10 @@ Section {sec-dice-spdm} provides information on how evidence collected using DIC
 
 ## Evidence appraisal
 
-In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used to convert the received Evidence from its raw form into a more usable form. This phase may be repeated multiple times.
+In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to appraise the received evidence.
+If the evidence is acceptable then the CoRIM can supplement it with a more concise description of the attestor.
+For example, a CoRIM provided by a firmware author might match against the hash of a piece of firmware and provide the version number of that firmware.
+This phase may be repeated multiple times.
 The outcome of the appraisal process is summarised in an Attestation Result.
 The Relying Party application uses the content of the Attestation Result to make its own policy decisions.
 
