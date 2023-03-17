@@ -1080,84 +1080,112 @@ The verification procedure is divided into three separate phases:
 * Evidence collection
 * Evidence appraisal
 
-At a few well-defined points in the procedure, the Verifier behaviour will depend on the specific CoRIM profile.
-Each CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.
+At a few well-defined points in the procedure, the Verifier behaviour will
+depend on the specific CoRIM profile.
+Each CoRIM profile MUST provide a description of the expected Verifier behavior
+for each of those well-defined points.
 
 Note that what follows describes a simplified implementation.
-Verifiers claiming compliance with this specification must exhibit the same externally visible behavior as described here,
+Verifiers claiming compliance with this specification must exhibit the same
+externally visible behavior as described here,
 they are not required to use the same internal data structures.
-For example, it is expected that the resources used during the initialisation phase can be amortised across multiple appraisals.
+For example, it is expected that the resources used during the initialisation
+phase can be amortised across multiple appraisals.
 
 ## Appraisal Context initialisation
 
-The goal of the initialisation phase is to load the CoRIM Appraisal Context with objects such as CoRIM tags,
-cryptographic validation key material (e.g., raw public keys, root certificates, intermediate CA certificate chains), etc.
-that will be used in the subsequent Evidence Appraisal phase.
+The goal of the initialisation phase is to load the CoRIM Appraisal Context
+with objects such as CoRIM tags,
+cryptographic validation key material (e.g., raw public keys, root certificates,
+intermediate CA certificate chains), etc. that will be used in the subsequent
+Evidence Appraisal phase.
 
 ### CoRIM Selection
 
 All available CoRIMs are collected.
-A Verifier may be pre-configured with a large number of tags describing many types of device.
-All CoRIMs are loaded at this stage, later stages will select the CoRIMs appropriate to the Evidence Appraisal step.
+A Verifier may be pre-configured with a large number of tags describing many
+types of device.
+All CoRIMs are loaded at this stage, later stages will select the CoRIMs
+appropriate to the Evidence Appraisal step.
 
-CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
+CoRIMs that are not within their validity period, or that cannot be associated
+with an authenticated and authorised source MUST be discarded.
 
-CoRIM that are secured by a cryptographic mechanism such as a signature which does not pass validation MUST be discarded.
+CoRIM that are secured by a cryptographic mechanism such as a signature which
+does not pass validation MUST be discarded.
 
 Other selection criteria MAY be applied.
 
-For example, if the Evidence format is known in advance, tags that do not match the expected profile can be readily discarded.
+For example, if the Evidence format is known in advance, tags that do not match
+the expected profile can be readily discarded.
 
 The selection process MUST yield at least one usable tag.
 
 ### CoBOM Extraction
 
-All the available Concise Bill Of Material (CoBOMs) tags are then collected from the selected CoRIMs.
+All the available Concise Bill Of Material (CoBOMs) tags are then collected
+from the selected CoRIMs.
 
 The verifier MUST activate all tags referenced by a CoBOM.
 
-After the verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
+After the verifier has processed all CoBOMs it MUST discard any tags which have
+not been activated by a CoBOM.
 
 ### Tags Identification and Validation
 
-The verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}), Concise Software ID Tags (CoSWID, {{-coswid}}),
-and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) -- from the selected CoRIMs.
+The verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
+Concise Software ID Tags (CoSWID, {{-coswid}}),
+and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) --
+from the selected CoRIMs.
 
-The verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+The verifier MUST discard all tags which are not syntactically and semantically
+valid.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples)
+MUST be successfully resolved.
 
 ### Appraisal Context Construction
 
 All of the validated and potentially useful tags are loaded into the Appraisal Context. 
-Each tag is loaded into the Appraisal Context as a single unit, later stages will accept or ignore the whole tag.
+Each tag is loaded into the Appraisal Context as a single unit, later stages
+will accept or ignore the whole tag.
 
 This concludes the initialisation phase.
 
 ## Evidence Collection
 
-In the evidence collection phase the verifier communicates with attesters to collect evidence.
+In the evidence collection phase the verifier communicates with attesters to
+collect evidence.
 
-The first part of the Evidence collection phase does not perform any cryptographic validation.
+The first part of the Evidence collection phase does not perform any
+cryptographic validation.
 This allows verifiers to use untrusted code for their initial Evidence collection.
 
-The results of the evidence collection are protocol specific data and transcripts which can be used as input to appraisal by a trusted Verifier.
+The results of the evidence collection are protocol specific data and transcripts
+which can be used as input to appraisal by a trusted Verifier.
 
 ### Cryptographic validation of Evidence
 
-If the authenticity of Evidence is secured by a cryptographic mechanism such as a signature,
-the first step in the Evidence Appraisal is to perform cryptographic validation of the Evidence.
+If the authenticity of Evidence is secured by a cryptographic mechanism such as
+a signature, the first step in the Evidence Appraisal is to perform
+cryptographic validation of the Evidence.
 
-The exact cryptographic signature validation mechanics depend on the specific Evidence collection protocol.
+The exact cryptographic signature validation mechanics depend on the specific
+Evidence collection protocol.
 
 For example:
-In DICE, a proof of liveness is performed on the final key in the certificate chain.
-If this passes then a suitable certification path anchored on a trusted root certificate is looked up
--- e.g., based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}})--
-in the Appraisal Context.  If found, then usual X.509 certificate validation is performed.
-In PSA, the verification public key is looked up in the appraisal context using the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
+In DICE, a proof of liveness is performed on the final key in the certificate
+chain.
+If this passes then a suitable certification path anchored on a trusted root
+certificate is looked up -- e.g., based on linking information obtained from
+the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}})--
+in the Appraisal Context.  If found, then usual X.509 certificate validation
+is performed.
+In PSA, the verification public key is looked up in the appraisal context using
+the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
 If found, COSE Sign1 verification is performed accordingly.
 
-Independent of the specific integrity protection method used, the integrity of Evidence MUST be successfully verified.
+Independent of the specific integrity protection method used, the integrity of
+Evidence MUST be successfully verified.
 
 > A CoRIM profile MUST describe:
 >
@@ -1167,39 +1195,55 @@ Independent of the specific integrity protection method used, the integrity of E
 
 ### The Accepted Claims Set
 
-At the end of the Evidence collection process evidence has been converted into a format suitable for appraisal.
-Verifiers are not required to use this as their internal state, but for the purposes of this document a sample verifier is discussed which uses this format.
+At the end of the Evidence collection process evidence has been converted into
+a format suitable for appraisal.
+Verifiers are not required to use this as their internal state, but for the
+purposes of this document a sample verifier is discussed which uses this format.
 
-The Accepted Claims Set will be matched against CoMID reference values, as per the appraisal policy of the verifier.
-This document describes an example evidence structure which can be easily matched against these reference values.
-Each set of evidence contains an `environment-map` providing a namespace, and a `measurement-values-map` containing one or more entries.
+The Accepted Claims Set will be matched against CoMID reference values, as per
+the appraisal policy of the verifier.
+This document describes an example evidence structure which can be easily
+matched against these reference values.
+Each set of evidence contains an `environment-map` providing a namespace, and
+a `measurement-values-map` containing one or more entries.
 
-Each entry in the `measurement-values-map` is a separate piece of evidence describing the environment named by the `environment-map`.
- An attestor can provide multiple `environment-map`s each containing a `measurement-values-map` with one entry;
- a single `environment-map` containing multiple entries in its `measurement-values-map`;
- or a combination of these approaches.
+Each entry in the `measurement-values-map` is a separate piece of evidence
+describing the environment named by the `environment-map`.
+ An attestor can provide multiple `environment-map`s each containing a
+ `measurement-values-map` with one entry;  a single `environment-map` containing
+ multiple entries in its `measurement-values-map`; or a combination of
+ these approaches.
 
-If evidence from different sources has the same `environment-map` then the `measurement-values-map`s are merged.
-If both measurement-value-maps being merged contain the same key then the values associated with that key MUST be binary identical.
+If evidence from different sources has the same `environment-map` then the
+`measurement-values-map`s are merged.
+If both measurement-value-maps being merged contain the same key then the
+values associated with that key MUST be binary identical.
 
 > A CoRIM profile MUST describe:
 >
 > * How evidence is converted to a format suitable for appraisal
 
-Section {sec-dice-spdm} provides information on how evidence collected using DICE and SPDM protocols is added to the Accepted Claims Map.
+Section {sec-dice-spdm} provides information on how evidence collected using
+DICE and SPDM protocols is added to the Accepted Claims Map.
 
 
 ## Evidence appraisal
 
-In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to appraise the received evidence.
-If the evidence is acceptable then the CoRIM can supplement it with a more concise description of the attestor.
-For example, a CoRIM provided by a firmware author might match against the hash of a piece of firmware and provide the version number of that firmware.
+In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence
+Appraisal Policy are used by the Verifier to appraise the received evidence.
+If the evidence is acceptable then the CoRIM can supplement it with a more
+concise description of the attestor.
+For example, a CoRIM provided by a firmware author might match against the hash
+of a piece of firmware and provide the version number of that firmware.
 This phase may be repeated multiple times.
 The outcome of the appraisal process is summarised in an Attestation Result.
-The Relying Party application uses the content of the Attestation Result to make its own policy decisions.
+The Relying Party application uses the content of the Attestation Result to
+make its own policy decisions.
 
-This specification makes no assumptions on the specific shape of the Attestation Result,
-except for its optional ability to include Evidence from the attestor and Endorsed Values that the Verifier has been able to infer from Evidence and the Appraisal Context.
+This specification makes no assumptions on the specific shape of the
+Attestation Result, except for its optional ability to include Evidence from
+the attestor and Endorsed Values that the Verifier has been able to infer from
+Evidence and the Appraisal Context.
 
 > A CoRIM profile MUST describe:
 >
@@ -1219,47 +1263,66 @@ The sections below describe the algorithm used to compare CoMID tags.
 
 There can be multiple passes of the CoMID evidence appraisal process.
 
-In each pass, each potential CoMID tag in the Appraisal Context is compared against the accepted claims set (which has been initialised with Evidence from the attestor(s) ).
-If the reference values in the CoMID tag match the Accepted Claims Set then Endorsements and other values from the tag are added to the Accepted Claims Set.
+In each pass, each potential CoMID tag in the Appraisal Context is compared
+against the accepted claims set (which has been initialised with Evidence from
+the attestor(s) ).
+If the reference values in the CoMID tag match the Accepted Claims Set then
+Endorsements and other values from the tag are added to the Accepted Claims Set.
 
-If any tags matched in a pass through the CoMID appraisal process then another pass is performed.
-Tags which matched in a previous pass are ignored in later passes of the same appraisal.
+If any tags matched in a pass through the CoMID appraisal process then another
+pass is performed.
+Tags which matched in an earlier pass are ignored in later passes of the same
+appraisal.
 
-A later pass may match Reference Values from the CoMID against Endorsements added by matched tags in an earlier pass,
-this allows CoRIM authors to create hierarchical descriptions of a system.
+A later pass may match Reference Values from the CoMID against Endorsements
+added by matched tags in an earlier pass, this allows CoRIM authors to create
+hierarchical descriptions of a system.
 
 ### Matching Evidence against Reference Values
 
-This section describes the process performed by the verifier to determine whether a candidate CoMID tag matches the Accepted Claims Set.
-If a tag does not match the Accepted Claims Set then it is silently ignored for this pass,
-the Verifier continues to iterate over the remaining candidate tags.
+This section describes the process performed by the verifier to determine
+whether a candidate CoMID tag matches the Accepted Claims Set.
+If a tag does not match the Accepted Claims Set then it is silently ignored
+for this pass, the Verifier continues to iterate over the remaining candidate
+tags.
 
 The Verifier iterates over the Reference Values in the CoMID tag.
-If the Accepted Claims Set does not contain an entry with the same `environment-map` as the Reference Value then the tag does not match.
+If the Accepted Claims Set does not contain an entry with the same `environment-map`
+as the Reference Value then the tag does not match.
 Comparison of `environment-map` is performed using a binary comparison.
-A Verifier SHOULD convert `environment-map` to the canonical format before performing the binary comparison.
+A Verifier SHOULD convert `environment-map` to the canonical format before
+performing the binary comparison.
 
-The Verifer locates the `measurement-values-map` corresponding to the `environment-map` in the Reference Value and the Accepted Claims Set.
-The Verifier enumerates over the key-value pairs in the Reference Value `measurement-values-map`.
-If the Accepted Claims Set `measurement-values-map` does not have an entry with the same key as the Reference Value `measurement-values-map`,
+The Verifer locates the `measurement-values-map` corresponding to the
+`environment-map` in the Reference Value and the Accepted Claims Set.
+The Verifier enumerates over the key-value pairs in the Reference Value
+`measurement-values-map`.
+If the Accepted Claims Set `measurement-values-map` does not have an entry
+with the same key as the Reference Value `measurement-values-map`,
 or if the entries do not match, then the tag does not match.
 
-The algorithm used to match the `measurement-values-map` entries together depends on whether the reference value is tagged,
+The algorithm used to match the `measurement-values-map` entries together
+depends on whether the reference value is tagged,
 and on the `measurement-values-map` key which identifies the entry.
 
-If the Reference Value `measurement-values-map` value starts with a CBOR tag then the verifier MUST use the algorithm described by the tag to match the entries.
+If the Reference Value `measurement-values-map` value starts with a CBOR tag
+then the verifier MUST use the algorithm associated with that tag to match
+the entries.
 Handling for initial tags is described in sub-sections below.
 If the verifier does not recognise the tag value then the tag does not match.
 
-If the Reference Value is not tagged and the measurement-value-map key is a special value described in the sub-sections below,
+If the Reference Value is not tagged and the measurement-value-map key is a
+special value described in the sub-sections below,
 then the algorithm appropriate to that key is used to match the entries.
 
-If the Reference Value is not tagged, and the `measurement-values-map` key is not a special value described below,
+If the Reference Value is not tagged, and the `measurement-values-map` key
+is not a special value described below,
 then the entries are compared using binary comparison of their CBOR values.
 
 Note that while specifications may extend the matching semantics using tags,
 there is no way to extend the matching semantics of special key values.
-Any new keys requiring special handling must have an appropriate tag in the reference value.
+Any new keys requiring special handling must have an appropriate tag in the
+reference value.
 
 #### Comparing raw-value entries
 
@@ -1279,32 +1342,38 @@ Any new keys requiring special handling must have an appropriate tag in the refe
 
 ### Adding CoMID Endorsed Values to the Accepted Claims Set
 
-If a CoMID tag matches the Accepted Claims Set then the verifier must attempt to add Endorsed values from that tag to the Accepted Claims Set.
+If a CoMID tag matches the Accepted Claims Set then the verifier must attempt
+to add Endorsed values from that tag to the Accepted Claims Set.
 
-If any of the Endorsed values being added have the same `environment-map` and `measurement-values-map` key,
-but a different`measurement-values-map` value from the value in the Accepted Claims Map
-then the verifier MUST NOT add any part of the tag to the Accepted Claims Map.
+If any of the Endorsed values being added have the same `environment-map` and
+`measurement-values-map` key, but a different`measurement-values-map` value
+from the value in the Accepted Claims Map then the verifier MUST NOT add any
+part of the tag to the Accepted Claims Map.
 
 ## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
 
-This section defines how evidence from DICE and/or SPDM is transformed into a format where it can be
-added to an accepted claims set.
+This section defines how evidence from DICE and/or SPDM is transformed into a
+format where it can be added to an accepted claims set.
 A verifier supporting DICE/SPDM format evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
 
-[Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which evidence in a SPDM MEASUREMENTS
-response is converted to Evidence suitable for matching using the rules below.
-The converted evidence is held in evidence triples which have a similar format to reference-triples
-(their semantics follows the matching rules described above).
+[Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which
+evidence in a SPDM MEASUREMENTS response is converted to Evidence suitable for
+matching using the rules below.
+The converted evidence is held in evidence triples which have a similar format
+to reference-triples (their semantics follows the matching rules described above).
 
 ### Transforming DICE Evidence to a format usable for matching
 
 DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
-Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an evidence triple using the rules in this section.
-In a MultiTcbInfo each entry in the sequence is treated as independent and translated into a separate evidence object.
+Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an evidence
+triple using the rules in this section.
+In a MultiTcbInfo each entry in the sequence is treated as independent and
+translated into a separate evidence object.
 
-The verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record
+The verifier SHALL translate each field in the TcbInfo into a field in the
+created endorsed-triple-record
 
 - The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id`
 - The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
@@ -1320,8 +1389,10 @@ The verifier SHALL translate each field in the TcbInfo into a field in the creat
   - Each flag is translated independently
 - The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
 
-If there are multiple evidence triples with the same `environment-map` then they MUST be merged into a single entry.
-If the `measurement-values-map` fields in evidence triples have conflicting values then the Verifier MUST fail validation.
+If there are multiple evidence triples with the same `environment-map` then
+they MUST be merged into a single entry.
+If the `measurement-values-map` fields in evidence triples have conflicting
+values then the Verifier MUST fail validation.
 
 # Implementation Status
 
