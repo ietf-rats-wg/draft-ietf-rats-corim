@@ -1177,7 +1177,7 @@ In DICE, a proof of liveness is performed on the final key in the certificate
 chain.
 If this passes then a suitable certification path anchored on a trusted root
 certificate is looked up -- e.g., based on linking information obtained from
-the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}})--
+the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}}) --
 in the Appraisal Context.  If found, then usual X.509 certificate validation
 is performed.
 In PSA, the verification public key is looked up in the appraisal context using
