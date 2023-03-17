@@ -1086,7 +1086,7 @@ Each CoRIM profile MUST provide a description of the expected Verifier behavior
 for each of those well-defined points.
 
 Note that what follows describes a simplified implementation.
-Verifiers claiming compliance with this specification must exhibit the same
+Verifiers claiming compliance with this specification MUST exhibit the same
 externally visible behavior as described here,
 they are not required to use the same internal data structures.
 For example, it is expected that the resources used during the initialisation
