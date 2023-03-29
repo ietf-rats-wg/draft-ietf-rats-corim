@@ -106,7 +106,7 @@ Verifier. In order to conduct Evidence appraisal, a Verifier requires not only
 fresh Evidence from an Attester, but also trusted Endorsements and Reference
 Values from Endorsers and Reference Value Providers, such as manufacturers,
 distributors, or device owners. This document specifies the information elements for
-conveying Endorsements and Reference Values in CBOR format.
+representing Endorsements and Reference Values in CBOR format.
 
 --- middle
 
@@ -281,7 +281,7 @@ Tags can be of different types:
 
 * Concise Module ID (CoMID) tags ({{sec-comid}}) contain metadata and claims about the hardware and firmware modules.
 
-* CoSWID tags {{-coswid}} describe software components.
+* Concise Software ID (CoSWID) tags {{-coswid}} describe software components.
 
 * Concise Bill of Material (CoBOM) tags ({{sec-cobom}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
 
@@ -517,8 +517,7 @@ The set of triples is extensible.
 The following triples are currently defined:
 
 * Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
-* Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence and are used by Verifiers to infer more information about the Attester ({{sec-comid-triple-endval}}).
-Specific examples include testing or certification data pertaining to a module.
+* Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
@@ -706,8 +705,8 @@ The following describes each member of the `triples-map`:
 
 ##### Environment
 
-An `environment-map` may be used to represent a whole Attester, an attesting
-environment, or a target environment.  The exact semantic depends on the
+An `environment-map` may be used to represent a whole Attester, an Attesting
+Environment, or a Target Environment.  The exact semantic depends on the
 context (triple) in which the environment is used.
 
 An environment is named after a class, instance or group identifier (or a
