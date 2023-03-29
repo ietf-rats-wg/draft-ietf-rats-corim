@@ -116,7 +116,7 @@ In order to conduct Evidence appraisal, a Verifier requires not only fresh Evide
 Such Endorsements and Reference Values are obtained from the relevant supply chain actors, such as manufacturers, distributors, or device owners.
 In a complex supply chain, it is likely that multiple actors will produce these values at different points in time.
 Besides, one supply chain actor will only provide the subset of characteristics that they know about the Attester.
-Attesters vary from one vendor to another, and within a vendor from one product to another.
+Attesters vary from one vendor to another, and for a given vendor from one product to another.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
 This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challanges by using an extensible format common to all supply chain actors and Verifiers.
