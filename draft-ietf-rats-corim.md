@@ -387,7 +387,7 @@ The following describes each child element of this type.
 
 ### Profile Types {#sec-corim-profile-types}
 
-Profiling is the mechanism that allows the base CoRIM schema to be customised to fit a specific Attester or Attesters' family.
+Profiling is the mechanism that allows the base CoRIM schema to be customised to fit a specific Attester.
 
 A profile defines which of the optional parts of a CoRIM are required,
 which are prohibited and which extension points are exercised and how.
