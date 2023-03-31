@@ -387,8 +387,18 @@ The following describes each child element of this type.
 
 ### Profile Types {#sec-corim-profile-types}
 
-A profile specifies which of the optional parts of a CoRIM are required, which
-are prohibited and which extension points are exercised and how.
+Profiling is the mechanism that allows the base CoRIM schema to be customised to fit a specific Attester or Attesters' family.
+
+A profile defines which of the optional parts of a CoRIM are required, which are prohibited and which extension points are exercised and how.
+A profile MUST NOT alter the syntax or semantics of an already defined CoRIM type.
+A profile MAY constrain the values of a given CoRIM type to a subset of that type.
+
+CoRIM profiles SHOULD be specified in a publicly available document.
+
+A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-corim-signed}} and {{sec-mt-corim-unsigned}} with the `profile` parameter set to the appropriate value.
+Alternatively, it MAY define and register its own media type.
+
+A profile identifier is either a OID {{-cbor-oids}} or a URL {{-uri}}.
 
 ~~~ cddl
 {::include cddl/profile-type-choice.cddl}
