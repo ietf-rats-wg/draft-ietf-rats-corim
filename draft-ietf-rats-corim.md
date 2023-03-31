@@ -398,7 +398,7 @@ CoRIM profiles SHOULD be specified in a publicly available document.
 A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-corim-signed}} and {{sec-mt-corim-unsigned}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
 
-A profile identifier is either a OID {{-cbor-oids}} or a URL {{-uri}}.
+A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
 
 ~~~ cddl
 {::include cddl/profile-type-choice.cddl}
