@@ -389,7 +389,9 @@ The following describes each child element of this type.
 
 Profiling is the mechanism that allows the base CoRIM schema to be customised to fit a specific Attester or Attesters' family.
 
-A profile defines which of the optional parts of a CoRIM are required, which are prohibited and which extension points are exercised and how.
+A profile defines which of the optional parts of a CoRIM are required,
+which are prohibited and which extension points are exercised and how.
+Exercised extension points should preserve the intent of the original map semantics.
 A profile MUST NOT alter the syntax or semantics of an already defined CoRIM type.
 A profile MAY constrain the values of a given CoRIM type to a subset of that type.
 
