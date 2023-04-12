@@ -1161,7 +1161,7 @@ cryptographic validation.
 This allows verifiers to use untrusted code for their initial Evidence collection.
 
 The results of the evidence collection are protocol specific data and transcripts
-which can be used as input to appraisal by a trusted Verifier.
+which are used as input to appraisal by the Verifier.
 
 ### Cryptographic validation of Evidence
 
