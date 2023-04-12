@@ -1223,7 +1223,7 @@ values associated with that key MUST be binary identical.
 >
 > * How evidence is converted to a format suitable for appraisal
 
-Section {sec-dice-spdm} provides information on how evidence collected using
+{{sec-dice-spdm}} provides information on how evidence collected using
 DICE and SPDM protocols is added to the Accepted Claims Map.
 
 
