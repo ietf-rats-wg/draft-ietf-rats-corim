@@ -393,7 +393,7 @@ A profile defines which of the optional parts of a CoRIM are required,
 which are prohibited and which extension points are exercised and how.
 A profile MUST NOT alter the syntax or semantics of an already defined CoRIM type.
 A profile MAY constrain the values of a given CoRIM type to a subset of the values.
-A profile MAY extend the set of a given CoRIM type to meet the requirement of a specific profile using the defined extension points.
+A profile MAY extend the set of a given CoRIM type using the defined extension points.
 Exercised extension points should preserve the intent of the original map semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
