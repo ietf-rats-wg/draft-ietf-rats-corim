@@ -1145,7 +1145,7 @@ MUST be successfully resolved.
 
 ### Appraisal Context Construction
 
-All of the validated and potentially useful tags are loaded into the Appraisal Context. 
+All of the validated and potentially useful tags are loaded into the Appraisal Context.
 Each tag is loaded into the Appraisal Context as a single unit, later stages
 will accept or ignore the whole tag.
 
