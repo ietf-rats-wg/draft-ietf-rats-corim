@@ -404,6 +404,10 @@ Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
 
+The profile identifier uniquely identifies a documented profile.  Any changes
+to the profile, even the slightest deviation, is considered a different profile
+that MUST have a different identifier.
+
 ~~~ cddl
 {::include cddl/profile-type-choice.cddl}
 ~~~
