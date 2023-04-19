@@ -1126,19 +1126,19 @@ The selection process MUST yield at least one usable tag.
 All the available Concise Bill Of Material (CoBOMs) tags are then collected
 from the selected CoRIMs.
 
-The verifier MUST activate all tags referenced by a CoBOM.
+The Verifier MUST activate all tags referenced by a CoBOM.
 
-After the verifier has processed all CoBOMs it MUST discard any tags which have
+After the Verifier has processed all CoBOMs it MUST discard any tags which have
 not been activated by a CoBOM.
 
 ### Tags Identification and Validation
 
-The verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
+The Verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
 Concise Software ID Tags (CoSWID, {{-coswid}}),
 and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) --
 from the selected CoRIMs.
 
-The verifier MUST discard all tags which are not syntactically and semantically
+The Verifier MUST discard all tags which are not syntactically and semantically
 valid.
 In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples)
 MUST be successfully resolved.
@@ -1153,12 +1153,12 @@ This concludes the initialisation phase.
 
 ## Evidence Collection
 
-In the evidence collection phase the verifier communicates with attesters to
+In the evidence collection phase the Verifier communicates with attesters to
 collect evidence.
 
 The first part of the Evidence collection phase does not perform any
 cryptographic validation.
-This allows verifiers to use untrusted code for their initial Evidence collection.
+This allows Verifiers to use untrusted code for their initial Evidence collection.
 
 The results of the evidence collection are protocol specific data and transcripts
 which are used as input to appraisal by the Verifier.
@@ -1196,20 +1196,32 @@ Evidence MUST be successfully verified.
 ### The Accepted Claims Set
 
 At the end of the Evidence collection process evidence has been converted into
-a format suitable for appraisal.
+a format suitable for appraisal. This document describes an `accepted-claims-set`
+format and the algorithms used to compare it against CoMID reference values.
+
+    accepted-claims-set = {​
+        &(ce.evidence-triples: 0) => [ + reference-triple-record ]​
+      ? &(ce.identity-triples: 1) => [ + identity-triple-record ]​
+      ? &(ce.dependency-triples: 2) => [ + domain-dependency-triple-record ]
+      ? &(ce.domain-membership-triples: 3) => [ + domain-membership-triple-record ]
+      ? &(ce.coswid-triples: 4) => [ + ev-coswid-triple-record ]
+      * $$ev-triples-map-extension​
+    }
+
 Verifiers are not required to use this as their internal state, but for the
-purposes of this document a sample verifier is discussed which uses this format.
+purposes of this document a sample Verifier is discussed which uses this format.
 
 The Accepted Claims Set will be matched against CoMID reference values, as per
-the appraisal policy of the verifier.
+the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be easily
 matched against these reference values.
 Each set of evidence contains an `environment-map` providing a namespace, and
-a `measurement-values-map` containing one or more entries.
+a non empty `measurement-values-map`.
 
 Each entry in the `measurement-values-map` is a separate piece of evidence
 describing the environment named by the `environment-map`.
- An attestor can provide multiple `environment-map`s each containing a
+
+ An Attester can provide multiple `environment-map`s each containing a
  `measurement-values-map` with one entry;  a single `environment-map` containing
  multiple entries in its `measurement-values-map`; or a combination of
  these approaches.
@@ -1219,30 +1231,38 @@ If evidence from different sources has the same `environment-map` then the
 If both measurement-value-maps being merged contain the same key then the
 values associated with that key MUST be binary identical.
 
+### Accepted Claims Set Initialisation
+
+The Accepted Claims Set is initialised with cryptographically verified Evidence
+from the Attestation Environments.
+
 > A CoRIM profile MUST describe:
 >
 > * How evidence is converted to a format suitable for appraisal
 
-{{sec-dice-spdm}} provides information on how evidence collected using
+Section {sec-dice-spdm} provides information on how evidence collected using
 DICE and SPDM protocols is added to the Accepted Claims Map.
 
 
-## Evidence appraisal
+## Accepted Claims Map extension using CoMID tags
 
-In the Evidence Appraisal phase, a CoRIM Appraisal Context and an Evidence
-Appraisal Policy are used by the Verifier to appraise the received evidence.
-If the evidence is acceptable then the CoRIM can supplement it with a more
-concise description of the attestor.
+In the Accepted Claims Map extension phase, a CoRIM Appraisal Context and
+an Evidence Appraisal Policy are used by the Verifier to find CoMID tags which
+match the Attester. Tags which match are accepted, and the Accepted Claims Map
+is extended using Endorsements etc. from the accepted tags.
+
 For example, a CoRIM provided by a firmware author might match against the hash
 of a piece of firmware and provide the version number of that firmware.
-This phase may be repeated multiple times.
+
+The Accepted Claims Map extension phase may be repeated multiple times.
+
 The outcome of the appraisal process is summarised in an Attestation Result.
 The Relying Party application uses the content of the Attestation Result to
 make its own policy decisions.
 
 This specification makes no assumptions on the specific shape of the
 Attestation Result, except for its optional ability to include Evidence from
-the attestor and Endorsed Values that the Verifier has been able to infer from
+the Attester and Endorsed Values that the Verifier has been able to infer from
 Evidence and the Appraisal Context.
 
 > A CoRIM profile MUST describe:
@@ -1261,16 +1281,16 @@ The sections below describe the algorithm used to compare CoMID tags.
 
 ### Comparing and processing CoMID tags
 
-There can be multiple passes of the CoMID evidence appraisal process.
+The Accepted Claims Map extension phase is executed at least once, if any pass
+extends the Accepted Claims Map then the pass is repeated at least once more.
 
 In each pass, each potential CoMID tag in the Appraisal Context is compared
-against the accepted claims set (which has been initialised with Evidence from
-the attestor(s) ).
-If the reference values in the CoMID tag match the Accepted Claims Set then
-Endorsements and other values from the tag are added to the Accepted Claims Set.
+against the accepted claims set.
 
-If any tags matched in a pass through the CoMID appraisal process then another
-pass is performed.
+If all reference values in the CoMID tag match entries in the 
+Accepted Claims Set then Endorsements etc. from the tag are added to the
+Accepted Claims Set.
+
 Tags which matched in an earlier pass are ignored in later passes of the same
 appraisal.
 
@@ -1280,8 +1300,12 @@ hierarchical descriptions of a system.
 
 ### Matching Evidence against Reference Values
 
-This section describes the process performed by the verifier to determine
+This section describes the process performed by the Verifier to determine
 whether a candidate CoMID tag matches the Accepted Claims Set.
+
+A tag matches the Accepted Claims Set if every reference value in the tag
+matches evidence in the Accepted Claims Set, as described below.
+
 If a tag does not match the Accepted Claims Set then it is silently ignored
 for this pass, the Verifier continues to iterate over the remaining candidate
 tags.
@@ -1290,7 +1314,8 @@ The Verifier iterates over the Reference Values in the CoMID tag.
 If the Accepted Claims Set does not contain an entry with the same `environment-map`
 as the Reference Value then the tag does not match.
 Comparison of `environment-map` is performed using a binary comparison.
-A Verifier SHOULD convert `environment-map` to the canonical format before
+
+A Verifier SHOULD convert `environment-map` to the canonical CBOR format before
 performing the binary comparison.
 
 The Verifer locates the `measurement-values-map` corresponding to the
@@ -1306,10 +1331,10 @@ depends on whether the reference value is tagged,
 and on the `measurement-values-map` key which identifies the entry.
 
 If the Reference Value `measurement-values-map` value starts with a CBOR tag
-then the verifier MUST use the algorithm associated with that tag to match
+then the Verifier MUST use the algorithm associated with that tag to match
 the entries.
 Handling for initial tags is described in sub-sections below.
-If the verifier does not recognise the tag value then the tag does not match.
+If the Verifier does not recognise the tag value then the tag does not match.
 
 If the Reference Value is not tagged and the measurement-value-map key is a
 special value described in the sub-sections below,
@@ -1323,6 +1348,8 @@ Note that while specifications may extend the matching semantics using tags,
 there is no way to extend the matching semantics of special key values.
 Any new keys requiring special handling must have an appropriate tag in the
 reference value.
+
+[^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
 
 #### Comparing raw-value entries
 
@@ -1342,19 +1369,19 @@ reference value.
 
 ### Adding CoMID Endorsed Values to the Accepted Claims Set
 
-If a CoMID tag matches the Accepted Claims Set then the verifier must attempt
+If a CoMID tag matches the Accepted Claims Set then the Verifier must attempt
 to add Endorsed values from that tag to the Accepted Claims Set.
 
 If any of the Endorsed values being added have the same `environment-map` and
-`measurement-values-map` key, but a different`measurement-values-map` value
-from the value in the Accepted Claims Map then the verifier MUST NOT add any
+`measurement-values-map` key, but a different `measurement-values-map` value
+from the value in the Accepted Claims Map then the Verifier MUST NOT add any
 part of the tag to the Accepted Claims Map.
 
 ## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
 
 This section defines how evidence from DICE and/or SPDM is transformed into a
 format where it can be added to an accepted claims set.
-A verifier supporting DICE/SPDM format evidence should implement this section.
+A Verifier supporting DICE/SPDM format evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
 
@@ -1372,7 +1399,7 @@ triple using the rules in this section.
 In a MultiTcbInfo each entry in the sequence is treated as independent and
 translated into a separate evidence object.
 
-The verifier SHALL translate each field in the TcbInfo into a field in the
+The Verifier SHALL translate each field in the TcbInfo into a field in the
 created endorsed-triple-record
 
 - The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id`
