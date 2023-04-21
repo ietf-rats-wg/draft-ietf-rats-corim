@@ -1315,8 +1315,8 @@ If the Accepted Claims Set does not contain an entry with the same `environment-
 as the Reference Value then the tag does not match.
 Comparison of `environment-map` is performed using a binary comparison.
 
-A Verifier SHOULD convert `environment-map` to the canonical CBOR format before
-performing the binary comparison.
+A Verifier SHOULD convert `environment-map` so it meets CBOR Core Deterministic
+Encoding Requirements before performing the binary comparison.
 
 The Verifer locates the `measurement-values-map` corresponding to the
 `environment-map` in the Reference Value and the Accepted Claims Set.
