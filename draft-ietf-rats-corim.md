@@ -86,6 +86,7 @@ normative:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
+  RFC8152: cose
 
 informative:
   RFC7942:
@@ -1008,10 +1009,21 @@ A cryptographic key can be one of the following formats:
   certificates MUST be concatenated in order so that each directly certifies
   the one preceding.
 
-A fourth format is used to represent thumbprints of raw keys or certificated
-keys:
+* `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
+  Defined in {{Section 7 of -cose}}
 
-* `tagged-thumbprint-type`: hash of a certificate or raw public key.
+A cryptographic key digest can be one of the following formats:
+
+* `tagged-thumbprint-type`: a `digest` of a raw public key. The digest value may
+  be used to find the key if contained in a certificate or lookup table.
+
+* `tagged-cert-thumbprint-type`: a `digest` of a certificate containing a public key.
+  The digest value may be used to find the certificate.
+
+In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
+then compute a digest of the key that is forwarded to a second Verifier. The second Verifier
+completes the signature verification by performing certificate path validation, revocation
+checks, and trust anchor checks.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
