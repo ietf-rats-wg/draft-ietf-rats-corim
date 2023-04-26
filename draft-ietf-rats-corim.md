@@ -1014,7 +1014,7 @@ keys:
 * `tagged-thumbprint-type`: hash of a certificate or raw public key.
 
 ~~~ cddl
-{:include cddl/crypto-key-type-choice.cddl}
+{::include cddl/crypto-key-type-choice.cddl}
 ~~~
 
 ##### Domain Types {#sec-comid-domain-type}
