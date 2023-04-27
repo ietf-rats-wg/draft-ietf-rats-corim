@@ -8,6 +8,7 @@ COMID_FRAGS += conditional-endorsement-series-triple-record.cddl
 COMID_FRAGS += conditional-endorsement-triple-record.cddl
 COMID_FRAGS += conditional-series-record.cddl
 COMID_FRAGS += cose-key.cddl
+COMID_FRAGS += cose-label-and-value.cddl
 COMID_FRAGS += coswid-triple-record.cddl
 COMID_FRAGS += crypto-key-type-choice.cddl
 COMID_FRAGS += domain-dependency-triple-record.cddl
