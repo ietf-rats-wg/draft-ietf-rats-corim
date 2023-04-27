@@ -86,7 +86,7 @@ normative:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
-  RFC8152: cose
+
 
 informative:
   RFC7942:
@@ -1015,10 +1015,13 @@ A cryptographic key can be one of the following formats:
 A cryptographic key digest can be one of the following formats:
 
 * `tagged-thumbprint-type`: a `digest` of a raw public key. The digest value may
-  be used to find the key if contained in a certificate or lookup table.
+  be used to find the public key if contained in a lookup table.
 
-* `tagged-cert-thumbprint-type`: a `digest` of a certificate containing a public key.
-  The digest value may be used to find the certificate.
+* `tagged-cert-thumbprint-type`: a `digest` of a certificate.
+  The digest value may be used to find the certificate if contained in a lookup table.
+
+* `tagged-cert-path-thumbprint-type`: a `digest` of a certificate path.
+  The digest value may be used to find the certificate path if contained in a lookup table.
 
 In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
 then compute a digest of the key that is forwarded to a second Verifier. The second Verifier
