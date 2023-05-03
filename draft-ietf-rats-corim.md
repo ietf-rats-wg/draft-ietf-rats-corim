@@ -1020,7 +1020,7 @@ A cryptographic key digest can be one of the following formats:
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
   The digest value may be used to find the certificate if contained in a lookup table.
 
-* `tagged-cert-path-thumbprint-type`: a `digest` of a certificate path.
+* `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
 
 In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
