@@ -1,9 +1,11 @@
-corim = #6.500($concise-rim-type-choice)
-$concise-rim-type-choice /= #6.501(corim-map)
-$concise-rim-type-choice /= #6.502(signed-corim)
-$concise-tag-type-choice /= #6.505(bytes .cbor concise-swid-tag)
-$concise-tag-type-choice /= #6.506(bytes .cbor concise-mid-tag)
-$concise-tag-type-choice /= #6.508(bytes .cbor concise-bom-tag)
+corim = tagged-concise-rim-type-choice
+$concise-rim-type-choice /= tagged-corim-map
+$concise-rim-type-choice /= tagged-signed-corim
+$concise-tag-type-choice /= tagged-concise-swid-tag
+$concise-tag-type-choice /= tagged-concise-mid-tag
+$concise-tag-type-choice /= tagged-concise-bom-tag
+$raw-value-type-choice /= tagged-bytes
+tagged-bytes = #6.560(bytes)
 tagged-ueid-type = #6.550(ueid-type)
 tagged-int-type = #6.551(int)
 tagged-svn = #6.552(svn)
@@ -12,4 +14,4 @@ tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
 tagged-pkix-base64-cert-path-type = #6.556(tstr)
 tagged-thumbprint-type = #6.557(digest)
-$raw-value-type-choice /= #6.560(bytes)
+
