@@ -62,6 +62,11 @@ CORIM_FRAGS += profile-type-choice.cddl
 CORIM_FRAGS += protected-corim-header-map.cddl
 CORIM_FRAGS += signed-corim.cddl
 CORIM_FRAGS += tagged-corim-map.cddl
+CORIM_FRAGS += tagged-concise-rim-type-choice.cddl
+CORIM_FRAGS += tagged-signed-corim.cddl
+CORIM_FRAGS += tagged-concise-swid-tag.cddl
+CORIM_FRAGS += tagged-concise-mid-tag.cddl
+CORIM_FRAGS += tagged-concise-bom-tag.cddl
 CORIM_FRAGS += unprotected-corim-header-map.cddl
 CORIM_FRAGS += validity-map.cddl
 
