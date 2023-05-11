@@ -1207,6 +1207,242 @@ The following describes each member of the `concise-bom-tag` map.
   The `$$concise-bom-tag-extension` extension socket is empty in this
   specification.
 
+# CoRIM-based Evidence Verification
+
+The verification procedure is divided into three separate phases:
+
+* Appraisal Context initialisation
+* Evidence collection
+* Evidence appraisal
+
+At a few well-defined points in the procedure, the Verifier behaviour will
+depend on the specific CoRIM profile.
+Each CoRIM profile MUST provide a description of the expected Verifier behavior
+for each of those well-defined points.
+
+Note that what follows describes a simplified implementation.
+Verifiers claiming compliance with this specification MUST exhibit the same
+externally visible behavior as described here,
+they are not required to use the same internal data structures.
+For example, it is expected that the resources used during the initialisation
+phase can be amortised across multiple appraisals.
+
+## Appraisal Context initialisation
+
+The goal of the initialisation phase is to load the CoRIM Appraisal Context
+with objects such as tags (CoMID, CoSWID etc.) from CoRIM files,
+cryptographic validation key material (e.g., raw public keys, root certificates,
+intermediate CA certificate chains), etc. that will be used in the subsequent
+Evidence Appraisal phase.
+
+### CoRIM Selection
+
+All available CoRIMs are collected.
+A Verifier may be pre-configured with a large number of tags describing many
+types of device.
+All CoRIMs are loaded at this stage, later stages will select the CoRIMs
+appropriate to the Evidence Appraisal step.
+
+CoRIMs that are not within their validity period, or that cannot be associated
+with an authenticated and authorised source MUST be discarded.
+
+CoRIM that are secured by a cryptographic mechanism such as a signature which
+does not pass validation MUST be discarded.
+
+Other selection criteria MAY be applied.
+
+For example, if the Evidence format is known in advance, tags that do not match
+the expected profile can be readily discarded.
+
+The selection process MUST yield at least one usable tag.
+
+### CoBOM Extraction
+
+All the available Concise Bill Of Material (CoBOMs) tags are then collected
+from the selected CoRIMs.
+
+The Verifier MUST activate all tags referenced by a CoBOM.
+
+After the Verifier has processed all CoBOMs it MUST discard any tags which have
+not been activated by a CoBOM.
+
+### Tags Identification and Validation
+
+The Verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
+Concise Software ID Tags (CoSWID, {{-coswid}}),
+and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) --
+from the selected CoRIMs.
+
+The Verifier MUST discard all tags which are not syntactically and semantically
+valid.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples)
+MUST be successfully resolved.
+
+### Appraisal Context Construction
+
+All of the validated and potentially useful tags are loaded into the Appraisal Context.
+Each tag is loaded into the Appraisal Context as a single unit, later stages
+will accept or ignore the whole tag.
+
+This concludes the initialisation phase.
+
+## Evidence Collection
+
+In the evidence collection phase the Verifier communicates with attesters to
+collect evidence.
+
+The first part of the Evidence collection phase does not perform any
+cryptographic validation.
+This allows Verifiers to use untrusted code for their initial Evidence collection.
+
+The results of the evidence collection are protocol specific data and transcripts
+which are used as input to appraisal by the Verifier.
+
+### Cryptographic validation of Evidence
+
+If the authenticity of Evidence is secured by a cryptographic mechanism such as
+a signature, the first step in the Evidence Appraisal is to perform
+cryptographic validation of the Evidence.
+
+The exact cryptographic signature validation mechanics depend on the specific
+Evidence collection protocol.
+
+For example:
+In DICE, a proof of liveness is performed on the final key in the certificate
+chain.
+If this passes then a suitable certification path anchored on a trusted root
+certificate is looked up -- e.g., based on linking information obtained from
+the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}}) --
+in the Appraisal Context.  If found, then usual X.509 certificate validation
+is performed.
+In PSA, the verification public key is looked up in the appraisal context using
+the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
+If found, COSE Sign1 verification is performed accordingly.
+
+Independent of the specific integrity protection method used, the integrity of
+Evidence MUST be successfully verified.
+
+> A CoRIM profile MUST describe:
+>
+> * How cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags)
+> * How key material is associated with the Attesting Environment
+> * How the Attesting Environment is identified in Evidence
+
+### The Accepted Claims Set
+
+At the end of the Evidence collection process evidence has been converted into
+a format suitable for appraisal. This document describes an `accepted-claims-set`
+format and the algorithms used to compare it against CoMID reference values.
+
+    accepted-claims-set = {​
+        &(ce.evidence-triples: 0) => [ + reference-triple-record ]​
+      ? &(ce.identity-triples: 1) => [ + identity-triple-record ]​
+      ? &(ce.dependency-triples: 2) => [ + domain-dependency-triple-record ]
+      ? &(ce.domain-membership-triples: 3) => [ + domain-membership-triple-record ]
+      ? &(ce.coswid-triples: 4) => [ + ev-coswid-triple-record ]
+      * $$ev-triples-map-extension​
+    }
+
+Verifiers are not required to use this as their internal state, but for the
+purposes of this document a sample Verifier is discussed which uses this format.
+
+The Accepted Claims Set will be matched against CoMID reference values, as per
+the appraisal policy of the Verifier.
+This document describes an example evidence structure which can be easily
+matched against these reference values.
+Each set of evidence contains an `environment-map` providing a namespace, and
+a non empty `measurement-values-map`.
+
+Each entry in the `measurement-values-map` is a separate piece of evidence
+describing the environment named by the `environment-map`.
+
+ An Attester can provide multiple `environment-map`s each containing a
+ `measurement-values-map` with one entry;  a single `environment-map` containing
+ multiple entries in its `measurement-values-map`; or a combination of
+ these approaches.
+
+If evidence from different sources has the same `environment-map` then the
+`measurement-values-map`s are merged.
+If both measurement-value-maps being merged contain the same key then the
+values associated with that key MUST be binary identical.
+
+### Accepted Claims Set Initialisation
+
+The Accepted Claims Set is initialised with cryptographically verified Evidence
+from the Attestation Environments.
+
+> A CoRIM profile MUST describe:
+>
+> * How evidence is converted to a format suitable for appraisal
+
+Section {sec-dice-spdm} provides information on how evidence collected using
+DICE and SPDM protocols is added to the Accepted Claims Map.
+
+## Accepted Claims Map extension using CoMID tags
+
+In the Accepted Claims Map extension phase, a CoRIM Appraisal Context and
+an Evidence Appraisal Policy are used by the Verifier to find CoMID tags which
+match the Attester. Tags which match are accepted, and the Accepted Claims Map
+is extended using Endorsements etc. from the accepted tags.
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+### Comparing and processing CoMID tags
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+### Matching Evidence against Reference Values
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+### Adding CoMID Endorsed Values to the Accepted Claims Set
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
+
+This section defines how evidence from DICE and/or SPDM is transformed into a
+format where it can be added to an accepted claims set.
+A Verifier supporting DICE/SPDM format evidence should implement this section.
+
+### Transforming SPDM Evidence to a format usable for matching
+
+[Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which
+evidence in a SPDM MEASUREMENTS response is converted to Evidence suitable for
+matching using the rules below.
+The converted evidence is held in evidence triples which have a similar format
+to reference-triples (their semantics follows the matching rules described above).
+
+### Transforming DICE Evidence to a format usable for matching
+
+DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
+Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an evidence
+triple using the rules in this section.
+In a MultiTcbInfo each entry in the sequence is treated as independent and
+translated into a separate evidence object.
+
+The Verifier SHALL translate each field in the TcbInfo into a field in the
+created endorsed-triple-record
+
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id`
+- The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
+- The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
+- The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
+- The TcbInfo `index` field SHALL be copied to the field named `environment-map / class / index`
+
+- The TcbInfo `version` field SHALL be translated to the field named `measurement-map / mval / version / version`
+- The TcbInfo `svn` field SHALL be copied to the field named `measurement-map / mval / svn`
+- The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / mval / digests`
+  - Each digest within fwids is translated to a CoMID digest object, with an appropriate algorithm identifier
+- The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / mval / flags`
+  - Each flag is translated independently
+- The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
+
+If there are multiple evidence triples with the same `environment-map` then
+they MUST be merged into a single entry.
+If the `measurement-values-map` fields in evidence triples have conflicting
+values then the Verifier MUST fail validation.
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
