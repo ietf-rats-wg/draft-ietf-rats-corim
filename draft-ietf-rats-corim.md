@@ -363,7 +363,7 @@ identifiers. Other types of identifiers could be defined as needed.
 ### Tags {#sec-corim-tags}
 
 A `$concise-tag-type-choice` is a tagged CBOR payload that carries either a
-CoMID ({{sec-comid}}), or a CoSWID {{-coswid}}, or a CoBOM {{sec-cobom}}.
+CoMID ({{sec-comid}}), a CoSWID {{-coswid}}, or a CoBOM {{sec-cobom}}.
 
 ~~~ cddl
 {::include cddl/concise-tag-type-choice.cddl}
