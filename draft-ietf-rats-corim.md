@@ -1274,8 +1274,6 @@ groups to use this information as they see fit".
 
 ## New CBOR Tags {#sec-iana-cbor-tags}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/13
-
 IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!IANA.cbor-tags}}, preferably with the specific CBOR tag value requested:
 
 |     Tag | Data Item           | Semantics                                                            | Reference |
@@ -1285,9 +1283,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                             | {{&SELF}} |
 | 503-504 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                  | {{&SELF}} |
-|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}}                  | {{&SELF}} |
+|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                   | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}}        | {{&SELF}} |
+|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}         | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 |     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
 |     551 | `int`               | tagged-int-type, see {{sec-common-tagged-int}}                       | {{&SELF}} |
