@@ -1230,7 +1230,7 @@ phase can be amortised across multiple appraisals.
 ## Appraisal Context initialisation
 
 The goal of the initialisation phase is to load the CoRIM Appraisal Context
-with objects such as tags (CoMID, CoSWID etc.) from CoRIM files,
+with objects such as tags (CoMID, CoSWID, etc.) from CoRIM files,
 cryptographic validation key material (e.g., raw public keys, root certificates,
 intermediate CA certificate chains), etc. that will be used in the subsequent
 Evidence Appraisal phase.
