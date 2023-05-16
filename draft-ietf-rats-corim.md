@@ -1270,7 +1270,7 @@ not been activated by a CoBOM.
 
 The Verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
 Concise Software ID Tags (CoSWID, {{-coswid}}),
-and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) --
+and/or Concise Trust Anchor Stores (CoTS, {{-ta-store}}) --
 from the selected CoRIMs.
 
 The Verifier MUST discard all tags which are not syntactically and semantically
