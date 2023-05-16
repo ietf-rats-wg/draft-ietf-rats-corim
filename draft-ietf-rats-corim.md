@@ -1316,7 +1316,7 @@ the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}}) -
 in the Appraisal Context.  If found, then usual X.509 certificate validation
 is performed.
 In PSA, the verification public key is looked up in the appraisal context using
-the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
+the `ueid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
 If found, COSE Sign1 verification is performed accordingly.
 
 Independent of the specific integrity protection method used, the integrity of
