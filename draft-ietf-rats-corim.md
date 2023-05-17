@@ -1338,7 +1338,7 @@ Evidence MUST be successfully verified.
 ### The Accepted Claims Set
 
 At the end of the Evidence collection process evidence has been converted into
-a format suitable for appraisal. This document describes an `accepted-claims-set`
+a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
 format and the algorithms used to compare it against CoMID reference values.
 
     accepted-claims-set = {​
