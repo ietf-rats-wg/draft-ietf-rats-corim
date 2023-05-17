@@ -70,7 +70,7 @@ normative:
     -: uri
     =: RFC3986
   I-D.ietf-sacm-coswid: coswid
-  I-D.ietf-rats-architecture: rats-arch
+  RFC9334: rats-arch
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   IANA.language-subtag-registry: language-subtag
@@ -91,6 +91,13 @@ informative:
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
+  DICE.Layer:
+    title: DICE Layering Architecture
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.0, Revision 0.19
+    date: July 2020
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
 
 entity:
   SELF: "RFCthis"
@@ -1312,7 +1319,7 @@ In DICE, a proof of liveness is performed on the final key in the certificate
 chain.
 If this passes then a suitable certification path anchored on a trusted root
 certificate is looked up -- e.g., based on linking information obtained from
-the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}}) --
+the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}) --
 in the Appraisal Context.  If found, then usual X.509 certificate validation
 is performed.
 In PSA, the verification public key is looked up in the appraisal context using
