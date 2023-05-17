@@ -1363,7 +1363,7 @@ describing the environment named by the `environment-map`.
 
 If evidence from different sources has the same `environment-map` then the
 `measurement-values-map`s are merged.
-If both measurement-value-maps being merged contain the same key then the
+If measurement-value-maps being merged contain the same key then the
 values associated with that key MUST be binary identical.
 
 ### Accepted Claims Set Initialisation
