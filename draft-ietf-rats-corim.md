@@ -1365,7 +1365,7 @@ Each set of evidence contains an `environment-map` providing a namespace, and
 a non empty `measurement-values-map`.
 
 Each entry in the `measurement-values-map` is a separate piece of evidence
-describing a measurement associated with the environment identified in 
+describing a measurement associated with the environment identified in
 the `environment-map`.
 
 An Attester can provide multiple `environment-map`s each containing a
@@ -1381,7 +1381,7 @@ measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
 If the merged measurement-value-map contains duplicate codepoints and the
-measurement values are not equivalent then the verifier SHALL report 
+measurement values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
 ### Accepted Claims Set Initialisation
