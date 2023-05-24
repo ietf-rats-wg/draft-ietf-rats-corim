@@ -70,7 +70,7 @@ normative:
     -: uri
     =: RFC3986
   I-D.ietf-sacm-coswid: coswid
-  I-D.ietf-rats-architecture: rats-arch
+  RFC9334: rats-arch
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   IANA.language-subtag-registry: language-subtag
@@ -91,6 +91,13 @@ informative:
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
+  DICE.Layer:
+    title: DICE Layering Architecture
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.0, Revision 0.19
+    date: July 2020
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
 
 entity:
   SELF: "RFCthis"
@@ -1230,7 +1237,7 @@ phase can be amortised across multiple appraisals.
 ## Appraisal Context initialisation
 
 The goal of the initialisation phase is to load the CoRIM Appraisal Context
-with objects such as tags (CoMID, CoSWID etc.) from CoRIM files,
+with objects such as tags (CoMID, CoSWID, etc.) from CoRIM files,
 cryptographic validation key material (e.g., raw public keys, root certificates,
 intermediate CA certificate chains), etc. that will be used in the subsequent
 Evidence Appraisal phase.
@@ -1273,7 +1280,7 @@ not been activated by a CoBOM.
 
 The Verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
 Concise Software ID Tags (CoSWID, {{-coswid}}),
-and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) --
+and/or Concise Trust Anchor Stores (CoTS, {{-ta-store}}) --
 from the selected CoRIMs.
 
 The Verifier MUST discard all tags which are not syntactically and semantically
@@ -1315,11 +1322,11 @@ In DICE, a proof of liveness is performed on the final key in the certificate
 chain.
 If this passes then a suitable certification path anchored on a trusted root
 certificate is looked up -- e.g., based on linking information obtained from
-the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}}) --
+the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}) --
 in the Appraisal Context.  If found, then usual X.509 certificate validation
 is performed.
 In PSA, the verification public key is looked up in the appraisal context using
-the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
+the `ueid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
 If found, COSE Sign1 verification is performed accordingly.
 
 Independent of the specific integrity protection method used, the integrity of
@@ -1334,7 +1341,7 @@ Evidence MUST be successfully verified.
 ### The Accepted Claims Set
 
 At the end of the Evidence collection process evidence has been converted into
-a format suitable for appraisal. This document describes an `accepted-claims-set`
+a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
 format and the algorithms used to compare it against CoMID reference values.
 
     accepted-claims-set = {​
