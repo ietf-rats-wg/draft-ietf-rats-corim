@@ -70,7 +70,7 @@ normative:
     -: uri
     =: RFC3986
   I-D.ietf-sacm-coswid: coswid
-  RFC9334: rats-arch
+  I-D.ietf-rats-architecture: rats-arch
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   IANA.language-subtag-registry: language-subtag
@@ -87,18 +87,10 @@ normative:
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
 
-
 informative:
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
-  DICE.Layer:
-    title: DICE Layering Architecture
-    author:
-      org: Trusted Computing Group
-    seriesinfo: Version 1.0, Revision 0.19
-    date: July 2020
-    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
 
 entity:
   SELF: "RFCthis"
@@ -1016,24 +1008,10 @@ A cryptographic key can be one of the following formats:
   certificates MUST be concatenated in order so that each directly certifies
   the one preceding.
 
-* `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
-  Defined in {{Section 7 of -cose}}
+A fourth format is used to represent thumbprints of raw keys or certificated
+keys:
 
-A cryptographic key digest can be one of the following formats:
-
-* `tagged-thumbprint-type`: a `digest` of a raw public key. The digest value may
-  be used to find the public key if contained in a lookup table.
-
-* `tagged-cert-thumbprint-type`: a `digest` of a certificate.
-  The digest value may be used to find the certificate if contained in a lookup table.
-
-* `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
-  The digest value may be used to find the certificate path if contained in a lookup table.
-
-In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
-then compute a digest of the key that is forwarded to a second Verifier. The second Verifier
-completes the signature verification by performing certificate path validation, revocation
-checks, and trust anchor checks.
+* `tagged-thumbprint-type`: hash of a certificate or raw public key.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
@@ -1252,7 +1230,7 @@ phase can be amortised across multiple appraisals.
 ## Appraisal Context initialisation
 
 The goal of the initialisation phase is to load the CoRIM Appraisal Context
-with objects such as tags (CoMID, CoSWID, etc.) from CoRIM files,
+with objects such as tags (CoMID, CoSWID etc.) from CoRIM files,
 cryptographic validation key material (e.g., raw public keys, root certificates,
 intermediate CA certificate chains), etc. that will be used in the subsequent
 Evidence Appraisal phase.
@@ -1288,8 +1266,6 @@ not available to the verifier, are discarded.
 
 The Verifier MUST activate all tags referenced by a CoBOM.
 
-ISSUE: What does the verifier do if there are multiple CoBOMs available
-
 After the Verifier has processed all CoBOMs it MUST discard any tags which have
 not been activated by a CoBOM.
 
@@ -1297,7 +1273,7 @@ not been activated by a CoBOM.
 
 The Verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
 Concise Software ID Tags (CoSWID, {{-coswid}}),
-and/or Concise Trust Anchor Stores (CoTS, {{-ta-store}}) --
+and/or Concise Trust Anchor Stores (CoTS, {{?I-D.ietf-rats-concise-ta-stores}}) --
 from the selected CoRIMs.
 
 The Verifier MUST discard all tags which are not syntactically and semantically
@@ -1309,7 +1285,7 @@ MUST be successfully resolved.
 
 All of the validated and potentially useful tags are loaded into the Appraisal Context.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
+ISSUE: Are CoMID tag boundaries discarded at this stage or are they used as part of verification?
 
 This concludes the initialisation phase.
 
@@ -1339,11 +1315,11 @@ In DICE, a proof of liveness is performed on the final key in the certificate
 chain.
 If this passes then a suitable certification path anchored on a trusted root
 certificate is looked up -- e.g., based on linking information obtained from
-the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}) --
+the DeviceID certificate (see Section 9.2.1 of {{DICE-Layering-Architecture}}) --
 in the Appraisal Context.  If found, then usual X.509 certificate validation
 is performed.
 In PSA, the verification public key is looked up in the appraisal context using
-the `ueid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
+the `euid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
 If found, COSE Sign1 verification is performed accordingly.
 
 Independent of the specific integrity protection method used, the integrity of
@@ -1358,7 +1334,7 @@ Evidence MUST be successfully verified.
 ### The Accepted Claims Set
 
 At the end of the Evidence collection process evidence has been converted into
-a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
+a format suitable for appraisal. This document describes an `accepted-claims-set`
 format and the algorithms used to compare it against CoMID reference values.
 
     accepted-claims-set = {​
@@ -1369,8 +1345,6 @@ format and the algorithms used to compare it against CoMID reference values.
       ? &(ce.coswid-triples: 4) => [ + ev-coswid-triple-record ]
       * $$ev-triples-map-extension​
     }
-
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/97
 
 Verifiers are not required to use this as their internal state, but for the
 purposes of this document a sample Verifier is discussed which uses this format.
@@ -1384,7 +1358,7 @@ Each set of evidence contains an `environment-map` providing a namespace, and
 a non empty `measurement-values-map`.
 
 Each entry in the `measurement-values-map` is a separate piece of evidence
-describing a measurement associated with the environment identified in
+describing a measurement associated with the environment identified in 
 the `environment-map`.
 
 An Attester can provide multiple `environment-map`s each containing a
@@ -1400,7 +1374,7 @@ measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
 If the merged measurement-value-map contains duplicate codepoints and the
-measurement values are not equivalent then the verifier SHALL report
+measurement values are not equivalent then the verifier SHALL report 
 an error and stop validation processing.
 
 ### Accepted Claims Set Initialisation
@@ -1413,7 +1387,7 @@ from the Attestation Environments.
 > * How evidence is converted to a format suitable for appraisal
 
 {{sec-dice-spdm}} provides information on how evidence collected using
-DICE and SPDM is added to the Accepted Claims Map.
+DICE and SPDM protocols is added to the Accepted Claims Map.
 
 ## Accepted Claims Map extension using CoMID tags
 
@@ -1437,8 +1411,6 @@ is extended using Endorsements etc. from the accepted tags.
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 ## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
-
-[^issue]: Add references. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/98
 
 This section defines how evidence from DICE and/or SPDM is transformed into a
 format where it can be added to an accepted claims set.
