@@ -1220,7 +1220,7 @@ depend on the specific CoRIM profile.
 Each CoRIM profile MUST provide a description of the expected Verifier behavior
 for each of those well-defined points.
 
-Note that what follows describes a simplified implementation.
+Note that what follows describes a simplified and standard algorithm.
 Verifiers claiming compliance with this specification MUST exhibit the same
 externally visible behavior as described here,
 they are not required to use the same internal data structures.
@@ -1238,7 +1238,7 @@ Evidence Appraisal phase.
 ### CoRIM Selection
 
 All available CoRIMs are collected.
-A Verifier may be pre-configured with a large number of tags describing many
+A Verifier may be pre-configured with a large number of CoRIMs describing many
 types of device.
 All CoRIMs are loaded at this stage, later stages will select the CoRIMs
 appropriate to the Evidence Appraisal step.
@@ -1251,8 +1251,8 @@ does not pass validation MUST be discarded.
 
 Other selection criteria MAY be applied.
 
-For example, if the Evidence format is known in advance, tags that do not match
-the expected profile can be readily discarded.
+For example, if the Evidence format is known in advance, CoRIMs using a
+profile that is not understood by a Verifier can be readily discarded.
 
 The selection process MUST yield at least one usable tag.
 
@@ -1260,6 +1260,9 @@ The selection process MUST yield at least one usable tag.
 
 All the available Concise Bill Of Material (CoBOMs) tags are then collected
 from the selected CoRIMs.
+
+CoBOMs which are not within their validity period, or which reference tags
+not available to the verifier, are discarded.
 
 The Verifier MUST activate all tags referenced by a CoBOM.
 
@@ -1281,8 +1284,8 @@ MUST be successfully resolved.
 ### Appraisal Context Construction
 
 All of the validated and potentially useful tags are loaded into the Appraisal Context.
-Each tag is loaded into the Appraisal Context as a single unit, later stages
-will accept or ignore the whole tag.
+
+ISSUE: Are CoMID tag boundaries discarded at this stage or are they used as part of verification?
 
 This concludes the initialisation phase.
 
@@ -1350,21 +1353,29 @@ The Accepted Claims Set will be matched against CoMID reference values, as per
 the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be easily
 matched against these reference values.
+
 Each set of evidence contains an `environment-map` providing a namespace, and
 a non empty `measurement-values-map`.
 
 Each entry in the `measurement-values-map` is a separate piece of evidence
-describing the environment named by the `environment-map`.
+describing a measurement associated with the environment identified in 
+the `environment-map`.
 
- An Attester can provide multiple `environment-map`s each containing a
- `measurement-values-map` with one entry;  a single `environment-map` containing
- multiple entries in its `measurement-values-map`; or a combination of
+An Attester can provide multiple `environment-map`s each containing a
+`measurement-values-map` with one entry;  a single `environment-map` containing
+multiple entries in its `measurement-values-map`; or a combination of
  these approaches.
 
 If evidence from different sources has the same `environment-map` then the
 `measurement-values-map`s are merged.
-If both measurement-value-maps being merged contain the same key then the
-values associated with that key MUST be binary identical.
+
+If the merged measurement-value-map contains duplicate codepoints and the
+measurement values are equivalent, then duplicate claims SHOULD be omitted.
+Equivalence typically means values MUST be binary identical.
+
+If the merged measurement-value-map contains duplicate codepoints and the
+measurement values are not equivalent then the verifier SHALL report 
+an error and stop validation processing.
 
 ### Accepted Claims Set Initialisation
 
@@ -1375,7 +1386,7 @@ from the Attestation Environments.
 >
 > * How evidence is converted to a format suitable for appraisal
 
-Section {sec-dice-spdm} provides information on how evidence collected using
+{{sec-dice-spdm}} provides information on how evidence collected using
 DICE and SPDM protocols is added to the Accepted Claims Map.
 
 ## Accepted Claims Map extension using CoMID tags
@@ -1408,7 +1419,7 @@ A Verifier supporting DICE/SPDM format evidence should implement this section.
 ### Transforming SPDM Evidence to a format usable for matching
 
 [Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which
-evidence in a SPDM MEASUREMENTS response is converted to Evidence suitable for
+measurements in an SPDM Measurement Block are converted to Evidence suitable for
 matching using the rules below.
 The converted evidence is held in evidence triples which have a similar format
 to reference-triples (their semantics follows the matching rules described above).
