@@ -1361,16 +1361,9 @@ At the end of the Evidence collection process evidence has been converted into
 a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
 format and the algorithms used to compare it against CoMID reference values.
 
-    accepted-claims-set = {​
-        &(ce.evidence-triples: 0) => [ + reference-triple-record ]​
-      ? &(ce.identity-triples: 1) => [ + identity-triple-record ]​
-      ? &(ce.dependency-triples: 2) => [ + domain-dependency-triple-record ]
-      ? &(ce.domain-membership-triples: 3) => [ + domain-membership-triple-record ]
-      ? &(ce.coswid-triples: 4) => [ + ev-coswid-triple-record ]
-      * $$ev-triples-map-extension​
-    }
-
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/97
+~~~ cddl
+{::include cddl/accepted-claims-set.cddl}
+~~~
 
 Verifiers are not required to use this as their internal state, but for the
 purposes of this document a sample Verifier is discussed which uses this format.
