@@ -964,24 +964,30 @@ If a `flags-map` value is not specified, then the operational mode is unknown.
 
 The following describes each member of the `flags-map`:
 
-* `configured` (index 0): The measured environment is fully configured for
-  normal operation if the flag is true.
+* `is-configured` (index 0): If the flag is true, the measured environment is fully configured for normal operation.
 
-* `secure` (index 1): The measured environment's configurable security settings
-  are fully enabled if the flag is true.
+* `is-secure` (index 1): If the flag is true, the measured environment's configurable
+security settings are fully enabled.
 
-* `recovery` (index 2): The measured environment is NOT in a recovery state if
-  the flag is true.
+* `is-recovery` (index 2): If the flag is true, the measured environment is in recovery
+mode.
 
-* `debug` (index 3): The measured environment is in a debug enabled state if
-  the flag is true.
+* `is-debug` (index 3): If the flag is true, the measured environment is in a debug enabled
+mode.
 
-* `replay-protected` (index 4): The measured environment is protected from
-  replay by a previous image that differs from the current image if the flag is
-  true.
+* `is-replay-protected` (index 4): If the flag is true, the measured environment is
+protected from replay by a previous image that differs from the current image.
 
-* `integrity-protected` (index 5): The measured environment is protected from
-  unauthorized update if the flag is true.
+* `is-integrity-protected` (index 5): If the flag is true, the measured environment is
+protected from unauthorized update.
+
+* `is-runtime-meas` (index 6): If the flag is true, the measured environment is measured
+after being loaded into memory.
+
+* `is-immutable` (index 7): If the flag is true, the measured environment is immutable.
+
+* `is-tcb` (index 8): If the flag is true, the measured environment is a trusted
+computing base.
 
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
