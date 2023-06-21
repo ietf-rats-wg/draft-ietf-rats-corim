@@ -1570,7 +1570,12 @@ which stores [expect-raw-value raw-value-mask] in an array?
 
 ##### Defining handling for new tags
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+A profile may specify handling for new CBOR tagged Reference Values. The
+profile must specify how to compare the tagged reference value against
+the Accepted Claims Set.
+
+Note that the verifier may compare Reference Values in any order, so the
+comparison should not include any state.
 
 ### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
 
