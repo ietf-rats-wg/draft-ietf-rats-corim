@@ -1522,15 +1522,49 @@ the `authorized-by` field then the Reference Value does not match.
 If all checks above have been performed successfully then the Reference Value
 matches.
 
-##### Comparing raw-value entries
+##### Comparison for svn entries
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+The value stored under `measurement-values-map` key 1 is a SVN, which is stored
+in the Accepted Claims Set as a UINT.
 
-##### Comparing svn entries
+If the Reference value for `measurement-values-map` key 1 is an untagged UINT or
+a UINT tagged with #6.552 then an equality comparison is performed. If the value
+of the SVN in Accepted Claims Set is not the same as the value in the Reference
+Value then the Reference Value does not match.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
+#6.553 then a minimum comparison is performed. If the value of the SVN in
+Accepted Claims Set less than the value in the Reference Value then the
+Reference Value does not match.
 
-##### Comparing digests entries
+##### Comparison for digests entries
+
+The value stored under `measurement-values-map` key 2, or a value tagged with
+#6.TBD is a digest entry. It contains one or more digests, each measuring the
+same object. A Reference Value may contain multiple digests, each with a
+different algorithm, if any of the algorithms meets the security requirements
+of the Reference Value author.
+
+If the CBOR structure of the digest entry in the Reference Value or the
+Accepted Claim Set value with the same key is incorrect then the Reference
+Value does not match.
+
+The Verifier iterates over the digests array in the reference value, locating
+algorithms which are present in the Reference Value and the Accepted Claims
+Set entry.
+
+If there is no algorithm which is present in the Reference Value and the
+Accepted Claims Set then the Reference Value does not match.
+
+If a hash algorithm is present in both the Reference Value and the Accepted
+Claims Set, but the value of the hash is not binary identical between the
+two locations then the Reference Value does not match.
+
+##### Comparison for raw-value entries
+
+> I think this comparison method only works if the entry is at key 4 (because
+there needs to be a mask at key 5). Should we have a reference value of this
+which stores [expect-raw-value raw-value-mask] in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
