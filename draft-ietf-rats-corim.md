@@ -1429,9 +1429,116 @@ is extended using Endorsements etc. from the accepted tags.
 
 ### Matching Evidence against Reference Values
 
+This section describes the process performed by the Verifier to determine
+which Endoresments in the candidate CoMIDs are applicable to the Attester being
+verified. All applicable Endorsements are added to the Accepted Claims Set.
+
+The verifier checks whether Endorsements are applicable by comparing Evidence
+in the Accepted Claims Set against Reference Values from the CoMID. These
+Reference Values may be provided as Reference Value Triples or may be combined
+with the Endorsements, for example as the Conditional Endorsement Series Triple.
+
+The following subsections describe how the CoRIM tells the verifier which
+Reference Values and Endorsements are grouped together ({{sec-grouping-ref-vals}})
+and how the verifier matches a Reference Value against the Accepted Claims Set
+({{sec-match-one-ref-val}}).
+
+If all Reference Values in a group match the Accepted Claims Set then all
+Endorsements in the group are added to the Accepted Claims Set
+(see {{sec-add-to-acs}}).
+
+If any Reference Value in a group does not match then this does not affect
+the processing of other groups.
+
+#### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
+
+> This paragraph will be replaced by a description of how the CoRIM tells the
+verifier which Reference Values and Endorsements are grouped together.
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/TBD
+
+[^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
+
+#### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
+
+This section describes how a Reference Value is matched against the Accepted Claims
+Set. If any part of the processing indicates that the Reference Value does not match
+then the remaining steps in this section are not required.
+
+A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
+Reference Value Triple these are packaged together. In other triples multiple
+Referenve Values are stored more compactly by letting one `environment-map`
+apply to multiple `measurement-map`s.
+
+The Verifier first looks for entries in the Accepted Claims Set with the same
+`environment-map` as the reference value. If there are no such entries then
+the Reference Value does not match.
+
+A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
+encoded object.
+
+A Verifier SHOULD convert `environment-map` so it meets CBOR Core Deterministic
+Encoding Requirements before performing the binary comparison.
+
+The Verifier SHALL iterate over the entries in the `measurement-values-map`
+entry within the Reference Value `measurement-map`. Each entry is compared
+against the `measurement-map` from the Accepted Claims Set. If any entry
+does not match then the Reference Value does not match.
+
+The algorithm used to match the `measurement-values-map` entries
+depends on whether the reference value is tagged,
+and on the `measurement-values-map` key which identifies the entry.
+
+If the Reference Value `measurement-values-map` value starts with a CBOR tag
+then the Verifier MUST use the algorithm associated with that tag to match
+the entries.
+
+This specification defined handling for some tags, which is described in
+sub-sections below. Profiles may define algorithms describing the handling
+of additional tags.
+
+If the Verifier does not recognise the Refernce Value CBOR tag value then
+the Reference Value does not match.
+
+If the Reference Value is not tagged and the measurement-value-map key is a
+special value described in the sub-sections below,
+then the algorithm appropriate to that key is used to match the entries.
+
+If the Reference Value is not tagged, and the `measurement-values-map` key
+is not a special value described below, then the entries are compared
+using binary comparison of their CBOR encoded values. If the values
+are not binary identical then the Reference Value does not match.
+
+Note that while specifications may extend the matching semantics using tags,
+there is no way to extend the matching semantics of special key values.
+Any new keys requiring special handling must have an appropriate tag in the
+reference value.
+
+If the Reference Value contains an `authorized-by` field then the Verifier
+SHALL check which entities authorized the Accepted Claims Set entry compared
+in the steps above. If the entry was not authorized by one of the keys from
+the `authorized-by` field then the Reference Value does not match.
+
+If all checks above have been performed successfully then the Reference Value
+matches.
+
+##### Comparing raw-value entries
+
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-### Adding CoMID Endorsed Values to the Accepted Claims Set
+##### Comparing svn entries
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+##### Comparing digests entries
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+##### Defining handling for new tags
+
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
