@@ -127,7 +127,7 @@ Besides, one supply chain actor will only provide the subset of characteristics 
 Attesters vary from one vendor to another, and for a given vendor from one product to another.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
-This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challanges by using an extensible format common to all supply chain actors and Verifiers.
+This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
 CoRIM enables Verifiers to reconcile a complex and scattered supply chain into a single homogeneous view.
 
 ## Terminology and Requirements Language
@@ -824,7 +824,7 @@ measurement. Measurements can have class, instance or group scope.  This is
 typically determined by the triple's environment.
 
 Class measurements apply generally to all the Attesters in the given class.
-Instance measurements apply to a specific Attester instances.  Environments
+Instance measurements apply to a specific Attester instance.  Environments
 identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
@@ -1157,7 +1157,7 @@ matched.
 The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
 Each `conditional-series-record` record is evaluated in the order it appears in the series array.
 The Endorsed Values are accepted if the Reference Values in a `conditional-series-record` matches Evidence.
-The first `conditional-series-record` that sucessfully matches Evidence terminates the series and
+The first `conditional-series-record` that successfully matches Evidence terminates the series and
 the matching Reference Values as well as the Endorsed Values are accepted.
 If none of the Reference Values in the series match Evidence, the triple is not matched,
 and no Claims are accepted.
@@ -1491,7 +1491,7 @@ processes in progressing drafts to RFCs.  Please note that the listing of any
 individual implementation here does not imply endorsement by the IETF.
 Furthermore, no effort has been spent to verify the information presented here
 that was supplied by IETF contributors.  This is not intended as, and must not
-be construed to be, a catalog of available implementations or their features.
+be construed to be, a catalogue of available implementations or their features.
 Readers are advised to note that other implementations may exist.
 
 According to {{RFC7942}}, "this will allow reviewers and working groups to
@@ -1506,7 +1506,7 @@ groups to use this information as they see fit".
   Foundation
 
 * Implementation's web page:
-  [https://github.com/veraison/corim/README.md](https://github.com/veraison/corim/README.md)
+  [https://github.com/veraison/corim/README.md](https://github.com/veraison/corim/blob/main/README.md)
 
 * Brief general description: The `corim/corim` and `corim/comid` packages
   provide a golang API for low-level manipulation of Concise Reference
@@ -1515,7 +1515,7 @@ groups to use this information as they see fit".
   API from the `veraison/swid` package) to provide a user command line
   interface for working with CoRIM, CoMID and CoSWID. Specifically, it allows
   creating, signing, verifying, displaying, uploading, and more. See
-  [https://github.com/cocli/README.md](https://github.com/cocli/README.md) for
+  [https://github.com/cocli/README.md](https://github.com/veraison/corim/blob/main/cocli/README.md) for
   further details.
 
 * Implementation's level of maturity: alpha.
