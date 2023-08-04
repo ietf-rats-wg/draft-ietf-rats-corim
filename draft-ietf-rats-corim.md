@@ -1235,7 +1235,7 @@ The following describes each member of the `concise-bom-tag` map.
   The `$$concise-bom-tag-extension` extension socket is empty in this
   specification.
 
-# CoRIM-based appraisal of Evidence
+# CoRIM-based Appraisal of Evidence
 
 The verification procedure is divided into three separate phases:
 
