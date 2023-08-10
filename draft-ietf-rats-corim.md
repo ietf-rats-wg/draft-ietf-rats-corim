@@ -989,6 +989,10 @@ after being loaded into memory.
 * `is-tcb` (index 8): If the flag is true, the measured environment is a trusted
 computing base.
 
+* `is-confidentiality-protected` (index 9): If the flag is true, the measured environment
+is confidentiality protected. For example, if the measured environment consists of memory,
+the sensitive values in memory are obfuscated, such as, by encryption.
+
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/9
