@@ -1574,7 +1574,7 @@ A profile may specify handling for new CBOR tagged Reference Values. The
 profile must specify how to compare the tagged Reference Value against
 the Accepted Claims Set.
 
-Note that the verifier may compare Reference Values in any order, so the
+Note that the Verifier may compare Reference Values in any order, so the
 comparison should not include any state.
 
 ### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
