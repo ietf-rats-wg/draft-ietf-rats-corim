@@ -1444,7 +1444,7 @@ and how the Verifier matches a Reference Value against the Accepted Claims Set
 ({{sec-match-one-ref-val}}).
 
 If all Reference Values in a group match the Accepted Claims Set then all
-Endorsements in the group are added to the Accepted Claims Set
+Endorsed Values in the group are added to the Accepted Claims Set
 (see {{sec-add-to-acs}}).
 
 If any Reference Value in a group does not match then this does not affect
