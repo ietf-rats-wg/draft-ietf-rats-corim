@@ -1438,7 +1438,7 @@ in the Accepted Claims Set against Reference Values from the CoMID. These
 Reference Values may be provided as Reference Value Triples or may be combined
 with the Endorsed Values, for example as the Conditional Endorsement Series Triple.
 
-The following subsections describe how the CoRIM tells the verifier which
+The following subsections describe how the CoRIM conveys the Verifier which
 Reference Values and Endorsements are grouped together ({{sec-grouping-ref-vals}})
 and how the verifier matches a Reference Value against the Accepted Claims Set
 ({{sec-match-one-ref-val}}).
