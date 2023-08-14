@@ -1440,7 +1440,7 @@ with the Endorsed Values, for example as the Conditional Endorsement Series Trip
 
 The following subsections describe how the CoRIM conveys the Verifier which
 Reference Values and Endorsements are grouped together ({{sec-grouping-ref-vals}})
-and how the verifier matches a Reference Value against the Accepted Claims Set
+and how the Verifier matches a Reference Value against the Accepted Claims Set
 ({{sec-match-one-ref-val}}).
 
 If all Reference Values in a group match the Accepted Claims Set then all
