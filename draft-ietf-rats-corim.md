@@ -1412,13 +1412,13 @@ from the Attestation Environments.
 > * How evidence is converted to a format suitable for appraisal
 
 {{sec-dice-spdm}} provides information on how evidence collected using
-DICE and SPDM is added to the Accepted Claims Map.
+DICE and SPDM is added to the Accepted Claims Set.
 
-## Accepted Claims Map extension using CoMID tags
+## Accepted Claims Set extension using CoMID tags
 
-In the Accepted Claims Map extension phase, a CoRIM Appraisal Context and
+In the Accepted Claims Set extension phase, a CoRIM Appraisal Context and
 an Evidence Appraisal Policy are used by the Verifier to find CoMID tags which
-match the Attester. Tags which match are accepted, and the Accepted Claims Map
+match the Attester. Tags which match are accepted, and the Accepted Claims Set
 is extended using Endorsements etc. from the accepted tags.
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
