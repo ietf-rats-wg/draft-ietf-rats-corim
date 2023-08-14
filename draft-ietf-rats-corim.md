@@ -1467,7 +1467,7 @@ then the remaining steps in this section are not required.
 
 A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
 Reference Value Triple these are packaged together. In other triples multiple
-Referenve Values are stored more compactly by letting one `environment-map`
+Reference Values are stored more compactly by letting one `environment-map`
 apply to multiple `measurement-map`s.
 
 The Verifier first looks for entries in the Accepted Claims Set with the same
