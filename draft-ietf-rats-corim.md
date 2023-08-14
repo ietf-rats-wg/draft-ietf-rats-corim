@@ -1471,7 +1471,7 @@ Reference Values are stored more compactly by letting one `environment-map`
 apply to multiple `measurement-map`s.
 
 The Verifier first looks for entries in the Accepted Claims Set with the same
-`environment-map` as the reference value. If there are no such entries then
+`environment-map` as the Reference Value. If there are no such entries then
 the Reference Value does not match.
 
 A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
