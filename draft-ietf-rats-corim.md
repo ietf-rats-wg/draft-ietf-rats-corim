@@ -1571,7 +1571,7 @@ which stores [expect-raw-value raw-value-mask] in an array?
 ##### Defining handling for new tags
 
 A profile may specify handling for new CBOR tagged Reference Values. The
-profile must specify how to compare the tagged reference value against
+profile must specify how to compare the tagged Reference Value against
 the Accepted Claims Set.
 
 Note that the verifier may compare Reference Values in any order, so the
