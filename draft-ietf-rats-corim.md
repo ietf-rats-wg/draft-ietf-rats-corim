@@ -1436,7 +1436,7 @@ verified. All applicable Endorsements are added to the Accepted Claims Set.
 The Verifier checks whether Endorsements are applicable by comparing Evidence
 in the Accepted Claims Set against Reference Values from the CoMID. These
 Reference Values may be provided as Reference Value Triples or may be combined
-with the Endorsements, for example as the Conditional Endorsement Series Triple.
+with the Endorsed Values, for example as the Conditional Endorsement Series Triple.
 
 The following subsections describe how the CoRIM tells the verifier which
 Reference Values and Endorsements are grouped together ({{sec-grouping-ref-vals}})
