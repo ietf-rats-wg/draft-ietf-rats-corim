@@ -99,6 +99,7 @@ informative:
     seriesinfo: Version 1.0, Revision 0.19
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
+  IANA.concise-software-identifier: coswid-reg
 
 entity:
   SELF: "RFCthis"
@@ -1194,7 +1195,22 @@ applies to all measurements in the triple, including those in `measurement-value
 
 ## Extensibility {#sec-extensibility}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/10
+CoRIM is described using CDDL {{-cddl}} which includes extensibility support for "sockets" (a.k.a., map structures)
+and data types. CDDL socket extensions have the form `($$NAME-extension)` where "NAME" is the name of the map.
+CDDL socket extensibility enables a CoRIM profile to extend the standard definition.
+Typically, map extension requires a convention for code point naming that avoids code-point resue.
+Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
+Additionally, a range of code points may be reserved for vendor-specific use such as negative integers.
+
+Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name and '$' signifies type extensibility.
+
+Socket and type extensions are permitted by the CoRIM schema where the above CDDL extensibility points are defined.
+Schema extensions should be documented to facilitate interoperability. CoRIM profiles are best used to documennt
+vendor or industry defined extensions.
+
+This specification uses CDDL type extension. Type extensions contained in this specification are considered
+as "standard CoRIM types". Standard CoRIM types, along with the other CDDL expressions in this specification,
+set the baseline for CoRIM interoperability.
 
 # CoBOM {#sec-cobom}
 
