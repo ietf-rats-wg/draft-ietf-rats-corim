@@ -991,7 +991,7 @@ computing base.
 
 * `is-confidentiality-protected` (index 9): If the flag is true, the measured environment
 is confidentiality protected. For example, if the measured environment consists of memory,
-the sensitive values in memory are obfuscated, such as, by encryption.
+the sensitive values in memory are encrypted.
 
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
