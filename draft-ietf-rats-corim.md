@@ -99,6 +99,27 @@ informative:
     seriesinfo: Version 1.0, Revision 0.19
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
+  SPDM:
+    title: Security Protocol and Data Model (SPDM)
+    author:
+      org: Distributed Management Task Force
+    seriesinfo: Version 1.3.0
+    date: May 2023
+    target: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pdf
+  CE.SPDM:
+    title: TCG DICE Concise Evidence Binding for SPDM
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.00, Revision 0.53, public review
+    date: June 2023
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf
+  DICE.AA:
+    title: DICE Attestation Architecture
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.1, Revision 0.17, public review
+    date: May 2023
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
 
 entity:
   SELF: "RFCthis"
@@ -1435,21 +1456,19 @@ is extended using Endorsements etc. from the accepted tags.
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
+## Adding DICE/SPDM Evidence to the Accepted Claims Set {#sec-dice-spdm}
 
-[^issue]: Add references. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/98
-
-This section defines how evidence from DICE and/or SPDM is transformed into a
+This section defines how evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
 format where it can be added to an accepted claims set.
 A Verifier supporting DICE/SPDM format evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
 
-[Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which
+The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which
 measurements in an SPDM Measurement Block are converted to Evidence suitable for
 matching using the rules below.
-The converted evidence is held in evidence triples which have a similar format
-to reference-triples (their semantics follows the matching rules described above).
+The SPDM measurements are converted to `concise-evidence` which has a format that is similar
+to CoRIM `triples-map` (their semantics follows the matching rules described above).
 
 ### Transforming DICE Evidence to a format usable for matching
 
