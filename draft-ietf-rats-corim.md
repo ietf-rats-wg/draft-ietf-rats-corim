@@ -997,7 +997,7 @@ for consistency only, since the security relevance is opaque to Verifiers.
 There are two parts to a `raw-value-group`, a measurement and an optional mask.
 The default raw value measurement is a CBOR tagged `bstr`.
 Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
-between the various forms.
+between the various semantics of type values.
 
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
