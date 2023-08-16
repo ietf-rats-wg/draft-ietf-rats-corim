@@ -1292,9 +1292,10 @@ from the selected CoRIMs.
 CoBOMs which are not within their validity period, or which reference tags
 not available to the verifier, are discarded.
 
-The Verifier MUST activate all tags referenced by a CoBOM.
-
-ISSUE: What does the verifier do if there are multiple CoBOMs available
+If there are multiple CoBOMs available then the Verifier MUST process each
+CoBOM independently. The Verifier MUST activate all tags referenced by
+any valid CoBOM. It is valid to have multiple CoBOMs activating the same
+tag.
 
 After the Verifier has processed all CoBOMs it MUST discard any tags which have
 not been activated by a CoBOM.
