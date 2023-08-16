@@ -850,6 +850,11 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
+The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
+the `authorized-by` statement can be supplied in the `measurement-map`.
+
+
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
 ~~~
@@ -861,6 +866,9 @@ The following describes each member of the `measurement-map`:
 
 * `mval` (index 1): The measurements associated with the (sub-)environment.
   Described in {{sec-comid-mval}}.
+
+* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
+ the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
