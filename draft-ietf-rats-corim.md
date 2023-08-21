@@ -885,6 +885,10 @@ environment. Depending on the context (triple) in which they are found,
 elements in a `measurement-values-map` can represent class or instance
 measurements. Note that some of the elements have instance scope only.
 
+Measurement values may support use cases beyond Verifier appraisal.
+Typically, a Relying Party determines if additional processing is desirable
+and whether the processing is applied by the Verifier or the Relying Party.
+
 ~~~ cddl
 {::include cddl/measurement-values-map.cddl}
 ~~~
@@ -934,6 +938,11 @@ The following describes each member of the `measurement-values-map`.
   {{sec-common-uuid}}.
 
 * `name` (index 11): a name associated with the measured environment.
+
+* `cryptokeys` (index 12): identifies cryptographic keys that are protected by the Target Environment
+  See {{sec-crypto-keys}}.
+  An Attesting Environment determines that keys are protected as part of Claims Collection.
+  Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 
 ###### Version {#sec-comid-version}
 
@@ -1631,6 +1640,21 @@ there needs to be a mask at key 5). Should we have a Reference Value of this
 which stores [expect-raw-value raw-value-mask] in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+##### Comparison for cryptokeys entries
+
+The value stored under `measurement-values-map` key 12 is an array of `$crypto-key-type-choice` entries. `$crypto-key-type-choice` entries are CBOR tagged values.
+The array contains one or more entries in sequence.
+
+The CBOR tag of the first entry of the Reference Value `cryptokeys` array is compared with
+the CBOR tag of the first entry of the Accepted Claims Set `cryptokeys` value.
+If the CBOR tags match, then the bytes following the CBOR tag from the Reference Value entry
+are compared with the bytes following the CBOR tag from the Accepted Claims Set entry.
+If the byte strings match, and there is another array entry,
+then the next entry from the Reference Values array is likewise
+compared with the next entry of the Accepted Claims Set array.
+If all entrys of the Reference Values array matches a corresponding entry in the Accepted Claims Set array, then the `cryptokeys` Reference Value matches.
+Otherwise, `cryptokeys` does not match.
 
 ##### Handling of new tags
 
