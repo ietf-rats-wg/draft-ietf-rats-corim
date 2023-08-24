@@ -1439,17 +1439,17 @@ If the merged measurement-value-map contains duplicate codepoints and the
 measurement values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
-### Accepted Claims Set Initialisation
+### Accepted Claims Set Initialization
 
-The Accepted Claims Set is initialised with cryptographically verified Evidence
-from the Attestation Environments.
+The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments
+into the Verifier's Accepted Claims Set. By default, all Attester claims are allowed, unless disallowed by Reference Claims
+that do not satisfy appraisal checks.
 
-> A CoRIM profile MUST describe:
->
-> * How evidence is converted to a format suitable for appraisal
+{{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions
+before being added to the Accepted Claims Set.
 
-{{sec-dice-spdm}} provides information on how evidence collected using
-DICE and SPDM is added to the Accepted Claims Set.
+Other Evidence formats may require format translation before being added to the Accepted Claims Set. A CoRIM profile,
+see {{sec-corim-map}}, may be used to define an Evidence translation function.
 
 ## Accepted Claims Set extension using CoMID tags
 
