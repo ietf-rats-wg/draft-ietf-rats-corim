@@ -1442,8 +1442,7 @@ an error and stop validation processing.
 ### Accepted Claims Set Initialization
 
 The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments
-into the Verifier's Accepted Claims Set. By default, all Attester claims are allowed, unless disallowed by Reference Claims
-that do not satisfy appraisal checks.
+into the Verifier's Accepted Claims Set.
 
 {{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions
 before being added to the Accepted Claims Set.
