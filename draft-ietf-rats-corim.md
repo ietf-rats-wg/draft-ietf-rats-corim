@@ -1441,14 +1441,12 @@ an error and stop validation processing.
 
 ### Accepted Claims Set Initialization
 
-The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments
-into the Verifier's Accepted Claims Set.
+The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments into the Verifier's Accepted Claims Set.
 
-{{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions
-before being added to the Accepted Claims Set.
+{{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions before being added to the Accepted Claims Set.
 
-Other Evidence formats may require format translation before being added to the Accepted Claims Set. A CoRIM profile,
-see {{sec-corim-map}}, may be used to define an Evidence translation function.
+Other Evidence formats may require format translation before being added to the Accepted Claims Set.
+A CoRIM profile, see {{sec-corim-map}}, may be used to define an Evidence translation function.
 
 ## Accepted Claims Set extension using CoMID tags
 
