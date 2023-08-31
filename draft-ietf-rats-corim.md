@@ -1593,14 +1593,14 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                            | Reference |
 |     --- | ---------           | ---------                                                            | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}} | {{&SELF}} |
-|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                                   | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                             | {{&SELF}} |
+|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}             | {{&SELF}} |
+|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                            | {{&SELF}} |
+|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                      | {{&SELF}} |
 | 503-504 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                  | {{&SELF}} |
-|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                   | {{&SELF}} |
+|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                    | {{&SELF}} |
+|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}         | {{&SELF}} |
+|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 |     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
 |     551 | `int`               | tagged-int-type, see {{sec-common-tagged-int}}                       | {{&SELF}} |
@@ -1610,9 +1610,11 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}                | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}           | {{&SELF}} |
 |     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}                | {{&SELF}} |
-| 558-559 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}          | {{&SELF}} |
-| 561-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}                        | {{&SELF}} |
+|     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
+|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}                      | {{&SELF}} |
+|     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
+| 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
