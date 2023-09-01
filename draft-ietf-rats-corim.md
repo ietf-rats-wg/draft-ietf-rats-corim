@@ -1091,11 +1091,6 @@ A cryptographic key digest can be one of the following formats:
 * `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
 
-In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
-then compute a digest of the key that is forwarded to a second Verifier. The second Verifier
-completes the signature verification by performing certificate path validation, revocation
-checks, and trust anchor checks.
-
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
 ~~~
@@ -1138,10 +1133,22 @@ the object relates to the subject.
 #### Device Identity Triple {#sec-comid-triple-identity}
 
 A Device Identity triple relates one or more cryptographic keys to a device.
-The subject of an Identity triple uses an instance or class identifier to refer
+The triple subject is an identity used to name a device.
+The triple object is an array of cryptographic key(s) used to authenticate the device.
+The predicate asserts that any of the key(s) (found in the triple object) can be used to authenticate the device.
+
+If contained in a CoRIM, this triple endorses that the key(s) were provisioned to the Target Environment.
+
+If contained in Evidence, this triple asserts that the key(s) are present in the Target Environment.
+
+The Verifier SHOULD perform offline verification of the key(s).
+
+The subject of an identity triple uses an instance or class identifier to refer
 to a device, and a cryptographic key is the object. The predicate asserts that
-the identity is authenticated by the key. A common application for this triple
-is device identity.
+at least one of the keys, as defined by `$crypto-key-type-choice`, authenticates the Attester.
+
+Depending on which `$crypto-key-type-choice` form is supplied, the Verifier may
+need to take different steps to locate or verify the key.
 
 ~~~ cddl
 {::include cddl/identity-triple-record.cddl}
@@ -1149,10 +1156,24 @@ is device identity.
 
 #### Attestation Keys Triple {#sec-comid-triple-attest-key}
 
+An Attestation Keys triple relates one or more cryptographic keys to an Attesting Environment.
+The attest key triple subject identifies an Attesting Environment whose object
+is an array of cryptographic keys used to validate the integrity of Evidence.
+The predicate asserts that any of the key(s) (found in the triple object) can be used to validate integrity of Evidence.
+
+If contained in a CoRIM, this triple endorses that the key(s) were provisioned to the Attesting Environment.
+
+If contained in Evidence, this triple asserts that the key(s) are present in the Attesting Environment.
+
+The Verifier SHOULD perform offline verification of the key(s).
+
 An Attestation Keys triple relates one or more cryptographic keys to an
-Attesting Environment. The Attestation Key triple subject is an Attesting
+Attesting Environment. The attest key triple subject is an Attesting
 Environment whose object is a cryptographic key. The predicate asserts that the
-Attesting Environment signs Evidence that can be verified using the key.
+Attesting Environment integrity protects Evidence using at least one of the keys.
+
+Depending on which `$crypto-key-type-choice` form is supplied, the Verifier may
+need to take different steps to locate or verify the key.
 
 ~~~ cddl
 {::include cddl/attest-key-triple-record.cddl}
