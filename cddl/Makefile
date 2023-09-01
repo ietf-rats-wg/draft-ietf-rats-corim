@@ -7,6 +7,7 @@ include tools.mk
 %.cbor: %.diag
 	$(diag2cbor) $< > $@
 
+check:: cbor-tags-unique
 check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
 
@@ -57,3 +58,9 @@ clean: ; rm -f $(CLEANFILES)
 
 # Extract the CBOR tags defined by CoRIM/CoMID (i.e., those in the 5xx space)
 cbor-tags.txt: $(wildcard *.cddl) ; grep -h '#6\.5' *cddl | sort -u -t'=' -k2 > $@
+
+# Return an error if there are duplicat CBOR Tags defined
+cbor-tags-unique: $(wildcard *.cddl) ; \
+	 grep -h '#6\.5' *cddl | sort -u -t'=' -k2 > cbor-tags.txt ; \
+	 grep -E -h -o '#6\.[0-9]{3}' cbor-tags.txt | uniq -cd ; \
+	 if [ -n $1 ]; then exit 1; else echo "null"; fi
