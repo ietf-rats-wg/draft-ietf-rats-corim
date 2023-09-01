@@ -63,4 +63,4 @@ cbor-tags.txt: $(wildcard *.cddl) ; grep -h '#6\.5' *cddl | sort -u -t'=' -k2 > 
 cbor-tags-unique: $(wildcard *.cddl) ; \
 	 grep -h '#6\.5' *cddl | sort -u -t'=' -k2 > cbor-tags.txt ; \
 	 grep -E -h -o '#6\.[0-9]{3}' cbor-tags.txt | uniq -cd ; \
-	 if [ -n $1 ]; then exit 1; else echo "null"; fi
+	 if [ -n $1 ]; then exit 1; else echo "CBOR tags are unique"; fi
