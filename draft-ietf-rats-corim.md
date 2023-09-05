@@ -1429,45 +1429,53 @@ is extended using Endorsements etc. from the accepted tags.
 
 ### Matching Evidence against Reference Values
 
+An Endorser may use CoMID tags to publish Conditional Endorsements, which
+are added to the Accepted Claims Set only if specified conditions apply.
 This section describes the process performed by the Verifier to determine
-which Endoresments in the candidate CoMIDs are applicable to the Attester being
-verified. All applicable Endorsements are added to the Accepted Claims Set.
+which Conditional Endorsements from the candidate CoMIDs should be added
+to the Accepted Claims Set.
 
-The Verifier checks whether Endorsements are applicable by comparing Evidence
-in the Accepted Claims Set against Reference Values from the CoMID. These
-Reference Values may be provided as Reference Value Triples or may be combined
-with the Endorsed Values, for example as the Conditional Endorsement Series Triple.
+The verifier checks whether Conditional Endorsements are applicable by
+comparing Evidence in the Accepted Claims Set against Reference Values
+from the CoMID. These Reference Values may be provided as Reference Value
+Triples or may be combined with the Endorsements, for example as the
+Conditional Endorsement Series Triple.
 
-The following subsections describe how the CoRIM conveys the Verifier which
-Reference Values and Endorsements are grouped together ({{sec-grouping-ref-vals}})
-and how the Verifier matches a Reference Value against the Accepted Claims Set
-({{sec-match-one-ref-val}}).
-
-If all Reference Values in a group match the Accepted Claims Set then all
-Endorsed Values in the group are added to the Accepted Claims Set
-(see {{sec-add-to-acs}}).
-
-If any Reference Value in a group does not match then this does not affect
-the processing of other groups.
+The following subsections describe how the CoRIM tells the verifier which
+Reference Values and Endorsed Values are grouped together ({{sec-grouping-ref-vals}})
+and how the verifier matches a Reference Value against the Accepted Claims Set
+({{sec-match-all-ref-vals}}).
 
 #### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
 
 > This paragraph will be replaced by a description of how the CoRIM tells the
 verifier which Reference Values and Endorsements are grouped together.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/TBD
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/110
 
 [^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
 
+#### Matching all reference values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
+
+If all Reference Values in a group match entries in the Accepted Claims Set
+then all Endorsements in the group are added to the Accepted Claims Set
+(see {{sec-add-to-acs}}). {{sec-match-one-ref-val}} describes how one 
+Reference Value is matched against the Accepted Claims Set.
+
+If any Reference Value in a group does not match the Accepted Claims Set then 
+all Endorsements in the group are silently ignored. 
+
+Each group is processed independently of other groups. If a group fails to match
+the Accepted Claims Set then this does not affect the processing of other groups.
+
 #### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
 
-This section describes how a Reference Value is matched against the Accepted Claims
-Set. If any part of the processing indicates that the Reference Value does not match
-then the remaining steps in this section are not required.
+This section describes how a Reference Value is matched against evidence in the Accepted
+Claims Set. If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
 
 A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
-Reference Value Triple these are packaged together. In other triples multiple
-Reference Values are stored more compactly by letting one `environment-map`
+`reference-values-triple-record` these are packaged together. In other triples multiple
+Reference Values are represented more compactly by letting one `environment-map`
 apply to multiple `measurement-map`s.
 
 The Verifier first looks for entries in the Accepted Claims Set with the same
@@ -1477,59 +1485,62 @@ the Reference Value does not match.
 A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
 encoded object.
 
-A Verifier SHOULD convert `environment-map` so it meets CBOR Core Deterministic
-Encoding Requirements before performing the binary comparison.
+A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
+Deterministic Encoding Requirements before performing the binary comparison.
 
 The Verifier SHALL iterate over the entries in the `measurement-values-map`
-entry within the Reference Value `measurement-map`. Each entry is compared
+entry within the reference value `measurement-map`. Each entry is compared
 against the `measurement-map` from the Accepted Claims Set. If any entry
 does not match then the Reference Value does not match.
 
 The algorithm used to match the `measurement-values-map` entries
-depends on whether the reference value is tagged,
+is described below. It depends on whether the reference value is tagged with a
+CBOR tag {{-cbor}},
 and on the `measurement-values-map` key which identifies the entry.
 
 If the Reference Value `measurement-values-map` value starts with a CBOR tag
 then the Verifier MUST use the algorithm associated with that tag to match
 the entries.
 
-This specification defined handling for some tags, which is described in
-sub-sections below. Profiles may define algorithms describing the handling
-of additional tags.
+This specification defines the matching algorithm for some CBOR tagged reference
+values, which is described in sub-sections below.
 
-If the Verifier does not recognise the Refernce Value CBOR tag value then
+A CoRIM profile may define additional tags and their matching algorithms.
+
+If the Verifier does not recognize the Reference Value CBOR tag value then
 the Reference Value does not match.
 
 If the Reference Value is not tagged and the measurement-value-map key is a
-special value described in the sub-sections below,
+value with handling described in the sub-sections below,
 then the algorithm appropriate to that key is used to match the entries.
 
 If the Reference Value is not tagged, and the `measurement-values-map` key
-is not a special value described below, then the entries are compared
+is not a value described below, then the entries are compared
 using binary comparison of their CBOR encoded values. If the values
 are not binary identical then the Reference Value does not match.
 
-Note that while specifications may extend the matching semantics using tags,
-there is no way to extend the matching semantics of special key values.
-Any new keys requiring special handling must have an appropriate tag in the
-reference value.
+Note that while specifications may extend the matching semantics using CBOR tags,
+there is no way to extend the matching semantics of key values.
+Any new keys requiring non-default comparison must add a CBOR tag to the
+reference value describing the desired behaviour.
 
 If the Reference Value contains an `authorized-by` field then the Verifier
-SHALL check which entities authorized the Accepted Claims Set entry compared
-in the steps above. If the entry was not authorized by one of the keys from
-the `authorized-by` field then the Reference Value does not match.
+SHALL check for an `authorized-by` field in the Accepted Claims Set entry
+compared in the steps above. If the Accepted Claims Set key is not one of
+the keys from the reference value `authorized-by` field then the
+reference value does not match.
 
 If all checks above have been performed successfully then the Reference Value
 matches.
 
 ##### Comparison for svn entries
 
-The value stored under `measurement-values-map` key 1 is a SVN, which is stored
-in the Accepted Claims Set as a UINT.
+The value stored under `measurement-values-map` key 1 is an SVN, which must
+have type UINT.
 
 If the Reference value for `measurement-values-map` key 1 is an untagged UINT or
 a UINT tagged with #6.552 then an equality comparison is performed. If the value
-of the SVN in Accepted Claims Set is not the same as the value in the Reference
+of the SVN in Accepted Claims Set is not equal to the value in the Reference
 Value then the Reference Value does not match.
 
 If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
@@ -1542,23 +1553,30 @@ Reference Value does not match.
 The value stored under `measurement-values-map` key 2, or a value tagged with
 #6.TBD is a digest entry. It contains one or more digests, each measuring the
 same object. A Reference Value may contain multiple digests, each with a
-different algorithm, if any of the algorithms meets the security requirements
-of the Reference Value author.
+different algorithm acceptable to the Reference Value provider. If the
+digest in evidence contains a single value with an algorithm and value
+matching one of the algorithms and values in the Reference Value then it
+matches.
+
+To prevent downgrade attacks, if there are multiple algorithms which are in
+both the evidence and Reference Value then the digests calculated using all
+shared algorithms must match.
 
 If the CBOR structure of the digest entry in the Reference Value or the
 Accepted Claim Set value with the same key is incorrect then the Reference
 Value does not match.
 
-The Verifier iterates over the digests array in the reference value, locating
-algorithms which are present in the Reference Value and the Accepted Claims
+The Verifier MUST iterate over the reference value `digests` array, locating
+algorithms which are present in the reference value and the Accepted Claims
 Set entry.
 
-If there is no algorithm which is present in the Reference Value and the
-Accepted Claims Set then the Reference Value does not match.
+If there is no hash algorithm identifier which is present in the Reference Value
+and the Accepted Claims Set entry then the Reference Value does not match.
 
-If a hash algorithm is present in both the Reference Value and the Accepted
-Claims Set, but the value of the hash is not binary identical between the
-two locations then the Reference Value does not match.
+If a hash algorithm identifier is present in both the Reference Value and
+the Accepted Claims Set, but the value of the hash is not binary identical
+between the reference value and the Accepted Claims Set entry then the
+Reference Value does not match.
 
 ##### Comparison for raw-value entries
 
@@ -1568,14 +1586,14 @@ which stores [expect-raw-value raw-value-mask] in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-##### Defining handling for new tags
+##### Handling of new tags
 
 A profile may specify handling for new CBOR tagged Reference Values. The
-profile must specify how to compare the tagged Reference Value against
+profile must specify how to compare the CBOR tagged Reference Value against
 the Accepted Claims Set.
 
-Note that the Verifier may compare Reference Values in any order, so the
-comparison should not include any state.
+Note that the verifier may compare Reference Values in any order, so the
+comparison should not be stateful.
 
 ### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
 
@@ -1608,7 +1626,7 @@ translated into a separate evidence object.
 The Verifier SHALL translate each field in the TcbInfo into a field in the
 created endorsed-triple-record
 
-- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id`
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id` and tagged with tag #6.111
 - The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
 - The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
 - The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
