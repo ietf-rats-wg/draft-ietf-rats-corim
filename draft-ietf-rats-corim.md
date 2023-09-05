@@ -1462,8 +1462,8 @@ then all Endorsements in the group are added to the Accepted Claims Set
 (see {{sec-add-to-acs}}). {{sec-match-one-ref-val}} describes how one
 Reference Value is matched against the Accepted Claims Set.
 
-If any Reference Value in a group does not match the Accepted Claims Set then 
-all Endorsements in the group are silently ignored. 
+If any Reference Value in a group does not match the Accepted Claims Set then
+all Endorsements in the group are silently ignored.
 
 Each group is processed independently of other groups. If a group fails to match
 the Accepted Claims Set then this does not affect the processing of other groups.
