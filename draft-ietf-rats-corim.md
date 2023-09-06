@@ -1571,7 +1571,7 @@ The Verifier MUST iterate over the reference value `digests` array, locating
 algorithms which are present in the reference value and the Accepted Claims
 Set entry.
 
-If there is no hash algorithm identifier which is present in the Reference Value
+If the hash algorithm identifier which is present in the Reference Value
 and the Accepted Claims Set entry then the Reference Value does not match.
 
 If a hash algorithm identifier is present in both the Reference Value and
