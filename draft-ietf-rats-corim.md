@@ -1484,7 +1484,7 @@ The Verifier first looks for entries in the Accepted Claims Set with the same
 the Reference Value does not match.
 
 A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
-encoded object.
+encoded objects.
 
 A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
 Deterministic Encoding Requirements before performing the binary comparison.
