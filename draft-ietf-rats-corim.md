@@ -1471,7 +1471,8 @@ the Accepted Claims Set then this does not affect the processing of other groups
 #### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
 
 This section describes how a Reference Value is matched against Evidence in the Accepted
-Claims Set. If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
+Claims Set.
+If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
 
 A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
 `reference-values-triple-record` these are packaged together. In other triples multiple
