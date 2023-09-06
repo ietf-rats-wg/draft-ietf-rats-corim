@@ -1572,7 +1572,7 @@ algorithms which are present in the reference value and the Accepted Claims
 Set entry.
 
 If the hash algorithm identifier which is present in the Reference Value
-and the Accepted Claims Set entry then the Reference Value does not match.
+differs from the hash algorithm identifier in the Accepted Claims Set entry then the Reference Value does not match.
 
 If a hash algorithm identifier is present in both the Reference Value and
 the Accepted Claims Set, but the value of the hash is not binary identical
