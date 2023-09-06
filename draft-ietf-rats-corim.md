@@ -1521,7 +1521,7 @@ using binary comparison of their CBOR encoded values. If the values
 are not binary identical then the Reference Value does not match.
 
 Note that while specifications may extend the matching semantics using CBOR tags,
-there is no way to extend the matching semantics of key values.
+there is no way to extend the matching semantics of keys.
 Any new keys requiring non-default comparison must add a CBOR tag to the
 reference value describing the desired behaviour.
 
