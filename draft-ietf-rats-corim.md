@@ -1551,7 +1551,8 @@ Reference Value does not match.
 
 ##### Comparison for digests entries
 
-The value stored under `measurement-values-map` key 2, or a value tagged with
+The value stored under `measurement-values-map` key 2,
+or a value tagged with
 #6.TBD is a digest entry.
 It contains one or more digests, each measuring the
 same object. A Reference Value may contain multiple digests, each with a
