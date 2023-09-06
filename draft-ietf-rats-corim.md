@@ -1555,7 +1555,7 @@ The value stored under `measurement-values-map` key 2, or a value tagged with
 #6.TBD is a digest entry. It contains one or more digests, each measuring the
 same object. A Reference Value may contain multiple digests, each with a
 different algorithm acceptable to the Reference Value provider. If the
-digest in evidence contains a single value with an algorithm and value
+digest in Evidence contains a single value with an algorithm and value
 matching one of the algorithms and values in the Reference Value then it
 matches.
 
