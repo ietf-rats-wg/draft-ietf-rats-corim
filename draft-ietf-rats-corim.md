@@ -1563,7 +1563,7 @@ To prevent downgrade attacks, if there are multiple algorithms which are in
 both the Evidence and Reference Value then the digests calculated using all
 shared algorithms must match.
 
-If the CBOR structure of the digest entry in the Reference Value or the
+If the CBOR encoding of the digest entry in the Reference Value or the
 Accepted Claim Set value with the same key is incorrect then the Reference
 Value does not match.
 
