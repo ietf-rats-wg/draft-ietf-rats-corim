@@ -99,6 +99,27 @@ informative:
     seriesinfo: Version 1.0, Revision 0.19
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
+  SPDM:
+    title: Security Protocol and Data Model (SPDM)
+    author:
+      org: Distributed Management Task Force
+    seriesinfo: Version 1.3.0
+    date: May 2023
+    target: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pdf
+  CE.SPDM:
+    title: TCG DICE Concise Evidence Binding for SPDM
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.00, Revision 0.53, public review
+    date: June 2023
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf
+  DICE.AA:
+    title: DICE Attestation Architecture
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.1, Revision 0.17, public review
+    date: May 2023
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
 
 entity:
   SELF: "RFCthis"
@@ -127,7 +148,7 @@ Besides, one supply chain actor will only provide the subset of characteristics 
 Attesters vary from one vendor to another, and for a given vendor from one product to another.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
-This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challanges by using an extensible format common to all supply chain actors and Verifiers.
+This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
 CoRIM enables Verifiers to reconcile a complex and scattered supply chain into a single homogeneous view.
 
 ## Terminology and Requirements Language
@@ -824,10 +845,15 @@ measurement. Measurements can have class, instance or group scope.  This is
 typically determined by the triple's environment.
 
 Class measurements apply generally to all the Attesters in the given class.
-Instance measurements apply to a specific Attester instances.  Environments
+Instance measurements apply to a specific Attester instance.  Environments
 identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
+
+The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
+the `authorized-by` statement can be supplied in the `measurement-map`.
+
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -840,6 +866,9 @@ The following describes each member of the `measurement-map`:
 
 * `mval` (index 1): The measurements associated with the (sub-)environment.
   Described in {{sec-comid-mval}}.
+
+* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
+ the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
@@ -989,9 +1018,25 @@ after being loaded into memory.
 * `is-tcb` (index 8): If the flag is true, the measured environment is a trusted
 computing base.
 
+* `is-confidentiality-protected` (index 9): If the flag is true, the measured environment
+is confidentiality protected. For example, if the measured environment consists of memory,
+the sensitive values in memory are encrypted.
+
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/9
+Raw value measurements are typically vendor defined values that are checked by Verifiers
+for consistency only, since the security relevance is opaque to Verifiers.
+
+There are two parts to a `raw-value-group`, a measurement and an optional mask.
+The default raw value measurement is a CBOR tagged `bstr`.
+Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
+between the various semantics of type values.
+
+The mask is applied by the Verifier as part of appraisal.
+Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
+
+When a new raw value type is defined, the convention for applying the mask is also defined.
+Typically, a CoRIM profile is used to define new raw values and mask semantics.
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
@@ -1157,7 +1202,7 @@ matched.
 The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
 Each `conditional-series-record` record is evaluated in the order it appears in the series array.
 The Endorsed Values are accepted if the Reference Values in a `conditional-series-record` matches Evidence.
-The first `conditional-series-record` that sucessfully matches Evidence terminates the series and
+The first `conditional-series-record` that successfully matches Evidence terminates the series and
 the matching Reference Values as well as the Endorsed Values are accepted.
 If none of the Reference Values in the series match Evidence, the triple is not matched,
 and no Claims are accepted.
@@ -1235,7 +1280,7 @@ The following describes each member of the `concise-bom-tag` map.
   The `$$concise-bom-tag-extension` extension socket is empty in this
   specification.
 
-# CoRIM-based Evidence Verification
+# CoRIM-based Appraisal of Evidence
 
 The verification procedure is divided into three separate phases:
 
@@ -1414,11 +1459,11 @@ from the Attestation Environments.
 {{sec-dice-spdm}} provides information on how evidence collected using
 DICE and SPDM is added to the Accepted Claims Map.
 
-## Accepted Claims Map extension using CoMID tags
+## Accepted Claims Set extension using CoMID tags
 
-In the Accepted Claims Map extension phase, a CoRIM Appraisal Context and
+In the Accepted Claims Set extension phase, a CoRIM Appraisal Context and
 an Evidence Appraisal Policy are used by the Verifier to find CoMID tags which
-match the Attester. Tags which match are accepted, and the Accepted Claims Map
+match the Attester. Tags which match are accepted, and the Accepted Claims Set
 is extended using Endorsements etc. from the accepted tags.
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
@@ -1606,17 +1651,18 @@ comparison should not be stateful.
 
 [^issue]: Add references. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/98
 
-This section defines how evidence from DICE and/or SPDM is transformed into a
+This section defines how evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
 format where it can be added to an accepted claims set.
 A Verifier supporting DICE/SPDM format evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
-
-[Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which
+The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which
 measurements in an SPDM Measurement Block are converted to Evidence suitable for
 matching using the rules below.
-The converted evidence is held in evidence triples which have a similar format
-to reference-triples (their semantics follows the matching rules described above).
+The SPDM measurements are converted to `concise-evidence` which has a format that is similar
+
+to CoRIM `triples-map` (their semantics follows the matching rules described above).
+
 
 ### Transforming DICE Evidence to a format usable for matching
 
@@ -1658,7 +1704,7 @@ processes in progressing drafts to RFCs.  Please note that the listing of any
 individual implementation here does not imply endorsement by the IETF.
 Furthermore, no effort has been spent to verify the information presented here
 that was supplied by IETF contributors.  This is not intended as, and must not
-be construed to be, a catalog of available implementations or their features.
+be construed to be, a catalogue of available implementations or their features.
 Readers are advised to note that other implementations may exist.
 
 According to {{RFC7942}}, "this will allow reviewers and working groups to
@@ -1673,7 +1719,7 @@ groups to use this information as they see fit".
   Foundation
 
 * Implementation's web page:
-  [https://github.com/veraison/corim/README.md](https://github.com/veraison/corim/README.md)
+  [https://github.com/veraison/corim/README.md](https://github.com/veraison/corim/blob/main/README.md)
 
 * Brief general description: The `corim/corim` and `corim/comid` packages
   provide a golang API for low-level manipulation of Concise Reference
@@ -1682,7 +1728,7 @@ groups to use this information as they see fit".
   API from the `veraison/swid` package) to provide a user command line
   interface for working with CoRIM, CoMID and CoSWID. Specifically, it allows
   creating, signing, verifying, displaying, uploading, and more. See
-  [https://github.com/cocli/README.md](https://github.com/cocli/README.md) for
+  [https://github.com/cocli/README.md](https://github.com/veraison/corim/blob/main/cocli/README.md) for
   further details.
 
 * Implementation's level of maturity: alpha.
@@ -1736,9 +1782,11 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}                | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}           | {{&SELF}} |
 |     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}                | {{&SELF}} |
-| 558-559 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}          | {{&SELF}} |
-| 561-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}                        | {{&SELF}} |
+|     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
+|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}                      | {{&SELF}} |
+|     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
+| 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
