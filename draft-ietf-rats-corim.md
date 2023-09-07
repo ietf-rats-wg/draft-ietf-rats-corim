@@ -1365,7 +1365,7 @@ Evidence MUST be successfully verified.
 
 At the end of the Evidence collection process evidence has been converted into
 a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
-format and the algorithms used to compare it against CoMID reference values.
+format and the algorithms used to compare it against CoMID Reference Values.
 
 ~~~ cddl
 {::include cddl/accepted-claims-set.cddl}
@@ -1374,10 +1374,10 @@ format and the algorithms used to compare it against CoMID reference values.
 Verifiers are not required to use this as their internal state, but for the
 purposes of this document a sample Verifier is discussed which uses this format.
 
-The Accepted Claims Set will be matched against CoMID reference values, as per
+The Accepted Claims Set will be matched against CoMID Reference Values, as per
 the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be easily
-matched against these reference values.
+matched against these Reference Values.
 
 Each set of evidence contains an `environment-map` providing a namespace, and
 a non empty `measurement-values-map`.
@@ -1451,11 +1451,11 @@ and how the verifier matches a Reference Value against the Accepted Claims Set
 > This paragraph will be replaced by a description of how the CoRIM tells the
 verifier which Reference Values and Endorsements are grouped together.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/110
+[^issue]: Need to get agreement on how group membership is encoded. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
 
 [^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
 
-#### Matching all reference values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
+#### Matching all Reference Values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
 
 If all Reference Values in a group match entries in the Accepted Claims Set
 then all Endorsements in the group are added to the Accepted Claims Set
@@ -1490,12 +1490,12 @@ A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
 Deterministic Encoding Requirements before performing the binary comparison.
 
 The Verifier SHALL iterate over the entries in the `measurement-values-map`
-entry within the reference value `measurement-map`. Each entry is compared
+entry within the Reference Value `measurement-map`. Each entry is compared
 against the `measurement-map` from the Accepted Claims Set. If any entry
 does not match then the Reference Value does not match.
 
 The algorithm used to match the `measurement-values-map` entries
-is described below. It depends on whether the reference value is tagged with a
+is described below. It depends on whether the Reference Value is tagged with a
 CBOR tag {{-cbor}},
 and on the `measurement-values-map` key which identifies the entry.
 
@@ -1523,13 +1523,13 @@ are not binary identical then the Reference Value does not match.
 Note that while specifications may extend the matching semantics using CBOR tags,
 there is no way to extend the matching semantics of keys.
 Any new keys requiring non-default comparison must add a CBOR tag to the
-reference value describing the desired behaviour.
+Reference Value describing the desired behaviour.
 
 If the Reference Value contains an `authorized-by` field then the Verifier
 SHALL check for an `authorized-by` field in the Accepted Claims Set entry
 compared in the steps above. If the Accepted Claims Set key is not one of
-the keys from the reference value `authorized-by` field then the
-reference value does not match.
+the keys from the Reference Value `authorized-by` field then the
+Reference Value does not match.
 
 If all checks above have been performed successfully then the Reference Value
 matches.
@@ -1569,8 +1569,8 @@ If the CBOR encoding of the digest entry in the Reference Value or the
 Accepted Claim Set value with the same key is incorrect then the Reference
 Value does not match.
 
-The Verifier MUST iterate over the reference value `digests` array, locating
-algorithms which are present in the reference value and the Accepted Claims
+The Verifier MUST iterate over the Reference Value `digests` array, locating
+algorithms which are present in the Reference Value and the Accepted Claims
 Set entry.
 
 If the hash algorithm identifier which is present in the Reference Value
@@ -1578,13 +1578,13 @@ differs from the hash algorithm identifier in the Accepted Claims Set entry then
 
 If a hash algorithm identifier is present in both the Reference Value and
 the Accepted Claims Set, but the value of the hash is not binary identical
-between the reference value and the Accepted Claims Set entry then the
+between the Reference Value and the Accepted Claims Set entry then the
 Reference Value does not match.
 
 ##### Comparison for raw-value entries
 
 > I think this comparison method only works if the entry is at key 4 (because
-there needs to be a mask at key 5). Should we have a reference value of this
+there needs to be a mask at key 5). Should we have a Reference Value of this
 which stores [expect-raw-value raw-value-mask] in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
