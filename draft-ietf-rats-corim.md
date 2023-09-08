@@ -1447,17 +1447,15 @@ If the merged measurement-value-map contains duplicate codepoints and the
 measurement values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
-### Accepted Claims Set Initialisation
+### Accepted Claims Set Initialization
 
-The Accepted Claims Set is initialised with cryptographically verified Evidence
-from the Attestation Environments.
+The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments into the Verifier's Accepted Claims Set.
 
-> A CoRIM profile MUST describe:
->
-> * How evidence is converted to a format suitable for appraisal
+Evidence formats may require format translation before being added to the Accepted Claims Set.
+If format translation is required, a CoRIM profile, see {{sec-corim-profile-types}}, defines an Evidence translation function.
 
-{{sec-dice-spdm}} provides information on how evidence collected using
-DICE and SPDM is added to the Accepted Claims Map.
+{{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions before being added to the Accepted Claims Set.
+
 
 ## Accepted Claims Set extension using CoMID tags
 
@@ -1647,20 +1645,18 @@ comparison should not be stateful.
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
-
-[^issue]: Add references. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/98
+## Adding DICE/SPDM Evidence to the Accepted Claims Set {#sec-dice-spdm}
 
 This section defines how evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
 format where it can be added to an accepted claims set.
 A Verifier supporting DICE/SPDM format evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
+
 The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which
 measurements in an SPDM Measurement Block are converted to Evidence suitable for
 matching using the rules below.
 The SPDM measurements are converted to `concise-evidence` which has a format that is similar
-
 to CoRIM `triples-map` (their semantics follows the matching rules described above).
 
 
@@ -1765,14 +1761,14 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                            | Reference |
 |     --- | ---------           | ---------                                                            | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}} | {{&SELF}} |
-|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                                   | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                             | {{&SELF}} |
+|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}             | {{&SELF}} |
+|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                            | {{&SELF}} |
+|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                      | {{&SELF}} |
 | 503-504 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                  | {{&SELF}} |
-|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                   | {{&SELF}} |
+|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                    | {{&SELF}} |
+|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}         | {{&SELF}} |
+|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 |     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
 |     551 | `int`               | tagged-int-type, see {{sec-common-tagged-int}}                       | {{&SELF}} |
