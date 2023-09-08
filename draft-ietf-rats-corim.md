@@ -1492,7 +1492,7 @@ and how the verifier matches a Reference Value against the Accepted Claims Set
 #### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
 
 > This paragraph will be replaced by a description of how the CoRIM tells the
-verifier which Reference Values and Endorsements are grouped together.
+verifier which Reference Values and Endorsed Values are grouped together.
 
 [^issue]: Need to get agreement on how group membership is encoded. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
 
@@ -1530,7 +1530,7 @@ A Verifier SHALL compare two `environment-map`s using a binary comparison of the
 encoded objects.
 
 A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
-Deterministic Encoding Requirements before performing the binary comparison.
+Deterministic Encoding Requirements {{-cbor}} before performing the binary comparison.
 
 The Verifier SHALL iterate over the entries in the `measurement-values-map`
 entry within the Reference Value `measurement-map`. Each entry is compared
@@ -1608,13 +1608,13 @@ To prevent downgrade attacks, if there are multiple algorithms which are in
 both the Evidence and Reference Value then the digests calculated using all
 shared algorithms must match.
 
-If the CBOR encoding of the digest entry in the Reference Value or the
-Accepted Claim Set value with the same key is incorrect then the Reference
-Value does not match.
+If the CBOR encoding of the `digests` entry in the Reference Value or the
+Accepted Claim Set value with the same key is incorrect (for example if fields
+are missing or the wrong type) then the Reference Value does not match.
 
 The Verifier MUST iterate over the Reference Value `digests` array, locating
-algorithms which are present in the Reference Value and the Accepted Claims
-Set entry.
+hash algorithm identifiers that are present in the Reference Value and
+in the Accepted Claims Set entry.
 
 If the hash algorithm identifier which is present in the Reference Value
 differs from the hash algorithm identifier in the Accepted Claims Set entry then the Reference Value does not match.
