@@ -1479,7 +1479,7 @@ which Conditional Endorsements from the candidate CoMIDs should be added
 to the Accepted Claims Set.
 
 The verifier checks whether Conditional Endorsements are applicable by
-comparing Evidence in the Accepted Claims Set against Reference Values
+comparing Evidence or Endorsements in the Accepted Claims Set against Reference Values
 from the CoMID. These Reference Values may be provided as Reference Value
 Triples or may be combined with the Endorsements, for example as the
 Conditional Endorsement Series Triple.
@@ -1491,36 +1491,97 @@ and how the verifier matches a Reference Value against the Accepted Claims Set
 
 #### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
 
-> This paragraph will be replaced by a description of how the CoRIM tells the
-verifier which Reference Values and Endorsed Values are grouped together.
+> *TODO: This paragraph will be replaced by a description of how the CoRIM tells the
+verifier which Reference Values and Endorsed Values are grouped together.*
 
 [^issue]: Need to get agreement on how group membership is encoded. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
 
-[^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
+> *TODO: Can we find a better term than the placeholder "group"? If so then I think we should replace all mentions of "group" with the new term.*
 
 #### Matching all Reference Values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
 
-If all Reference Values in a group match entries in the Accepted Claims Set
-then all Endorsements in the group are added to the Accepted Claims Set
-(see {{sec-add-to-acs}}). {{sec-match-one-ref-val}} describes how one
+If a group contains at least one `reference-triple-record` and at least one
+`endorsed-triple-record` then the Reference Values contained in the former
+are used to decide whether to add Endorsed Values in the latter to the
+Accepted Claims Set.
+
+The Verifier SHALL try to match all Reference Values contained within all
+`reference-triple-record`s within the group against Evidence and Endorsements
+in the Accepted Claims Set. {{sec-match-one-ref-val}} describes how each
 Reference Value is matched against the Accepted Claims Set.
 
-If any Reference Value in a group does not match the Accepted Claims Set then
-all Endorsements in the group are silently ignored.
+If all Reference Values in a group match entries in the Accepted Claims Set
+then all Endorsed Values from `endorsed-triple-record`s in the group are added
+to the Accepted Claims Set (see {{sec-add-to-acs}}).
 
-Each group is processed independently of other groups. If a group fails to match
-the Accepted Claims Set then this does not affect the processing of other groups.
+If any Reference Value in a group does not match the Accepted Claims Set then
+all `endorsed-triple-record`s in the group are silently ignored.
+
+Each group is processed independently of other groups. If `reference-triple-record`s
+in a group do not match the Accepted Claims Set then this does not affect
+the processing of other groups.
+
+#### Matching a Conditional Endorsement Triple against the Accepted Claims Set
+
+A Conditional Endorsement Triple {{sec-comid-triple-cond-end}} is an efficient
+encoding of a Reference Value and an Endorsed Value.
+
+The triple's `stateful-environment-record` field contains both the `environment-map` and `measurement-map` parts of the Reference Value.
+
+The Endorsed Value is encoded using the same `environment-map`, plus the
+`measurement-value-map` field within the Conditional Endorsement Triple.
+
+For each Conditional Endorsement Triple, the verifier SHALL attempt to match the
+Reference Value against entries in the Accepted Claims Set (see {{sec-match-one-ref-val}}).
+If it matches then the verifier SHALL add the Endorsed value to the
+Accepted Claims Set (see {{sec-add-to-acs}}).
+
+>> *TODO: Is a Conditional Endorsement Triple affected by `reference-triple-record`s
+in the same group? I think not. Does this need to be mentioned?*
+
+#### Matching a Conditional Endorsement Series Triple against the Accepted Claims Set
+
+A Conditional Endorsement Series Triple {{sec-comid-triple-cond-series}} is an efficient
+encoding of a series of alternative Reference Values, each with a corresponding
+Endorsed Value. The Verifier adds the Endorsed Values corresponding to the first
+Reference Value which matches.
+
+All Reference Values and Endorsed Values in the triple use the same `environment-map`
+which is encoded within the `stateful-environment-record` part of the triple.
+
+Reference Values are encoded in two parts of this triple.
+
+Reference Values which apply to every Endorsed Value are encoded in the
+`stateful-environment-record`, in the same way as for the
+Conditional Endorsement Triple. If any of these Reference Values
+do not match Evidence or Endorsements in the Accepted Claims Set then then the
+entire triple is silently ignored.
+
+Reference Values which apply to only one Endorsed Value are encoded, with their
+matching Endorsed Value, in an array of `conditional-series-record`s.
+Each `conditional-series-record` encodes the `measurement-value-map` part for its
+Reference Values and for the corresponding Endorsed Value.
+
+The entries in the `conditional-series-record` array are processed in order. The verifier
+SHALL attempt to match the Reference Value part of each entry against entries
+in the Accepted Claims Set (see {{sec-match-one-ref-val}}).
+If the Reference Value matches then the verifier SHALL add the corresponding
+Endorsed Value to the Accepted Claims Set (see {{sec-add-to-acs}}) and
+SHALL skip processing the remaining entries in the array.
+
+>> *TODO: Is a Conditional Endorsement Series Triple affected by
+`reference-triple-record`s in the same group? I think not.
+Does this need to be mentioned?*
 
 #### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
 
-This section describes how a Reference Value is matched against Evidence in the Accepted
-Claims Set.
-If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
+This section describes how a Reference Value is matched against Evidence or Endorsements
+in the Accepted Claims Set.
+If any part of the processing indicates that the Reference Value does not match
+then the remaining steps in this section are skipped for that group.
 
-A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
-`reference-values-triple-record` these are packaged together. In other triples multiple
-Reference Values are represented more compactly by letting one `environment-map`
-apply to multiple `measurement-map`s.
+A Reference Value consists of an `environment-map` plus a `measurement-map`. It is
+encoded within different triples as described above.
 
 The Verifier first looks for entries in the Accepted Claims Set with the same
 `environment-map` as the Reference Value. If there are no such entries then
