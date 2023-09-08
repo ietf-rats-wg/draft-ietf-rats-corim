@@ -1410,7 +1410,7 @@ Evidence MUST be successfully verified.
 
 At the end of the Evidence collection process evidence has been converted into
 a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
-format and the algorithms used to compare it against CoMID reference values.
+format and the algorithms used to compare it against CoMID Reference Values.
 
 ~~~ cddl
 {::include cddl/accepted-claims-set.cddl}
@@ -1419,10 +1419,10 @@ format and the algorithms used to compare it against CoMID reference values.
 Verifiers are not required to use this as their internal state, but for the
 purposes of this document a sample Verifier is discussed which uses this format.
 
-The Accepted Claims Set will be matched against CoMID reference values, as per
+The Accepted Claims Set will be matched against CoMID Reference Values, as per
 the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be easily
-matched against these reference values.
+matched against these Reference Values.
 
 Each set of evidence contains an `environment-map` providing a namespace, and
 a non empty `measurement-values-map`.
@@ -1472,9 +1472,176 @@ is extended using Endorsements etc. from the accepted tags.
 
 ### Matching Evidence against Reference Values
 
+An Endorser may use CoMID tags to publish Conditional Endorsements, which
+are added to the Accepted Claims Set only if specified conditions apply.
+This section describes the process performed by the Verifier to determine
+which Conditional Endorsements from the candidate CoMIDs should be added
+to the Accepted Claims Set.
+
+The verifier checks whether Conditional Endorsements are applicable by
+comparing Evidence in the Accepted Claims Set against Reference Values
+from the CoMID. These Reference Values may be provided as Reference Value
+Triples or may be combined with the Endorsements, for example as the
+Conditional Endorsement Series Triple.
+
+The following subsections describe how the CoRIM tells the verifier which
+Reference Values and Endorsed Values are grouped together ({{sec-grouping-ref-vals}})
+and how the verifier matches a Reference Value against the Accepted Claims Set
+({{sec-match-all-ref-vals}}).
+
+#### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
+
+> This paragraph will be replaced by a description of how the CoRIM tells the
+verifier which Reference Values and Endorsed Values are grouped together.
+
+[^issue]: Need to get agreement on how group membership is encoded. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
+
+[^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
+
+#### Matching all Reference Values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
+
+If all Reference Values in a group match entries in the Accepted Claims Set
+then all Endorsements in the group are added to the Accepted Claims Set
+(see {{sec-add-to-acs}}). {{sec-match-one-ref-val}} describes how one
+Reference Value is matched against the Accepted Claims Set.
+
+If any Reference Value in a group does not match the Accepted Claims Set then
+all Endorsements in the group are silently ignored.
+
+Each group is processed independently of other groups. If a group fails to match
+the Accepted Claims Set then this does not affect the processing of other groups.
+
+#### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
+
+This section describes how a Reference Value is matched against Evidence in the Accepted
+Claims Set.
+If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
+
+A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
+`reference-values-triple-record` these are packaged together. In other triples multiple
+Reference Values are represented more compactly by letting one `environment-map`
+apply to multiple `measurement-map`s.
+
+The Verifier first looks for entries in the Accepted Claims Set with the same
+`environment-map` as the Reference Value. If there are no such entries then
+the Reference Value does not match.
+
+A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
+encoded objects.
+
+A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
+Deterministic Encoding Requirements {{-cbor}} before performing the binary comparison.
+
+The Verifier SHALL iterate over the entries in the `measurement-values-map`
+entry within the Reference Value `measurement-map`. Each entry is compared
+against the `measurement-map` from the Accepted Claims Set. If any entry
+does not match then the Reference Value does not match.
+
+The algorithm used to match the `measurement-values-map` entries
+is described below. It depends on whether the Reference Value is tagged with a
+CBOR tag {{-cbor}},
+and on the `measurement-values-map` key which identifies the entry.
+
+If the Reference Value `measurement-values-map` value starts with a CBOR tag
+then the Verifier MUST use the algorithm associated with that tag to match
+the entries.
+
+This specification defines the matching algorithm for some CBOR tagged reference
+values, which is described in sub-sections below.
+
+A CoRIM profile may define additional tags and their matching algorithms.
+
+If the Verifier does not recognize the Reference Value CBOR tag value then
+the Reference Value does not match.
+
+If the Reference Value is not tagged and the measurement-value-map key is a
+value with handling described in the sub-sections below,
+then the algorithm appropriate to that key is used to match the entries.
+
+If the Reference Value is not tagged, and the `measurement-values-map` key
+is not a value described below, then the entries are compared
+using binary comparison of their CBOR encoded values. If the values
+are not binary identical then the Reference Value does not match.
+
+Note that while specifications may extend the matching semantics using CBOR tags,
+there is no way to extend the matching semantics of keys.
+Any new keys requiring non-default comparison must add a CBOR tag to the
+Reference Value describing the desired behaviour.
+
+If the Reference Value contains an `authorized-by` field then the Verifier
+SHALL check for an `authorized-by` field in the Accepted Claims Set entry
+compared in the steps above. If the Accepted Claims Set key is not one of
+the keys from the Reference Value `authorized-by` field then the
+Reference Value does not match.
+
+If all checks above have been performed successfully then the Reference Value
+matches.
+
+##### Comparison for svn entries
+
+The value stored under `measurement-values-map` key 1 is an SVN, which must
+have type UINT.
+
+If the Reference value for `measurement-values-map` key 1 is an untagged UINT or
+a UINT tagged with #6.552 then an equality comparison is performed. If the value
+of the SVN in Accepted Claims Set is not equal to the value in the Reference
+Value then the Reference Value does not match.
+
+If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
+#6.553 then a minimum comparison is performed. If the value of the SVN in
+Accepted Claims Set less than the value in the Reference Value then the
+Reference Value does not match.
+
+##### Comparison for digests entries
+
+The value stored under `measurement-values-map` key 2,
+or a value tagged with
+#6.TBD is a digest entry.
+It contains one or more digests, each measuring the
+same object. A Reference Value may contain multiple digests, each with a
+different algorithm acceptable to the Reference Value provider. If the
+digest in Evidence contains a single value with an algorithm and value
+matching one of the algorithms and values in the Reference Value then it
+matches.
+
+To prevent downgrade attacks, if there are multiple algorithms which are in
+both the Evidence and Reference Value then the digests calculated using all
+shared algorithms must match.
+
+If the CBOR encoding of the `digests` entry in the Reference Value or the
+Accepted Claim Set value with the same key is incorrect (for example if fields
+are missing or the wrong type) then the Reference Value does not match.
+
+The Verifier MUST iterate over the Reference Value `digests` array, locating
+hash algorithm identifiers that are present in the Reference Value and
+in the Accepted Claims Set entry.
+
+If the hash algorithm identifier which is present in the Reference Value
+differs from the hash algorithm identifier in the Accepted Claims Set entry then the Reference Value does not match.
+
+If a hash algorithm identifier is present in both the Reference Value and
+the Accepted Claims Set, but the value of the hash is not binary identical
+between the Reference Value and the Accepted Claims Set entry then the
+Reference Value does not match.
+
+##### Comparison for raw-value entries
+
+> I think this comparison method only works if the entry is at key 4 (because
+there needs to be a mask at key 5). Should we have a Reference Value of this
+which stores [expect-raw-value raw-value-mask] in an array?
+
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-### Adding CoMID Endorsed Values to the Accepted Claims Set
+##### Handling of new tags
+
+A profile may specify handling for new CBOR tagged Reference Values. The
+profile must specify how to compare the CBOR tagged Reference Value against
+the Accepted Claims Set.
+
+Note that the verifier may compare Reference Values in any order, so the
+comparison should not be stateful.
+
+### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
@@ -1492,6 +1659,7 @@ matching using the rules below.
 The SPDM measurements are converted to `concise-evidence` which has a format that is similar
 to CoRIM `triples-map` (their semantics follows the matching rules described above).
 
+
 ### Transforming DICE Evidence to a format usable for matching
 
 DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
@@ -1503,7 +1671,7 @@ translated into a separate evidence object.
 The Verifier SHALL translate each field in the TcbInfo into a field in the
 created endorsed-triple-record
 
-- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id`
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id` and tagged with tag #6.111
 - The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
 - The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
 - The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
