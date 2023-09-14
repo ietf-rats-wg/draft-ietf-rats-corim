@@ -1256,7 +1256,7 @@ only at specific allowed points known as "extension points"
 
 The following types of extensions are supported in CoRIM
 
-## Map Extensions
+### Map Extensions
 Map Extensions provides extensibility support to CoRIM Map structures.
 CDDL map extensibility enables a CoRIM profile to extend the base CoRIM definition.
 CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map
@@ -1265,7 +1265,7 @@ for code point naming that avoids code-point reuse.
 Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
 Additionally, a range of code points may be reserved for vendor-specific use such as negative integers.
 
-## Data Type Extensions
+### Data Type Extensions
 
 Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name
 and '$' signifies type extensibility.
@@ -1425,8 +1425,8 @@ This concludes the initialisation phase.
 
 ## Evidence Collection
 
-In the evidence collection phase the Verifier communicates with attesters to
-collect evidence.
+In the Evidence collection phase the Verifier communicates with attesters to
+collect Evidence.
 
 The first part of the Evidence collection phase does not perform any
 cryptographic validation.
@@ -1435,7 +1435,7 @@ This allows Verifiers to use untrusted code for their initial Evidence collectio
 The results of the evidence collection are protocol specific data and transcripts
 which are used as input to appraisal by the Verifier.
 
-### Cryptographic validation of Evidence
+### Cryptographic validation of Evidence {#sec-crypto-validate-evidence}
 
 If the authenticity of Evidence is secured by a cryptographic mechanism such as
 a signature, the first step in the Evidence Appraisal is to perform
@@ -1467,36 +1467,57 @@ Evidence MUST be successfully verified.
 
 ### The Accepted Claims Set
 
-At the end of the Evidence collection process evidence has been converted into
-a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
-format and the algorithms used to compare it against CoMID Reference Values.
+At the end of the Evidence collection process Evidence has been converted into
+a format suitable for appraisal. To this end, this document describes an
+`accepted-claims-set` format and the algorithms used to compare it against
+CoMID Reference Values.
 
 ~~~ cddl
 {::include cddl/accepted-claims-set.cddl}
 ~~~
 
-Verifiers are not required to use this as their internal state, but for the
+Verifiers are not required to use this as their internal state, for the
 purposes of this document a sample Verifier is discussed which uses this format.
 
-The Accepted Claims Set will be matched against CoMID Reference Values, as per
+The Accepted Claims Set (ACS) contains the actual state of Target Environments (TEs).
+The `state-triples` field contains Evidence (from Attesters) and Endorsements
+(e.g. from `endorsed-triple-record`).
+
+CoMID Reference Values will be matched against the Accepted Claims Set, as per
 the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be easily
 matched against these Reference Values.
 
-Each set of evidence contains an `environment-map` providing a namespace, and
-a non empty `measurement-values-map`.
+Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
+When an `endorsed-triple-record` appears within `state-triples` it
+indicates that the authority named by `measurement-map`/`authorized-by`
+asserts that the actual state of one or more Claims within the
+Target Environment, as identified by `environment-map`, have the
+measurement values in `measurement-map`/`mval`.
 
-Each entry in the `measurement-values-map` is a separate piece of evidence
-describing a measurement associated with the environment identified in
-the `environment-map`.
+In `authorized-by`, authority is represented by cryptographic keys. Authority
+is asserted by digitally signing a Claim using the key. Hence, Claims are
+added to the ACS under the authority of a key.
 
-An Attester can provide multiple `environment-map`s each containing a
-`measurement-values-map` with one entry;  a single `environment-map` containing
-multiple entries in its `measurement-values-map`; or a combination of
- these approaches.
+Each Claim is encoded as an Environment Measurement Tuple (a contraction
+of `environment-map`, `measurement-map` tuple). The `environment-map` and a
+key within `measurement-values-map` encode the name of the Claim.
+The value matching that key within `measurement-values-map` is the actual
+state of the Claim.
 
-If evidence from different sources has the same `environment-map` then the
-`measurement-values-map`s are merged.
+This specification does not assign special meanings to any Claim name,
+it only specifies rules for determining when two Claim names are the same.
+
+If two Claims have the same `environment-map` encoding then this does not
+trigger special encoding in the Verifier. The Verifier follows instructions
+in the CoRIM file which tell it how claims are related.
+
+If Evidence or Endorsements from different sources has the same `environment-map`
+and `authorized-by` then the `measurement-values-map`s are merged.
+
+The ACS must maintain the authority information for each EMT. There can be
+multiple entries in `state-triples` which have the same `environment-map`
+and a different `authorized-by` field (see {{sec-authorized-by}}).
 
 If the merged measurement-value-map contains duplicate codepoints and the
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
@@ -1506,28 +1527,61 @@ If the merged measurement-value-map contains duplicate codepoints and the
 measurement values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
-### Accepted Claims Set Initialization
+#### Accepted Claims Set Initialization {#sec-acs-initialization}
 
-The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments into the Verifier's Accepted Claims Set.
+The Accepted Claims Set is initialized by copying Evidence claims describing
+authenticated Attester's Target Environments into the Verifier's Accepted Claims Set.
 
 Evidence formats may require format translation before being added to the Accepted Claims Set.
 If format translation is required, a CoRIM profile, see {{sec-corim-profile-types}}, defines an Evidence translation function.
 
 {{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions before being added to the Accepted Claims Set.
 
+#### The authorized-by field in Accepted Claims Set {#sec-authorized-by}
 
-## Accepted Claims Set extension using CoMID tags
+The `authorized-by` field in an Accepted Claims Set entry indicates the entity
+whose authority backs the claim.
+
+An entity is authoritative when it makes Claims that are inside its area of
+competence. The Verifier keeps track of the authorities that assert Claims so
+that it can filter out claims from entities that do not satisfy appraisal
+policies.
+
+When adding an Evidence Claim to the Accepted Claims Set, the
+Verifier SHALL set the `authorized-by` field in that Claim to the trusted
+authority keys at the head of each key chain which signed that Evidence. This
+key is often the subject of a self-signed certificate.
+The Verifier has already verified the certificate chain (see {{sec-crypto-validate-evidence}}).
+
+If multiple authorities approve the same Claim, for example if multiple key chains
+are available, then the `authorized-by` field SHALL be set to include the trusted
+authority keys used by each of those authorities.
+
+When adding Endorsement Claims to the Accepted Claims Set that resulted
+from CoRIM processing (see {{sec-add-to-acs}}) the Verifier SHALL set the
+`authorized-by` field in that Evidence to the trusted authority key that is
+at the head of the key chain that signed the CoRIM.
+
+When searching the Accepted Claims Set for an entry which matches a Reference
+Value containing an `authorized-by` field, the Verifier SHALL ignore ACS
+entries if none of the keys present in the Reference Value `authorized-by` field
+are also present in the ACS `authorized-by` field.
+
+The Verifier SHOULD set the `authorized-by` field in Accepted Claims Set entries
+to a format which contains only a key, for example the `tagged-cose-key-type`
+format. Using a common format makes it easier to compare the field.
+
+## Accepted Claims Set extension using CoMID triples
 
 In the Accepted Claims Set extension phase, a CoRIM Appraisal Context and
-an Evidence Appraisal Policy are used by the Verifier to find CoMID tags which
-match the Attester. Tags which match are accepted, and the Accepted Claims Set
-is extended using Endorsements etc. from the accepted tags.
+an Evidence Appraisal Policy are used by the Verifier to find CoMID tripples which
+match the Attester. Triples which match are accepted, and the Accepted Claims Set
+is extended using Endorsements etc. from the accepted triples.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+To be Completed
 
-### Comparing and processing CoMID tags
-
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+### Comparing and processing CoMID triples
+To be Completed.
 
 ### Matching Evidence against Reference Values
 
@@ -1577,13 +1631,13 @@ Claims Set.
 If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
 
 A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
-`reference-values-triple-record` these are packaged together. In other triples multiple
+`reference-triple-record` these are encoded together. In other triples multiple
 Reference Values are represented more compactly by letting one `environment-map`
 apply to multiple `measurement-map`s.
 
 The Verifier first looks for entries in the Accepted Claims Set with the same
-`environment-map` as the Reference Value. If there are no such entries then
-the Reference Value does not match.
+`environment-map` as the Reference Value. These are the candidate claims. If there are
+no candidate claims then the Reference Value does not match.
 
 A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
 encoded objects.
@@ -1591,19 +1645,29 @@ encoded objects.
 A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
 Deterministic Encoding Requirements {{-cbor}} before performing the binary comparison.
 
-The Verifier SHALL iterate over the entries in the `measurement-values-map`
-entry within the Reference Value `measurement-map`. Each entry is compared
-against the `measurement-map` from the Accepted Claims Set. If any entry
-does not match then the Reference Value does not match.
+If the Reference Value contains an `authorized-by` field then the Verifier
+SHALL modify the candidate claims set to remove Claims whose `authorized-by`
+field does not contain one of the keys listed in the Reference Value
+`authorized-by` field (see {{sec-authorized-by}} for more details).
+If all candidate claim entries are discarded by this step then the
+Reference Value does not match.
+
+The Verifier SHALL iterate over the codepoints which are present in the
+`measurement-values-map` field within the Reference Value `measurement-values-map`.
+The Reference Value entry is compared against each of the candidate claims.
+If none of the candidate claims matches
+the Reference Value entry then the Reference Value does not match.
 
 The algorithm used to match the `measurement-values-map` entries
-is described below. It depends on whether the Reference Value is tagged with a
-CBOR tag {{-cbor}},
-and on the `measurement-values-map` key which identifies the entry.
+is described below. The comparison performed depends on the type of
+field being compared.
 
-If the Reference Value `measurement-values-map` value starts with a CBOR tag
-then the Verifier MUST use the algorithm associated with that tag to match
-the entries.
+If the Reference Value `measurement-values-map` value is tagged with a CBOR
+tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated
+with that tag.
+
+If the Reference Value is not tagged then the Verifier MUST use the comparison
+algorithm associated with the `measurement-values-map` codepoint for the entry.
 
 This specification defines the matching algorithm for some CBOR tagged reference
 values, which is described in sub-sections below.
@@ -1626,12 +1690,6 @@ Note that while specifications may extend the matching semantics using CBOR tags
 there is no way to extend the matching semantics of keys.
 Any new keys requiring non-default comparison must add a CBOR tag to the
 Reference Value describing the desired behaviour.
-
-If the Reference Value contains an `authorized-by` field then the Verifier
-SHALL check for an `authorized-by` field in the Accepted Claims Set entry
-compared in the steps above. If the Accepted Claims Set key is not one of
-the keys from the Reference Value `authorized-by` field then the
-Reference Value does not match.
 
 If all checks above have been performed successfully then the Reference Value
 matches.
@@ -1721,9 +1779,9 @@ comparison should not be stateful.
 
 ## Adding DICE/SPDM Evidence to the Accepted Claims Set {#sec-dice-spdm}
 
-This section defines how evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
+This section defines how Evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
 format where it can be added to an accepted claims set.
-A Verifier supporting DICE/SPDM format evidence should implement this section.
+A Verifier supporting DICE/SPDM format Evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
 
@@ -1737,10 +1795,10 @@ to CoRIM `triples-map` (their semantics follows the matching rules described abo
 ### Transforming DICE Evidence to a format usable for matching
 
 DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
-Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an evidence
-triple using the rules in this section.
+Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an
+`endorsed-triple-record` using the rules in this section.
 In a MultiTcbInfo each entry in the sequence is treated as independent and
-translated into a separate evidence object.
+translated into a separate Evidence object.
 
 The Verifier SHALL translate each field in the TcbInfo into a field in the
 created endorsed-triple-record
@@ -1759,9 +1817,9 @@ created endorsed-triple-record
   - Each flag is translated independently
 - The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
 
-If there are multiple evidence triples with the same `environment-map` then
-they MUST be merged into a single entry.
-If the `measurement-values-map` fields in evidence triples have conflicting
+If there are multiple `endorsed-triple-record`s with the same `environment-map`
+then they MUST be merged into a single entry.
+If the `measurement-values-map` fields in Evidence triples have conflicting
 values then the Verifier MUST fail validation.
 
 # Implementation Status
