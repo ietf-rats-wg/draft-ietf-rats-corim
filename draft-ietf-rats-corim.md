@@ -1204,7 +1204,7 @@ Additionally, a range of code points may be reserved for vendor-specific use suc
 
 Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name and '$' signifies type extensibility.
 
-Socket and type extensions are permitted by the CoRIM schema where the above CDDL extensibility points are defined.
+Map and type extensions are permitted by the CoRIM schema where the above CDDL extensibility points are defined.
 Schema extensions should be documented to facilitate interoperability. CoRIM profiles are best used to documennt
 vendor or industry defined extensions.
 
