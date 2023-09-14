@@ -100,6 +100,27 @@ informative:
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.concise-software-identifier: coswid-reg
+  SPDM:
+    title: Security Protocol and Data Model (SPDM)
+    author:
+      org: Distributed Management Task Force
+    seriesinfo: Version 1.3.0
+    date: May 2023
+    target: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pdf
+  CE.SPDM:
+    title: TCG DICE Concise Evidence Binding for SPDM
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.00, Revision 0.53, public review
+    date: June 2023
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf
+  DICE.AA:
+    title: DICE Attestation Architecture
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.1, Revision 0.17, public review
+    date: May 2023
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
 
 entity:
   SELF: "RFCthis"
@@ -830,6 +851,11 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
+The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
+the `authorized-by` statement can be supplied in the `measurement-map`.
+
+
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
 ~~~
@@ -841,6 +867,9 @@ The following describes each member of the `measurement-map`:
 
 * `mval` (index 1): The measurements associated with the (sub-)environment.
   Described in {{sec-comid-mval}}.
+
+* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
+ the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
@@ -990,9 +1019,25 @@ after being loaded into memory.
 * `is-tcb` (index 8): If the flag is true, the measured environment is a trusted
 computing base.
 
+* `is-confidentiality-protected` (index 9): If the flag is true, the measured environment
+is confidentiality protected. For example, if the measured environment consists of memory,
+the sensitive values in memory are encrypted.
+
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/9
+Raw value measurements are typically vendor defined values that are checked by Verifiers
+for consistency only, since the security relevance is opaque to Verifiers.
+
+There are two parts to a `raw-value-group`, a measurement and an optional mask.
+The default raw value measurement is a CBOR tagged `bstr`.
+Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
+between the various semantics of type values.
+
+The mask is applied by the Verifier as part of appraisal.
+Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
+
+When a new raw value type is defined, the convention for applying the mask is also defined.
+Typically, a CoRIM profile is used to define new raw values and mask semantics.
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
@@ -1381,7 +1426,7 @@ Evidence MUST be successfully verified.
 
 At the end of the Evidence collection process evidence has been converted into
 a format suitable for appraisal. To this end, this document describes an `accepted-claims-set`
-format and the algorithms used to compare it against CoMID reference values.
+format and the algorithms used to compare it against CoMID Reference Values.
 
 ~~~ cddl
 {::include cddl/accepted-claims-set.cddl}
@@ -1390,10 +1435,10 @@ format and the algorithms used to compare it against CoMID reference values.
 Verifiers are not required to use this as their internal state, but for the
 purposes of this document a sample Verifier is discussed which uses this format.
 
-The Accepted Claims Set will be matched against CoMID reference values, as per
+The Accepted Claims Set will be matched against CoMID Reference Values, as per
 the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be easily
-matched against these reference values.
+matched against these Reference Values.
 
 Each set of evidence contains an `environment-map` providing a namespace, and
 a non empty `measurement-values-map`.
@@ -1418,23 +1463,21 @@ If the merged measurement-value-map contains duplicate codepoints and the
 measurement values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
-### Accepted Claims Set Initialisation
+### Accepted Claims Set Initialization
 
-The Accepted Claims Set is initialised with cryptographically verified Evidence
-from the Attestation Environments.
+The Accepted Claims Set is initialized by copying Evidence claims from the authenticated Attester's Target Environments into the Verifier's Accepted Claims Set.
 
-> A CoRIM profile MUST describe:
->
-> * How evidence is converted to a format suitable for appraisal
+Evidence formats may require format translation before being added to the Accepted Claims Set.
+If format translation is required, a CoRIM profile, see {{sec-corim-profile-types}}, defines an Evidence translation function.
 
-{{sec-dice-spdm}} provides information on how evidence collected using
-DICE and SPDM is added to the Accepted Claims Map.
+{{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions before being added to the Accepted Claims Set.
 
-## Accepted Claims Map extension using CoMID tags
 
-In the Accepted Claims Map extension phase, a CoRIM Appraisal Context and
+## Accepted Claims Set extension using CoMID tags
+
+In the Accepted Claims Set extension phase, a CoRIM Appraisal Context and
 an Evidence Appraisal Policy are used by the Verifier to find CoMID tags which
-match the Attester. Tags which match are accepted, and the Accepted Claims Map
+match the Attester. Tags which match are accepted, and the Accepted Claims Set
 is extended using Endorsements etc. from the accepted tags.
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
@@ -1445,27 +1488,193 @@ is extended using Endorsements etc. from the accepted tags.
 
 ### Matching Evidence against Reference Values
 
+An Endorser may use CoMID tags to publish Conditional Endorsements, which
+are added to the Accepted Claims Set only if specified conditions apply.
+This section describes the process performed by the Verifier to determine
+which Conditional Endorsements from the candidate CoMIDs should be added
+to the Accepted Claims Set.
+
+The verifier checks whether Conditional Endorsements are applicable by
+comparing Evidence in the Accepted Claims Set against Reference Values
+from the CoMID. These Reference Values may be provided as Reference Value
+Triples or may be combined with the Endorsements, for example as the
+Conditional Endorsement Series Triple.
+
+The following subsections describe how the CoRIM tells the verifier which
+Reference Values and Endorsed Values are grouped together ({{sec-grouping-ref-vals}})
+and how the verifier matches a Reference Value against the Accepted Claims Set
+({{sec-match-all-ref-vals}}).
+
+#### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
+
+> This paragraph will be replaced by a description of how the CoRIM tells the
+verifier which Reference Values and Endorsed Values are grouped together.
+
+[^issue]: Need to get agreement on how group membership is encoded. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
+
+[^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
+
+#### Matching all Reference Values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
+
+If all Reference Values in a group match entries in the Accepted Claims Set
+then all Endorsements in the group are added to the Accepted Claims Set
+(see {{sec-add-to-acs}}). {{sec-match-one-ref-val}} describes how one
+Reference Value is matched against the Accepted Claims Set.
+
+If any Reference Value in a group does not match the Accepted Claims Set then
+all Endorsements in the group are silently ignored.
+
+Each group is processed independently of other groups. If a group fails to match
+the Accepted Claims Set then this does not affect the processing of other groups.
+
+#### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
+
+This section describes how a Reference Value is matched against Evidence in the Accepted
+Claims Set.
+If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
+
+A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
+`reference-values-triple-record` these are packaged together. In other triples multiple
+Reference Values are represented more compactly by letting one `environment-map`
+apply to multiple `measurement-map`s.
+
+The Verifier first looks for entries in the Accepted Claims Set with the same
+`environment-map` as the Reference Value. If there are no such entries then
+the Reference Value does not match.
+
+A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
+encoded objects.
+
+A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
+Deterministic Encoding Requirements {{-cbor}} before performing the binary comparison.
+
+The Verifier SHALL iterate over the entries in the `measurement-values-map`
+entry within the Reference Value `measurement-map`. Each entry is compared
+against the `measurement-map` from the Accepted Claims Set. If any entry
+does not match then the Reference Value does not match.
+
+The algorithm used to match the `measurement-values-map` entries
+is described below. It depends on whether the Reference Value is tagged with a
+CBOR tag {{-cbor}},
+and on the `measurement-values-map` key which identifies the entry.
+
+If the Reference Value `measurement-values-map` value starts with a CBOR tag
+then the Verifier MUST use the algorithm associated with that tag to match
+the entries.
+
+This specification defines the matching algorithm for some CBOR tagged reference
+values, which is described in sub-sections below.
+
+A CoRIM profile may define additional tags and their matching algorithms.
+
+If the Verifier does not recognize the Reference Value CBOR tag value then
+the Reference Value does not match.
+
+If the Reference Value is not tagged and the measurement-value-map key is a
+value with handling described in the sub-sections below,
+then the algorithm appropriate to that key is used to match the entries.
+
+If the Reference Value is not tagged, and the `measurement-values-map` key
+is not a value described below, then the entries are compared
+using binary comparison of their CBOR encoded values. If the values
+are not binary identical then the Reference Value does not match.
+
+Note that while specifications may extend the matching semantics using CBOR tags,
+there is no way to extend the matching semantics of keys.
+Any new keys requiring non-default comparison must add a CBOR tag to the
+Reference Value describing the desired behaviour.
+
+If the Reference Value contains an `authorized-by` field then the Verifier
+SHALL check for an `authorized-by` field in the Accepted Claims Set entry
+compared in the steps above. If the Accepted Claims Set key is not one of
+the keys from the Reference Value `authorized-by` field then the
+Reference Value does not match.
+
+If all checks above have been performed successfully then the Reference Value
+matches.
+
+##### Comparison for svn entries
+
+The value stored under `measurement-values-map` key 1 is an SVN, which must
+have type UINT.
+
+If the Reference value for `measurement-values-map` key 1 is an untagged UINT or
+a UINT tagged with #6.552 then an equality comparison is performed. If the value
+of the SVN in Accepted Claims Set is not equal to the value in the Reference
+Value then the Reference Value does not match.
+
+If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
+#6.553 then a minimum comparison is performed. If the value of the SVN in
+Accepted Claims Set less than the value in the Reference Value then the
+Reference Value does not match.
+
+##### Comparison for digests entries
+
+The value stored under `measurement-values-map` key 2,
+or a value tagged with
+#6.TBD is a digest entry.
+It contains one or more digests, each measuring the
+same object. A Reference Value may contain multiple digests, each with a
+different algorithm acceptable to the Reference Value provider. If the
+digest in Evidence contains a single value with an algorithm and value
+matching one of the algorithms and values in the Reference Value then it
+matches.
+
+To prevent downgrade attacks, if there are multiple algorithms which are in
+both the Evidence and Reference Value then the digests calculated using all
+shared algorithms must match.
+
+If the CBOR encoding of the `digests` entry in the Reference Value or the
+Accepted Claim Set value with the same key is incorrect (for example if fields
+are missing or the wrong type) then the Reference Value does not match.
+
+The Verifier MUST iterate over the Reference Value `digests` array, locating
+hash algorithm identifiers that are present in the Reference Value and
+in the Accepted Claims Set entry.
+
+If the hash algorithm identifier which is present in the Reference Value
+differs from the hash algorithm identifier in the Accepted Claims Set entry then the Reference Value does not match.
+
+If a hash algorithm identifier is present in both the Reference Value and
+the Accepted Claims Set, but the value of the hash is not binary identical
+between the Reference Value and the Accepted Claims Set entry then the
+Reference Value does not match.
+
+##### Comparison for raw-value entries
+
+> I think this comparison method only works if the entry is at key 4 (because
+there needs to be a mask at key 5). Should we have a Reference Value of this
+which stores [expect-raw-value raw-value-mask] in an array?
+
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-### Adding CoMID Endorsed Values to the Accepted Claims Set
+##### Handling of new tags
+
+A profile may specify handling for new CBOR tagged Reference Values. The
+profile must specify how to compare the CBOR tagged Reference Value against
+the Accepted Claims Set.
+
+Note that the verifier may compare Reference Values in any order, so the
+comparison should not be stateful.
+
+### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-## Adding DICE/SPDM evidence to the Accepted Claims Set {#sec-dice-spdm}
+## Adding DICE/SPDM Evidence to the Accepted Claims Set {#sec-dice-spdm}
 
-[^issue]: Add references. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/98
-
-This section defines how evidence from DICE and/or SPDM is transformed into a
+This section defines how evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
 format where it can be added to an accepted claims set.
 A Verifier supporting DICE/SPDM format evidence should implement this section.
 
 ### Transforming SPDM Evidence to a format usable for matching
 
-[Evidence Binding For SPDM](TCG_SPDM-TBD) describes the process by which
+The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which
 measurements in an SPDM Measurement Block are converted to Evidence suitable for
 matching using the rules below.
-The converted evidence is held in evidence triples which have a similar format
-to reference-triples (their semantics follows the matching rules described above).
+The SPDM measurements are converted to `concise-evidence` which has a format that is similar
+to CoRIM `triples-map` (their semantics follows the matching rules described above).
+
 
 ### Transforming DICE Evidence to a format usable for matching
 
@@ -1478,7 +1687,7 @@ translated into a separate evidence object.
 The Verifier SHALL translate each field in the TcbInfo into a field in the
 created endorsed-triple-record
 
-- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id`
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id` and tagged with tag #6.111
 - The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
 - The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
 - The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
@@ -1568,14 +1777,14 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                            | Reference |
 |     --- | ---------           | ---------                                                            | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}} | {{&SELF}} |
-|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                                   | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                             | {{&SELF}} |
+|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}             | {{&SELF}} |
+|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                            | {{&SELF}} |
+|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                      | {{&SELF}} |
 | 503-504 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                  | {{&SELF}} |
-|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                   | {{&SELF}} |
+|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                    | {{&SELF}} |
+|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}         | {{&SELF}} |
+|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 |     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
 |     551 | `int`               | tagged-int-type, see {{sec-common-tagged-int}}                       | {{&SELF}} |
@@ -1585,9 +1794,11 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}                | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}           | {{&SELF}} |
 |     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}                | {{&SELF}} |
-| 558-559 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}          | {{&SELF}} |
-| 561-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}                        | {{&SELF}} |
+|     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
+|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}                      | {{&SELF}} |
+|     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
+| 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
