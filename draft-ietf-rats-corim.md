@@ -1195,7 +1195,7 @@ applies to all measurements in the triple, including those in `measurement-value
 
 ## Extensibility {#sec-extensibility}
 
-CoRIM is described using CDDL {{-cddl}} which includes extensibility support for "sockets" (a.k.a., map structures)
+CoRIM is described using CDDL {{-cddl}} which includes extensibility support for "extension points" (a.k.a., map structures)
 and data types. CDDL socket extensions have the form `($$NAME-extension)` where "NAME" is the name of the map.
 CDDL socket extensibility enables a CoRIM profile to extend the standard definition.
 Typically, map extension requires a convention for code point naming that avoids code-point reuse.
