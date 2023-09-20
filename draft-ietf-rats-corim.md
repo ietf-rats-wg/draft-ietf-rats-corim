@@ -1316,8 +1316,8 @@ manufactruing practices, or supplier configuration options.
 * actual state: Claims that describe a Target Environment instance,
 given some constraining context, such as a point in time or a network connection.
 Endorsed Values and Evidence typically are Claims about actual state.
-* Group: The scope in which Evidence, Reference Values, Endorsed Values and Appraisal Policy
-are applied.
+* Group: A set of Evidence, Reference Values, Endorsed Values and Appraisal Policies
+which are processed together.
 An Attester may be composed of multiple components, where each component may
 represent a scope of appraisal.
 * Authority: Provenance linking a Claim to the entity that asserted it.
