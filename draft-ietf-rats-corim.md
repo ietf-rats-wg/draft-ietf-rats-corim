@@ -1306,7 +1306,7 @@ This document assumes Verifier implementations may differ.
 To facilitate description of normative Verifier behavior,
 this document uses abstract representation of Verifier internals.
 
-* Claim: A structure that has a key-value pairing.
+* Claim: A piece of information, in the form of a key-value pair.
 * Environment Measurement Tuple (EMT): A structure containing a set of environment
 Claims that describe a Target Environment and a set of measurement Claims that
 describe attributes of the Target Environment.
