@@ -1300,6 +1300,34 @@ they are not required to use the same internal data structures.
 For example, it is expected that the resources used during the initialisation
 phase can be amortised across multiple appraisals.
 
+## Verifier Abstraction
+
+This document assumes Verifier implementations may differ.
+To facilitate description of normative Verifier behavior,
+this document uses abstract representation of Verifier internals.
+
+* Claim: A piece of information, in the form of a key-value pair.
+* Environment Measurement Tuple (EMT): A structure containing a set of environment
+Claims that describe a Target Environment and a set of measurement Claims that
+describe attributes of the Target Environment.
+* reference state: Claims that describe various alternative states of a Target Environment.
+Reference Values Claims typically describe various possible states due to versioning,
+manufactruing practices, or supplier configuration options.
+* actual state: Claims that describe a Target Environment instance at a given point in time.
+Endorsed Values and Evidence typically are Claims about actual state.
+* Group: A set of Evidence, Reference Values, Endorsed Values and Appraisal Policies
+which are processed together.
+An Attester may be composed of multiple components, where each component may
+represent a scope of appraisal.
+* Authority: The entity asserting that a claim is true.
+Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
+* Accepted Claims Set (ACS): A structure that holds EMT Claims that have been vetted
+following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy. The ACS also keeps track of a Claim's authority.
+* Appraisal Policy: A description of the conditions that, if met, allow acceptance
+of Claims. Typically, the entity asserting a Claim should have knowledge, expertise,
+or context that gives credibility to the assertion. Appraisal Policy resolves which
+entities are credible and under what conditions.
+
 ## Appraisal Context initialisation
 
 The goal of the initialisation phase is to load the CoRIM Appraisal Context
