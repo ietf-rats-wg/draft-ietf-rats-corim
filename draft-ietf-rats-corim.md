@@ -1320,7 +1320,7 @@ Endorsed Values and Evidence typically are Claims about actual state.
 which are processed together.
 An Attester may be composed of multiple components, where each component may
 represent a scope of appraisal.
-* Authority: Provenance linking a Claim to the entity that asserted it.
+* Authority: The entity asserting that a claim is true.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
 * Accepted Claims Set (ACS): A structure that holds EMT Claims that have been vetted
 following the appraisal process. The ACS describes the actual state of an Attesster that has been vetted by appraisal policy. The ACS keeps track of a Claim's authority.
