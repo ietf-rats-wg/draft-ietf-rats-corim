@@ -1310,7 +1310,7 @@ this document uses abstract representation of Verifier internals.
 * Environment Measurement Tuple (EMT): A structure containing a set of environment
 Claims that describe a Target Environment and a set of measurement Claims that
 describe attributes of the Target Environment.
-* reference state: Claims that describe various alternative forms of a Target Environment.
+* reference state: Claims that describe various alternative states of a Target Environment.
 Reference Values Claims typically describe various possible states due to versioning,
 manufactruing practices, or supplier configuration options.
 * actual state: Claims that describe a snapshot of the state of a Target Environment instance.
