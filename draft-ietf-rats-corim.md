@@ -1314,7 +1314,6 @@ describe attributes of the Target Environment.
 Reference Values Claims typically describe various possible states due to versioning,
 manufactruing practices, or supplier configuration options.
 * actual state: Claims that describe a snapshot of the state of a Target Environment instance.
-given some constraining context, such as a point in time or a network connection.
 Endorsed Values and Evidence typically are Claims about actual state.
 * Group: A set of Evidence, Reference Values, Endorsed Values and Appraisal Policies
 which are processed together.
