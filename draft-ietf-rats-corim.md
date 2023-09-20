@@ -1323,7 +1323,7 @@ represent a scope of appraisal.
 * Authority: The entity asserting that a claim is true.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
 * Accepted Claims Set (ACS): A structure that holds EMT Claims that have been vetted
-following the appraisal process. The ACS describes the actual state of an Attesster that has been vetted by appraisal policy. The ACS keeps track of a Claim's authority.
+following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy. The ACS also keeps track of a Claim's authority.
 * Appraisal Policy: A description of the conditions, that if met, allow acceptance
 of Claims. Typically, the entity asserting a Claim should have knowledge, expertise,
 or context that gives credibility to the assertion. Appraisal Policy resolves which
