@@ -1642,7 +1642,7 @@ which stores [expect-raw-value raw-value-mask] in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-##### Comparison for cryptokeys entries
+##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
 The value stored under `measurement-values-map` key 12 is an array of `$crypto-key-type-choice` entries. `$crypto-key-type-choice` entries are CBOR tagged values.
 The array contains one or more entries in sequence.
