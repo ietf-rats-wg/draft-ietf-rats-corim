@@ -941,7 +941,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `cryptokeys` (index 12): identifies cryptographic keys that are protected by the Target Environment
   See {{sec-crypto-keys}} for the supported formats.
-  An Attesting Environment determines that keys are protected as part of Claims Collection.
+  An Attesting Environment determines that keys are protected as part of Claims collection.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 
 ###### Version {#sec-comid-version}
