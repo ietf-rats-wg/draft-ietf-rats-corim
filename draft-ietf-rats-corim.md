@@ -1654,7 +1654,7 @@ are compared with the bytes following the CBOR tag from the Accepted Claims Set 
 If the byte strings match, and there is another array entry,
 then the next entry from the Reference Values array is likewise
 compared with the next entry of the Accepted Claims Set array.
-If all entrys of the Reference Values array matches a corresponding entry in the Accepted Claims Set array, then the `cryptokeys` Reference Value matches.
+If all entries of the Reference Values array match a corresponding entry in the Accepted Claims Set array, then the `cryptokeys` Reference Value matches.
 Otherwise, `cryptokeys` does not match.
 
 ##### Handling of new tags
