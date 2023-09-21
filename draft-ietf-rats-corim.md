@@ -943,6 +943,7 @@ The following describes each member of the `measurement-values-map`.
   See {{sec-crypto-keys}} for the supported formats.
   An Attesting Environment determines that keys are protected as part of Claims collection.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
+Matching is described in {{sec-cryptokeys-matching}}.
 
 ###### Version {#sec-comid-version}
 
