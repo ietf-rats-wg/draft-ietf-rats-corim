@@ -940,7 +940,7 @@ The following describes each member of the `measurement-values-map`.
 * `name` (index 11): a name associated with the measured environment.
 
 * `cryptokeys` (index 12): identifies cryptographic keys that are protected by the Target Environment
-  See {{sec-crypto-keys}}.
+  See {{sec-crypto-keys}} for the supported formats.
   An Attesting Environment determines that keys are protected as part of Claims Collection.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 
