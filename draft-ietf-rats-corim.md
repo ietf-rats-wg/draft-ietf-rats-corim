@@ -1280,6 +1280,22 @@ for appraisal until a CoBOM which activates that tag has been received and
 successfully processed. All the tags listed in the CoBOM must be activated in
 the same transaction, i.e., either all or none.
 
+The number of CoBOMs required in a given supply chain eco-system is dependent on
+Verifier Owner's appraisal policy, which is often driven by the complexity and nature of
+use case.
+
+In a certain use case CoBOM's may not be required at all. For example, where only limited CoRIMs
+are produced by a single authority. In such cases any tags in a CoRIM received by a Verifier
+are activated immediately and treated valid for appraisal.
+
+However, a more common case is the one where Verifier receives multiple CoRIMs containing
+Reference Values and Endorsements from multiple Reference Value providers and Endorsers.
+In such cases an Integrator or a Supplier authority is often designated to issue a single CoBOM
+to activate all the tags supplied in the CoRIMs.
+
+In a more complex case, there may be multiple authorities that issue CoBOM's at different points in time.
+A Verifier policy then dictates how multiple CoBOM's are processed within the Verifier.
+
 ## Structure
 
 The CDDL specification for the `concise-bom-tag` map is as follows and this
