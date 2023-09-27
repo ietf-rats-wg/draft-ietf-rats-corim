@@ -812,10 +812,11 @@ The following describes each member of the `class-map`:
 
 ##### Instance {#sec-comid-instance}
 
-An instance carries a unique identifier that is reliably bound to an instance
-of the Attester.
+An instance carries a unique identifier that is reliably bound to a Target Environment
+that is an instance of the Attester.
 
-The types defined for an instance identifier are UEID or UUID.
+The types defined for an instance identifier are CBOR tagged expressions of
+UEID, UUID, or cryptographic key identifier.
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
