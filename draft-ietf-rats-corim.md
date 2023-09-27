@@ -1240,22 +1240,26 @@ applies to all measurements in the triple, including those in `measurement-value
 
 ## Extensibility {#sec-extensibility}
 
-CoRIM is described using CDDL {{-cddl}} which includes extensibility support for "extension points" (a.k.a., map structures)
-and data types. CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map and '$$' signifies map extensibility.
+The base CORIM schema is described using CDDL {{-cddl}} that can be extended 
+only at specific allowed points known as "extension points"
+
+The following types of extensions are supported in CoRIM
+
+## Map Extensions
+Map Extensions provides extensibility support to CoRIM Map structures.
 CDDL map extensibility enables a CoRIM profile to extend the base CoRIM definition.
-Typically, map extension requires a convention for code point naming that avoids code-point reuse.
+CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map
+and '$$' signifies map extensibility. Typically, map extension requires a convention 
+for code point naming that avoids code-point reuse.
 Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
 Additionally, a range of code points may be reserved for vendor-specific use such as negative integers.
 
-Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name and '$' signifies type extensibility.
+## Data Type Extensions
 
-Map and type extensions are permitted by the CoRIM schema where the above CDDL extensibility points are defined.
-Schema extensions should be documented to facilitate interoperability. CoRIM profiles are best used to documennt
-vendor or industry defined extensions.
+Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name 
+and '$' signifies type extensibility.
 
-This specification uses CDDL type extension. Type extensions contained in this specification are considered
-as "standard CoRIM types". Standard CoRIM types, along with the other CDDL expressions in this specification,
-set the baseline for CoRIM interoperability.
+Schema extensions (Map or Data Type) should be documented to facilitate interoperability. CoRIM profiles are best used to document vendor or industry defined extensions.
 
 # CoBOM {#sec-cobom}
 
