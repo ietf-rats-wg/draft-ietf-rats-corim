@@ -1275,8 +1275,8 @@ Schema extensions (Map or Data Type) should be documented to facilitate interope
 # CoBOM {#sec-cobom}
 
 A Concise Bill of Material (CoBOM) object represents the signal for the
-Verifier to activate the listed tags. Data contained in a tag SHOULD NOT be used
-for appraisal until a CoBOM which activates that tag has been received and
+Verifier to activate the listed tags. When CoBOMs are required, data contained
+in a tag SHOULD NOT be used for appraisal until a CoBOM which activates that tag has been received and
 successfully processed. All the tags listed in the CoBOM must be activated in
 the same transaction, i.e., either all or none.
 
