@@ -1280,22 +1280,22 @@ for appraisal until a CoBOM which activates that tag has been received and
 successfully processed. All the tags listed in the CoBOM must be activated in
 the same transaction, i.e., either all or none.
 
-The number of CoBOMs required in a given supply chain eco-system is dependent on
+The number of CoBOMs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence, which is often driven by the complexity and nature of
 the use case.
 
-For example, in cases where only limited CoRIMs are produced by a single authority, a Verifier Owner may have
-a policy that CoBOM's are not required. In this case, signature chain over each CoRIM is sufficient authorization,
+For example, in cases where CoRIMs are produced by a single authority, a Verifier Owner may have
+a policy that CoBOM's are not required. In this case, signature chain over each CoRIM establishes required authorization,
 and may not require additional authorization via CoBOM. Any tags in a CoRIM received by a Verifier
-are activated immediately and treated valid for appraisal
+are activated immediately and treated valid for appraisal.
 
-However, a more common case is the one where Verifier receives multiple CoRIMs containing
-Reference Values and Endorsements from multiple Reference Value providers and Endorsers
-respectively. In such cases, an integrator or a supplier authority may be designated to
-issue a single CoBOM to activate all the CoRIM tags.
+However there may be cases when Verifier receives CoRIMs from multiple
+Reference Value providers and Endorsers. In such cases, an integrator or a supplier authority
+may be designated to issue a single CoBOM to activate all the tags submitted to the Verifier
+in these CoRIMs.
 
-In a more complex case, there may be multiple authorities that issue CoBOM's at different points in time.
-An Appraisal Policy for Evidence may dictate how multiple CoBOM's are to be processed within the Verifier.
+In a more complex case, there may be multiple authorities that issue CoBOM at different points in time.
+An Appraisal Policy for Evidence may dictate how multiple CoBOMs are to be processed within the Verifier.
 
 ## Structure
 
