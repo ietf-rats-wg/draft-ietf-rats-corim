@@ -1283,9 +1283,7 @@ All the tags listed in the CoBOM MUST be activated atomically. If any tag activa
 The number of CoBOMs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
 
-For example, in cases where CoRIMs are produced by a single authority, a Verifier Owner may have
-a policy that CoBOM's are not required. In this case, signature chain over each CoRIM establishes required authorization,
-and may not require additional authorization via CoBOM. Any tags in a CoRIM received by a Verifier
+A Verifier Owner has a policy that does not require CoBOM, tags within a CoRIM received by a Verifier
 are activated immediately and treated valid for appraisal.
 
 However there may be cases when Verifier receives CoRIMs from multiple
