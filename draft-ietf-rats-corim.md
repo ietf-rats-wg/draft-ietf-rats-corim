@@ -1292,7 +1292,7 @@ from the selected CoRIMs.
 CoBOMs which are not within their validity period, or which reference tags
 not available to the verifier, are discarded.
 
-The Verifier processes all CoBOMs that are valid at the point in time appraisal of Evidence occurs, and activates all tags referenced therein.
+The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal, and activates all tags referenced therein.
 
 A Verifier may decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
 (Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of scope of the present document.)
