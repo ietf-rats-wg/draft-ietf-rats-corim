@@ -1396,9 +1396,13 @@ from the selected CoRIMs.
 CoBOMs which are not within their validity period, or which reference tags
 not available to the verifier, are discarded.
 
-The Verifier MUST activate all tags referenced by a CoBOM.
+The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal, and activates all tags referenced therein.
 
-ISSUE: What does the verifier do if there are multiple CoBOMs available
+A Verifier may decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
+(Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of scope of the present document.)
+
+For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
+In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not activated by the trusted integrator.
 
 After the Verifier has processed all CoBOMs it MUST discard any tags which have
 not been activated by a CoBOM.
