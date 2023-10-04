@@ -1281,8 +1281,7 @@ successfully processed. All the tags listed in the CoBOM must be activated in
 the same transaction, i.e., either all or none.
 
 The number of CoBOMs required in a given supply chain ecosystem is dependent on
-Verifier Owner's Appraisal Policy for Evidence, which is often driven by the complexity and nature of
-the use case.
+Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
 
 For example, in cases where CoRIMs are produced by a single authority, a Verifier Owner may have
 a policy that CoBOM's are not required. In this case, signature chain over each CoRIM establishes required authorization,
