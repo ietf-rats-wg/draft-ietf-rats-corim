@@ -1278,8 +1278,7 @@ A Concise Bill of Material (CoBOM) object represents the signal for the
 Verifier to activate the listed tags. Verifier policy determines whether CoBOMs are required.
 
 When CoBOMs are required, each tag MUST be activated by a CoBOM before being processed.
-All the tags listed in the CoBOM MUST be activated in
-the same transaction, i.e., either all or none.
+All the tags listed in the CoBOM MUST be activated atomically. If any tag activated by a CoBOM is not available to the Verifier, the entire CoBOM is rejected.
 
 The number of CoBOMs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
