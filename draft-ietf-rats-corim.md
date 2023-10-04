@@ -1407,6 +1407,8 @@ The selection process MUST yield at least one usable tag.
 
 ### CoBOM Extraction
 
+This section is not applicable if the Verifier policy does not require CoBOMs.
+
 All the available Concise Bill Of Material (CoBOMs) tags are then collected
 from the selected CoRIMs.
 
