@@ -1287,7 +1287,7 @@ If a Verifier Owner has a policy that does not require CoBOM, tags within a CoRI
 are activated immediately and treated valid for appraisal.
 
 There may be cases when Verifier receives CoRIMs from multiple
-Reference Value providers and Endorsers. In such cases, an integrator or a supplier authority
+Reference Value providers and Endorsers. In such cases, a supplier (or other authorities, such as integrators)
 may be designated to issue a single CoBOM to activate all the tags submitted to the Verifier
 in these CoRIMs.
 
