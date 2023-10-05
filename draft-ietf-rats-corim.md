@@ -1275,10 +1275,24 @@ Schema extensions (Map or Data Type) should be documented to facilitate interope
 # CoBOM {#sec-cobom}
 
 A Concise Bill of Material (CoBOM) object represents the signal for the
-Verifier to activate the listed tags. Data contained in a tag MUST NOT be used
-for appraisal until a CoBOM which activates that tag has been received and
-successfully processed. All the tags listed in the CoBOM must be activated in
-the same transaction, i.e., either all or none.
+Verifier to activate the listed tags. Verifier policy determines whether CoBOMs are required.
+
+When CoBOMs are required, each tag MUST be activated by a CoBOM before being processed.
+All the tags listed in the CoBOM MUST be activated atomically. If any tag activated by a CoBOM is not available to the Verifier, the entire CoBOM is rejected.
+
+The number of CoBOMs required in a given supply chain ecosystem is dependent on
+Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
+
+If a Verifier Owner has a policy that does not require CoBOM, tags within a CoRIM received by a Verifier
+are activated immediately and treated valid for appraisal.
+
+There may be cases when Verifier receives CoRIMs from multiple
+Reference Value providers and Endorsers. In such cases, a supplier (or other authorities, such as integrators)
+may be designated to issue a single CoBOM to activate all the tags submitted to the Verifier
+in these CoRIMs.
+
+In a more complex case, there may be multiple authorities that issue CoBOMs at different points in time.
+An Appraisal Policy for Evidence may dictate how multiple CoBOMs are to be processed within the Verifier.
 
 ## Structure
 
@@ -1389,6 +1403,8 @@ profile that is not understood by a Verifier can be readily discarded.
 The selection process MUST yield at least one usable tag.
 
 ### CoBOM Extraction
+
+This section is not applicable if the Verifier policy does not require CoBOMs.
 
 All the available Concise Bill Of Material (CoBOMs) tags are then collected
 from the selected CoRIMs.
