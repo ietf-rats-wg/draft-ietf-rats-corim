@@ -569,7 +569,7 @@ The following triples are currently defined:
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
-* Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
+* Group membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-group-membership}}).
 * CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
 
 ## Structure
@@ -736,7 +736,7 @@ The following describes each member of the `triples-map`:
   between domains.  Described in {{sec-comid-triple-domain-dependency}}.
 
 * `membership-triples` (index 5): Triples describing topological relationships
-  between (sub-)modules.  Described in {{sec-comid-triple-domain-membership}}.
+  between (sub-)modules.  Described in {{sec-comid-triple-group-membership}}.
 
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID
   tags. Described in {{sec-comid-triple-coswid}}.
@@ -822,7 +822,7 @@ UEID, UUID, or cryptographic key identifier.
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Group
+##### Group
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -1173,18 +1173,86 @@ trustworthiness properties of the subject domain exists.
 {::include cddl/domain-dependency-triple-record.cddl}
 ~~~
 
-#### Domain Membership Triple {#sec-comid-triple-domain-membership}
+#### Group Membership Triple {#sec-comid-triple-group-membership}
 
-A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain ({{sec-comid-domain-type}}) that has a predicate
-relationship to the object containing one or more environments.  Endorsed
-environments ({{sec-comid-triple-endval}}) membership is conditional upon
-successful matching of Reference Values ({{sec-comid-triple-refval}}) to
-Evidence.
+In order to model hierarchical device composition, CoRIM authors need to identify all components in the composite device (see {{Section 3.3 of -rats-arch}}).
+A group describes all target environments that a certain attesting environment is generating evidence about.
+The parent-child relationship between the attesting environment and all target environments in question is expressed via the group-membership-triple:
 
 ~~~ cddl
-{::include cddl/domain-membership-triple-record.cddl}
+{::include cddl/group-membership-triple-record.cddl}
 ~~~
+
+In the example composite device in {{composite}}, `env-1` is the Attesting Environment for `env-2` and `env-3`, while `env-2` is the Attesting Environment for `env-4`.
+Appraisal starts from the top of the device hierarchy (`env-1`) and descends through all the subtrees until all Target Environments have been visited.
+
+~~~ aasvg
+.-------.
+| env-1 |
+'---+---'
+    |  .-------.
+    +--+ env-2 |
+    |  '---+---'
+    |      |  .-------.
+    |      +--+ env-4 |
+    |         '-------'
+    |  .-------.
+    +--+ env-3 |
+       '-------'
+~~~
+{: #composite artwork-align="center" title="Example Environments Composition"}
+
+The two following group triples model the device hierarchy:
+
+* The top-level with `env-1` as lead attester:
+
+~~~
+group-membership-triple-record = [
+  lead: env-1
+  subs: [ env-2, env-3 ]
+]
+~~~
+
+* The sub-attester rooted at `env-2`:
+
+~~~
+group-membership-triple-record = [
+  lead: env-2
+  subs: [ env-4 ]
+]
+~~~
+
+The `lead` environment is the group name.
+Since it is expressed as an `environment-map`, it can itself appear as one of the `subs` elements of other `group-membership-triple-record`, thus allowing recursive composition.
+
+The scope of a single `group-membership-triple-record` encompasses exactly two adjacent layers in a layered Attester.
+
+#### Multi-Environment Conditional (MEC) Endorsements Triple {#sec-comid-triple-mec-endorsements}
+
+The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is as follows:
+
+> "IF accepted state matches the `cond` value, THEN the `env` is associated with the endorsed value `val`."
+
+~~~ cddl
+{::include cddl/mec-endorsement-triple-record.cddl}
+~~~
+
+A `multi-env-conditional-endorsement-triple-record` has the following parameters:
+
+* `env`: the environment to which the endorsed value (conditionally) applies
+* `val`: the endorsed value
+* `cond`: all target environments, along with a specific state, that need to match in order for the endorsement to apply
+
+All the entries in `cond` MUST match.
+
+The order in which MEC Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
+
+Therefore, the set of applicable MEC Endorsement triple MUST be topologically sorted based on the criterion that a MEC Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the second triple.
+
+Notes:
+
+* In order to give the expected result, the condition must describe the expected context completely.
+* The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.
 
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
