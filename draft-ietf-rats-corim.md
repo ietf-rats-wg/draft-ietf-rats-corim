@@ -1040,11 +1040,20 @@ Raw value measurements are typically vendor defined values that are checked by V
 for consistency only, since the security relevance is opaque to Verifiers.
 
 There are two parts to a `raw-value-group`, a measurement and an optional mask.
-The default raw value measurement is a CBOR tagged `bstr`.
-Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
-between the various semantics of type values.
+A raw value measurement is a BSTR, optionally preceded by a CBOR tag.
+In Evidence or Endorsement, the CBOR tag value #6.560 identifies an opaque raw value, the verifier does not make any assumptions about the contents of a `bstr` with this
+CBOR tag.
 
-The mask is applied by the Verifier as part of appraisal.
+Additional CBOR tags can be defined for raw value. In a CBOR tagged raw-value entry within Evidence or Endorsement, the CBOR tag describes the structure of the data within
+the BSTR. This may be used by entities processing the contents of the raw-value.
+The base Verifier described in this specification ignores the CBOR tag on an
+Evidence or Endorsement raw-value, but extensions profiles may assign meaning to it.
+
+In a Reference Value raw-entry, the CBOR tag on a raw-value describes the algorithm
+which the Verifier must use when comparing the values.
+
+If a raw value reference value (at index 4) also includes a mask (at index 5) then
+the mask is used by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
 
 When a new raw value type is defined, the convention for applying the mask is also defined.
@@ -1683,15 +1692,18 @@ The algorithm used to match the `measurement-values-map` entries
 is described below. The comparison performed depends on the type of
 field being compared.
 
+The presense of, or value of, the CBOR tag {{-cbor}} on an Accepted Claims Set
+entry does not affect the result of the comparison.
+
 If the Reference Value `measurement-values-map` value is tagged with a CBOR
-tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated
+tag then the Verifier MUST use the comparison algorithm associated
 with that tag.
 
 If the Reference Value is not tagged then the Verifier MUST use the comparison
 algorithm associated with the `measurement-values-map` codepoint for the entry.
 
-This specification defines the matching algorithm for some CBOR tagged reference
-values, which is described in sub-sections below.
+This specification defines the matching algorithm for some CBOR tagged Reference
+Values, which is described in sub-sections below.
 
 A CoRIM profile may define additional tags and their matching algorithms.
 
@@ -1764,11 +1776,39 @@ Reference Value does not match.
 
 ##### Comparison for raw-value entries
 
-> I think this comparison method only works if the entry is at key 4 (because
-there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores [expect-raw-value raw-value-mask] in an array?
+The value stored under `measurement-values-map` key 4 is a raw-value entry with
+optional mask. The mask, if present, is stored under `measurement-values-map` key 5.
+Both raw-value and mask must have type BSTR.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+Within a Reference Value, a `measurement-values-map` entry of type BSTR, either with
+no CBOR tag or with CBOR tag #6.560, is a raw-value entry without mask.
+
+If no mask is provided then the Verifier creates a mask with every byte containing
+the value 0xFF.
+If the Reference Value is not tagged then the created mask is the same size as
+the longer of Reference Value raw-value or Accepted Claims Set raw-value.
+If the Reference Value is tagged with #6.560 then the created mask is the same
+size as the Reference Value raw-value.
+
+For example, if the Accepted Claims Set raw-value has value h'123456',
+the untagged Reference Value raw-value has value h'1234', and there is no
+corresponding mask then a mask is created with value h'FFFFFF'.
+
+The Verifier then adds zeros to the end of each of the three BSTR inputs as required to make them all the same length.
+
+For example, if the Reference raw-value has value h'1234' and the Accepted Claims Set raw-value is h'123456' then the Reference raw-value is extended to h'123400'.
+
+Finally, the contents of the Reference Value and Accepted Claims Set raw-values are compared together using the mask. Each bit is compared separately.
+If a bit in the mask is 1 and the corresponding bits in the Reference Value and
+Accepted Claims Set are different, then the Reference Value does not match.
+If a bit in the mask is 0 then the values of the corresponding bits in the
+Reference Value and Accepted Claims set do not affect the result of the comparison.
+
+The CBOR tag (or lack of tag) on the Accepted Claims Set raw-value does not affect
+the result of the comparison.
+
+If a Reference Value `measurement-values-map` contains key 5 but does not contain
+key 4 then this is an error and the Reference Value does not match.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
