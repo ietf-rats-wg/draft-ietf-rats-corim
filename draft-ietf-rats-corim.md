@@ -749,6 +749,10 @@ The following describes each member of the `triples-map`:
   Endorsement based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-end}}.
 
+* `multi-conditional-endorsement-triples` (index 10) Triples describing conditional
+  Endorsement based on the acceptance of multiple stateful environments. Described
+  in {{sec-comid-triple-multi-cond-end}}.
+
 #### Common Types
 
 ##### Environment
@@ -1247,6 +1251,26 @@ applies to all measurements in the triple, including those in `measurement-value
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-triple-record.cddl}
+~~~
+
+#### Multi Conditional Endorsement Triple {#sec-comid-triple-multi-cond-end}
+
+A Multi Conditional Endorsement Triple behaves similarly to the Conditional Endorsement Triple {{sec-comid-triple-cond-end})
+but has the ability to match against Evidence or Endorsement in multiple environments, and the ability to add Endorsements
+to multiple environments.
+
+The subject of each Multi Conditional Endorsement triple (named `cond`) consists of one or more Reference Values,
+encoded as stateful environments (i.e., `stateful-environment-record`), each of which identifies a Target Environment state
+based on an `environment-map` plus `measurement-map` measurements that may match Evidence or Endorsements.
+
+The object (named `end`) of Multi Conditional Endorsement triple contains one or more Endorsements, also encoded as
+stateful environments, which the Verifier should accept if all of the conditions match.
+
+If all Reference Values match Evidence or Endorsements already accepted by the Verifier then all Endorsements listed
+in the triple Endorsement field are accepted by the Verifier.
+
+~~~ cddl
+{::include cddl/multi-conditional-endorsement-triple-record.cddl}
 ~~~
 
 ## Extensibility {#sec-extensibility}
