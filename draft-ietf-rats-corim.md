@@ -1249,6 +1249,25 @@ applies to all measurements in the triple, including those in `measurement-value
 {::include cddl/conditional-endorsement-triple-record.cddl}
 ~~~
 
+#### Update Triple {#sec-update-triple-rec}
+During supply chain lifecycle it is often necessary that the Verifier Reference-Values or Endorsed Values for a subject needs an update. The below semantics provides a generic mechanism to allow update to existing Reference-Values and Endorsed-Values.
+
+The CDDL below, provides a schema that describes the update flow.
+
+~~~ cddl
+{::include cddl/update-record.cddl}
+~~~
+
+#### X-Triples {#sec-x-triple-rec}
+For the Supply Chain Systems where only incremental updates are possible, it is essential that obsolete or security vulnerable Reference Values and/or Endorsed Values must be removed using x-ref-endor-triple-record.
+
+The CCDL below, provides schema for remving Reference Values and/or Endorsed Values from a Verifier.
+
+~~~ cddl
+{::include cddl/x-triples-record.cddl}
+~~~
+
+
 ## Extensibility {#sec-extensibility}
 
 The base CORIM schema is described using CDDL {{-cddl}} that can be extended
