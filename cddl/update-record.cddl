@@ -1,0 +1,12 @@
+update-triple-record = [
+&(subj: 0) => $subject-type-choice
+& (mval: 1) => [+measurement-values-map] ; object of the update
+? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+&(action: 3) => $update-action-type-choice
+]
+
+$subject-type-choice /= [+environment-map] ; One or more environment that comprise the subject
+$subject-type-choice /= [+stateful-environment-record] ;  One or more stateful-environments that comprise the subject
+
+$update-action-type-choice /= add ; The new triple causes a new revision identified by measurement-values-map , to be simply updated/added in Verifier
+$update-action-type-choice /= replaces ; The triple overwrites pre-existing reference-values/endorsements for the subject identified by $subject-type-choice
