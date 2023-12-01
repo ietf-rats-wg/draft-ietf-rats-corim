@@ -1137,6 +1137,14 @@ the object relates to the subject.
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
 
+#### Condition Values Triple 
+
+A Condition Values Triple defines a set of operational state of an environment. If the corresponding values defined in its `measurement-map` are found in an Accepted Claims Set, corresponding endorsed values defined in a `multi-env-conditional-endorsement-triple-record` can be added to that Accepted Claims Set.
+
+~~~ cddl
+{::include cddl/condition-triple-record.cddl}
+~~~
+
 #### Device Identity Triple {#sec-comid-triple-identity}
 
 A Device Identity triple relates one or more cryptographic keys to a device.
@@ -1185,6 +1193,39 @@ Evidence.
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
 ~~~
+
+
+
+#### Multi-Environment Conditional (MEC) Endorsements Triple {#sec-comid-triple-mec-endorsements}
+
+The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is as follows:
+
+> "IF accepted state matches the `cond` value, THEN `env` is associated with the endorsed value(s) `ends`."
+
+~~~ cddl
+{::include cddl/mec-endorsement-triple-record.cddl}
+~~~
+
+A `multi-env-conditional-endorsement-triple-record` has the following parameters:
+
+* `conds`: all target environments, along with a specific state, that need to match in order for the endorsement(s) to apply
+* `actions`: TODO 
+* `env`: the environment to which the endorsed value (conditionally) applies
+* `ends`: the endorsed value(s) associated with `env`
+
+All the entries in `cond` MUST match.
+
+The order in which MEC Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
+
+Therefore, the set of applicable MEC Endorsement triple MUST be topologically sorted based on the criterion that a MEC Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the second triple.
+
+Notes:
+
+* In order to give the expected result, the condition must describe the expected context completely.
+* The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.
+
+
+
 
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
