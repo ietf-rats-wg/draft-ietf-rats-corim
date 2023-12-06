@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 14 April 2024                                      Y. Deshpande
+Expires: 8 June 2024                                        Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         12 October 2023
+                                                         6 December 2023
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 April 2024.
+   This Internet-Draft will expire on 8 June 2024.
 
 Copyright Notice
 
@@ -128,6 +128,8 @@ Table of Contents
          3.1.4.8.  CoMID-CoSWID Linking Triple
          3.1.4.9.  Conditional Endorsement Series Triple
          3.1.4.10. Conditional Endorsement Triple
+         3.1.4.11. Multi-Environment Conditional (MEC) Endorsement
+                 Triple
      3.2.  Extensibility
        3.2.1.  Map Extensions
        3.2.2.  Data Type Extensions
@@ -887,6 +889,8 @@ Table of Contents
        [ + conditional-endorsement-series-triple-record ]
      ? &(conditional-endorsement-triples: 9) =>
        [ + conditional-endorsement-triple-record ]
+     ? &(mec-endorsement-triples: 10) =>
+       [ + mec-endorsement-triple-record ]
      * $$triples-map-extension
    }>
 
@@ -923,6 +927,11 @@ Table of Contents
    *  conditional-endorsement-triples (index 9) Triples describing
       conditional Endorsement based on the acceptance of a stateful
       environment.  Described in Section 3.1.4.10.
+
+   *  mec-endorsement-triple-record (index 10) Triples describing a
+      series of Endorsement that are applicable based on the acceptance
+      of a series of stateful environment records.  Described in
+      Section 3.1.4.11.
 
 3.1.4.1.  Common Types
 
@@ -1543,6 +1552,50 @@ Table of Contents
      measurement-values-map
    ]
 
+3.1.4.11.  Multi-Environment Conditional (MEC) Endorsement Triple
+
+   The semantics of the Multi-Environment Conditional (MEC) Endorsement
+   Triple is as follows:
+
+      "IF accepted state matches all conds values, THEN every entry in
+      the endorsements is added to the accepted state"
+
+   mec-endorsement-triple-record = [
+     conds: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
+   ]
+
+   A mec-endorsement-triple-record has the following parameters:
+
+   *  conds: all target environments, along with a specific state, that
+      need to match state-triples entries in the ACS for the
+      endorsement(s) to apply
+
+   *  endorsements: endorsements that are added to the ACS state-triples
+      if all conds match.
+
+   The order in which MEC Endorsement triples are evaluated is
+   important: different sorting may produce different end-results in the
+   computed ACS.
+
+   Therefore, the set of applicable MEC Endorsement triple MUST be
+   topologically sorted based on the criterion that a MEC Endorsement
+   triple is evaluated before another if its Target Environment and
+   Endorsement pair is found in any of the stateful environments of the
+   second triple.
+
+   Notes:
+
+   *  In order to give the expected result, the condition must describe
+      the expected context completely.
+
+   *  The scope of a single MEC triple encompasses an arbitrary amount
+      of environments across all layers in an Attester.
+
+   There are scope-related questions that need to be answered.  (
+   // Tracked at: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/
+   issues/176)
+
 3.2.  Extensibility
 
    The base CORIM schema is described using CDDL [RFC8610] that can be
@@ -1558,10 +1611,9 @@ Table of Contents
    ($$NAME-extension) where "NAME" is the name of the map and '$$'
    signifies map extensibility.  Typically, map extension requires a
    convention for code point naming that avoids code-point reuse.  Well-
-   known code points may be in a registry, such as CoSWID
-   [IANA.concise-software-identifier].  Additionally, a range of code
-   points may be reserved for vendor-specific use such as negative
-   integers.
+   known code points may be in a registry, such as CoSWID [IANA.coswid].
+   Additionally, a range of code points may be reserved for vendor-
+   specific use such as negative integers.
 
 3.2.2.  Data Type Extensions
 
@@ -2492,16 +2544,16 @@ Table of Contents
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
               "Concise TA Stores (CoTS)", Work in Progress, Internet-
-              Draft, draft-ietf-rats-concise-ta-stores-01, 5 June 2023,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              concise-ta-stores-01>.
+              Draft, draft-ietf-rats-concise-ta-stores-02, 5 December
+              2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              rats-concise-ta-stores-02>.
 
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-21, 30 June
-              2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              rats-eat-21>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-22, 14
+              October 2023, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-22>.
 
    [I-D.ietf-sacm-coswid]
               Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
@@ -2619,12 +2671,13 @@ Table of Contents
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
               T. Fossati, "Arm's Platform Security Architecture (PSA)
               Attestation Token", Work in Progress, Internet-Draft,
-              draft-tschofenig-rats-psa-token-13, 1 September 2023,
+              draft-tschofenig-rats-psa-token-18, 4 December 2023,
               <https://datatracker.ietf.org/doc/html/draft-tschofenig-
-              rats-psa-token-13>.
+              rats-psa-token-18>.
 
-   [IANA.concise-software-identifier]
-              "*** BROKEN REFERENCE ***".
+   [IANA.coswid]
+              IANA, "Concise Software Identifier (CoSWID)",
+              <http://www.iana.org/assignments/coswid>.
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
@@ -2836,6 +2889,11 @@ Appendix A.  Full CoRIM CDDL
      [ + environment-map ]
    ]
 
+   mec-endorsement-triple-record = [
+     conds: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
+   ]
+
    $domain-type-choice /= uint
    $domain-type-choice /= text
    $domain-type-choice /= tagged-uuid-type
@@ -2989,6 +3047,8 @@ Appendix A.  Full CoRIM CDDL
        [ + conditional-endorsement-series-triple-record ]
      ? &(conditional-endorsement-triples: 9) =>
        [ + conditional-endorsement-triple-record ]
+     ? &(mec-endorsement-triples: 10) =>
+       [ + mec-endorsement-triple-record ]
      * $$triples-map-extension
    }>
 
