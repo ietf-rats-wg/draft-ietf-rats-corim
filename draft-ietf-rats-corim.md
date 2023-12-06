@@ -1248,9 +1248,9 @@ applies to all measurements in the triple, including those in `measurement-value
 {::include cddl/conditional-endorsement-triple-record.cddl}
 ~~~
 
-#### Multi-Environment Conditional (MEC) Endorsements Triple {#sec-comid-triple-mec-endorsements}
+#### Multi-Environment Conditional (MEC) Endorsement Triple {#sec-comid-triple-mec-endorsement}
 
-The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is as follows:
+The semantics of the Multi-Environment Conditional (MEC) Endorsement Triple is as follows:
 
 > "IF accepted state matches all `conds` values, THEN every `endorsements` value is added to the accepted state"
 
