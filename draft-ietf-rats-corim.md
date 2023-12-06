@@ -1252,7 +1252,7 @@ applies to all measurements in the triple, including those in `measurement-value
 
 The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is as follows:
 
-> "IF accepted state matches the `cond` value, THEN `env` is associated with the endorsed value(s) `ends`."
+> "IF accepted state matches all `conds` values, THEN every `endorsements` value is added to the accepted state"
 
 ~~~ cddl
 {::include cddl/mec-endorsement-triple-record.cddl}
