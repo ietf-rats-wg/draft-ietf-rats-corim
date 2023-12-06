@@ -1277,6 +1277,8 @@ Notes:
 * In order to give the expected result, the condition must describe the expected context completely.
 * The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.
 
+There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
+
 ## Extensibility {#sec-extensibility}
 
 The base CORIM schema is described using CDDL {{-cddl}} that can be extended
