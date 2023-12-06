@@ -15,6 +15,7 @@ COMID_FRAGS += crypto-key-type-choice.cddl
 COMID_FRAGS += domain-dependency-triple-record.cddl
 COMID_FRAGS += domain-membership-triple-record.cddl
 COMID_FRAGS += mec-endorsement-triple-record.cddl
+COMID_FRAGS += condition-triple-record.cddl
 COMID_FRAGS += domain-type-choice.cddl
 COMID_FRAGS += endorsed-triple-record.cddl
 COMID_FRAGS += entity-map.cddl
