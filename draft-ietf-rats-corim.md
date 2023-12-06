@@ -1209,9 +1209,7 @@ The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is 
 A `multi-env-conditional-endorsement-triple-record` has the following parameters:
 
 * `conds`: all target environments, along with a specific state, that need to match in order for the endorsement(s) to apply
-* `actions`: TODO
-* `env`: the environment to which the endorsed value (conditionally) applies
-* `ends`: the endorsed value(s) associated with `env`
+* `actions`: additional Endorsements are added to a current ACS maintained by a Verifier and that matches `conds` is augmented with another set of Endorsements
 
 All the entries in `cond` MUST match.
 
