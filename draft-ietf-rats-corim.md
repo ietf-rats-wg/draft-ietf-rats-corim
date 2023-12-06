@@ -1186,32 +1186,6 @@ Evidence.
 {::include cddl/domain-membership-triple-record.cddl}
 ~~~
 
-
-
-#### Multi-Environment Conditional (MEC) Endorsements Triple {#sec-comid-triple-mec-endorsements}
-
-The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is as follows:
-
-> "IF accepted state matches the `cond` value, THEN `env` is associated with the endorsed value(s) `ends`."
-
-~~~ cddl
-{::include cddl/mec-endorsement-triple-record.cddl}
-~~~
-
-A `multi-env-conditional-endorsement-triple-record` has the following parameters:
-
-* `conds`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
-* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
-
-The order in which MEC Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
-
-Therefore, the set of applicable MEC Endorsement triple MUST be topologically sorted based on the criterion that a MEC Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the second triple.
-
-Notes:
-
-* In order to give the expected result, the condition must describe the expected context completely.
-* The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.
-
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
 A CoSWID triple relates reference measurements contained in one or more CoSWIDs
@@ -1273,6 +1247,30 @@ applies to all measurements in the triple, including those in `measurement-value
 ~~~ cddl
 {::include cddl/conditional-endorsement-triple-record.cddl}
 ~~~
+
+#### Multi-Environment Conditional (MEC) Endorsements Triple {#sec-comid-triple-mec-endorsements}
+
+The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is as follows:
+
+> "IF accepted state matches the `cond` value, THEN `env` is associated with the endorsed value(s) `ends`."
+
+~~~ cddl
+{::include cddl/mec-endorsement-triple-record.cddl}
+~~~
+
+A `multi-env-conditional-endorsement-triple-record` has the following parameters:
+
+* `conds`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
+* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
+
+The order in which MEC Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
+
+Therefore, the set of applicable MEC Endorsement triple MUST be topologically sorted based on the criterion that a MEC Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the second triple.
+
+Notes:
+
+* In order to give the expected result, the condition must describe the expected context completely.
+* The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.
 
 ## Extensibility {#sec-extensibility}
 
