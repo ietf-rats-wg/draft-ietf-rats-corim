@@ -749,9 +749,10 @@ The following describes each member of the `triples-map`:
   Endorsement based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-end}}.
 
-* `multi-env-conditional-endorsement-triple-record` (index 10) Triples describing a series of Endorsement
-that are applicable based on the acceptance of a series of stateful environment records. Described
-in {{sec-comid-triple-mec-endorsement}}.
+* `mec-endorsement-triple-record` (index 10) Triples describing a series of
+  Endorsement that are applicable based on the acceptance of a series of
+  stateful environment records. Described in
+  {{sec-comid-triple-mec-endorsement}}.
 
 #### Common Types
 
@@ -1263,7 +1264,7 @@ The semantics of the Multi-Environment Conditional (MEC) Endorsement Triple is a
 {::include cddl/mec-endorsement-triple-record.cddl}
 ~~~
 
-A `multi-env-conditional-endorsement-triple-record` has the following parameters:
+A `mec-endorsement-triple-record` has the following parameters:
 
 * `conds`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
 * `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
