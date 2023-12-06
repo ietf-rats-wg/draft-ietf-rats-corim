@@ -749,6 +749,10 @@ The following describes each member of the `triples-map`:
   Endorsement based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-end}}.
 
+* `multi-env-conditional-endorsement-triple-record` (index 10) Triples describing a series of Endorsement
+that are applicable based on the acceptance of a series of stateful environment records. Described
+in {{sec-comid-triple-mec-endorsement}}.
+
 #### Common Types
 
 ##### Environment
