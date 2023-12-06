@@ -121,16 +121,15 @@ Table of Contents
            3.1.4.1.7.  Domain Types
          3.1.4.2.  Reference Values Triple
          3.1.4.3.  Endorsed Values Triple
-         3.1.4.4.  Condition Values Triple
-         3.1.4.5.  Device Identity Triple
-         3.1.4.6.  Attestation Keys Triple
-         3.1.4.7.  Domain Dependency Triple
-         3.1.4.8.  Domain Membership Triple
-         3.1.4.9.  Multi-Environment Conditional (MEC) Endorsements
+         3.1.4.4.  Device Identity Triple
+         3.1.4.5.  Attestation Keys Triple
+         3.1.4.6.  Domain Dependency Triple
+         3.1.4.7.  Domain Membership Triple
+         3.1.4.8.  Multi-Environment Conditional (MEC) Endorsements
                  Triple
-         3.1.4.10. CoMID-CoSWID Linking Triple
-         3.1.4.11. Conditional Endorsement Series Triple
-         3.1.4.12. Conditional Endorsement Triple
+         3.1.4.9.  CoMID-CoSWID Linking Triple
+         3.1.4.10. Conditional Endorsement Series Triple
+         3.1.4.11. Conditional Endorsement Triple
      3.2.  Extensibility
        3.2.1.  Map Extensions
        3.2.2.  Data Type Extensions
@@ -702,24 +701,24 @@ Table of Contents
 
    *  Device Identity triples: containing cryptographic credentials -
       for example, an IDevID - uniquely identifying a device
-      (Section 3.1.4.5).
+      (Section 3.1.4.4).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
-      from the Attester (Section 3.1.4.6).
+      from the Attester (Section 3.1.4.5).
 
    *  Domain dependency triples: describing trust relationships between
       domains, i.e., collection of related environments and their
-      measurements (Section 3.1.4.7).
+      measurements (Section 3.1.4.6).
 
    *  Domain membership triples: describing topological relationships
       between (sub-)modules.  For example, in a composite Attester
       comprising multiple sub-Attesters (sub-modules), this triple can
       be used to define the topological relationship between lead- and
-      sub- Attester environments (Section 3.1.4.8).
+      sub- Attester environments (Section 3.1.4.7).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID tags (Section 3.1.4.10).
+      with existing CoSWID tags (Section 3.1.4.9).
 
 3.1.  Structure
 
@@ -892,8 +891,6 @@ Table of Contents
        [ + conditional-endorsement-triple-record ]
      ? &(mec-endorsement-triples: 10) =>
        [ + multi-env-conditional-endorsement-triple-record ]
-     ? &(condition-triples: 11) =>
-       [ + condition-triple-record ]
      * $$triples-map-extension
    }>
 
@@ -906,30 +903,30 @@ Table of Contents
       Described in Section 3.1.4.3.
 
    *  identity-triples (index 2): Triples containing identity
-      credentials.  Described in Section 3.1.4.5.
+      credentials.  Described in Section 3.1.4.4.
 
    *  attest-key-triples (index 3): Triples containing verification keys
       associated with attesting environments.  Described in
-      Section 3.1.4.6.
+      Section 3.1.4.5.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in Section 3.1.4.7.
+      relationships between domains.  Described in Section 3.1.4.6.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      Section 3.1.4.8.
+      Section 3.1.4.7.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in Section 3.1.4.10.
+      existing CoSWID tags.  Described in Section 3.1.4.9.
 
    *  conditional-endorsement-series-triples (index 8) Triples
       describing a series of conditional Endorsements based on the
       acceptance of a stateful environment.  Described in
-      Section 3.1.4.11.
+      Section 3.1.4.10.
 
    *  conditional-endorsement-triples (index 9) Triples describing
       conditional Endorsement based on the acceptance of a stateful
-      environment.  Described in Section 3.1.4.12.
+      environment.  Described in Section 3.1.4.11.
 
 3.1.4.1.  Common Types
 
@@ -1409,20 +1406,7 @@ Table of Contents
      measurement-map
    ]
 
-3.1.4.4.  Condition Values Triple
-
-   A Condition Values Triple defines a set of operational state of an
-   environment.  If the corresponding values defined in its measurement-
-   map are found in an Accepted Claims Set, corresponding endorsed
-   values defined in a multi-env-conditional-endorsement-triple-record
-   can be added to that Accepted Claims Set.
-
-   condition-triple-record = [
-     environment-map
-     measurement-map
-   ]
-
-3.1.4.5.  Device Identity Triple
+3.1.4.4.  Device Identity Triple
 
    A Device Identity triple relates one or more cryptographic keys to a
    device.  The subject of an Identity triple uses an instance or class
@@ -1435,7 +1419,7 @@ Table of Contents
      [ + $crypto-key-type-choice ]
    ]
 
-3.1.4.6.  Attestation Keys Triple
+3.1.4.5.  Attestation Keys Triple
 
    An Attestation Keys triple relates one or more cryptographic keys to
    an Attesting Environment.  The Attestation Key triple subject is an
@@ -1448,7 +1432,7 @@ Table of Contents
      [ + $crypto-key-type-choice ]
    ]
 
-3.1.4.7.  Domain Dependency Triple
+3.1.4.6.  Domain Dependency Triple
 
    A Domain Dependency triple defines trust dependencies between
    measurement sources.  The subject identifies a domain
@@ -1463,7 +1447,7 @@ Table of Contents
      [ + $domain-type-choice ]
    ]
 
-3.1.4.8.  Domain Membership Triple
+3.1.4.7.  Domain Membership Triple
 
    A Domain Membership triple assigns domain membership to environments.
    The subject identifies a domain (Section 3.1.4.1.7) that has a
@@ -1477,7 +1461,7 @@ Table of Contents
      [ + environment-map ]
    ]
 
-3.1.4.9.  Multi-Environment Conditional (MEC) Endorsements Triple
+3.1.4.8.  Multi-Environment Conditional (MEC) Endorsements Triple
 
    The semantics of the Multi-Environment Conditional (MEC) Endorsements
    Triple is as follows:
@@ -1486,21 +1470,19 @@ Table of Contents
       with the endorsed value(s) ends."
 
    multi-env-conditional-endorsement-triple-record = [
-     conds: [ + condition-triple-record ]
-     actions: [ + stateful-environment-record ]
+     conds: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
    ]
 
    A multi-env-conditional-endorsement-triple-record has the following
    parameters:
 
    *  conds: all target environments, along with a specific state, that
-      need to match in order for the endorsement(s) to apply
+      need to match state-triples entries in the ACS for the
+      endorsement(s) to apply
 
-   *  actions: additional Endorsements are added to a current ACS
-      maintained by a Verifier and that matches conds is augmented with
-      another set of Endorsements
-
-   All the entries in cond MUST match.
+   *  endorsements: endorsements that are added to the ACS state-triples
+      if all conds match.
 
    The order in which MEC Endorsement triples are evaluated is
    important: different sorting may produce different end-results in the
@@ -1520,7 +1502,7 @@ Table of Contents
    *  The scope of a single MEC triple encompasses an arbitrary amount
       of environments across all layers in an Attester.
 
-3.1.4.10.  CoMID-CoSWID Linking Triple
+3.1.4.9.  CoMID-CoSWID Linking Triple
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
@@ -1535,7 +1517,7 @@ Table of Contents
 
    concise-swid-tag-id = text / bstr .size 16
 
-3.1.4.11.  Conditional Endorsement Series Triple
+3.1.4.10.  Conditional Endorsement Series Triple
 
    A Conditional Endorsement Series triple uses a stateful environment,
    (i.e., stateful-environment-record), that identifies a Target
@@ -1579,7 +1561,7 @@ Table of Contents
      endv: measurement-values-map
    ]
 
-3.1.4.12.  Conditional Endorsement Triple
+3.1.4.11.  Conditional Endorsement Triple
 
    A Conditional Endorsement triple uses a stateful environment, (i.e.,
    stateful-environment-record), that identifies a Target Environment
@@ -1621,10 +1603,9 @@ Table of Contents
    ($$NAME-extension) where "NAME" is the name of the map and '$$'
    signifies map extensibility.  Typically, map extension requires a
    convention for code point naming that avoids code-point reuse.  Well-
-   known code points may be in a registry, such as CoSWID
-   [IANA.concise-software-identifier].  Additionally, a range of code
-   points may be reserved for vendor-specific use such as negative
-   integers.
+   known code points may be in a registry, such as CoSWID [IANA.coswid].
+   Additionally, a range of code points may be reserved for vendor-
+   specific use such as negative integers.
 
 3.2.2.  Data Type Extensions
 
@@ -2686,8 +2667,9 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-tschofenig-
               rats-psa-token-18>.
 
-   [IANA.concise-software-identifier]
-              "*** BROKEN REFERENCE ***".
+   [IANA.coswid]
+              IANA, "Concise Software Identifier (CoSWID)",
+              <http://www.iana.org/assignments/coswid>.
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
@@ -2900,13 +2882,8 @@ Appendix A.  Full CoRIM CDDL
    ]
 
    multi-env-conditional-endorsement-triple-record = [
-     conds: [ + condition-triple-record ]
-     actions: [ + stateful-environment-record ]
-   ]
-
-   condition-triple-record = [
-     environment-map
-     measurement-map
+     conds: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
    ]
 
    $domain-type-choice /= uint
@@ -3064,8 +3041,6 @@ Appendix A.  Full CoRIM CDDL
        [ + conditional-endorsement-triple-record ]
      ? &(mec-endorsement-triples: 10) =>
        [ + multi-env-conditional-endorsement-triple-record ]
-     ? &(condition-triples: 11) =>
-       [ + condition-triple-record ]
      * $$triples-map-extension
    }>
 
