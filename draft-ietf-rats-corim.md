@@ -1137,7 +1137,7 @@ the object relates to the subject.
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
 
-#### Condition Values Triple 
+#### Condition Values Triple
 
 A Condition Values Triple defines a set of operational state of an environment. If the corresponding values defined in its `measurement-map` are found in an Accepted Claims Set, corresponding endorsed values defined in a `multi-env-conditional-endorsement-triple-record` can be added to that Accepted Claims Set.
 
@@ -1209,7 +1209,7 @@ The semantics of the Multi-Environment Conditional (MEC) Endorsements Triple is 
 A `multi-env-conditional-endorsement-triple-record` has the following parameters:
 
 * `conds`: all target environments, along with a specific state, that need to match in order for the endorsement(s) to apply
-* `actions`: TODO 
+* `actions`: TODO
 * `env`: the environment to which the endorsed value (conditionally) applies
 * `ends`: the endorsed value(s) associated with `env`
 
