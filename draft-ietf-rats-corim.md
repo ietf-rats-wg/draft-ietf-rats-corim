@@ -99,7 +99,7 @@ informative:
     seriesinfo: Version 1.0, Revision 0.19
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
-  IANA.concise-software-identifier: coswid-reg
+  IANA.coswid: coswid-reg
   SPDM:
     title: Security Protocol and Data Model (SPDM)
     author:
@@ -749,6 +749,11 @@ The following describes each member of the `triples-map`:
   Endorsement based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-end}}.
 
+* `mec-endorsement-triple-record` (index 10) Triples describing a series of
+  Endorsement that are applicable based on the acceptance of a series of
+  stateful environment records. Described in
+  {{sec-comid-triple-mec-endorsement}}.
+
 #### Common Types
 
 ##### Environment
@@ -1248,6 +1253,32 @@ applies to all measurements in the triple, including those in `measurement-value
 ~~~ cddl
 {::include cddl/conditional-endorsement-triple-record.cddl}
 ~~~
+
+#### Multi-Environment Conditional (MEC) Endorsement Triple {#sec-comid-triple-mec-endorsement}
+
+The semantics of the Multi-Environment Conditional (MEC) Endorsement Triple is as follows:
+
+> "IF accepted state matches all `conds` values, THEN every  entry in the `endorsements` is added to the accepted state"
+
+~~~ cddl
+{::include cddl/mec-endorsement-triple-record.cddl}
+~~~
+
+A `mec-endorsement-triple-record` has the following parameters:
+
+* `conds`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
+* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
+
+The order in which MEC Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
+
+Therefore, the set of applicable MEC Endorsement triple MUST be topologically sorted based on the criterion that a MEC Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the second triple.
+
+Notes:
+
+* In order to give the expected result, the condition must describe the expected context completely.
+* The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.
+
+There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
 
 ## Extensibility {#sec-extensibility}
 
