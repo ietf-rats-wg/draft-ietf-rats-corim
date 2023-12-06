@@ -1656,14 +1656,17 @@ A Reference Value consists of an `environment-map` plus a `measurement-map`. In 
 Reference Values are represented more compactly by letting one `environment-map`
 apply to multiple `measurement-map`s.
 
-The Verifier first looks for entries in the Accepted Claims Set with the same
-`environment-map` as the Reference Value. These are the candidate claims. If there are
+The Verifier first looks for entries in the Accepted Claims Set with an
+`environment-map` which is compatible with the Reference Value.
+These are the candidate claims. If there are
 no candidate claims then the Reference Value does not match.
 
-A Verifier SHALL compare two `environment-map`s using a binary comparison of the CBOR
-encoded objects.
+An ACS entry has a compatible `environment-map` if each field which is present
+in the Reference Value environment-map (for example `class`, `instance` etc.)
+is also present in the ACS entry, and the CBOR encoded field values in the Reference Value and ACS entry are binary identical.
+If a field is not present in the Reference value then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are compatible.
 
-A Verifier SHOULD convert `environment-map` into a form which meets CBOR Core
+A Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core
 Deterministic Encoding Requirements {{-cbor}} before performing the binary comparison.
 
 If the Reference Value contains an `authorized-by` field then the Verifier
