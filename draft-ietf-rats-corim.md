@@ -1120,9 +1120,9 @@ Three types are defined: uint and text for local scope, UUID for global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
-A Reference Values triple relates reference measurements to a Target
+A Reference Values triple relates one or more reference measurements to a Target
 Environment. For Reference Value Claims, the subject identifies a Target
-Environment, the object contains measurements, and the predicate asserts that
+Environment, the object contains one or more measurements, and the predicate asserts that
 these are the expected (i.e., reference) measurements for the Target
 Environment.
 
@@ -1206,8 +1206,7 @@ measurements for the Target Environment.
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
-that have matching Evidence.
+that identifies a Target Environment based on an `environment-map` plus one or more of the `measurement-map` measurements that have matching Evidence.
 
 The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
 matched.
@@ -1238,7 +1237,7 @@ applies to all measurements in the triple, including `conditional-series-record`
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-end}
 
 A Conditional Endorsement triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
+that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
 that have matching Evidence.
 
 The stateful Target Environment is a triple subject that MUST be satisfied before the Endorsed Values in the triple object are accepted.
@@ -1682,7 +1681,7 @@ This section describes how a Reference Value is matched against Evidence in the 
 Claims Set.
 If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
 
-A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
+A Reference Value consists of an `environment-map` plus one or more `measurement-map`. In the
 `reference-triple-record` these are encoded together. In other triples multiple
 Reference Values are represented more compactly by letting one `environment-map`
 apply to multiple `measurement-map`s.
@@ -1704,10 +1703,11 @@ field does not contain one of the keys listed in the Reference Value
 If all candidate claim entries are discarded by this step then the
 Reference Value does not match.
 
-The Verifier SHALL iterate over the codepoints which are present in the
-`measurement-values-map` field within the Reference Value `measurement-values-map`.
-The Reference Value entry is compared against each of the candidate claims.
-If none of the candidate claims matches
+The Verifier SHALL for each measurement in the set of measurements, iterate
+over the codepoints which are present in the `measurement-values-map` field
+within each of the Reference Value `measurement-values-map`.
+The Reference Value entry, which is one or more measurements is compared
+against each of the candidate claims. If none of the candidate claims matches
 the Reference Value entry then the Reference Value does not match.
 
 The algorithm used to match the `measurement-values-map` entries
