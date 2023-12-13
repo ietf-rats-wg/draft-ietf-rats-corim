@@ -1124,7 +1124,9 @@ A Reference Values triple relates one or more reference measurements to a Target
 Environment. For Reference Value Claims, the subject identifies a Target
 Environment, the object contains one or more measurements, and the predicate asserts that
 these are the expected (i.e., reference) measurements for the Target
-Environment.
+Environment. When more than one measurements are expressed using Reference Value Triple
+then Reference Value provider may use optional element `mkey` to establish context
+of each measurement in the array.
 
 ~~~ cddl
 {::include cddl/reference-triple-record.cddl}
