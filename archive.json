@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-12-12T01:19:58.381764+00:00",
+  "timestamp": "2023-12-14T01:18:25.033850+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -1753,7 +1753,7 @@
       "labels": [],
       "body": "see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/wiki/Multiple--vs-Single-measurements-Environments",
       "createdAt": "2023-03-08T16:01:19Z",
-      "updatedAt": "2023-09-01T21:55:58Z",
+      "updatedAt": "2023-12-13T19:00:12Z",
       "closedAt": null,
       "comments": [
         {
@@ -1867,6 +1867,146 @@
           "body": "Is this issue resolved? Maybe as \"do not fix\"?",
           "createdAt": "2023-09-01T21:55:58Z",
           "updatedAt": "2023-09-01T21:55:58Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @thomas-fossati I want to resurrect the discussion on \r\n (ENV --1:m--> MEAS)\r\n\r\nThere are other use cases apart from PSA, where we have a set of Measurements (Digests to be precise). The set belongs to an Environment.\r\n\r\nCurrently we do not have an adequate and elegant `way` to express this using CoRIM Reference Value Triple!\r\n\r\nWe do not want Supply chain to use `m` triples with the same `Environment` (in the subject) and then put each MEAS of (`m`) in the object. This is not elegant.\r\nIn our use case, all the Measurements for the `Environment` appears in the Evidence, hence we need matching all.\r\n\r\nAs far as concern about Evidence Matching Policy, we can make a careful assessment of the situation as:\r\nIf None of the Measurements (for the Environment) matches : Then Verifier fails the appraisal.\r\nif a partial match happens (the result can be a complete failure ) OR a Partial Failure based on the Verifier Appraisal Policy .\r\n\r\nA Verifier matches all the Measurements belonging to the Environment with the set of Reference Values.",
+          "createdAt": "2023-12-12T19:05:44Z",
+          "updatedAt": "2023-12-12T19:07:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I was looking for text (both in I-D.corim and TCG Endorsement arch) that clarifies whether an array of reference triples mean OR or AND matching logic. That is to say, given an array of reference triples in the same tag / same triples-map statement. Do all of the EMT statements have to match (aka AND logic) or is it OR logic where if any triples in the array match, then the evidence matches? The examples seem to suggest OR logic, but the prose sections don't seem very clear to me. E.g.: given a reference-triple array as follows:\r\n```\r\n[\r\n   (env=ENV1, meas=MEAS1),\r\n   (env=ENV2, meas=MEAS2),\r\n   (env=ENV3, meas=MEAS3)\r\n]\r\n```\r\nand given Evidence as:\r\n```\r\n(env=ENV2, meas=MEAS2),\r\n```\r\nIs there a match on (ENV2, MEAS2) because (ENV2, MEAS2) appears in the list of RV triples or is it not a match because all of the RV triples are not matched? \r\nThe examples suggest the former. Hence, there doesn't appear to be a way to represent AND matching logic with the current schema except for Example 3 below.\r\n\r\nAND logic therefore uses inner arrays. There are several examples that follow. \r\nExample 1:\r\n```\r\n[\r\n   [ (env=ENV1, meas=MEAS1) ],\r\n   [ (env=ENV2, meas=MEAS2) ],\r\n   [ (env=ENV3, meas=MEAS3) ]\r\n]\r\n```\r\nIf evidence matching algorithms allow for: ~[ (env=ENV2, meas=MEAS2) ] matching. Then evidence can omit the inner array brackets: (ENV2, MEAS2).\r\n\r\nIf the reference values expression was:\r\n```\r\n[\r\n   [ (env=ENV1, meas=MEAS1) ],\r\n   [ (env=ENV2, meas=MEAS2), (env=ENV4, meas=MEAS4) ],\r\n   [ (env=ENV3, meas=MEAS3) ]\r\n]\r\n```\r\n\r\nAND matching logic implies:  `[ (env=ENV2, meas=MEAS2), (env=ENV4, meas=MEAS4) ]` would not match given evidence only included `(env=ENV2, meas=MEAS2)` and not `(env=ENV4, meas=MEAS4)`.\r\n\r\nYogesh may be suggesting AND logic where only the measurement component of an EMT has multiplicity. \r\nExample 2:\r\n```\r\n[\r\n   (env=ENV1, [ meas=MEAS1] ),\r\n   (env=ENV2, [ meas=MEAS2, meas=MEAS4] ),\r\n   (env=ENV3, [ meas=MEAS3] )\r\n]\r\n```\r\n\r\nThe current schema supports measurement multiplicity by defining code points that have values expressed as arrays. \r\nExample 3:\r\n```\r\n[\r\n   (env=ENV1, meas=MEAS1 ),\r\n   (env=ENV2, meas-x=[MEAS2, MEAS4] ),\r\n   (env=ENV3, meas=MEAS3)\r\n]\r\n```\r\n",
+          "createdAt": "2023-12-12T21:55:47Z",
+          "updatedAt": "2023-12-12T22:48:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">There are other use cases apart from PSA\r\n\r\nNote the TCG Endorsement arch spec suggests there are use cases for multi-valued measurement sets for a given environment and it implies AND matching logic:\r\n\"measurement-map : Contains one or more reference measurements.\u00a0 Attester Evidence MUST match all measurements in measurement-map.\"\r\n\r\nIf we allow an arbitrary set of measurement values with the same key (Example 2 above), I think that presents ambiguity as it isn't clear if value2 appearing at array position 0 is different from value2 appearing at array position 1.",
+          "createdAt": "2023-12-12T22:13:52Z",
+          "updatedAt": "2023-12-12T22:51:38Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @nedmsmith @thomas-fossati I want to resurrect the discussion on (ENV --1:m--> MEAS)\r\n> \r\n> There are other use cases apart from PSA, where we have a set of Measurements (Digests to be precise). The set belongs to an Environment.\r\n> \r\n> Currently we do not have an adequate and elegant `way` to express this using CoRIM Reference Value Triple!\r\n> \r\n> We do not want Supply chain to use `m` triples with the same `Environment` (in the subject) and then put each MEAS of (`m`) in the object. This is not elegant. In our use case, all the Measurements for the `Environment` appears in the Evidence, hence we need matching all.\r\n\r\nIf matching multiple different digests in one go is the goal, defining a multi-digest measurement is an \"elegant\" (and more compact) solution.  We made the measurement map extensible to allow use cases that do not fit the DICE model.\r\n",
+          "createdAt": "2023-12-12T22:17:19Z",
+          "updatedAt": "2023-12-12T22:21:02Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think this issue is tied to the environment scoping issue #176 because scope may determine whether a collection of measurements is grouped by EMT structure or by the scope of the chosen EMT name. ",
+          "createdAt": "2023-12-12T23:01:12Z",
+          "updatedAt": "2023-12-12T23:01:12Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If matching multiple different digests in one go is the goal, defining a multi-digest measurement is an \"elegant\" (and more compact) solution. We made the measurement map extensible to allow use cases that do not fit the DICE model.\r\n\r\nThis is Example 3 above.",
+          "createdAt": "2023-12-12T23:02:59Z",
+          "updatedAt": "2023-12-12T23:02:59Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think, we are over-complicating the discussion here: \r\n\r\nFor Example 1: (stated by Ned above)\r\nThe Device composition is clearly identified by a set of Environments => If  the reported Evidence is ONLY expected to report Env2: (with an expected set of Measurements, which in this example is (env=ENV2, meas=MEAS2, the MEAS2 should be matched to complete the Appraisal. \r\n\r\nExample 2: Ned got the use case right, the ENV has Multiple Measurements:\r\nWe can make the condition tight for now, if the Environment(ENV) in Evidence matches the one in the Reference Values (inside Verifier), then ALL the measurements reported in the Evidence for the ENV MUST match the corresponding one found in Reference Values (inside Verifier), else Verifier Fails appraisal.\r\n\r\n@nedmsmith To your point: _If we allow an arbitrary set of measurement values with the same key (Example 2 above), I think that presents ambiguity as it isn't clear if value2 appearing at array position 0 is different from value2 appearing at array position 1._\r\n\r\nWe have sufficient semantics in the schema today to define what each Measurement at a specific position (say 0 or 1) implies, that should be clarified by the Supply Chain, when provisioning reference values. The Verifier will match the corresponding one received in the Evidence.\r\n\r\nExample 3: \r\nTo your point:\r\n_The current schema supports measurement multiplicity by defining code points that have values expressed as arrays._\r\n \r\nMy view point:\r\na. I propose we handle the use case natively in the core spec rather than relying on the extension points.\r\n\r\nb. The extension point does not exist at the correct place to express the multiplicity I am referring to\r\n\r\n\r\n",
+          "createdAt": "2023-12-13T09:17:22Z",
+          "updatedAt": "2023-12-13T09:17:22Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > @nedmsmith @thomas-fossati I want to resurrect the discussion on (ENV --1:m--> MEAS)\r\n> > There are other use cases apart from PSA, where we have a set of Measurements (Digests to be precise). The set belongs to an Environment.\r\n> > Currently we do not have an adequate and elegant `way` to express this using CoRIM Reference Value Triple!\r\n> > We do not want Supply chain to use `m` triples with the same `Environment` (in the subject) and then put each MEAS of (`m`) in the object. This is not elegant. In our use case, all the Measurements for the `Environment` appears in the Evidence, hence we need matching all.\r\n> \r\n> If matching multiple different digests in one go is the goal, defining a multi-digest measurement is an \"elegant\" (and more compact) solution. We made the measurement map extensible to allow use cases that do not fit the DICE model.\r\n\r\n@thomas-fossati : `measurement-map` is NOT extensible, however, `measurement-values-map` is extensible.\r\nI would avoid extending just  the  `measurement-values-map` to fit the use case, I have in mind.\r\n",
+          "createdAt": "2023-12-13T09:20:19Z",
+          "updatedAt": "2023-12-13T09:20:19Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > @nedmsmith @thomas-fossati I want to resurrect the discussion on (ENV --1:m--> MEAS)\r\n> > > There are other use cases apart from PSA, where we have a set of Measurements (Digests to be precise). The set belongs to an Environment.\r\n> > > Currently we do not have an adequate and elegant `way` to express this using CoRIM Reference Value Triple!\r\n> > > We do not want Supply chain to use `m` triples with the same `Environment` (in the subject) and then put each MEAS of (`m`) in the object. This is not elegant. In our use case, all the Measurements for the `Environment` appears in the Evidence, hence we need matching all.\r\n> > \r\n> > \r\n> > If matching multiple different digests in one go is the goal, defining a multi-digest measurement is an \"elegant\" (and more compact) solution. We made the measurement map extensible to allow use cases that do not fit the DICE model.\r\n> \r\n> @thomas-fossati : `measurement-map` is NOT extensible, however, `measurement-values-map` is extensible.\r\n\r\nThat's what I meant.\r\n\r\n\r\n> I would avoid extending just the `measurement-values-map` to fit the use case, I have in mind.\r\n\r\nwhy not, extensibility is a feature not a bug ;-)",
+          "createdAt": "2023-12-13T09:38:02Z",
+          "updatedAt": "2023-12-13T09:38:02Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > > @nedmsmith @thomas-fossati I want to resurrect the discussion on (ENV --1:m--> MEAS)\r\n> > > > There are other use cases apart from PSA, where we have a set of Measurements (Digests to be precise). The set belongs to an Environment.\r\n> > > > Currently we do not have an adequate and elegant `way` to express this using CoRIM Reference Value Triple!\r\n> > > > We do not want Supply chain to use `m` triples with the same `Environment` (in the subject) and then put each MEAS of (`m`) in the object. This is not elegant. In our use case, all the Measurements for the `Environment` appears in the Evidence, hence we need matching all.\r\n> > > \r\n> > > \r\n> > > If matching multiple different digests in one go is the goal, defining a multi-digest measurement is an \"elegant\" (and more compact) solution. We made the measurement map extensible to allow use cases that do not fit the DICE model.\r\n> > \r\n> > \r\n> > @thomas-fossati : `measurement-map` is NOT extensible, however, `measurement-values-map` is extensible.\r\n> \r\n> That's what I meant.\r\n> \r\n> > I would avoid extending just the `measurement-values-map` to fit the use case, I have in mind.\r\n> \r\n> why not, extensibility is a feature not a bug ;-)\r\n\r\nI meant the `use case` requirement is that we extend the `measurement-map` instead of just `measurement-values-map`.\r\n\r\nHence the proposal!",
+          "createdAt": "2023-12-13T09:40:30Z",
+          "updatedAt": "2023-12-13T09:40:30Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > > > @nedmsmith @thomas-fossati I want to resurrect the discussion on (ENV --1:m--> MEAS)\r\n> > > > > There are other use cases apart from PSA, where we have a set of Measurements (Digests to be precise). The set belongs to an Environment.\r\n> > > > > Currently we do not have an adequate and elegant `way` to express this using CoRIM Reference Value Triple!\r\n> > > > > We do not want Supply chain to use `m` triples with the same `Environment` (in the subject) and then put each MEAS of (`m`) in the object. This is not elegant. In our use case, all the Measurements for the `Environment` appears in the Evidence, hence we need matching all.\r\n> > > > \r\n> > > > \r\n> > > > If matching multiple different digests in one go is the goal, defining a multi-digest measurement is an \"elegant\" (and more compact) solution. We made the measurement map extensible to allow use cases that do not fit the DICE model.\r\n> > > \r\n> > > \r\n> > > @thomas-fossati : `measurement-map` is NOT extensible, however, `measurement-values-map` is extensible.\r\n> > \r\n> > \r\n> > That's what I meant.\r\n> > > I would avoid extending just the `measurement-values-map` to fit the use case, I have in mind.\r\n> > \r\n> > \r\n> > why not, extensibility is a feature not a bug ;-)\r\n> \r\n> I meant the `use case` requirement is that we extend the `measurement-map` instead of just `measurement-values-map`.\r\n> \r\n> Hence the proposal, to avoid extension but make it a first class change in the specification!\r\n\r\n",
+          "createdAt": "2023-12-13T09:41:01Z",
+          "updatedAt": "2023-12-13T09:41:01Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Now I am confused.  I understood this was about changing ref-val and end-val triples to allow 1 or more `measurement-map`s, not about extending `measurement-map`.",
+          "createdAt": "2023-12-13T09:47:42Z",
+          "updatedAt": "2023-12-13T09:47:42Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Now I am confused. I understood this was about changing ref-val and end-val triples to allow 1 or more `measurement-map`s, not about extending `measurement-map`.\r\n\r\nYes I do NOT propose extending the map. You are correct!\r\n\r\nI propose we add multiplicity! ",
+          "createdAt": "2023-12-13T09:49:55Z",
+          "updatedAt": "2023-12-13T09:49:55Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Example 4:\r\n```\r\n[\r\n   (env=ENV1, [ meas=MEAS1] ),\r\n   (env=ENV2, [ (mkey=x, meas=MEAS2), (mkey=y, meas=MEAS4)] ),\r\n   (env=ENV3, [ meas=MEAS3] )\r\n]\r\n```",
+          "createdAt": "2023-12-13T16:16:23Z",
+          "updatedAt": "2023-12-13T16:16:23Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I am all for Example 4: \r\nSince We have all the required bits already: We just need to do the following: ==> To Achieve Example 4:\r\nreference-triple-record = [\r\n  environment-map\r\n  [measurement-map]\r\n]",
+          "createdAt": "2023-12-13T16:24:10Z",
+          "updatedAt": "2023-12-13T16:24:10Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">We just need to do the following: ==>\r\n\r\n... and document the verifier behavior for matching reference values to evidence / ACS and for conditional endorsement condition matching.",
+          "createdAt": "2023-12-13T16:29:25Z",
+          "updatedAt": "2023-12-13T16:29:25Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > We just need to do the following: ==>\r\n> \r\n> ... and document the verifier behavior for matching reference values to evidence / ACS and for conditional endorsement condition matching.\r\n\r\n100% Agree!",
+          "createdAt": "2023-12-13T16:30:33Z",
+          "updatedAt": "2023-12-13T16:30:33Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > We just need to do the following: ==>\r\n> \r\n> ... and document the verifier behavior for matching reference values to evidence / ACS and for conditional endorsement condition matching.\r\n\r\n... and make sure that this all works with existing conditional triples using _naked_ `measurement-values-map`s",
+          "createdAt": "2023-12-13T17:44:18Z",
+          "updatedAt": "2023-12-13T17:44:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">... and make sure that this all works with existing conditional triples using naked measurement-values-maps\r\n\r\n...and not forgetting the ability to include authority as part of the condition.",
+          "createdAt": "2023-12-13T17:48:52Z",
+          "updatedAt": "2023-12-13T17:48:52Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have started a Draft [WIP] PR.\r\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/181\r\n\r\nI admit I will need your help in completing this neatly \ud83e\udd47 \r\n\r\nI will update examples, once we limit and evaluate the impact!",
+          "createdAt": "2023-12-13T19:00:11Z",
+          "updatedAt": "2023-12-13T19:00:11Z"
         }
       ]
     },
@@ -20172,7 +20312,7 @@
       "labels": [],
       "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.",
       "createdAt": "2023-12-06T06:56:36Z",
-      "updatedAt": "2023-12-06T19:33:44Z",
+      "updatedAt": "2023-12-13T15:09:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
@@ -20267,8 +20407,62 @@
               "updatedAt": "2023-12-06T19:32:25Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qFpDj",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-13T15:09:20Z",
+          "updatedAt": "2023-12-13T15:09:21Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Compatible is described two paragraphs later",
+              "createdAt": "2023-12-13T15:09:20Z",
+              "updatedAt": "2023-12-13T15:09:21Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 181,
+      "id": "PR_kwDOH6-tI85h7W97",
+      "title": "First initial Proposal for adding multiple measurement maps to a Reference Triple",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/181",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "[WIP] Multiple Measurements in a Reference Triple",
+      "createdAt": "2023-12-13T18:45:59Z",
+      "updatedAt": "2023-12-13T19:02:50Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d546b10160832e500a3db9e6cfa18e74ef55a384",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "mutli-meas-per-env",
+      "headRefOid": "5fe49df77aacdf4a622bd75d3985023240c171fb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I will update examples for the PR to compile properly, once we have evaluated the `impact`",
+          "createdAt": "2023-12-13T19:02:49Z",
+          "updatedAt": "2023-12-13T19:02:49Z"
+        }
+      ],
+      "reviews": []
     }
   ]
 }
