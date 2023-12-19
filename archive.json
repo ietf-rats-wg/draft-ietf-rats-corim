@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-12-17T01:24:35.237560+00:00",
+  "timestamp": "2023-12-19T01:18:35.317136+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3631,9 +3631,24 @@
       "labels": [],
       "body": "Section 5.4.2 \"Matching Evidence against Reference Values\" uses endorsement and reference values incorrectly. This section should not describe endorsement processing since its focus is on reference values processing. \r\n\r\nSuggested replacement text:\r\n\"A Reference Value Provider (RVP) may publish Reference Values, which are reviewed to determine if they are contained in the Accepted Claims Set (ACS). This section describes the process performed by the Verifier to determine which Reference Values should be compared to the Evidence claims contained in the ACS.\r\n\r\nThe verifier compares Reference Values claims with ACS claims. If they match, the RVP authority that asserted the claims is added to the ACS (for each claim that matched).\r\n\r\nThe following subsections describe how Reference Values are grouped ([Section 5.4.2.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-grouping-ref-vals)) and how a Verifier matches Reference Values against the ACS ([Section 5.4.2.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-match-all-ref-vals)).\"\r\n\r\nNotes:\r\n - CoMID references were removed since reference claims can occur in other tag types (e.g., coswid) and is somewhat unnecessary.\r\n - The signature over the RIM / COSWID is the authority that asserts claims (Not the authorized-by field). The authorized-by field describes authority matching constraints. Section 5.3.2.2 also needs wordsmithing.\r\n - Reference Values claims aren't 'added' to the ACS, as they are already in the ACS but under the authority of the Attester rather than the RVP. Hence, the only action needed is for the RVP authority to be added to existing claims. \r\n\r\n\r\n",
       "createdAt": "2023-12-06T20:10:02Z",
-      "updatedAt": "2023-12-06T20:10:34Z",
+      "updatedAt": "2023-12-17T23:57:21Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "I found the concept of \"matching\" to be too vague. The document mentions that triples are \"subject, object, predicate\", but the representation is just subject and object. The predicate appears to be implicit in the selection of profile. To me that should be explicit if that's the intention. For example the in-toto attestation format explicitly represents predicates and names them through a URI to the schema definition. Predicates can be applied at individual value scales rather than profiles on entire CoRIM document scales, thus explicit representation to me is valuable for concision and reuse.\r\n\r\nIf \"predicate\" is meant to be implicitly raw equality with the intention of allowing later extensions by profiles, I'd like to see that third element of a triple called out as `$$`[whatever]`-triple-predicate-type-choice`. For instance, the Intel Profile for CoRIM defines generic expressions for numerical and set matching that would be nice to use across profiles. I don't really know how to distinguish predicate in a measurement map triple from a conditional endorsement, given that conditions can be defined as predicates apart from the quality of \"stateful\". Still the \"or\" semantics of matching a set of acceptable values is conditional without statefulness. The type definition is clear about intent for matching stateful environments, but can be abused for disjunctive stateless predicates, albeit with significant bloat.\r\n\r\nI interpret then that conditional-endorsement-series-triples to be the entry point for endorsements, and statelessness is an empty `refv` that trivially applies. Emptiness is disallowed with the `non-empty` requirement for `measurement-values-map`, but what is the semantics of \"matching\" a singular `/ name: / 11 => \"\"` key against Evidence? It seems to be purely diagnostic for reporting match failures of other keys in the map.\r\n\r\nThe `endorsed-triples` memberkey then is a shorthand to avoid bloated representation. If that is the case, it would help my conceptual understanding to see the presentation of triples-map use group notation to discuss the three triples as describing the general concept of endorsement. \r\n\r\n```\r\ntriples-map = non-empty<{\r\n  ? &(reference-triples: 0) =>\r\n    [ + reference-triple-record ]\r\n  // * &endorsement-triple-group-choice //\r\n  ? &(identity-triples: 2) =>\r\n    [ + identity-triple-record ]\r\n  ? &(attest-key-triples: 3) =>\r\n    [ + attest-key-triple-record ]\r\n  ? &(dependency-triples: 4) =>\r\n    [ + domain-dependency-triple-record ]\r\n  ? &(membership-triples: 5) =>\r\n    [ + domain-membership-triple-record ]\r\n  ? &(coswid-triples: 6) =>\r\n    [ + coswid-triple-record ]\r\n  * $$triples-map-extension\r\n}>\r\n\r\n&endorsement-triple-group-choice //= &(\r\n  ? &(endorsed-triples: 1) =>\r\n    [ + endorsed-triple-record ]\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record ])\r\n  ? &(conditional-endorsement-triples: 9) =>\r\n    [ + conditional-endorsement-triple-record ])\r\n)\r\n```",
+          "createdAt": "2023-12-17T21:14:17Z",
+          "updatedAt": "2023-12-17T21:14:17Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Reference value predicate means all the claims in the reference value triple have to have corresponding evidence claims or the RVP asserted claims cannot be assserted as attester actual state.\r\n\r\nEndorsement predicate means if the attester is in a particular actual state, the endorsed claims can be appended to the attester's actual state.\r\n\r\nnon-equivalence matching has more to do with the behavior of the matching operator than the semantics of reference or endorsement.",
+          "createdAt": "2023-12-17T23:57:20Z",
+          "updatedAt": "2023-12-17T23:57:20Z"
+        }
+      ]
     },
     {
       "number": 179,
@@ -3664,6 +3679,194 @@
       "body": "RFC9090 defines: \r\noid=#6.111(bstr) \r\n\r\nCoRIM defines:\r\noid-type = bytes\r\ntagged-oid-type = #6.111(oid-type)\r\n\r\nTo be more closely aligned with RFC9090 instances of `tagged-oid-type` can be replaced with `oid`.\r\n",
       "createdAt": "2023-12-12T00:45:15Z",
       "updatedAt": "2023-12-12T00:45:15Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 182,
+      "id": "I_kwDOH6-tI8556Jlz",
+      "title": "Dionna's review",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/182",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "@deeglaze on the [RATS mailing list](https://mailarchive.ietf.org/arch/msg/rats/7fKjloBwrv4NbYHQtlWCIbGmWi0/):\r\n\r\n> Minor technical bits about the document:\r\n> 1. https://datatracker.ietf.org/doc/html/draft-ietf-rats-corim-03#name-protected-header-map specifies alg-id as an integer whereas RFC9052 specifies its name as alg. They both have field number 1, so I suppose it's irrelevant to the encoding, but I thought I'd ask if that's something you want to amend.\r\n> 1. Additionally issuer-key-id is confusing terminology given that a Certificate Authority is an Issuer of Subject keys. For CoRIM, the signature would come from a digitalSignature KeyUsage key, which is rare to mix with a keyCertSign KeyUsage. I'd amend this to reference the COSE RFC's comment on value 4 being a \"key identifier\" with just \"key-id\".\r\n> 1. '3.1.4.1.7. Domain Types\" says 3 types are defined, but it defines 4. I suspect the OID should be classified as global scope.\r\n",
+      "createdAt": "2023-12-17T16:39:24Z",
+      "updatedAt": "2023-12-17T16:39:24Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 183,
+      "id": "I_kwDOH6-tI8556kd4",
+      "title": "Modeling finer grain binary provenance: endorsement? CoSWID entity-entry extension?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/183",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The concept of endorsement vs just signing a CoRIM with reference values is still a point of confusion for me, so apologies if I get the terminology wrong. I'm particularly perplexed about the notion of endorsement.\r\n\r\nAt Google we're working on an open standard for binary integrity in terms of linking source + trusted builder with the set of binary artifacts. This is called [SLSA](https://slsa.dev), and it's not so much an entity that created software dependencies like an SBOM would describe, but more of a holistic \"all that source\" => \"all these binaries\" integrity claim. I don't particularly know what the expectation is for CoSWID tag creation when you're building a patched version of on open source project.\r\n\r\nEven so, our builders don't produce CoRIMs and I don't expect them to for a while. If I want to combine SLSA with CoRIM with a profile definition, I'm not sure where to begin. I think my CoRIM signer would be recertifying the SLSA document's claims by linking to the original SLSA document and additionally signing the CoSWID representation that includes binary digests. Is that what y'all would recommend?\r\n\r\nOr, by signing the CoSWID without a SLSA link as an entity-entry extension, we can state an inference. The SLSA document is not part of the CoSWID but is instead a supporting endorsement?\r\n\r\nEndorsement according to CoRIM:\r\n\"Additional measurements that are valid when a Target Environment has been verified against reference measurements.\"\r\n\r\nWe would then define a SLSA Profile for CoRIM that extends measurement-values-map with some linking representation that the CoSWID tag has extra integrity when verified against the SLSA provenance? We could furthermore have counter-signers that independently verify the build and endorse those links? I don't know. Counter-signing by a third party seems to be yet another modeling difficulty I'm unsure how to handle.\r\n",
+      "createdAt": "2023-12-17T22:13:36Z",
+      "updatedAt": "2023-12-18T11:20:26Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Signing the corim means the signer (aka a principal in the supply chain) asserts the claims contained in the corim. The principal is the authority that is speaking. Some principals may be more qualified to assert a statement than other principals. E.g., the manufacturer / designer of a widget may be more qualified to say how the widget was created than say a retail store that sells the widget. Any of these principals could assert the same claim. But one might be the most qualified. An appraisal policy might want to specify which principal is most qualified to assert claim X. \r\n\r\nAnything a principal says about an Attester is an endorsement. \r\n\r\nReference Values are (in a way) a special case of endorsement except that reference values describe claims that are corroborated by evidence. The attester is also a principal that asserts claims (aka Evidence). The limitation on attesters is they can only assert claims that are reasonable for hardware or software to make. For example, they can read FLASH / ROM and report what they read. They can't tell however what version of software was used to populate the FLASH / ROM (unless read from somewhere else). They can't tell if a particular test or qa process was followed as part of writing the contents to the FLASH / ROM. These are examples of endorsement claims. \r\n\r\nFIPS 140 calls for self-tests that run as part of the bringup process in a FIPS certified chip. It is reasonable for an Attesting Environment (AE) to be able to detect if the FIPS self-tests ran. This can be reported as evidence. But the quality of the self-tests may rely on engineering practice and other quality control procedures that the AE can't monitor and report. Hence, these are endorsements. ",
+          "createdAt": "2023-12-17T23:34:57Z",
+          "updatedAt": "2023-12-17T23:34:57Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">We could furthermore have counter-signers that independently verify the build and endorse those links?\r\n\r\nI don't think counter-signing is necessary for basic attestation. The semantics of counter signing has to be understood in the context of what processing the signing principal is performing before adding their signature. Normally, the Verifier processes the various attestation inputs and produces an attestation results. The signed result asserts the verifier processed the inputs an realized a certain result. The Verifier is (in a way) counter signing the claims made by the other principals (even though it doesn't fit the technical definition of cryptographic counter-signature). \r\n\r\nIf you removed all the claims, and just counter-signed a signature, what would the counter-signing principal be asserting? It seems like an existential statement about the signature that has esoteric value.\r\n\r\nIf a second supply chain entity wanted to assert build properties, then it could do so by simply signing the same claims as were signed by the first supplier. \r\n\r\nThe Verifier would have two principals asserting the same claim about the Attester. Does that mean two principals are more believable than one? Well, that depends on what policy is being applied. If a policy says two principals have to agree, then that is something the Verifier can enforce. But if the policy says only one principal (e.g., the entity that stamped the widget on the assembly line is the most authoritative), then adding a second principal wouldn't carry additional credibility. ",
+          "createdAt": "2023-12-17T23:44:52Z",
+          "updatedAt": "2023-12-17T23:50:09Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "\"Anything a principle says about an Attester is an endorsement\"\r\n\r\nYes, so a key certificate is an endorsement conceptually but isn't necessarily going in the endorsed-triple.\r\nAs I conceptualize this for provisioning certificates for AMD SEV-SNP or Intel TDX, I'm unsure what this means. \r\nAMD says the attestation key is authentic for a given CHIP_ID, TCB_VERSION, and model stepping name. The AMD key distribution service binds those claims in bespoke x.509 certificate extensions. If AMD or Intel were to embrace CoRIM over x.509 extensions / TLS-protected responses from the PCS respectively, how would it do so for a TEE on particular firmware? Is the firmware security version(s) an endorsed-triple for the same environment-map of the attest-key-triple that includes the VCEK or PCK certificate?\r\n\r\nThe environment-map piece has an instance representation that we'd need to extend to allow CHIP_ID (AMD 64 bytes), PlatformManifest (Intel, yikes), or encrypted ppid (Intel, 384 bytes) in the case of chip-specific environments, but there are group keys as well. AMD has a VLEK that is certified for a whole cloud service provider ID that itself needs a group representation somehow.\r\n\r\nNow if I'm essentially rewrapping that information as interpretations from the provisioning services, then I'm endorsing an Attester, but for the VCEK certificate I can provide some evidence. For the Intel PCK certificate, I can't really give evidence about the TCB versions since those were just in a protected response by the TLS session.\r\n\r\nI guess I have to ask if it's even worth using the attest-key-triple to model these certificates that are produced outside the CoRIM model, and instead just define some special profile to link the actual data to some expectation from the ATTESTATION_REPORT or TDQUOTE evidence.",
+          "createdAt": "2023-12-18T00:31:17Z",
+          "updatedAt": "2023-12-18T00:31:17Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> We could furthermore have counter-signers that independently verify the build and endorse those links? I don't know. Counter-signing by a third party seems to be yet another modeling difficulty I'm unsure how to handle.\r\n\r\nFrom a purely technical standpoint, [RFC9338](https://datatracker.ietf.org/doc/rfc9338/) provides the COSE building block for counter signatures.  You compute it and stash it in an unprotected header of the original Sign1.  An example [here](https://www.rfc-editor.org/rfc/rfc9338.html#appendix-A.2.1).\r\n\r\nBTW, countersignatures are implemented in [go-cose](https://github.com/veraison/go-cose#countersigning).\r\n",
+          "createdAt": "2023-12-18T11:20:25Z",
+          "updatedAt": "2023-12-18T11:20:25Z"
+        }
+      ]
+    },
+    {
+      "number": 184,
+      "id": "I_kwDOH6-tI855_sS5",
+      "title": "Tagged bytes as instance and class identifiers",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/184",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Recently, there has been a discussion on the RATS mailing list about using [SEV-SNP CHIP_ID](https://mailarchive.ietf.org/arch/msg/rats/NdvOUhPp8t4dG8fI0YKNK-H_M1w/) as an AE instance identifier. This same requirement had previously arisen in a SEV-SNP integration with Veraison.\r\nAdditionally, there are internal discussions at Arm regarding CCA workload identification, which cannot use the currently defined type choice.\r\n\r\nExtending the class and instance identifier types with an opaque byte array whose exact semantics would be defined by the CoRIM profile could address both cases, among others.\r\n\r\n```cddl\r\n$tagged-bytes-type = #6.TBD(bytes)\r\n\r\n$instance-id-type-choice /= $tagged-bytes-type\r\n$class-id-type-choice /= $tagged-bytes-type\r\n```",
+      "createdAt": "2023-12-18T14:04:50Z",
+      "updatedAt": "2023-12-18T15:03:18Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "/cc @deeglaze @yogeshbdeshpande ",
+          "createdAt": "2023-12-18T14:05:41Z",
+          "updatedAt": "2023-12-18T14:05:41Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, we discussed this internally and felt that this is very much required for individual vendors to have the flexibility of defining the required semantics of free expression of Identities.",
+          "createdAt": "2023-12-18T15:03:16Z",
+          "updatedAt": "2023-12-18T15:03:16Z"
+        }
+      ]
+    },
+    {
+      "number": 185,
+      "id": "I_kwDOH6-tI855_ynT",
+      "title": "PCR bank measurement type",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/185",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Some environments (e.g., Arm CCA realms, TPMs) have a bunch of measurements bundled in PCR banks rather than single digests.\r\n\r\nInstead of having each technology provide their own custom PCR-bank measurement type, we should define it as a basic, reusable CoMID type.\r\n\r\nFor example - modelled on the `digest` type:\r\n\r\n```cddl\r\n; design A\r\n\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + bytes / nil ]\r\n]\r\n```\r\n\r\nThe `nil` alternative is for when the PCR slot is not populated or match is to be skipped.\r\n\r\nCoRIM profiles will have to define the exact shape of the bank, i.e., the number of elements in the `slots` array.",
+      "createdAt": "2023-12-18T14:16:45Z",
+      "updatedAt": "2023-12-18T23:12:24Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "In my view if we provide per digest slot as below to express it like this:\r\n\r\n```\r\n; design B\r\n\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + [ slot_index: uint, value: bytes ] ]\r\n]\r\n```",
+          "createdAt": "2023-12-18T15:13:47Z",
+          "updatedAt": "2023-12-18T16:48:16Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The difference is that in design A the slot index is implicit, while in design B it's explicit.\r\n\r\nSo, a PCR bank with 4 slots, where only 0, 2 and 3 are populated, would be encoded as:\r\n\r\n* design A:\r\n \r\n```cbor-diag\r\n[\r\n  / alg /   \"my-hash-algorithm\",\r\n  / slots / [ h'00', nil, h'22', h'33' ]\r\n]\r\n```\r\n\r\n* design B:\r\n\r\n```cbor-diag\r\n[\r\n  / alg /   \"my-hash-algorithm\",\r\n  / slots / [ [ 0, h'00' ], [ 2, h'22' ], [ 3, h'33' ] ]\r\n]\r\n```\r\n\r\n\r\n\r\n\r\n",
+          "createdAt": "2023-12-18T16:31:21Z",
+          "updatedAt": "2023-12-18T16:31:21Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Other roots of trust can make use of an integrity register (aka PCR) structure. Allowing the \"slot\" to have a text name as well as a numeric value provides better flexibility for non-TPM IR designs. This (int / text) is not unlike the cmw collection approach.",
+          "createdAt": "2023-12-18T19:14:41Z",
+          "updatedAt": "2023-12-18T19:14:41Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Other roots of trust can make use of an integrity register (aka PCR) structure.\r\n\r\nCan you provide examples?  All the cases we are factoring in (i.e., TPMs / vTPMs, CCA Realm REMs) have the standard TPM structure (`slot[i] => bytes`).\r\n\r\n> Allowing the \"slot\" to have a text name as well as a numeric value provides better flexibility for non-TPM IR designs.\r\n\r\nYou mean:\r\n\r\n```cddl\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: {\r\n    + (int / text) => bytes\r\n  }\r\n]\r\n```\r\n\r\nor\r\n\r\n```\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + [ index: uint, value: bytes, ? name: text ] ])\r\n]\r\n```",
+          "createdAt": "2023-12-18T19:29:12Z",
+          "updatedAt": "2023-12-18T19:32:26Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I was thinking:\r\n```\r\npcrs = [ + pcr ]\r\npcr = [\r\n  alg:  (int / text)\r\n  slot: { (int / text) => bytes }\r\n]\r\n```\r\nNote: I think it is a single pcr per slot.",
+          "createdAt": "2023-12-18T20:16:41Z",
+          "updatedAt": "2023-12-18T20:19:26Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This is what I was thinking:\r\n> \r\n> ```\r\n> pcrs = [\r\n>   alg:  (int / text)\r\n>   slot: {\r\n>     + (int / text) => bytes\r\n>   }\r\n> ]\r\n> ```\r\n\r\nOK.  However, I'd like to see at least one example that justifies using the text label.\r\n\r\n> Note: I think it is a singleton slot.\r\n\r\nHmm. if it's defined as:\r\n\r\n```\r\n{ + (int / text) => bytes }\r\n```\r\n\r\ni.e. a map of one or more elements, the plural seems warranted, no?",
+          "createdAt": "2023-12-18T20:22:45Z",
+          "updatedAt": "2023-12-18T20:22:45Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Besides, in general, are `text` and `int` keys allowed within the same map?  Or is that profile-specific?\r\n\r\n(PS: `int` should be `uint`, I guess?)",
+          "createdAt": "2023-12-18T20:27:16Z",
+          "updatedAt": "2023-12-18T20:27:16Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "+1 uint\nA tpm profile would be uint only.\nOther profiles could mix and match.\n\nTpm2 uses multiple algorithms and digests per PCR similar semantics as CoRIM digests measurement.\n\nTPM PCRs have only one digest per algorithm id.",
+          "createdAt": "2023-12-18T20:32:59Z",
+          "updatedAt": "2023-12-18T20:38:36Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Where do you plan on this pcr measurement type being? `$$measurement-values-map-extension //= &(&(pcrs: 13) => pcr-bank-map)`?\r\n\r\nI'm rather perplexed at the contended global number space for measurement-values-map as opposed to `&(uri-profiles: ??) => uri-measurement-values-map` for niche environments to provide their profile and extensions through a URI they control bound to a map of values of any kind they want. This is generally more extensible in the way in-toto allows folks to use URIs for predicates and for assigning evaluators.\r\n\r\nPCRs and their behavior in CoRIM are best specified by the TCG in their own referenced URI for the TPM 2.0 profile, rather than tunneled through CoRIM standards folks as its own first class model, no?",
+          "createdAt": "2023-12-18T23:12:24Z",
+          "updatedAt": "2023-12-18T23:12:24Z"
+        }
+      ]
+    },
+    {
+      "number": 186,
+      "id": "I_kwDOH6-tI856Br3J",
+      "title": "measurement-values-map code point 12 already in use",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/186",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The concise-evidence schema defined in TCG DICE Concise Evidence Binding for SPDM already assigns code point 12 to spdm-indirect. \r\n\r\n  ? &(cryptokeys: 12) => [ + $crypto-key-type-choice ] should move to 13.\r\n```\r\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\r\n```",
+      "createdAt": "2023-12-18T18:58:38Z",
+      "updatedAt": "2023-12-18T18:58:38Z",
       "closedAt": null,
       "comments": []
     }
@@ -20477,6 +20680,58 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 187,
+      "id": "PR_kwDOH6-tI85iS94r",
+      "title": "changed cryptokeys code point to 13",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/187",
+      "state": "MERGED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "code point 12 is already used by concise-evidence spec for spdm indirect.",
+      "createdAt": "2023-12-18T19:05:12Z",
+      "updatedAt": "2023-12-18T19:27:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d546b10160832e500a3db9e6cfa18e74ef55a384",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "move-code-point-12",
+      "headRefOid": "d0401864f8a798f1f4b437c68233403afde0f95e",
+      "closedAt": "2023-12-18T19:27:25Z",
+      "mergedAt": "2023-12-18T19:27:25Z",
+      "mergedBy": "nedmsmith",
+      "mergeCommit": {
+        "oid": "ec6b7da8b3b1ba6c9e636ab9b0049a66e410d495"
+      },
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> in hindsight it'd have been better to offset the CoEv registration range\r\n\r\nAgree.",
+          "createdAt": "2023-12-18T19:27:18Z",
+          "updatedAt": "2023-12-18T19:27:18Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85qjBQy",
+          "commit": {
+            "abbreviatedOid": "d040186"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "in hindsight it'd have been better to offset the CoEv registration range",
+          "createdAt": "2023-12-18T19:23:45Z",
+          "updatedAt": "2023-12-18T19:23:45Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
