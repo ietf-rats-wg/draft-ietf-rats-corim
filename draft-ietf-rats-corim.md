@@ -952,6 +952,9 @@ The following describes each member of the `measurement-values-map`.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 Matching is described in {{sec-cryptokeys-matching}}.
 
+* `integrity-registers` (index 14): A register with one or more banks containing measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
+
+
 ###### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -1105,6 +1108,16 @@ checks, and trust anchor checks.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
+~~~
+
+##### Integrity Registers {#sec-comid-integrity-registers}
+
+An Integrity register is a register with one or more banks containing measurements.
+Each measurement has an unique identifier (either an unsigned integer or a string) and one or more digests.
+This type can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, as well as other vendor-specific "Integrity Registers".
+
+~~~ cddl
+{::include cddl/integrity-registers.cddl}
 ~~~
 
 ##### Domain Types {#sec-comid-domain-type}
@@ -1797,7 +1810,7 @@ Reference Value does not match.
 
 > I think this comparison method only works if the entry is at key 4 (because
 there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores [expect-raw-value raw-value-mask] in an array?
+which stores `[expect-raw-value raw-value-mask]` in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
