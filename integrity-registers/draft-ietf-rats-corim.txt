@@ -160,7 +160,8 @@ Table of Contents
            5.4.2.3.2.  Comparison for digests entries
            5.4.2.3.3.  Comparison for raw-value entries
            5.4.2.3.4.  Comparison for cryptokeys entries
-           5.4.2.3.5.  Handling of new tags
+           5.4.2.3.5.  Comparison for Integrity Registers
+           5.4.2.3.6.  Handling of new tags
        5.4.3.  Adding CoMID Endorsed Values to the Accepted Claims Set
      5.5.  Adding DICE/SPDM Evidence to the Accepted Claims Set
        5.5.1.  Transforming SPDM Evidence to a format usable for
@@ -2223,7 +2224,18 @@ Table of Contents
    cryptokeys Reference Value matches.  Otherwise, cryptokeys does not
    match.
 
-5.4.2.3.5.  Handling of new tags
+5.4.2.3.5.  Comparison for Integrity Registers
+
+   For each Integrity Register entry in Evidence, the Verifier will use
+   the associated identifier to look up the matching Integrity Register
+   entry in the Reference Value.  If no entry is found, the Reference
+   Value does not match.  Instead, if an entry is found, the digest
+   comparison proceeds as defined in Section 5.4.2.3.2.  Note that it is
+   not required for all the entries in the Reference Value to be used
+   during matching: Evidence could consist of a "quote" (in TPM
+   parlance) of just a subset of the register space.
+
+5.4.2.3.6.  Handling of new tags
 
    A profile may specify handling for new CBOR tagged Reference Values.
    The profile must specify how to compare the CBOR tagged Reference

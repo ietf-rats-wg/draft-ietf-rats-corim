@@ -1446,7 +1446,10 @@ representing Endorsements and Reference Values in CBOR format.<a href="#section-
                             <p id="section-toc.1-1.5.2.4.2.2.2.3.2.4.1"><a href="#section-5.4.2.3.4" class="auto internal xref">5.4.2.3.4</a>.  <a href="#name-comparison-for-cryptokeys-e" class="internal xref">Comparison for cryptokeys entries</a></p>
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4.2.2.2.3.2.5">
-                            <p id="section-toc.1-1.5.2.4.2.2.2.3.2.5.1"><a href="#section-5.4.2.3.5" class="auto internal xref">5.4.2.3.5</a>.  <a href="#name-handling-of-new-tags" class="internal xref">Handling of new tags</a></p>
+                            <p id="section-toc.1-1.5.2.4.2.2.2.3.2.5.1"><a href="#section-5.4.2.3.5" class="auto internal xref">5.4.2.3.5</a>.  <a href="#name-comparison-for-integrity-re" class="internal xref">Comparison for Integrity Registers</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4.2.2.2.3.2.6">
+                            <p id="section-toc.1-1.5.2.4.2.2.2.3.2.6.1"><a href="#section-5.4.2.3.6" class="auto internal xref">5.4.2.3.6</a>.  <a href="#name-handling-of-new-tags" class="internal xref">Handling of new tags</a></p>
 </li>
                         </ul>
 </li>
@@ -3949,7 +3952,7 @@ Accepted Claims Set less than the value in the Reference Value then the
 Reference Value does not match.<a href="#section-5.4.2.3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="comparison-for-digests-entries">
+<div id="sec-cmp-digests">
 <section id="section-5.4.2.3.2">
               <h6 id="name-comparison-for-digests-entr">
 <a href="#section-5.4.2.3.2" class="section-number selfRef">5.4.2.3.2. </a><a href="#name-comparison-for-digests-entr" class="section-name selfRef">Comparison for digests entries</a>
@@ -4012,16 +4015,27 @@ If all entries of the Reference Values array match a corresponding entry in the 
 Otherwise, <code>cryptokeys</code> does not match.<a href="#section-5.4.2.3.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="handling-of-new-tags">
+<div id="sec-cmp-integrity-registers">
 <section id="section-5.4.2.3.5">
-              <h6 id="name-handling-of-new-tags">
-<a href="#section-5.4.2.3.5" class="section-number selfRef">5.4.2.3.5. </a><a href="#name-handling-of-new-tags" class="section-name selfRef">Handling of new tags</a>
+              <h6 id="name-comparison-for-integrity-re">
+<a href="#section-5.4.2.3.5" class="section-number selfRef">5.4.2.3.5. </a><a href="#name-comparison-for-integrity-re" class="section-name selfRef">Comparison for Integrity Registers</a>
               </h6>
-<p id="section-5.4.2.3.5-1">A profile may specify handling for new CBOR tagged Reference Values. The
+<p id="section-5.4.2.3.5-1">For each Integrity Register entry in Evidence, the Verifier will use the associated identifier to look up the matching Integrity Register entry in the Reference Value.
+If no entry is found, the Reference Value does not match.
+Instead, if an entry is found, the digest comparison proceeds as defined in <a href="#sec-cmp-digests" class="auto internal xref">Section 5.4.2.3.2</a>.
+Note that it is not required for all the entries in the Reference Value to be used during matching: Evidence could consist of a "quote" (in TPM parlance) of just a subset of the register space.<a href="#section-5.4.2.3.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="handling-of-new-tags">
+<section id="section-5.4.2.3.6">
+              <h6 id="name-handling-of-new-tags">
+<a href="#section-5.4.2.3.6" class="section-number selfRef">5.4.2.3.6. </a><a href="#name-handling-of-new-tags" class="section-name selfRef">Handling of new tags</a>
+              </h6>
+<p id="section-5.4.2.3.6-1">A profile may specify handling for new CBOR tagged Reference Values. The
 profile must specify how to compare the CBOR tagged Reference Value against
-the Accepted Claims Set.<a href="#section-5.4.2.3.5-1" class="pilcrow">¶</a></p>
-<p id="section-5.4.2.3.5-2">Note that the verifier may compare Reference Values in any order, so the
-comparison should not be stateful.<a href="#section-5.4.2.3.5-2" class="pilcrow">¶</a></p>
+the Accepted Claims Set.<a href="#section-5.4.2.3.6-1" class="pilcrow">¶</a></p>
+<p id="section-5.4.2.3.6-2">Note that the verifier may compare Reference Values in any order, so the
+comparison should not be stateful.<a href="#section-5.4.2.3.6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
