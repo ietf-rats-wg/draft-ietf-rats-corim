@@ -1669,9 +1669,9 @@ of the ACS `environment-map`.
 If there are no candidate entries then the triple containing the stateful environment does not match.
 
 A stateful environment `environment-map` is a subset of an ACS entry `environment-map`
-if each field which is present in the stateful environment `environment-map`
-(for example `class`, `instance` etc.)
-is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and
+if each field (for example `class`, `instance` etc.) which is present in the
+stateful environment `environment-map` is also present in the ACS entry,
+and the CBOR encoded field values in the stateful environment and
 ACS entry are binary identical.
 If a field is not present in the stateful environment `environment-map` then the presence of,
 and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
