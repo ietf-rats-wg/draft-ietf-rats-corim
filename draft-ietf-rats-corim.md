@@ -1113,7 +1113,7 @@ checks, and trust anchor checks.
 ##### Integrity Registers {#sec-comid-integrity-registers}
 
 An Integrity register is a register with one or more banks containing measurements.
-Each measurement has an unique identifier (either an unsigned integer or a string) and one or more digests.
+Each measurement has an unique identifier (either an unsigned integer or a string) and one or more associated digests.
 This type can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, as well as other vendor-specific "Integrity Registers".
 
 ~~~ cddl
