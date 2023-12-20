@@ -1774,7 +1774,7 @@ If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
 Accepted Claims Set less than the value in the Reference Value then the
 Reference Value does not match.
 
-##### Comparison for digests entries
+##### Comparison for digests entries {#sec-cmp-digests}
 
 The value stored under `measurement-values-map` key 2,
 or a value tagged with
@@ -1828,6 +1828,13 @@ then the next entry from the Reference Values array is likewise
 compared with the next entry of the Accepted Claims Set array.
 If all entries of the Reference Values array match a corresponding entry in the Accepted Claims Set array, then the `cryptokeys` Reference Value matches.
 Otherwise, `cryptokeys` does not match.
+
+##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
+
+For each Integrity Register entry in Evidence, the Verifier will use the associated identifier to look up the matching Integrity Register entry in the Reference Value.
+If no entry is found, the Reference Value does not match.
+Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}}.
+Note that it is not required for all the entries in the Reference Value to be used during matching: Evidence could consist of a "quote" (in TPM parlance) of just a subset of the register space.
 
 ##### Handling of new tags
 
