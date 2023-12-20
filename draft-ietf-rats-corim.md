@@ -303,6 +303,16 @@ convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
 {::include cddl/digest.cddl}
 ~~~
 
+### Tagged Bytes Type {#sec-common-tagged-bytes}
+
+An opaque, variable-length byte string.
+It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
+Its semantics is defined by the context in which it is found, and by the overarching CoRIM profile.
+
+~~~ cddl
+{::include cddl/tagged-bytes.cddl}
+~~~
+
 # Concise Reference Integrity Manifest (CoRIM) {#sec-corim}
 
 A CoRIM is a collection of tags and related metadata as described below.
@@ -821,7 +831,7 @@ An instance carries a unique identifier that is reliably bound to a Target Envir
 that is an instance of the Attester.
 
 The types defined for an instance identifier are CBOR tagged expressions of
-UEID, UUID, or cryptographic key identifier.
+UEID, UUID, variable-length opaque byte string, or cryptographic key identifier.
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
@@ -833,7 +843,7 @@ A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
-The type defined for a group identified is UUID.
+The types defined for a group identified are UUID and variable-length opaque byte string.
 
 ~~~ cddl
 {::include cddl/group-id-type-choice.cddl}
@@ -1045,7 +1055,7 @@ Raw value measurements are typically vendor defined values that are checked by V
 for consistency only, since the security relevance is opaque to Verifiers.
 
 There are two parts to a `raw-value-group`, a measurement and an optional mask.
-The default raw value measurement is a CBOR tagged `bstr`.
+The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
 between the various semantics of type values.
 
@@ -1953,9 +1963,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}                | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}           | {{&SELF}} |
 |     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}                | {{&SELF}} |
-|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}                        | {{&SELF}} |
+|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}                  | {{&SELF}} |
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
-|     560 | `bytes`             | tagged-bytes, see {{sec-comid-raw-value-types}}                      | {{&SELF}} |
+|     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                        | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
 | 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 
