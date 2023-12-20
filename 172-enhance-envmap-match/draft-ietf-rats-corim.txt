@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 8 June 2024                                        Y. Deshpande
+Expires: 22 June 2024                                       Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         6 December 2023
+                                                        20 December 2023
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 June 2024.
+   This Internet-Draft will expire on 22 June 2024.
 
 Copyright Notice
 
@@ -151,8 +151,8 @@ Table of Contents
          5.4.2.1.  Grouping Reference Values and Endorsements
          5.4.2.2.  Matching all Reference Values in a group against
                  the Accepted Claims Set
-         5.4.2.3.  Matching a Reference Value against the Accepted
-                 Claims Set
+         5.4.2.3.  Matching a stateful environment against the
+                 Accepted Claims Set
            5.4.2.3.1.  Comparison for svn entries
            5.4.2.3.2.  Comparison for digests entries
            5.4.2.3.3.  Comparison for raw-value entries
@@ -1997,80 +1997,92 @@ Table of Contents
    fails to match the Accepted Claims Set then this does not affect the
    processing of other groups.
 
-5.4.2.3.  Matching a Reference Value against the Accepted Claims Set
+5.4.2.3.  Matching a stateful environment against the Accepted Claims
+          Set
 
-   This section describes how a Reference Value is matched against
+   meaning does not match the version in the current text.  I will
+   submit a further PR to replace most uses of "Reference Value" in
+   section 5 with "stateful environment".  Tracked at
+   https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/178
+
+   This section describes how a stateful environment is matched against
    Evidence in the Accepted Claims Set. If any part of the processing
-   indicates that the Reference Value does not match then the remaining
-   steps in this section are skipped for that group.
+   indicates that the stateful environment does not match then the
+   remaining steps in this section are skipped for that conditional
+   endorsement.
 
-   A Reference Value consists of an environment-map plus a measurement-
-   map.  In the reference-triple-record these are encoded together.  In
-   other triples multiple Reference Values are represented more
-   compactly by letting one environment-map apply to multiple
-   measurement-maps.
+   A stateful environment consists of an environment-map plus a
+   measurement-map.  In conditional-endorsement-triple-record and mec-
+   endorsement-triple-record these are encoded together.  In other
+   triples multiple stateful environments are represented more compactly
+   by letting one environment-map apply to multiple measurement-maps.
 
-   The Verifier first looks for entries in the Accepted Claims Set with
-   an environment-map which is compatible with the Reference Value.
-   These are the candidate claims.  If there are no candidate claims
-   then the Reference Value does not match.
+   The Verifier initialises its temporary candidate entries variable
+   with all entries in the Accepted Claims Set (ACS) where the stateful
+   enviromnment environment-map is a subset of the ACS environment-map.
 
-   An ACS entry has a compatible environment-map if each field which is
-   present in the Reference Value environment-map (for example class,
-   instance etc.) is also present in the ACS entry, and the CBOR encoded
-   field values in the Reference Value and ACS entry are binary
-   identical.  If a field is not present in the Reference value then the
-   presence of, and value of, the corresponding ACS entry field does not
-   affect whether the environment-maps are compatible.
+   If there are no candidate entries then the triple containing the
+   stateful environment does not match.
 
-   A Verifier SHOULD convert environment-map fields into a form which
-   meets CBOR Core Deterministic Encoding Requirements [STD94] before
-   performing the binary comparison.
+   A stateful environment environment-map is a subset of an ACS entry
+   environment-map if each field which is present in the stateful
+   environment environment-map (for example class, instance etc.) is
+   also present in the ACS entry, and the CBOR encoded field values in
+   the stateful environment and ACS entry are binary identical.  If a
+   field is not present in the stateful environment environment-map then
+   the presence of, and value of, the corresponding ACS entry field does
+   not affect whether the environment-maps are subsets.
 
-   If the Reference Value contains an authorized-by field then the
-   Verifier SHALL modify the candidate claims set to remove Claims whose
+   Before performing the binary comparison, a Verifier SHOULD convert
+   environment-map fields into a form which meets CBOR Core
+   Deterministic Encoding Requirements [STD94].
+
+   If the stateful environment contains an authorized-by field then the
+   Verifier SHALL modify the candidate entries to remove entries whose
    authorized-by field does not contain one of the keys listed in the
-   Reference Value authorized-by field (see Section 5.3.2.2 for more
-   details).  If all candidate claim entries are discarded by this step
-   then the Reference Value does not match.
+   stateful environment authorized-by field (see Section 5.3.2.2 for
+   more details).  If all candidate entries are discarded by this step
+   then the stateful environment does not match.
 
    The Verifier SHALL iterate over the codepoints which are present in
-   the measurement-values-map field within the Reference Value
-   measurement-values-map.  The Reference Value entry is compared
-   against each of the candidate claims.  If none of the candidate
-   claims matches the Reference Value entry then the Reference Value
-   does not match.
+   the measurement-values-map field within the stateful environment
+   measurement-values-map.  The stateful environment entry is compared
+   against each of the candidate entries.  If none of the candidate
+   entries matches the stateful environment entry then the stateful
+   environment does not match.
 
    The algorithm used to match the measurement-values-map entries is
    described below.  The comparison performed depends on the type of
    field being compared.
 
-   If the Reference Value measurement-values-map value is tagged with a
-   CBOR tag [STD94] then the Verifier MUST use the comparison algorithm
-   associated with that tag.
+   If the stateful environment measurement-values-map value is tagged
+   with a CBOR tag [STD94] then the Verifier MUST use the comparison
+   algorithm associated with that tag.
 
-   If the Reference Value is not tagged then the Verifier MUST use the
-   comparison algorithm associated with the measurement-values-map
+   If the stateful environment is not tagged then the Verifier MUST use
+   the comparison algorithm associated with the measurement-values-map
    codepoint for the entry.
 
    This specification defines the matching algorithm for some CBOR
-   tagged reference values, which is described in sub-sections below.
+   tagged stateful environments, which is described in sub-sections
+   below.
 
    A CoRIM profile may define additional tags and their matching
    algorithms.
 
-   If the Verifier does not recognize the Reference Value CBOR tag value
-   then the Reference Value does not match.
+   If the Verifier does not recognize the stateful environment CBOR tag
+   value then the stateful environment does not match.
 
-   If the Reference Value is not tagged and the measurement-value-map
-   key is a value with handling described in the sub-sections below,
+   If the stateful environment is not tagged and the measurement-value-
+   map key is a value with handling described in the sub-sections below,
    then the algorithm appropriate to that key is used to match the
    entries.
 
-   If the Reference Value is not tagged, and the measurement-values-map
-   key is not a value described below, then the entries are compared
-   using binary comparison of their CBOR encoded values.  If the values
-   are not binary identical then the Reference Value does not match.
+   If the stateful environment is not tagged, and the measurement-
+   values-map key is not a value described below, then the entries are
+   compared using binary comparison of their CBOR encoded values.  If
+   the values are not binary identical then the stateful environment
+   does not match.
 
    Note that while specifications may extend the matching semantics
    using CBOR tags, there is no way to extend the matching semantics of
@@ -2078,7 +2090,7 @@ Table of Contents
    tag to the Reference Value describing the desired behaviour.
 
    If all checks above have been performed successfully then the
-   Reference Value matches.
+   stateful environment matches.
 
 5.4.2.3.1.  Comparison for svn entries
 
@@ -2504,9 +2516,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-22, 14
-              October 2023, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-eat-22>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-24, 16
+              December 2023, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-24>.
 
    [I-D.ietf-sacm-coswid]
               Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
@@ -2624,9 +2636,9 @@ Table of Contents
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
               T. Fossati, "Arm's Platform Security Architecture (PSA)
               Attestation Token", Work in Progress, Internet-Draft,
-              draft-tschofenig-rats-psa-token-18, 4 December 2023,
+              draft-tschofenig-rats-psa-token-20, 18 December 2023,
               <https://datatracker.ietf.org/doc/html/draft-tschofenig-
-              rats-psa-token-18>.
+              rats-psa-token-20>.
 
    [IANA.concise-software-identifier]
               "*** BROKEN REFERENCE ***".
