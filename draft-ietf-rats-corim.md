@@ -1645,77 +1645,87 @@ all Endorsements in the group are silently ignored.
 Each group is processed independently of other groups. If a group fails to match
 the Accepted Claims Set then this does not affect the processing of other groups.
 
-#### Matching a Reference Value against the Accepted Claims Set {#sec-match-one-ref-val}
+#### Matching a stateful environment against the Accepted Claims Set {#sec-match-one-ref-val}
 
-This section describes how a Reference Value is matched against Evidence in the Accepted
-Claims Set.
-If any part of the processing indicates that the Reference Value does not match then the remaining steps in this section are skipped for that group.
+[^issue]: There were two interpretations of the meaning of `Reference Value` and the adopted
+meaning does not match the version in the current text. I will submit a further PR to replace
+most uses of "Reference Value" in section 5 with "stateful environment".
+Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/178
 
-A Reference Value consists of an `environment-map` plus a `measurement-map`. In the
-`reference-triple-record` these are encoded together. In other triples multiple
-Reference Values are represented more compactly by letting one `environment-map`
-apply to multiple `measurement-map`s.
+This section describes how a stateful environment is matched against Evidence in the
+Accepted Claims Set.
+If any part of the processing indicates that the stateful environment does not match
+then the remaining steps in this section are skipped for that conditional endorsement.
 
-The Verifier first looks for entries in the Accepted Claims Set with an
-`environment-map` which is compatible with the Reference Value.
-These are the candidate claims. If there are
-no candidate claims then the Reference Value does not match.
+A stateful environment consists of an `environment-map` plus a `measurement-map`.
+In `conditional-endorsement-triple-record` and `mec-endorsement-triple-record` these are encoded together.
+In other triples multiple stateful environments are represented more compactly by
+letting one `environment-map` apply to multiple `measurement-map`s.
 
-An ACS entry has a compatible `environment-map` if each field which is present
-in the Reference Value environment-map (for example `class`, `instance` etc.)
-is also present in the ACS entry, and the CBOR encoded field values in the Reference Value and ACS entry are binary identical.
-If a field is not present in the Reference value then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are compatible.
+The Verifier initialises its temporary `candidate entries` variable with all entries in the
+Accepted Claims Set (ACS) where the stateful enviromnment `environment-map` is a subset
+of the ACS `environment-map`.
 
-A Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core
-Deterministic Encoding Requirements {{-cbor}} before performing the binary comparison.
+If there are no candidate entries then the triple containing the stateful environment does not match.
 
-If the Reference Value contains an `authorized-by` field then the Verifier
-SHALL modify the candidate claims set to remove Claims whose `authorized-by`
-field does not contain one of the keys listed in the Reference Value
+A stateful environment `environment-map` is a subset of an ACS entry `environment-map`
+if each field which is present in the stateful environment `environment-map`
+(for example `class`, `instance` etc.)
+is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and
+ACS entry are binary identical.
+If a field is not present in the stateful environment `environment-map` then the presence of,
+and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
+
+Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into
+a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+
+If the stateful environment contains an `authorized-by` field then the Verifier
+SHALL modify the candidate entries to remove entries whose `authorized-by`
+field does not contain one of the keys listed in the stateful environment
 `authorized-by` field (see {{sec-authorized-by}} for more details).
-If all candidate claim entries are discarded by this step then the
-Reference Value does not match.
+If all candidate entries are discarded by this step then the
+stateful environment does not match.
 
 The Verifier SHALL iterate over the codepoints which are present in the
-`measurement-values-map` field within the Reference Value `measurement-values-map`.
-The Reference Value entry is compared against each of the candidate claims.
-If none of the candidate claims matches
-the Reference Value entry then the Reference Value does not match.
+`measurement-values-map` field within the stateful environment `measurement-values-map`.
+The stateful environment entry is compared against each of the candidate entries.
+If none of the candidate entries matches
+the stateful environment entry then the stateful environment does not match.
 
 The algorithm used to match the `measurement-values-map` entries
 is described below. The comparison performed depends on the type of
 field being compared.
 
-If the Reference Value `measurement-values-map` value is tagged with a CBOR
+If the stateful environment `measurement-values-map` value is tagged with a CBOR
 tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated
 with that tag.
 
-If the Reference Value is not tagged then the Verifier MUST use the comparison
+If the stateful environment is not tagged then the Verifier MUST use the comparison
 algorithm associated with the `measurement-values-map` codepoint for the entry.
 
-This specification defines the matching algorithm for some CBOR tagged reference
-values, which is described in sub-sections below.
+This specification defines the matching algorithm for some CBOR tagged stateful environments,
+which is described in sub-sections below.
 
 A CoRIM profile may define additional tags and their matching algorithms.
 
-If the Verifier does not recognize the Reference Value CBOR tag value then
-the Reference Value does not match.
+If the Verifier does not recognize the stateful environment CBOR tag value then
+the stateful environment does not match.
 
-If the Reference Value is not tagged and the measurement-value-map key is a
+If the stateful environment is not tagged and the measurement-value-map key is a
 value with handling described in the sub-sections below,
 then the algorithm appropriate to that key is used to match the entries.
 
-If the Reference Value is not tagged, and the `measurement-values-map` key
+If the stateful environment is not tagged, and the `measurement-values-map` key
 is not a value described below, then the entries are compared
 using binary comparison of their CBOR encoded values. If the values
-are not binary identical then the Reference Value does not match.
+are not binary identical then the stateful environment does not match.
 
 Note that while specifications may extend the matching semantics using CBOR tags,
 there is no way to extend the matching semantics of keys.
 Any new keys requiring non-default comparison must add a CBOR tag to the
 Reference Value describing the desired behaviour.
 
-If all checks above have been performed successfully then the Reference Value
+If all checks above have been performed successfully then the stateful environment
 matches.
 
 ##### Comparison for svn entries
