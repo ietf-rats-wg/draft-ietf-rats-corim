@@ -307,7 +307,7 @@ convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
 
 An opaque, variable-length byte string.
 It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
-Its semantics is defined by the context in which it is found, and by the overarching CoRIM profile.
+Its semantics are defined by the context in which it is found, and by the overarching CoRIM profile.
 When used as an identifier the responsible allocator entity SHOULD ensure uniqueness.
 
 ~~~ cddl
