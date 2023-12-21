@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-12-19T01:18:35.317136+00:00",
+  "timestamp": "2023-12-21T01:17:53.620441+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3631,7 +3631,7 @@
       "labels": [],
       "body": "Section 5.4.2 \"Matching Evidence against Reference Values\" uses endorsement and reference values incorrectly. This section should not describe endorsement processing since its focus is on reference values processing. \r\n\r\nSuggested replacement text:\r\n\"A Reference Value Provider (RVP) may publish Reference Values, which are reviewed to determine if they are contained in the Accepted Claims Set (ACS). This section describes the process performed by the Verifier to determine which Reference Values should be compared to the Evidence claims contained in the ACS.\r\n\r\nThe verifier compares Reference Values claims with ACS claims. If they match, the RVP authority that asserted the claims is added to the ACS (for each claim that matched).\r\n\r\nThe following subsections describe how Reference Values are grouped ([Section 5.4.2.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-grouping-ref-vals)) and how a Verifier matches Reference Values against the ACS ([Section 5.4.2.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-match-all-ref-vals)).\"\r\n\r\nNotes:\r\n - CoMID references were removed since reference claims can occur in other tag types (e.g., coswid) and is somewhat unnecessary.\r\n - The signature over the RIM / COSWID is the authority that asserts claims (Not the authorized-by field). The authorized-by field describes authority matching constraints. Section 5.3.2.2 also needs wordsmithing.\r\n - Reference Values claims aren't 'added' to the ACS, as they are already in the ACS but under the authority of the Attester rather than the RVP. Hence, the only action needed is for the RVP authority to be added to existing claims. \r\n\r\n\r\n",
       "createdAt": "2023-12-06T20:10:02Z",
-      "updatedAt": "2023-12-17T23:57:21Z",
+      "updatedAt": "2023-12-20T18:54:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -3647,6 +3647,20 @@
           "body": "Reference value predicate means all the claims in the reference value triple have to have corresponding evidence claims or the RVP asserted claims cannot be assserted as attester actual state.\r\n\r\nEndorsement predicate means if the attester is in a particular actual state, the endorsed claims can be appended to the attester's actual state.\r\n\r\nnon-equivalence matching has more to do with the behavior of the matching operator than the semantics of reference or endorsement.",
           "createdAt": "2023-12-17T23:57:20Z",
           "updatedAt": "2023-12-17T23:57:20Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think the document does it wrong, it does it using a different meaning of reference values and endorsements from the one you have Ned. We've discussed this and agreed to create a Multi-Conditional-Endorsement triple, which takes over the alternative meaning. As part of the change to section 5 I will try and use your text to describe your meaning of what Reference Value Triple means.",
+          "createdAt": "2023-12-20T13:10:25Z",
+          "updatedAt": "2023-12-20T13:10:25Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I don't think the document does it wrong, it does it using a different meaning of reference values and endorsements from the one you have Ned. \r\n\r\nCoRIM needs to be faithful to the terminology conventions in 9334 and the endorsements draft. There is no need to redefine reference values for the purposes of defining a multi-conditional-endorsement triple.",
+          "createdAt": "2023-12-20T18:54:56Z",
+          "updatedAt": "2023-12-20T18:54:56Z"
         }
       ]
     },
@@ -3786,7 +3800,7 @@
       "labels": [],
       "body": "Some environments (e.g., Arm CCA realms, TPMs) have a bunch of measurements bundled in PCR banks rather than single digests.\r\n\r\nInstead of having each technology provide their own custom PCR-bank measurement type, we should define it as a basic, reusable CoMID type.\r\n\r\nFor example - modelled on the `digest` type:\r\n\r\n```cddl\r\n; design A\r\n\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + bytes / nil ]\r\n]\r\n```\r\n\r\nThe `nil` alternative is for when the PCR slot is not populated or match is to be skipped.\r\n\r\nCoRIM profiles will have to define the exact shape of the bank, i.e., the number of elements in the `slots` array.",
       "createdAt": "2023-12-18T14:16:45Z",
-      "updatedAt": "2023-12-18T23:12:24Z",
+      "updatedAt": "2023-12-20T12:06:16Z",
       "closedAt": null,
       "comments": [
         {
@@ -3851,6 +3865,167 @@
           "body": "Where do you plan on this pcr measurement type being? `$$measurement-values-map-extension //= &(&(pcrs: 13) => pcr-bank-map)`?\r\n\r\nI'm rather perplexed at the contended global number space for measurement-values-map as opposed to `&(uri-profiles: ??) => uri-measurement-values-map` for niche environments to provide their profile and extensions through a URI they control bound to a map of values of any kind they want. This is generally more extensible in the way in-toto allows folks to use URIs for predicates and for assigning evaluators.\r\n\r\nPCRs and their behavior in CoRIM are best specified by the TCG in their own referenced URI for the TPM 2.0 profile, rather than tunneled through CoRIM standards folks as its own first class model, no?",
           "createdAt": "2023-12-18T23:12:24Z",
           "updatedAt": "2023-12-18T23:12:24Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Tpm2 uses multiple algorithms and digests per PCR similar semantics as CoRIM digests measurement.\r\n\r\nQuestion: in TPM2 once an algorithm is set it's used for all PCRs?  Or could one have PCR[i] with alg X and PCR[j] with alg Y simultaneously?\r\n\r\n",
+          "createdAt": "2023-12-19T07:06:45Z",
+          "updatedAt": "2023-12-19T07:06:45Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Where do you plan on this pcr measurement type being? `$$measurement-values-map-extension //= &(&(pcrs: 13) => pcr-bank-map)`?\r\n\r\nYep\r\n\r\n> I'm rather perplexed at the contended global number space for measurement-values-map as opposed to `&(uri-profiles: ??) => uri-measurement-values-map` for niche environments to provide their profile and extensions through a URI they control bound to a map of values of any kind they want. This is generally more extensible in the way in-toto allows folks to use URIs for predicates and for assigning evaluators.\r\n> \r\n> PCRs and their behavior in CoRIM are best specified by the TCG in their own referenced URI for the TPM 2.0 profile, rather than tunneled through CoRIM standards folks as its own first class model, no?\r\n\r\nI quite agree.\r\n\r\nAt the same time, for types that are shared across different use cases, it makes sense to have them represented as first-class CoRIM types that different profiles can reuse.\r\n\r\nIn any case, the two approaches are not mutually exclusive.",
+          "createdAt": "2023-12-19T07:12:07Z",
+          "updatedAt": "2023-12-19T07:13:38Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Maybe a minor detail:\r\n\r\nIs everybody aware that a PCR `bank` allows for various algs used? You can request different digests using different alg-ids representing the same measured (\"extended\") operational state. As a point of reference, I scraped some old CDDL excerpts for the TPM TSS (based on ; TCG TPM Structures, Family 2.0, Level 00, Rev 01.38, Sep 29, 2016):\r\n\r\n```\r\n; Hash/Digest Structures (10.3)\r\nTPMT_HA = { TPMU_HA-hashAlg,\r\n            TPMU_HA-digest,\r\n          }\r\n\r\nTPMU_HA-hashAlg = (hashAlg: TPMI_ALG_HASH)\r\nTPMU_HA-digest = (digest: TPMU_HA)\r\nTPML_DIGEST_VALUES-digests = (digests: [*TPMT_HA])\r\n```\r\nTPMI_ALG_HASH is the subsets of hash-ids from the TCG Algorithm Registry.",
+          "createdAt": "2023-12-19T08:34:04Z",
+          "updatedAt": "2023-12-19T08:34:04Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Taking Ned's input about TPM2 into account, and after a chat with Henk about that, this looks like a sensible design:\r\n\r\n```\r\npcr-id = uint\r\n\r\npcrs = {\r\n  + pcr-id => [ + digest ]\r\n}\r\n\r\n; digest is already defined in CoRIM as:\r\ndigest = [\r\n  alg: (int / text),\r\n  val: bytes\r\n]\r\n```\r\n\r\nE.g.:\r\n\r\n```cbor-diag\r\n{\r\n  / pcr[0] / 0: [\r\n     [\"sha-256\", h'19..'],\r\n     [\"sha-512\", h'f3..']\r\n  ],\r\n  / pcr[1] / 1: [\r\n     [\"sha-256\", h'a1..'],\r\n     [\"sha-512\", h'45..']\r\n  ]\r\n  ; ...\r\n}\r\n```",
+          "createdAt": "2023-12-19T09:40:54Z",
+          "updatedAt": "2023-12-19T09:46:25Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati As I was suggesting the design to be on the similar lines that what Ned stated;\r\n`Allowing the \"slot\" to have a text name`\r\n\r\nIf I see the suggested last proposed changes from you, that aspect is missing.\r\n\r\nDid you mean :\r\npcr-id = uint /text?",
+          "createdAt": "2023-12-19T09:57:40Z",
+          "updatedAt": "2023-12-19T09:58:01Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Allowing the \"slot\" to have a text name\r\n\r\nMaybe.  I still haven't gotten an answer from Ned regarding:\r\n\r\n> Can you provide examples? All the cases we are factoring in (i.e., TPMs / vTPMs, CCA Realm REMs) have the standard TPM structure (slot[i] => bytes).",
+          "createdAt": "2023-12-19T10:08:33Z",
+          "updatedAt": "2023-12-19T10:08:33Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Also, I suggest two improvements:\r\n\r\nWe should not call it PCR (as in some cases, it may not be strictly Platform Configuration Registers, like the case of ARM CCA, where they are Workload Measurement Set) \r\nAlso PCR is a term `heavily` only used and directed to TPM Measurements.\r\n\r\nI suggest we call it as:\r\nenv_digests\r\nOR\r\ndigest_bank\r\n",
+          "createdAt": "2023-12-19T10:19:31Z",
+          "updatedAt": "2023-12-19T10:19:31Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Also, I suggest two improvements:\r\n> \r\n> We should not call it PCR (as in some cases, it may not be strictly Platform Configuration Registers, like the case of ARM CCA, where they are Workload Measurement Set) Also PCR is a term `heavily` only used and directed to TPM Measurements.\r\n> \r\n> I suggest we call it as: env_digests OR digest_bank\r\n\r\nPCR semantics (i.e., set of registers which are _\"extended\"_) is well understood and is applicable beyond the TPM scope.  I don't think the names you propose would be an improvement.",
+          "createdAt": "2023-12-19T10:25:01Z",
+          "updatedAt": "2023-12-19T10:25:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PCR name itself expands to `Platform Configuration Registers` which restricts it only to Platforms.",
+          "createdAt": "2023-12-19T10:26:54Z",
+          "updatedAt": "2023-12-19T10:26:54Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To be super clear, I want to confirm, what is our overall proposal:\r\n\r\n\r\n1. ` measurement-values-map = non-empty<{\r\n ? &(digest-bank: 14) => [+env-digests]\r\n}\r\n\r\nenv-digests = {\r\n  digest-id => [+digest]\r\n}` \r\n\r\nOR\r\n\r\n2. I suppose we meant the below:\r\n\r\n` measurement-values-map = non-empty<{\r\n?  &(digest-bank: 14) => env-digests\r\n}\r\n\r\nenv-digests = [\r\n  +{ digest-id => [+digest] }\r\n] `\r\n",
+          "createdAt": "2023-12-19T10:56:08Z",
+          "updatedAt": "2023-12-19T10:56:45Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [...] what is our overall proposal:\r\n\r\n```\r\nintegrity-register-id = uint / text\r\n\r\nintegrity-registers = {\r\n  + integrity-register-id => [ + digest ]\r\n}\r\n\r\n; digest is already defined in CoRIM as:\r\ndigest = [\r\n  alg: (int / text),\r\n  val: bytes\r\n]\r\n\r\n$$measurement-values-map-extension //= (\r\n  &(integrity-registers: TBD) => integrity-registers\r\n)\r\n```\r\n\r\nUpdated as per https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/185#issuecomment-1863205954",
+          "createdAt": "2023-12-19T11:27:26Z",
+          "updatedAt": "2023-12-19T17:44:05Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Allowing the \"slot\" to have a text name\r\n> \r\n> Maybe. I still haven't gotten an answer from Ned regarding:\r\n> \r\n> > Can you provide examples? All the cases we are factoring in (i.e., TPMs / vTPMs, CCA Realm REMs) have the standard TPM structure (slot[i] => bytes).\r\n\r\nThere are non-TPM cases that use \"Integrity Registers\" such as Intel AMT. The AMT subsystem updates an IR that is read by system SW. It is simply the \"AMT IR\" rather than IR[0]. \r\n\r\nThe TPM NV can be used as a PCR. The NV location is its name. \r\n\r\nTCG DPE (DICE Protection Environment) can maintain a set of TCI values that are known by their name rather than an array of TCI values. I'm aware of one DPE implementation that treats the TCI as an IR / \"extend\" register. \r\n\r\nThe `pcr` naming is biased toward TPM PCR use cases. \r\n\r\nIn CoRIM, the `pcr` measurement type is only one part of a triple. The triple environment may provide additional context for disambiguating the measurement. For example, a class-map could use `index` to describe an array of TPM PCR locations and `digests` could be used directly without additional qualification.\r\n\r\nA different `class-id` could model TPM NV and `index` models offsets within TPM NV that are used for integrity registers.\r\n\r\nIf `pcrs` is aimed exclusively at TPM PCRs, then should corim also define `tpm-nv-irs`, `dice-tcis`, and `iamt-ir` variants? \r\n\r\nAlternatively, `digests` could be modified to include an optional tag (int/text) that allows `digests` to model TPM PCRs for a given environment-map that describes a TPM.\r\n",
+          "createdAt": "2023-12-19T17:32:03Z",
+          "updatedAt": "2023-12-19T17:40:59Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Cool, thanks @nedmsmith.  I like \"Integrity Registers\" better than PCR.  I will update the example CDDL above accordingly.",
+          "createdAt": "2023-12-19T17:42:54Z",
+          "updatedAt": "2023-12-20T01:01:26Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati \r\n\r\nI think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n\r\nshould be:\r\n\r\n```\r\nintegrity-register-id = uint / text\r\n\r\nintegrity-registers = [\r\n  + integrity-register-id => [ + digest ]\r\n]\r\n\r\n; digest is already defined in CoRIM as:\r\ndigest = [\r\n  alg: (int / text),\r\n  val: bytes\r\n]\r\n\r\n$$measurement-values-map-extension //= (\r\n  &(integrity-registers: TBD) => integrity-registers\r\n)\r\n\r\n```",
+          "createdAt": "2023-12-20T10:01:32Z",
+          "updatedAt": "2023-12-20T10:01:32Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n\r\n@yogeshbdeshpande: nope.  We want a map, not a record.\r\n",
+          "createdAt": "2023-12-20T10:38:32Z",
+          "updatedAt": "2023-12-20T10:38:32Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n> \r\n> @yogeshbdeshpande: nope. We want a map, not a record.\r\n\r\nThen where is the `multiplicity` of Per slot index?",
+          "createdAt": "2023-12-20T10:40:08Z",
+          "updatedAt": "2023-12-20T10:40:08Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > I think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n> > \r\n> > \r\n> > @yogeshbdeshpande: nope. We want a map, not a record.\r\n> \r\n> Then where is the `multiplicity` of Per slot index?\r\n\r\nIIUC your question, it's here:\r\n```\r\n [ + digest ]\r\n```",
+          "createdAt": "2023-12-20T10:42:46Z",
+          "updatedAt": "2023-12-20T10:42:46Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > > I think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n> > > \r\n> > > \r\n> > > @yogeshbdeshpande: nope. We want a map, not a record.\r\n> > \r\n> > \r\n> > Then where is the `multiplicity` of Per slot index?\r\n> \r\n> IIUC your question, it's here:\r\n> \r\n> ```\r\n>  [ + digest ]\r\n> ```\r\n\r\nNo that is per slot digest, so If I have PCR index 0, then I will put integrity-register-id = 0 and Digest for `0` around that.\r\n\r\nBut I want to make this for other PCR Indexes also, where is that array expression, which is required ?",
+          "createdAt": "2023-12-20T10:45:50Z",
+          "updatedAt": "2023-12-20T10:45:50Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > > > I think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n> > > > \r\n> > > > \r\n> > > > @yogeshbdeshpande: nope. We want a map, not a record.\r\n> > > \r\n> > > \r\n> > > Then where is the `multiplicity` of Per slot index?\r\n> > \r\n> > \r\n> > IIUC your question, it's here:\r\n> > ```\r\n> >  [ + digest ]\r\n> > ```\r\n> \r\n> No that is per slot digest, so If I have PCR index 0, then I will put integrity-register-id = 0 and Digest for `0` around that.\r\n> \r\n> But I want to make this for other PCR Indexes also, where is that array expression, which is required ?\r\n\r\nhere:\r\n```\r\n+ integrity-register-id => ...\r\n```",
+          "createdAt": "2023-12-20T10:54:17Z",
+          "updatedAt": "2023-12-20T10:54:17Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > > > > I think the correct CDDL as per https://datatracker.ietf.org/doc/html/rfc8610#section-3.5.1\r\n> > > > > \r\n> > > > > \r\n> > > > > @yogeshbdeshpande: nope. We want a map, not a record.\r\n> > > > \r\n> > > > \r\n> > > > Then where is the `multiplicity` of Per slot index?\r\n> > > \r\n> > > \r\n> > > IIUC your question, it's here:\r\n> > > ```\r\n> > >  [ + digest ]\r\n> > > ```\r\n> > \r\n> > \r\n> > No that is per slot digest, so If I have PCR index 0, then I will put integrity-register-id = 0 and Digest for `0` around that.\r\n> > But I want to make this for other PCR Indexes also, where is that array expression, which is required ?\r\n> \r\n> here:\r\n> \r\n> ```\r\n> + integrity-register-id => ...\r\n> ```\r\n\r\nMy question is : Can we do this in a `map` + expression ? I thought this is for `arrays` ?",
+          "createdAt": "2023-12-20T10:55:53Z",
+          "updatedAt": "2023-12-20T10:55:53Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> My question is : Can we do this in a `map` + expression ?\r\n\r\nyes",
+          "createdAt": "2023-12-20T11:05:10Z",
+          "updatedAt": "2023-12-20T11:05:10Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks. Just wanted to confirm, then is the positional order in the multiplicity always is preserved in this or not?",
+          "createdAt": "2023-12-20T11:21:41Z",
+          "updatedAt": "2023-12-20T11:21:41Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [...] is the positional order in the multiplicity always is preserved in this or not?\r\n\r\nwhy would it be relevant?",
+          "createdAt": "2023-12-20T12:06:15Z",
+          "updatedAt": "2023-12-20T12:06:15Z"
         }
       ]
     },
@@ -20515,13 +20690,13 @@
       "labels": [],
       "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.",
       "createdAt": "2023-12-06T06:56:36Z",
-      "updatedAt": "2023-12-13T15:09:21Z",
+      "updatedAt": "2023-12-20T18:51:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "172-enhance-envmap-match",
-      "headRefOid": "ec1ba6a146c21516b9bfcc68f64f649fb2d93ca9",
+      "headRefOid": "3e08bc556d1b2a126f403d14ad6325402bcdbf43",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -20630,6 +20805,186 @@
               "updatedAt": "2023-12-13T15:09:21Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qvnxy",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T13:13:24Z",
+          "updatedAt": "2023-12-20T13:13:24Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "The first proposed text deletes a lot of text and makes later paragraphs less clear. I am ok with the second proposed change.",
+              "createdAt": "2023-12-20T13:13:24Z",
+              "updatedAt": "2023-12-20T13:13:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qvxk6",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T13:36:50Z",
+          "updatedAt": "2023-12-20T13:36:52Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I will change Reference Value to stateful environment when fixing [#80](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80)",
+              "createdAt": "2023-12-20T13:36:51Z",
+              "updatedAt": "2023-12-20T13:36:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qvykK",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T13:39:10Z",
+          "updatedAt": "2023-12-20T13:39:12Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "I have rewritten the text to remove the forward reference",
+              "createdAt": "2023-12-20T13:39:11Z",
+              "updatedAt": "2023-12-20T13:39:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qv5dv",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T13:53:14Z",
+          "updatedAt": "2023-12-20T13:53:14Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Processing of `authorized-by` is described later in the section.",
+              "createdAt": "2023-12-20T13:53:14Z",
+              "updatedAt": "2023-12-20T13:53:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qv8Sv",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T13:59:20Z",
+          "updatedAt": "2023-12-20T13:59:20Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "I have rewritten this text",
+              "createdAt": "2023-12-20T13:59:20Z",
+              "updatedAt": "2023-12-20T13:59:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qv8nM",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T13:59:59Z",
+          "updatedAt": "2023-12-20T13:59:59Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I rewrote this para with subset language similar to that provided above.",
+              "createdAt": "2023-12-20T13:59:59Z",
+              "updatedAt": "2023-12-20T13:59:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qv9cY",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T14:01:48Z",
+          "updatedAt": "2023-12-20T14:01:48Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "I have updated the text using text similar to that proposed",
+              "createdAt": "2023-12-20T14:01:48Z",
+              "updatedAt": "2023-12-20T14:01:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qwXVd",
+          "commit": {
+            "abbreviatedOid": "ec1ba6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T14:55:28Z",
+          "updatedAt": "2023-12-20T14:55:29Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "The verifier removes claims with incorrect authorized-by values from the candidate claims, which means that the stateful environment won't have anything to match against.\r\nThis text describes \"Reference Value\" with the meaning stateful environment, we should have a different subsection with the meaning of \"Reference Value\" you are using.",
+              "createdAt": "2023-12-20T14:55:28Z",
+              "updatedAt": "2023-12-20T14:55:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qx91P",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T18:50:36Z",
+          "updatedAt": "2023-12-20T18:51:03Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nif each field (for example `class-map`, `instance-id` etc.) which is present in the\r\n```",
+              "createdAt": "2023-12-20T18:50:36Z",
+              "updatedAt": "2023-12-20T18:51:03Z"
+            }
+          ]
         }
       ]
     },
@@ -20729,6 +21084,273 @@
           "body": "in hindsight it'd have been better to offset the CoEv registration range",
           "createdAt": "2023-12-18T19:23:45Z",
           "updatedAt": "2023-12-18T19:23:45Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 188,
+      "id": "PR_kwDOH6-tI85iekYZ",
+      "title": "extend the use of tagged-bytes to identifiers",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/188",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix #184",
+      "createdAt": "2023-12-20T14:35:05Z",
+      "updatedAt": "2023-12-20T19:34:59Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ec6b7da8b3b1ba6c9e636ab9b0049a66e410d495",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "opaque-id",
+      "headRefOid": "9757398627525052f2b0bf3d2dd2c36affd790a8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85qwRTm",
+          "commit": {
+            "abbreviatedOid": "50f2fe0"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Minor .nit but LGTM!",
+          "createdAt": "2023-12-20T14:43:14Z",
+          "updatedAt": "2023-12-20T14:43:14Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qww2p",
+          "commit": {
+            "abbreviatedOid": "f6b97ba"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-12-20T15:37:29Z",
+          "updatedAt": "2023-12-20T15:37:29Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qwxOo",
+          "commit": {
+            "abbreviatedOid": "f6b97ba"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-12-20T15:37:54Z",
+          "updatedAt": "2023-12-20T15:37:54Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qwynu",
+          "commit": {
+            "abbreviatedOid": "f6b97ba"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-12-20T15:39:20Z",
+          "updatedAt": "2023-12-20T15:39:26Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Agreed to omit this suggestion.",
+              "createdAt": "2023-12-20T15:39:21Z",
+              "updatedAt": "2023-12-20T15:39:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qwzgh",
+          "commit": {
+            "abbreviatedOid": "f6b97ba"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T15:40:13Z",
+          "updatedAt": "2023-12-20T15:40:14Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nWhen used as an identifier the responsible allocator entity SHOULD ensure uniqueness.\r\n```",
+              "createdAt": "2023-12-20T15:40:13Z",
+              "updatedAt": "2023-12-20T15:42:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qx9FB",
+          "commit": {
+            "abbreviatedOid": "b1f4810"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T18:48:17Z",
+          "updatedAt": "2023-12-20T18:48:43Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "the scope of uniqueness should be defined.",
+              "createdAt": "2023-12-20T18:48:17Z",
+              "updatedAt": "2023-12-20T18:48:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qx-d-",
+          "commit": {
+            "abbreviatedOid": "b1f4810"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T18:52:33Z",
+          "updatedAt": "2023-12-20T18:52:33Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "You mean something like:\r\n\r\n> _\"[...] ensure uniqueness within the usage scope.\"_",
+              "createdAt": "2023-12-20T18:52:33Z",
+              "updatedAt": "2023-12-20T18:58:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qyAzq",
+          "commit": {
+            "abbreviatedOid": "b1f4810"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T18:59:41Z",
+          "updatedAt": "2023-12-20T19:02:06Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nIts semantics are defined by the context in which it is found, and by the overarching CoRIM profile.\r\n```",
+              "createdAt": "2023-12-20T18:59:41Z",
+              "updatedAt": "2023-12-20T19:02:06Z"
+            },
+            {
+              "originalPosition": 9,
+              "body": "> You mean something like:\r\n> \r\n> > _\"[...] ensure uniqueness within the usage scope.\"_\r\n\r\nOK",
+              "createdAt": "2023-12-20T19:01:34Z",
+              "updatedAt": "2023-12-20T19:02:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qyL0J",
+          "commit": {
+            "abbreviatedOid": "269c024"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T19:34:18Z",
+          "updatedAt": "2023-12-20T19:34:18Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nWhen used as an identifier the responsible allocator entity SHOULD ensure uniqueness within the usage scope.\r\n```",
+              "createdAt": "2023-12-20T19:34:18Z",
+              "updatedAt": "2023-12-20T19:34:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85qyMBw",
+          "commit": {
+            "abbreviatedOid": "b1f4810"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-12-20T19:34:59Z",
+          "updatedAt": "2023-12-20T19:34:59Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "cool, see [9757398](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/188/commits/9757398627525052f2b0bf3d2dd2c36affd790a8)",
+              "createdAt": "2023-12-20T19:34:59Z",
+              "updatedAt": "2023-12-20T19:34:59Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 189,
+      "id": "PR_kwDOH6-tI85ieyr0",
+      "title": "add integrity registers",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix #185",
+      "createdAt": "2023-12-20T15:03:53Z",
+      "updatedAt": "2023-12-20T18:34:12Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ec6b7da8b3b1ba6c9e636ab9b0049a66e410d495",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "integrity-registers",
+      "headRefOid": "260e909875d462a67c84c5cadc47bc5078d3b40f",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Please add a section immediately below \"Comparison for cryptokeys entries\" which describes how a stateful environment (needs Reference Value) is matched against the ACS.",
+          "createdAt": "2023-12-20T15:59:17Z",
+          "updatedAt": "2023-12-20T18:21:54Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Please add a section immediately below \"Comparison for cryptokeys entries\" which describes how a stateful environment (nee Reference Value) is matched against the ACS.\r\n\r\ndone, see [260e909](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/260e909875d462a67c84c5cadc47bc5078d3b40f)",
+          "createdAt": "2023-12-20T16:37:14Z",
+          "updatedAt": "2023-12-20T16:37:14Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85qx4DL",
+          "commit": {
+            "abbreviatedOid": "260e909"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-12-20T18:34:12Z",
+          "updatedAt": "2023-12-20T18:34:12Z",
           "comments": []
         }
       ]
