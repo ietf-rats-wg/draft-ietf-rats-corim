@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-04T01:18:33.296189+00:00",
+  "timestamp": "2024-01-07T01:25:25.119499+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3769,7 +3769,7 @@
       "labels": [],
       "body": "Recently, there has been a discussion on the RATS mailing list about using [SEV-SNP CHIP_ID](https://mailarchive.ietf.org/arch/msg/rats/NdvOUhPp8t4dG8fI0YKNK-H_M1w/) as an AE instance identifier. This same requirement had previously arisen in a SEV-SNP integration with Veraison.\r\nAdditionally, there are internal discussions at Arm regarding CCA workload identification, which cannot use the currently defined type choice.\r\n\r\nExtending the class and instance identifier types with an opaque byte array whose exact semantics would be defined by the CoRIM profile could address both cases, among others.\r\n\r\n```cddl\r\n$tagged-bytes-type = #6.TBD(bytes)\r\n\r\n$instance-id-type-choice /= $tagged-bytes-type\r\n$class-id-type-choice /= $tagged-bytes-type\r\n```",
       "createdAt": "2023-12-18T14:04:50Z",
-      "updatedAt": "2023-12-18T15:03:18Z",
+      "updatedAt": "2024-01-04T23:17:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -3785,6 +3785,13 @@
           "body": "Yes, we discussed this internally and felt that this is very much required for individual vendors to have the flexibility of defining the required semantics of free expression of Identities.",
           "createdAt": "2023-12-18T15:03:16Z",
           "updatedAt": "2023-12-18T15:03:16Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Tagged bytes composed with an AMD SEV-SNP profile identifier seems adequate to interpret this as CHIP_ID. LGTM.",
+          "createdAt": "2024-01-04T23:17:21Z",
+          "updatedAt": "2024-01-04T23:17:21Z"
         }
       ]
     },
@@ -4044,6 +4051,30 @@
       "updatedAt": "2023-12-18T18:58:38Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 190,
+      "id": "I_kwDOH6-tI857MQ-1",
+      "title": "ev-coswid-triple-record undefined in CoRIM draft?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/190",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The accepted claims set type description uses the variable `ev-coswid-triple-record` without definition. I noticed this is also used in the Intel Profile for CoRIM, but there it references the TCG specification for concise evidence for DICE (https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf). Given the specificity to DICE, this seems overly specific for the CoRIM specification given that evidence is expected to be profile-specific, so I wonder what this hanging reference is meant to mean.",
+      "createdAt": "2024-01-05T06:39:47Z",
+      "updatedAt": "2024-01-06T00:13:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "`accepted-claims-set` technically is mythical as it intends to describe the Verifier's \"internal representation\" which is out of scope for this specification.  We discussed whether or not using CDDL to describe an internal representation would be confusing. We also defined abstract terminology for the verifier in section 5.1 which is used to describe an \"internal representation\". \r\n\r\nThere are times when the prose needs to be specific about certain compare operations where having `accepted-claims-set` CDDL is a helpful abstraction. Other prose seems appropriate for more conceptual explanations. \r\n\r\nI'm not convinced the `accepted-claims-set` CDDL is entirely correct, I think we're in a mode of working through use cases and identifying gaps in `accepted-claims-set`. \r\n\r\nOne challenge with using the same CDDL as is used to describe Verifier inputs, to describe Verifier outputs (or nearly Verifier outputs) is it assumes the Verifier's other inputs such as Appraisal Policy for Evidence and RP context isn't additive. \r\n\r\nSpecifically, the case of coswid, the coswid tags are additional inputs beyond the core comid schema. As such, you might expect these inputs should affect Verifier output. ev-coswid-triple-record is an example. Nevertheless, it models a Verifier output using an Evidence schema input. \r\n\r\nSince it is a non-goal of CoRIM to define an Attestation Result format, it seems using CDDL to define `accepted-claims-set` implies an alternative to other drafts that do this.  Technically, it isn't part of the CoRIM schema. \r\n\r\nIf there is a way to document the \"internal representation\" with as much precision as CDDL, but without using CDDL (or something similar) then that would be interesting prose to read.",
+          "createdAt": "2024-01-06T00:13:15Z",
+          "updatedAt": "2024-01-06T00:13:15Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -20690,7 +20721,7 @@
       "labels": [],
       "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.",
       "createdAt": "2023-12-06T06:56:36Z",
-      "updatedAt": "2024-01-03T18:46:19Z",
+      "updatedAt": "2024-01-05T14:36:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
@@ -21094,9 +21125,9 @@
             },
             {
               "originalPosition": 47,
-              "body": "```suggestion\r\nThe Verifier initializes a temporary 'candidate' entries variable where the `environment-map` fields from\r\nthe endorsement condition's `stateful-environment-record` is a subset of the `environment-map`\r\nfields in the ACS `environment-map` records.\r\n```",
+              "body": "```suggestion\r\nThe Verifier initializes a temporary \"candidate\" entries variable where the `environment-map` fields from\r\nthe endorsement condition's `stateful-environment-record` is a subset of the `environment-map`\r\nfields in the ACS `environment-map` records.\r\n```",
               "createdAt": "2024-01-03T18:23:06Z",
-              "updatedAt": "2024-01-03T18:36:46Z"
+              "updatedAt": "2024-01-05T11:28:05Z"
             },
             {
               "originalPosition": 49,
@@ -21136,6 +21167,126 @@
           "createdAt": "2024-01-03T18:46:19Z",
           "updatedAt": "2024-01-03T18:46:19Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85rocej",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-05T11:14:50Z",
+          "updatedAt": "2024-01-05T11:14:51Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "I think this will not render as you may expect :-)\r\n\r\n```suggestion\r\n> There were two interpretations of the meaning of `Reference Value` and the adopted meaning does not match the version in the current text. I will submit a further PR to replace most uses of \"Reference Value\" in section 5 with \"stateful environment\".  [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/178\r\n```",
+              "createdAt": "2024-01-05T11:14:50Z",
+              "updatedAt": "2024-01-05T11:15:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85rodKP",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-05T11:17:13Z",
+          "updatedAt": "2024-01-05T11:17:13Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "editorial note: we agreed to not insert arbitrary line breaks and have instead one sentence per line.",
+              "createdAt": "2024-01-05T11:17:13Z",
+              "updatedAt": "2024-01-05T11:19:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85roe0k",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-05T11:22:42Z",
+          "updatedAt": "2024-01-05T11:22:42Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "I agree with Ned's suggestion, but then L1655-1658 also need to be rearranged as part of creating the reader's context.",
+              "createdAt": "2024-01-05T11:22:42Z",
+              "updatedAt": "2024-01-05T11:22:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85rofIl",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-05T11:23:45Z",
+          "updatedAt": "2024-01-05T11:23:45Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "* US English\r\n* we reserve the reverse tick quoting for CDDL data items\r\n\r\n```suggestion\r\nThe Verifier initializes its temporary \"candidate\" entries variable with all entries in the\r\n```",
+              "createdAt": "2024-01-05T11:23:45Z",
+              "updatedAt": "2024-01-05T11:27:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85rponc",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-05T14:35:28Z",
+          "updatedAt": "2024-01-05T14:35:30Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "I expect to delete this paragraph in the next change, happy to remove it in this one if you prefer",
+              "createdAt": "2024-01-05T14:35:28Z",
+              "updatedAt": "2024-01-05T14:35:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85rpo_o",
+          "commit": {
+            "abbreviatedOid": "3e08bc5"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-05T14:36:23Z",
+          "updatedAt": "2024-01-05T14:36:26Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "ok",
+              "createdAt": "2024-01-05T14:36:24Z",
+              "updatedAt": "2024-01-05T14:36:26Z"
+            }
+          ]
         }
       ]
     },
@@ -21616,7 +21767,7 @@
       "labels": [],
       "body": "Fix #185",
       "createdAt": "2023-12-20T15:03:53Z",
-      "updatedAt": "2023-12-20T18:34:12Z",
+      "updatedAt": "2024-01-04T13:20:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ec6b7da8b3b1ba6c9e636ab9b0049a66e410d495",
@@ -21655,6 +21806,19 @@
           "body": "",
           "createdAt": "2023-12-20T18:34:12Z",
           "updatedAt": "2023-12-20T18:34:12Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85riROY",
+          "commit": {
+            "abbreviatedOid": "260e909"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-01-04T13:20:11Z",
+          "updatedAt": "2024-01-04T13:20:11Z",
           "comments": []
         }
       ]
