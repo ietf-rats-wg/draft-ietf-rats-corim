@@ -807,7 +807,7 @@ needed.
 The following describes each member of the `class-map`:
 
 * `class-id` (index 0): Identifies the environment via a well-known identifier.
-  Typically, `class-id` is an object identifier (OID) or universally unique
+  Typically, `class-id` is an object identifier (OID) variable-length opaque byte string ({{sec-common-tagged-bytes}}) or universally unique
   identifier (UUID). Use of this attribute is preferred.
 
 * `vendor` (index 1): Identifies the entity responsible for choosing values for
@@ -832,7 +832,7 @@ An instance carries a unique identifier that is reliably bound to a Target Envir
 that is an instance of the Attester.
 
 The types defined for an instance identifier are CBOR tagged expressions of
-UEID, UUID, variable-length opaque byte string, or cryptographic key identifier.
+UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or cryptographic key identifier.
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
@@ -844,7 +844,7 @@ A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
-The types defined for a group identified are UUID and variable-length opaque byte string.
+The types defined for a group identified are UUID and variable-length opaque byte string ({{sec-common-tagged-bytes}}).
 
 ~~~ cddl
 {::include cddl/group-id-type-choice.cddl}
