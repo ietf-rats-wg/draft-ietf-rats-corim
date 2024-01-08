@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 20 June 2024                                       Y. Deshpande
+Expires: 11 July 2024                                       Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        18 December 2023
+                                                          8 January 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,11 +54,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 June 2024.
+   This Internet-Draft will expire on 11 July 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -84,6 +84,7 @@ Table of Contents
        1.3.6.  OID
        1.3.7.  Tagged Integer Type
        1.3.8.  Digest
+       1.3.9.  Tagged Bytes Type
    2.  Concise Reference Integrity Manifest (CoRIM)
      2.1.  CoRIM Map
        2.1.1.  Identity
@@ -383,6 +384,18 @@ Table of Contents
      alg: (int / text),
      val: bytes
    ]
+
+1.3.9.  Tagged Bytes Type
+
+   An opaque, variable-length byte string.  It can be used in different
+   contexts: as an instance, class or group identifier in an
+   environment-map; as a raw value measurement in a measurement-values-
+   map.  Its semantics are defined by the context in which it is found,
+   and by the overarching CoRIM profile.  When used as an identifier the
+   responsible allocator entity SHOULD ensure uniqueness within the
+   context that it is used.
+
+   tagged-bytes = #6.560(bytes)
 
 2.  Concise Reference Integrity Manifest (CoRIM)
 
@@ -979,13 +992,14 @@ Table of Contents
    $class-id-type-choice /= tagged-oid-type
    $class-id-type-choice /= tagged-uuid-type
    $class-id-type-choice /= tagged-int-type
+   $class-id-type-choice /= tagged-bytes
 
    The following describes each member of the class-map:
 
    *  class-id (index 0): Identifies the environment via a well-known
-      identifier.  Typically, class-id is an object identifier (OID) or
-      universally unique identifier (UUID).  Use of this attribute is
-      preferred.
+      identifier.  Typically, class-id is an object identifier (OID)
+      variable-length opaque byte string (Section 1.3.9) or universally
+      unique identifier (UUID).  Use of this attribute is preferred.
 
    *  vendor (index 1): Identifies the entity responsible for choosing
       values for the other class attributes that do not already have
@@ -1010,11 +1024,13 @@ Table of Contents
    Target Environment that is an instance of the Attester.
 
    The types defined for an instance identifier are CBOR tagged
-   expressions of UEID, UUID, or cryptographic key identifier.
+   expressions of UEID, UUID, variable-length opaque byte string
+   (Section 1.3.9), or cryptographic key identifier.
 
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= $crypto-key-type-choice
+   $instance-id-type-choice /= tagged-bytes
 
 3.1.4.1.4.   Group
 
@@ -1022,9 +1038,11 @@ Table of Contents
    of Attesters, for example when a number of Attester are hidden in the
    same anonymity set.
 
-   The type defined for a group identified is UUID.
+   The types defined for a group identified are UUID and variable-length
+   opaque byte string (Section 1.3.9).
 
    $group-id-type-choice /= tagged-uuid-type
+   $group-id-type-choice /= tagged-bytes
 
 3.1.4.1.5.  Measurements
 
@@ -1286,10 +1304,10 @@ Table of Contents
    relevance is opaque to Verifiers.
 
    There are two parts to a raw-value-group, a measurement and an
-   optional mask.  The default raw value measurement is a CBOR tagged
-   bstr.  Additional raw value types can be defined, but must be CBOR
-   tagged so that parsers can distinguish between the various semantics
-   of type values.
+   optional mask.  The default raw value measurement is of type tagged-
+   bytes (Section 1.3.9).  Additional raw value types can be defined,
+   but must be CBOR tagged so that parsers can distinguish between the
+   various semantics of type values.
 
    The mask is applied by the Verifier as part of appraisal.  Only the
    raw value bits with corresponding TRUE mask bits are compared during
@@ -1299,7 +1317,6 @@ Table of Contents
    mask is also defined.  Typically, a CoRIM profile is used to define
    new raw values and mask semantics.
 
-   tagged-bytes = #6.560(bytes)
    $raw-value-type-choice /= tagged-bytes
 
    raw-value-mask-type = bytes
@@ -2416,8 +2433,7 @@ Table of Contents
    |559    |digest     | tagged-cert-thumbprint-type, see   |RFCthis  |
    |       |           | Section 3.1.4.1.6                  |         |
    +-------+-----------+------------------------------------+---------+
-   |560    |bytes      | tagged-bytes, see                  |RFCthis  |
-   |       |           | Section 3.1.4.1.5.6                |         |
+   |560    |bytes      | tagged-bytes, see Section 1.3.9    |RFCthis  |
    +-------+-----------+------------------------------------+---------+
    |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
    |       |           | see Section 3.1.4.1.6              |         |
@@ -2807,6 +2823,7 @@ Appendix A.  Full CoRIM CDDL
    $class-id-type-choice /= tagged-oid-type
    $class-id-type-choice /= tagged-uuid-type
    $class-id-type-choice /= tagged-int-type
+   $class-id-type-choice /= tagged-bytes
 
    class-map = non-empty<{
      ? &(class-id: 0) => $class-id-type-choice
@@ -2934,6 +2951,7 @@ Appendix A.  Full CoRIM CDDL
    }
 
    $group-id-type-choice /= tagged-uuid-type
+   $group-id-type-choice /= tagged-bytes
 
    identity-triple-record = [
      environment-map
@@ -2943,6 +2961,7 @@ Appendix A.  Full CoRIM CDDL
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= $crypto-key-type-choice
+   $instance-id-type-choice /= tagged-bytes
 
    ip-addr-type-choice = ip4-addr-type / ip6-addr-type
    ip4-addr-type = bytes .size 4
@@ -2991,7 +3010,6 @@ Appendix A.  Full CoRIM CDDL
    oid-type = bytes
    tagged-oid-type = #6.111(oid-type)
 
-   tagged-bytes = #6.560(bytes)
    $raw-value-type-choice /= tagged-bytes
 
    raw-value-mask-type = bytes
@@ -3027,6 +3045,8 @@ Appendix A.  Full CoRIM CDDL
    tag-version-type = uint .default 0
 
    tagged-int-type = #6.551(int)
+
+   tagged-bytes = #6.560(bytes)
 
    triples-map = non-empty<{
      ? &(reference-triples: 0) =>
