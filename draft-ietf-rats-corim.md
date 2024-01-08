@@ -1591,142 +1591,113 @@ The Verifier SHOULD set the `authorized-by` field in Accepted Claims Set entries
 to a format which contains only a key, for example the `tagged-cose-key-type`
 format. Using a common format makes it easier to compare the field.
 
-## Accepted Claims Set extension using CoMID tags or triples
+## Accepted Claims Set extension using CoMID triples
 
-In the Accepted Claims Set extension phase, a CoRIM Appraisal Context and
-an Evidence Appraisal Policy are used by the Verifier to find CoMID tags or triples which
-match the Attester. Tags/triples which match are accepted, and the Accepted Claims Set
-is extended using Endorsements etc. from the accepted tags.
+In the Accepted Claims Set extension phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID tags or triples which match the ACS.
+Tags/triples which match are accepted, and the Accepted Claims Set is extended using Endorsements etc. from the accepted tags.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
+Each triple is processed independently of other triples.
+If any triple within the CoRIM Appraisal Context does not match the Accepted Claims Set then ACS extensions in that triple are not processed.
+If a triple does not match the ACS then this does not affect whether the Verifier tries to match other triples against the ACS.
 
-### Comparing and processing CoMID tags or triples
+Note that the order of triples processing is important. Processing a triple may result in modifications to the ACS which allow other triples to match the modified ACS.
+The Verifier SHOULD ensure that it processes triples in the correct order (for example by processing all triples which match against a particular ACS entry or environment after that ACS entry has been modified).
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
+### Processing Reference Values Triple
 
-### Matching Evidence against Reference Values
+A Reference Value Provider (RVP) may publish Reference Values, which are reviewed to determine if they are contained in the Accepted Claims Set (ACS).
+The authority of the RVP is added to all ACS entries which match the Reference Values triple.
 
-An Endorser may use CoMID tags to publish Conditional Endorsements, which
-are added to the Accepted Claims Set only if specified conditions apply.
-This section describes the process performed by the Verifier to determine
-which Conditional Endorsements from the candidate CoMIDs should be added
-to the Accepted Claims Set.
+For each Reference Value triple, the verifier compares each `reference-triple-record` against ACS entries as described in {{sec-match-one-se}}, using a `stateful-environment-record` created from the fields in `reference-triple-record`.
+If all `reference-triple-record`s match the ACS then the authority which signed the triple shall be added to the `authorized-by` field of each ACS entry which matched.
 
-The verifier checks whether Conditional Endorsements are applicable by
-comparing Evidence in the Accepted Claims Set against Reference Values
-from the CoMID. These Reference Values may be provided as Reference Value
-Triples or may be combined with the Endorsements, for example as the
-Conditional Endorsement Series Triple.
+TODO: Is this really what we want? I think this description might not work as expected if there are partial matches.
+Might it be better to add a new ACS entry built from the contents of the reference triple record.
 
-The following subsections describe how the CoRIM tells the verifier which
-Reference Values and Endorsed Values are grouped together ({{sec-grouping-ref-vals}})
-and how the verifier matches a Reference Value against the Accepted Claims Set
-({{sec-match-all-ref-vals}}).
+If any `reference-triple-record` in the Reference Value triple does not match the ACS then the entire triple is ignored.
 
-#### Grouping Reference Values and Endorsements {#sec-grouping-ref-vals}
+### Processing Endorsed Value Triple
 
-> This paragraph will be replaced by a description of how the CoRIM tells the
-verifier which Reference Values and Endorsed Values are grouped together.
+[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
-[^issue]: Need to get agreement on how group membership is encoded. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/136
+### Processing triples representing Conditional Endorsements
 
-[^issue]: Need to describe how to match conditional endorsements. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80
+An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the Accepted Claims Set only if specified conditions apply.
+This section describes the process performed by the Verifier to determine which Conditional Endorsements from the candidate CoMIDs should be added to the ACS.
 
-#### Matching all Reference Values in a group against the Accepted Claims Set {#sec-match-all-ref-vals}
+The verifier checks whether Conditional Endorsements are applicable by comparing Evidence in the Accepted Claims Set against expected values provided in `stateful-environment-record` object which are part of the triple.
 
-If all Reference Values in a group match entries in the Accepted Claims Set
-then all Endorsements in the group are added to the Accepted Claims Set
-(see {{sec-add-to-acs}}). {{sec-match-one-ref-val}} describes how one
-Reference Value is matched against the Accepted Claims Set.
+#### Processing Conditional Endorsement Triple
 
-If any Reference Value in a group does not match the Accepted Claims Set then
-all Endorsements in the group are silently ignored.
+For each Conditional Endorsement Triple the Verifier compares the `stateful-environment-record` field in the triple against the ACS (see {{sec-match-one-se}}).
 
-Each group is processed independently of other groups. If a group fails to match
-the Accepted Claims Set then this does not affect the processing of other groups.
+If the stateful environment matches then the Verifier adds an Endorsement entry to the ACS (see {{sec-add-to-acs}}).
+The endorsement is created from the `environment-map` and the `measurement-values-map` field in the triple, and the authority which signed the tag containing the Conditional Endorsement Triple.
+
+#### Processing Multi-Environment Conditional (MEC) Endorsement Triple
+
+For each MEC Endorsement Triple the Verifier compares each of the `stateful-environment-record` fields from the `cond` field in the triple against the ACS (see {{sec-match-one-se}}).
+
+If every stateful environment matches then the Verifier adds an Endorsement entry to the ACS (see {{sec-add-to-acs}}) for each `endorsed-triple-record` in the `endorsements` field.
+Each endorsement is created from the `endorsed-triple-record` and the authority which signed the tag containing the MEC Endorsement Triple.
+
+#### Processing Conditional Endorsement Series Triple
+
+For each Conditional Endorsement Series Triple the Verifier matches the triple in two steps.
+The first step compares the `stateful-environment-record` field in the triple against the ACS (see {{sec-match-one-se}}). If this matches then the Verifier performs the second step.
+
+The second step steps through the `conditional-series-record`s in order, comparing each of them against the ACS, using a temporary stateful environment created from the `environment-map` in step one and the `refv` field.
+The second step stops if a match is detected.
+
+If the second step matches then the Verifier adds an Endorsement entry to the ACS.
+This endorsement is created from the `environment-map` field in `stateful-environment-record`, the `endv` field from the match detected in the second step and the authority which signed the tag containing the Conditional Endorsement Series Triple.
 
 #### Matching a stateful environment against the Accepted Claims Set {#sec-match-one-ref-val}
 
-[^issue]: There were two interpretations of the meaning of `Reference Value` and the adopted
-meaning does not match the version in the current text. I will submit a further PR to replace
-most uses of "Reference Value" in section 5 with "stateful environment".
-Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/178
+This section describes how a stateful environment is matched against Evidence in the Accepted Claims Set.
+If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.
 
-This section describes how a stateful environment is matched against Evidence in the
-Accepted Claims Set.
-If any part of the processing indicates that the stateful environment does not match
-then the remaining steps in this section are skipped for that conditional endorsement.
+A stateful environment consists of an `environment-map` plus a `measurement-map` which are processed separately.
 
-A stateful environment consists of an `environment-map` plus a `measurement-map`.
-In `conditional-endorsement-triple-record` and `mec-endorsement-triple-record` these are encoded together.
-In other triples multiple stateful environments are represented more compactly by
-letting one `environment-map` apply to multiple `measurement-map`s.
-
-The Verifier initialises its temporary `candidate entries` variable with all entries in the
-Accepted Claims Set (ACS) where the stateful enviromnment `environment-map` is a subset
-of the ACS `environment-map`.
+The Verifier initializes its temporary "candidate entries" variable with all entries in the Accepted Claims Set (ACS) where the stateful enviromnment `environment-map` is a subset of the ACS `environment-map`.
 
 If there are no candidate entries then the triple containing the stateful environment does not match.
 
-A stateful environment `environment-map` is a subset of an ACS entry `environment-map`
-if each field (for example `class`, `instance` etc.) which is present in the
-stateful environment `environment-map` is also present in the ACS entry,
-and the CBOR encoded field values in the stateful environment and
-ACS entry are binary identical.
-If a field is not present in the stateful environment `environment-map` then the presence of,
-and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
+A stateful environment `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the stateful environment `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
+If a field is not present in the stateful environment `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
 
-Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into
-a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If the stateful environment contains an `authorized-by` field then the Verifier
-SHALL modify the candidate entries to remove entries whose `authorized-by`
-field does not contain one of the keys listed in the stateful environment
-`authorized-by` field (see {{sec-authorized-by}} for more details).
-If all candidate entries are discarded by this step then the
-stateful environment does not match.
+If the stateful environment contains an `authorized-by` field then the Verifier SHALL modify the candidate entries to remove entries whose `authorized-by` field does not contain one of the keys listed in the stateful environment `authorized-by` field (see {{sec-authorized-by}} for more details).
+If all candidate entries are discarded by this step then the stateful environment does not match.
 
-The Verifier SHALL iterate over the codepoints which are present in the
-`measurement-values-map` field within the stateful environment `measurement-values-map`.
 The stateful environment entry is compared against each of the candidate entries.
-If none of the candidate entries matches
-the stateful environment entry then the stateful environment does not match.
+If none of the candidate entries matches the stateful environment entry then the stateful environment does not match.
 
-The algorithm used to match the `measurement-values-map` entries
-is described below. The comparison performed depends on the type of
-field being compared.
+For each of the candidate entries, the Verifier SHALL iterate over the codepoints which are present in the `measurement-values-map` field (referred to as the "MVM codepoints" below) within the stateful environment `measurement-map`.
 
-If the stateful environment `measurement-values-map` value is tagged with a CBOR
-tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated
-with that tag.
+The algorithm used to match the MVM codepoints is described below.
+The comparison performed depends on the value of the codepoint being compared and whether the `measurement-values-map` value associated with that codepoint is tagged.
 
-If the stateful environment is not tagged then the Verifier MUST use the comparison
-algorithm associated with the `measurement-values-map` codepoint for the entry.
+If the stateful environment `measurement-values-map` value is tagged with a CBOR tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated with that tag.
 
-This specification defines the matching algorithm for some CBOR tagged stateful environments,
-which is described in sub-sections below.
+If the value is not tagged then the Verifier MUST use the comparison algorithm associated with the `measurement-values-map` codepoint for the entry.
+
+This specification defines the matching algorithm for some codepoints and CBOR tagged values, which are described in sub-sections below.
 
 A CoRIM profile may define additional tags and their matching algorithms.
 
-If the Verifier does not recognize the stateful environment CBOR tag value then
-the stateful environment does not match.
+If the Verifier does not recognize the stateful environment CBOR tag value then the stateful environment does not match.
 
-If the stateful environment is not tagged and the measurement-value-map key is a
-value with handling described in the sub-sections below,
-then the algorithm appropriate to that key is used to match the entries.
+If the stateful environment is not tagged and the measurement-value-map key is a value with handling described in  the sub-sections below, then the algorithm appropriate to that key is used to match the entries.
 
-If the stateful environment is not tagged, and the `measurement-values-map` key
-is not a value described below, then the entries are compared
-using binary comparison of their CBOR encoded values. If the values
-are not binary identical then the stateful environment does not match.
+If the stateful environment is not tagged, and the `measurement-values-map` key is not a value described below, then the entries are compared using binary comparison of their CBOR encoded values.
+If the values are not binary identical then the stateful environment does not match.
 
-Note that while specifications may extend the matching semantics using CBOR tags,
-there is no way to extend the matching semantics of keys.
-Any new keys requiring non-default comparison must add a CBOR tag to the
-Reference Value describing the desired behaviour.
+Note that while specifications may extend the matching semantics using CBOR tags, there is no way to extend the matching semantics of codepoints.
+Any new codepoints requiring non-default comparison must add a CBOR tag to the Reference Value describing the desired behaviour.
 
-If all checks above have been performed successfully then the stateful environment
-matches.
+If all checks above have been performed successfully then the stateful environment matches.
 
 ##### Comparison for svn entries
 
