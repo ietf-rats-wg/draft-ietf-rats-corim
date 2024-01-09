@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 22 June 2024                                       Y. Deshpande
+Expires: 12 July 2024                                       Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        20 December 2023
+                                                          9 January 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,11 +54,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 June 2024.
+   This Internet-Draft will expire on 12 July 2024.
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2024 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -145,20 +145,25 @@ Table of Contents
        5.3.2.  The Accepted Claims Set
          5.3.2.1.  Accepted Claims Set Initialization
          5.3.2.2.  The authorized-by field in Accepted Claims Set
-     5.4.  Accepted Claims Set extension using CoMID tags or triples
-       5.4.1.  Comparing and processing CoMID tags or triples
-       5.4.2.  Matching Evidence against Reference Values
-         5.4.2.1.  Grouping Reference Values and Endorsements
-         5.4.2.2.  Matching all Reference Values in a group against
-                 the Accepted Claims Set
-         5.4.2.3.  Matching a stateful environment against the
+     5.4.  Accepted Claims Set extension using CoMID triples
+       5.4.1.  Processing Reference Values Triple
+       5.4.2.  Processing Endorsed Value Triple
+       5.4.3.  Processing triples representing Conditional
+               Endorsements
+         5.4.3.1.  Processing Conditional Endorsement Triple
+         5.4.3.2.  Processing Multi-Environment Conditional (MEC)
+                 Endorsement Triple
+         5.4.3.3.  Processing Conditional Endorsement Series Triple
+         5.4.3.4.  Matching a stateful environment against the
                  Accepted Claims Set
-           5.4.2.3.1.  Comparison for svn entries
-           5.4.2.3.2.  Comparison for digests entries
-           5.4.2.3.3.  Comparison for raw-value entries
-           5.4.2.3.4.  Comparison for cryptokeys entries
-           5.4.2.3.5.  Handling of new tags
-       5.4.3.  Adding CoMID Endorsed Values to the Accepted Claims Set
+         5.4.3.5.  Matching a single codepoint in two
+                 measurement-value-maps
+           5.4.3.5.1.  Comparison for svn entries
+           5.4.3.5.2.  Comparison for digests entries
+           5.4.3.5.3.  Comparison for raw-value entries
+           5.4.3.5.4.  Comparison for cryptokeys entries
+           5.4.3.5.5.  Handling of new tags
+       5.4.4.  Adding CoMID Endorsed Values to the Accepted Claims Set
      5.5.  Adding DICE/SPDM Evidence to the Accepted Claims Set
        5.5.1.  Transforming SPDM Evidence to a format usable for
                matching
@@ -1154,7 +1159,7 @@ Table of Contents
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 5.4.2.3.4.
+      Value entry.  Matching is described in Section 5.4.3.5.4.
 
 3.1.4.1.5.3.  Version
 
@@ -1933,7 +1938,7 @@ Table of Contents
    authorities.
 
    When adding Endorsement Claims to the Accepted Claims Set that
-   resulted from CoRIM processing (see Section 5.4.3) the Verifier SHALL
+   resulted from CoRIM processing (see Section 5.4.4) the Verifier SHALL
    set the authorized-by field in that Evidence to the trusted authority
    key that is at the head of the key chain that signed the CoRIM.
 
@@ -1947,77 +1952,121 @@ Table of Contents
    tagged-cose-key-type format.  Using a common format makes it easier
    to compare the field.
 
-5.4.  Accepted Claims Set extension using CoMID tags or triples
+5.4.  Accepted Claims Set extension using CoMID triples
 
    In the Accepted Claims Set extension phase, a CoRIM Appraisal Context
    and an Evidence Appraisal Policy are used by the Verifier to find
-   CoMID tags or triples which match the Attester.  Tags/triples which
-   match are accepted, and the Accepted Claims Set is extended using
+   CoMID tags or triples which match the ACS.  Tags/triples which match
+   are accepted, and the Accepted Claims Set is extended using
    Endorsements etc. from the accepted tags.
 
-5.4.1.  Comparing and processing CoMID tags or triples
+   Each triple is processed independently of other triples.  If any
+   triple within the CoRIM Appraisal Context does not match the Accepted
+   Claims Set then ACS extensions in that triple are not processed.  If
+   a triple does not match the ACS then this does not affect whether the
+   Verifier tries to match other triples against the ACS.
 
-5.4.2.  Matching Evidence against Reference Values
+   Note that the order of triples processing is important.  Processing a
+   triple may result in modifications to the ACS which allow other
+   triples to match the modified ACS.  The Verifier SHOULD ensure that
+   it processes triples in the correct order (for example by processing
+   all triples which match against a particular ACS entry or environment
+   after that ACS entry has been modified).
+
+5.4.1.  Processing Reference Values Triple
+
+   A Reference Value Provider (RVP) may publish Reference Values, which
+   are reviewed to determine if they are contained in the Accepted
+   Claims Set (ACS).  The authority of the RVP is added to all ACS
+   entries which match the Reference Values triple.
+
+   For each Reference Value triple, the verifier compares each
+   reference-triple-record against ACS entries as described in
+   Section 5.4.3.4, using a stateful-environment-record created from the
+   fields in reference-triple-record.  If all reference-triple-records
+   match the ACS then the authority which signed the triple shall be
+   added to the authorized-by field of each ACS entry which matched.
+
+   TODO: Is this really what we want?  I think this description might
+   not work as expected if there are partial matches.  Might it be
+   better to add a new ACS entry built from the contents of the
+   reference triple record.
+
+   If any reference-triple-record in the Reference Value triple does not
+   match the ACS then the entire triple is ignored.
+
+5.4.2.  Processing Endorsed Value Triple
+
+5.4.3.  Processing triples representing Conditional Endorsements
 
    An Endorser may use CoMID tags to publish Conditional Endorsements,
    which are added to the Accepted Claims Set only if specified
    conditions apply.  This section describes the process performed by
    the Verifier to determine which Conditional Endorsements from the
-   candidate CoMIDs should be added to the Accepted Claims Set.
+   candidate CoMIDs should be added to the ACS.
 
    The verifier checks whether Conditional Endorsements are applicable
-   by comparing Evidence in the Accepted Claims Set against Reference
-   Values from the CoMID.  These Reference Values may be provided as
-   Reference Value Triples or may be combined with the Endorsements, for
-   example as the Conditional Endorsement Series Triple.
+   by comparing Accepted Claims Set entries against expected values
+   provided in stateful-environment-record object which are part of the
+   triple.
 
-   The following subsections describe how the CoRIM tells the verifier
-   which Reference Values and Endorsed Values are grouped together
-   (Section 5.4.2.1) and how the verifier matches a Reference Value
-   against the Accepted Claims Set (Section 5.4.2.2).
+5.4.3.1.  Processing Conditional Endorsement Triple
 
-5.4.2.1.  Grouping Reference Values and Endorsements
+   For each Conditional Endorsement Triple the Verifier compares the
+   stateful-environment-record field in the triple against the ACS (see
+   Section 5.4.3.4).
 
-      This paragraph will be replaced by a description of how the CoRIM
-      tells the verifier which Reference Values and Endorsed Values are
-      grouped together.
+   If the stateful environment matches then the Verifier adds an
+   Endorsement entry to the ACS (see Section 5.4.4).  The endorsement is
+   created from the environment-map and the measurement-values-map field
+   in the triple, and the authority which signed the tag containing the
+   Conditional Endorsement Triple.
 
-5.4.2.2.  Matching all Reference Values in a group against the Accepted
-          Claims Set
+5.4.3.2.  Processing Multi-Environment Conditional (MEC) Endorsement
+          Triple
 
-   If all Reference Values in a group match entries in the Accepted
-   Claims Set then all Endorsements in the group are added to the
-   Accepted Claims Set (see Section 5.4.3).  Section 5.4.2.3 describes
-   how one Reference Value is matched against the Accepted Claims Set.
+   For each MEC Endorsement Triple the Verifier compares each of the
+   stateful-environment-record fields from the cond field in the triple
+   against the ACS (see Section 5.4.3.4).
 
-   If any Reference Value in a group does not match the Accepted Claims
-   Set then all Endorsements in the group are silently ignored.
+   If every stateful environment matches then the Verifier adds an
+   Endorsement entry to the ACS (see Section 5.4.4) for each endorsed-
+   triple-record in the endorsements field.  Each endorsement is created
+   from the endorsed-triple-record and the authority which signed the
+   tag containing the MEC Endorsement Triple.
 
-   Each group is processed independently of other groups.  If a group
-   fails to match the Accepted Claims Set then this does not affect the
-   processing of other groups.
+5.4.3.3.  Processing Conditional Endorsement Series Triple
 
-5.4.2.3.  Matching a stateful environment against the Accepted Claims
+   For each Conditional Endorsement Series Triple the Verifier matches
+   the triple in two steps.  The first step compares the stateful-
+   environment-record field in the triple against the ACS (see
+   Section 5.4.3.4).  If this matches then the Verifier performs the
+   second step.
+
+   The second step steps through the conditional-series-records in
+   order, comparing each of them against the ACS, using a temporary
+   stateful environment created from the environment-map in step one and
+   the refv field.  The second step stops if a match is detected.
+
+   If the second step matches then the Verifier adds an Endorsement
+   entry to the ACS.  This endorsement is created from the environment-
+   map field in stateful-environment-record, the endv field from the
+   match detected in the second step and the authority which signed the
+   tag containing the Conditional Endorsement Series Triple.
+
+5.4.3.4.  Matching a stateful environment against the Accepted Claims
           Set
 
-   meaning does not match the version in the current text.  I will
-   submit a further PR to replace most uses of "Reference Value" in
-   section 5 with "stateful environment".  Tracked at
-   https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/178
-
    This section describes how a stateful environment is matched against
-   Evidence in the Accepted Claims Set. If any part of the processing
+   an Accepted Claims Set entry.  If any part of the processing
    indicates that the stateful environment does not match then the
-   remaining steps in this section are skipped for that conditional
-   endorsement.
+   remaining steps in this section are skipped for that stateful
+   environment.
 
    A stateful environment consists of an environment-map plus a
-   measurement-map.  In conditional-endorsement-triple-record and mec-
-   endorsement-triple-record these are encoded together.  In other
-   triples multiple stateful environments are represented more compactly
-   by letting one environment-map apply to multiple measurement-maps.
+   measurement-map which are processed separately.
 
-   The Verifier initialises its temporary candidate entries variable
+   The Verifier initializes its temporary "candidate entries" variable
    with all entries in the Accepted Claims Set (ACS) where the stateful
    enviromnment environment-map is a subset of the ACS environment-map.
 
@@ -2044,28 +2093,41 @@ Table of Contents
    more details).  If all candidate entries are discarded by this step
    then the stateful environment does not match.
 
-   The Verifier SHALL iterate over the codepoints which are present in
-   the measurement-values-map field within the stateful environment
-   measurement-values-map.  The stateful environment entry is compared
-   against each of the candidate entries.  If none of the candidate
-   entries matches the stateful environment entry then the stateful
-   environment does not match.
+   The stateful environment entry is compared against each of the
+   candidate entries.  If none of the candidate entries matches the
+   stateful environment entry then the stateful environment does not
+   match.
 
-   The algorithm used to match the measurement-values-map entries is
-   described below.  The comparison performed depends on the type of
-   field being compared.
+   For each of the candidate entries, the Verifier SHALL iterate over
+   the codepoints which are present in the measurement-values-map field
+   (referred to as the "MVM codepoints" below) within the stateful
+   environment measurement-map.  Each of the codepoints present in the
+   stateful environment is compared againt the candidate entry.
+
+   If any codepoint present in the stateful environment measurement-
+   values-map doesn't match the same codepoint within the candidate
+   entry then the stateful environment does not match.
+
+   If all checks above have been performed successfully then the
+   stateful environment matches.
+
+5.4.3.5.  Matching a single codepoint in two measurement-value-maps
+
+   The algorithm used to match the MVM codepoints is described in this
+   section.  The comparison performed depends on the value of the
+   codepoint being compared and whether the measurement-values-map value
+   associated with that codepoint is tagged.
 
    If the stateful environment measurement-values-map value is tagged
    with a CBOR tag [STD94] then the Verifier MUST use the comparison
    algorithm associated with that tag.
 
-   If the stateful environment is not tagged then the Verifier MUST use
-   the comparison algorithm associated with the measurement-values-map
-   codepoint for the entry.
+   If the value is not tagged then the Verifier MUST use the comparison
+   algorithm associated with the measurement-values-map codepoint for
+   the entry.
 
-   This specification defines the matching algorithm for some CBOR
-   tagged stateful environments, which is described in sub-sections
-   below.
+   This specification defines the matching algorithm for some codepoints
+   and CBOR tagged values, which are described in sub-sections below.
 
    A CoRIM profile may define additional tags and their matching
    algorithms.
@@ -2086,13 +2148,11 @@ Table of Contents
 
    Note that while specifications may extend the matching semantics
    using CBOR tags, there is no way to extend the matching semantics of
-   keys.  Any new keys requiring non-default comparison must add a CBOR
-   tag to the Reference Value describing the desired behaviour.
+   codepoints.  Any new codepoints requiring non-default comparison must
+   add a CBOR tag to the Reference Value describing the desired
+   behaviour.
 
-   If all checks above have been performed successfully then the
-   stateful environment matches.
-
-5.4.2.3.1.  Comparison for svn entries
+5.4.3.5.1.  Comparison for svn entries
 
    The value stored under measurement-values-map key 1 is an SVN, which
    must have type UINT.
@@ -2108,7 +2168,7 @@ Table of Contents
    value of the SVN in Accepted Claims Set less than the value in the
    Reference Value then the Reference Value does not match.
 
-5.4.2.3.2.  Comparison for digests entries
+5.4.3.5.2.  Comparison for digests entries
 
    The value stored under measurement-values-map key 2, or a value
    tagged with #6.TBD is a digest entry.  It contains one or more
@@ -2140,14 +2200,14 @@ Table of Contents
    identical between the Reference Value and the Accepted Claims Set
    entry then the Reference Value does not match.
 
-5.4.2.3.3.  Comparison for raw-value entries
+5.4.3.5.3.  Comparison for raw-value entries
 
       I think this comparison method only works if the entry is at key 4
       (because there needs to be a mask at key 5).  Should we have a
       Reference Value of this which stores [expect-raw-value raw-value-
       mask] in an array?
 
-5.4.2.3.4.  Comparison for cryptokeys entries
+5.4.3.5.4.  Comparison for cryptokeys entries
 
    The value stored under measurement-values-map key 12 is an array of
    $crypto-key-type-choice entries. $crypto-key-type-choice entries are
@@ -2167,7 +2227,7 @@ Table of Contents
    cryptokeys Reference Value matches.  Otherwise, cryptokeys does not
    match.
 
-5.4.2.3.5.  Handling of new tags
+5.4.3.5.5.  Handling of new tags
 
    A profile may specify handling for new CBOR tagged Reference Values.
    The profile must specify how to compare the CBOR tagged Reference
@@ -2176,7 +2236,7 @@ Table of Contents
    Note that the verifier may compare Reference Values in any order, so
    the comparison should not be stateful.
 
-5.4.3.  Adding CoMID Endorsed Values to the Accepted Claims Set
+5.4.4.  Adding CoMID Endorsed Values to the Accepted Claims Set
 
 5.5.  Adding DICE/SPDM Evidence to the Accepted Claims Set
 
