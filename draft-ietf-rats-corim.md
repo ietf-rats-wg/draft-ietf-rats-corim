@@ -1625,7 +1625,7 @@ If any `reference-triple-record` in the Reference Value triple does not match th
 An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the Accepted Claims Set only if specified conditions apply.
 This section describes the process performed by the Verifier to determine which Conditional Endorsements from the candidate CoMIDs should be added to the ACS.
 
-The verifier checks whether Conditional Endorsements are applicable by comparing Evidence in the Accepted Claims Set against expected values provided in `stateful-environment-record` object which are part of the triple.
+The verifier checks whether Conditional Endorsements are applicable by comparing Accepted Claims Set entries against expected values provided in `stateful-environment-record` object which are part of the triple.
 
 #### Processing Conditional Endorsement Triple
 
@@ -1652,9 +1652,9 @@ The second step stops if a match is detected.
 If the second step matches then the Verifier adds an Endorsement entry to the ACS.
 This endorsement is created from the `environment-map` field in `stateful-environment-record`, the `endv` field from the match detected in the second step and the authority which signed the tag containing the Conditional Endorsement Series Triple.
 
-#### Matching a stateful environment against the Accepted Claims Set {#sec-match-one-ref-val}
+#### Matching a stateful environment against the Accepted Claims Set {#sec-match-one-se}
 
-This section describes how a stateful environment is matched against Evidence in the Accepted Claims Set.
+This section describes how a stateful environment is matched against an Accepted Claims Set entry.
 If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.
 
 A stateful environment consists of an `environment-map` plus a `measurement-map` which are processed separately.
@@ -1675,8 +1675,15 @@ The stateful environment entry is compared against each of the candidate entries
 If none of the candidate entries matches the stateful environment entry then the stateful environment does not match.
 
 For each of the candidate entries, the Verifier SHALL iterate over the codepoints which are present in the `measurement-values-map` field (referred to as the "MVM codepoints" below) within the stateful environment `measurement-map`.
+Each of the codepoints present in the stateful environment is compared againt the candidate entry.
 
-The algorithm used to match the MVM codepoints is described below.
+If any codepoint present in the stateful environment `measurement-values-map` doesn't match the same codepoint within the candidate entry then the stateful environment does not match.
+
+If all checks above have been performed successfully then the stateful environment matches.
+
+#### Matching a single codepoint in two measurement-value-maps {#sec-match-one-codepoint}
+
+The algorithm used to match the MVM codepoints is described in this section.
 The comparison performed depends on the value of the codepoint being compared and whether the `measurement-values-map` value associated with that codepoint is tagged.
 
 If the stateful environment `measurement-values-map` value is tagged with a CBOR tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated with that tag.
@@ -1696,8 +1703,6 @@ If the values are not binary identical then the stateful environment does not ma
 
 Note that while specifications may extend the matching semantics using CBOR tags, there is no way to extend the matching semantics of codepoints.
 Any new codepoints requiring non-default comparison must add a CBOR tag to the Reference Value describing the desired behaviour.
-
-If all checks above have been performed successfully then the stateful environment matches.
 
 ##### Comparison for svn entries
 
