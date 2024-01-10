@@ -952,7 +952,7 @@ The following describes each member of the `measurement-values-map`.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 Matching is described in {{sec-cryptokeys-matching}}.
 
-* `integrity-registers` (index 14): A register with one or more banks containing measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
+* `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
 
 ###### Version {#sec-comid-version}
@@ -1112,7 +1112,7 @@ checks, and trust anchor checks.
 
 ##### Integrity Registers {#sec-comid-integrity-registers}
 
-An Integrity register is a register with one or more banks containing measurements.
+An Integrity register is a group of one or more named measurements.
 Each measurement has an unique identifier (either an unsigned integer or a string) and one or more associated digests.
 This type can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, as well as other vendor-specific "Integrity Registers".
 
