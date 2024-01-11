@@ -1120,7 +1120,7 @@ Identifiers are either unsigned integers or text strings and their type matters,
 {::include cddl/integrity-registers.cddl}
 ~~~
 
-All the measured objects in an Integrity Registers map are explicitly named and the order in which they are found on the map is irrelevant.
+All the measured objects in an Integrity Registers map are explicitly named and the order in which they appear in the map is irrelevant.
 Any digests associated with a measured object represent an acceptable state for the object.
 Therefore, if multiple digests are provided, the acceptable state is their cross-product.
 For example, given the following Integrity Registers:
@@ -1152,7 +1152,7 @@ and
 
 are acceptable states.
 
-Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, as well as other kinds of vendor-specific measured objects.
+Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
 ##### Domain Types {#sec-comid-domain-type}
