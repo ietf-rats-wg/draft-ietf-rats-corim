@@ -1112,13 +1112,48 @@ checks, and trust anchor checks.
 
 ##### Integrity Registers {#sec-comid-integrity-registers}
 
-An Integrity register is a group of one or more named measurements.
-Each measurement has an unique identifier (either an unsigned integer or a string) and one or more associated digests.
-This type can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, as well as other vendor-specific "Integrity Registers".
+An Integrity Registers map groups together one or more measured "objects".
+Each measured object has a unique identifier and one or more associated digests.
+Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
 
 ~~~ cddl
 {::include cddl/integrity-registers.cddl}
 ~~~
+
+All the measured objects in an Integrity Registers map are explicitly named and the order in which they are found on the map is irrelevant.
+Any digests associated with a measured object represent an acceptable state for the object.
+Therefore, if multiple digests are provided, the acceptable state is their cross-product.
+For example, given the following Integrity Registers:
+
+~~~cbor-diag
+{
+  0: [ [ 0, h'00' ] ],
+  1: [ [ 0, h'11' ], [ 1, h'12' ] ]
+}
+~~~
+
+then both
+
+~~~ cbor-diag
+{
+  0: [ 0, h'00' ],
+  1: [ 0, h'11' ]
+}
+~~~
+
+and
+
+~~~cbor-diag
+{
+  0: [ 0, h'00' ],
+  1: [ 1, h'12' ]
+}
+~~~
+
+are acceptable states.
+
+Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, as well as other kinds of vendor-specific measured objects.
+
 
 ##### Domain Types {#sec-comid-domain-type}
 
