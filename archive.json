@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-09T01:20:09.488236+00:00",
+  "timestamp": "2024-01-11T01:20:12.553598+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3262,16 +3262,26 @@
       "id": "I_kwDOH6-tI85yL5Ef",
       "title": "Enhance matching rules to allow both instance rims and class rims to match an instance measurement",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/155",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "duplicate"
+      ],
       "body": "",
       "createdAt": "2023-09-27T14:29:20Z",
-      "updatedAt": "2023-09-27T14:29:20Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-01-09T11:15:36Z",
+      "closedAt": "2024-01-09T11:15:36Z",
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Duplicate of #172 ",
+          "createdAt": "2024-01-09T11:15:36Z",
+          "updatedAt": "2024-01-09T11:15:36Z"
+        }
+      ]
     },
     {
       "number": 156,
@@ -3377,7 +3387,7 @@
       "labels": [],
       "body": "Ned writes:\r\n> \"authorities\" is ambiguous given a cert chain has multiple CAs and given multiple Endorsers/RVPs could have asserted the same claim (each potentially having a their specific cert chains)\r\n\r\nCurrently the algorithm for authorized-by requires that the key in a reference value authorized-by must match the root key in the certificate chain associated with the Evidence or Endorsement.\r\n\r\nDo we want to allow a reference value authorized-by to match against a key lower down in the chain?",
       "createdAt": "2023-09-29T13:58:07Z",
-      "updatedAt": "2023-09-29T16:46:35Z",
+      "updatedAt": "2024-01-09T21:53:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -3386,6 +3396,20 @@
           "body": ">Do we want to allow a reference value authorized-by to match against a key lower down in the chain?\r\n\r\nMaybe \"matching\" is the wrong way to think about it. If we separate application of policy from claims appraisal, (maybe policy processing is a subsequent stage), then authorized-by is simply there to keep track of who said what. \r\n\r\nSince cryptographic keys are the mechanism for \"speaking\", the key (that generated the signature over the claim) is often tied to a chain of authority such as PKI cert path. The \"speaker\" is actually all the keys in the path, as each is contributing something different to the conversation. For example, a root keys says that a sub-CA has a name  and can issue certs for product line X. The product line tester CA can say \"this is a device ID\" for an instance of product X. A Device ID can say \"this is an attestation key and can assert claims about Target Environment Y\". Since any claim could be asserted under the authority of one or more keys (which is under the authority of the next key in the key path etc), the Verifier should treat authority as a set of fully qualified keys / \"key paths\".  As in: `[ + key-path ]`\r\n\r\nThe signer of a conceptual message (Evidence, RIM) signs using a fully qualified key. The \"matching\" happens when a policy expresses authority in terms of a trust anchor, a \"pinned\" cert (which points to an intermediate key in the key path), or a raw key. None of these keys are assumed to be fully qualified by the policy.\r\n\r\nDuring the claims appraisal stage, no policy \"matching\" needs to be applied. For example, if there are no policies, the Verifier can still produce a valid result. \r\n\r\nThe result should include an accurate picture of who said what (using fully qualified authority). This implies the Verifier should attempt path construction for any key that was used to assert authority.\r\n\r\nIf claim C1 is signed by RVP R1. The verifier should add the fully qualified key path for R1. If the  EMT contains `authorized-by` that references RVP R2. Then R1 is saying R2 is also authorized to say C1. The Verifier should add the key path for R2 to C1's authority. This will allow policies expressed in terms of R2 to be applied (later on) during the policy matching stage.\r\n\r\nAdditionally, R2 could be a sub-CA within R1's oversight. R2 might be responsible for Product line X products and wants to separate authority from an R3 which is responsible for product line Y. Both R2 and R3 may be under the authority of R1, but for different claims sets. `authorized-by` can be used in Reference Values to capture constraints on authority such as this.",
           "createdAt": "2023-09-29T16:37:57Z",
           "updatedAt": "2023-09-29T16:46:35Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I am hoping that we can write something definitive in the document describing which key the CoRIM author should put in the `authorized-by` field.\r\n\r\nThe question I was asking is whether a stateful environment which requires authorization by key A will match against an ACS entry which is authorized by key B, if a certificate chain exists where A authorizes key B. There are also questions about what the properties of the certificate chain should be (for example what must be in the extKeyUsage field of the certificates).",
+          "createdAt": "2024-01-09T11:06:45Z",
+          "updatedAt": "2024-01-09T11:14:07Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am hoping that we can write something definitive in the document describing which key the CoRIM author should put in the `authorized-by` field.\r\n> \r\n> The question I was asking is whether a stateful environment which requires authorization by key A will match against an ACS entry which is authorized by key B, if a certificate chain exists where A authorizes key B. There are also questions about what the properties of the certificate chain should be (for example what must be in the extKeyUsage field of the certificates).\r\n\r\nIn the context of an endorsement condition (aka `stateful-environment-map`), inclusion of authority in the condition means the condition doesn't match unless the claims were asserted by the right entity. If the authority is identified by a cert chain, then there is some flexibility in specifying the entity scope (in terms of CA hierarchy - which could include embedded CA use cases). The matching rules are similar to path validation where the authority used (signer of claims in the stateful env) could match if the condition authority is at same path location or higher (where root CA is at the top). \r\n\r\nIn the context of a reference value containing authority (other than the authority that signed the claim), this means the first authority delegates to a second authority. Possibly, one company acquired another company and centralized RVP RIMs under one company's key such that newer RVs for the device are now issued under the other key hierarchy (and there isn't a new common root and the TA policies across the ecosystem haven't yet been updated to reflect the merger). Alternatively, supplier-A wants to delegate to supplier-B the claims that were originally supplied by supplier-A but were modified by supplier-B (and subsequently signed by supplier-B).\r\n\r\nNevertheless, these variations apply to Reference Value State (RVS) which is fodder for doing overlap matching involving ACS claims (aka actual state).  The overlap matching algorithm might be adjusted (given the suppler-A/B use case as follows:\r\n- The claim X in ACS is found RVS in two places, one under supplier-A and another under supplier-B. However, the claim value doesn't match supplier-A but does match supplier-B.\r\n- The appraisal policy expects claim X authority to be supplier-A. But given the supplier-A RVS includes an authorized-by that names supplier-B, the verifier accepts claim X into ACS.\r\n\r\nSince acceptance of claim X was according to 'delegate' processing semantics it isn't correct to represent the authority as either supplier-A or supplier-B. Rather, the authority for claim X should be a representation of the delegation from A to B. (I think `accepted-claims-set` CDDL is insufficient currently to represent this form of authority.\r\n\r\nThe happy path, otherwise, doesn't require use of authorized-by for Reference Values. ",
+          "createdAt": "2024-01-09T21:53:49Z",
+          "updatedAt": "2024-01-09T21:53:49Z"
         }
       ]
     },
@@ -3599,9 +3623,24 @@
       "labels": [],
       "body": "An Attester can be from multiple vendors though, the Elements of Class Identifier are Optional Elements like\r\nVendor, Model, Class-ID etc.\r\n\r\nThis leaves the scope for a user to only add a Model, which could collide with other Vendor Models.\r\n\r\nNeed to define the usage of Class Identifier that should be unique across Multiple Vendors and Multiple Attesters belonging to the same Vendor. Specification needs some clarification about usage on Class Identifier, been how to mint it as a Unique Identifier!",
       "createdAt": "2023-12-06T15:36:52Z",
-      "updatedAt": "2023-12-06T15:36:52Z",
+      "updatedAt": "2024-01-09T22:12:05Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "My assumption is that the attester and/or the evidence collection protocol defines the `environment-map`. During ACS initialization the evidence entries with this environment map are added to the ACS.\r\nCoMID triples intending to interact with this evidence should use the same `environment-map` as appears in evidence.\r\nCoMID triples can add Endorsements with a new `environment-map` and can select a unique value for the `vendor` field if they want a new namespace.\r\nWe have added a free-format `instance` field which can be used to identify different device instances, is any more work needed to close this issue? ",
+          "createdAt": "2024-01-09T10:44:35Z",
+          "updatedAt": "2024-01-09T10:44:35Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> My assumption is that the attester and/or the evidence collection protocol defines the `environment-map`.\r\n\r\nDo you mean \"the attester and/or the evidence collection protocol *developer* defines the `environment-map` scope?\r\n\r\nThe consideration is that these values have to be defined at manufacturing time so that Ref Vals use the same environment identifiers. If the identifiers are not globally unique values, there is potential for collision from an unrelated supplier which could confuse verifiers (unless there is some other scoping context). \r\n\r\nThe other issues having to do with groups potentially are impacted because an `environment-map` within a group could have non-globally-unique identifiers due to the grouping context (which can be used to safely limit scope). \r\n\r\n>is any more work needed to close this issue?\r\n\r\nRequiring use of `instance-id` where an RVP is only prepared to use `class-map` seems onerous. Even if a device asserts an instance name, the matching rules allow subset matching. RVP-A using `class-map` (without instance-id/group-id) could be confused by an RVP-B that uses the same `class-map` value. If RVP-B is authorized based on a Verifier trust anchor, the Verifier still doesn't know which set of RVs to apply. \r\n\r\nIf the schema constrains the `environment-map` values to be globally unique (in some fashion) then the possibility of `environment-map` collision goes away. ",
+          "createdAt": "2024-01-09T22:10:41Z",
+          "updatedAt": "2024-01-09T22:12:05Z"
+        }
+      ]
     },
     {
       "number": 177,
@@ -4048,9 +4087,24 @@
       "labels": [],
       "body": "The concise-evidence schema defined in TCG DICE Concise Evidence Binding for SPDM already assigns code point 12 to spdm-indirect. \r\n\r\n  ? &(cryptokeys: 12) => [ + $crypto-key-type-choice ] should move to 13.\r\n```\r\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\r\n```",
       "createdAt": "2023-12-18T18:58:38Z",
-      "updatedAt": "2023-12-18T18:58:38Z",
+      "updatedAt": "2024-01-09T22:13:25Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This change has been made. Is it ok to close the issue?",
+          "createdAt": "2024-01-09T10:34:00Z",
+          "updatedAt": "2024-01-09T10:34:00Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "yes.\r\n",
+          "createdAt": "2024-01-09T22:13:24Z",
+          "updatedAt": "2024-01-09T22:13:24Z"
+        }
+      ]
     },
     {
       "number": 190,
@@ -16542,25 +16596,33 @@
       "id": "PR_kwDOH6-tI85Z4Ze8",
       "title": "Add verifier behaviour for conditional triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/145",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-09-08T13:59:46Z",
-      "updatedAt": "2023-09-11T18:42:59Z",
+      "updatedAt": "2024-01-10T15:43:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "48bdd67559ef7dbdee9f561981659f4bcfb8d715",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "80-matching-conditional-endorsements",
       "headRefOid": "c3bf056cbe33a285cf3a65188f30cf48b3628d44",
-      "closedAt": null,
+      "closedAt": "2024-01-10T15:43:10Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Replaced by #175",
+          "createdAt": "2024-01-10T15:43:10Z",
+          "updatedAt": "2024-01-10T15:43:10Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI85gbnmt",
@@ -19755,21 +19817,21 @@
       "id": "PR_kwDOH6-tI85dQJVO",
       "title": "Group Membership & MEC Endorsment",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/168",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "fixes #136 ",
       "createdAt": "2023-10-19T10:27:55Z",
-      "updatedAt": "2023-11-29T15:22:41Z",
+      "updatedAt": "2024-01-10T15:41:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "group-n-mec",
       "headRefOid": "69a494b8cfb9752b33a0582594ff68460df00863",
-      "closedAt": null,
+      "closedAt": "2024-01-10T15:41:58Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -19801,6 +19863,13 @@
           "body": "I have closed PR #169 - I don't think we have reached agreement on the goals. If we rush for a change before the deadline then we may make mistakes.",
           "createdAt": "2023-10-20T19:04:30Z",
           "updatedAt": "2023-10-20T19:04:30Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "#177 now points to a wiki page illustrating the approach.",
+          "createdAt": "2024-01-10T15:41:38Z",
+          "updatedAt": "2024-01-10T15:41:38Z"
         }
       ],
       "reviews": [
@@ -20719,15 +20788,15 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.",
+      "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.\r\nIt also fixes #136 (removing the term \"group\") and #80.\r\nIt also fixes #175",
       "createdAt": "2023-12-06T06:56:36Z",
-      "updatedAt": "2024-01-08T21:55:54Z",
+      "updatedAt": "2024-01-10T15:01:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "172-enhance-envmap-match",
-      "headRefOid": "a03572b00cf60d42cf469b1af173948e0569e611",
+      "headRefOid": "e6ce2f7315bb23e86418cbd2783a1204f4850927",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -20746,6 +20815,27 @@
           "body": "This PR should apply to the entire section on reference values matching so that the section reads consistently. ",
           "createdAt": "2023-12-06T19:33:43Z",
           "updatedAt": "2023-12-06T19:33:43Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Need to consider how this works with the `group` field. This field is intended to be used by DAA, as described in https://www.ietf.org/id/draft-ietf-rats-daa-04.html\r\n\r\nI checked the DAA draft and as I understand it the DAA `group` field behaves in a similar way to the `instance` field (but is allocated differently). This change specifies that the Verifier should handle the `group` field in the same way as the `instance` field which matches that interpretation.",
+          "createdAt": "2024-01-09T10:07:41Z",
+          "updatedAt": "2024-01-09T10:07:41Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This change specifies that the Verifier should handle the `group` field in the same way as the `instance` field which matches that interpretation.\r\n\r\nI looked for language that mentions 'group' (ps shouldn't we use back quotes to mean artifacts that are in the CoRIM schema - e.g., `group-id`) but couldn't find any. Maybe I missed it but unless the prose specifically mentions `group-id` the reader may be confused as to what is the processing behavior. Same goes for `instance-id` and `class-map`.",
+          "createdAt": "2024-01-09T22:27:13Z",
+          "updatedAt": "2024-01-09T22:27:13Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > This change specifies that the Verifier should handle the `group` field in the same way as the `instance` field which matches that interpretation.\r\n> \r\n> I looked for language that mentions 'group' (ps shouldn't we use back quotes to mean artifacts that are in the CoRIM schema - e.g., `group-id`) but couldn't find any. Maybe I missed it but unless the prose specifically mentions `group-id` the reader may be confused as to what is the processing behavior. Same goes for `instance-id` and `class-map`.\r\n\r\nThe text relating to binary comparison of fields within `environment-map` is this:\r\n> A stateful environment `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the stateful environment `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.\r\n\r\nThis text applies the same processing to `class`, `instance` and other fields.",
+          "createdAt": "2024-01-10T14:49:43Z",
+          "updatedAt": "2024-01-10T14:49:43Z"
         }
       ],
       "reviews": [
@@ -21307,6 +21397,466 @@
               "updatedAt": "2024-01-08T21:43:27Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFK4z",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:01:37Z",
+          "updatedAt": "2024-01-10T14:01:38Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\nTags/triples which match are accepted, and the Accepted Claims Set is extended using Endorsements from the accepted tags.\r\n```",
+              "createdAt": "2024-01-10T14:01:38Z",
+              "updatedAt": "2024-01-10T14:01:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFOV9",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:08:03Z",
+          "updatedAt": "2024-01-10T14:08:03Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "@andrew-draper To my impression: This PR is still as Work In progress, if I read Line 1614: ",
+              "createdAt": "2024-01-10T14:08:03Z",
+              "updatedAt": "2024-01-10T14:08:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFP1Q",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:10:25Z",
+          "updatedAt": "2024-01-10T14:10:25Z",
+          "comments": [
+            {
+              "originalPosition": 111,
+              "body": "```suggestion\r\nThe second step iterates through the `conditional-series-record`s in order, comparing each of them against the ACS, using a temporary stateful environment created from the `environment-map` in step one and the `refv` field.\r\n```",
+              "createdAt": "2024-01-10T14:10:25Z",
+              "updatedAt": "2024-01-10T14:10:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFT1V",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:16:30Z",
+          "updatedAt": "2024-01-10T14:16:31Z",
+          "comments": [
+            {
+              "originalPosition": 111,
+              "body": "The whole second step needs to be clarified!\r\n\r\nI would attempt to rephrase it, see if you like it then take it\r\n\r\nThe second step iterates through the `conditional-series-record`s in order, comparing the `reference-value` in the record against the `reference-value` in the ACS. Once a match is detected, the matching procedure is terminated.",
+              "createdAt": "2024-01-10T14:16:30Z",
+              "updatedAt": "2024-01-10T14:17:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFZyT",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:27:49Z",
+          "updatedAt": "2024-01-10T14:27:49Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "\"extension\" is a bit overloaded.  Can we use a synonym instead?  E.g., \"augmentation\".",
+              "createdAt": "2024-01-10T14:27:49Z",
+              "updatedAt": "2024-01-10T14:27:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFcf-",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:32:56Z",
+          "updatedAt": "2024-01-10T14:32:57Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "The title of the section has removed \"tags\".  The same should apply to the contents.\r\n\r\n```suggestion\r\nIn the Accepted Claims Set extension phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.\r\n```",
+              "createdAt": "2024-01-10T14:32:56Z",
+              "updatedAt": "2024-01-10T14:32:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFei1",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:36:49Z",
+          "updatedAt": "2024-01-10T14:36:50Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "ditto\r\n\r\n```suggestion\r\nTriples which match are accepted and the ACS is extended with the associated endorsed values.\r\n```",
+              "createdAt": "2024-01-10T14:36:49Z",
+              "updatedAt": "2024-01-10T14:36:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFgRx",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:40:03Z",
+          "updatedAt": "2024-01-10T14:40:03Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "not sure what _\"ACS extensions in that triple\"_ refers to",
+              "createdAt": "2024-01-10T14:40:03Z",
+              "updatedAt": "2024-01-10T14:40:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFhDx",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:41:29Z",
+          "updatedAt": "2024-01-10T14:41:29Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "Maybe:\r\n\r\n```suggestion\r\nAny triple within the CoRIM Appraisal Context that does not match the Accepted Claims Set does not contribute to ACS extensions.\r\n```",
+              "createdAt": "2024-01-10T14:41:29Z",
+              "updatedAt": "2024-01-10T14:41:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFh0N",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:42:54Z",
+          "updatedAt": "2024-01-10T14:42:54Z",
+          "comments": [
+            {
+              "originalPosition": 139,
+              "body": "Line 1660 is not clear! What do you mean by `processed separately`",
+              "createdAt": "2024-01-10T14:42:54Z",
+              "updatedAt": "2024-01-10T14:42:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFh_3",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:43:15Z",
+          "updatedAt": "2024-01-10T14:43:15Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "This just restates L1599, we can be drop it.",
+              "createdAt": "2024-01-10T14:43:15Z",
+              "updatedAt": "2024-01-10T14:43:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFjMQ",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:45:27Z",
+          "updatedAt": "2024-01-10T14:45:27Z",
+          "comments": [
+            {
+              "originalPosition": 185,
+              "body": "```suggestion\r\nThe algorithm used to match the measurement values map code points is described in this section.\r\n```",
+              "createdAt": "2024-01-10T14:45:27Z",
+              "updatedAt": "2024-01-10T14:45:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFkpn",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:47:54Z",
+          "updatedAt": "2024-01-10T14:47:54Z",
+          "comments": [
+            {
+              "originalPosition": 192,
+              "body": "```suggestion\r\nThis specification defines the matching algorithm for some codepoints and CBOR tagged values, which are described in sub-sections below. `Please add a reference to the sub-sections`\r\n```",
+              "createdAt": "2024-01-10T14:47:54Z",
+              "updatedAt": "2024-01-10T14:48:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFm7u",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:51:40Z",
+          "updatedAt": "2024-01-10T14:51:42Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "ok",
+              "createdAt": "2024-01-10T14:51:41Z",
+              "updatedAt": "2024-01-10T14:51:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFnXy",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:52:29Z",
+          "updatedAt": "2024-01-10T14:52:31Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "thanks, missed that one",
+              "createdAt": "2024-01-10T14:52:29Z",
+              "updatedAt": "2024-01-10T14:52:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFnzc",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:53:16Z",
+          "updatedAt": "2024-01-10T14:53:16Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "This is security-relevant, it can't be a SHOULD.  It has to be a well-defined MUST.  IIRC, I had previously added some text to that effect (i.e., to ensure topo-sorting).\r\n\r\n```suggestion\r\nThe Verifier SHOULD ensure that it processes triples in the correct order (for example by processing all triples which match against a particular ACS entry or environment after that ACS entry has been modified).\r\n```",
+              "createdAt": "2024-01-10T14:53:16Z",
+              "updatedAt": "2024-01-10T14:55:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFqXw",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:57:57Z",
+          "updatedAt": "2024-01-10T14:57:57Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\nA Reference Value Provider (RVP) publishes Reference Values that are matched against the Accepted Claims Set (ACS).\r\n```",
+              "createdAt": "2024-01-10T14:57:57Z",
+              "updatedAt": "2024-01-10T14:57:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFq7a",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:58:56Z",
+          "updatedAt": "2024-01-10T14:58:58Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "I think I prefer keeping this line and dropping the line before",
+              "createdAt": "2024-01-10T14:58:57Z",
+              "updatedAt": "2024-01-10T14:58:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFrV0",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:59:41Z",
+          "updatedAt": "2024-01-10T14:59:43Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I think this line is better than the one below, so would prefer to drop this one",
+              "createdAt": "2024-01-10T14:59:41Z",
+              "updatedAt": "2024-01-10T14:59:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFrYW",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:59:44Z",
+          "updatedAt": "2024-01-10T14:59:47Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I think this line is better than the one below, so would prefer to drop this one",
+              "createdAt": "2024-01-10T14:59:45Z",
+              "updatedAt": "2024-01-10T14:59:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFraJ",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T14:59:47Z",
+          "updatedAt": "2024-01-10T14:59:50Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I think this line is better than the one below, so would prefer to drop this one",
+              "createdAt": "2024-01-10T14:59:48Z",
+              "updatedAt": "2024-01-10T14:59:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFsIk",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T15:01:05Z",
+          "updatedAt": "2024-01-10T15:01:07Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "I think it is ok to make this MUST, but I expect the result of processing in the wrong order to be an attestation failure so this will fail safe.",
+              "createdAt": "2024-01-10T15:01:06Z",
+              "updatedAt": "2024-01-10T15:01:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sFsWI",
+          "commit": {
+            "abbreviatedOid": "e6ce2f7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T15:01:26Z",
+          "updatedAt": "2024-01-10T15:01:26Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nThe Verifier compares each `reference-triple-record` against ACS entries as described in {{sec-match-one-se}}, using a `stateful-environment-record` created from the fields in `reference-triple-record`.\r\n```",
+              "createdAt": "2024-01-10T15:01:26Z",
+              "updatedAt": "2024-01-10T15:01:26Z"
+            }
+          ]
         }
       ]
     },
@@ -21315,21 +21865,21 @@
       "id": "PR_kwDOH6-tI85h7W97",
       "title": "First initial Proposal for adding multiple measurement maps to a Reference Triple",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/181",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "[WIP] Multiple Measurements in a Reference Triple",
       "createdAt": "2023-12-13T18:45:59Z",
-      "updatedAt": "2023-12-14T15:39:48Z",
+      "updatedAt": "2024-01-10T13:57:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d546b10160832e500a3db9e6cfa18e74ef55a384",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "mutli-meas-per-env",
       "headRefOid": "5fe49df77aacdf4a622bd75d3985023240c171fb",
-      "closedAt": null,
+      "closedAt": "2024-01-10T13:57:23Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -21354,6 +21904,13 @@
           "body": "> Are we revisiting this topic? If my memory does not fail me, didn't we go for \"only one object in the triple\" choosing simplicity over conciseness in this case?\r\n\r\n`Yes` we are revisiting this topic. I believe this will be beneficial, as many use cases exists today where this change will help the users of the specification. ",
           "createdAt": "2023-12-14T15:39:46Z",
           "updatedAt": "2023-12-14T15:39:46Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing this PR as the alternative proposal is progressed via discussions on \r\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189",
+          "createdAt": "2024-01-10T13:57:23Z",
+          "updatedAt": "2024-01-10T13:57:23Z"
         }
       ],
       "reviews": []
@@ -21882,13 +22439,13 @@
       "labels": [],
       "body": "Fix #185",
       "createdAt": "2023-12-20T15:03:53Z",
-      "updatedAt": "2024-01-09T00:31:31Z",
+      "updatedAt": "2024-01-10T22:34:29Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "ec6b7da8b3b1ba6c9e636ab9b0049a66e410d495",
+      "baseRefOid": "32f7c64b04efc5b470bc10d56bbc5f512852f283",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "integrity-registers",
-      "headRefOid": "260e909875d462a67c84c5cadc47bc5078d3b40f",
+      "headRefOid": "425d5f4189b32cb0876c315abb2912468aac041e",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -21907,6 +22464,272 @@
           "body": "> Please add a section immediately below \"Comparison for cryptokeys entries\" which describes how a stateful environment (nee Reference Value) is matched against the ACS.\r\n\r\ndone, see [260e909](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/260e909875d462a67c84c5cadc47bc5078d3b40f)",
           "createdAt": "2023-12-20T16:37:14Z",
           "updatedAt": "2023-12-20T16:37:14Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have few concerns on the `way` we express the CDDL in the specification for `Integrity registers`\r\n\r\nI will state that so that we can consider this during our meeting tomorrow (10/Jan)\r\n\r\nI would prefer we keep the encoding `simple` as below:\r\n\r\n```\r\n$register-id-type-choice /= uint\r\n$register-id-type-choice /= text\r\n\r\nintegrity-register = {\r\n  &(id:0) => register-id-type-choice\r\n  &(digests:1) => [+digest]\r\n}\r\n\r\nmeasurement-values-map = non-empty<{\r\n  ? &(version: 0) => version-map\r\n  ? &(svn: 1) => svn-type-choice\r\n  ? &(digests: 2) => [ + digest ]\r\n  ? &(flags: 3) => flags-map\r\n  ? (\r\n      &(raw-value: 4) => $raw-value-type-choice,\r\n      ? &(raw-value-mask: 5) => raw-value-mask-type\r\n    )\r\n  ? &(mac-addr: 6) => mac-addr-type-choice\r\n  ? &(ip-addr: 7) =>  ip-addr-type-choice\r\n  ? &(serial-number: 8) => text\r\n  ? &(ueid: 9) => ueid-type\r\n  ? &(uuid: 10) => uuid-type\r\n  ? &(name: 11) => text\r\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\r\n  ? &(integrity-registers: 14) => [+integrity-register] \r\n   $$measurement-values-map-extension\r\n}>\r\n```\r\n\r\nWhat are the benefits:\r\n1. The expression allows flexibility in type expansion\r\n2. More clear and simple semantics\r\n3. This is more readable \r\n\r\nDisadvantages:\r\n1. May not be as optimised as the proposed solution in the PR\r\n\r\nFor the current PR proposal:\r\nThe flexibility of encoding a register-id as a compound type.\r\nEven if we express that it will be very hard to understand to the reader!\r\nHard to comprehend (at least to me for sure!)\r\n\r\nI would like to seek feedback on how other authors feel about this and then we decide as a team\r\n\r\n",
+          "createdAt": "2024-01-09T10:43:35Z",
+          "updatedAt": "2024-01-09T11:10:44Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I would like to seek feedback on how other authors feel about this and then we decide as a team\r\n\r\nhmm, we already had that discussion in #185.\r\n",
+          "createdAt": "2024-01-09T11:19:01Z",
+          "updatedAt": "2024-01-09T11:19:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">I would prefer we keep the encoding simple as below:\r\n\r\nI don't get what about the PR isn't aligned with what is cited as the \"simple\" encoding. Isn't this restating what is in the PR?\r\n",
+          "createdAt": "2024-01-09T18:30:22Z",
+          "updatedAt": "2024-01-09T18:30:37Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I would prefer we keep the encoding simple as below:\r\n> \r\n> I don't get what about the PR isn't aligned with what is cited as the \"simple\" encoding. Isn't this restating what is in the PR?\r\n\r\nNo it is slightly different, if I understand correctly (@thomas-fossati can correct if this is mis-interpreted).  Please check the examples.\r\nIn the proposed PR, the code point is encoded as the Register ID. \r\n\r\nWhile I am suggesting an explicit allocation of register-id. The benefit is that the register-id can be a composite identity without losing clarity!",
+          "createdAt": "2024-01-09T18:38:56Z",
+          "updatedAt": "2024-01-09T18:40:56Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> No it is slightly different, if I understand correctly (@thomas-fossati can correct if this is mis-interpreted). Please check the examples. In the proposed PR, the code point is encoded as the Register ID.\r\n\r\nThere is no semantic difference.\r\n\r\nWhat your proposal does is re-encoding a map as an array of (k, v) tuples.\r\n\r\nEchoing Ned, I don't understand how that would result in a clearer, simpler and more readable representation.",
+          "createdAt": "2024-01-09T18:49:16Z",
+          "updatedAt": "2024-01-09T18:49:16Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> > I would like to seek feedback on how other authors feel about this and then we decide as a team\r\n> \r\n> hmm, we already had that discussion in #185.\r\n\r\n@yogeshbdeshpande, so you are saying that nesting two redundant quantities (1st layer [+integrity-register], and then 2nd layer [+digest]) is more simple and readable? I am having a hard time a.) ignoring the established consensus based on #185 and b.) to see the actual improvement here? Maybe I am missing something obvious, but I like the changes in this PR and am perplexed by the new suggestion (also using the suggestion feature in the files changed tab would have saved me some time spotting the differences in the CDDL :wink:)",
+          "createdAt": "2024-01-09T18:52:24Z",
+          "updatedAt": "2024-01-09T18:55:13Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > I would like to seek feedback on how other authors feel about this and then we decide as a team\r\n> > \r\n> > \r\n> > hmm, we already had that discussion in #185.\r\n> \r\n> @yogeshbdeshpande, so you are saying that nesting two redundant quantities (1st layer [+integrity-register], and then 2nd layer [+digest]) is more simple and readable? I am having a hard time a.) ignoring the established consensus based on #185 and b.) to see the actual improvement here? Maybe I am missing something obvious, but I like the changes in this PR and am perplexed by the new suggestion (also using the suggestion feature in the files changed tab would have saved me some times spotting the differences in the CDDL \ud83d\ude09)\r\n\r\nI do not see this as a two layer thing, why you say that?\r\n\r\nIt is an array representation with an Id and a Value. My point was that if one need to associate with Composite ID, instead of an int/text, then how this can be manifested in the existing PR ?",
+          "createdAt": "2024-01-09T18:56:35Z",
+          "updatedAt": "2024-01-09T18:56:35Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Okay. Let me rephrase my question.\r\n\r\nWhat problem do you solve with your suggestion?",
+          "createdAt": "2024-01-09T19:01:40Z",
+          "updatedAt": "2024-01-09T19:01:40Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> The benefit is that the register-id can be a composite identity without losing clarity!\r\n\r\n> My point was that if one need to associate with Composite ID\r\n\r\nWhat issue do think are you fixing?",
+          "createdAt": "2024-01-09T19:04:17Z",
+          "updatedAt": "2024-01-09T19:04:17Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The benefit is that the register-id can be a composite identity without losing clarity!\r\n> \r\n> > My point was that if one need to associate with Composite ID\r\n> \r\n> What issue do think are you fixing?\r\n\r\nThe solution should be such that it should lend flexibility in the Identity we associate with the set of digests.\r\n\r\nI am not clear, how in the current proposal if we want to associate an ID (example a composite ID like a Class ID), can we do that neatly, is the question?",
+          "createdAt": "2024-01-09T19:09:11Z",
+          "updatedAt": "2024-01-09T19:09:11Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It is an array representation with an Id and a Value. My point was that if one need to associate with Composite ID, instead of an int/text, then how this can be manifested in the existing PR ?\r\n\r\nOK, we complicate the serialisation to solve a problem that does not exist :-)\r\n",
+          "createdAt": "2024-01-09T19:11:09Z",
+          "updatedAt": "2024-01-09T19:11:09Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am not clear, how in the current proposal if we want to associate an ID (example a composite ID like a Class ID), can we do that neatly, is the question?\r\n\r\nyes.\r\n",
+          "createdAt": "2024-01-09T19:16:09Z",
+          "updatedAt": "2024-01-09T19:16:09Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > It is an array representation with an Id and a Value. My point was that if one need to associate with Composite ID, instead of an int/text, then how this can be manifested in the existing PR ?\r\n> \r\n> OK, we complicate the serialisation to solve a problem that does not exist :-)\r\n\r\nWhy is the serialisation complex? I do not agree! \r\n\r\nAs we are modelling Digests, it is a perfectly valid point to keep in mind future extensibility.  In-fact if we do not think properly, in future it may not be very easily usable, for all the possible use cases!",
+          "createdAt": "2024-01-09T19:18:04Z",
+          "updatedAt": "2024-01-09T19:18:04Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I am not clear, how in the current proposal if we want to associate an ID (example a composite ID like a Class ID), can we do that neatly, is the question?\r\n> \r\n> yes.\r\n\r\nok, can you please cite some examples, how the encoding will look like in a composite ID ?",
+          "createdAt": "2024-01-09T19:19:12Z",
+          "updatedAt": "2024-01-09T19:19:12Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > I am not clear, how in the current proposal if we want to associate an ID (example a composite ID like a Class ID), can we do that neatly, is the question?\r\n> > \r\n> > \r\n> > yes.\r\n> \r\n> ok, can you please cite some examples, how the encoding will look like in a composite ID ?\r\n\r\nIn CBOR you can do things like:\r\n\r\n```\r\nmap-with-map-keys = {\r\n { 1 => 2 } => [ \"pippo\", \"pluto\" ]\r\n}\r\n```",
+          "createdAt": "2024-01-09T19:22:40Z",
+          "updatedAt": "2024-01-09T19:22:40Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > > I am not clear, how in the current proposal if we want to associate an ID (example a composite ID like a Class ID), can we do that neatly, is the question?\r\n> > > \r\n> > > \r\n> > > yes.\r\n> > \r\n> > \r\n> > ok, can you please cite some examples, how the encoding will look like in a composite ID ?\r\n> \r\n> In CBOR you can do things like:\r\n> \r\n> ```\r\n> map-with-map-keys = {\r\n>  { 1 => 2 } => [ \"pippo\", \"pluto\" ]\r\n> }\r\n> ```\r\n\r\nBut again, this is for pure curiosity, since we are not solving that problem here.\r\n",
+          "createdAt": "2024-01-09T19:23:28Z",
+          "updatedAt": "2024-01-09T19:24:21Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> OK, we complicate the serialization to solve a problem that does not exist :-)\r\n\r\nI think I agree with Thomas. If there is a need to associate the digest with a composite ID (e.g., `class-map`) then use of the triple / stateful-environment already does that. In a real-world use case of a TPM, the TPM module is the environment and the array of `integrity-register` is the PCRs. TPM uses a scalar (0-15) to name the PCRs (not a composite identifier). Another possibility is TPM-NV is used for integrity in this case some set of NV indexes will be carved from the NV addresses as integrity registers. These might be numeric or given pet names by the spec that assigns the NV indexes. In which case, the pet name (tstr) or the index id (uint) is sufficient to identify the register. \r\n\r\n",
+          "createdAt": "2024-01-09T19:23:43Z",
+          "updatedAt": "2024-01-09T19:23:43Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> I do not see this as a two layer thing, why you say that?\r\n\r\nAnd to address that question: because this seems to introduce yet another quantity of one-or-more. There is already a one-or-more on the digest level. What do you gain from the added array? (other than bringing a mix of register-ids into a measurement-values-map instead of using separate measurement-values-map instances, which to me seems to go against the simple triple layout)\r\n\r\nI am also at a loss why we need more \"flexibility in type expansion\", but that is a separate confusion. Preemptively, I am suggesting that we try to clear anyone's confusion here before trying to fix confusion in calls, okay?",
+          "createdAt": "2024-01-09T19:25:26Z",
+          "updatedAt": "2024-01-09T19:25:26Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I do not see this as a two layer thing, why you say that?\r\n> \r\n> And to address that question: because this seems to introduce yet another quantity of one-or-more. There is already a one-or-more on the digest level. What do you gain from the added array? (other than bringing a mix of register-ids into a measurement-values-map instead of using separate measurement-values-map instances, which to me seems to go against the simple triple layout)\r\n> \r\n> I am also at a loss why we need more \"flexibility in type expansion\", but that is a separate confusion. Preemptively, I am suggesting that we try to clear anyone's confusion here before trying to fix confusion in calls, okay?\r\n\r\nI think the PR also proposes a two level array, it is just that it not clearly evident in the CDDL?\r\nWe have an array/multiplicity of integrity-registers using the +symbol, I have not suggested anything different, but more clear expression. I find the existing CDDL `terse` as far as understanding is concerned\r\n",
+          "createdAt": "2024-01-09T23:32:30Z",
+          "updatedAt": "2024-01-09T23:33:51Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you @thomas-fossati @henkbirkholz and @nedmsmith been patient with me \r\n\r\nIn addition to above I see another issue with the changes proposed...\r\n\r\nThe encoding of the CDDL in the base specification relies on the Profile specific \r\nsettings. Specifically, on line 4, of integrity-registers.cddl an encoder will assign a tag/code point based on\r\nthe specific register-id settings. The Receiver cannot natively decide the\r\ncode point for digest, unless it is aware of the profile specific information, i.e. which profile to apply?\r\nand to expect what code point?\r\n\r\nThis is against the principles of Base Schema where always deterministic type setting is expected\r\nfor each type based on the well-known code point, given in the specification?\r\n\r\nAlso I am not sure that the order is guaranteed for each encoding, so not sure how this would work, at the receiver ?\r\n\r\nCan anyone help me clarify this aspect?",
+          "createdAt": "2024-01-09T23:35:51Z",
+          "updatedAt": "2024-01-09T23:35:51Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I find the existing CDDL `terse`\r\n\r\nAgree. The CDDL could make better use of optional tagging, e.g., [ + mytag: mycontent ]\r\nAfter looking at the CDDL again, its subtle that `integrity-registers` is an array of integrity register.\r\n```\r\nintegrity-registers = {\r\n  + integrity-register-id => [ + digest ]\r\n}\r\n```\r\nUsing maps to model an array seems unintuitive (though legal). \r\nI personally dislike CDDL convention that refers to \"[\", \"]\" as an \"array\". It should be called a \"record\".  That way *arrays* can be described as either maps or records having multiple members (using the \"*\" or \"+\" operators). ",
+          "createdAt": "2024-01-09T23:58:46Z",
+          "updatedAt": "2024-01-10T00:23:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am not sure that the order is guaranteed for each encoding\r\n\r\nThe intent is that order should not matter. Verifier considers the codepoint value for each entry and finds the matching codepoint in the reference value; if they are the same, then compare the digest array values. It may be ambiguous if the digest array (e.g.: `[ + digest ]`) can be compared byte-by-byte or if the parser walks each array entry. Maybe it's an implementation choice.",
+          "createdAt": "2024-01-10T00:04:10Z",
+          "updatedAt": "2024-01-10T00:04:10Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> each type based on the well-known code point\r\n\r\nThe goal is universal interoperability of Verifiers for appraisal (only) processing. Since the goal is to represent digests that belong to systems that are not defined by this spec, Verifiers are not expected to do additional processing that, for example, knows about which components are not supposed to be extended into PCR4. As long as the `integrity-register-id` is unique to the `integrity-registers` set, the verifier shouldn't need additional context to do the compare operation.",
+          "createdAt": "2024-01-10T00:12:47Z",
+          "updatedAt": "2024-01-10T00:12:47Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The encoding of the CDDL in the base specification relies on the Profile specific settings. Specifically, on line 4, of integrity-registers.cddl an encoder will assign a tag/code point based on the specific register-id settings. The Receiver cannot natively decide the code point for digest, unless it is aware of the profile specific information, i.e. which profile to apply? and to expect what code point?\r\n> \r\n> This is against the principles of Base Schema where always deterministic type setting is expected for each type based on the well-known code point, given in the specification?\r\n\r\ncodepoint 14 means \"integrity-registers\", I don't see anything _\"[a]gainst the principles of Base Schema always deterministic type setting is expected for each type based on the well-known code point, given in the specification\"_.\r\n\r\nNote that this is not different from other objects in our info model (e.g., the recently added \"tagged bytes\".)\r\n\r\n> Also I am not sure that the order is guaranteed for each encoding, so not sure how this would work, at the receiver ?\r\n\r\nIntegrity registers are explicitly named.  Order, i.e., implicit naming, is irrelevant.",
+          "createdAt": "2024-01-10T08:06:23Z",
+          "updatedAt": "2024-01-10T08:06:23Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think the PR also proposes a two level array,\r\n\r\nNo, it doesn't.\r\n\r\n> it is just that it not clearly evident in the CDDL?\r\n\r\nNope.\r\n\r\nThe core of your proposal is to replace a representation that uses *one* native type (i.e., a map):\r\n\r\n```\r\na = {\r\n  + $key-type => $val-type\r\n}\r\n```\r\n\r\nwith one that reimplements the _same_ semantics using a two-level construction that serialises the associative array as a list of tuples:\r\n\r\n```\r\na = [\r\n  + [ k: $key-type, v: $val-type ]\r\n]\r\n```\r\n\r\n> We have an array/multiplicity of integrity-registers using the +symbol, I have not suggested anything different, but more clear expression.\r\n\r\nComparing the two constructions above I struggle to understand how the latter would be clearer than the former.\r\n\r\n> I find the existing CDDL `terse` as far as understanding is concerned\r\n\r\nIt's terse exactly because it uses a native (i.e., natural) type for representing the concept, which (to me) is a great plus.\r\n\r\n",
+          "createdAt": "2024-01-10T10:42:41Z",
+          "updatedAt": "2024-01-10T10:43:03Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The encoding of the CDDL in the base specification relies on the Profile specific settings. Specifically, on line 4, of integrity-registers.cddl an encoder will assign a tag/code point based on the specific register-id settings. The Receiver cannot natively decide the code point for digest, unless it is aware of the profile specific information, i.e. which profile to apply? and to expect what code point?\r\n> > This is against the principles of Base Schema where always deterministic type setting is expected for each type based on the well-known code point, given in the specification?\r\n> \r\n> codepoint 14 means \"integrity-registers\", I don't see anything _\"[a]gainst the principles of Base Schema always deterministic type setting is expected for each type based on the well-known code point, given in the specification\"_.\r\n> \r\n> Note that this is not different from other objects in our info model (e.g., the recently added \"tagged bytes\".)\r\n> \r\n> > Also I am not sure that the order is guaranteed for each encoding, so not sure how this would work, at the receiver ?\r\n> \r\n> Integrity registers are explicitly named. Order, i.e., implicit naming, is irrelevant.\r\n\r\nI am not referring to Code Point 14, but to the code point of the digests. With the proposed changes in the PR, within the base schema, the encoding for [+digest] is dependent on the specific `profile` setting the [+digest].  With the tagged bytes, we always use a fixed tag (to encode the provided bytes from the user). I am not sure, how can one assume at the receiver side, whether the code point is encoded as an integer or a string (text) unless one has the profile information ?",
+          "createdAt": "2024-01-10T12:21:57Z",
+          "updatedAt": "2024-01-10T12:21:57Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [h]ow can one assume at the receiver side, whether the code point is encoded as an integer or a string (text) unless one has the profile information ?\r\n\r\nText string and unsigned integer are CBOR types.\r\n\r\n",
+          "createdAt": "2024-01-10T12:27:55Z",
+          "updatedAt": "2024-01-10T12:27:55Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I think the PR also proposes a two level array,\r\n> \r\n> No, it doesn't.\r\n> \r\n> > it is just that it not clearly evident in the CDDL?\r\n> \r\n> Nope.\r\n> \r\n> The core of your proposal is to replace a representation that uses _one_ native type (i.e., a map):\r\n> \r\n> ```\r\n> a = {\r\n>   + $key-type => $val-type\r\n> }\r\n> ```\r\n> \r\n> with one that reimplements the _same_ semantics using a two-level construction that serialises the associative array as a list of tuples:\r\n> \r\n> ```\r\n> a = [\r\n>   + [ k: $key-type, v: $val-type ]\r\n> ]\r\n> ```\r\n> \r\n> > We have an array/multiplicity of integrity-registers using the +symbol, I have not suggested anything different, but more clear expression.\r\n> \r\n> Comparing the two constructions above I struggle to understand how the latter would be clearer than the former.\r\n> \r\n> > I find the existing CDDL `terse` as far as understanding is concerned\r\n> \r\n> It's terse exactly because it uses a native (i.e., natural) type for representing the concept, which (to me) is a great plus.\r\n\r\nI think the correct representation for what I am proposing is like below:\r\n\r\n ```\r\n a = [\r\n   + { k: $key-type, v: $val-type }\r\n ]\r\n ```",
+          "createdAt": "2024-01-10T13:18:53Z",
+          "updatedAt": "2024-01-10T13:18:53Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If one sees the same elements in CBOR Diag, it is not hugely different:\r\n\r\n```\r\n  / measurement-map / {\r\n        / comid.mval / 1 : {\r\n          / comid.integrity-registers / 14 : [\r\n            {\r\n\t\t\t   /id / 0, 26\r\n\t\t\t   / digests/, 1: [\r\n               [\r\n                / hash-alg-id / 1, / sha256 /\r\n                / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n              ],\r\n              [\r\n                / hash-alg-id / \"my-alg-id\",\r\n                / hash-value / h'deadbeef'\r\n              ]\r\n\t\t\t]\r\n            },\r\n            {\r\n\t\t\t   /id / 0, 2\r\n\t\t\t   / digests/, 1: [\r\n               [\r\n                / hash-alg-id / 1, / sha256 /\r\n                / hash-value / h'50aa341af9cb20a879440e58dd6581c14fa14bccafb75f488259262d6ea3a4d9'\r\n              ],\r\n              [\r\n                / hash-alg-id / \"my-alg-id\",\r\n                / hash-value / h'fefefafa'\r\n              ]\r\n\t\t\t]\r\n            }\r\n          ]\r\n        }\r\n      }\r\n```",
+          "createdAt": "2024-01-10T13:20:21Z",
+          "updatedAt": "2024-01-10T13:20:21Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think the correct representation for what I am proposing is like below:\r\n> \r\n> ```\r\n> a = [\r\n>   + { k: $key-type, v: $val-type }\r\n> ]\r\n> ```\r\n\r\nthere is no material difference between the two, it's a logical tuple.",
+          "createdAt": "2024-01-10T13:40:12Z",
+          "updatedAt": "2024-01-10T13:40:12Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If one sees the same elements in CBOR Diag, it is not hugely different:\r\n> \r\n> ```\r\n> [...]\r\n> ```\r\n\r\nYou have not managed to convince us that your last-minute change proposal is an improvement over what this PR (and the associated issue) put forward.\r\n\r\nI think that continuing this discussion to the last reply is not a productive use of our time and energy.",
+          "createdAt": "2024-01-10T13:42:12Z",
+          "updatedAt": "2024-01-10T13:42:12Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It's terse exactly because it uses a native (i.e., natural) type for representing the concept, which (to me) is a great plus.\r\n\r\nThe `terse` CDDL is making me nervous and I would prefer to go with more clarity rather than optimising the CDDL.\r\n",
+          "createdAt": "2024-01-10T13:54:30Z",
+          "updatedAt": "2024-01-10T13:54:30Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The `terse` CDDL\r\n\r\nThe diag file is helpful in visualizing the list of digests. Although, it would help to include a tstr codepoint example as in \"myIR\" : [ ... ] \r\n\r\nThis thread is turning into style differences which usually isn't productive.",
+          "createdAt": "2024-01-10T16:11:03Z",
+          "updatedAt": "2024-01-10T16:13:22Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The diag file is helpful in visualizing the list of digests. Although, it would help to include a tstr codepoint example as in \"myIR\" : [ ... ]\r\n\r\nGood point.  Done in [43c73dc](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/43c73dc84a80cb117e089a2570885543975b2edd)\r\n\r\n> This thread is turning into style differences which usually isn't productive.\r\n\r\nMassive \ud83d\udc4d \r\n",
+          "createdAt": "2024-01-10T16:15:29Z",
+          "updatedAt": "2024-01-10T16:15:29Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The diag file is helpful in visualizing the list of digests. Although, it would help to include a tstr codepoint example as in \"myIR\" : [ ... ]\r\n> \r\n> Good point. Done in [43c73dc](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/43c73dc84a80cb117e089a2570885543975b2edd)\r\n> \r\n> > This thread is turning into style differences which usually isn't productive.\r\n> \r\n> Massive \ud83d\udc4d\r\n\r\nThis is super confusing, I guess, in one of the payload (CoMID ref-measurement-value) we can only have one type of Register ID?\r\nHow can we mix `uint` and `text` in the same diag?",
+          "createdAt": "2024-01-10T16:50:58Z",
+          "updatedAt": "2024-01-10T16:50:58Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > The diag file is helpful in visualizing the list of digests. Although, it would help to include a tstr codepoint example as in \"myIR\" : [ ... ]\r\n> > \r\n> > \r\n> > Good point. Done in [43c73dc](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/43c73dc84a80cb117e089a2570885543975b2edd)\r\n> > > This thread is turning into style differences which usually isn't productive.\r\n> > \r\n> > \r\n> > Massive \ud83d\udc4d\r\n> \r\n> This is super confusing, I guess, in one of the payload (CoMID ref-measurement-value) we can only have one type of Register ID? How can we mix `uint` and `text` in the same diag?\r\n\r\nSure in that case, I would produce two diags one  exemplifying the usage of  `text` and the other `uint`.\r\n\r\nI would not prefer to produce wrong examples, if mixing is not applicable",
+          "createdAt": "2024-01-10T17:01:41Z",
+          "updatedAt": "2024-01-10T17:01:41Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I would not prefer to produce wrong examples, if mixing is not applicable\r\n\r\nWrong example?  Where do we state that the keys have to be homogeneous?\r\n\r\n",
+          "createdAt": "2024-01-10T17:09:45Z",
+          "updatedAt": "2024-01-10T17:09:45Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I would not prefer to produce wrong examples, if mixing is not applicable\r\n> \r\n> Wrong example? Where do we state that the keys have to be homogeneous?\r\n\r\nI am yet to grapple with the fact both type of encoding in the same measurement-value-map is a possibility for a same `profile`",
+          "createdAt": "2024-01-10T17:21:43Z",
+          "updatedAt": "2024-01-10T17:21:43Z"
         }
       ],
       "reviews": [
@@ -21948,6 +22771,185 @@
           "createdAt": "2024-01-09T00:31:31Z",
           "updatedAt": "2024-01-09T00:31:31Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sE_v6",
+          "commit": {
+            "abbreviatedOid": "260e909"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T13:39:40Z",
+          "updatedAt": "2024-01-10T13:39:41Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n* `integrity-registers` (index 14):  Multiple registers with one or more banks containing measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.\r\n```",
+              "createdAt": "2024-01-10T13:39:40Z",
+              "updatedAt": "2024-01-10T13:39:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sG3BX",
+          "commit": {
+            "abbreviatedOid": "43c73dc"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T17:24:28Z",
+          "updatedAt": "2024-01-10T17:24:29Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Should not this be \r\nintegrity-register-id-type-choice as per the convention:\r\nhttps://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-cddl-typographical-conventi",
+              "createdAt": "2024-01-10T17:24:28Z",
+              "updatedAt": "2024-01-10T17:24:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sG8kF",
+          "commit": {
+            "abbreviatedOid": "43c73dc"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T17:32:58Z",
+          "updatedAt": "2024-01-10T17:32:59Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "done in [425d5f4](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/425d5f4189b32cb0876c315abb2912468aac041e)",
+              "createdAt": "2024-01-10T17:32:59Z",
+              "updatedAt": "2024-01-10T17:32:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sI8wT",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T22:11:53Z",
+          "updatedAt": "2024-01-10T22:11:54Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "```suggestion\r\nIntegrity registers are a group of one or more named measurements.\r\n```",
+              "createdAt": "2024-01-10T22:11:54Z",
+              "updatedAt": "2024-01-10T22:14:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sJADv",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T22:20:33Z",
+          "updatedAt": "2024-01-10T22:20:34Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\nIntegrity registers can be used to model the PCRs in a TPM or vTPM ( in which case the identifier is the register index), or can model vendor-specific \"Integrity Registers\".\r\n```",
+              "createdAt": "2024-01-10T22:20:34Z",
+              "updatedAt": "2024-01-10T22:23:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sJA2W",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T22:23:21Z",
+          "updatedAt": "2024-01-10T22:23:21Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "It is not clear from line 117 in the change whether we are using `This type` to refer to the identifier or Integrity register specifically. Hence I tried to word smith it to add better clarity, however feel free to improve it further, if need be!",
+              "createdAt": "2024-01-10T22:23:21Z",
+              "updatedAt": "2024-01-10T22:23:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sJCze",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-10T22:30:04Z",
+          "updatedAt": "2024-01-10T22:30:04Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "```suggestion\r\nFor each Integrity Register entry in Evidence, the Verifier will use the associated identifier to look up the matching Integrity Register entry in the Reference Value. It is expected that the `type` of identifier in the Evidence is same as the one set in the Reference Values, as dictated by the profile.  Otherwise the comparison is undefined behaviour.\r\n```",
+              "createdAt": "2024-01-10T22:30:04Z",
+              "updatedAt": "2024-01-10T22:30:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sJDFn",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Some more clarifications",
+          "createdAt": "2024-01-10T22:31:10Z",
+          "updatedAt": "2024-01-10T22:31:10Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85r_fkp",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-09T19:01:11Z",
+          "updatedAt": "2024-01-10T22:34:29Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "The \"one or more associated digests\" phrase doesn't clarify whether a plurality of digests means that each digest is over the same object (similar to how `digests` claim is defined) or if each digest is for a different object. TPM assumes the former and I assumed the former, but it is best not to assume.",
+              "createdAt": "2024-01-09T19:01:11Z",
+              "updatedAt": "2024-01-10T22:34:29Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "Somewhere in this section it might make sense to describe verifier behavior. I believe it is somewhat like ASN.1 SETS (vs. SEQUENCE) in that an entry \"PCR5\" at position 0 in the list should match a reference value even if the reference placed \"PCR5\" at position n>0. \r\n\r\nMaybe it goes without saying that verifier will not do type translation. That is if evidence has an entry `'5' : [...]` and reference values has an entry `5 : [...]` there is no ascii-to-numeric / numeric-to-ascii translation. What do you think?",
+              "createdAt": "2024-01-10T22:34:15Z",
+              "updatedAt": "2024-01-10T22:35:07Z"
+            }
+          ]
         }
       ]
     }
