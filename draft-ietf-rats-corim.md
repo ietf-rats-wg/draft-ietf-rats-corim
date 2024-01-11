@@ -1214,8 +1214,7 @@ matched.
 The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
 Each `conditional-series-record` record is evaluated in the order it appears in the series array.
 The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
-The first `conditional-series-record` that successfully matches an ACS Entry terminates 
-the matching and the corresponding Endorsed Values are accepted.
+The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
 If none of the series conditions match an ACS Entry, the triple is not matched,
 and no Endorsed values are accepted.
 
