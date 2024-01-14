@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-11T01:20:12.553598+00:00",
+  "timestamp": "2024-01-14T01:25:39.872878+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -4129,6 +4129,22 @@
           "updatedAt": "2024-01-06T00:13:15Z"
         }
       ]
+    },
+    {
+      "number": 191,
+      "id": "I_kwDOH6-tI85766TP",
+      "title": "Need to say that ACS is initialized from Evidence",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/191",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Note from Ned in a review:\r\n\r\n> Note: The Appraisal Context initialization and Evidence Collection sections don't adequately describe that Evidence updates the ACS. This should be explained before the sections describing ACS augmentation.",
+      "createdAt": "2024-01-12T14:59:34Z",
+      "updatedAt": "2024-01-12T14:59:34Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -20790,13 +20806,13 @@
       "labels": [],
       "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.\r\nIt also fixes #136 (removing the term \"group\") and #80.\r\nIt also fixes #175",
       "createdAt": "2023-12-06T06:56:36Z",
-      "updatedAt": "2024-01-10T15:01:26Z",
+      "updatedAt": "2024-01-12T01:38:13Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "172-enhance-envmap-match",
-      "headRefOid": "e6ce2f7315bb23e86418cbd2783a1204f4850927",
+      "headRefOid": "89f865a268b1c23a02e09a2015d14f136107bd9c",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -21857,6 +21873,152 @@
               "updatedAt": "2024-01-10T15:01:26Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sTXrr",
+          "commit": {
+            "abbreviatedOid": "89f865a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple edits.",
+          "createdAt": "2024-01-11T23:31:40Z",
+          "updatedAt": "2024-01-12T01:38:13Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\r\nTriples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.\r\n```",
+              "createdAt": "2024-01-11T23:31:40Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\nIn the Accepted Claims Set (ACS) augmentation phase, the Appraisal Context and an Appraisal Policy are used by the Verifier to find CoMID triples that may augment the ACS.\r\n```",
+              "createdAt": "2024-01-11T23:36:39Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "\"Appraisal Context\" isn't defined above as an upper case pronoun hence it shouldn't be capitalized here. Possibly, it should be added to the Verifier Abstraction section? Technically, the Verifier can accept supply chain inputs in other formats besides CoRIM, hence it is overly constrained to include \"CoRIM\". The description of Appraisal Context might assert that an internal representation of Appraisal Context will map Endorsement and Reference Value inputs to a CoMID schema representation for consistent verifier behavior.\r\nThe description of Appraisal Policy above should explain that it includes Appraisal Policy for Evidence (hence qualifying it with \"evidence\" here isn't necessary). ",
+              "createdAt": "2024-01-11T23:49:11Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            },
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\r\nTriples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.\r\n```",
+              "createdAt": "2024-01-11T23:59:53Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\nEach triple is processed independently of other triples. However, the ACS state may change as a result of processing a triple.\r\n```",
+              "createdAt": "2024-01-12T00:01:44Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nIf a triple condition does not match then the triple is discarded, and the Verifier processes the next triple.\r\n```",
+              "createdAt": "2024-01-12T00:03:20Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 48,
+              "body": "```suggestion\r\nTriples either have an explicit matching condition, such as `stateful-environment-record`, or use an `environment-map` statement to select the ACS entries to be modified.\r\n```",
+              "createdAt": "2024-01-12T00:11:34Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 51,
+              "body": "```suggestion\r\nThe order of triples processing is important. Processing a triple may result in ACS modifications that affect matching behavior for subsequently processed triples.\r\n```",
+              "createdAt": "2024-01-12T00:22:10Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "Note: The Appraisal Context initialization and Evidence Collection sections don't adequately describe that Evidence updates the ACS. This should be explained before the sections describing ACS augmentation.",
+              "createdAt": "2024-01-12T00:40:02Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 58,
+              "body": "```suggestion\r\nThe Verifier MUST ensure that a triple's matching condition is processed after any other triple that modifies or adds an ACS entry. Typically, the `environment-map` or `stateful-environment-record` are used to match ACS entries. The `reference-triple-record` uses both `environment-map` and `measurement-map` for matching ACS entries.\r\n```",
+              "createdAt": "2024-01-12T00:52:52Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "```suggestion\r\nVerifiers achieve consistent ACS state change by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.\r\n```",
+              "createdAt": "2024-01-12T00:55:18Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 75,
+              "body": "```suggestion\r\nReference Value Providers (RVP) publish Reference Values triples that are matched against ACS entries.\r\nReference Values may describe multiple acceptable states for Attesters; hence \"matching\" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.\r\nIf the appropriate subset matches, the authority of the RVP is added to the appropriate ACS entries.\r\n```",
+              "createdAt": "2024-01-12T01:04:54Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 79,
+              "body": "```suggestion\r\nThe Verifier compares each `reference-triple-record` against ACS entries as described in {{sec-match-one-se}}, where the `reference-triple-record` takes the place of a `stateful-environment-record`.\r\n```",
+              "createdAt": "2024-01-12T01:07:40Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 80,
+              "body": "```suggestion\r\nIf all fields of the `reference-triple-record` match the ACS, then the Verifier MUST add the RVP authority to each matching ACS field.\r\n```",
+              "createdAt": "2024-01-12T01:10:25Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "```suggestion\r\nIf any `reference-triple-record` in the Reference Value triple does not match, the entire triple is ignored and the Appraisal Context is consulted to see if other Reference Values are appropriate.\r\nIf all remaining appropriate Reference Value triples have been exhausted without matching, then the ACS state is unchanged.\r\nIf a matching Reference Value triple contains the `authorized-by` field. The authority contained in this field is added to the ACS.\r\n```",
+              "createdAt": "2024-01-12T01:15:27Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 99,
+              "body": "```suggestion\r\nAn Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the Accepted Claims Set only if specified conditions are satisfied.\r\n```",
+              "createdAt": "2024-01-12T01:21:58Z",
+              "updatedAt": "2024-01-12T01:38:13Z"
+            },
+            {
+              "originalPosition": 118,
+              "body": "```suggestion\r\nIf the stateful environment matches, then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}).\r\n```",
+              "createdAt": "2024-01-12T01:22:47Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            },
+            {
+              "originalPosition": 119,
+              "body": "```suggestion\r\nThe Endorsement consists of the `measurement-values-map` field in the triple, plus the authority of the entity that signed the conditional endorsement triple.\r\n```",
+              "createdAt": "2024-01-12T01:27:00Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            },
+            {
+              "originalPosition": 132,
+              "body": "```suggestion\r\nIf every stateful environment matches a corresponding ACS entry, then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}) for each `endorsed-triple-record` in the `endorsements` field.\r\n```",
+              "createdAt": "2024-01-12T01:31:24Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            },
+            {
+              "originalPosition": 133,
+              "body": "```suggestion\r\nEach endorsement from the `endorsed-triple-record` contains the authority of the entity that signed the MEC endorsement triple.\r\n```",
+              "createdAt": "2024-01-12T01:33:27Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            },
+            {
+              "originalPosition": 158,
+              "body": "```suggestion\r\nIf one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.\r\n```",
+              "createdAt": "2024-01-12T01:35:12Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            },
+            {
+              "originalPosition": 159,
+              "body": "Is this line needed? It seems to restate the matching algorithm described above. A simple change to line 1653 seems sufficient to describe the nature of the endorsement value added.",
+              "createdAt": "2024-01-12T01:37:16Z",
+              "updatedAt": "2024-01-12T01:38:14Z"
+            }
+          ]
         }
       ]
     },
@@ -22439,13 +22601,13 @@
       "labels": [],
       "body": "Fix #185",
       "createdAt": "2023-12-20T15:03:53Z",
-      "updatedAt": "2024-01-10T22:34:29Z",
+      "updatedAt": "2024-01-11T19:31:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "32f7c64b04efc5b470bc10d56bbc5f512852f283",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "integrity-registers",
-      "headRefOid": "425d5f4189b32cb0876c315abb2912468aac041e",
+      "headRefOid": "fa9ee538e8e17a4a618a9ab4095ef50b7a99e7dd",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -22950,6 +23112,132 @@
               "updatedAt": "2024-01-10T22:35:07Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sO1xr",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-11T15:11:56Z",
+          "updatedAt": "2024-01-11T15:11:57Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "reworded in [0daa574](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/0daa57453d485e1ad42dd2d338868d0b3d389fcd)",
+              "createdAt": "2024-01-11T15:11:56Z",
+              "updatedAt": "2024-01-11T15:11:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sO14F",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-11T15:12:07Z",
+          "updatedAt": "2024-01-11T15:12:07Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "reworded in [0daa574](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/0daa57453d485e1ad42dd2d338868d0b3d389fcd)",
+              "createdAt": "2024-01-11T15:12:07Z",
+              "updatedAt": "2024-01-11T15:12:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sO1-n",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-11T15:12:19Z",
+          "updatedAt": "2024-01-11T15:12:19Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "reworded in [0daa574](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/0daa57453d485e1ad42dd2d338868d0b3d389fcd)",
+              "createdAt": "2024-01-11T15:12:19Z",
+              "updatedAt": "2024-01-11T15:12:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sO2OC",
+          "commit": {
+            "abbreviatedOid": "425d5f4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-11T15:12:45Z",
+          "updatedAt": "2024-01-11T15:12:46Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "reworded in [0daa574](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/0daa57453d485e1ad42dd2d338868d0b3d389fcd)",
+              "createdAt": "2024-01-11T15:12:45Z",
+              "updatedAt": "2024-01-11T15:12:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sO2V3",
+          "commit": {
+            "abbreviatedOid": "260e909"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-11T15:12:58Z",
+          "updatedAt": "2024-01-11T15:12:59Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "reworded in [0daa574](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189/commits/0daa57453d485e1ad42dd2d338868d0b3d389fcd)",
+              "createdAt": "2024-01-11T15:12:59Z",
+              "updatedAt": "2024-01-11T15:12:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sPWRx",
+          "commit": {
+            "abbreviatedOid": "0daa574"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "lgtm",
+          "createdAt": "2024-01-11T16:12:26Z",
+          "updatedAt": "2024-01-11T16:12:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85sQYWi",
+          "commit": {
+            "abbreviatedOid": "0daa574"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-01-11T18:20:43Z",
+          "updatedAt": "2024-01-11T18:20:43Z",
+          "comments": []
         }
       ]
     }
