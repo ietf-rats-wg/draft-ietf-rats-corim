@@ -1593,29 +1593,30 @@ format. Using a common format makes it easier to compare the field.
 ## Accepted Claims Set augmentation using CoMID triples
 
 In the Accepted Claims Set augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the Accepted Claims Set (ACS).
-Triples which match are accepted, and the Accepted Claims Set is extended with Endorsements from these triples.
+Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
 
-Each triple is processed independently of other triples.
-If a triple does not match the ACS then this does not affect whether the Verifier tries to match other triples against the ACS.
+Each triple is processed independently of other triples. However, the ACS state may change as a result of processing a triple.
+If a triple condition does not match, then the Verifier continues to process other triples.
 
 ### Ordering of triple processing
 
-Triples interace with the ACS by either matching against ACS entries or by modifying or adding AES entries.
-The `environment-map` field is used to select the AES entries to match or modify.
+Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
+Most triples use an `environment-map` field to select the AES entries to match or modify. This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
 
-The order of triples processing is important. Processing a triple may result in ACS modifications which allow other triples to match the modified ACS.
+The order of triples processing is important. Processing a triple may result in ACS modifications that affect matching behavior of other triples.
 
-The Verifier MUST ensure that all triples which include a particular `environment-map` in their matching specification are processed after triples which modify or add an ACS entry with that `environment-map`.
+The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
 
 This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
 
 ### Processing Reference Values Triple
 
-A Reference Value Provider publishes Reference Values, which are matched against the Accepted Claims Set (ACS).
-The authority of the RVP is added to all ACS entries which match the Reference Values triple.
+Reference Value Providers (RVP) publish Reference Values triples that are matched against ACS entries.
+Reference Values may describe multiple acceptable states for Attesters; hence "matching" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.
+If the appropriate subset matches, the authority of the RVP is added to the appropriate ACS entries.
 
-The Verifier compares each `reference-triple-record` against ACS entries as described in {{sec-match-one-se}}, using a `stateful-environment-record` created from the fields in `reference-triple-record`.
-If all `reference-triple-record`s match the ACS then the Verifier MUST add the authority which signed the CoRIM file containing the triple to the `authorized-by` field of each `measurement-values-map` codepoint which matched.
+The Verifier compares each `reference-triple-record` against ACS entries as described in {{sec-match-one-se}}, where the `reference-triple-record` takes the place of a `stateful-environment-record`.
+If all fields of the `reference-triple-record` match the ACS, then the Verifier MUST add the RVP authority to each matching ACS field.
 
 If any `reference-triple-record` in the Reference Value triple does not match the ACS then the entire triple is ignored.
 
@@ -1625,7 +1626,7 @@ If any `reference-triple-record` in the Reference Value triple does not match th
 
 ### Processing triples representing Conditional Endorsements
 
-An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the Accepted Claims Set only if specified conditions apply.
+An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the Accepted Claims Set only if specified conditions are satisfied.
 This section describes the process performed by the Verifier to determine which Conditional Endorsements from the candidate CoMIDs should be added to the ACS.
 
 The verifier checks whether Conditional Endorsements are applicable by comparing Accepted Claims Set entries against expected values provided in `stateful-environment-record` object which are part of the triple.
@@ -1634,15 +1635,15 @@ The verifier checks whether Conditional Endorsements are applicable by comparing
 
 For each Conditional Endorsement Triple the Verifier compares the `stateful-environment-record` field in the triple against the ACS (see {{sec-match-one-se}}).
 
-If the stateful environment matches then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}).
-The endorsement is created from the `environment-map` and the `measurement-values-map` field in the triple, plus the authority which signed the CoRIM file containing the Conditional Endorsement Triple.
+If the stateful environment matches, then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}).
+The Endorsement consists of the `measurement-values-map` field in the triple, plus the authority of the entity that signed the Conditional Endorsement Triple.
 
 #### Processing Multi-Environment Conditional (MEC) Endorsement Triple
 
 For each MEC Endorsement Triple the Verifier compares each of the `stateful-environment-record` fields from the `cond` field in the triple against the ACS (see {{sec-match-one-se}}).
 
-If every stateful environment matches then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}) for each `endorsed-triple-record` in the `endorsements` field.
-Each endorsement is created from the `endorsed-triple-record` and the authority which signed the CoRIM file containing the MEC Endorsement Triple.
+If every stateful environment matches a corresponding ACS entry, then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}) for each `endorsed-triple-record` in the `endorsements` field.
+Each Endorsement from the `endorsed-triple-record` includes the authority which signed the MEC Endorsement Triple.
 
 #### Processing Conditional Endorsement Series Triple
 
@@ -1650,8 +1651,8 @@ For each Conditional Endorsement Series Triple the Verifier iterates over the `c
 
 For each iteration, the Verifier creates a temporary `stateful-environment-record` by merging the `stateful-environment-record` in the triple with the `refv` field in the `conditional-series-record`. It compares this temporary record against the ACS (see {{sec-match-one-se}}).
 
-If one of the temporary records matches then the Verifier MUST add an Endorsement entry to the ACS.
-This Endorsement is created from the `environment-map` field in `stateful-environment-record`, the `endv` field from the `conditional-series-record` which matched and the authority which signed the CoRIM file containing the Conditional Endorsement Series Triple.
+If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
+This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
 
 #### Matching a stateful environment against the Accepted Claims Set {#sec-match-one-se}
 
