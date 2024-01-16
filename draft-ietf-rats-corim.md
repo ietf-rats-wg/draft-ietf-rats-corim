@@ -1595,15 +1595,18 @@ format. Using a common format makes it easier to compare the field.
 In the Accepted Claims Set augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the Accepted Claims Set (ACS).
 Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
 
-Each triple is processed independently of other triples. However, the ACS state may change as a result of processing a triple.
+Each triple is processed independently of other triples.
+However, the ACS state may change as a result of processing a triple.
 If a triple condition does not match, then the Verifier continues to process other triples.
 
 ### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the AES entries to match or modify. This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
+Most triples use an `environment-map` field to select the AES entries to match or modify.
+This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
 
-The order of triples processing is important. Processing a triple may result in ACS modifications that affect matching behavior of other triples.
+The order of triples processing is important.
+Processing a triple may result in ACS modifications that affect matching behavior of other triples.
 
 The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
 
