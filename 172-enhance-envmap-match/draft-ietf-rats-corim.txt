@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 14 July 2024                                       Y. Deshpande
+Expires: 21 July 2024                                       Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         11 January 2024
+                                                         18 January 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 July 2024.
+   This Internet-Draft will expire on 21 July 2024.
 
 Copyright Notice
 
@@ -84,6 +84,7 @@ Table of Contents
        1.3.6.  OID
        1.3.7.  Tagged Integer Type
        1.3.8.  Digest
+       1.3.9.  Tagged Bytes Type
    2.  Concise Reference Integrity Manifest (CoRIM)
      2.1.  CoRIM Map
        2.1.1.  Identity
@@ -128,6 +129,8 @@ Table of Contents
          3.1.4.8.  CoMID-CoSWID Linking Triple
          3.1.4.9.  Conditional Endorsement Series Triple
          3.1.4.10. Conditional Endorsement Triple
+         3.1.4.11. Multi-Environment Conditional (MEC) Endorsement
+                 Triple
      3.2.  Extensibility
        3.2.1.  Map Extensions
        3.2.2.  Data Type Extensions
@@ -386,6 +389,18 @@ Table of Contents
      alg: (int / text),
      val: bytes
    ]
+
+1.3.9.  Tagged Bytes Type
+
+   An opaque, variable-length byte string.  It can be used in different
+   contexts: as an instance, class or group identifier in an
+   environment-map; as a raw value measurement in a measurement-values-
+   map.  Its semantics are defined by the context in which it is found,
+   and by the overarching CoRIM profile.  When used as an identifier the
+   responsible allocator entity SHOULD ensure uniqueness within the
+   context that it is used.
+
+   tagged-bytes = #6.560(bytes)
 
 2.  Concise Reference Integrity Manifest (CoRIM)
 
@@ -892,6 +907,8 @@ Table of Contents
        [ + conditional-endorsement-series-triple-record ]
      ? &(conditional-endorsement-triples: 9) =>
        [ + conditional-endorsement-triple-record ]
+     ? &(mec-endorsement-triples: 10) =>
+       [ + mec-endorsement-triple-record ]
      * $$triples-map-extension
    }>
 
@@ -928,6 +945,11 @@ Table of Contents
    *  conditional-endorsement-triples (index 9) Triples describing
       conditional Endorsement based on the acceptance of a stateful
       environment.  Described in Section 3.1.4.10.
+
+   *  mec-endorsement-triple-record (index 10) Triples describing a
+      series of Endorsement that are applicable based on the acceptance
+      of a series of stateful environment records.  Described in
+      Section 3.1.4.11.
 
 3.1.4.1.  Common Types
 
@@ -975,13 +997,14 @@ Table of Contents
    $class-id-type-choice /= tagged-oid-type
    $class-id-type-choice /= tagged-uuid-type
    $class-id-type-choice /= tagged-int-type
+   $class-id-type-choice /= tagged-bytes
 
    The following describes each member of the class-map:
 
    *  class-id (index 0): Identifies the environment via a well-known
-      identifier.  Typically, class-id is an object identifier (OID) or
-      universally unique identifier (UUID).  Use of this attribute is
-      preferred.
+      identifier.  Typically, class-id is an object identifier (OID)
+      variable-length opaque byte string (Section 1.3.9) or universally
+      unique identifier (UUID).  Use of this attribute is preferred.
 
    *  vendor (index 1): Identifies the entity responsible for choosing
       values for the other class attributes that do not already have
@@ -1006,11 +1029,13 @@ Table of Contents
    Target Environment that is an instance of the Attester.
 
    The types defined for an instance identifier are CBOR tagged
-   expressions of UEID, UUID, or cryptographic key identifier.
+   expressions of UEID, UUID, variable-length opaque byte string
+   (Section 1.3.9), or cryptographic key identifier.
 
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= $crypto-key-type-choice
+   $instance-id-type-choice /= tagged-bytes
 
 3.1.4.1.4.   Group
 
@@ -1018,9 +1043,11 @@ Table of Contents
    of Attesters, for example when a number of Attester are hidden in the
    same anonymity set.
 
-   The type defined for a group identified is UUID.
+   The types defined for a group identified are UUID and variable-length
+   opaque byte string (Section 1.3.9).
 
    $group-id-type-choice /= tagged-uuid-type
+   $group-id-type-choice /= tagged-bytes
 
 3.1.4.1.5.  Measurements
 
@@ -1102,7 +1129,7 @@ Table of Contents
      ? &(ueid: 9) => ueid-type
      ? &(uuid: 10) => uuid-type
      ? &(name: 11) => text
-     ? &(cryptokeys: 12) => [ + $crypto-key-type-choice ]
+     ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      * $$measurement-values-map-extension
    }>
 
@@ -1154,7 +1181,7 @@ Table of Contents
 
    *  name (index 11): a name associated with the measured environment.
 
-   *  cryptokeys (index 12): identifies cryptographic keys that are
+   *  cryptokeys (index 13): identifies cryptographic keys that are
       protected by the Target Environment See Section 3.1.4.1.6 for the
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
@@ -1282,10 +1309,10 @@ Table of Contents
    relevance is opaque to Verifiers.
 
    There are two parts to a raw-value-group, a measurement and an
-   optional mask.  The default raw value measurement is a CBOR tagged
-   bstr.  Additional raw value types can be defined, but must be CBOR
-   tagged so that parsers can distinguish between the various semantics
-   of type values.
+   optional mask.  The default raw value measurement is of type tagged-
+   bytes (Section 1.3.9).  Additional raw value types can be defined,
+   but must be CBOR tagged so that parsers can distinguish between the
+   various semantics of type values.
 
    The mask is applied by the Verifier as part of appraisal.  Only the
    raw value bits with corresponding TRUE mask bits are compared during
@@ -1295,7 +1322,6 @@ Table of Contents
    mask is also defined.  Typically, a CoRIM profile is used to define
    new raw values and mask semantics.
 
-   tagged-bytes = #6.560(bytes)
    $raw-value-type-choice /= tagged-bytes
 
    raw-value-mask-type = bytes
@@ -1547,6 +1573,50 @@ Table of Contents
      measurement-values-map
    ]
 
+3.1.4.11.  Multi-Environment Conditional (MEC) Endorsement Triple
+
+   The semantics of the Multi-Environment Conditional (MEC) Endorsement
+   Triple is as follows:
+
+      "IF accepted state matches all conds values, THEN every entry in
+      the endorsements is added to the accepted state"
+
+   mec-endorsement-triple-record = [
+     conds: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
+   ]
+
+   A mec-endorsement-triple-record has the following parameters:
+
+   *  conds: all target environments, along with a specific state, that
+      need to match state-triples entries in the ACS for the
+      endorsement(s) to apply
+
+   *  endorsements: endorsements that are added to the ACS state-triples
+      if all conds match.
+
+   The order in which MEC Endorsement triples are evaluated is
+   important: different sorting may produce different end-results in the
+   computed ACS.
+
+   Therefore, the set of applicable MEC Endorsement triple MUST be
+   topologically sorted based on the criterion that a MEC Endorsement
+   triple is evaluated before another if its Target Environment and
+   Endorsement pair is found in any of the stateful environments of the
+   second triple.
+
+   Notes:
+
+   *  In order to give the expected result, the condition must describe
+      the expected context completely.
+
+   *  The scope of a single MEC triple encompasses an arbitrary amount
+      of environments across all layers in an Attester.
+
+   There are scope-related questions that need to be answered.  (
+   // Tracked at: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/
+   issues/176)
+
 3.2.  Extensibility
 
    The base CORIM schema is described using CDDL [RFC8610] that can be
@@ -1562,10 +1632,9 @@ Table of Contents
    ($$NAME-extension) where "NAME" is the name of the map and '$$'
    signifies map extensibility.  Typically, map extension requires a
    convention for code point naming that avoids code-point reuse.  Well-
-   known code points may be in a registry, such as CoSWID
-   [IANA.concise-software-identifier].  Additionally, a range of code
-   points may be reserved for vendor-specific use such as negative
-   integers.
+   known code points may be in a registry, such as CoSWID [IANA.coswid].
+   Additionally, a range of code points may be reserved for vendor-
+   specific use such as negative integers.
 
 3.2.2.  Data Type Extensions
 
@@ -1956,26 +2025,29 @@ Table of Contents
    In the Accepted Claims Set augmentation phase, a CoRIM Appraisal
    Context and an Evidence Appraisal Policy are used by the Verifier to
    find CoMID triples which match the Accepted Claims Set (ACS).
-   Triples which match are accepted, and the Accepted Claims Set is
-   extended with Endorsements from these triples.
+   Triples that specify an ACS matching condition will augment the ACS
+   with Endorsements if the condition is met.
 
-   Each triple is processed independently of other triples.  If a triple
-   does not match the ACS then this does not affect whether the Verifier
-   tries to match other triples against the ACS.
+   Each triple is processed independently of other triples.  However,
+   the ACS state may change as a result of processing a triple.  If a
+   triple condition does not match, then the Verifier continues to
+   process other triples.
 
 5.4.1.  Ordering of triple processing
 
-   Triples interace with the ACS by either matching against ACS entries
-   or by modifying or adding AES entries.  The environment-map field is
-   used to select the AES entries to match or modify.
+   Triples interface with the ACS by either adding new ACS entries or by
+   matching existing ACS entries before updating the ACS.  Most triples
+   use an environment-map field to select the AES entries to match or
+   modify.  This field may be contained in an explicit matching
+   condition, such as stateful-environment-record.
 
    The order of triples processing is important.  Processing a triple
-   may result in ACS modifications which allow other triples to match
-   the modified ACS.
+   may result in ACS modifications that affect matching behavior of
+   other triples.
 
-   The Verifier MUST ensure that all triples which include a particular
-   environment-map in their matching specification are processed after
-   triples which modify or add an ACS entry with that environment-map.
+   The Verifier MUST ensure that a triple including a matching condition
+   is processed after any other triple that modifies or adds an ACS
+   entry with an environment-map that is in the matching condition.
 
    This can be acheived by sorting the triples before processing, by
    repeating processing of some triples after ACS modifications or by
@@ -1983,18 +2055,19 @@ Table of Contents
 
 5.4.2.  Processing Reference Values Triple
 
-   A Reference Value Provider publishes Reference Values, which are
-   matched against the Accepted Claims Set (ACS).  The authority of the
-   RVP is added to all ACS entries which match the Reference Values
-   triple.
+   Reference Value Providers (RVP) publish Reference Values triples that
+   are matched against ACS entries.  Reference Values may describe
+   multiple acceptable states for Attesters; hence "matching" determines
+   that Evidence (contained in the ACS) satisfies an appropriate subset
+   of the available Reference Values.  If the appropriate subset
+   matches, the authority of the RVP is added to the appropriate ACS
+   entries.
 
    The Verifier compares each reference-triple-record against ACS
-   entries as described in Section 5.4.4.4, using a stateful-
-   environment-record created from the fields in reference-triple-
-   record.  If all reference-triple-records match the ACS then the
-   Verifier MUST add the authority which signed the CoRIM file
-   containing the triple to the authorized-by field of each measurement-
-   values-map codepoint which matched.
+   entries as described in Section 5.4.4.4, where the reference-triple-
+   record takes the place of a stateful-environment-record.  If all
+   fields of the reference-triple-record match the ACS, then the
+   Verifier MUST add the RVP authority to each matching ACS field.
 
    If any reference-triple-record in the Reference Value triple does not
    match the ACS then the entire triple is ignored.
@@ -2005,9 +2078,9 @@ Table of Contents
 
    An Endorser may use CoMID tags to publish Conditional Endorsements,
    which are added to the Accepted Claims Set only if specified
-   conditions apply.  This section describes the process performed by
-   the Verifier to determine which Conditional Endorsements from the
-   candidate CoMIDs should be added to the ACS.
+   conditions are satisfied.  This section describes the process
+   performed by the Verifier to determine which Conditional Endorsements
+   from the candidate CoMIDs should be added to the ACS.
 
    The verifier checks whether Conditional Endorsements are applicable
    by comparing Accepted Claims Set entries against expected values
@@ -2020,11 +2093,11 @@ Table of Contents
    stateful-environment-record field in the triple against the ACS (see
    Section 5.4.4.4).
 
-   If the stateful environment matches then the Verifier MUST add an
-   Endorsement entry to the ACS (see Section 5.4.5).  The endorsement is
-   created from the environment-map and the measurement-values-map field
-   in the triple, plus the authority which signed the CoRIM file
-   containing the Conditional Endorsement Triple.
+   If the stateful environment matches, then the Verifier MUST add an
+   Endorsement entry to the ACS (see Section 5.4.5).  The Endorsement
+   consists of the measurement-values-map field in the triple, plus the
+   authority of the entity that signed the Conditional Endorsement
+   Triple.
 
 5.4.4.2.  Processing Multi-Environment Conditional (MEC) Endorsement
           Triple
@@ -2033,11 +2106,11 @@ Table of Contents
    stateful-environment-record fields from the cond field in the triple
    against the ACS (see Section 5.4.4.4).
 
-   If every stateful environment matches then the Verifier MUST add an
-   Endorsement entry to the ACS (see Section 5.4.5) for each endorsed-
-   triple-record in the endorsements field.  Each endorsement is created
-   from the endorsed-triple-record and the authority which signed the
-   CoRIM file containing the MEC Endorsement Triple.
+   If every stateful environment matches a corresponding ACS entry, then
+   the Verifier MUST add an Endorsement entry to the ACS (see
+   Section 5.4.5) for each endorsed-triple-record in the endorsements
+   field.  Each Endorsement from the endorsed-triple-record includes the
+   authority which signed the MEC Endorsement Triple.
 
 5.4.4.3.  Processing Conditional Endorsement Series Triple
 
@@ -2050,12 +2123,9 @@ Table of Contents
    triple with the refv field in the conditional-series-record.  It
    compares this temporary record against the ACS (see Section 5.4.4.4).
 
-   If one of the temporary records matches then the Verifier MUST add an
-   Endorsement entry to the ACS.  This Endorsement is created from the
-   environment-map field in stateful-environment-record, the endv field
-   from the conditional-series-record which matched and the authority
-   which signed the CoRIM file containing the Conditional Endorsement
-   Series Triple.
+   If one of the temporary records matches then the Verifier MUST add
+   the endv Endorsement entry to the ACS.  This Endorsement includes the
+   authority which signed the Conditional Endorsement Series Triple.
 
 5.4.4.4.  Matching a stateful environment against the Accepted Claims
           Set
@@ -2440,8 +2510,7 @@ Table of Contents
    |559    |digest     | tagged-cert-thumbprint-type, see   |RFCthis  |
    |       |           | Section 3.1.4.1.6                  |         |
    +-------+-----------+------------------------------------+---------+
-   |560    |bytes      | tagged-bytes, see                  |RFCthis  |
-   |       |           | Section 3.1.4.1.5.6                |         |
+   |560    |bytes      | tagged-bytes, see Section 1.3.9    |RFCthis  |
    +-------+-----------+------------------------------------+---------+
    |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
    |       |           | see Section 3.1.4.1.6              |         |
@@ -2575,9 +2644,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-24, 16
-              December 2023, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-eat-24>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-25, 15
+              January 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-25>.
 
    [I-D.ietf-sacm-coswid]
               Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
@@ -2699,8 +2768,9 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-tschofenig-
               rats-psa-token-20>.
 
-   [IANA.concise-software-identifier]
-              "*** BROKEN REFERENCE ***".
+   [IANA.coswid]
+              IANA, "Concise Software Identifier (CoSWID)",
+              <http://www.iana.org/assignments/coswid>.
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
@@ -2830,6 +2900,7 @@ Appendix A.  Full CoRIM CDDL
    $class-id-type-choice /= tagged-oid-type
    $class-id-type-choice /= tagged-uuid-type
    $class-id-type-choice /= tagged-int-type
+   $class-id-type-choice /= tagged-bytes
 
    class-map = non-empty<{
      ? &(class-id: 0) => $class-id-type-choice
@@ -2912,6 +2983,11 @@ Appendix A.  Full CoRIM CDDL
      [ + environment-map ]
    ]
 
+   mec-endorsement-triple-record = [
+     conds: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
+   ]
+
    $domain-type-choice /= uint
    $domain-type-choice /= text
    $domain-type-choice /= tagged-uuid-type
@@ -2952,6 +3028,7 @@ Appendix A.  Full CoRIM CDDL
    }
 
    $group-id-type-choice /= tagged-uuid-type
+   $group-id-type-choice /= tagged-bytes
 
    identity-triple-record = [
      environment-map
@@ -2961,6 +3038,7 @@ Appendix A.  Full CoRIM CDDL
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= $crypto-key-type-choice
+   $instance-id-type-choice /= tagged-bytes
 
    ip-addr-type-choice = ip4-addr-type / ip6-addr-type
    ip4-addr-type = bytes .size 4
@@ -3000,7 +3078,7 @@ Appendix A.  Full CoRIM CDDL
      ? &(ueid: 9) => ueid-type
      ? &(uuid: 10) => uuid-type
      ? &(name: 11) => text
-     ? &(cryptokeys: 12) => [ + $crypto-key-type-choice ]
+     ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      * $$measurement-values-map-extension
    }>
 
@@ -3009,7 +3087,6 @@ Appendix A.  Full CoRIM CDDL
    oid-type = bytes
    tagged-oid-type = #6.111(oid-type)
 
-   tagged-bytes = #6.560(bytes)
    $raw-value-type-choice /= tagged-bytes
 
    raw-value-mask-type = bytes
@@ -3046,6 +3123,8 @@ Appendix A.  Full CoRIM CDDL
 
    tagged-int-type = #6.551(int)
 
+   tagged-bytes = #6.560(bytes)
+
    triples-map = non-empty<{
      ? &(reference-triples: 0) =>
        [ + reference-triple-record ]
@@ -3065,6 +3144,8 @@ Appendix A.  Full CoRIM CDDL
        [ + conditional-endorsement-series-triple-record ]
      ? &(conditional-endorsement-triples: 9) =>
        [ + conditional-endorsement-triple-record ]
+     ? &(mec-endorsement-triples: 10) =>
+       [ + mec-endorsement-triple-record ]
      * $$triples-map-extension
    }>
 
