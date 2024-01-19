@@ -232,21 +232,22 @@ Examples of how the `entity-map` generic is instantiated can be found in
 
 ### Validity {#sec-common-validity}
 
-A `validity-map` represents the time interval during which the signer
-warrants that it will maintain information about the status of the signed
-object (e.g., a manifest).
+A `validity-map` represents the time interval in which the signer expects the manifest is valid.
 
-In a `validity-map`, both ends of the interval are encoded as epoch-based
-date/time as per {{Section 3.4.2 of -cbor}}.
+If the `not-after` value is omitted and isn't extended using a `$$validity-map-extension`, the manifest is presumed to be valid infefinitiely.
+
+Validity is extensible via `$$validity-map-extension`, allowing alternative forms of validity that possibly don't require a secure time capability, such as epoch markers.
+
+If a Verifier cannot process a `$$validity-map-extension` extension, the Verifier treats the manifest as invalid.
 
 ~~~ cddl
 {::include cddl/validity-map.cddl}
 ~~~
 
-* `not-before` (index 0): the date on which the signed manifest validity period
+* `not-before` (index 0): the date the signed manifest validity period
   begins
 
-* `not-after` (index 1): the date on which the signed manifest validity period
+* `not-after` (index 1): the date the signed manifest validity period
   ends
 
 ### UUID {#sec-common-uuid}
