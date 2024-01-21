@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-18T01:20:15.231734+00:00",
+  "timestamp": "2024-01-21T01:26:03.363871+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2296,16 +2296,24 @@
       "id": "I_kwDOH6-tI85j0QRE",
       "title": "Need description of matching rules for conditional endorsements",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/80",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Conditional endorsements have been added to the spec, the matching rules section needs to be enhanced to describe them",
       "createdAt": "2023-04-19T10:40:33Z",
-      "updatedAt": "2023-04-19T10:40:33Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-01-18T16:08:18Z",
+      "closedAt": "2024-01-18T16:08:18Z",
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed by #193",
+          "createdAt": "2024-01-18T16:08:18Z",
+          "updatedAt": "2024-01-18T16:08:18Z"
+        }
+      ]
     },
     {
       "number": 82,
@@ -2884,7 +2892,7 @@
       "labels": [],
       "body": "The text uses the placeholder term \"group\" to describe reference values and endorsed values which are processed together.\r\nThere are different ways proposed to encode the group concept in the CoRIM file\r\nWe need to agree how the \"group\" is encoded, and probably rewrite the document to replace the term \"group\" with new text",
       "createdAt": "2023-09-06T14:26:04Z",
-      "updatedAt": "2023-10-20T16:13:25Z",
+      "updatedAt": "2024-01-19T14:33:09Z",
       "closedAt": null,
       "comments": [
         {
@@ -2907,6 +2915,20 @@
           "body": "I'm not sure the 3a conclusion make sense. There is a lot of work and working code behind these triples. \r\nSince we have concluded that there are at least three or four types of grouping semantics, it is somewhat ambiguous what we mean by \"the group\".  \r\nThe notion that a triple that captures grouping semantics somehow causes reference and endorsed triples to be deprecated isn't obvious.\r\n\r\n",
           "createdAt": "2023-10-20T16:13:25Z",
           "updatedAt": "2023-10-20T16:13:25Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm not convinced the grouping discussion is closed. We should get broader consensus before closing this issue.",
+          "createdAt": "2024-01-18T16:13:05Z",
+          "updatedAt": "2024-01-18T16:13:05Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I closed this issue (which I filed) because the text referring to group was deleted by PR #193, it has been replaced by multi-conditional-endorsement and other triples.\r\nIn our discussions others have used the word \"group\" to mean something else, there might be more discussions to be had on that.\r\nI think it is probably better to use new issues to discuss those meanings.",
+          "createdAt": "2024-01-19T14:33:07Z",
+          "updatedAt": "2024-01-19T14:33:07Z"
         }
       ]
     },
@@ -3554,15 +3576,15 @@
       "id": "I_kwDOH6-tI852GT2M",
       "title": "Should we allow class Conditional Endorsements to match instance measurements?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/172",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "If an attester includes an instance identifier in the evidence it provides then the current matching rules will prevent a triples in a class CoMID from matching against that measurement.\r\n\r\nFor example, a measurement might have the following value:\r\n\r\n```cbor-diag\r\n  [\r\n    / environment-map / {\r\n      / comid.class / 0 : {\r\n        / comid.class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\r\n        / comid.vendor / 1 : \"example.com\"\r\n      }\r\n      / comid.instance / 1 : #6.558 / COSE_Key / [ / TODO-insert-key-here / ]\r\n    },\r\n    / measurement-map / {\r\n      / comid.mval / 1 : {\r\n        / comid.digests / 2 : [\r\n          [\r\n            / sha-384 / 7,\r\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\r\n          ]\r\n        ]\r\n      }\r\n    }\r\n  ], \r\n```\r\nThe current matching rules do not let this match against the following reference value (for example in a Conditional Endorsement Triple, or in other forms of conditional endorsement).\r\n```cbor-diag\r\n  [\r\n    / environment-map / {\r\n      / comid.class / 0 : {\r\n        / comid.class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\r\n        / comid.vendor / 1 : \"example.com\"\r\n      }\r\n    },\r\n    / measurement-map / {\r\n      / comid.mval / 1 : {\r\n        / comid.digests / 2 : [\r\n          [\r\n            / sha-384 / 7,\r\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\r\n          ]\r\n        ]\r\n      }\r\n    }\r\n  ], \r\n```\r\nThe missing instance value prevents the triple from matching.\r\n\r\nAdding instance identifiers to the reported evidence is useful as it lets the verifier handle cases where it is evaluating the a state which contains multiple TEs of the same type (which may be in the same state or in slightly different states).\r\n\r\nClass Conditional Endorsements are a key part of the semantics of CoMID files. We need a way to apply a class conditional endorsement to evidence or endorsements which include instance  identifiers.\r\n\r\nI think this can be done with a few small changes to the text, and I will make a proposal if nobody objects to the idea.",
       "createdAt": "2023-11-07T13:28:12Z",
-      "updatedAt": "2023-11-07T13:52:28Z",
-      "closedAt": null,
+      "updatedAt": "2024-01-18T16:09:33Z",
+      "closedAt": "2024-01-18T16:09:33Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -3570,6 +3592,13 @@
           "body": "When we defined environment-map, there was an expectation that one of the 3 forms of measurement-map identifiers would be used. It was more of an artifact of CDDL that permitted multiple forms could be used simultaneously (at least that is how I remembered it).\r\nHowever, using multiple forms could enable interesting use cases such as the one Andy describes (i.e. AE dynamically discovers / reports a composition of components that didn't exist at time of manufacture). The instance-id is a convenient way for the AE to disambiguate component multiplicity in evidence.\r\n\r\nThere is a more general conversation around what it might mean to populate multiple forms of environment-map in ref vals / endorsements. For example, if an environment is identified by instance-id, but there are relevant class attributes (e.g., vendor, model). Would it make sense to allow this? If so, would it make sense to match evidence using both instance-id and class-map, or should matching on instance-id only be permitted (and treat the class-map attributes as measurements)?",
           "createdAt": "2023-11-07T13:51:28Z",
           "updatedAt": "2023-11-07T13:52:28Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed by #193",
+          "createdAt": "2024-01-18T16:09:33Z",
+          "updatedAt": "2024-01-18T16:09:33Z"
         }
       ]
     },
@@ -3578,15 +3607,15 @@
       "id": "I_kwDOH6-tI8535omD",
       "title": "Representing multiple attesters, of the same or different types",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/173",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "CoRIM needs a way to represent an expected state which includes results from different attesters.\r\n\r\nThis in turn means that the Accepted Claims Set abstraction needs a way to model evidence and endorsements relating to different target environments.\r\n\r\nAs an example, please consider this example system, which contains two identical sub-components, each of which contains two Target Environments.\r\n\r\n```mermaid\r\ngraph TD\r\n    Verifier[\"Verifier\"]\r\n\r\n    subgraph Compound[\"Compound system\"]\r\n\r\n    subgraph DICE1[\"DICE Component #1\"]\r\n        TE1z[\"SPDM TEs\"]\r\n        TE1y[\"DICE L1 TE (SPDM AE)\"]\r\n        TE1x[\"DICE L0 TE (L1 AE)\"]\r\n    end\r\n    TE1z ==> TE1y\r\n    TE1y ==> TE1x\r\n\r\n    subgraph DICE2[\"DICE Component #2\"]\r\n        TE2x[\"DICE L0 TE (L1 AE)\"]\r\n        TE2y[\"DICE L1 TE (SPDM AE)\"]\r\n        TE2z[\"SPDM TEs\"]\r\n    end\r\n    TE2z ==> TE2y\r\n    TE2y ==> TE2x\r\n\r\n    end\r\n\r\n    style Compound fill:#CCC,stroke:#CCC\r\n\r\n    Verifier -...-> TE1y\r\n    Verifier -...-> TE2y\r\n```\r\nThough components \\#1 and \\#2 are the same, they may be running different firmware. For example, component \\#1 might be running the 1.0 firmware, while component \\#2 has been updated to run the 2.0 firmware. If both firmware versions are acceptable to the verifier owner and relying party then the attestation result should be positive.\r\n\r\nTo provide hierarchy, I expect that the expected state for this system will be described by multiple CoRIM files. One CoRIM file describes the expected state for component \\#1, another for component \\#2 and a third describes the state of the system containing both components.\r\n\r\n## What information is in these CoRIM files?\r\n\r\nI expect that the component CoRIM files are class RIMs, issued by the firmware author and either trusted or re-issued by the verifier owner and/or relying party. These RIMs apply to any device of the appropriate type.\r\n\r\nThe system RIM may contain instance measurements, for example, in addition to specifying the type of component \\#1 it may specify which instance of that component (by including the serial number of the component, a cryptographic key or similar instance measurement). This RIM might have been generated by scanning the state of the system and converting that to CoRIM format.\r\n\r\n## What does the ACS which matches against these RIMs look like?\r\n\r\nI think the system RIM adds a constraint to the ACS format: **Measurements from all sub-components must be in the same ACS so they can match against a single RIM.**\r\n\r\nThe existence of two components of the same type adds a second constraint: **It must be possible to keep all evidence and endorsements relating to sub-component \\#1 separate from those relating to sub-component \\#2.**\r\n\r\n## What is a possible way to implement this?\r\n\r\nMy thoughts on how this could be implemented start by solving the problem of keeping ACS entries separate from each other.\r\n\r\nAs currently specified in the draft, a DICE/SPDM verifier provides evidence whose `environment-map` only contains the `class` field. The protocol also provides a public key known as the hardware identity, whose value does not change during normal device state changes.\r\n\r\nIf we change the draft to say that for DICE/SPDM generated evidence, the `environment-map`/`instance` field SHOULD be set to the hardware identity for the SPDM AE, then evidence loaded into the ACS for component \\#1 and component \\#2 will be separate. This means that both can be stored into the ACS without conflict.\r\n\r\nFor the component RIMs to match an ACS which contains an `instance` field described like this, we would need to change the matching rules for conditional endorsements slightly. The change is that if none of the reference value `environment-map`s within a conditional endorsement include an `instance` field, then the first `environment-map` will match against an ACS entry with the same `class` field as the reference value and any (or no) `instance` field. The second `environment-map` will match against an ACS entry with the same `class` field and the same `instance` field as the first ACS entry.\r\n\r\nFor `conditional-endorsement-triple` and `conditional-endorsement-series-triple` there is only one `environment-map`, so this simplifies to \"If the environment-map does not contain an `instance` field then it will match against any `environment-map` with the same `class` field\". The endorsement is added to the same `environment-map`.\r\n\r\nIssue #172 is asking whether there are any problems with this approach.\r\n\r\nOf course, if there are multiple identical components, each configured in the same way, then the triple will match each of them and add an endorsement to each. This is what I would expect to happen.\r\n\r\nFor the conditional endorsement triple with multiple `environment-map`s, it is a bit more complex. In particular, if any of the endorsements is added to a different environment-map from the reference values then the CoRIM needs to describe whether or not to copy the `instance` value from the reference value or use a new one.\r\n\r\nI think that problem can be easily solved as part of defining the new conditional endorsement triple.\r\n\r\nIs there another way to solve the same problems?",
       "createdAt": "2023-11-27T06:43:11Z",
-      "updatedAt": "2023-12-05T22:43:18Z",
-      "closedAt": null,
+      "updatedAt": "2024-01-18T16:06:49Z",
+      "closedAt": "2024-01-18T16:06:49Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -3608,6 +3637,13 @@
           "body": ">The change is that if none of the reference value environment-maps within a conditional endorsement\r\n\r\nThe structure of a conditional endorsement is: a condition followed by an endorsed value claimset. If the condition describes a state that exists in the ACS, then add the claimset to the ACS. \r\n\r\nThe structure of a reference value is: a claimset that is asserted by a RVP iff the same claimset is also asserted by an Attester.\r\n\r\nPossibly there are use cases for asserting a claimset by a supplier iff the same claimset is also asserted by another supplier. If that use case exists, it is different from the above two use cases even though it may reuse some of the same primitives.",
           "createdAt": "2023-12-05T22:43:18Z",
           "updatedAt": "2023-12-05T22:43:18Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed by #193",
+          "createdAt": "2024-01-18T16:06:49Z",
+          "updatedAt": "2024-01-18T16:06:49Z"
         }
       ]
     },
@@ -3619,11 +3655,17 @@
       "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith",
+        "thomas-fossati",
+        "henkbirkholz",
+        "yogeshbdeshpande",
+        "andrew-draper"
+      ],
       "labels": [],
       "body": "An Attester can be from multiple vendors though, the Elements of Class Identifier are Optional Elements like\r\nVendor, Model, Class-ID etc.\r\n\r\nThis leaves the scope for a user to only add a Model, which could collide with other Vendor Models.\r\n\r\nNeed to define the usage of Class Identifier that should be unique across Multiple Vendors and Multiple Attesters belonging to the same Vendor. Specification needs some clarification about usage on Class Identifier, been how to mint it as a Unique Identifier!",
       "createdAt": "2023-12-06T15:36:52Z",
-      "updatedAt": "2024-01-09T22:12:05Z",
+      "updatedAt": "2024-01-19T22:48:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -3639,6 +3681,13 @@
           "body": "> My assumption is that the attester and/or the evidence collection protocol defines the `environment-map`.\r\n\r\nDo you mean \"the attester and/or the evidence collection protocol *developer* defines the `environment-map` scope?\r\n\r\nThe consideration is that these values have to be defined at manufacturing time so that Ref Vals use the same environment identifiers. If the identifiers are not globally unique values, there is potential for collision from an unrelated supplier which could confuse verifiers (unless there is some other scoping context). \r\n\r\nThe other issues having to do with groups potentially are impacted because an `environment-map` within a group could have non-globally-unique identifiers due to the grouping context (which can be used to safely limit scope). \r\n\r\n>is any more work needed to close this issue?\r\n\r\nRequiring use of `instance-id` where an RVP is only prepared to use `class-map` seems onerous. Even if a device asserts an instance name, the matching rules allow subset matching. RVP-A using `class-map` (without instance-id/group-id) could be confused by an RVP-B that uses the same `class-map` value. If RVP-B is authorized based on a Verifier trust anchor, the Verifier still doesn't know which set of RVs to apply. \r\n\r\nIf the schema constrains the `environment-map` values to be globally unique (in some fashion) then the possibility of `environment-map` collision goes away. ",
           "createdAt": "2024-01-09T22:10:41Z",
           "updatedAt": "2024-01-09T22:12:05Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Environment includes both `environment-map` and `stateful-environment-record` as various triples may use both to identify Target Environments (TE). \r\n\r\nThe existing prose for `environment-map` doesn't explicitly state namespace scope expectations. In the case of `instance-id` the types of instance values suggest global namespace scope (as a `$crypto-key-type-choice` implies cryptographic identifiers have global uniqueness. `class-id` forms include `uuid` and `oid` which also imply global scope. However, it also supports `int` and `bytes` variants that don't necessarily imply global scope. Additionally, use of `class-id` is optional leaving various combinations of 'vendor', 'model', 'layer', 'index' that have no implied scoping. \r\n\r\nIf Environments are required to have global scope, then it is impossible (absent malicious intent) for environment-A to be confused with environment-B due to name collision. If it is impractical to expect environments will have global scope, the rules for local scoping need to be defined. \r\n\r\nAt one point, there was wording in a PR that suggested namespace scope could be localized by placing an environment inside a grouping construct such as a 'domain' or 'bundle'. This may be a reasonable approach to support locally scoped namespaces, but is there a use case that motivates it?\r\n\r\nIf the spec mandates environments to have global scope, and there happen to be namespace collisions (e.g.: vendor-X and vendor-Y choose the same vendor string \"Solutions-R-us\" then Verifiers may give incorrect results unknowingly (as there is not test that can be applied to determine if a combination of attributes is indeed globally unique and I presume CoRIM doesn't intended to require use of a registry that guarantees global uniqueness.\r\n\r\nIf environments are presumed globally unique, then grouping for the purpose of making something become globally unique doesn't make sense. This may simplify the grouping context discussions.",
+          "createdAt": "2024-01-19T22:48:12Z",
+          "updatedAt": "2024-01-19T22:48:12Z"
         }
       ]
     },
@@ -3654,24 +3703,46 @@
       "labels": [],
       "body": "see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/wiki/Composite-device-description-using-domain-membership-triples",
       "createdAt": "2023-12-06T16:01:29Z",
-      "updatedAt": "2023-12-06T16:01:29Z",
+      "updatedAt": "2024-01-19T18:05:03Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Issue #136 has some context regarding grouping concepts",
+          "createdAt": "2024-01-19T17:33:16Z",
+          "updatedAt": "2024-01-19T17:33:16Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">It is not possible to limit the acceptable combinations: all possible cross-products are acceptable.\r\nSuppose TF-M goes through a similar update cycle as BL. Using the semantics above it is not possible to express things like: BL \"1.0.0\" is acceptable only with TF-M \"1.0.0\" and not with TF-M \"1.0.1\".\r\n\r\nTypically, updates are applied in the context of an update package that contains dependency semantics (see SUIT). If there are unacceptable combinations the update manifest will sus them out. If there is a trustworthiness relevant combinatoric that a RATS Verifier should process, the RVP can create a new BL version \"1.0.1\" that excludes the revoked T-FM image. \r\n\r\nAlternatively, the RVP could create a domain context that includes `stateful-environment-record`s that names only valid versions of T-FM. (Although allowing `stateful-environment-record` as a posible domain name wasn't part of the original proposal).\r\n",
+          "createdAt": "2024-01-19T17:54:04Z",
+          "updatedAt": "2024-01-19T17:54:04Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Grouping semantics apply to Evidence as well as RV/Endorsements. A DICE alias certificate / EAT token implies a grouping of evidence claims due to the signature over the claims. The Attester implies the grouping context because it chose to bundle a set of claims before signing them. \r\n\r\nA TPM PCR is also an implied grouping context. TCG specs specify the type of measurements that belong to a specific PCR. The intent is that a Verifier can check the integrity of individual PCRs and return a pass/fail result for each PCR. If some pass and some fail, the final result is neither pass or fail. Hence, there isn't a presumption that appraisal necessarily must produce a binary result.\r\n\r\nSimilarly, the RVs should be grouped such that only the RVs that are apply to the Evidence grouping semantic should be applied for a given grouping.",
+          "createdAt": "2024-01-19T18:02:39Z",
+          "updatedAt": "2024-01-19T18:05:03Z"
+        }
+      ]
     },
     {
       "number": 178,
       "id": "I_kwDOH6-tI8549LsE",
       "title": "Cleanup Section 5.4.2. Matching Evidence against Reference Values ",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/178",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Section 5.4.2 \"Matching Evidence against Reference Values\" uses endorsement and reference values incorrectly. This section should not describe endorsement processing since its focus is on reference values processing. \r\n\r\nSuggested replacement text:\r\n\"A Reference Value Provider (RVP) may publish Reference Values, which are reviewed to determine if they are contained in the Accepted Claims Set (ACS). This section describes the process performed by the Verifier to determine which Reference Values should be compared to the Evidence claims contained in the ACS.\r\n\r\nThe verifier compares Reference Values claims with ACS claims. If they match, the RVP authority that asserted the claims is added to the ACS (for each claim that matched).\r\n\r\nThe following subsections describe how Reference Values are grouped ([Section 5.4.2.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-grouping-ref-vals)) and how a Verifier matches Reference Values against the ACS ([Section 5.4.2.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-match-all-ref-vals)).\"\r\n\r\nNotes:\r\n - CoMID references were removed since reference claims can occur in other tag types (e.g., coswid) and is somewhat unnecessary.\r\n - The signature over the RIM / COSWID is the authority that asserts claims (Not the authorized-by field). The authorized-by field describes authority matching constraints. Section 5.3.2.2 also needs wordsmithing.\r\n - Reference Values claims aren't 'added' to the ACS, as they are already in the ACS but under the authority of the Attester rather than the RVP. Hence, the only action needed is for the RVP authority to be added to existing claims. \r\n\r\n\r\n",
       "createdAt": "2023-12-06T20:10:02Z",
-      "updatedAt": "2023-12-20T18:54:57Z",
-      "closedAt": null,
+      "updatedAt": "2024-01-18T16:08:57Z",
+      "closedAt": "2024-01-18T16:08:57Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -3700,6 +3771,13 @@
           "body": "> I don't think the document does it wrong, it does it using a different meaning of reference values and endorsements from the one you have Ned. \r\n\r\nCoRIM needs to be faithful to the terminology conventions in 9334 and the endorsements draft. There is no need to redefine reference values for the purposes of defining a multi-conditional-endorsement triple.",
           "createdAt": "2023-12-20T18:54:56Z",
           "updatedAt": "2023-12-20T18:54:56Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed by #193",
+          "createdAt": "2024-01-18T16:08:57Z",
+          "updatedAt": "2024-01-18T16:08:57Z"
         }
       ]
     },
@@ -3731,9 +3809,17 @@
       "labels": [],
       "body": "RFC9090 defines: \r\noid=#6.111(bstr) \r\n\r\nCoRIM defines:\r\noid-type = bytes\r\ntagged-oid-type = #6.111(oid-type)\r\n\r\nTo be more closely aligned with RFC9090 instances of `tagged-oid-type` can be replaced with `oid`.\r\n",
       "createdAt": "2023-12-12T00:45:15Z",
-      "updatedAt": "2023-12-12T00:45:15Z",
+      "updatedAt": "2024-01-19T23:28:06Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "CDDL2 supports namespaced definitions such that an rfc9090 definition of oid could be used as follows:\r\n`tagged-oid-type = rfc9090.oid`",
+          "createdAt": "2024-01-19T23:28:04Z",
+          "updatedAt": "2024-01-19T23:28:04Z"
+        }
+      ]
     },
     {
       "number": 182,
@@ -4080,15 +4166,15 @@
       "id": "I_kwDOH6-tI856Br3J",
       "title": "measurement-values-map code point 12 already in use",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/186",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The concise-evidence schema defined in TCG DICE Concise Evidence Binding for SPDM already assigns code point 12 to spdm-indirect. \r\n\r\n  ? &(cryptokeys: 12) => [ + $crypto-key-type-choice ] should move to 13.\r\n```\r\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\r\n```",
       "createdAt": "2023-12-18T18:58:38Z",
-      "updatedAt": "2024-01-09T22:13:25Z",
-      "closedAt": null,
+      "updatedAt": "2024-01-19T23:24:08Z",
+      "closedAt": "2024-01-19T23:20:46Z",
       "comments": [
         {
           "author": "andrew-draper",
@@ -4103,6 +4189,13 @@
           "body": "yes.\r\n",
           "createdAt": "2024-01-09T22:13:24Z",
           "updatedAt": "2024-01-09T22:13:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed in main.",
+          "createdAt": "2024-01-19T23:24:08Z",
+          "updatedAt": "2024-01-19T23:24:08Z"
         }
       ]
     },
@@ -4118,7 +4211,7 @@
       "labels": [],
       "body": "The accepted claims set type description uses the variable `ev-coswid-triple-record` without definition. I noticed this is also used in the Intel Profile for CoRIM, but there it references the TCG specification for concise evidence for DICE (https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf). Given the specificity to DICE, this seems overly specific for the CoRIM specification given that evidence is expected to be profile-specific, so I wonder what this hanging reference is meant to mean.",
       "createdAt": "2024-01-05T06:39:47Z",
-      "updatedAt": "2024-01-06T00:13:16Z",
+      "updatedAt": "2024-01-19T23:20:11Z",
       "closedAt": null,
       "comments": [
         {
@@ -4127,6 +4220,13 @@
           "body": "`accepted-claims-set` technically is mythical as it intends to describe the Verifier's \"internal representation\" which is out of scope for this specification.  We discussed whether or not using CDDL to describe an internal representation would be confusing. We also defined abstract terminology for the verifier in section 5.1 which is used to describe an \"internal representation\". \r\n\r\nThere are times when the prose needs to be specific about certain compare operations where having `accepted-claims-set` CDDL is a helpful abstraction. Other prose seems appropriate for more conceptual explanations. \r\n\r\nI'm not convinced the `accepted-claims-set` CDDL is entirely correct, I think we're in a mode of working through use cases and identifying gaps in `accepted-claims-set`. \r\n\r\nOne challenge with using the same CDDL as is used to describe Verifier inputs, to describe Verifier outputs (or nearly Verifier outputs) is it assumes the Verifier's other inputs such as Appraisal Policy for Evidence and RP context isn't additive. \r\n\r\nSpecifically, the case of coswid, the coswid tags are additional inputs beyond the core comid schema. As such, you might expect these inputs should affect Verifier output. ev-coswid-triple-record is an example. Nevertheless, it models a Verifier output using an Evidence schema input. \r\n\r\nSince it is a non-goal of CoRIM to define an Attestation Result format, it seems using CDDL to define `accepted-claims-set` implies an alternative to other drafts that do this.  Technically, it isn't part of the CoRIM schema. \r\n\r\nIf there is a way to document the \"internal representation\" with as much precision as CDDL, but without using CDDL (or something similar) then that would be interesting prose to read.",
           "createdAt": "2024-01-06T00:13:15Z",
           "updatedAt": "2024-01-06T00:13:15Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The TCG has published [https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf] which is the most recent publication of `concise-evidence`. The CoRIM spec, Section 5.5, contains subsections that describe mapping of evidence formats to an internal representation (aka ACS). Possibly, it makes sense to include a sub-section for `concise-evidence` that details the mapping semantics?",
+          "createdAt": "2024-01-19T23:20:10Z",
+          "updatedAt": "2024-01-19T23:20:10Z"
         }
       ]
     },
@@ -4142,7 +4242,7 @@
       "labels": [],
       "body": "Note from Ned in a review:\r\n\r\n> Note: The Appraisal Context initialization and Evidence Collection sections don't adequately describe that Evidence updates the ACS. This should be explained before the sections describing ACS augmentation.",
       "createdAt": "2024-01-12T14:59:34Z",
-      "updatedAt": "2024-01-14T17:31:40Z",
+      "updatedAt": "2024-01-20T00:28:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -4151,8 +4251,38 @@
           "body": "I think a conceptual introduction with proposed standard formats would really help. Say for example, a Verifier receives a CMW of evidence and collateral from a Relying Party (Background check model) or a Target Environment (Passport model).\r\n\r\nA Verifier's role is to perform Evidence Appraisal and produce an Attestation Result. A CMW's encapsulated evidence is must be interpreted by its associated Profile, and may trust the provided collateral to do so, and the culminating result should be either rejection or a pair of initialized Accepted Claims Set, and Candidate Claims Set.\r\n\r\nThe initial Accepted Claims Set represents statements that are trusted unconditionally, whereas a the Candidate Claims Set represents possible additions to the Accepted Claims Set provided certain evaluation criterial hold of the Accepted Claims Set.\r\n\r\n\r\nWhat I don't know is if this is meant to be treated as forward chaining task like in a datalog evaluation engine's fixpoint calculation. Do you process the Candidate Claims Set repeatedly until you are unable to expand the Accepted Claims Set?",
           "createdAt": "2024-01-14T17:31:39Z",
           "updatedAt": "2024-01-14T17:31:39Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "I will also note here that it's confusing that the only example of appraising evidence is the DICE translation to a matchable state, and that the representation used an endorsed-value-triple without a specified authorized-by. I would assume at least the attest key would be the authorizer?\r\n\r\nWhat's more, the section \"Processing Endorsed Value Triple\" is empty without a linked issue to fill it out. Is the presumption that and endorsed triple is simply added to the ACS? There's the expectation, at least for DICE, that equal environment-maps must lead to merged measurement maps, and that conflicting values need to lead to rejecting the evidence.\r\n\r\nThere is no discussion how conflicts may arise. If an endorsement says \"value X is okay\" and the actual state is Y, and X != Y, then this isn't well discussed about the virtual representation of knowledge with the CDDL of accepted claims set doesn't necessarily catch this nuance. Or, is this kind of endorsed statement not the intended use case, and instead an endorsed triple means a fiat declaration of concrete state?",
+          "createdAt": "2024-01-20T00:16:33Z",
+          "updatedAt": "2024-01-20T00:16:33Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Issue #194 tries to clean up some the document structure loose ends.",
+          "createdAt": "2024-01-20T00:28:53Z",
+          "updatedAt": "2024-01-20T00:28:53Z"
         }
       ]
+    },
+    {
+      "number": 194,
+      "id": "I_kwDOH6-tI858pjtd",
+      "title": "Revisit doc structure and headings",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/194",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Taking a step back, the document structure may need some tweaking:\r\n- Section 5 heading should be \"CoRIM-based Appraisal\" or something similar since it isn't exclusive to Evidence.\r\n    -  Section 5.4.5 Adding CoMID Endorsed values to ACS : should be removed or integrated with Section 5.4.3 Processing Endorsed Value Triple since these appear to be synonymous.\r\n    -   There should be a section between Section 5.4.1 and 5.4.2 that describes \"Adding Evidence to ACS\".\r\n    - There should be a section (5.4.5?) that describes processing of CoSWID tags and `coswid-triples` that also closes issue #165.\r\n\r\n- Section 5.5 should be \"Transforming Evidence\" or something similar since other sections in 5 (see previous bullets) describe initialization and population of ACS with Evidence and 5.5 focuses on schema mapping issues.\r\n     - There should be a section 5.5.3 \"Transforming EAT Evidence\" (and the other similarly named subsections can be shortened so the heading is less wordy. (e.g.: \"Transforming DICE Evidence\", and \"Transforming SPDM Evidence\",...)\r\n     - Similarly, Section 5.5.4 \"Transforming Concise Evidence\" for https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf\r\n\r\n- There should be a new Section 6 that focuses on processing updates e.g., \"Update Processing\". The resolution to PR #170 should be documented here. Subsections might be:\r\n    - Section 6.1 Updates Can Take Multiple Forms : This section describes the various possible ways the ecosystem might update RIMs (e.g.: x-triples, x-corims, refreshed corims, x-tags?...)\r\n    - Section 6.2 Staging Updates : This section describes a staging area for applying updates and results in an internal representation of RVPs and Endorsements suitable for use by appraisal (section 5). \r\n    - If there is a need to describe in more detail a particular update mechanism (e.g. x-triple) then subsections here can describe semantics and CDDL expressions.",
+      "createdAt": "2024-01-19T19:50:41Z",
+      "updatedAt": "2024-01-19T23:48:36Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -19454,7 +19584,7 @@
     {
       "number": 164,
       "id": "PR_kwDOH6-tI85b7SYj",
-      "title": "Fix issue #161",
+      "title": "Adds extension point to validity-map",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/164",
       "state": "OPEN",
       "author": "nedmsmith",
@@ -19465,13 +19595,13 @@
       "labels": [],
       "body": "Adds extension point to validity-map",
       "createdAt": "2023-10-04T17:41:15Z",
-      "updatedAt": "2023-10-13T13:57:33Z",
+      "updatedAt": "2024-01-19T23:08:08Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a597257e393a376f1ac65c26710ee31055342501",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "161-validity-map",
-      "headRefOid": "5c60a98c90014f72d7cb85410a772476a1b31dd2",
+      "headRefOid": "3055dcdf5a32732e05da2c2b8f371daac6a683bf",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -19490,6 +19620,20 @@
           "body": "> I am a bit confused by this PR (next to style & syntax).\r\n> \r\n> This seems to break the straight forward semantics of current validity map. But more importantly, I cannot see how Epoch Markers (that were the example in #161 would solve a problem here. Do they really?\r\n\r\nThe validity period assumes verifier has trusted time. I'm looking for a solution that doesn't require trusted time. Epoch markers could be used in this sort of environment.",
           "createdAt": "2023-10-13T13:57:33Z",
           "updatedAt": "2023-10-13T13:57:33Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This branch was rebased to pick up changes in main that fixes ghpages build errors.",
+          "createdAt": "2024-01-19T23:00:26Z",
+          "updatedAt": "2024-01-19T23:01:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Besides, since this introduces an extension point, we need a new IANA sub-registry.\r\n\r\nWe can tolerate not having an IANA sub-registry until there is interest in standardizing extensions. In the meantime, a vendor may leverage a profile context to define a vendor-specific approach using negative code points. \r\n\r\nThe lack of a defined registry creates a friction point that limits use of the extention point for standard use, thereby limiting possible backwards compatibility issues should another approach become preferred.",
+          "createdAt": "2024-01-19T23:08:07Z",
+          "updatedAt": "2024-01-19T23:08:07Z"
         }
       ],
       "reviews": [
@@ -19517,6 +19661,19 @@
           "body": "The semantics of this must be documented in \u00a71.3.3 -- and possibly in all the places it is `validity-map` is reused.\r\n\r\nBesides, since this introduces an extension point, we need a new IANA sub-registry.\r\n\r\nBut more generally, I don't think this is the right design.  (See https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/161#issuecomment-1760732672 for the rationale.)",
           "createdAt": "2023-10-13T04:13:24Z",
           "updatedAt": "2023-10-13T04:13:55Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85tR2ga",
+          "commit": {
+            "abbreviatedOid": "5c60a98"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "This looks good, but I think it also needs text which says that if a verifier doesn't understand any of the fields within validity-map then that map is not valid.",
+          "createdAt": "2024-01-19T18:13:00Z",
+          "updatedAt": "2024-01-19T18:13:00Z",
           "comments": []
         }
       ]
@@ -20186,7 +20343,7 @@
       "labels": [],
       "body": "Added relevant issue #171 ",
       "createdAt": "2023-10-24T22:16:20Z",
-      "updatedAt": "2023-11-02T19:53:59Z",
+      "updatedAt": "2024-01-19T19:55:20Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
@@ -20197,7 +20354,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I created issue #194 that makes suggestions for how to approach updates. The x-triples section should probably be moved to a new top level section dealing with update processing. Some of the update processing goals are not unique to x-triples, hence can be described in a way that applies broadly to updates regardless of which update vehicle is used.",
+          "createdAt": "2024-01-19T19:55:19Z",
+          "updatedAt": "2024-01-19T19:55:19Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI85lFsUt",
@@ -20807,21 +20972,21 @@
       "id": "PR_kwDOH6-tI85hQ6OV",
       "title": "Describe case where env-map has class & instance",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/175",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Enhance description of matching rules for `environment-map` to permit richer behavior when both `class` and `instance` fields are present.\r\nThis fixes issue #172 and is part of the solution to issue #173.\r\nIt also fixes #136 (removing the term \"group\") and #80.\r\nIt also fixes #175",
       "createdAt": "2023-12-06T06:56:36Z",
-      "updatedAt": "2024-01-16T11:02:08Z",
+      "updatedAt": "2024-01-18T16:04:36Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "172-enhance-envmap-match",
-      "headRefOid": "f1824f71f033216a07d79d183b9edb59f7b62cc1",
-      "closedAt": null,
+      "headRefOid": "17c9723b5a0d2ab8fbf3fb642ed88405f179e03e",
+      "closedAt": "2024-01-18T16:04:36Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -20860,6 +21025,13 @@
           "body": "> > This change specifies that the Verifier should handle the `group` field in the same way as the `instance` field which matches that interpretation.\r\n> \r\n> I looked for language that mentions 'group' (ps shouldn't we use back quotes to mean artifacts that are in the CoRIM schema - e.g., `group-id`) but couldn't find any. Maybe I missed it but unless the prose specifically mentions `group-id` the reader may be confused as to what is the processing behavior. Same goes for `instance-id` and `class-map`.\r\n\r\nThe text relating to binary comparison of fields within `environment-map` is this:\r\n> A stateful environment `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the stateful environment `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.\r\n\r\nThis text applies the same processing to `class`, `instance` and other fields.",
           "createdAt": "2024-01-10T14:49:43Z",
           "updatedAt": "2024-01-10T14:49:43Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The exact changes described in this PR were applied using PR #193",
+          "createdAt": "2024-01-18T16:04:36Z",
+          "updatedAt": "2024-01-18T16:04:36Z"
         }
       ],
       "reviews": [
@@ -22027,6 +22199,19 @@
               "updatedAt": "2024-01-12T01:38:14Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85tE9TK",
+          "commit": {
+            "abbreviatedOid": "17c9723"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-01-18T15:47:43Z",
+          "updatedAt": "2024-01-18T15:47:43Z",
+          "comments": []
         }
       ]
     },
@@ -23272,6 +23457,34 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 193,
+      "id": "PR_kwDOH6-tI85kcQW4",
+      "title": "Update description of triple processing, describe case where env-map has class & instance",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/193",
+      "state": "MERGED",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Enhance description of matching rules for environment-map to permit richer behavior when both class and instance fields are present.\r\nThis fixes #136 (removing the term \"group\"), #80 and #178.\r\n\r\nAdd description of case where env-map has class & instance.\r\nThis fixes issue #172 and is part of the solution to issue #173.\r\n\r\nThe changes made by this PR are an exact copy of the changes in PR #175 and branch 172-enhance-envmap-match, please refer to the discussion in that PR for details of the approvals.\r\n\r\n",
+      "createdAt": "2024-01-18T16:02:43Z",
+      "updatedAt": "2024-01-18T16:03:20Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "e7587a48c79eac85fa3042f0279b265e3b13d704",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "172-enhance-envmap-match-v2",
+      "headRefOid": "e035b9f27272fc1ecbca2fac6314d7f25c8a0c38",
+      "closedAt": "2024-01-18T16:03:20Z",
+      "mergedAt": "2024-01-18T16:03:20Z",
+      "mergedBy": "andrew-draper",
+      "mergeCommit": {
+        "oid": "daf987e2a2b30360e774988991fc84966bccdbdb"
+      },
       "comments": [],
       "reviews": []
     }
