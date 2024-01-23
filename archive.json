@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-21T01:26:03.363871+00:00",
+  "timestamp": "2024-01-23T01:21:56.962892+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3932,7 +3932,7 @@
       "labels": [],
       "body": "Some environments (e.g., Arm CCA realms, TPMs) have a bunch of measurements bundled in PCR banks rather than single digests.\r\n\r\nInstead of having each technology provide their own custom PCR-bank measurement type, we should define it as a basic, reusable CoMID type.\r\n\r\nFor example - modelled on the `digest` type:\r\n\r\n```cddl\r\n; design A\r\n\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + bytes / nil ]\r\n]\r\n```\r\n\r\nThe `nil` alternative is for when the PCR slot is not populated or match is to be skipped.\r\n\r\nCoRIM profiles will have to define the exact shape of the bank, i.e., the number of elements in the `slots` array.",
       "createdAt": "2023-12-18T14:16:45Z",
-      "updatedAt": "2023-12-20T12:06:16Z",
+      "updatedAt": "2024-01-22T21:26:17Z",
       "closedAt": null,
       "comments": [
         {
@@ -4158,6 +4158,27 @@
           "body": "> [...] is the positional order in the multiplicity always is preserved in this or not?\r\n\r\nwhy would it be relevant?",
           "createdAt": "2023-12-20T12:06:15Z",
           "updatedAt": "2023-12-20T12:06:15Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Given that the conversation about extensibility is to prefer cleaner separation into namespaces apart from what is already stuck for DICE, I think we should revisit refactoring this into a type that's associated with a trustedcomputinggroup.org url base for the type. Similarly I don't think PCR banks are the whole story, given that folks may want to have more inspection on the event log entries instead, and just keep the PCR bank as a final integrity test for evidence appraisal.",
+          "createdAt": "2024-01-22T19:10:57Z",
+          "updatedAt": "2024-01-22T19:10:57Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do you have a specific suggestion for what should change (as this has been merged already i think)?",
+          "createdAt": "2024-01-22T19:38:58Z",
+          "updatedAt": "2024-01-22T19:38:58Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "measurement-values-map has the possibility of extensions that are protected by this standards body, and everything that already exists is there for DICE's benefit.\r\nI don't think that anything else should be added other than a namespaced entry with payload schema entirely determined by the namespace.\r\n\r\n```\r\n  ? &(named-extensions: 14) => [ + $named-extension ]\r\n\r\n$named-extension = [\r\n  $profile-type-choice\r\n  bytes\r\n]\r\n```\r\n\r\nThe TCG should use its own OID for TPM 2.0, say, to allow the bytes to be interpreted as an CBOR encoding of a map that includes something with the same schema as the proposed integrity-registers CDDL.",
+          "createdAt": "2024-01-22T21:25:56Z",
+          "updatedAt": "2024-01-22T21:26:17Z"
         }
       ]
     },
