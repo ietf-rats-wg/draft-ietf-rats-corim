@@ -92,6 +92,7 @@ informative:
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
+  I-D.ietf-rats-endorsements: rats-endorsements
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -1370,9 +1371,9 @@ The following describes each member of the `concise-bom-tag` map.
 
 The verification procedure is divided into three separate phases:
 
-* Appraisal Context initialisation
-* Evidence collection
-* Accepted Claims Set Augmentation
+* Appraisal Context initialisation ({{sec-app-ctx-init}})
+* Evidence collection ({{sec-ev-coll}})
+* Evidence appraisal ({{sec-ev-appraisal}})
 
 At a few well-defined points in the procedure, the Verifier behaviour will
 depend on the specific CoRIM profile.
@@ -1388,137 +1389,106 @@ phase can be amortised across multiple appraisals.
 
 ## Verifier Abstraction
 
-This document assumes Verifier implementations may differ.
-To facilitate description of normative Verifier behavior,
-this document uses abstract representation of Verifier internals.
+This document assumes that Verifier implementations may differ.
+To facilitate the description of normative Verifier behavior, this document uses an abstract representation of Verifier internals.
 
-* Claim: A piece of information, in the form of a key-value pair.
-* Environment Measurement Tuple (EMT): A structure containing a set of environment
-Claims that describe a Target Environment and a set of measurement Claims that
-describe attributes of the Target Environment.
-* reference state: Claims that describe various alternative states of a Target Environment.
-Reference Values Claims typically describe various possible states due to versioning,
-manufactruing practices, or supplier configuration options.
-* actual state: Claims that describe a Target Environment instance at a given point in time.
-Endorsed Values and Evidence typically are Claims about actual state.
-* Group: A set of Evidence, Reference Values, Endorsed Values and Appraisal Policies
-which are processed together.
-An Attester may be composed of multiple components, where each component may
-represent a scope of appraisal.
-* Authority: The entity asserting that a claim is true.
-Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
-* Accepted Claims Set (ACS): A structure that holds EMT Claims that have been vetted
-following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy. The ACS also keeps track of a Claim's authority.
-* Appraisal Policy: A description of the conditions that, if met, allow acceptance
-of Claims. Typically, the entity asserting a Claim should have knowledge, expertise,
-or context that gives credibility to the assertion. Appraisal Policy resolves which
-entities are credible and under what conditions.
+The following terms are used:
 
-## Appraisal Context initialisation
+{: vspace="0"}
+Claim:
+: A piece of information, in the form of a key-value pair.
 
-The goal of the initialisation phase is to load the CoRIM Appraisal Context
-with objects such as tags (CoMID, CoSWID, etc.) from CoRIM files,
-cryptographic validation key material (e.g., raw public keys, root certificates,
-intermediate CA certificate chains), etc. that will be used in the subsequent
-Evidence Appraisal phase.
+Environment Measurement Tuple (EMT):
+: A structure containing a set of environment Claims that describe a Target Environment and a set of measurement Claims that describe attributes of the Target Environment.
+
+reference state:
+: Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
+
+actual state:
+: Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.  See also {{Section 2 of -rats-endorsements}}.
+
+Authority:
+: The entity asserting that a claim is true.  Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
+
+Accepted Claims Set (ACS):
+: A structure that holds EMT Claims that have been vetted following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy. The ACS also keeps track of a Claim's authority.
+
+Appraisal Policy:
+: A description of the conditions that, if met, allow acceptance of Claims. Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion. Appraisal Policy resolves which entities are credible and under what conditions.  See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
+
+## Appraisal Context initialisation {#sec-app-ctx-init}
+
+During the initialization phase, the CoRIM Appraisal Context is loaded with various objects such as CoMID tags, CoSWID tags, and cryptographic validation key material (including raw public keys, root certificates, and intermediate CA certificate chains).
+These objects will be utilized in the Evidence Appraisal phase that follows.
+The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
 ### CoRIM Selection
 
 All available CoRIMs are collected.
-A Verifier may be pre-configured with a large number of CoRIMs describing many
-types of device.
-All CoRIMs are loaded at this stage, later stages will select the CoRIMs
-appropriate to the Evidence Appraisal step.
 
-CoRIMs that are not within their validity period, or that cannot be associated
-with an authenticated and authorised source MUST be discarded.
+CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
 
-CoRIM that are secured by a cryptographic mechanism such as a signature which
-does not pass validation MUST be discarded.
+Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
 
 Other selection criteria MAY be applied.
-
-For example, if the Evidence format is known in advance, CoRIMs using a
-profile that is not understood by a Verifier can be readily discarded.
+For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
 The selection process MUST yield at least one usable tag.
 
+Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage. TBC(tho)
+
 ### CoBOM Extraction
 
-This section is not applicable if the Verifier policy does not require CoBOMs.
+This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
 
-All the available Concise Bill Of Material (CoBOMs) tags are then collected
-from the selected CoRIMs.
+All the available Concise Bill Of Material (CoBOMs) tags are collected from the selected CoRIMs.
 
-CoBOMs which are not within their validity period, or which reference tags
-not available to the verifier, are discarded.
+CoBOMs which are not within their validity period, or reference tags that are not available to the verifier, are discarded.
 
-The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal, and activates all tags referenced therein.
+The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 
-A Verifier may decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
-(Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of scope of the present document.)
-
+A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
+(Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.)
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
-In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not activated by the trusted integrator.
+In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
-After the Verifier has processed all CoBOMs it MUST discard any tags which have
-not been activated by a CoBOM.
+After the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
 ### Tags Identification and Validation
 
-The Verifier chooses tags -- including Concise Module ID Tags (CoMID, {{sec-comid}}),
-Concise Software ID Tags (CoSWID, {{-coswid}}),
-and/or Concise Trust Anchor Stores (CoTS, {{-ta-store}}) --
-from the selected CoRIMs.
+The Verifier chooses tags - including Concise Module ID Tags (CoMID, {{sec-comid}}), Concise Software ID Tags (CoSWID, {{-coswid}}), and/or Concise Trust Anchor Stores (CoTS, {{-ta-store}}) - from the selected CoRIMs.
 
-The Verifier MUST discard all tags which are not syntactically and semantically
-valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples)
-MUST be successfully resolved.
+The Verifier MUST discard all tags which are not syntactically and semantically valid.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
 
 ### Appraisal Context Construction
 
 All of the validated and potentially useful tags are loaded into the Appraisal Context.
+This concludes the Appraisal Context initialisation phase.
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
-This concludes the initialisation phase.
+## Evidence Collection {#sec-ev-coll}
 
-## Evidence Collection
+During the Evidence collection phase, the Verifier communicates with attesters to gather Evidence.
+The first part of this phase does not involve any cryptographic validation.
+This means that Verifiers can use untrusted code for their initial Evidence collection.
+The Evidence collection generates protocol-specific data and transcripts that are used as input to appraisal by the Verifier.
 
-In the Evidence collection phase the Verifier communicates with attesters to
-collect Evidence.
-
-The first part of the Evidence collection phase does not perform any
-cryptographic validation.
-This allows Verifiers to use untrusted code for their initial Evidence collection.
-
-The results of the evidence collection are protocol specific data and transcripts
-which are used as input to appraisal by the Verifier.
+## Evidence Appraisal {#sec-ev-appraisal}
 
 ### Cryptographic validation of Evidence {#sec-crypto-validate-evidence}
 
-If the authenticity of Evidence is secured by a cryptographic mechanism such as
-a signature, the first step in the Evidence Appraisal is to perform
-cryptographic validation of the Evidence.
+If Evidence is cryptographically signed, its validation is the first step in Appraisal.
 
-The exact cryptographic signature validation mechanics depend on the specific
-Evidence collection protocol.
-
-For example:
-In DICE, a proof of liveness is performed on the final key in the certificate
-chain.
-If this passes then a suitable certification path anchored on a trusted root
-certificate is looked up -- e.g., based on linking information obtained from
-the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}) --
-in the Appraisal Context.  If found, then usual X.509 certificate validation
-is performed.
-In PSA, the verification public key is looked up in the appraisal context using
-the `ueid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
+The way cryptographic signature validation works depends on the specific Evidence collection protocol being used.
+For instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain.
+If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}).
+If a trusted root certificate is found, the usual X.509 certificate validation is performed.
+On the other hand, in PSA, the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
 If found, COSE Sign1 verification is performed accordingly.
 
-Independent of the specific integrity protection method used, the integrity of
-Evidence MUST be successfully verified.
+Regardless of the specific integrity protection method used, the Evidence's integrity MUST be verified successfully.
 
 > A CoRIM profile MUST describe:
 >
