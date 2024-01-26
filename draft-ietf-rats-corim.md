@@ -1435,7 +1435,7 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 
 The selection process MUST yield at least one usable tag.
 
-Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage. TBC(tho)
+Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 ### CoBOM Extraction
 
