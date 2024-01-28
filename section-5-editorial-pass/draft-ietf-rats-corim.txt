@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 29 July 2024                                       Y. Deshpande
+Expires: 31 July 2024                                       Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         26 January 2024
+                                                         28 January 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 July 2024.
+   This Internet-Draft will expire on 31 July 2024.
 
 Copyright Notice
 
@@ -1878,15 +1878,16 @@ Table of Contents
    The way cryptographic signature validation works depends on the
    specific Evidence collection protocol being used.  For instance, in
    DICE, a proof of liveness is carried out on the final key in the
-   certificate chain.  If this is successful, a suitable certification
-   path is looked up in the Appraisal Context, based on linking
-   information obtained from the DeviceID certificate (see Section 9.2.1
-   of [DICE.Layer]).  If a trusted root certificate is found, the usual
-   X.509 certificate validation is performed.  On the other hand, in
-   PSA, the verification public key is looked up in the appraisal
-   context using the ueid claim found in the PSA claims-set (see
-   Section 4.2.1 of [I-D.tschofenig-rats-psa-token]).  If found, COSE
-   Sign1 verification is performed accordingly.
+   certificate chain (a.k.a., the alias certificate).  If this is
+   successful, a suitable certification path is looked up in the
+   Appraisal Context, based on linking information obtained from the
+   DeviceID certificate (see Section 9.2.1 of [DICE.Layer]).  If a
+   trusted root certificate is found, the usual X.509 certificate
+   validation is performed.  On the other hand, in PSA, the verification
+   public key is looked up in the appraisal context using the ueid claim
+   found in the PSA claims-set (see Section 4.2.1 of
+   [I-D.tschofenig-rats-psa-token]).  If found, COSE Sign1 verification
+   is performed accordingly.
 
    Regardless of the specific integrity protection method used, the
    Evidence's integrity MUST be verified successfully.
