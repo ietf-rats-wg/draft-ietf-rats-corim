@@ -1482,7 +1482,7 @@ The Evidence collection generates protocol-specific data and transcripts that ar
 If Evidence is cryptographically signed, its validation is the first step in Appraisal.
 
 The way cryptographic signature validation works depends on the specific Evidence collection protocol being used.
-For instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain.
+For instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}).
 If a trusted root certificate is found, the usual X.509 certificate validation is performed.
 On the other hand, in PSA, the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set (see {{Section 4.2.1 of -psa-token}}).
