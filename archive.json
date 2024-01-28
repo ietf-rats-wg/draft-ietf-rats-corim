@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-25T01:21:48.595688+00:00",
+  "timestamp": "2024-01-28T01:19:09.682890+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3932,7 +3932,7 @@
       "labels": [],
       "body": "Some environments (e.g., Arm CCA realms, TPMs) have a bunch of measurements bundled in PCR banks rather than single digests.\r\n\r\nInstead of having each technology provide their own custom PCR-bank measurement type, we should define it as a basic, reusable CoMID type.\r\n\r\nFor example - modelled on the `digest` type:\r\n\r\n```cddl\r\n; design A\r\n\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + bytes / nil ]\r\n]\r\n```\r\n\r\nThe `nil` alternative is for when the PCR slot is not populated or match is to be skipped.\r\n\r\nCoRIM profiles will have to define the exact shape of the bank, i.e., the number of elements in the `slots` array.",
       "createdAt": "2023-12-18T14:16:45Z",
-      "updatedAt": "2024-01-22T21:26:17Z",
+      "updatedAt": "2024-01-25T09:10:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -4179,6 +4179,13 @@
           "body": "measurement-values-map has the possibility of extensions that are protected by this standards body, and everything that already exists is there for DICE's benefit.\r\nI don't think that anything else should be added other than a namespaced entry with payload schema entirely determined by the namespace.\r\n\r\n```\r\n  ? &(named-extensions: 14) => [ + $named-extension ]\r\n\r\n$named-extension = [\r\n  $profile-type-choice\r\n  bytes\r\n]\r\n```\r\n\r\nThe TCG should use its own OID for TPM 2.0, say, to allow the bytes to be interpreted as an CBOR encoding of a map that includes something with the same schema as the proposed integrity-registers CDDL.",
           "createdAt": "2024-01-22T21:25:56Z",
           "updatedAt": "2024-01-22T21:26:17Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "hi @deeglaze, the scope of this is larger than PCRs.  It's an attempt at creating a CoRIM base type that covers TPMs, vTPMs as well as other types of \"integrity registers\" - for example, Arm CCA Realm's REMs.",
+          "createdAt": "2024-01-25T09:10:13Z",
+          "updatedAt": "2024-01-25T09:10:13Z"
         }
       ]
     },
@@ -4304,6 +4311,93 @@
       "updatedAt": "2024-01-19T23:48:36Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 195,
+      "id": "I_kwDOH6-tI859OFYu",
+      "title": "Hannes's comments",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/195",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Here are few points raised by Hannes, which are listed in sequence below, so that they are not lost and feedback incorporated.\r\n\r\n1. **Document Readability** : Overall, the document is hard to read. As a reader one is lost in details and there is no big picture. The introduction is 2 paragraphs long to be followed by lots of CDDL definitions in the terminology section. \r\n2. **Document Purpose** Need to clearly define the `Goal` of the document.\r\n3. Need a clear and consistent definition of a `CoMID`. \r\n4. Define the concept of \"module composition\" in context of CoRIM document\r\n5. Needs consistency in terminology: Example some places, `language` is referred as `lang`.\r\n6. Need to clearly highlight that JSON is also supported as encoding format for `Triples` and one should provide Examples as to how JSON Encoding will look like?",
+      "createdAt": "2024-01-25T17:19:10Z",
+      "updatedAt": "2024-01-26T09:21:17Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> 6. Need to clearly highlight that JSON is also supported as encoding format for `Triples` and one should provide Examples as to how JSON Encoding will look like?\r\n\r\nJSON is not in scope.\r\n",
+          "createdAt": "2024-01-25T17:37:52Z",
+          "updatedAt": "2024-01-25T17:37:52Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If we are to be in `sync` with TCG Version, it clearly states about `Support for JSON` ",
+          "createdAt": "2024-01-25T17:40:01Z",
+          "updatedAt": "2024-01-25T17:40:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "TCG DICE Endorsement Architecture is an information model. The data model is not normative (provided in an appendix). I-D.corim makes the data model normative.\r\n",
+          "createdAt": "2024-01-25T18:11:36Z",
+          "updatedAt": "2024-01-25T18:11:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Too confusing Ned: Throughout the TCG document It mentions, support for JSON and CBOR\r\nIf I see March 2022 Revision of TCG DICE Endorsement Architecture: Section 5.2 is Information model\r\nand \r\nSection 5.5 is the Data Model.\r\n\r\nWhat has changed since then?",
+          "createdAt": "2024-01-25T18:17:24Z",
+          "updatedAt": "2024-01-25T18:17:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">Section 5.5 is the Data Model\r\n\r\nI meant to say data definition (i.e., CDDL representation) is in the appendix. Appendicies are non-normative in TCG specs. The references to JSON and CBOR are in gray background text blocks which are another form of informative. Effectively, the 'wire format' is not normative. CDDL, technically isn't a wire format (so it can be described as a data modelling language). But it maps to cbor readily, so it makes a reasonable substitute for a wire-format expression. CDDL can be tweaked to allow it to describe JSON as a wire format. ",
+          "createdAt": "2024-01-25T18:29:51Z",
+          "updatedAt": "2024-01-25T18:29:51Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree that expression in CDDL can be manifested in either `CBOR` or `JSON` \r\n\r\nTo this fact the specification is very clear in Section 4.4:\r\n\r\n_The CoRIM schema, expressed in CDDL, is used to generate the CoRIM file that typically is rendered in CBOR [18]\r\nor JSON [19] format. This is illustrated in Figure 2._",
+          "createdAt": "2024-01-25T18:36:57Z",
+          "updatedAt": "2024-01-25T18:36:57Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think, this is a `sensible` statement and this is how it should be: Wherever `CoRIM` is expressed, be it in `TCG` Specification or `IETF` Specification. We should not force either way in any of the specification.",
+          "createdAt": "2024-01-25T18:39:16Z",
+          "updatedAt": "2024-01-25T18:39:16Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I am _strongly_ against specifying a JSON serialisation in the IETF document.\r\n\r\nThe only serialisation we should describe is CBOR.",
+          "createdAt": "2024-01-25T19:48:36Z",
+          "updatedAt": "2024-01-25T19:48:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am _strongly_ against specifying a JSON serialisation in the IETF document.\r\n> \r\n> The only serialisation we should describe is CBOR.\r\n\r\nPlease specify your reason for the `strong` statement above.",
+          "createdAt": "2024-01-26T08:50:50Z",
+          "updatedAt": "2024-01-26T08:51:07Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I am _strongly_ against specifying a JSON serialisation in the IETF document.\r\n> > The only serialisation we should describe is CBOR.\r\n> \r\n> Please specify your reason for the `strong` statement above.\r\n\r\nscope creep",
+          "createdAt": "2024-01-26T09:21:15Z",
+          "updatedAt": "2024-01-26T09:21:15Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -22815,7 +22909,7 @@
       "labels": [],
       "body": "Fix #185",
       "createdAt": "2023-12-20T15:03:53Z",
-      "updatedAt": "2024-01-11T19:31:54Z",
+      "updatedAt": "2024-01-25T09:14:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "32f7c64b04efc5b470bc10d56bbc5f512852f283",
@@ -23106,6 +23200,13 @@
           "body": "> > I would not prefer to produce wrong examples, if mixing is not applicable\r\n> \r\n> Wrong example? Where do we state that the keys have to be homogeneous?\r\n\r\nI am yet to grapple with the fact both type of encoding in the same measurement-value-map is a possibility for a same `profile`",
           "createdAt": "2024-01-10T17:21:43Z",
           "updatedAt": "2024-01-10T17:21:43Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "hi @andrew-draper, you had comments at the very beginning, which I think I have addressed.  Could you have a look and confirm you are OK with the current wording?",
+          "createdAt": "2024-01-25T09:14:57Z",
+          "updatedAt": "2024-01-25T09:14:57Z"
         }
       ],
       "reviews": [
@@ -23460,21 +23561,21 @@
       "id": "PR_kwDOH6-tI85kUt0d",
       "title": "[please ignore] enable diagnostic",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/192",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-01-17T15:06:08Z",
-      "updatedAt": "2024-01-17T15:10:35Z",
+      "updatedAt": "2024-01-25T09:10:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "32f7c64b04efc5b470bc10d56bbc5f512852f283",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "investigate-failure",
       "headRefOid": "96003cf09f4bd064668e34d606e98bb0cec13c01",
-      "closedAt": null,
+      "closedAt": "2024-01-25T09:10:34Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -23508,6 +23609,100 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 196,
+      "id": "PR_kwDOH6-tI85lKJeA",
+      "title": "editorial pass of \u00a75 up to 5.3.2",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/196",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "* various reformatting\r\n* edits for clarity & conciseness\r\n* added missing \"Evidence Appraisal\" subsection\r\n* removed \"group\" from the glossary because it wasn't used",
+      "createdAt": "2024-01-26T13:17:57Z",
+      "updatedAt": "2024-01-28T00:00:05Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "daf987e2a2b30360e774988991fc84966bccdbdb",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "section-5-editorial-pass",
+      "headRefOid": "7bf7aed59c2280fe4a10e46b2c4d4cbbdb516aa4",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "While doing the editorial pass, I realised I didn't get the intended scope of \u00a75.1 \"Verifier Abstraction\", at least given its current contents which can be categorised into two buckets:\r\n1. a restate of the last paragraph of \u00a75\r\n2. definitions of many useful terms\r\n\r\nThe former can probably be dropped (or merged with what we already have in \u00a75), while the latter needs to move to the terminology section (\u00a71.1)\r\n\r\nGiven that, we'd be left with an empty section :-)\r\n\r\nIf we want to leave it, then I guess we might want to put a picture similar to https://github.com/ietf-rats-wg/draft-ietf-rats-corim/wiki/verification-schematic and add some prose around it.",
+          "createdAt": "2024-01-26T13:44:43Z",
+          "updatedAt": "2024-01-26T13:48:52Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another observation I have is that this section should be the entry point of the document.  From here we would have references to the sections describing the data structures used.",
+          "createdAt": "2024-01-26T14:04:18Z",
+          "updatedAt": "2024-01-26T14:04:37Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85uBNmI",
+          "commit": {
+            "abbreviatedOid": "b204e0f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-26T14:01:36Z",
+          "updatedAt": "2024-01-26T14:01:36Z",
+          "comments": [
+            {
+              "originalPosition": 116,
+              "body": "```suggestion\r\nLater stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.\r\n```",
+              "createdAt": "2024-01-26T14:01:36Z",
+              "updatedAt": "2024-01-26T14:01:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uHBsC",
+          "commit": {
+            "abbreviatedOid": "7bf7aed"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see comments inline",
+          "createdAt": "2024-01-27T23:57:12Z",
+          "updatedAt": "2024-01-28T00:00:05Z",
+          "comments": [
+            {
+              "originalPosition": 177,
+              "body": "```suggestion\r\nThis means that Verifiers MAY use untrusted code for their initial Evidence collection.\r\n```",
+              "createdAt": "2024-01-27T23:57:12Z",
+              "updatedAt": "2024-01-28T00:00:05Z"
+            },
+            {
+              "originalPosition": 210,
+              "body": "```suggestion\r\nFor instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).\r\n```",
+              "createdAt": "2024-01-27T23:58:42Z",
+              "updatedAt": "2024-01-28T00:00:05Z"
+            },
+            {
+              "originalPosition": 213,
+              "body": "Should this text be moved to the PSA profile?",
+              "createdAt": "2024-01-27T23:59:33Z",
+              "updatedAt": "2024-01-28T00:00:05Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
