@@ -1139,8 +1139,6 @@ The predicate asserts that any of the key(s) (found in the triple object) can be
 
 If contained in a CoRIM, this triple endorses that the key(s) were provisioned to the Target Environment.
 
-If contained in Evidence, this triple asserts that the key(s) are present in the Target Environment.
-
 The Verifier SHOULD perform offline verification of the key(s).
 
 The subject of an identity triple uses an instance or class identifier to refer
