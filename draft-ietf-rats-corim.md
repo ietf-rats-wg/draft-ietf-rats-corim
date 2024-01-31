@@ -1173,7 +1173,7 @@ Attesting Environment integrity protects Evidence using at least one of the keys
 
 Depending on which `$crypto-key-type-choice` form is supplied, the Verifier may
 need to take different steps to locate or verify the key.
-
+Note: some keys can only be used for attestation purposes, hence should not be mistaken for device identities.
 ~~~ cddl
 {::include cddl/attest-key-triple-record.cddl}
 ~~~
