@@ -1167,6 +1167,7 @@ The Verifier SHOULD perform offline verification of the key(s).
 
 An Attestation Keys triple relates one or more cryptographic keys to an
 Attesting Environment. The attest key triple subject is an Attesting
+Environment whose object is one or more cryptographic keys.
 Environment whose object is a cryptographic key. The predicate asserts that the
 Attesting Environment integrity protects Evidence using at least one of the keys.
 
