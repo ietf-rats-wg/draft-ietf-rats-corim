@@ -1152,7 +1152,7 @@ and
 
 are acceptable states.
 
-Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
+Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects. Refer {{sec-cmp-integrity-registers}}, for matching procedure for Integrity Registers.
 
 
 ##### Domain Types {#sec-comid-domain-type}
@@ -1866,11 +1866,11 @@ Otherwise, `cryptokeys` does not match.
 
 ##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
 
-For each Integrity Register entry in Evidence, the Verifier will use the associated identifier to look up the matching Integrity Register entry in the Reference Value.
-If no entry is found, the Reference Value does not match.
-Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}}.
-Note that it is not required for all the entries in the Reference Value to be used during matching: Evidence could consist of a "quote" (in TPM parlance) of just a subset of the register space.
+For each Integrity Register entry in the Reference Value, identified as: id => digests_{ref}, the Verifier will claim a "match" with Evidence only if the Evidence has an Integrity Register entry, identified as: id => digests_{ev} such that the `id` in Evidence and Reference Value both have the same type and value and the digests matches using the method defined in {{sec-cmp-digests}}.
 
+If no entry is found, the Reference Value does not match.
+
+Note that it is not required for all the Evidence entries in an Integrity Register array to be used during matching: Evidence could consist of a Target Environment's complete register space, while the Integrity Register array in Reference Values could consist of a subset of the Target Environment's register space.
 ##### Handling of new tags
 
 A profile may specify handling for new CBOR tagged Reference Values. The
