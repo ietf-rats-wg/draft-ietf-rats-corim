@@ -963,6 +963,9 @@ The following describes each member of the `measurement-values-map`.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 Matching is described in {{sec-cryptokeys-matching}}.
 
+* `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
+
+
 ###### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -1117,6 +1120,51 @@ checks, and trust anchor checks.
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
 ~~~
+
+##### Integrity Registers {#sec-comid-integrity-registers}
+
+An Integrity Registers map groups together one or more measured "objects".
+Each measured object has a unique identifier and one or more associated digests.
+Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
+
+~~~ cddl
+{::include cddl/integrity-registers.cddl}
+~~~
+
+All the measured objects in an Integrity Registers map are explicitly named and the order in which they appear in the map is irrelevant.
+Any digests associated with a measured object represent an acceptable state for the object.
+Therefore, if multiple digests are provided, the acceptable state is their cross-product.
+For example, given the following Integrity Registers:
+
+~~~cbor-diag
+{
+  0: [ [ 0, h'00' ] ],
+  1: [ [ 0, h'11' ], [ 1, h'12' ] ]
+}
+~~~
+
+then both
+
+~~~ cbor-diag
+{
+  0: [ 0, h'00' ],
+  1: [ 0, h'11' ]
+}
+~~~
+
+and
+
+~~~cbor-diag
+{
+  0: [ 0, h'00' ],
+  1: [ 1, h'12' ]
+}
+~~~
+
+are acceptable states.
+
+Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
+
 
 ##### Domain Types {#sec-comid-domain-type}
 
@@ -1763,7 +1811,7 @@ If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
 Accepted Claims Set less than the value in the Reference Value then the
 Reference Value does not match.
 
-##### Comparison for digests entries
+##### Comparison for digests entries {#sec-cmp-digests}
 
 The value stored under `measurement-values-map` key 2,
 or a value tagged with
@@ -1799,7 +1847,7 @@ Reference Value does not match.
 
 > I think this comparison method only works if the entry is at key 4 (because
 there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores [expect-raw-value raw-value-mask] in an array?
+which stores `[expect-raw-value raw-value-mask]` in an array?
 
 [^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
@@ -1817,6 +1865,13 @@ then the next entry from the Reference Values array is likewise
 compared with the next entry of the Accepted Claims Set array.
 If all entries of the Reference Values array match a corresponding entry in the Accepted Claims Set array, then the `cryptokeys` Reference Value matches.
 Otherwise, `cryptokeys` does not match.
+
+##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
+
+For each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier to look up the matching Integrity Register entry in Evidence.
+If no entry is found, the Reference Value does not match.
+Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}}.
+Note that it is not required for all the entries in Evidence to be used during matching: the Reference Value could consist of a "quote" (in TPM parlance) of just a subset of the register space.
 
 ##### Handling of new tags
 
