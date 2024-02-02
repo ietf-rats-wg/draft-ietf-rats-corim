@@ -1866,10 +1866,10 @@ Otherwise, `cryptokeys` does not match.
 
 ##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
 
-For each Integrity Register entry in Evidence, the Verifier will use the associated identifier to look up the matching Integrity Register entry in the Reference Value.
+For each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier to look up the matching Integrity Register entry in Evidence.
 If no entry is found, the Reference Value does not match.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}}.
-Note that it is not required for all the entries in the Reference Value to be used during matching: Evidence could consist of a "quote" (in TPM parlance) of just a subset of the register space.
+Note that it is not required for all the entries in Evidence to be used during matching: the Reference Value could consist of a "quote" (in TPM parlance) of just a subset of the register space.
 
 ##### Handling of new tags
 
