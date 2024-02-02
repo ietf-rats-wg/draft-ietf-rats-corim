@@ -22,11 +22,11 @@ Values from Endorsers and Reference Value Providers, such as manufacturers,
 distributors, or device owners. This document specifies the information elements for
 representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.19.0" name="generator">
+<meta content="xml2rfc 3.19.1" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.19.0
+  xml2rfc 3.19.1
     Python 3.11.6
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
@@ -39,7 +39,7 @@ representing Endorsements and Reference Values in CBOR format.
     requests 2.31.0
     setuptools 68.2.2
     six 1.16.0
-    wcwidth 0.2.12
+    wcwidth 0.2.13
 -->
 <link href="draft-ietf-rats-corim.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1038,11 +1038,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">CoRIM</td>
-<td class="right">January 2024</td>
+<td class="right">February 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 14 July 2024</td>
+<td class="center">Expires 5 August 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1055,12 +1055,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-01-11" class="published">11 January 2024</time>
+<time datetime="2024-02-02" class="published">2 February 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-07-14">14 July 2024</time></dd>
+<dd class="expires"><time datetime="2024-08-05">5 August 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1127,7 +1127,7 @@ representing Endorsements and Reference Values in CBOR format.<a href="#section-
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 14 July 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 August 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1793,7 +1793,7 @@ tagged-uuid-type = #6.37(uuid-type)
 <a href="#section-1.3.5" class="section-number selfRef">1.3.5. </a><a href="#name-ueid" class="section-name selfRef">UEID</a>
           </h4>
 <p id="section-1.3.5-1">Used to tag a byte string as Universal Entity ID Claim (UUID) defined in
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-24#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#I-D.ietf-rats-eat" class="cite xref">I-D.ietf-rats-eat</a>]</span>.<a href="#section-1.3.5-1" class="pilcrow">¶</a></p>
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-25#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#I-D.ietf-rats-eat" class="cite xref">I-D.ietf-rats-eat</a>]</span>.<a href="#section-1.3.5-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-1.3.5-2">
 <pre>
 ueid-type = bytes .size 33
@@ -4052,10 +4052,10 @@ Otherwise, <code>cryptokeys</code> does not match.<a href="#section-5.4.2.3.4-2"
               <h6 id="name-comparison-for-integrity-re">
 <a href="#section-5.4.2.3.5" class="section-number selfRef">5.4.2.3.5. </a><a href="#name-comparison-for-integrity-re" class="section-name selfRef">Comparison for Integrity Registers</a>
               </h6>
-<p id="section-5.4.2.3.5-1">For each Integrity Register entry in Evidence, the Verifier will use the associated identifier to look up the matching Integrity Register entry in the Reference Value.
+<p id="section-5.4.2.3.5-1">For each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier to look up the matching Integrity Register entry in Evidence.
 If no entry is found, the Reference Value does not match.
 Instead, if an entry is found, the digest comparison proceeds as defined in <a href="#sec-cmp-digests" class="auto internal xref">Section 5.4.2.3.2</a>.
-Note that it is not required for all the entries in the Reference Value to be used during matching: Evidence could consist of a "quote" (in TPM parlance) of just a subset of the register space.<a href="#section-5.4.2.3.5-1" class="pilcrow">¶</a></p>
+Note that it is not required for all the entries in Evidence to be used during matching: the Reference Value could consist of a "quote" (in TPM parlance) of just a subset of the register space.<a href="#section-5.4.2.3.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="handling-of-new-tags">
@@ -4801,7 +4801,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-eat">[I-D.ietf-rats-eat]</dt>
         <dd>
-<span class="refAuthor">Lundblade, L.</span>, <span class="refAuthor">Mandyam, G.</span>, <span class="refAuthor">O'Donoghue, J.</span>, and <span class="refAuthor">C. Wallace</span>, <span class="refTitle">"The Entity Attestation Token (EAT)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-eat-24</span>, <time datetime="2023-12-16" class="refDate">16 December 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-24">https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-24</a>&gt;</span>. </dd>
+<span class="refAuthor">Lundblade, L.</span>, <span class="refAuthor">Mandyam, G.</span>, <span class="refAuthor">O'Donoghue, J.</span>, and <span class="refAuthor">C. Wallace</span>, <span class="refTitle">"The Entity Attestation Token (EAT)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-eat-25</span>, <time datetime="2024-01-15" class="refDate">15 January 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-25">https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-25</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-sacm-coswid">[I-D.ietf-sacm-coswid]</dt>
         <dd>
