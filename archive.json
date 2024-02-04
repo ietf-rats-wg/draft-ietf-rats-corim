@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-01T01:18:20.727106+00:00",
+  "timestamp": "2024-02-04T01:19:08.123305+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3925,15 +3925,15 @@
       "id": "I_kwDOH6-tI855_ynT",
       "title": "PCR bank measurement type",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/185",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Some environments (e.g., Arm CCA realms, TPMs) have a bunch of measurements bundled in PCR banks rather than single digests.\r\n\r\nInstead of having each technology provide their own custom PCR-bank measurement type, we should define it as a basic, reusable CoMID type.\r\n\r\nFor example - modelled on the `digest` type:\r\n\r\n```cddl\r\n; design A\r\n\r\npcrs = [\r\n  alg:  (int / text)\r\n  slots: [ + bytes / nil ]\r\n]\r\n```\r\n\r\nThe `nil` alternative is for when the PCR slot is not populated or match is to be skipped.\r\n\r\nCoRIM profiles will have to define the exact shape of the bank, i.e., the number of elements in the `slots` array.",
       "createdAt": "2023-12-18T14:16:45Z",
-      "updatedAt": "2024-01-25T09:10:13Z",
-      "closedAt": null,
+      "updatedAt": "2024-02-02T17:03:20Z",
+      "closedAt": "2024-02-02T17:03:20Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -4516,15 +4516,15 @@
       "labels": [],
       "body": "We discussed in today's meeting that next time we will go over a PR or slides about simplification to CoRIM as a standard to a Core and some other bits.\r\n\r\nHere's what I think ought to be addressed:\r\n\r\n1. CoRIM is a closed CDDL without extension points.\r\n2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n3. Profiles for standard attestation technologies may choose to go through IETF standardization to allocate CBOR tags through IANA, but this is not required for profiles.\r\n4. The CoRIM working group may define reference value types with \"matching\" semantics that can be reused by other profile definitions. This should help extend the composability of the initially standardized notions of reference values. The policy should be, but still at the WG's discretion, that reference values are not given privileged CBOR representation through tag allocation without being applicable to at least 2 standard profiles. The applicability of the generalization must be concrete to give clear motivation behind the representation and semantics.\r\n5. The ACS discussion should not use CDDL because it confuses the conceptual with the serializable. It should use an ABNF to describe an algebra of claims and sets of claims. All reference value and endorsement types must have a defined operation to reflect into the algebra. Claims can be partially ordered in order to define simplification through subsumption. A set of claims must therefore contain pairwise incomparable claims. By defining this algebra, the standard may give a clear definition to word \"match\" for composition and reuse, but it does not limit what profiles are definable\u2013it is merely scaffolding. The algebraic notion of Claim is extensible by any profile, but each type of Claim is defined and owned by the standard/profile that defines it.\r\n6. A CoRIM either fails to \"match\" an accepted claim set, or it augments individual claims in the ACS with \"authorized-by\" tags.\r\n7. Evidence Appraisal should be defined explicitly as an operation to translate an octet string into a claim set.\r\n\r\nFor all of this, we've boiled the representation down to profile * profile-defined octet string. The algebra is a communication tool for specifying the semantics for composable standardized profile components.\r\n\r\nAll of the schema that is specified in the current document can be interpreted as, \"if your profile's representation structurally matches profiles defined in RFCs, then it must semantically mean the same\". You can keep TPM, PSA, and DICE following the same schema if you'd like as a way to provide a baseline for expected expressiveness.\r\n\r\nBut by doing this, you need to have reserved indices for the standard to grow and safe regions that custom profiles are allowed to define themselves. For example, `* $$corim-map-extension` allows for anyone to define index 6 or higher, but that is not desirable unless this type really should be considered \"closed\" from the standards body's perspective. If it's open, then say 0-1000 and [2^31, 2^32) are reserved for the specification to allow for custom profiles to use small indices without giving up a value space for the standard.\r\n\r\nThe reserved indices should be assigned by IANA for each following RFC, but the core CoRIM spec defines the value space for standard extension.\r\n\r\nDo folks find this reasonable? ",
       "createdAt": "2024-01-31T17:55:01Z",
-      "updatedAt": "2024-01-31T21:53:17Z",
+      "updatedAt": "2024-02-02T20:40:22Z",
       "closedAt": null,
       "comments": [
         {
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
-          "body": "[Verifier Theory of Operation.pdf](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/files/14116685/Verifier.Theory.of.Operation.pdf) describes a theory of operation that applies to the currently documented (in corim and other I-Ds or industry specs) conceptual messages that could be mapped to a Verifier internal representation. The theory of operation isn't exclusive to the objective of \"simplifying\" the CoRIM structure, but may inform that objective.\r\n",
+          "body": "\r\n[Verifier Theory of Operation v3.pdf](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/files/14145164/Verifier.Theory.of.Operation.v3.pdf)\r\n describes a theory of operation that applies to the currently documented (in corim and other I-Ds or industry specs) conceptual messages that could be mapped to a Verifier internal representation. The theory of operation isn't exclusive to the objective of \"simplifying\" the CoRIM structure, but may inform that objective.\r\n",
           "createdAt": "2024-01-31T19:56:53Z",
-          "updatedAt": "2024-01-31T20:06:42Z"
+          "updatedAt": "2024-02-02T20:40:22Z"
         },
         {
           "author": "nedmsmith",
@@ -4546,8 +4546,89 @@
           "body": "> the CDDL that's used for explanation purposes only might actually be specifying an interchange format between verifiers? Can we say that's not the intention?\r\n\r\nThe I-D already tries to say that there is an internal representation and that if we use CDDL to describe the internal representation, that it isn't for the purpose of defining an interchange format.\r\n\r\nThere has been a thread in the CCC related to conceptual message types and attestation results formats which focuses on interchange formats. The theory of operations mentions the concept so that it is understood that for a distributed Verifier architecture the verifiers need to agree on a common internal representation.",
           "createdAt": "2024-01-31T21:53:16Z",
           "updatedAt": "2024-01-31T21:53:16Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> 1. CoRIM is a closed CDDL without extension points.\r\n> 2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n\r\nI am trying to align these two requirements and this seems to break with any CDDL convention introduced in IETF specification text introduced  in the recent past.\r\n\r\nIn order to enable profiles to the \"core CoRIM spec\" we will add CDDL extension points to the base CoRIM spec. How would you integrate IANA registrations for well-known extensions and create standardized global interoperability otherwise? It seems to me that I am missing a vital piece of concept here. What am I missing?",
+          "createdAt": "2024-02-01T11:05:11Z",
+          "updatedAt": "2024-02-01T11:05:11Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> 3. Profiles for standard attestation technologies may choose to go through IETF standardization to allocate CBOR tags through IANA, but this is not required for profiles.\r\n\r\nYou can always chose the way of custom extensions as long as they do not collide with IANA registered extensions. Okay",
+          "createdAt": "2024-02-01T11:06:25Z",
+          "updatedAt": "2024-02-01T11:06:25Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> 4. The CoRIM working group may define reference value types with \"matching\" semantics that can be reused by other profile definitions. This should help extend the composability of the initially standardized notions of reference values. The policy should be, but still at the WG's discretion, that reference values are not given privileged CBOR representation through tag allocation without being applicable to at least 2 standard profiles. The applicability of the generalization must be concrete to give clear motivation behind the representation and semantics.\r\n\r\nI can follow `define reference value types with \"matching\" semantics that can be reused by other profile definitions. This should help extend the composability of the initially standardized notions of reference values.` Okay\r\n\r\nCBOR tags are there to help and not to constrain. If you choose not to use CBOR tags, you must provide coherent CDDL or might fall back to very comprehensive and fool-proof English text (which I am not sure of that that is a thing). But CBOR tags should not be the only way to deal with CDDL defined CBOR structures. If that is what you mean, okay. I would not block CBOR tag allocation by forcing at least two profiles to use said tags. That seem to be violating POLS/POLA and I would strongly advise not to do that.",
+          "createdAt": "2024-02-01T11:12:50Z",
+          "updatedAt": "2024-02-01T11:12:50Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> 5. The ACS discussion should not use CDDL because it confuses the conceptual with the serializable. It should use an ABNF to describe an algebra of claims and sets of claims. All reference value and endorsement types must have a defined operation to reflect into the algebra. Claims can be partially ordered in order to define simplification through subsumption. A set of claims must therefore contain pairwise incomparable claims. By defining this algebra, the standard may give a clear definition to word \"match\" for composition and reuse, but it does not limit what profiles are definable\u2013it is merely scaffolding. The algebraic notion of Claim is extensible by any profile, but each type of Claim is defined and owned by the standard/profile that defines it.\r\n\r\n`The ACS discussion should not use CDDL because it confuses the conceptual with the serializable` is an interesting point. I think it is done so it is intuitive to the reader on the one hand. OTOH, it seem way off to suddenly use ABNF here. I do not know what the middle ground should look like. How about we stick with CDDL with for now (although it is not necessarily serialized in CBOR internally) and go to the CBOR WG with that questions after we agreed on the more pressing issue about the \"core CoRIM spec\" itself?",
+          "createdAt": "2024-02-01T11:16:45Z",
+          "updatedAt": "2024-02-01T11:16:45Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> 6. A CoRIM either fails to \"match\" an accepted claim set, or it augments individual claims in the ACS with \"authorized-by\" tags.\r\n\r\nI think I might need more input for this, as an ACS (also a name we should revisit maybe, but that is not important now) is build based on the input of one or more CoRIMs, for examples via a CoMID's measurement-map acting as a condition to also add endorsed values. So, what does \"CoRIM fails to match an ACS\" mean?",
+          "createdAt": "2024-02-01T11:20:42Z",
+          "updatedAt": "2024-02-01T11:20:42Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> 7. Evidence Appraisal should be defined explicitly as an operation to translate an octet string into a claim set.\r\n\r\nI think I might need more context to grasp what means. It could mean: `Evidence Appraisal requires policy to compare bytes to create Attestation Result Claims.` Does that match your thinking?",
+          "createdAt": "2024-02-01T11:23:23Z",
+          "updatedAt": "2024-02-01T11:23:23Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> The description in the slides says that different verifiers can share partial ACSes, which makes me wonder if the CDDL that's used for explanation purposes only might actually be specifying an interchange format between verifiers? Can we say that's not the intention?\r\n\r\nThat is a really cool summary. It is yet more content, but I strongly suggest that we do not loose track of @deeglaze suggestion here.",
+          "createdAt": "2024-02-01T13:24:38Z",
+          "updatedAt": "2024-02-01T13:24:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> different verifiers can share partial ACSes\r\n\r\nThis implies the different verifiers must agree on a common representation of internal structures such as the ACS.",
+          "createdAt": "2024-02-01T17:38:29Z",
+          "updatedAt": "2024-02-01T17:38:29Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "> > 1. CoRIM is a closed CDDL without extension points.\r\n> > 2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n> \r\n> I am trying to align these two requirements and this seems to break with any CDDL convention introduced in IETF specification text introduced in the recent past.\r\n> \r\n\r\nWhich text would that be? I'm saying that CoRIM is an envelope for providing information to a Verifier, where information is interpreted according to the profile. This allows for maximum flexibility for the profile definer to use the envelope format. I should clarify that I still intend for the pair of profile and payload to be within a COSE_Sign1 envelope. With that, you have the absolute bare minimum for authentication, semantic interpretation, and information.\r\n\r\n> In order to enable profiles to the \"core CoRIM spec\" we will add CDDL extension points to the base CoRIM spec. How would you integrate IANA registrations for well-known extensions and create standardized global interoperability otherwise? It seems to me that I am missing a vital piece of concept here. What am I missing?\r\n\r\nWith the more open envelope type structure, the rest of the document could then start to stand as it currently is, but I have an issue with its presentation. I think every addition on the envelope should be justified with standard profiles that illustrate the concept, if not completely relegated to the profile spec that introduces the concept. The culmination of all the specs can be a supplemental appendix with references to the RFCs that define a concept.\r\n\r\nIf there are no uses, they should be relegated to an extension RFC for when they are used. Examples then become case studies. I'm not saying any specific piece of the spec is contrived, I'm saying a lot feels unjustified as generalizations over an unknown set of profiles.\r\n\r\nWhen the spec says \"base schema\" it's talking about core profile elements that ought to be easily adopted by a Verifier's implementation of a profile that follows the core. The points about extensibility should be higher up in the document and stand out more typographically. I didn't now about the negative integer map extension convention, and I felt it was buried in section 3.2.1.\r\n\r\nI find it hard to determine why some pieces are extensible while others aren't. That's maps and type choices. Why are some type choices are so spoiled for choice when the type is extensible for other profiles? Why use a closed map when you can use a struct?\r\n\r\nFor specific presentational choices, I'd recommend to\r\n\r\n* move all the optional keys in an extensible map out of the initial CDDL and into their own sections as extensions of the $$MAP-NAME-extensions code point. This allows every addition to get specifically justified with prose to explain what concept it embodies, and how it solves a particular problem.\r\n* pick _one_ preferred alternative to present in the introduction of any $NAME-type-choice. Move the others to a Standard Extensions Library section.\r\n* Even with the typographical convention of $ or $$ prefix, do say in prose that a particular type is extensible or not.\r\n\r\nThis keeps the spec more digestible and lets me know that this schema is more of a menu than a requirement. When there are large selections of optional representations, you're making life harder both for the Verifier implementors and the profile authors that don't know what representation to pick.\r\n\r\nClosed types that don't make sense to me to stay closed:\r\n\r\n* corim-locator-map: A uri is one way to reference something, but as I noted in another issue, we may want to reference specific UEFI variables like in the TCG PFP Rev 1.06 for the SP800-155 event's rimLocatorType.\r\n* svn-type-choice: X or >=X aren't the only conditions an endorser may want to express.\r\n* role-type-choice: Not actually closed, but a variable in a CDDL generic that is typographically confusing given the NAME-type-choice, $NAME-type-choice notational convention called out at the beginning of the document. Since no instantiation in the document uses a closed type, please change to the $NAME-type-choice naming for the generic variable.\r\n* class-map: The class-id is allowed to be a tagged-bytes to encode something as its own notion of extension to class, so I'd say allow this map to be extensible. Again the vendor/model/layer/index options should be in their own section to introduce the concept they represent (clearly a DICE thing).\r\n\r\nRequired map keys that aren't justified as to why they're required:\r\n\r\n* corim-map's id and tags keys are the only required pieces, but the type is extensible. What is the \"tag\" concept that makes it a requirement? Why does a RIM /require/ a document identity? Can the CoSWID and CoBOM type choices be left to a separate document or much farther down?\r\n* entity-map's role\r\n\r\nThe spec should explain why any closed type is closed.\r\n* ip-addr-type-choice: Supports ipv4 and ipv6. No other IP address standards exist today, and it's not vendor-extensible concept.\r\n* mac-addr-type-choice: Similar to ip-addr.\r\n* tagged-concise-rim-type-choice: Sort of obvious that an open type allows a corim to mean absolutely anything, but given the call to justify all types, this still should be explained.\r\n* environment-map: This needs hard justification to stick to just the class/instance/group breakdown, since you severely limit what concepts express what environments you're describing. Every value is an extensible type (except class-map, which should be extensible), so just like class-map, why keep it closed? You could still recommend sticking to the existing concepts by giving ample examples of their use in the standard extension library sections.\r\n\r\nThen there are types that aren't named -type-choice but are also required representational choice in a concept (actually I only see the one)\r\n\r\n* tag-version-type: The optional version as the only other component and only as a uint makes different kinds of versioning schemes unusable. What is the property you need on the version type for its semantic interpretation? Can we spec a type choice required property like \"has a partial order\" or \"has a total order\"?\r\n* version-map's version value is text only, but has an extensible scheme type? \r\n* entity-map's reg-id uri type: so many extensible identity types elsewhere, but this is only a URI?\r\n\r\nTypes that I just don't understand the implied concept for\r\n\r\n* tag-identity-map: Probably I'm just missing the concept explanation for this. $tag-id-type-choice is extensible but the text says it's a universally unique identifier. An extensible choice doesn't just mean different ways of representing a UUID. If you don't mean a UUID, then say an identifier type that should be universally unique.  What is the purpose? The linked-tag-map concept is not well-justified.\r\n\r\nI'll leave it at that for now.",
+          "createdAt": "2024-02-01T21:45:03Z",
+          "updatedAt": "2024-02-01T21:45:03Z"
         }
       ]
+    },
+    {
+      "number": 199,
+      "id": "I_kwDOH6-tI85-CwiC",
+      "title": "Address Integrity Register Comparison comments from Ned",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/199",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "              ```suggestion\r\nWhen asserted as Evidence, the Verifier accepts each Integrity Register entry into the ACS.\r\nWhen asserted as Reference Values, all of the Integrity Register entries of the matching EMT MUST have a corresponding Integrity Register entry in the ACS Evidence.\r\nAdditionally, the Verifier will use the associated Integrity Register label (i.e.,`integrity-register-id-type-choice`) to match the label in a corresponding Integrity Register entry in the ACS.\r\nThe Verifier compares the labels which MUST exactly match.\r\nIf the labels match, then the Integrity Register digest arrays are compared (see {{sec-comid-integrity-registers}} and {{sec-comparison-for-digests-entries}}).\r\n```\r\nNote: {#sec-comparison-for-digets-entries} needs to be added.\r\n\r\n_Originally posted by @nedmsmith in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189#discussion_r1473577658_\r\n            ",
+      "createdAt": "2024-02-02T10:55:06Z",
+      "updatedAt": "2024-02-02T17:11:02Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -16633,13 +16714,13 @@
       "labels": [],
       "body": "Issue #126 anticipates better clarification for identity and attest-key triples to disambiguate from keys as measurements.",
       "createdAt": "2023-09-01T20:20:39Z",
-      "updatedAt": "2024-01-31T23:13:48Z",
+      "updatedAt": "2024-02-02T16:52:43Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "957931f2a8fdd51175c752aa2d97e71c2835eae2",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "ident-attest-key-wording",
-      "headRefOid": "d999b671b9675658a63dcaa779191082c8de88a6",
+      "headRefOid": "271a4cf16ebd884375bc6507a6f6cf378051892d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -17071,6 +17152,56 @@
               "body": "Here device is the application layer concept that is been mapped to a `Environment` for encoding.\r\n\r\nPerhaps, we can clarify better that the Device Identifier, either class of Device or specific Device instance, is expressed in the Environment in the subject of the triple",
               "createdAt": "2024-01-31T18:38:13Z",
               "updatedAt": "2024-01-31T18:39:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ukbzc",
+          "commit": {
+            "abbreviatedOid": "d999b67"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-01-31T23:04:26Z",
+          "updatedAt": "2024-02-02T16:52:43Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\nThe triple subject is a device identity used to name a device.\r\n```",
+              "createdAt": "2024-01-31T23:04:26Z",
+              "updatedAt": "2024-02-02T16:52:43Z"
+            },
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nThe subject of a device identity triple uses an instance or class identifier to refer\r\n```",
+              "createdAt": "2024-01-31T23:05:58Z",
+              "updatedAt": "2024-02-02T16:52:43Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nto a device, and cryptographic key objects.\r\nThe predicate asserts that\r\n```",
+              "createdAt": "2024-01-31T23:07:01Z",
+              "updatedAt": "2024-02-02T16:52:43Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\nat least one of the keys, as defined by `$crypto-key-type-choice`, authenticates the device.\r\n```",
+              "createdAt": "2024-01-31T23:08:17Z",
+              "updatedAt": "2024-02-02T16:52:43Z"
+            },
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-01-31T23:08:58Z",
+              "updatedAt": "2024-02-02T16:52:43Z"
+            },
+            {
+              "originalPosition": 49,
+              "body": "```suggestion\r\nThe Verifier SHOULD perform offline verification of the key(s) that may include revocation, expiration, and certificate path validation checks.\r\n```",
+              "createdAt": "2024-01-31T23:12:35Z",
+              "updatedAt": "2024-02-02T16:52:43Z"
             }
           ]
         }
@@ -23118,24 +23249,26 @@
       "id": "PR_kwDOH6-tI85ieyr0",
       "title": "add integrity registers",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fix #185",
       "createdAt": "2023-12-20T15:03:53Z",
-      "updatedAt": "2024-01-31T22:56:27Z",
+      "updatedAt": "2024-02-02T17:03:22Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "32f7c64b04efc5b470bc10d56bbc5f512852f283",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "integrity-registers",
-      "headRefOid": "fa9ee538e8e17a4a618a9ab4095ef50b7a99e7dd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "57cec3a3cdff65ae132b8fa54a8ccd9f9a43df1c",
+      "closedAt": "2024-02-02T17:03:19Z",
+      "mergedAt": "2024-02-02T17:03:19Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246"
+      },
       "comments": [
         {
           "author": "andrew-draper",
@@ -23955,6 +24088,419 @@
               "updatedAt": "2024-01-31T22:58:14Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uox-D",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T10:58:17Z",
+          "updatedAt": "2024-02-01T10:58:18Z",
+          "comments": [
+            {
+              "originalPosition": 89,
+              "body": "I am ok, with the suggested text from Ned, as it makes the matching constraints more crisp and consistent. ",
+              "createdAt": "2024-02-01T10:58:17Z",
+              "updatedAt": "2024-02-01T10:58:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uo3Jw",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T11:09:11Z",
+          "updatedAt": "2024-02-01T11:09:12Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "@nedmsmith : This text is not clear. We should keep it at a high level describing just the Evidence and Reference Value requirements. Bringing EMT and ACS into mix has made it more complicated, given that we are towards simplification, so this is too much detail without adding much value",
+              "createdAt": "2024-02-01T11:09:12Z",
+              "updatedAt": "2024-02-01T11:09:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uo51N",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T11:14:28Z",
+          "updatedAt": "2024-02-01T11:14:28Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "I am happy with @andrew-draper suggested `text` here. It is also `sort` of aligned with RATS specification: As mentioned in * Section  8.3 of RFC 9334\r\n`8.3.  Reference Values: Reference Values used in appraisal procedures come from a Reference\r\n Value Provider and are then used by the Verifier to compare to\r\n Evidence.  Reference Values with matching Evidence produce acceptable\r\n Claims.  Additionally, an appraisal policy may play a role in\r\n determining the acceptance of Claims.`",
+              "createdAt": "2024-02-01T11:14:28Z",
+              "updatedAt": "2024-02-01T11:15:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85usRNQ",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T17:26:45Z",
+          "updatedAt": "2024-02-01T17:26:45Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "> We should keep it at a high level\r\n\r\nWe already document the high level rules in earlier sections. It doesn't add value to repeat it here. The reader is potentially uncertain how a verifier will process the array of measurements as each measurement could be processed independently. Alternatively, the collection of measurements could be processed as a singleton measurement. The current text provides no insight or guidance that resolves the reader's confusion. ",
+              "createdAt": "2024-02-01T17:26:45Z",
+              "updatedAt": "2024-02-01T17:26:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85usaOx",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T17:44:16Z",
+          "updatedAt": "2024-02-01T17:44:17Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "I quite liked the crisp nature of text @deeglaze added, so tried to modify her text slightly to specify more clarity on \r\nmatching semantics and attempted purely to see how this expresses. See https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/198/files",
+              "createdAt": "2024-02-01T17:44:16Z",
+              "updatedAt": "2024-02-01T17:44:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85usjOm",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T17:58:25Z",
+          "updatedAt": "2024-02-01T17:58:26Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "```suggestion\r\n##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}\r\nFor each Integrity Register entry in the Reference Value, identified as: id => digests_{ref}, the Verifier will claim a \"match\" with Evidence only if the Evidence has an Integrity Register entry, identified as: id => digests_{ev} such that the `id` in Evidence and Reference Value both have the same type and value and the digests matches using the method defined in {{sec-cmp-digests}}.\r\n\r\nIf no entry is found, the Reference Value does not match.\r\n\r\nNote that it is not required for all the Evidence entries in an Integrity Register array to be used during matching: Evidence could consist of a Target Environment's complete register space, while the Integrity Register array in Reference Values could consist of a subset of the Target Environment's register space.\r\n```",
+              "createdAt": "2024-02-01T17:58:25Z",
+              "updatedAt": "2024-02-01T17:58:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85usjvU",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T17:59:37Z",
+          "updatedAt": "2024-02-01T17:59:37Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "@nedmsmith : See if this check is enough to un-block this ?",
+              "createdAt": "2024-02-01T17:59:37Z",
+              "updatedAt": "2024-02-01T17:59:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ussvl",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T18:15:02Z",
+          "updatedAt": "2024-02-01T18:15:02Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "> > We should keep it at a high level\r\n> \r\n> We already document the high level rules in earlier sections. It doesn't add value to repeat it here. The reader is potentially uncertain how a verifier will process the array of measurements as each measurement could be processed independently. Alternatively, the collection of measurements could be processed as a singleton measurement. The current text provides no insight or guidance that resolves the reader's confusion.\r\n\r\n@nedmsmith : I do not think, we have so far introduced any section as to how `Contents` within Integrity Registers (within Evidence and Reference Values) are to be compared. All I was stating was that: We should not describe the loading of Evidence and  RefValue into ACS specific actions here  and just describe the direct matching semantics of the Registers. \r\n",
+              "createdAt": "2024-02-01T18:15:02Z",
+              "updatedAt": "2024-02-01T18:15:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85us-er",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T18:41:32Z",
+          "updatedAt": "2024-02-01T18:41:32Z",
+          "comments": [
+            {
+              "originalPosition": 86,
+              "body": "> We should not describe the loading of Evidence and RefValue into ACS\r\n\r\nLine 1869 of my proposed edit could be removed based on this objective. Lines 1870-1873 are aimed at describing the direct matching semantics. Possibly there is better wording, but it seems to say what we want it to say.",
+              "createdAt": "2024-02-01T18:41:32Z",
+              "updatedAt": "2024-02-01T18:41:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85utF-B",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T18:49:03Z",
+          "updatedAt": "2024-02-01T18:49:03Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "> id => digests_{ev}\r\n\r\nThis nomenclature is confusing as it doesn't refer to the actual CDDL. Substitute `id` with `integrity-register-id-type-choice` and ` => digests_{ev}` with ` => [ + digest ]` and it would be more clear. Alternatively, include the aliased terms in the CDDL definition. E.g.:\r\n```\r\nintegrity-registers = {\r\n  + id: integrity-register-id-type-choice => digests: [ + digest ]\r\n}\r\n```\r\nThen it would be OK to use `id` and `digests`. (but not sure this is correct CDDL)",
+              "createdAt": "2024-02-01T18:49:03Z",
+              "updatedAt": "2024-02-01T18:49:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85utM1u",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T19:00:03Z",
+          "updatedAt": "2024-02-01T19:00:03Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": ">the Verifier will claim a \"match\" with Evidence only if the Evidence has an Integrity Register entry\r\n\r\nThis wording is confusing because \"Claim\" has special meaning but it is used in the verb form. Other parts of the document use \"match\" in the verb form already. Maybe it's better to stay with this convention. \r\n\r\nNevertheless, the matching semantic is misrepresented by the sentence. The Verifier doesn't match evidence per se, as it accepts it simply because the (authenticated) Attester asserted it. \r\n\r\nThe Ref Val is accepted only if it is a subset of the Evidence. \r\n\r\nThe question that needs to be answered is whether or not the Ref Val subset requirements are applied to the IR array too. I think the answer should be yes.\r\n\r\nThe text I supplied seems to work in terms of describing applying the subset matching semantics to the IR array.",
+              "createdAt": "2024-02-01T19:00:03Z",
+              "updatedAt": "2024-02-01T19:00:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uvBoL",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T22:40:31Z",
+          "updatedAt": "2024-02-01T22:40:31Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "> > the Verifier will claim a \"match\" with Evidence only if the Evidence has an Integrity Register entry\r\n> \r\n> This wording is confusing because \"Claim\" has special meaning but it is used in the verb form. Other parts of the document use \"match\" in the verb form already. Maybe it's better to stay with this convention.\r\n> \r\n> Nevertheless, the matching semantic is misrepresented by the sentence. The Verifier doesn't match evidence per se, as it accepts it simply because the (authenticated) Attester asserted it.\r\n> \r\n> The Ref Val is accepted only if it is a subset of the Evidence.\r\n> \r\n> The question that needs to be answered is whether or not the Ref Val subset requirements are applied to the IR array too. I think the answer should be yes.\r\n> \r\n> The text I supplied seems to work in terms of describing applying the subset matching semantics to the IR array.\r\n\r\nI agree we should use the term `match` only not mis-use the word claim. ",
+              "createdAt": "2024-02-01T22:40:31Z",
+              "updatedAt": "2024-02-01T22:40:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uvD2j",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T22:42:57Z",
+          "updatedAt": "2024-02-01T22:42:57Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "In order to progress this, I would prefer we split the PR into two. One which advances the data model, which we all have agreed. We can merge it as we have a consensus in the CDDL. This will un-block me.\r\n\r\nWe raise a new issue to describe the matching semantics for IR's. There we can discuss at length.\r\n\r\n",
+              "createdAt": "2024-02-01T22:42:57Z",
+              "updatedAt": "2024-02-01T22:42:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uvepF",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-01T23:49:44Z",
+          "updatedAt": "2024-02-01T23:49:44Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": ">split the PR into two. One which advances the data model\r\n\r\n+1",
+              "createdAt": "2024-02-01T23:49:44Z",
+              "updatedAt": "2024-02-01T23:50:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uyNxL",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-02T08:30:00Z",
+          "updatedAt": "2024-02-02T08:30:01Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "TL;DR the RP cannot decide autonomously the geometry of the quote and Andy's text is fine\r\n\r\nI've been raising the question to the TCG IWG. There was a clear answer: the RP does not meddle with the geometry of the quote. The only usage scenario where that implicitly could be the case is where Attester owner and RP owner are collapsed roles and the local configuration of an Attester is required by certain RPs. In these cases the RP owner (which is also the Attester Owner) would also take on the role of Endorser and produce a CoRIM for the Verifier to take care of \"the RP's needs\". So, in the end the requirement would be again be addressed by the de-facto Endorser and not the RP.",
+              "createdAt": "2024-02-02T08:30:00Z",
+              "updatedAt": "2024-02-02T08:30:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uyTz7",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-02T08:42:49Z",
+          "updatedAt": "2024-02-02T08:42:50Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "> The question that needs to be answered is whether or not the Ref Val subset requirements are applied to the IR array too. I think the answer should be yes.\r\n\r\nGiven @henkbirkholz https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/189#discussion_r1475724199 I am OK too.\r\n\r\n> The text I supplied seems to work in terms of describing applying the subset matching semantics to the IR array.\r\n\r\nLGTM\r\n",
+              "createdAt": "2024-02-02T08:42:49Z",
+              "updatedAt": "2024-02-02T08:42:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uytv8",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-02T09:36:44Z",
+          "updatedAt": "2024-02-02T09:36:44Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "I suggest we accept Andy's proposed text and merge this.  As suggested by Yogesh, we can track the refinement put forward by Ned in a separate PR.",
+              "createdAt": "2024-02-02T09:36:44Z",
+              "updatedAt": "2024-02-02T09:36:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uyuEh",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-02T09:37:27Z",
+          "updatedAt": "2024-02-02T09:37:28Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "This works with me +1",
+              "createdAt": "2024-02-02T09:37:27Z",
+              "updatedAt": "2024-02-02T09:37:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85uzaXg",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-02T11:04:57Z",
+          "updatedAt": "2024-02-02T11:04:57Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "@nedmsmith : We have raised a new issue #199 to address your comments. We can discuss this in the incoming meeting. In the mean time, we intend to apply suggestions from @andrew-draper after clarification from @henkbirkholz  and acceptance from @thomas-fossati. I hope this is ok, with you.\r\n\r\nPlease reply with +1 if you agree so that we can un-block it today.",
+              "createdAt": "2024-02-02T11:04:57Z",
+              "updatedAt": "2024-02-02T11:05:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85u2NdA",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-02T16:52:23Z",
+          "updatedAt": "2024-02-02T16:52:24Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "+1",
+              "createdAt": "2024-02-02T16:52:24Z",
+              "updatedAt": "2024-02-02T16:52:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85u2P7P",
+          "commit": {
+            "abbreviatedOid": "fa9ee53"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-02-02T16:54:15Z",
+          "updatedAt": "2024-02-02T16:54:15Z",
+          "comments": []
         }
       ]
     },
@@ -24161,6 +24707,122 @@
               "body": "Lines 1485-1487 appear to apply to a DICE example. Line 1488 doesn't begin with enough descriptive text to highlight it as a second example, vs. an extension to a DICE example. As a second example, it needs more development to make it understandable. I didn't want to spend too much time in this document reviewing content that applies to a different audience. Possibly, a reference to the psa document is sufficient for an interested reader to go there to obtain the well-described example?",
               "createdAt": "2024-01-29T18:36:28Z",
               "updatedAt": "2024-01-29T18:37:35Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 198,
+      "id": "PR_kwDOH6-tI85luyLD",
+      "title": "Corim integrity register new text",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/198",
+      "state": "CLOSED",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-02-01T17:41:41Z",
+      "updatedAt": "2024-02-01T19:01:16Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "daf987e2a2b30360e774988991fc84966bccdbdb",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "corim-integrity-register-new-text",
+      "headRefOid": "79e766920ac456e11590518e3e56e5acf5ebfc17",
+      "closedAt": "2024-02-01T17:57:35Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm confused why there are competing PRs. Can we decide to use #189 or #198 but not both?",
+          "createdAt": "2024-02-01T17:52:59Z",
+          "updatedAt": "2024-02-01T17:52:59Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I'm confused why there are competing PRs. Can we decide to use #189 or #198 but not both?\r\n\r\nNo intention to confuse anybody. This was just a draft for you to check how the text aligns. I will delete #198 immediately.\r\n\r\nBetter I add a suggestion in the main PR. But I wanted to avoid too many commennts, hence thought of aligning this way",
+          "createdAt": "2024-02-01T17:55:43Z",
+          "updatedAt": "2024-02-01T17:55:43Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Will be addressed by #189 ONLY hence deleting this!",
+          "createdAt": "2024-02-01T17:57:35Z",
+          "updatedAt": "2024-02-01T17:57:35Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 200,
+      "id": "PR_kwDOH6-tI85l3C4O",
+      "title": "integrity registers, misc wordsmithing ",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/200",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Fixed erroneous wording related to TPMs and added clarity that cross-product equivalence should be applied before applying the `digests` comparison algorithm. Added reference to the cddl that defines what an \"identifier\" is.",
+      "createdAt": "2024-02-02T17:41:31Z",
+      "updatedAt": "2024-02-03T11:20:37Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "199-address-integrity-register-comparison-comments",
+      "headRefOid": "0cf19337914d191ab44b11abc4af28631da7d6ef",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85u3Qlc",
+          "commit": {
+            "abbreviatedOid": "0cf1933"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-02-02T17:43:42Z",
+          "updatedAt": "2024-02-02T17:43:42Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85u7Jhx",
+          "commit": {
+            "abbreviatedOid": "0cf1933"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "LGTM, modulo a bit more wordsmithing",
+          "createdAt": "2024-02-03T11:09:46Z",
+          "updatedAt": "2024-02-03T11:19:19Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nFor each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in Evidence.\r\n```",
+              "createdAt": "2024-02-03T11:09:47Z",
+              "updatedAt": "2024-02-03T11:19:19Z"
+            },
+            {
+              "originalPosition": 9,
+              "body": "also not sure about wording choices:\r\n* \"equivalence\", and\r\n* \"found\"\r\n```suggestion\r\nInstead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after the cross-product equivalence has been found according to {{sec-comid-integrity-registers}}.\r\n```",
+              "createdAt": "2024-02-03T11:18:27Z",
+              "updatedAt": "2024-02-03T11:19:19Z"
             }
           ]
         }
