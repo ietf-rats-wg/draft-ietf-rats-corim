@@ -1434,33 +1434,136 @@ they are not required to use the same internal data structures.
 For example, it is expected that the resources used during the initialisation
 phase can be amortised across multiple appraisals.
 
-## Verifier Abstraction
+## Verifier Abstraction {#sec-verifier-abstraction}
 
 This document assumes Verifier implementations may differ.
 To facilitate description of normative Verifier behavior,
 this document uses abstract representation of Verifier internals.
 
 * Claim: A piece of information, in the form of a key-value pair.
-* Environment Measurement Tuple (EMT): A structure containing a set of environment
-Claims that describe a Target Environment and a set of measurement Claims that
-describe attributes of the Target Environment.
-* reference state: Claims that describe various alternative states of a Target Environment.
+* Claimset: A structure containing a set of Claims that describe a Target Environment and its associated measurement Claims.
+* Conceptual Message Type: An indication of the type of conceptual message that contains Claimsets.
+* Reference state: Claims that describe various alternative states of a Target Environment.
 Reference Values Claims typically describe various possible states due to versioning,
 manufactruing practices, or supplier configuration options.
-* actual state: Claims that describe a Target Environment instance at a given point in time.
+* Actual state: Claims that describe a Target Environment instance at a given point in time.
 Endorsed Values and Evidence typically are Claims about actual state.
-* Group: A set of Evidence, Reference Values, Endorsed Values and Appraisal Policies
-which are processed together.
-An Attester may be composed of multiple components, where each component may
-represent a scope of appraisal.
 * Authority: The entity asserting that a claim is true.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
-* Accepted Claims Set (ACS): A structure that holds EMT Claims that have been vetted
-following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy. The ACS also keeps track of a Claim's authority.
+* Accepted Claims Set (ACS): A structure that contains a list of entries containing a Claimset that has been vetted following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy.
+ACS entries include the authority that asserted the entry's Claimset and its type.
 * Appraisal Policy: A description of the conditions that, if met, allow acceptance
 of Claims. Typically, the entity asserting a Claim should have knowledge, expertise,
 or context that gives credibility to the assertion. Appraisal Policy resolves which
 entities are credible and under what conditions.
+
+### Verifier Theory of Operation {#sec-verifier-theory-of-operation}
+
+A Verifier theory of operation describes a model for processing Verifier inputs such that independent Verifier implementations will achieve consistent results.
+In this section, "Verifier" refers to the abstract Verifier.
+Inputs to the Verifier include {{-rats-arch}} conceptual messages that contain an abstract representation called the "augmentation tuple".
+The augmentation tuple has the following structure:
+
+~~~cbor-diag
+{
+  (condition, update, authority) => output
+}
+~~~
+
+* condition: a Claimset that is matched to the ACS.
+* update: a Claimset that is to be added to the ACS if a condition is met.
+* authority: an identifier of the entity that asserted the augmentation tuple.
+* output: a Claimset that is to be added to the ACS.
+
+If the condition is met, then an ACS entry is formatted to contain the output as its Claimset, the authority, and the type of conceptual message: e.g., Evidence, Reference Values, Endorsements, etc... Several ACS entries are shown in {{acs}}. For convenience, the conceptual message types are abbrevieated as:
+
+* EV: Evidence
+* RV: Reference Values
+* EN: Endorsements
+
+Authorities are in parenthesis and abbreviated as:
+
+* AE: Attesting Environment
+* RVP: Reference Value Provider
+* E: Endorser
+
+~~~~ aasvg
+             ACS Entries               Search Scope                  Conditions
+
++---------+-------------------------+ *
+|0        |                         | |
+| Header  |   Attester Session      | |
+|         |                         | |<------------------------------------+
++---------+ (lead Attester / AE0)   | |                                     |
+|                                   | |                                     |
++-----------------------------------+ *                                     |
++---------+-------------------------+   *  *  *                             |
+|1        |                         |   |  |  |                    +--------+--------+
+|   EV    |       Claimset 1        |   |  |  |                    |1                |
+|         |                         |   |<---------------------+   |     Condition   |
++---------+         (AE1)           |   |  |  |                |   |                 |
+|                                   |   |  |  |                |   +-----------------+
++-----------------------------------+   *  |<-------------+    |
++---------+-------------------------+      |  |           |    |
+|2        |                         |      |  |           |    |   +-----------------+
+|   RV    |       Claimset 1        |      |  |           |    |   |2                |
+|         |                         |      |  |<----+     |    +---+     Condition   |
++---------+         (RVP1)          |      |  |     |     |        |                 |
+|                                   |      |  |     |     |        +-----------------+
++-----------------------------------+      *  |     |     |
++---------+-------------------------+         |     |     |                
+|3        |                         |         |     |     |        +-----------------+
+|   EN    |       Claimset 2        |         |     |     |        |3                |
+|         |                         |         |     |     +--------+    Condition    |
++---------+         (E1)            |         |     |              |                 |
+|                                   |         |     |              +-----------------+
++-----------------------------------+         *     |
++---------+-------------------------+               |
+|4        |                         |               |              +-----------------+
+|   EN    |       Claimset 3        |               |              |4                |
+|         |                         |               +--------------+    Condition    |
++---------+         (E2)            |                              |                 |
+|                                   |                              +-----------------+
++-----------------------------------+
++-----------------------------------+
+|5                                  |                              +-----------------+
+|                 ...               |                              |5     ...        |
+~~~~
+{: #acs artwork-align="center" title="Accepted Claims Set"}
+
+Before processing augmentation tuples, the ACS is initialized with a header ACS entry that identifies the lead Attester that has the session or connection to the Verifier. The lead Attester authenticates to the Verifier and establishes a conveyance channel over which the Attester supplies its inputs.
+
+The Verifier may have conveyance channels to other entities that supply Endorsements, Reference Values, and Appraisal Policy for Evidence. The Verifier may immediately process these inputs so long as it the augmentation tuple's target unambiguously identifies the appropriate ACS.
+
+If an augmentation tuple's condition is met, then the tuple's update Claimset is added to a new ACS entry, along with the conceptual message type, and authority.
+The new ACS entry is appended to the list of current ACS entries.
+The order in which ACS entries appear in the ACS is inconsequential; meaning valid implementations may have different ACS entry orderings, but the set of ACS entries will be the same.
+Following 'append-only' semantics for ACS update implies the last ACS entry in the list is the only entry that may be in contention when the next record is added.
+
+If an augmentation tuple's condition is not met, then the tuple is placed on an input queue to be re-tried after one or more other inputs have been applied.
+
+Every augmentation tuple has a condition appearing to the right of the ACS entry (see {{acs}}) that points to a search scope that is a range of ACS entries that are searched by a given condition.
+
+The conceptual message type determines ACS search scope.
+Evidence condition search scope is the header ACS entry.
+Reference Values condition search scope is any Evidence entry.
+
+However, technically Evidience Claimset can contain more Claims than are contained in the Reference Values Claimset.
+Endorsements condition search scope is any Evidence, Reference Values, or already accepted Endorsements.
+
+Different conceptual message types have different expectations for condition search scope:
+
+* Evidence: The search scope is the header ACS entry that identifies the Attester's ACS context. Essentially, the condition expression can be nil.
+* Reference Values: The search scope is any ACS entry that has type 'EV' (Evidence). The example in {{acs}} shows Claimset 1 for both Evidence (entry 1) and Reference Values (entry 2) to illustrate the common case where Reference Values describes the Evidence values exactly.
+The condition may describe a subset of the Evidence Claimset. However, if the condition is a superset of the Evidience Claimset, the Reference Values do not match. The Evidence Claimset remains in the ACS under the Attester's authority. A Relying Party may have an Appraisal Policy that expects the Evidence Claimset should be asserted under RVP authority implying both the Attester and RVP agree to the Claimset state.
+* Endorsements: The search scope is any ACS entry.
+Note: that an Endorsement condition that depends on another Endorsement that hasn't yet been processed, it can still be met by placing it on the retry input queue.
+
+If all inputs have been processed, for example, the Attester closes its session with the Verifier, and the condition still is not met, then any pending augmentation tuples in the input queue are discarded.
+
+ACS entries can be archived or audited at any point after pending inputs have been committed to the ACS.
+
+Appraisal Policies or Relying Party inputs may have conditions that, if met, result in Verifier asserted Claimsets or restrict visibility into the ACS to only interesting Claims.
 
 ## Appraisal Context initialisation
 
@@ -1624,7 +1727,7 @@ in the CoRIM file which tell it how claims are related.
 If Evidence or Endorsements from different sources has the same `environment-map`
 and `authorized-by` then the `measurement-values-map`s are merged.
 
-The ACS must maintain the authority information for each EMT. There can be
+The ACS must maintain the authority information for each Claimset. There can be
 multiple entries in `state-triples` which have the same `environment-map`
 and a different `authorized-by` field (see {{sec-authorized-by}}).
 
