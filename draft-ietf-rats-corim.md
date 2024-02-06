@@ -1868,7 +1868,7 @@ Otherwise, `cryptokeys` does not match.
 
 ##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
 
-For each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`), to look up the matching Integrity Register entry in Evidence.
+For each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in Evidence.
 If no entry is found, the Reference Value does not match.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after the cross product equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in Evidence to be used during matching: the Reference Value could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a Reference Value could describe a subset of PCRs.
