@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-06T01:15:58.088863+00:00",
+  "timestamp": "2024-02-08T01:12:56.165537+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -4629,6 +4629,58 @@
       "updatedAt": "2024-02-02T17:11:02Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 202,
+      "id": "I_kwDOH6-tI85-kclP",
+      "title": "authorized-by: change type to [ + $authorized-by-type-choice ]",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/202",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Hey y'all, I discussed this in the Veraison meeting, but I'll make it an issue here.\r\n\r\nFirst off, let's not change anything yet, just add a code point.\r\n```\r\n$authorized-by-type-choice /= $crypto-key-type-choice\r\n```\r\n\r\nThe reason I'm asking for this change is for the Qemu OVMF profile for SEV-SNP to model composite authorizers. The SEV_HASH_TABLE in OVMF allows for different initial measurements of the boot chain to get locked into the initial launch measurement. The firmware itself that allocates space for this table can be created by a different entity. This effectively squashes multiple events with individual authorizers into a single event that is captured by the hardware attestation report's launch measurement.\r\n\r\nIf the profile has the ability to represent a composite authorized-by representation, then we can compose disparate claims about the components of the initial measurement into a profile-defined X+Y+Z = Reference-value operation that means the reference value is authorized by all of X, Y, and Z's endorsers.",
+      "createdAt": "2024-02-07T17:01:43Z",
+      "updatedAt": "2024-02-07T19:00:06Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What are the X, Y, and Z objects?",
+          "createdAt": "2024-02-07T17:15:58Z",
+          "updatedAt": "2024-02-07T17:15:58Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "X, Y, and Z are all CoRIMs with different signers, but all for the OVMF-for-SEV-SNP profile. They each have reference values for different components of the OVMF measurement and SEV hashes. Say X has the ovmf.fd measurement and GUID table data that's needed to interpret the other components of the measurement, Y has the SEV_KERNEL_HASH, SEV_CMDLINE_HASH and Z has the BSP and AP VMSAs.\r\n\r\nThe combination of all of them reconstructs the MEASUREMENT field of the attestation because the different memory sections described by the OvmfSevMetadata section and SEV-ES Reset Block all change how the measurement is constructed.",
+          "createdAt": "2024-02-07T17:27:36Z",
+          "updatedAt": "2024-02-07T17:27:36Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">just add a code point. `$authorized-by-type-choice /= $crypto-key-type-choice`\r\n\r\nI'm confused by this as AFIK there isn't an `$authorized-by-type-choice` in the schema that can be extended. The current authorized-by measurement is already a `$crypto-key-type-choice`.",
+          "createdAt": "2024-02-07T17:36:14Z",
+          "updatedAt": "2024-02-07T17:36:14Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Crypto key type choice is used other places that a composite authorization wouldn\u2019t make sense, which is why I suggested a new code point",
+          "createdAt": "2024-02-07T18:34:49Z",
+          "updatedAt": "2024-02-07T18:34:49Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If the X entity wants to recognize Y and Z as peer (equivalent) authorities for the X claims, it can include an `authorized-by` statement in `measurement-values-map` that includes $crypto-key-type-choice for Y and Z. Each of X and Y entities do the same for (X, Z) and (X, Y) respectively.\r\n\r\nVerifier will produce ACS entries for each RIM's triples resulting in three ACS entries:\r\nX claims with authority (X, Y, Z) - since X signed the rim and added `authorized-by` of (Y, Z).\r\nY claims with authority (X, Y, Z) - since Y signed the rim and added `authorized-by` of (X, Z).\r\nZ claims with authority (X, Y, Z) - since Z signed the rim and added `authorized-by` of (X, Y).\r\n\r\nThis use case seems solvable using the current schema. \r\nI don't see why the transitivity of `$authorizied-by-type-choice` /= `$crypto-key-type-choice` /= `tagged-...` (pick the best representation) is different from `$crypto-key-type-choice` /= `tagged-...` except that `$authorizied-by-type-choice` can be extended to some other form for authority. \r\n\r\nBut it seems the use case can be implemented with current schema, so I'm not seeing why the extensibility variation using `$authorized-by-type-choice` is needed aside from stylistic preference (which I kind of like personally).",
+          "createdAt": "2024-02-07T19:00:05Z",
+          "updatedAt": "2024-02-07T19:00:05Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -24774,13 +24826,13 @@
       "labels": [],
       "body": "Fixed erroneous wording related to TPMs and added clarity that cross-product equivalence should be applied before applying the `digests` comparison algorithm. Added reference to the cddl that defines what an \"identifier\" is.",
       "createdAt": "2024-02-02T17:41:31Z",
-      "updatedAt": "2024-02-03T11:20:37Z",
+      "updatedAt": "2024-02-06T18:44:06Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "199-address-integrity-register-comparison-comments",
-      "headRefOid": "0cf19337914d191ab44b11abc4af28631da7d6ef",
+      "headRefOid": "838dba0886082b8da8f770a68d259a328a30ccf7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -24825,13 +24877,26 @@
               "updatedAt": "2024-02-03T11:19:19Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85vOgiM",
+          "commit": {
+            "abbreviatedOid": "838dba0"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "accepted Thomas's suggestions",
+          "createdAt": "2024-02-06T18:44:06Z",
+          "updatedAt": "2024-02-06T18:44:06Z",
+          "comments": []
         }
       ]
     },
     {
       "number": 201,
       "id": "PR_kwDOH6-tI85mED88",
-      "title": "Update draft-ietf-rats-corim.md",
+      "title": "Theory of operation",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/201",
       "state": "OPEN",
       "author": "nedmsmith",
@@ -24842,7 +24907,7 @@
       "labels": [],
       "body": "Added section 5.2 describing the verifier theory of operation",
       "createdAt": "2024-02-05T19:17:01Z",
-      "updatedAt": "2024-02-05T19:18:06Z",
+      "updatedAt": "2024-02-07T17:11:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -24853,8 +24918,44 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Regarding today's discussion about conditionals' semantics, if we assume that all claims are conjunctive, then the problem becomes HORNSAT, which has linear time complexity. If there are claims that represent disjunctions or negations of other claims, then we get into general propositional satisfiability. Given that I haven't seen any discussion of deeper interpretation of claims other than positive propositional literals, and a conditional-endorsement-triple's RHS is a measurement-values-map that is essentially a large conjunction of non-overlapping claims, then I can abide the proposed semantics.",
+          "createdAt": "2024-02-07T16:45:08Z",
+          "updatedAt": "2024-02-07T16:45:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">if we assume that all claims are conjunctive, then the problem becomes HORNSAT\r\n\r\nThe conditional series triple is possibly the most complex, which is a 2-step condition, but both steps are conjunctive. The idea of an update form that is a function could become problematic if the function somehow introduces negation or disjunction. But the anticipated use with identity-key and attest-key triples doesn't do this. At most, the function result is a conjunction that adds new claims to ACS. Most likely it produces a nil result. ",
+          "createdAt": "2024-02-07T17:09:34Z",
+          "updatedAt": "2024-02-07T17:11:01Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85vWA_2",
+          "commit": {
+            "abbreviatedOid": "b0ef2b5"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-07T15:04:46Z",
+          "updatedAt": "2024-02-07T15:04:46Z",
+          "comments": [
+            {
+              "originalPosition": 130,
+              "body": "sp",
+              "createdAt": "2024-02-07T15:04:46Z",
+              "updatedAt": "2024-02-07T15:04:46Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
