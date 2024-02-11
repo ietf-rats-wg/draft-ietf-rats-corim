@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-08T01:12:56.165537+00:00",
+  "timestamp": "2024-02-11T01:19:07.250878+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -4642,7 +4642,7 @@
       "labels": [],
       "body": "Hey y'all, I discussed this in the Veraison meeting, but I'll make it an issue here.\r\n\r\nFirst off, let's not change anything yet, just add a code point.\r\n```\r\n$authorized-by-type-choice /= $crypto-key-type-choice\r\n```\r\n\r\nThe reason I'm asking for this change is for the Qemu OVMF profile for SEV-SNP to model composite authorizers. The SEV_HASH_TABLE in OVMF allows for different initial measurements of the boot chain to get locked into the initial launch measurement. The firmware itself that allocates space for this table can be created by a different entity. This effectively squashes multiple events with individual authorizers into a single event that is captured by the hardware attestation report's launch measurement.\r\n\r\nIf the profile has the ability to represent a composite authorized-by representation, then we can compose disparate claims about the components of the initial measurement into a profile-defined X+Y+Z = Reference-value operation that means the reference value is authorized by all of X, Y, and Z's endorsers.",
       "createdAt": "2024-02-07T17:01:43Z",
-      "updatedAt": "2024-02-07T19:00:06Z",
+      "updatedAt": "2024-02-09T17:21:51Z",
       "closedAt": null,
       "comments": [
         {
@@ -4679,6 +4679,55 @@
           "body": "If the X entity wants to recognize Y and Z as peer (equivalent) authorities for the X claims, it can include an `authorized-by` statement in `measurement-values-map` that includes $crypto-key-type-choice for Y and Z. Each of X and Y entities do the same for (X, Z) and (X, Y) respectively.\r\n\r\nVerifier will produce ACS entries for each RIM's triples resulting in three ACS entries:\r\nX claims with authority (X, Y, Z) - since X signed the rim and added `authorized-by` of (Y, Z).\r\nY claims with authority (X, Y, Z) - since Y signed the rim and added `authorized-by` of (X, Z).\r\nZ claims with authority (X, Y, Z) - since Z signed the rim and added `authorized-by` of (X, Y).\r\n\r\nThis use case seems solvable using the current schema. \r\nI don't see why the transitivity of `$authorizied-by-type-choice` /= `$crypto-key-type-choice` /= `tagged-...` (pick the best representation) is different from `$crypto-key-type-choice` /= `tagged-...` except that `$authorizied-by-type-choice` can be extended to some other form for authority. \r\n\r\nBut it seems the use case can be implemented with current schema, so I'm not seeing why the extensibility variation using `$authorized-by-type-choice` is needed aside from stylistic preference (which I kind of like personally).",
           "createdAt": "2024-02-07T19:00:05Z",
           "updatedAt": "2024-02-07T19:00:05Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "The beginning assumption \r\n\r\n> If the X entity wants to recognize Y and Z as peer (equivalent) authorities for the X claims\r\n\r\nWe (Google) don't. \r\n\r\nThere is a single piece of evidence that can be authorized, and that evidence is a collection of parties' reference values for inputs to a specified reference value computation function. That function is defined by a profile that specifies a complex image construction operation. We're effectively squashing multiple EventLog entries into one before the initial measurement.\r\n\r\nGoogle provides a firmware image and only wants to claim authority for that artifact. Canonical provides a kernel binary and only wants to claim authority for that artifact. Service operator Z provides the kernel commandline and only wants to claim authority for that artifact. The relying party includes Google, Canonical, and Z in their trust anchor to approve attestation results that include this profile's composite measurement authorization.\r\n",
+          "createdAt": "2024-02-08T18:17:26Z",
+          "updatedAt": "2024-02-08T18:17:26Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Let me try to model the use case to see if I understand it. Evidence is a combination of 3 artifacts G.a1, C.a2, and Z.a3 which is asserted by the Attester: `[G.a1, C.a2, Z.a3] : Attester_key`\r\n\r\nGoogle creates a manifest containing the G.a1 as a reference value: `[G.a1] : Google_key`. \r\nCanonical creates a manifest containing the C.a2 as a reference value: `[C.a2] : Canonical_key`. \r\nZ creates a manifest containing the Z.a3 as a reference value: `[Z.a3] : Z_key`. \r\n\r\nThese result in entries in an ACS as:\r\n```\r\nEV : [combined.a0] : A_key\r\nRV : [G.a1] : G_key\r\nRV : [C.a2] : C_key\r\nRV : [Z.a3] : Z_key\r\n```\r\nThe Relying Party has a policy that says the a1 artifact should be asserted by Google, the a2 artifact asserted by Canonical and the a3 artifact asserted by Z.\r\n\r\nSince the three RV entries in ACS are present, the policy can be met.\r\n\r\n",
+          "createdAt": "2024-02-08T21:47:42Z",
+          "updatedAt": "2024-02-08T23:22:38Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Apart from [G.a1, C.a2, Z.a3] appearing split out, yes. All the values of those three components are combined through an OVMF and SEV-SNP-specific computation that results in a single digest that is present as evidence in the AMD-signed attestation report. It's the AMD measurement that is evidence, so it's the only element that would get an authorized-by entry for the combined RVs.",
+          "createdAt": "2024-02-08T23:10:50Z",
+          "updatedAt": "2024-02-08T23:10:50Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">All the values of those three components are combined \r\n\r\nI updated my example to better represent the use case. Instead of evidence being three digests (a1, a2, a3) it is a combined digest a0. \r\n\r\nThe interesting condition may be that neither G, C, or Z are the providers of the RV for a0. Instead, the Verifier needs to know to compute the combined digest - i.e. `f-hash(a1, a2, a3) = a0` - is this a more accurate representation of the use case?",
+          "createdAt": "2024-02-08T23:27:00Z",
+          "updatedAt": "2024-02-08T23:27:00Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Yes",
+          "createdAt": "2024-02-08T23:27:48Z",
+          "updatedAt": "2024-02-08T23:27:48Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There's two options for collecting a0 as a reference value. Either the vendor that implements the algorithm that produces a0 needs to validate that given inputs a1, a2, and a3; a0 is indeed the output. Or the vendor that combined a1, a2, and a3 into a product can generate a0 using the algorithm implemented by the attester vendor. \r\n\r\nIs there a reason either of these two options are unworkable?\r\n\r\nThe alternative is a standard has to define an algorithm for combining a1 - a3. This seems like a slippery slope.",
+          "createdAt": "2024-02-09T16:28:05Z",
+          "updatedAt": "2024-02-09T16:28:05Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "Neither of those are workable. The a0 here is AMD SEV-SNP's measurement, and the VM operator that can populate a2 and a3 cannot get a1 ahead of time from us to sign the combination.\r\n\r\nAMD's design for SEV-SNP pushed the problem of runtime measurements down the road too far and we've ended up with a feature that might not die for a while that mixes multiple artifacts into one measurement. I don't think many would follow down this slippery slope given the difficulty to even determine a1, a2, and a3 ahead of time to even derive a0.",
+          "createdAt": "2024-02-09T17:21:50Z",
+          "updatedAt": "2024-02-09T17:21:50Z"
         }
       ]
     }
