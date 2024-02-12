@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 11 July 2024                                       Y. Deshpande
+Expires: 15 August 2024                                     Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          8 January 2024
+                                                        12 February 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 July 2024.
+   This Internet-Draft will expire on 15 August 2024.
 
 Copyright Notice
 
@@ -148,20 +148,25 @@ Table of Contents
        5.3.2.  The Accepted Claims Set
          5.3.2.1.  Accepted Claims Set Initialization
          5.3.2.2.  The authorized-by field in Accepted Claims Set
-     5.4.  Accepted Claims Set extension using CoMID tags or triples
-       5.4.1.  Comparing and processing CoMID tags or triples
-       5.4.2.  Matching Evidence against Reference Values
-         5.4.2.1.  Grouping Reference Values and Endorsements
-         5.4.2.2.  Matching all Reference Values in a group against
-                 the Accepted Claims Set
-         5.4.2.3.  Matching a Reference Value against the Accepted
-                 Claims Set
-           5.4.2.3.1.  Comparison for svn entries
-           5.4.2.3.2.  Comparison for digests entries
-           5.4.2.3.3.  Comparison for raw-value entries
-           5.4.2.3.4.  Comparison for cryptokeys entries
-           5.4.2.3.5.  Handling of new tags
-       5.4.3.  Adding CoMID Endorsed Values to the Accepted Claims Set
+     5.4.  Accepted Claims Set augmentation using CoMID triples
+       5.4.1.  Ordering of triple processing
+       5.4.2.  Processing Reference Values Triple
+       5.4.3.  Processing Endorsed Value Triple
+       5.4.4.  Processing triples representing Conditional
+               Endorsements
+         5.4.4.1.  Processing Conditional Endorsement Triple
+         5.4.4.2.  Processing Multi-Environment Conditional (MEC)
+                 Endorsement Triple
+         5.4.4.3.  Processing Conditional Endorsement Series Triple
+         5.4.4.4.  Matching a stateful environment against the
+                 Accepted Claims Set
+         5.4.4.5.  Matching a single measurement-values-map codepoint
+           5.4.4.5.1.  Comparison for svn entries
+           5.4.4.5.2.  Comparison for digests entries
+           5.4.4.5.3.  Comparison for raw-value entries
+           5.4.4.5.4.  Comparison for cryptokeys entries
+           5.4.4.5.5.  Handling of new tags
+       5.4.5.  Adding CoMID Endorsed Values to the Accepted Claims Set
      5.5.  Adding DICE/SPDM Evidence to the Accepted Claims Set
        5.5.1.  Transforming SPDM Evidence to a format usable for
                matching
@@ -380,10 +385,17 @@ Table of Contents
    are matched verbatim with Evidence that uses the same convention -
    e.g., Section 4.4.1.5 of [I-D.tschofenig-rats-psa-token]).
 
+   The digests-type-choice measurement is either an untagged array of
+   digest or the same array tagged with the CBOR tag #6.562.
+
    digest = [
      alg: (int / text),
      val: bytes
    ]
+
+   digests = [ + digest ]
+   tagged-digests = #6.562(digests)
+   digests-type-choice = digests / tagged-digests
 
 1.3.9.  Tagged Bytes Type
 
@@ -1112,7 +1124,7 @@ Table of Contents
    measurement-values-map = non-empty<{
      ? &(version: 0) => version-map
      ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => [ + digest ]
+     ? &(digests: 2) => digests-type-choice
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
@@ -1176,12 +1188,12 @@ Table of Contents
 
    *  name (index 11): a name associated with the measured environment.
 
-   *  cryptokeys (index 12): identifies cryptographic keys that are
+   *  cryptokeys (index 13): identifies cryptographic keys that are
       protected by the Target Environment See Section 3.1.4.1.6 for the
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 5.4.2.3.4.
+      Value entry.  Matching is described in Section 5.4.4.5.4.
 
 3.1.4.1.5.3.  Version
 
@@ -1517,13 +1529,12 @@ Table of Contents
    The series object is an array of conditional-series-record that has
    both Reference and Endorsed Values.  Each conditional-series-record
    record is evaluated in the order it appears in the series array.  The
-   Endorsed Values are accepted if the Reference Values in a
-   conditional-series-record matches Evidence.  The first conditional-
-   series-record that successfully matches Evidence terminates the
-   series and the matching Reference Values as well as the Endorsed
-   Values are accepted.  If none of the Reference Values in the series
-   match Evidence, the triple is not matched, and no Claims are
-   accepted.
+   Endorsed Values are accepted if the series condition in a
+   conditional-series-record matches the ACS.  The first conditional-
+   series-record that successfully matches an ACS Entry terminates the
+   matching and the corresponding Endorsed Values are accepted.  If none
+   of the series conditions match an ACS Entry, the triple is not
+   matched, and no Endorsed values are accepted.
 
    The authorized-by value in measurement-map in the stateful
    environment, if present, applies to all measurements in the triple,
@@ -1716,7 +1727,7 @@ Table of Contents
 
    *  Evidence collection
 
-   *  Evidence appraisal
+   *  Accepted Claims Set Augmentation
 
    At a few well-defined points in the procedure, the Verifier behaviour
    will depend on the specific CoRIM profile.  Each CoRIM profile MUST
@@ -2002,7 +2013,7 @@ Table of Contents
    authorities.
 
    When adding Endorsement Claims to the Accepted Claims Set that
-   resulted from CoRIM processing (see Section 5.4.3) the Verifier SHALL
+   resulted from CoRIM processing (see Section 5.4.5) the Verifier SHALL
    set the authorized-by field in that Evidence to the trusted authority
    key that is at the head of the key chain that signed the CoRIM.
 
@@ -2016,135 +2027,208 @@ Table of Contents
    tagged-cose-key-type format.  Using a common format makes it easier
    to compare the field.
 
-5.4.  Accepted Claims Set extension using CoMID tags or triples
+5.4.  Accepted Claims Set augmentation using CoMID triples
 
-   In the Accepted Claims Set extension phase, a CoRIM Appraisal Context
-   and an Evidence Appraisal Policy are used by the Verifier to find
-   CoMID tags or triples which match the Attester.  Tags/triples which
-   match are accepted, and the Accepted Claims Set is extended using
-   Endorsements etc. from the accepted tags.
+   In the Accepted Claims Set augmentation phase, a CoRIM Appraisal
+   Context and an Evidence Appraisal Policy are used by the Verifier to
+   find CoMID triples which match the Accepted Claims Set (ACS).
+   Triples that specify an ACS matching condition will augment the ACS
+   with Endorsements if the condition is met.
 
-5.4.1.  Comparing and processing CoMID tags or triples
+   Each triple is processed independently of other triples.  However,
+   the ACS state may change as a result of processing a triple.  If a
+   triple condition does not match, then the Verifier continues to
+   process other triples.
 
-5.4.2.  Matching Evidence against Reference Values
+5.4.1.  Ordering of triple processing
+
+   Triples interface with the ACS by either adding new ACS entries or by
+   matching existing ACS entries before updating the ACS.  Most triples
+   use an environment-map field to select the AES entries to match or
+   modify.  This field may be contained in an explicit matching
+   condition, such as stateful-environment-record.
+
+   The order of triples processing is important.  Processing a triple
+   may result in ACS modifications that affect matching behavior of
+   other triples.
+
+   The Verifier MUST ensure that a triple including a matching condition
+   is processed after any other triple that modifies or adds an ACS
+   entry with an environment-map that is in the matching condition.
+
+   This can be acheived by sorting the triples before processing, by
+   repeating processing of some triples after ACS modifications or by
+   other algorithms.
+
+5.4.2.  Processing Reference Values Triple
+
+   Reference Value Providers (RVP) publish Reference Values triples that
+   are matched against ACS entries.  Reference Values may describe
+   multiple acceptable states for Attesters; hence "matching" determines
+   that Evidence (contained in the ACS) satisfies an appropriate subset
+   of the available Reference Values.  If the appropriate subset
+   matches, the authority of the RVP is added to the appropriate ACS
+   entries.
+
+   The Verifier compares each reference-triple-record against ACS
+   entries as described in Section 5.4.4.4, where the reference-triple-
+   record takes the place of a stateful-environment-record.  If all
+   fields of the reference-triple-record match the ACS, then the
+   Verifier MUST add the RVP authority to each matching ACS field.
+
+   If any reference-triple-record in the Reference Value triple does not
+   match the ACS then the entire triple is ignored.
+
+5.4.3.  Processing Endorsed Value Triple
+
+5.4.4.  Processing triples representing Conditional Endorsements
 
    An Endorser may use CoMID tags to publish Conditional Endorsements,
    which are added to the Accepted Claims Set only if specified
-   conditions apply.  This section describes the process performed by
-   the Verifier to determine which Conditional Endorsements from the
-   candidate CoMIDs should be added to the Accepted Claims Set.
+   conditions are satisfied.  This section describes the process
+   performed by the Verifier to determine which Conditional Endorsements
+   from the candidate CoMIDs should be added to the ACS.
 
    The verifier checks whether Conditional Endorsements are applicable
-   by comparing Evidence in the Accepted Claims Set against Reference
-   Values from the CoMID.  These Reference Values may be provided as
-   Reference Value Triples or may be combined with the Endorsements, for
-   example as the Conditional Endorsement Series Triple.
+   by comparing Accepted Claims Set entries against expected values
+   provided in stateful-environment-record object which are part of the
+   triple.
 
-   The following subsections describe how the CoRIM tells the verifier
-   which Reference Values and Endorsed Values are grouped together
-   (Section 5.4.2.1) and how the verifier matches a Reference Value
-   against the Accepted Claims Set (Section 5.4.2.2).
+5.4.4.1.  Processing Conditional Endorsement Triple
 
-5.4.2.1.  Grouping Reference Values and Endorsements
+   For each Conditional Endorsement Triple the Verifier compares the
+   stateful-environment-record field in the triple against the ACS (see
+   Section 5.4.4.4).
 
-      This paragraph will be replaced by a description of how the CoRIM
-      tells the verifier which Reference Values and Endorsed Values are
-      grouped together.
+   If the stateful environment matches, then the Verifier MUST add an
+   Endorsement entry to the ACS (see Section 5.4.5).  The Endorsement
+   consists of the measurement-values-map field in the triple, plus the
+   authority of the entity that signed the Conditional Endorsement
+   Triple.
 
-5.4.2.2.  Matching all Reference Values in a group against the Accepted
-          Claims Set
+5.4.4.2.  Processing Multi-Environment Conditional (MEC) Endorsement
+          Triple
 
-   If all Reference Values in a group match entries in the Accepted
-   Claims Set then all Endorsements in the group are added to the
-   Accepted Claims Set (see Section 5.4.3).  Section 5.4.2.3 describes
-   how one Reference Value is matched against the Accepted Claims Set.
+   For each MEC Endorsement Triple the Verifier compares each of the
+   stateful-environment-record fields from the cond field in the triple
+   against the ACS (see Section 5.4.4.4).
 
-   If any Reference Value in a group does not match the Accepted Claims
-   Set then all Endorsements in the group are silently ignored.
+   If every stateful environment matches a corresponding ACS entry, then
+   the Verifier MUST add an Endorsement entry to the ACS (see
+   Section 5.4.5) for each endorsed-triple-record in the endorsements
+   field.  Each Endorsement from the endorsed-triple-record includes the
+   authority which signed the MEC Endorsement Triple.
 
-   Each group is processed independently of other groups.  If a group
-   fails to match the Accepted Claims Set then this does not affect the
-   processing of other groups.
+5.4.4.3.  Processing Conditional Endorsement Series Triple
 
-5.4.2.3.  Matching a Reference Value against the Accepted Claims Set
+   For each Conditional Endorsement Series Triple the Verifier iterates
+   over the conditional-series-records within the triple, stopping if it
+   finds a match.
 
-   This section describes how a Reference Value is matched against
-   Evidence in the Accepted Claims Set. If any part of the processing
-   indicates that the Reference Value does not match then the remaining
-   steps in this section are skipped for that group.
+   For each iteration, the Verifier creates a temporary stateful-
+   environment-record by merging the stateful-environment-record in the
+   triple with the refv field in the conditional-series-record.  It
+   compares this temporary record against the ACS (see Section 5.4.4.4).
 
-   A Reference Value consists of an environment-map plus a measurement-
-   map.  In the reference-triple-record these are encoded together.  In
-   other triples multiple Reference Values are represented more
-   compactly by letting one environment-map apply to multiple
-   measurement-maps.
+   If one of the temporary records matches then the Verifier MUST add
+   the endv Endorsement entry to the ACS.  This Endorsement includes the
+   authority which signed the Conditional Endorsement Series Triple.
 
-   The Verifier first looks for entries in the Accepted Claims Set with
-   the same environment-map as the Reference Value.  These are the
-   candidate claims.  If there are no candidate claims then the
-   Reference Value does not match.
+5.4.4.4.  Matching a stateful environment against the Accepted Claims
+          Set
 
-   A Verifier SHALL compare two environment-maps using a binary
-   comparison of the CBOR encoded objects.
+   This section describes how a stateful environment is matched against
+   an Accepted Claims Set entry.  If any part of the processing
+   indicates that the stateful environment does not match then the
+   remaining steps in this section are skipped for that stateful
+   environment.
 
-   A Verifier SHOULD convert environment-map into a form which meets
-   CBOR Core Deterministic Encoding Requirements [STD94] before
-   performing the binary comparison.
+   The Verifier initializes a temporary "candidate entries" variable
+   with all entries in the Accepted Claims Set (ACS) where the stateful
+   enviromnment environment-map is a subset of the ACS environment-map.
 
-   If the Reference Value contains an authorized-by field then the
-   Verifier SHALL modify the candidate claims set to remove Claims whose
-   authorized-by field does not contain one of the keys listed in the
-   Reference Value authorized-by field (see Section 5.3.2.2 for more
-   details).  If all candidate claim entries are discarded by this step
-   then the Reference Value does not match.
+   A stateful environment environment-map is a subset of an ACS entry
+   environment-map if each field (for example class, instance etc.)
+   which is present in the stateful environment environment-map is also
+   present in the ACS entry, and the CBOR encoded field values in the
+   stateful environment and ACS entry are binary identical.  If a field
+   is not present in the stateful environment environment-map then the
+   presence of, and value of, the corresponding ACS entry field does not
+   affect whether the environment-maps are subsets.
 
-   The Verifier SHALL iterate over the codepoints which are present in
-   the measurement-values-map field within the Reference Value
-   measurement-values-map.  The Reference Value entry is compared
-   against each of the candidate claims.  If none of the candidate
-   claims matches the Reference Value entry then the Reference Value
-   does not match.
+   Before performing the binary comparison, a Verifier SHOULD convert
+   environment-map fields into a form which meets CBOR Core
+   Deterministic Encoding Requirements [STD94].
 
-   The algorithm used to match the measurement-values-map entries is
-   described below.  The comparison performed depends on the type of
-   field being compared.
+   If the stateful environment contains an authorized-by field then the
+   Verifier SHALL remove all candidate entries whose authorized-by field
+   does not contain one of the keys listed in the stateful environment
+   authorized-by field (see Section 5.3.2.2 for more details).
 
-   If the Reference Value measurement-values-map value is tagged with a
-   CBOR tag [STD94] then the Verifier MUST use the comparison algorithm
-   associated with that tag.
+   If there are no candidate entries then the triple containing the
+   stateful environment does not match.
 
-   If the Reference Value is not tagged then the Verifier MUST use the
-   comparison algorithm associated with the measurement-values-map
-   codepoint for the entry.
+   The stateful environment entry is compared against each of the
+   candidate entries.
 
-   This specification defines the matching algorithm for some CBOR
-   tagged reference values, which is described in sub-sections below.
+   For each of the candidate entries, the Verifier SHALL iterate over
+   the codepoints which are present in the measurement-values-map field
+   within the stateful environment measurement-map.  Each of the
+   codepoints present in the stateful environment is compared against
+   the candidate entry.
+
+   If any codepoint present in the stateful environment measurement-
+   values-map does not match the same codepoint within the candidate
+   entry measurement-values-map then the stateful environment does not
+   match.
+
+   If all checks above have been performed successfully then the
+   stateful environment matches.  If none of the candidate entries match
+   the stateful environment entry then the stateful environment does not
+   match.
+
+5.4.4.5.  Matching a single measurement-values-map codepoint
+
+   The algorithm used to match the measurement-values-map codepoints is
+   described in this section.  The comparison performed depends on the
+   value of the codepoint being compared and whether the measurement-
+   values-map value associated with that codepoint is tagged.
+
+   If the stateful environment measurement-values-map value is tagged
+   with a CBOR tag [STD94] then the Verifier MUST use the comparison
+   algorithm associated with that tag.
+
+   If the value is not tagged then the Verifier MUST use the comparison
+   algorithm associated with the measurement-values-map codepoint for
+   the entry.
+
+   This specification defines the matching algorithm for some codepoints
+   and CBOR tagged values, which are described in sub-sections below.
 
    A CoRIM profile may define additional tags and their matching
    algorithms.
 
-   If the Verifier does not recognize the Reference Value CBOR tag value
-   then the Reference Value does not match.
+   If the Verifier does not recognize the stateful environment CBOR tag
+   value then the stateful environment does not match.
 
-   If the Reference Value is not tagged and the measurement-value-map
-   key is a value with handling described in the sub-sections below,
+   If the stateful environment is not tagged and the measurement-value-
+   map key is a value with handling described in the sub-sections below,
    then the algorithm appropriate to that key is used to match the
    entries.
 
-   If the Reference Value is not tagged, and the measurement-values-map
-   key is not a value described below, then the entries are compared
-   using binary comparison of their CBOR encoded values.  If the values
-   are not binary identical then the Reference Value does not match.
+   If the stateful environment is not tagged, and the measurement-
+   values-map key is not a value described below, then the entries are
+   compared using binary comparison of their CBOR encoded values.  If
+   the values are not binary identical then the stateful environment
+   does not match.
 
    Note that while specifications may extend the matching semantics
    using CBOR tags, there is no way to extend the matching semantics of
-   keys.  Any new keys requiring non-default comparison must add a CBOR
-   tag to the Reference Value describing the desired behaviour.
+   codepoints.  Any new codepoints requiring non-default comparison must
+   add a CBOR tag to the Reference Value describing the desired
+   behaviour.
 
-   If all checks above have been performed successfully then the
-   Reference Value matches.
-
-5.4.2.3.1.  Comparison for svn entries
+5.4.4.5.1.  Comparison for svn entries
 
    The value stored under measurement-values-map key 1 is an SVN, which
    must have type UINT.
@@ -2160,10 +2244,10 @@ Table of Contents
    value of the SVN in Accepted Claims Set less than the value in the
    Reference Value then the Reference Value does not match.
 
-5.4.2.3.2.  Comparison for digests entries
+5.4.4.5.2.  Comparison for digests entries
 
    The value stored under measurement-values-map key 2, or a value
-   tagged with #6.TBD is a digest entry.  It contains one or more
+   tagged with #6.562 is a digest entry.  It contains one or more
    digests, each measuring the same object.  A Reference Value may
    contain multiple digests, each with a different algorithm acceptable
    to the Reference Value provider.  If the digest in Evidence contains
@@ -2192,14 +2276,14 @@ Table of Contents
    identical between the Reference Value and the Accepted Claims Set
    entry then the Reference Value does not match.
 
-5.4.2.3.3.  Comparison for raw-value entries
+5.4.4.5.3.  Comparison for raw-value entries
 
       I think this comparison method only works if the entry is at key 4
       (because there needs to be a mask at key 5).  Should we have a
       Reference Value of this which stores [expect-raw-value raw-value-
       mask] in an array?
 
-5.4.2.3.4.  Comparison for cryptokeys entries
+5.4.4.5.4.  Comparison for cryptokeys entries
 
    The value stored under measurement-values-map key 12 is an array of
    $crypto-key-type-choice entries. $crypto-key-type-choice entries are
@@ -2219,7 +2303,7 @@ Table of Contents
    cryptokeys Reference Value matches.  Otherwise, cryptokeys does not
    match.
 
-5.4.2.3.5.  Handling of new tags
+5.4.4.5.5.  Handling of new tags
 
    A profile may specify handling for new CBOR tagged Reference Values.
    The profile must specify how to compare the CBOR tagged Reference
@@ -2228,7 +2312,7 @@ Table of Contents
    Note that the verifier may compare Reference Values in any order, so
    the comparison should not be stateful.
 
-5.4.3.  Adding CoMID Endorsed Values to the Accepted Claims Set
+5.4.5.  Adding CoMID Endorsed Values to the Accepted Claims Set
 
 5.5.  Adding DICE/SPDM Evidence to the Accepted Claims Set
 
@@ -2438,7 +2522,10 @@ Table of Contents
    |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
    |       |           | see Section 3.1.4.1.6              |         |
    +-------+-----------+------------------------------------+---------+
-   |562-599|any        | Earmarked for CoRIM                |RFCthis  |
+   |562    |[ + digest | tagged-digests, see Section 1.3.8  |RFCthis  |
+   |       |]          |                                    |         |
+   +-------+-----------+------------------------------------+---------+
+   |563-599|any        | Earmarked for CoRIM                |RFCthis  |
    +-------+-----------+------------------------------------+---------+
 
                                  Table 2
@@ -2567,9 +2654,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-24, 16
-              December 2023, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-eat-24>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-25, 15
+              January 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-25>.
 
    [I-D.ietf-sacm-coswid]
               Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
@@ -2989,7 +3076,7 @@ Appendix A.  Full CoRIM CDDL
    measurement-values-map = non-empty<{
      ? &(version: 0) => version-map
      ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => [ + digest ]
+     ? &(digests: 2) => digests-type-choice
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
@@ -3087,6 +3174,10 @@ Appendix A.  Full CoRIM CDDL
      alg: (int / text),
      val: bytes
    ]
+
+   digests = [ + digest ]
+   tagged-digests = #6.562(digests)
+   digests-type-choice = digests / tagged-digests
 
    concise-swid-tag = {
      tag-id => text / bstr .size 16,
