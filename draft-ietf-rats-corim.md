@@ -299,6 +299,8 @@ should only be used when the `digest` type conveys reference value
 measurements that are matched verbatim with Evidence that uses the same
 convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
 
+The `digests-type-choice` measurement is either an untagged array of `digest` or the same array tagged with the CBOR tag `#6.562`.
+
 ~~~ cddl
 {::include cddl/digest.cddl}
 ~~~
@@ -1813,9 +1815,7 @@ Reference Value does not match.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
-The value stored under `measurement-values-map` key 2,
-or a value tagged with
-#6.TBD is a digest entry.
+The value stored under `measurement-values-map` key 2, or a value tagged with #6.562 is a digest entry.
 It contains one or more digests, each measuring the
 same object. A Reference Value may contain multiple digests, each with a
 different algorithm acceptable to the Reference Value provider. If the
@@ -2023,7 +2023,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                        | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
-| 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     562 | `[ + digest ]`      | tagged-digests, see {{sec-common-hash-entry}}                        | {{&SELF}} |
+| 563-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
