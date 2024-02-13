@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-11T01:19:07.250878+00:00",
+  "timestamp": "2024-02-13T01:14:29.722718+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2503,16 +2503,24 @@
       "id": "I_kwDOH6-tI85mxQOo",
       "title": "What does the verifier do if there are multiple CoBOMs available?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2023-05-24T14:52:18Z",
-      "updatedAt": "2023-05-24T14:52:18Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-02-12T16:00:22Z",
+      "closedAt": "2024-02-12T16:00:22Z",
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This was addressed by PR #153",
+          "createdAt": "2024-02-12T16:00:22Z",
+          "updatedAt": "2024-02-12T16:00:22Z"
+        }
+      ]
     },
     {
       "number": 97,
@@ -2975,9 +2983,17 @@
       "labels": [],
       "body": "The TcbInfo `TYPE` is an OCTET STRING that can contain whatever form that `class-id` can take. It supports tagged UUID `#6.37(uuid-type)` and tagged int `#6.551(int)` in addition to tagged OID `#6.111(oid)`. \r\nThe Verifier reads the RV manifest to know how to translate the Evidence OCTET STRING. This poses a problem for Verifiers that copy the Evidence into ACS without knowing the RV context. \r\nPossibly, they need a \"dirty bit\" that signals when the schema translation has been applied?",
       "createdAt": "2023-09-06T17:49:32Z",
-      "updatedAt": "2023-09-06T17:49:32Z",
+      "updatedAt": "2024-02-12T15:57:51Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is only a problem if the Evidence Collection phase has added an ACS entry with a type entry that does not include a tag.\r\n\r\nI think the definition of how to add Evidence to the ACS should note that adding tags to the type field is important.",
+          "createdAt": "2024-02-12T15:57:50Z",
+          "updatedAt": "2024-02-12T15:57:50Z"
+        }
+      ]
     },
     {
       "number": 139,
@@ -3120,9 +3136,24 @@
       "labels": [],
       "body": "PR #107 lines 1458-1466, describe RV matching of Evidence in ACS, but instead focuses on matching Endorsements / Endorsed Value Claims. It is unclear if matching Endorsements is applied before/after RV matching. I believe EV matching happens after RV matching.\r\n\r\nIt would help if terminology was more pedantic in terms of identifying the type of claim contained in the ACS. I.e., \"If any Reference Value Claim in a group does not match an Evidence Claim in the ACS then ...\"",
       "createdAt": "2023-09-06T19:05:46Z",
-      "updatedAt": "2023-09-06T19:08:10Z",
+      "updatedAt": "2024-02-12T17:04:05Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The text commented on by this issue has been changes as part of PR #193.\r\n\r\nIs it OK to close this issue?",
+          "createdAt": "2024-02-12T15:52:08Z",
+          "updatedAt": "2024-02-12T15:52:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Is it OK to close this issue?\r\n\r\nOK by me.",
+          "createdAt": "2024-02-12T17:04:04Z",
+          "updatedAt": "2024-02-12T17:04:04Z"
+        }
+      ]
     },
     {
       "number": 144,
@@ -3136,7 +3167,7 @@
       "labels": [],
       "body": "in Pull Request:\r\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/107\r\n\r\nThe following text is ambigous\r\n\r\nA Reference Value consists of an `environment-map` plus a `measurement-map`. In the\r\n`reference-values-triple-record` these are packaged together. In other triples multiple\r\nReference Values are represented more compactly by letting one `environment-map`\r\napply to multiple `measurement-map`s.\r\n\r\nNeed to re-write the same.",
       "createdAt": "2023-09-07T16:35:57Z",
-      "updatedAt": "2023-09-07T16:58:21Z",
+      "updatedAt": "2024-02-12T15:51:10Z",
       "closedAt": null,
       "comments": [
         {
@@ -3159,6 +3190,13 @@
           "body": "Within the grouping context, the Verifier uses the environment fields in the ACS to locate relevant RVs. The environment fields in RVs must exactly match the environment fields in the ACS.\r\n\r\nThe measurement fields in matching RVs, within the grouping context, are matched with measurement fields in the ACS. All RV measurement fields MUST match an ACS measurement field. Otherwise, matching (within the grouping context) fails.\r\n\r\nNote: when grouping context is resolved, this text can be updated.",
           "createdAt": "2023-09-07T16:58:21Z",
           "updatedAt": "2023-09-07T16:58:21Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The text mentioned at the start of this issue has been replaced as part of PR #193.\r\n\r\nIs it ok to close this issue?",
+          "createdAt": "2024-02-12T15:51:09Z",
+          "updatedAt": "2024-02-12T15:51:09Z"
         }
       ]
     },
@@ -4642,7 +4680,7 @@
       "labels": [],
       "body": "Hey y'all, I discussed this in the Veraison meeting, but I'll make it an issue here.\r\n\r\nFirst off, let's not change anything yet, just add a code point.\r\n```\r\n$authorized-by-type-choice /= $crypto-key-type-choice\r\n```\r\n\r\nThe reason I'm asking for this change is for the Qemu OVMF profile for SEV-SNP to model composite authorizers. The SEV_HASH_TABLE in OVMF allows for different initial measurements of the boot chain to get locked into the initial launch measurement. The firmware itself that allocates space for this table can be created by a different entity. This effectively squashes multiple events with individual authorizers into a single event that is captured by the hardware attestation report's launch measurement.\r\n\r\nIf the profile has the ability to represent a composite authorized-by representation, then we can compose disparate claims about the components of the initial measurement into a profile-defined X+Y+Z = Reference-value operation that means the reference value is authorized by all of X, Y, and Z's endorsers.",
       "createdAt": "2024-02-07T17:01:43Z",
-      "updatedAt": "2024-02-09T17:21:51Z",
+      "updatedAt": "2024-02-12T16:58:19Z",
       "closedAt": null,
       "comments": [
         {
@@ -4728,6 +4766,20 @@
           "body": "Neither of those are workable. The a0 here is AMD SEV-SNP's measurement, and the VM operator that can populate a2 and a3 cannot get a1 ahead of time from us to sign the combination.\r\n\r\nAMD's design for SEV-SNP pushed the problem of runtime measurements down the road too far and we've ended up with a feature that might not die for a while that mixes multiple artifacts into one measurement. I don't think many would follow down this slippery slope given the difficulty to even determine a1, a2, and a3 ahead of time to even derive a0.",
           "createdAt": "2024-02-09T17:21:50Z",
           "updatedAt": "2024-02-09T17:21:50Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This seems similar to a case I've been thinking about, which is how to handle evidence which comes into the verifier as a PCR value plus an event log in a generalized way.\r\n\r\nMy thoughts were that the _Evidence Collection_ phase should use the PCR value to verify that the event log is correct, and then add the event log measurements to the Accepted Claims Set as individual measurements. The `environment-map` for each measurement would be set to something which represents what is being measured.\r\n\r\nThe CoRIM can then use the standard matching rules to match against the individual measurements it cares about.\r\n\r\nI think the Evidence Collection phase would also need to include a measurement which describes the order of measurements in the log, without this it might be possible for an attacker to add fake measurements to the PCR after the real measurements.\r\n\r\nDionne, could something like this help with your use case?",
+          "createdAt": "2024-02-12T15:47:44Z",
+          "updatedAt": "2024-02-12T15:47:44Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "NONE",
+          "body": "What is to be done with the hardware attestation report, then? It doesn't seem appropriate for a virtual firmware profile to override the profile for the measuring technology. When you interpret the evidence of a hardware attestation report, you get the measurement as an accepted claim, which that needs to be (collectively) authorized. Now every use of SEV-SNP that has multiple entities represented in the measurement need to specify that their profile should be used instead of AMD's for interpreting the hardware attestation report. Admittedly they could say, \"we use AMD's profile for everything except we don't admit the sevsnpvm-measurement as an accepted claim.\r\n\r\nThe SEV-SNP attestation report measurement must be computed from \"ovmf-sevsnp-base-measurement, ovmf-seves-rip, ovmf-seves-csbase\" as the baseline from the OVMF binary provider, then \"ovmf-sevhash-kernel, ovmf-sevhash-cmdline, ovmf-sevhash-initrd\" from the VM operator, then \"ovmf-seves-bspvmsa, ovmf-seves-apvmsa\" (with the seves-rip and seves-csbase plugged in appropriately) from the VMM operator.\r\n\r\nI suppose for this use case I could live with this awkward this, though I wonder how to collect all these values as evidence in the first place. Maybe /sys/firmware/qemu_fw_cfg, but that would need additional changes to qemu.\r\n",
+          "createdAt": "2024-02-12T16:58:17Z",
+          "updatedAt": "2024-02-12T16:58:17Z"
         }
       ]
     }
@@ -25005,6 +25057,32 @@
           ]
         }
       ]
+    },
+    {
+      "number": 203,
+      "id": "PR_kwDOH6-tI85mph0-",
+      "title": "Assign tag for digests",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/203",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Issue #154 notes that there is no tag assigned for a digests measurement when it appears at a local codepoint (for example at measurement-values-map codepoint -42).\r\n\r\nThis diff allocates the next available codepoint to inform the verifier that it should use the digests type.",
+      "createdAt": "2024-02-12T15:31:58Z",
+      "updatedAt": "2024-02-12T15:34:51Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "154-assign-tag-for-digest",
+      "headRefOid": "4a822179f2d9039171a039be8298a0e33739f755",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
