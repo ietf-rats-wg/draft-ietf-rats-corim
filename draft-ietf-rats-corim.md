@@ -453,6 +453,8 @@ that MUST have a different identifier.
 {::include cddl/profile-type-choice.cddl}
 ~~~
 
+A "standard CoRIM type" references definitions in {{sec-corim-cddl}} and any further definitions in relevant IANA registries.
+
 ### Entities {#sec-corim-entity}
 
 The CoRIM Entity is an instantiation of the Entity generic
@@ -1352,7 +1354,8 @@ CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the
 and '$$' signifies map extensibility. Typically, map extension requires a convention
 for code point naming that avoids code-point reuse.
 Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
-Additionally, a range of code points may be reserved for vendor-specific use such as negative integers.
+Any negative integer may be assigned meaning locally to the profile extending the map type.
+Non-negative integers are reserved for IANA to assign meaning globally.
 
 ### Data Type Extensions
 
@@ -2183,7 +2186,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 --- back
 
-# Full CoRIM CDDL
+# Full CoRIM CDDL {#sec-corim-cddl}
 
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
