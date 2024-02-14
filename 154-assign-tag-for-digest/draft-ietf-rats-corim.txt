@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 15 August 2024                                     Y. Deshpande
+Expires: 17 August 2024                                     Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        12 February 2024
+                                                        14 February 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 August 2024.
+   This Internet-Draft will expire on 17 August 2024.
 
 Copyright Notice
 
@@ -119,7 +119,8 @@ Table of Contents
              3.1.4.1.5.6.  Raw Values Types
              3.1.4.1.5.7.  Address Types
            3.1.4.1.6.  Crypto Keys
-           3.1.4.1.7.  Domain Types
+           3.1.4.1.7.  Integrity Registers
+           3.1.4.1.8.  Domain Types
          3.1.4.2.  Reference Values Triple
          3.1.4.3.  Endorsed Values Triple
          3.1.4.4.  Device Identity Triple
@@ -165,7 +166,8 @@ Table of Contents
            5.4.4.5.2.  Comparison for digests entries
            5.4.4.5.3.  Comparison for raw-value entries
            5.4.4.5.4.  Comparison for cryptokeys entries
-           5.4.4.5.5.  Handling of new tags
+           5.4.4.5.5.  Comparison for Integrity Registers
+           5.4.4.5.6.  Handling of new tags
        5.4.5.  Adding CoMID Endorsed Values to the Accepted Claims Set
      5.5.  Adding DICE/SPDM Evidence to the Accepted Claims Set
        5.5.1.  Transforming SPDM Evidence to a format usable for
@@ -1137,6 +1139,7 @@ Table of Contents
      ? &(uuid: 10) => uuid-type
      ? &(name: 11) => text
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
+     ? &(integrity-registers: 14) => integrity-registers
      * $$measurement-values-map-extension
    }>
 
@@ -1194,6 +1197,10 @@ Table of Contents
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
       Value entry.  Matching is described in Section 5.4.4.5.4.
+
+   *  integrity-registers (index 14): A group of one or more named
+      measurements associated with the environment.  Described in
+      Section 3.1.4.1.7.
 
 3.1.4.1.5.3.  Version
 
@@ -1400,7 +1407,53 @@ Table of Contents
    tagged-cert-thumbprint-type = #6.559(digest)
    tagged-cert-path-thumbprint-type = #6.561(digest)
 
-3.1.4.1.7.  Domain Types
+3.1.4.1.7.  Integrity Registers
+
+   An Integrity Registers map groups together one or more measured
+   "objects".  Each measured object has a unique identifier and one or
+   more associated digests.  Identifiers are either unsigned integers or
+   text strings and their type matters, e.g., unsigned integer 5 is
+   distinct from the text string "5".
+
+   integrity-register-id-type-choice = uint / text
+
+   integrity-registers = {
+     + integrity-register-id-type-choice => [ + digest ]
+   }
+
+   All the measured objects in an Integrity Registers map are explicitly
+   named and the order in which they appear in the map is irrelevant.
+   Any digests associated with a measured object represent an acceptable
+   state for the object.  Therefore, if multiple digests are provided,
+   the acceptable state is their cross-product.  For example, given the
+   following Integrity Registers:
+
+   {
+     0: [ [ 0, h'00' ] ],
+     1: [ [ 0, h'11' ], [ 1, h'12' ] ]
+   }
+
+   then both
+
+   {
+     0: [ 0, h'00' ],
+     1: [ 0, h'11' ]
+   }
+
+   and
+
+   {
+     0: [ 0, h'00' ],
+     1: [ 1, h'12' ]
+   }
+
+   are acceptable states.
+
+   Integrity Registers can be used to model the PCRs in a TPM or vTPM,
+   in which case the identifier is the register index, or other kinds of
+   vendor-specific measured objects.
+
+3.1.4.1.8.  Domain Types
 
    A domain is a context for bundling a collection of related
    environments and their measurements.
@@ -1470,7 +1523,7 @@ Table of Contents
 
    A Domain Dependency triple defines trust dependencies between
    measurement sources.  The subject identifies a domain
-   (Section 3.1.4.1.7) that has a predicate relationship to the object
+   (Section 3.1.4.1.8) that has a predicate relationship to the object
    containing one or more dependent domains.  Dependency means the
    subject domain’s trustworthiness properties rely on the object
    domain(s) trustworthiness having been established before the
@@ -1484,7 +1537,7 @@ Table of Contents
 3.1.4.7.  Domain Membership Triple
 
    A Domain Membership triple assigns domain membership to environments.
-   The subject identifies a domain (Section 3.1.4.1.7) that has a
+   The subject identifies a domain (Section 3.1.4.1.8) that has a
    predicate relationship to the object containing one or more
    environments.  Endorsed environments (Section 3.1.4.3) membership is
    conditional upon successful matching of Reference Values
@@ -2303,7 +2356,18 @@ Table of Contents
    cryptokeys Reference Value matches.  Otherwise, cryptokeys does not
    match.
 
-5.4.4.5.5.  Handling of new tags
+5.4.4.5.5.  Comparison for Integrity Registers
+
+   For each Integrity Register entry in the Reference Value, the
+   Verifier will use the associated identifier to look up the matching
+   Integrity Register entry in Evidence.  If no entry is found, the
+   Reference Value does not match.  Instead, if an entry is found, the
+   digest comparison proceeds as defined in Section 5.4.4.5.2.  Note
+   that it is not required for all the entries in Evidence to be used
+   during matching: the Reference Value could consist of a "quote" (in
+   TPM parlance) of just a subset of the register space.
+
+5.4.4.5.6.  Handling of new tags
 
    A profile may specify handling for new CBOR tagged Reference Values.
    The profile must specify how to compare the CBOR tagged Reference
@@ -3089,6 +3153,7 @@ Appendix A.  Full CoRIM CDDL
      ? &(uuid: 10) => uuid-type
      ? &(name: 11) => text
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
+     ? &(integrity-registers: 14) => integrity-registers
      * $$measurement-values-map-extension
    }>
 
@@ -3178,6 +3243,12 @@ Appendix A.  Full CoRIM CDDL
    digests = [ + digest ]
    tagged-digests = #6.562(digests)
    digests-type-choice = digests / tagged-digests
+
+   integrity-register-id-type-choice = uint / text
+
+   integrity-registers = {
+     + integrity-register-id-type-choice => [ + digest ]
+   }
 
    concise-swid-tag = {
      tag-id => text / bstr .size 16,
