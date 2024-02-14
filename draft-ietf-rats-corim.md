@@ -337,7 +337,10 @@ CoRIM can also carry the following optional metadata:
 
 * A locator, which allows discovery of possibly related RIMs
 
-* A profile identifier, which is used to interpret the information contained in the enclosed tags. A profile allows the base CoRIM schema to be customised to fit a specific Attester.  For example, see {{-psa-endorsements}}.
+* A profile identifier, which is used to interpret the information contained in the enclosed tags.
+A profile allows the base CoRIM CDDL definition to be customized to fit a specific Attester by augmenting the base CDDL data definition via the specified extension points or by constraining types defined.
+A profile MUST NOT change the base CoRIM CDDL definition's semantics, which including not changing or overloading names and numbers registered at the IANA registries specified by this document.
+or more, see {{sec-corim-profile-types}},
 
 * A validity period, which indicates the time period for which the CoRIM contents are valid.
 
@@ -454,6 +457,7 @@ that MUST have a different identifier.
 {::include cddl/profile-type-choice.cddl}
 ~~~
 
+For an example profile definition, see {{-psa-endorsements}}.
 
 ### Entities {#sec-corim-entity}
 
@@ -2154,7 +2158,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 --- back
 
-# Full CoRIM CDDL {#sec-corim-cddl}
+# Base CoRIM CDDL {#sec-corim-cddl}
 
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
