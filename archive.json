@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-15T01:14:12.603994+00:00",
+  "timestamp": "2024-02-18T01:18:16.747252+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -25070,7 +25070,7 @@
       "labels": [],
       "body": "Issue #154 notes that there is no tag assigned for a digests measurement when it appears at a local codepoint (for example at measurement-values-map codepoint -42).\r\n\r\nThis diff allocates the next available codepoint to inform the verifier that it should use the digests type.",
       "createdAt": "2024-02-12T15:31:58Z",
-      "updatedAt": "2024-02-14T15:58:24Z",
+      "updatedAt": "2024-02-17T19:48:08Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25081,7 +25081,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am afraid I don't understand the goal of this PR. The issue too is quite cryptic.\r\n\r\nThere are 3 ways to disambiguate semantics of a right-hand-side (RHS) expression. Profiles, code points (LHS), CBOR tags (RHS). Profiles, code points, and CBOR tags all have vendor-specific alternatives, that if used, require vendor-specific updates to Verifiers. Given the goal of a universal verifier is to avoid vendor-specific updates, standard profiles (e.g., DICE / base CoMID), positive code points, and standard CBOR tags `#6.<0..32767>` must be used.\r\n\r\nA while back we argued ourselves out of `[ + measurement-values-map ]` multiplicity. However, if there is a need for multiple measurements of the same type e.g., `digests`. There are 4 ways to do that. \r\n(1) multiple triple entries where the `environment-map` is repeated for each different `measurement-map`.\r\n(2) use multiple but different code points.\r\n(3) define a new measurement type that includes multiplicity on the RHS i.e., `[ + RHS ]`, e.g., `integrity-registers`. \r\n(4) add back multiplicity around `measurement-values-map`.\r\n\r\nOption (1) seems to create bloat by repeating the `environment-map` multiple times. But verifiers might not preserve ordering, hence could get the entries reversed. So, not a realistic option.\r\nOption (4) still requires positional logic to disambiguate individual instances. Hence, some other form of index value is needed that is recognized by universal verifiers. So, not a realistic option.\r\nOption (3) requires an update to a standard for each new instance of the measurement. Flexibility could be an issue.\r\nOption (2) was discussed a few times and there seemed to be consensus for its use. But non-vendor specific CBOR tags are needed for the RHS to ensure a universal verifier can process multiples. Nevertheless, (unless I'm mistaken) the CDDL that defines the negative code points has to be defined, possibly via a profile? \r\nBut more generally, it could be defined by reserving a few LHS code points that expect `#6.<0..32767>(any)` or maybe `#6.<500..599>(any)` as the RHS value?  E.g.:\r\n```\r\nmeasurement-values-map = {\r\n    ? < -25..-1 > => #6.<500..599>(any)\r\n}\r\n```\r\n\r\n",
+          "createdAt": "2024-02-17T19:48:07Z",
+          "updatedAt": "2024-02-17T19:48:07Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI85wGObw",
@@ -25094,6 +25102,59 @@
           "body": "LGTM!",
           "createdAt": "2024-02-14T15:58:24Z",
           "updatedAt": "2024-02-14T15:58:24Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85wGePP",
+          "commit": {
+            "abbreviatedOid": "985723a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-14T16:27:39Z",
+          "updatedAt": "2024-02-16T19:01:02Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Shouldn't the semantics of the tagged digest be explained? Or if the semantics are the same, explain why both are needed?",
+              "createdAt": "2024-02-14T16:27:39Z",
+              "updatedAt": "2024-02-16T19:01:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85wZ4Xo",
+          "commit": {
+            "abbreviatedOid": "985723a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-16T19:09:39Z",
+          "updatedAt": "2024-02-16T19:09:45Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\nThe `digests-type-choice` measurement is either an untagged array of `digest` or the same array tagged with the CBOR tag `#6.562`.\r\nIf a usage of `digests` differs from the semantics described for `#6.562`, then a different CBOR tag value MUST be used that defines the different semantics such that Verifiers can apply consistent processing behavior.\r\n```",
+              "createdAt": "2024-02-16T19:09:39Z",
+              "updatedAt": "2024-02-16T19:11:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85wcpCO",
+          "commit": {
+            "abbreviatedOid": "985723a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I am afraid I don't understand the goal of this PR.\r\nThe issue too is quite cryptic.",
+          "createdAt": "2024-02-17T12:12:05Z",
+          "updatedAt": "2024-02-17T12:12:05Z",
           "comments": []
         }
       ]
@@ -25205,7 +25266,7 @@
       "labels": [],
       "body": "There's a base schema and there's a standard type, so we ought to define the separate concepts.",
       "createdAt": "2024-02-14T18:04:34Z",
-      "updatedAt": "2024-02-14T19:16:23Z",
+      "updatedAt": "2024-02-15T10:47:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25315,6 +25376,26 @@
               "body": "I would expect that any number in IANA registries would link to the standard document that introduced it and gives it meaning, which is why I just used the IANA registry. That's the one authority that can assign numbers that are used in these extension points, no?",
               "createdAt": "2024-02-14T19:16:23Z",
               "updatedAt": "2024-02-14T19:16:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85wM7qA",
+          "commit": {
+            "abbreviatedOid": "ed9892a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-15T10:47:48Z",
+          "updatedAt": "2024-02-15T10:47:48Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I think \"standard CoRIM type\" is referring to the codepoints within `measurement-values-map` but this isn't very clear from the text.\r\n\r\nI wonder whether it would be better to say something along the lines of \"a profile SHALL not redefine anything in this document, but it can add to it\", which is what I think the current text is trying to say.",
+              "createdAt": "2024-02-15T10:47:48Z",
+              "updatedAt": "2024-02-15T10:47:48Z"
             }
           ]
         }
