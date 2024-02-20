@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-18T01:18:16.747252+00:00",
+  "timestamp": "2024-02-20T01:12:51.643062+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -25070,7 +25070,7 @@
       "labels": [],
       "body": "Issue #154 notes that there is no tag assigned for a digests measurement when it appears at a local codepoint (for example at measurement-values-map codepoint -42).\r\n\r\nThis diff allocates the next available codepoint to inform the verifier that it should use the digests type.",
       "createdAt": "2024-02-12T15:31:58Z",
-      "updatedAt": "2024-02-17T19:48:08Z",
+      "updatedAt": "2024-02-19T18:25:02Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25088,6 +25088,20 @@
           "body": "> I am afraid I don't understand the goal of this PR. The issue too is quite cryptic.\r\n\r\nThere are 3 ways to disambiguate semantics of a right-hand-side (RHS) expression. Profiles, code points (LHS), CBOR tags (RHS). Profiles, code points, and CBOR tags all have vendor-specific alternatives, that if used, require vendor-specific updates to Verifiers. Given the goal of a universal verifier is to avoid vendor-specific updates, standard profiles (e.g., DICE / base CoMID), positive code points, and standard CBOR tags `#6.<0..32767>` must be used.\r\n\r\nA while back we argued ourselves out of `[ + measurement-values-map ]` multiplicity. However, if there is a need for multiple measurements of the same type e.g., `digests`. There are 4 ways to do that. \r\n(1) multiple triple entries where the `environment-map` is repeated for each different `measurement-map`.\r\n(2) use multiple but different code points.\r\n(3) define a new measurement type that includes multiplicity on the RHS i.e., `[ + RHS ]`, e.g., `integrity-registers`. \r\n(4) add back multiplicity around `measurement-values-map`.\r\n\r\nOption (1) seems to create bloat by repeating the `environment-map` multiple times. But verifiers might not preserve ordering, hence could get the entries reversed. So, not a realistic option.\r\nOption (4) still requires positional logic to disambiguate individual instances. Hence, some other form of index value is needed that is recognized by universal verifiers. So, not a realistic option.\r\nOption (3) requires an update to a standard for each new instance of the measurement. Flexibility could be an issue.\r\nOption (2) was discussed a few times and there seemed to be consensus for its use. But non-vendor specific CBOR tags are needed for the RHS to ensure a universal verifier can process multiples. Nevertheless, (unless I'm mistaken) the CDDL that defines the negative code points has to be defined, possibly via a profile? \r\nBut more generally, it could be defined by reserving a few LHS code points that expect `#6.<0..32767>(any)` or maybe `#6.<500..599>(any)` as the RHS value?  E.g.:\r\n```\r\nmeasurement-values-map = {\r\n    ? < -25..-1 > => #6.<500..599>(any)\r\n}\r\n```\r\n\r\n",
           "createdAt": "2024-02-17T19:48:07Z",
           "updatedAt": "2024-02-17T19:48:07Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> ```\r\n> measurement-values-map = {\r\n>     ? < -25..-1 > => #6.<500..599>(any)\r\n> }\r\n> ```\r\n\r\nEven so, you'd need a profile to tell the verifier what -25 and 599 mean.",
+          "createdAt": "2024-02-19T12:55:34Z",
+          "updatedAt": "2024-02-19T12:55:34Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The CBOR code point defines a standardized structure such as \u2018digests\u2019.\r\n\r\nSent from my iPhone\r\n\r\nOn Feb 19, 2024, at 4:55\u202fAM, Thomas Fossati ***@***.***> wrote:\r\n\r\n\ufeff\r\n\r\nmeasurement-values-map = {\r\n    ? < -25..-1 > => #6.<500..599>(any)\r\n}\r\n\r\n\r\nEven so, you'd need a profile to tell the verifier what -25 and 599 mean.\r\n\r\n\u2014\r\nReply to this email directly, view it on GitHub<https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/203#issuecomment-1952395060>, or unsubscribe<https://github.com/notifications/unsubscribe-auth/ABPMCSGB4WWWKMTLDLYZFE3YUNDVDAVCNFSM6AAAAABDE5VJ2KVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMYTSNJSGM4TKMBWGA>.\r\nYou are receiving this because your review was requested.Message ID: ***@***.***>\r\n",
+          "createdAt": "2024-02-19T18:25:01Z",
+          "updatedAt": "2024-02-19T18:25:01Z"
         }
       ],
       "reviews": [
