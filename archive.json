@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-20T01:12:51.643062+00:00",
+  "timestamp": "2024-02-22T01:13:37.533513+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3784,7 +3784,7 @@
       "comments": [
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I found the concept of \"matching\" to be too vague. The document mentions that triples are \"subject, object, predicate\", but the representation is just subject and object. The predicate appears to be implicit in the selection of profile. To me that should be explicit if that's the intention. For example the in-toto attestation format explicitly represents predicates and names them through a URI to the schema definition. Predicates can be applied at individual value scales rather than profiles on entire CoRIM document scales, thus explicit representation to me is valuable for concision and reuse.\r\n\r\nIf \"predicate\" is meant to be implicitly raw equality with the intention of allowing later extensions by profiles, I'd like to see that third element of a triple called out as `$$`[whatever]`-triple-predicate-type-choice`. For instance, the Intel Profile for CoRIM defines generic expressions for numerical and set matching that would be nice to use across profiles. I don't really know how to distinguish predicate in a measurement map triple from a conditional endorsement, given that conditions can be defined as predicates apart from the quality of \"stateful\". Still the \"or\" semantics of matching a set of acceptable values is conditional without statefulness. The type definition is clear about intent for matching stateful environments, but can be abused for disjunctive stateless predicates, albeit with significant bloat.\r\n\r\nI interpret then that conditional-endorsement-series-triples to be the entry point for endorsements, and statelessness is an empty `refv` that trivially applies. Emptiness is disallowed with the `non-empty` requirement for `measurement-values-map`, but what is the semantics of \"matching\" a singular `/ name: / 11 => \"\"` key against Evidence? It seems to be purely diagnostic for reporting match failures of other keys in the map.\r\n\r\nThe `endorsed-triples` memberkey then is a shorthand to avoid bloated representation. If that is the case, it would help my conceptual understanding to see the presentation of triples-map use group notation to discuss the three triples as describing the general concept of endorsement. \r\n\r\n```\r\ntriples-map = non-empty<{\r\n  ? &(reference-triples: 0) =>\r\n    [ + reference-triple-record ]\r\n  // * &endorsement-triple-group-choice //\r\n  ? &(identity-triples: 2) =>\r\n    [ + identity-triple-record ]\r\n  ? &(attest-key-triples: 3) =>\r\n    [ + attest-key-triple-record ]\r\n  ? &(dependency-triples: 4) =>\r\n    [ + domain-dependency-triple-record ]\r\n  ? &(membership-triples: 5) =>\r\n    [ + domain-membership-triple-record ]\r\n  ? &(coswid-triples: 6) =>\r\n    [ + coswid-triple-record ]\r\n  * $$triples-map-extension\r\n}>\r\n\r\n&endorsement-triple-group-choice //= &(\r\n  ? &(endorsed-triples: 1) =>\r\n    [ + endorsed-triple-record ]\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record ])\r\n  ? &(conditional-endorsement-triples: 9) =>\r\n    [ + conditional-endorsement-triple-record ])\r\n)\r\n```",
           "createdAt": "2023-12-17T21:14:17Z",
           "updatedAt": "2023-12-17T21:14:17Z"
@@ -3882,7 +3882,7 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/183",
       "state": "OPEN",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The concept of endorsement vs just signing a CoRIM with reference values is still a point of confusion for me, so apologies if I get the terminology wrong. I'm particularly perplexed about the notion of endorsement.\r\n\r\nAt Google we're working on an open standard for binary integrity in terms of linking source + trusted builder with the set of binary artifacts. This is called [SLSA](https://slsa.dev), and it's not so much an entity that created software dependencies like an SBOM would describe, but more of a holistic \"all that source\" => \"all these binaries\" integrity claim. I don't particularly know what the expectation is for CoSWID tag creation when you're building a patched version of on open source project.\r\n\r\nEven so, our builders don't produce CoRIMs and I don't expect them to for a while. If I want to combine SLSA with CoRIM with a profile definition, I'm not sure where to begin. I think my CoRIM signer would be recertifying the SLSA document's claims by linking to the original SLSA document and additionally signing the CoSWID representation that includes binary digests. Is that what y'all would recommend?\r\n\r\nOr, by signing the CoSWID without a SLSA link as an entity-entry extension, we can state an inference. The SLSA document is not part of the CoSWID but is instead a supporting endorsement?\r\n\r\nEndorsement according to CoRIM:\r\n\"Additional measurements that are valid when a Target Environment has been verified against reference measurements.\"\r\n\r\nWe would then define a SLSA Profile for CoRIM that extends measurement-values-map with some linking representation that the CoSWID tag has extra integrity when verified against the SLSA provenance? We could furthermore have counter-signers that independently verify the build and endorse those links? I don't know. Counter-signing by a third party seems to be yet another modeling difficulty I'm unsure how to handle.\r\n",
@@ -3906,7 +3906,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "\"Anything a principle says about an Attester is an endorsement\"\r\n\r\nYes, so a key certificate is an endorsement conceptually but isn't necessarily going in the endorsed-triple.\r\nAs I conceptualize this for provisioning certificates for AMD SEV-SNP or Intel TDX, I'm unsure what this means. \r\nAMD says the attestation key is authentic for a given CHIP_ID, TCB_VERSION, and model stepping name. The AMD key distribution service binds those claims in bespoke x.509 certificate extensions. If AMD or Intel were to embrace CoRIM over x.509 extensions / TLS-protected responses from the PCS respectively, how would it do so for a TEE on particular firmware? Is the firmware security version(s) an endorsed-triple for the same environment-map of the attest-key-triple that includes the VCEK or PCK certificate?\r\n\r\nThe environment-map piece has an instance representation that we'd need to extend to allow CHIP_ID (AMD 64 bytes), PlatformManifest (Intel, yikes), or encrypted ppid (Intel, 384 bytes) in the case of chip-specific environments, but there are group keys as well. AMD has a VLEK that is certified for a whole cloud service provider ID that itself needs a group representation somehow.\r\n\r\nNow if I'm essentially rewrapping that information as interpretations from the provisioning services, then I'm endorsing an Attester, but for the VCEK certificate I can provide some evidence. For the Intel PCK certificate, I can't really give evidence about the TCB versions since those were just in a protected response by the TLS session.\r\n\r\nI guess I have to ask if it's even worth using the attest-key-triple to model these certificates that are produced outside the CoRIM model, and instead just define some special profile to link the actual data to some expectation from the ATTESTATION_REPORT or TDQUOTE evidence.",
           "createdAt": "2023-12-18T00:31:17Z",
           "updatedAt": "2023-12-18T00:31:17Z"
@@ -3951,7 +3951,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Tagged bytes composed with an AMD SEV-SNP profile identifier seems adequate to interpret this as CHIP_ID. LGTM.",
           "createdAt": "2024-01-04T23:17:21Z",
           "updatedAt": "2024-01-04T23:17:21Z"
@@ -4031,7 +4031,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Where do you plan on this pcr measurement type being? `$$measurement-values-map-extension //= &(&(pcrs: 13) => pcr-bank-map)`?\r\n\r\nI'm rather perplexed at the contended global number space for measurement-values-map as opposed to `&(uri-profiles: ??) => uri-measurement-values-map` for niche environments to provide their profile and extensions through a URI they control bound to a map of values of any kind they want. This is generally more extensible in the way in-toto allows folks to use URIs for predicates and for assigning evaluators.\r\n\r\nPCRs and their behavior in CoRIM are best specified by the TCG in their own referenced URI for the TPM 2.0 profile, rather than tunneled through CoRIM standards folks as its own first class model, no?",
           "createdAt": "2023-12-18T23:12:24Z",
           "updatedAt": "2023-12-18T23:12:24Z"
@@ -4199,7 +4199,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Given that the conversation about extensibility is to prefer cleaner separation into namespaces apart from what is already stuck for DICE, I think we should revisit refactoring this into a type that's associated with a trustedcomputinggroup.org url base for the type. Similarly I don't think PCR banks are the whole story, given that folks may want to have more inspection on the event log entries instead, and just keep the PCR bank as a final integrity test for evidence appraisal.",
           "createdAt": "2024-01-22T19:10:57Z",
           "updatedAt": "2024-01-22T19:10:57Z"
@@ -4213,7 +4213,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "measurement-values-map has the possibility of extensions that are protected by this standards body, and everything that already exists is there for DICE's benefit.\r\nI don't think that anything else should be added other than a namespaced entry with payload schema entirely determined by the namespace.\r\n\r\n```\r\n  ? &(named-extensions: 14) => [ + $named-extension ]\r\n\r\n$named-extension = [\r\n  $profile-type-choice\r\n  bytes\r\n]\r\n```\r\n\r\nThe TCG should use its own OID for TPM 2.0, say, to allow the bytes to be interpreted as an CBOR encoding of a map that includes something with the same schema as the proposed integrity-registers CDDL.",
           "createdAt": "2024-01-22T21:25:56Z",
           "updatedAt": "2024-01-22T21:26:17Z"
@@ -4272,7 +4272,7 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/190",
       "state": "OPEN",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The accepted claims set type description uses the variable `ev-coswid-triple-record` without definition. I noticed this is also used in the Intel Profile for CoRIM, but there it references the TCG specification for concise evidence for DICE (https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf). Given the specificity to DICE, this seems overly specific for the CoRIM specification given that evidence is expected to be profile-specific, so I wonder what this hanging reference is meant to mean.",
@@ -4313,14 +4313,14 @@
       "comments": [
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I think a conceptual introduction with proposed standard formats would really help. Say for example, a Verifier receives a CMW of evidence and collateral from a Relying Party (Background check model) or a Target Environment (Passport model).\r\n\r\nA Verifier's role is to perform Evidence Appraisal and produce an Attestation Result. A CMW's encapsulated evidence is must be interpreted by its associated Profile, and may trust the provided collateral to do so, and the culminating result should be either rejection or a pair of initialized Accepted Claims Set, and Candidate Claims Set.\r\n\r\nThe initial Accepted Claims Set represents statements that are trusted unconditionally, whereas a the Candidate Claims Set represents possible additions to the Accepted Claims Set provided certain evaluation criterial hold of the Accepted Claims Set.\r\n\r\n\r\nWhat I don't know is if this is meant to be treated as forward chaining task like in a datalog evaluation engine's fixpoint calculation. Do you process the Candidate Claims Set repeatedly until you are unable to expand the Accepted Claims Set?",
           "createdAt": "2024-01-14T17:31:39Z",
           "updatedAt": "2024-01-14T17:31:39Z"
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I will also note here that it's confusing that the only example of appraising evidence is the DICE translation to a matchable state, and that the representation used an endorsed-value-triple without a specified authorized-by. I would assume at least the attest key would be the authorizer?\r\n\r\nWhat's more, the section \"Processing Endorsed Value Triple\" is empty without a linked issue to fill it out. Is the presumption that and endorsed triple is simply added to the ACS? There's the expectation, at least for DICE, that equal environment-maps must lead to merged measurement maps, and that conflicting values need to lead to rejecting the evidence.\r\n\r\nThere is no discussion how conflicts may arise. If an endorsement says \"value X is okay\" and the actual state is Y, and X != Y, then this isn't well discussed about the virtual representation of knowledge with the CDDL of accepted claims set doesn't necessarily catch this nuance. Or, is this kind of endorsed statement not the intended use case, and instead an endorsed triple means a fiat declaration of concrete state?",
           "createdAt": "2024-01-20T00:16:33Z",
           "updatedAt": "2024-01-20T00:16:33Z"
@@ -4549,7 +4549,7 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/197",
       "state": "OPEN",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "We discussed in today's meeting that next time we will go over a PR or slides about simplification to CoRIM as a standard to a Core and some other bits.\r\n\r\nHere's what I think ought to be addressed:\r\n\r\n1. CoRIM is a closed CDDL without extension points.\r\n2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n3. Profiles for standard attestation technologies may choose to go through IETF standardization to allocate CBOR tags through IANA, but this is not required for profiles.\r\n4. The CoRIM working group may define reference value types with \"matching\" semantics that can be reused by other profile definitions. This should help extend the composability of the initially standardized notions of reference values. The policy should be, but still at the WG's discretion, that reference values are not given privileged CBOR representation through tag allocation without being applicable to at least 2 standard profiles. The applicability of the generalization must be concrete to give clear motivation behind the representation and semantics.\r\n5. The ACS discussion should not use CDDL because it confuses the conceptual with the serializable. It should use an ABNF to describe an algebra of claims and sets of claims. All reference value and endorsement types must have a defined operation to reflect into the algebra. Claims can be partially ordered in order to define simplification through subsumption. A set of claims must therefore contain pairwise incomparable claims. By defining this algebra, the standard may give a clear definition to word \"match\" for composition and reuse, but it does not limit what profiles are definable\u2013it is merely scaffolding. The algebraic notion of Claim is extensible by any profile, but each type of Claim is defined and owned by the standard/profile that defines it.\r\n6. A CoRIM either fails to \"match\" an accepted claim set, or it augments individual claims in the ACS with \"authorized-by\" tags.\r\n7. Evidence Appraisal should be defined explicitly as an operation to translate an octet string into a claim set.\r\n\r\nFor all of this, we've boiled the representation down to profile * profile-defined octet string. The algebra is a communication tool for specifying the semantics for composable standardized profile components.\r\n\r\nAll of the schema that is specified in the current document can be interpreted as, \"if your profile's representation structurally matches profiles defined in RFCs, then it must semantically mean the same\". You can keep TPM, PSA, and DICE following the same schema if you'd like as a way to provide a baseline for expected expressiveness.\r\n\r\nBut by doing this, you need to have reserved indices for the standard to grow and safe regions that custom profiles are allowed to define themselves. For example, `* $$corim-map-extension` allows for anyone to define index 6 or higher, but that is not desirable unless this type really should be considered \"closed\" from the standards body's perspective. If it's open, then say 0-1000 and [2^31, 2^32) are reserved for the specification to allow for custom profiles to use small indices without giving up a value space for the standard.\r\n\r\nThe reserved indices should be assigned by IANA for each following RFC, but the core CoRIM spec defines the value space for standard extension.\r\n\r\nDo folks find this reasonable? ",
@@ -4573,7 +4573,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "The description in the slides says that different verifiers can share partial ACSes, which makes me wonder if the CDDL that's used for explanation purposes only might actually be specifying an interchange format between verifiers? Can we say that's not the intention?",
           "createdAt": "2024-01-31T20:43:46Z",
           "updatedAt": "2024-01-31T20:43:46Z"
@@ -4643,7 +4643,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "> > 1. CoRIM is a closed CDDL without extension points.\r\n> > 2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n> \r\n> I am trying to align these two requirements and this seems to break with any CDDL convention introduced in IETF specification text introduced in the recent past.\r\n> \r\n\r\nWhich text would that be? I'm saying that CoRIM is an envelope for providing information to a Verifier, where information is interpreted according to the profile. This allows for maximum flexibility for the profile definer to use the envelope format. I should clarify that I still intend for the pair of profile and payload to be within a COSE_Sign1 envelope. With that, you have the absolute bare minimum for authentication, semantic interpretation, and information.\r\n\r\n> In order to enable profiles to the \"core CoRIM spec\" we will add CDDL extension points to the base CoRIM spec. How would you integrate IANA registrations for well-known extensions and create standardized global interoperability otherwise? It seems to me that I am missing a vital piece of concept here. What am I missing?\r\n\r\nWith the more open envelope type structure, the rest of the document could then start to stand as it currently is, but I have an issue with its presentation. I think every addition on the envelope should be justified with standard profiles that illustrate the concept, if not completely relegated to the profile spec that introduces the concept. The culmination of all the specs can be a supplemental appendix with references to the RFCs that define a concept.\r\n\r\nIf there are no uses, they should be relegated to an extension RFC for when they are used. Examples then become case studies. I'm not saying any specific piece of the spec is contrived, I'm saying a lot feels unjustified as generalizations over an unknown set of profiles.\r\n\r\nWhen the spec says \"base schema\" it's talking about core profile elements that ought to be easily adopted by a Verifier's implementation of a profile that follows the core. The points about extensibility should be higher up in the document and stand out more typographically. I didn't now about the negative integer map extension convention, and I felt it was buried in section 3.2.1.\r\n\r\nI find it hard to determine why some pieces are extensible while others aren't. That's maps and type choices. Why are some type choices are so spoiled for choice when the type is extensible for other profiles? Why use a closed map when you can use a struct?\r\n\r\nFor specific presentational choices, I'd recommend to\r\n\r\n* move all the optional keys in an extensible map out of the initial CDDL and into their own sections as extensions of the $$MAP-NAME-extensions code point. This allows every addition to get specifically justified with prose to explain what concept it embodies, and how it solves a particular problem.\r\n* pick _one_ preferred alternative to present in the introduction of any $NAME-type-choice. Move the others to a Standard Extensions Library section.\r\n* Even with the typographical convention of $ or $$ prefix, do say in prose that a particular type is extensible or not.\r\n\r\nThis keeps the spec more digestible and lets me know that this schema is more of a menu than a requirement. When there are large selections of optional representations, you're making life harder both for the Verifier implementors and the profile authors that don't know what representation to pick.\r\n\r\nClosed types that don't make sense to me to stay closed:\r\n\r\n* corim-locator-map: A uri is one way to reference something, but as I noted in another issue, we may want to reference specific UEFI variables like in the TCG PFP Rev 1.06 for the SP800-155 event's rimLocatorType.\r\n* svn-type-choice: X or >=X aren't the only conditions an endorser may want to express.\r\n* role-type-choice: Not actually closed, but a variable in a CDDL generic that is typographically confusing given the NAME-type-choice, $NAME-type-choice notational convention called out at the beginning of the document. Since no instantiation in the document uses a closed type, please change to the $NAME-type-choice naming for the generic variable.\r\n* class-map: The class-id is allowed to be a tagged-bytes to encode something as its own notion of extension to class, so I'd say allow this map to be extensible. Again the vendor/model/layer/index options should be in their own section to introduce the concept they represent (clearly a DICE thing).\r\n\r\nRequired map keys that aren't justified as to why they're required:\r\n\r\n* corim-map's id and tags keys are the only required pieces, but the type is extensible. What is the \"tag\" concept that makes it a requirement? Why does a RIM /require/ a document identity? Can the CoSWID and CoBOM type choices be left to a separate document or much farther down?\r\n* entity-map's role\r\n\r\nThe spec should explain why any closed type is closed.\r\n* ip-addr-type-choice: Supports ipv4 and ipv6. No other IP address standards exist today, and it's not vendor-extensible concept.\r\n* mac-addr-type-choice: Similar to ip-addr.\r\n* tagged-concise-rim-type-choice: Sort of obvious that an open type allows a corim to mean absolutely anything, but given the call to justify all types, this still should be explained.\r\n* environment-map: This needs hard justification to stick to just the class/instance/group breakdown, since you severely limit what concepts express what environments you're describing. Every value is an extensible type (except class-map, which should be extensible), so just like class-map, why keep it closed? You could still recommend sticking to the existing concepts by giving ample examples of their use in the standard extension library sections.\r\n\r\nThen there are types that aren't named -type-choice but are also required representational choice in a concept (actually I only see the one)\r\n\r\n* tag-version-type: The optional version as the only other component and only as a uint makes different kinds of versioning schemes unusable. What is the property you need on the version type for its semantic interpretation? Can we spec a type choice required property like \"has a partial order\" or \"has a total order\"?\r\n* version-map's version value is text only, but has an extensible scheme type? \r\n* entity-map's reg-id uri type: so many extensible identity types elsewhere, but this is only a URI?\r\n\r\nTypes that I just don't understand the implied concept for\r\n\r\n* tag-identity-map: Probably I'm just missing the concept explanation for this. $tag-id-type-choice is extensible but the text says it's a universally unique identifier. An extensible choice doesn't just mean different ways of representing a UUID. If you don't mean a UUID, then say an identifier type that should be universally unique.  What is the purpose? The linked-tag-map concept is not well-justified.\r\n\r\nI'll leave it at that for now.",
           "createdAt": "2024-02-01T21:45:03Z",
           "updatedAt": "2024-02-01T21:45:03Z"
@@ -4675,7 +4675,7 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/202",
       "state": "OPEN",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Hey y'all, I discussed this in the Veraison meeting, but I'll make it an issue here.\r\n\r\nFirst off, let's not change anything yet, just add a code point.\r\n```\r\n$authorized-by-type-choice /= $crypto-key-type-choice\r\n```\r\n\r\nThe reason I'm asking for this change is for the Qemu OVMF profile for SEV-SNP to model composite authorizers. The SEV_HASH_TABLE in OVMF allows for different initial measurements of the boot chain to get locked into the initial launch measurement. The firmware itself that allocates space for this table can be created by a different entity. This effectively squashes multiple events with individual authorizers into a single event that is captured by the hardware attestation report's launch measurement.\r\n\r\nIf the profile has the ability to represent a composite authorized-by representation, then we can compose disparate claims about the components of the initial measurement into a profile-defined X+Y+Z = Reference-value operation that means the reference value is authorized by all of X, Y, and Z's endorsers.",
@@ -4692,7 +4692,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "X, Y, and Z are all CoRIMs with different signers, but all for the OVMF-for-SEV-SNP profile. They each have reference values for different components of the OVMF measurement and SEV hashes. Say X has the ovmf.fd measurement and GUID table data that's needed to interpret the other components of the measurement, Y has the SEV_KERNEL_HASH, SEV_CMDLINE_HASH and Z has the BSP and AP VMSAs.\r\n\r\nThe combination of all of them reconstructs the MEASUREMENT field of the attestation because the different memory sections described by the OvmfSevMetadata section and SEV-ES Reset Block all change how the measurement is constructed.",
           "createdAt": "2024-02-07T17:27:36Z",
           "updatedAt": "2024-02-07T17:27:36Z"
@@ -4706,7 +4706,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Crypto key type choice is used other places that a composite authorization wouldn\u2019t make sense, which is why I suggested a new code point",
           "createdAt": "2024-02-07T18:34:49Z",
           "updatedAt": "2024-02-07T18:34:49Z"
@@ -4720,7 +4720,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "The beginning assumption \r\n\r\n> If the X entity wants to recognize Y and Z as peer (equivalent) authorities for the X claims\r\n\r\nWe (Google) don't. \r\n\r\nThere is a single piece of evidence that can be authorized, and that evidence is a collection of parties' reference values for inputs to a specified reference value computation function. That function is defined by a profile that specifies a complex image construction operation. We're effectively squashing multiple EventLog entries into one before the initial measurement.\r\n\r\nGoogle provides a firmware image and only wants to claim authority for that artifact. Canonical provides a kernel binary and only wants to claim authority for that artifact. Service operator Z provides the kernel commandline and only wants to claim authority for that artifact. The relying party includes Google, Canonical, and Z in their trust anchor to approve attestation results that include this profile's composite measurement authorization.\r\n",
           "createdAt": "2024-02-08T18:17:26Z",
           "updatedAt": "2024-02-08T18:17:26Z"
@@ -4734,7 +4734,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Apart from [G.a1, C.a2, Z.a3] appearing split out, yes. All the values of those three components are combined through an OVMF and SEV-SNP-specific computation that results in a single digest that is present as evidence in the AMD-signed attestation report. It's the AMD measurement that is evidence, so it's the only element that would get an authorized-by entry for the combined RVs.",
           "createdAt": "2024-02-08T23:10:50Z",
           "updatedAt": "2024-02-08T23:10:50Z"
@@ -4748,7 +4748,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Yes",
           "createdAt": "2024-02-08T23:27:48Z",
           "updatedAt": "2024-02-08T23:27:48Z"
@@ -4762,7 +4762,7 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Neither of those are workable. The a0 here is AMD SEV-SNP's measurement, and the VM operator that can populate a2 and a3 cannot get a1 ahead of time from us to sign the combination.\r\n\r\nAMD's design for SEV-SNP pushed the problem of runtime measurements down the road too far and we've ended up with a feature that might not die for a while that mixes multiple artifacts into one measurement. I don't think many would follow down this slippery slope given the difficulty to even determine a1, a2, and a3 ahead of time to even derive a0.",
           "createdAt": "2024-02-09T17:21:50Z",
           "updatedAt": "2024-02-09T17:21:50Z"
@@ -4776,12 +4776,46 @@
         },
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "What is to be done with the hardware attestation report, then? It doesn't seem appropriate for a virtual firmware profile to override the profile for the measuring technology. When you interpret the evidence of a hardware attestation report, you get the measurement as an accepted claim, which that needs to be (collectively) authorized. Now every use of SEV-SNP that has multiple entities represented in the measurement need to specify that their profile should be used instead of AMD's for interpreting the hardware attestation report. Admittedly they could say, \"we use AMD's profile for everything except we don't admit the sevsnpvm-measurement as an accepted claim.\r\n\r\nThe SEV-SNP attestation report measurement must be computed from \"ovmf-sevsnp-base-measurement, ovmf-seves-rip, ovmf-seves-csbase\" as the baseline from the OVMF binary provider, then \"ovmf-sevhash-kernel, ovmf-sevhash-cmdline, ovmf-sevhash-initrd\" from the VM operator, then \"ovmf-seves-bspvmsa, ovmf-seves-apvmsa\" (with the seves-rip and seves-csbase plugged in appropriately) from the VMM operator.\r\n\r\nI suppose for this use case I could live with this awkward this, though I wonder how to collect all these values as evidence in the first place. Maybe /sys/firmware/qemu_fw_cfg, but that would need additional changes to qemu.\r\n",
           "createdAt": "2024-02-12T16:58:17Z",
           "updatedAt": "2024-02-12T16:58:17Z"
         }
       ]
+    },
+    {
+      "number": 207,
+      "id": "I_kwDOH6-tI85_-SnC",
+      "title": "Reword  \"standard CoRIM type\" definition",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/207",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "henkbirkholz"
+      ],
+      "labels": [],
+      "body": "       In context of PR #206: Redefine meaning of standard CoRIM       types and clarify a para on use of Extensions.",
+      "createdAt": "2024-02-21T15:25:42Z",
+      "updatedAt": "2024-02-21T15:25:56Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 208,
+      "id": "I_kwDOH6-tI85_-Wwm",
+      "title": "Remove \"schema\" and replace with CDDL",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/208",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "An ask from Henk",
+      "createdAt": "2024-02-21T15:32:34Z",
+      "updatedAt": "2024-02-21T15:32:34Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -21944,7 +21978,7 @@
             "abbreviatedOid": "3e08bc5"
           },
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2024-01-03T15:52:37Z",
@@ -24182,7 +24216,7 @@
             "abbreviatedOid": "fa9ee53"
           },
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2024-01-31T16:34:10Z",
@@ -25022,7 +25056,7 @@
       "comments": [
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "Regarding today's discussion about conditionals' semantics, if we assume that all claims are conjunctive, then the problem becomes HORNSAT, which has linear time complexity. If there are claims that represent disjunctions or negations of other claims, then we get into general propositional satisfiability. Given that I haven't seen any discussion of deeper interpretation of claims other than positive propositional literals, and a conditional-endorsement-triple's RHS is a measurement-values-map that is essentially a large conjunction of non-overlapping claims, then I can abide the proposed semantics.",
           "createdAt": "2024-02-07T16:45:08Z",
           "updatedAt": "2024-02-07T16:45:08Z"
@@ -25042,7 +25076,7 @@
             "abbreviatedOid": "b0ef2b5"
           },
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2024-02-07T15:04:46Z",
@@ -25180,12 +25214,12 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/204",
       "state": "OPEN",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The first use is in tagged bytes, but the meaningful first use is changed here not only to link to the fuller definition, but also to clarify that the interpretation cannot be arbitrary.\r\n\r\nGiven there are multiple references to \"base CoRIM schema\" in the profile definition, I've renamed the \"Full CoRIM CDDL\" appendix to more clearly denote the base schema concept.",
       "createdAt": "2024-02-14T17:50:35Z",
-      "updatedAt": "2024-02-14T18:19:26Z",
+      "updatedAt": "2024-02-21T15:40:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25199,7 +25233,7 @@
       "comments": [
         {
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "@andrew-draper this long jump without implied extra meaning is where I read into the arbitrariness.",
           "createdAt": "2024-02-14T18:19:25Z",
           "updatedAt": "2024-02-14T18:19:25Z"
@@ -25225,6 +25259,66 @@
               "updatedAt": "2024-02-14T17:58:47Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85w3RYZ",
+          "commit": {
+            "abbreviatedOid": "24ade22"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-21T15:31:44Z",
+          "updatedAt": "2024-02-21T15:31:44Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nA profile allows the base CoRIM schema to be customised to fit a specific Attester, though it MUST NOT alter the base CoRIM CDDL syntax and semantics.\r\n```",
+              "createdAt": "2024-02-21T15:31:44Z",
+              "updatedAt": "2024-02-21T15:31:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85w3VPY",
+          "commit": {
+            "abbreviatedOid": "24ade22"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-21T15:38:11Z",
+          "updatedAt": "2024-02-21T15:38:11Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "fixing #208\r\n\r\nHow about this?\r\n\r\n```suggestion\r\nA profile allows the base CoRIM CDDL definition to be customized to fit a specific Attester by augmenting the base CDDL data definition via the specified extension points or by constraining types defined. A profile MUST NOT change the base CoRIM CDDL definition's semantics, which including not changing or overloading names and numbers registered at the IANA registries specified by this document.\r\n```",
+              "createdAt": "2024-02-21T15:38:11Z",
+              "updatedAt": "2024-02-21T15:38:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85w3WYB",
+          "commit": {
+            "abbreviatedOid": "24ade22"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-02-21T15:40:04Z",
+          "updatedAt": "2024-02-21T15:40:04Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "#208 implies the need for more text changes for consistency. The suggestion above is also a proposal how that consistency can look like.",
+              "createdAt": "2024-02-21T15:40:04Z",
+              "updatedAt": "2024-02-21T15:40:04Z"
+            }
+          ]
         }
       ]
     },
@@ -25233,24 +25327,26 @@
       "id": "PR_kwDOH6-tI85m40gi",
       "title": "Remove bad line break and add comma",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/205",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The draft guidelines say to keep sentences on an unbroken line. A list of three or more objects should have commas after each element for clearer parsability (Oxford comma).",
       "createdAt": "2024-02-14T17:52:30Z",
-      "updatedAt": "2024-02-14T17:56:20Z",
+      "updatedAt": "2024-02-21T15:08:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "oxfordcomma",
       "headRefOid": "543ee9f880ad95c337741afd53801a0d5afb1518",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-02-21T15:08:38Z",
+      "mergedAt": "2024-02-21T15:08:38Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "891e60381777b1e377fc955e8d281e239887ac97"
+      },
       "comments": [],
       "reviews": [
         {
@@ -25265,6 +25361,32 @@
           "createdAt": "2024-02-14T17:56:20Z",
           "updatedAt": "2024-02-14T17:56:20Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85w2_nE",
+          "commit": {
+            "abbreviatedOid": "543ee9f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-02-21T15:06:47Z",
+          "updatedAt": "2024-02-21T15:06:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85w3AkL",
+          "commit": {
+            "abbreviatedOid": "543ee9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-02-21T15:08:23Z",
+          "updatedAt": "2024-02-21T15:08:23Z",
+          "comments": []
         }
       ]
     },
@@ -25275,12 +25397,12 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/206",
       "state": "OPEN",
       "author": "deeglaze",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "There's a base schema and there's a standard type, so we ought to define the separate concepts.",
       "createdAt": "2024-02-14T18:04:34Z",
-      "updatedAt": "2024-02-15T10:47:48Z",
+      "updatedAt": "2024-02-21T15:27:42Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25291,7 +25413,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@Henk to raise another PR to add another section of linking profiles to extensibility.",
+          "createdAt": "2024-02-21T15:27:41Z",
+          "updatedAt": "2024-02-21T15:27:41Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI85wHOr1",
@@ -25319,7 +25449,7 @@
             "abbreviatedOid": "ed9892a"
           },
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2024-02-14T19:02:28Z",
@@ -25359,7 +25489,7 @@
             "abbreviatedOid": "ed9892a"
           },
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2024-02-14T19:13:38Z",
@@ -25379,7 +25509,7 @@
             "abbreviatedOid": "ed9892a"
           },
           "author": "deeglaze",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2024-02-14T19:16:23Z",
