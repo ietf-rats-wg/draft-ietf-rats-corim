@@ -1488,7 +1488,7 @@ Authorities are in parenthesis and abbreviated as:
 * E: Endorser
 
 ~~~~ aasvg
-             ACS Entries               Search Scope                  Conditions
+            ACS Entries            Search Scope        Conditions
 
 +--------+-----------------------+ *
 |0       |                       | |
