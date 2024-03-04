@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 24 August 2024                                     Y. Deshpande
+Expires: 5 September 2024                                   Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        21 February 2024
+                                                            4 March 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 August 2024.
+   This Internet-Draft will expire on 5 September 2024.
 
 Copyright Notice
 
@@ -2352,13 +2352,17 @@ Table of Contents
 5.4.4.5.5.  Comparison for Integrity Registers
 
    For each Integrity Register entry in the Reference Value, the
-   Verifier will use the associated identifier to look up the matching
-   Integrity Register entry in Evidence.  If no entry is found, the
-   Reference Value does not match.  Instead, if an entry is found, the
-   digest comparison proceeds as defined in Section 5.4.4.5.2.  Note
-   that it is not required for all the entries in Evidence to be used
-   during matching: the Reference Value could consist of a "quote" (in
-   TPM parlance) of just a subset of the register space.
+   Verifier will use the associated identifier (i.e., integrity-
+   register-id-type-choice) to look up the matching Integrity Register
+   entry in Evidence.  If no entry is found, the Reference Value does
+   not match.  Instead, if an entry is found, the digest comparison
+   proceeds as defined in Section 5.4.4.5.2 after the cross-product
+   equivalence has been found according to Section 3.1.4.1.7.  Note that
+   it is not required for all the entries in Evidence to be used during
+   matching: the Reference Value could consist of a subset of the
+   device's register space.  In TPM parlance, a TPM "quote" may report
+   all PCRs in Evidence, while a Reference Value could describe a subset
+   of PCRs.
 
 5.4.4.5.6.  Handling of new tags
 
@@ -2820,17 +2824,17 @@ Table of Contents
               Fossati, T., Deshpande, Y., and H. Birkholz, "Arm's
               Platform Security Architecture (PSA) Attestation Verifier
               Endorsements", Work in Progress, Internet-Draft, draft-
-              fdb-rats-psa-endorsements-03, 10 September 2023,
+              fdb-rats-psa-endorsements-04, 4 March 2024,
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
-              endorsements-03>.
+              endorsements-04>.
 
    [I-D.tschofenig-rats-psa-token]
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
               T. Fossati, "Arm's Platform Security Architecture (PSA)
               Attestation Token", Work in Progress, Internet-Draft,
-              draft-tschofenig-rats-psa-token-21, 19 February 2024,
+              draft-tschofenig-rats-psa-token-22, 21 February 2024,
               <https://datatracker.ietf.org/doc/html/draft-tschofenig-
-              rats-psa-token-21>.
+              rats-psa-token-22>.
 
    [IANA.coswid]
               IANA, "Concise Software Identifier (CoSWID)",
