@@ -24,7 +24,7 @@ author:
 - ins: H. Birkholz
   name: Henk Birkholz
   org: Fraunhofer SIT
-  email: henk.birkholz@sit.fraunhofer.de
+  email: henk.birkholz@ietf.contact
 - ins: T. Fossati
   name: Thomas Fossati
   organization: arm
