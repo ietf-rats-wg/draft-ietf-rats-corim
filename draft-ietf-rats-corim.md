@@ -453,7 +453,6 @@ that MUST have a different identifier.
 {::include cddl/profile-type-choice.cddl}
 ~~~
 
-A "standard CoRIM type" references definitions in {{sec-corim-cddl}} and any further definitions in relevant IANA registries.
 
 ### Entities {#sec-corim-entity}
 
