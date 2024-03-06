@@ -1353,7 +1353,6 @@ CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the
 and '$$' signifies map extensibility. Typically, map extension requires a convention
 for code point naming that avoids code-point reuse.
 Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
-Any negative integer may be assigned meaning locally to the profile extending the map type.
 Non-negative integers are reserved for IANA to assign meaning globally.
 
 ### Data Type Extensions
