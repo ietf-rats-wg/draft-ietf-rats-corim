@@ -24,7 +24,7 @@ author:
 - ins: H. Birkholz
   name: Henk Birkholz
   org: Fraunhofer SIT
-  email: henk.birkholz@sit.fraunhofer.de
+  email: henk.birkholz@ietf.contact
 - ins: T. Fossati
   name: Thomas Fossati
   organization: arm
@@ -1513,7 +1513,7 @@ In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples)
 All of the validated and potentially useful tags are loaded into the Appraisal Context.
 This concludes the Appraisal Context initialisation phase.
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
 ## Evidence Collection {#sec-ev-coll}
 
@@ -1684,7 +1684,7 @@ If any `reference-triple-record` in the Reference Value triple does not match th
 
 ### Processing Endorsed Value Triple
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
 ### Processing triples representing Conditional Endorsements
 
@@ -1818,7 +1818,7 @@ Reference Value does not match.
 there needs to be a mask at key 5). Should we have a Reference Value of this
 which stores `[expect-raw-value raw-value-mask]` in an array?
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
@@ -1853,7 +1853,7 @@ comparison should not be stateful.
 
 ### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
 
-[^issue]: Content missing. Tracked at https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 ## Adding DICE/SPDM Evidence to the Accepted Claims Set {#sec-dice-spdm}
 
