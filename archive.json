@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-05T01:13:13.276268+00:00",
+  "timestamp": "2024-03-07T01:01:11.011588+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -1450,7 +1450,7 @@
       "comments": [
         {
           "author": "cabo",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "If we limit ourselves to unsigned integers, we have the following encoding sizes:\r\n\r\n* 1+0: 0..23\r\n* 1+1: 24..255\r\n* 1+2: 256..65535\r\n* 1+4: 65536..2^32-1\r\n* 1+8: 2^32..2^64-1\r\n\r\nI would use a relatively strong filter for 1+0; that would normally be Standards Action in the IETF (see Section 4.9 of RFC 8126)\r\nSimilarly for 24..255; this could be a weaker RFC required (4.7), or possibly Specification Required (4.6) with some frugality criteria for the designated expert.\r\n1+2 is already big enough for pretty lenient allocation; for CBOR tags we have split this range into 256 to 32767 (Specification Required) and 32768 to 18446744073709551615 (FCFS); I think that would work well here as well.\r\n\r\nCompare [Section 9.2 of RFC 8949](https://www.rfc-editor.org/rfc/rfc8949#name-cbor-tags-registry).\r\n\r\nDo not reserve a range for prototyping, see RFC 6648 for reasons why (or keep it in a penalty box like 1+8).",
           "createdAt": "2023-02-02T11:17:40Z",
           "updatedAt": "2023-02-02T11:20:02Z"
@@ -1464,7 +1464,7 @@
         },
         {
           "author": "cabo",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "> > 1+2 is already big enough for pretty lenient allocation; for CBOR tags we have split this range into 256 to 32767\r\n> \r\n> To be clear, this thread is about code point number space for `measurement-values-map` and not for CBOR tags. \r\n\r\nSure, but CBOR tags are just another code point number space, with the difference that CBOR tags are global for all uses of CBOR and you can do localized number spaces.\r\n\r\n> Each extensible map in corim has it's own code point number space. The code point space for `measurement-values-map` is likely to be extended more than the others IMHO. It probably isn't necessary that the entire code point space be reserved for standards and the smaller code points are valued for profiles\r\n\r\nI'm sorry, I don't know what profiles are.  Clearly, you can allocate some subspace to identified other allocation mechanisms.  This assumes that profiles are mutually exclusive, which they typically don't stay for more than a microsecond.\r\n\r\n> that contain extensions that are not (yet?) in a standard. If we decide to partition code point space using signed integers, then negative numbers are available for profile use and positive integers are available for standards use. Profile use means the CoRIM profile defines what follows the code point.\r\n\r\nClearly, using negative integers is a nice way to partition the space in two.  (The antonym for negative is \"unsigned\" for most applications of CBOR; zero is typically in the same space in which positive numbers are as well.)\r\n",
           "createdAt": "2023-02-02T19:46:42Z",
           "updatedAt": "2023-02-02T19:46:42Z"
@@ -1615,7 +1615,7 @@
         },
         {
           "author": "cabo",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "I don't understand the negative number discussion (thanks for clarifying this), but I think if we get through with the \"earmarking\" you'll have a level of control over the number assignment within the earmark, so you don't need this (but you still need to coordinate within IETF, DICE, etc.).\r\n\r\nI did ask for a change in the document in a separate message, though.",
           "createdAt": "2023-02-28T10:11:04Z",
           "updatedAt": "2023-02-28T10:11:04Z"
@@ -4814,6 +4814,46 @@
       "body": "An ask from Henk",
       "createdAt": "2024-02-21T15:32:34Z",
       "updatedAt": "2024-02-21T15:32:34Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 211,
+      "id": "I_kwDOH6-tI86BcuPC",
+      "title": "Representing ACS entries with multiple measurements, and extension point for new matching algorithms",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/211",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The contents of environment-map are chosen by the attesting environment (AE) making measurements, but it is constrained by the protocol used to collect the evidence.\r\n\r\nIf an target environment (TE) being measured has multiple measurements of the same type, for example multiple digest measurements or multiple raw value entries, then one option is for the AE to store each measurement under a different environment-map. This is not always the natural way to store the data.\r\n\r\nI suggest that a solution to this is to store the first measurement of a particular type under the standard measurement-map entry (eg 2 for digest or 4 for raw value) and to store the other measurements of this type using negative codepoints within `measurement-values-map`.\r\n\r\nThe verifier needs to know which comparison algorithm to use for measurements at negative codepoints.\r\n\r\nI suggest that, for measurements at negative codepoints, the verifier should use the CBOR tag at the start of the reference value to select the comparison algorithm. Some types, for example svn(1) and raw-value(4), already have tags defined.\r\n\r\nIf we choose this mechanism then we need to change the CDDL to add optional tags to relevant `measurement-values-map` values so that `stateful-environment`s can indicate which comparison algorithm should be used for negative types.\r\n\r\nIf we do not use the CBOR tag of the `stateful-environment` to select the comparison algorithm for a negative codepoint then we need to define a different way to do this. Using profiles to do this will mean either additional code in every verifier or the need for a profile definition language to indicate that _environment E with codepoint -X must use comparison algorithm A_.\r\n\r\nA related problem occurs when the data format requires extended comparison algorithms which differ from those described in the base specification. The specification of an extended comparison algorithm should define a CBOR tag which tells the verifier to use that algorithm, and the stateful-environment which provides the expected value should be tagged with that tag.\r\n\r\nPR #203 requests adding a tag for digests.",
+      "createdAt": "2024-03-06T15:31:39Z",
+      "updatedAt": "2024-03-06T16:46:52Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I think \"a TE with multiple measurements of the same type\" is a category error, no? It is a family of target environments. Your claim \"This is not always the natural way to store the data.\" may be valid intuitively, but it breaks the model I understand.\r\n\r\nI don't know how you you store multiple measurements in the same environment of the same type when appraising evidence. Can you go into more detail about that?\r\n\r\n---\r\n\r\nOutside of that, assigning meaning to values in negative codepoints I think is already specified but just not clearly enough.\r\n\r\nA CBOR tag's comparison semantics must be global since the tag is IANA-registered. Since there was confusion about this in the meeting, we need new text in the definition of a profile to clarify the \"syntax and semantics of a standard CoRIM type\" wording to include the meaning of tagged values in extensions. We can point to the following existing wording to solidify the point:\r\n\r\n\"If the stateful environment measurement-values-map value is tagged with a CBOR tag [[STD94](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#STD94)] then the Verifier MUST use the comparison algorithm associated with that tag.\"\r\n\r\nSo, your proposal to have a tagged digest satisfies using the right algorithm, but it doesn't give extra meaning like an ACS with digests in /2/ can have reference values in /-8/ match and give \"authorized-by\" tags in /2/.",
+          "createdAt": "2024-03-06T16:46:51Z",
+          "updatedAt": "2024-03-06T16:46:51Z"
+        }
+      ]
+    },
+    {
+      "number": 212,
+      "id": "I_kwDOH6-tI86Bcxkg",
+      "title": "\"Profiles allow to fit a specific Attester\" ?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/212",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We currently say that _\"Profiles allow the CDDL schema to fit a specific Attester\"_.\r\n\r\n@nedmsmith commented this looks odd.",
+      "createdAt": "2024-03-06T15:35:42Z",
+      "updatedAt": "2024-03-06T15:50:54Z",
       "closedAt": null,
       "comments": []
     }
@@ -25600,24 +25640,26 @@
       "id": "PR_kwDOH6-tI85m44gs",
       "title": "Clarify \"standard CoRIM type\"",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/206",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "There's a base schema and there's a standard type, so we ought to define the separate concepts.",
       "createdAt": "2024-02-14T18:04:34Z",
-      "updatedAt": "2024-02-21T15:27:42Z",
+      "updatedAt": "2024-03-06T15:26:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
+      "baseRefOid": "2991dc2f899011f89593e078f9987686d086ee41",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "baseorstandard",
-      "headRefOid": "ed9892a7311fdf6756b0d573ce7b89e368d1af6b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "5731911ac18a032c3f0ff4a99725d8392299c3ac",
+      "closedAt": "2024-03-06T15:26:38Z",
+      "mergedAt": "2024-03-06T15:26:38Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "1f9b06225d8825690a922ddb3b85685c99153505"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -25747,6 +25789,59 @@
               "updatedAt": "2024-02-15T10:47:48Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ycZNm",
+          "commit": {
+            "abbreviatedOid": "ed9892a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-06T15:17:42Z",
+          "updatedAt": "2024-03-06T15:17:42Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-03-06T15:17:42Z",
+              "updatedAt": "2024-03-06T15:17:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ycdau",
+          "commit": {
+            "abbreviatedOid": "89dd379"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-06T15:23:31Z",
+          "updatedAt": "2024-03-06T15:23:31Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-03-06T15:23:31Z",
+              "updatedAt": "2024-03-06T15:23:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ycdn_",
+          "commit": {
+            "abbreviatedOid": "d5a3c8d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-03-06T15:23:48Z",
+          "updatedAt": "2024-03-06T15:23:48Z",
+          "comments": []
         }
       ]
     },
@@ -25799,24 +25894,26 @@
       "id": "PR_kwDOH6-tI85opRtn",
       "title": "Nits -04",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/210",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "cabo",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-03-04T22:03:02Z",
-      "updatedAt": "2024-03-04T22:06:49Z",
+      "updatedAt": "2024-03-06T15:07:51Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "40732d1932131305ac842f6396563369ffd13787",
       "headRepository": "cabo/draft-ietf-rats-corim",
       "headRefName": "nits-04",
       "headRefOid": "fae9f6656a141276a6279cd9e44e764dfabaaba3",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-03-06T15:07:51Z",
+      "mergedAt": "2024-03-06T15:07:51Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "2991dc2f899011f89593e078f9987686d086ee41"
+      },
       "comments": [],
       "reviews": [
         {
@@ -25830,6 +25927,32 @@
           "body": "LGTM",
           "createdAt": "2024-03-04T22:06:49Z",
           "updatedAt": "2024-03-04T22:06:49Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yM9XJ",
+          "commit": {
+            "abbreviatedOid": "fae9f66"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "thanks!",
+          "createdAt": "2024-03-05T06:57:47Z",
+          "updatedAt": "2024-03-05T06:57:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yORPX",
+          "commit": {
+            "abbreviatedOid": "fae9f66"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!\r\nThanks!",
+          "createdAt": "2024-03-05T09:22:54Z",
+          "updatedAt": "2024-03-05T09:22:54Z",
           "comments": []
         }
       ]
