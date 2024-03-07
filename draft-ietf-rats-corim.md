@@ -27,8 +27,8 @@ author:
   email: henk.birkholz@ietf.contact
 - ins: T. Fossati
   name: Thomas Fossati
-  organization: arm
-  email: Thomas.Fossati@arm.com
+  organization: Linaro
+  email: Thomas.Fossati@linaro.org
 - ins: Y. Deshpande
   name: Yogesh Deshpande
   organization: arm
