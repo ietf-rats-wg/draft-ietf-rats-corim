@@ -921,8 +921,9 @@ The following describes each member of the `measurement-values-map`.
   {{sec-comid-svn}}.
 
 * `digests` (index 2): Contains the digest(s) of the measured environment
-  together with the respective hash algorithm used in the process.  See
-  {{sec-common-hash-entry}}.
+  together with the respective hash algorithm used in the process.
+  Each digest in the array represents one acceptable state of the measured object.
+  See {{sec-common-hash-entry}}.
 
 * `flags` (index 3): Describes security relevant operational modes. For
   example, whether the environment is in a debug mode, recovery mode, not fully
@@ -1125,6 +1126,7 @@ checks, and trust anchor checks.
 
 An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
+Each digest represents one acceptable state of the measured object.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
 
 ~~~ cddl
