@@ -1137,6 +1137,7 @@ The digests use `digests-type` semantic ({{sec-common-hash-entry}}).
 ~~~
 
 All the measured objects in an Integrity Registers map are explicitly named and the order in which they appear in the map is irrelevant.
+Any digests associated with a measured object represent an acceptable state for the object.
 Therefore, if multiple digests are provided, the acceptable state is their cross-product.
 For example, given the following Integrity Registers:
 
