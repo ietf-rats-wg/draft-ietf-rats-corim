@@ -298,6 +298,10 @@ Whenever possible, using the `int` encoding is RECOMMENDED.
 {::include cddl/digest.cddl}
 ~~~
 
+An environment can be measured using different hash algorithms.
+A `digests-type` can be used to collect multiple digest values obtained applying different hash algorithms on the same input.
+All entries in the `digests-type` MUST have different `alg` values.
+
 ### Tagged Bytes Type {#sec-common-tagged-bytes}
 
 An opaque, variable-length byte string.
@@ -922,8 +926,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `digests` (index 2): Contains the digest(s) of the measured environment
   together with the respective hash algorithm used in the process.
-  Each digest in the array represents one acceptable state of the measured object.
-  See {{sec-common-hash-entry}}.
+  It uses the `digests-type` described in {{sec-common-hash-entry}}.
 
 * `flags` (index 3): Describes security relevant operational modes. For
   example, whether the environment is in a debug mode, recovery mode, not fully
@@ -1126,15 +1129,14 @@ checks, and trust anchor checks.
 
 An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
-Each digest represents one acceptable state of the measured object.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
+The digests use `digests-type` semantic ({{sec-common-hash-entry}}).
 
 ~~~ cddl
 {::include cddl/integrity-registers.cddl}
 ~~~
 
 All the measured objects in an Integrity Registers map are explicitly named and the order in which they appear in the map is irrelevant.
-Any digests associated with a measured object represent an acceptable state for the object.
 Therefore, if multiple digests are provided, the acceptable state is their cross-product.
 For example, given the following Integrity Registers:
 
