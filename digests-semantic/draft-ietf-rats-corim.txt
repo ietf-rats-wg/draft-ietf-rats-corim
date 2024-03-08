@@ -5,13 +5,13 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 8 September 2024                                   Y. Deshpande
+Expires: 9 September 2024                                   Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            7 March 2024
+                                                            8 March 2024
 
 
                   Concise Reference Integrity Manifest
@@ -54,7 +54,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 September 2024.
+   This Internet-Draft will expire on 9 September 2024.
 
 Copyright Notice
 
@@ -392,6 +392,13 @@ Table of Contents
      alg: (int / text),
      val: bytes
    ]
+
+   digests-type = [ + digest ]
+
+   An environment can be measured using different hash algorithms.  A
+   digests-type can be used to collect multiple digest values obtained
+   applying different hash algorithms on the same input.  All entries in
+   the digests-type MUST have different alg values.
 
 1.3.9.  Tagged Bytes Type
 
@@ -1122,7 +1129,7 @@ Table of Contents
    measurement-values-map = non-empty<{
      ? &(version: 0) => version-map
      ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => [ + digest ]
+     ? &(digests: 2) => digests-type
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
@@ -1150,8 +1157,7 @@ Table of Contents
 
    *  digests (index 2): Contains the digest(s) of the measured
       environment together with the respective hash algorithm used in
-      the process.  Each digest in the array represents one acceptable
-      state of the measured object.  See Section 1.3.8.
+      the process.  It uses the digests-type described in Section 1.3.8.
 
    *  flags (index 3): Describes security relevant operational modes.
       For example, whether the environment is in a debug mode, recovery
@@ -1408,23 +1414,22 @@ Table of Contents
 
    An Integrity Registers map groups together one or more measured
    "objects".  Each measured object has a unique identifier and one or
-   more associated digests.  Each digest represents one acceptable state
-   of the measured object.  Identifiers are either unsigned integers or
+   more associated digests.  Identifiers are either unsigned integers or
    text strings and their type matters, e.g., unsigned integer 5 is
-   distinct from the text string "5".
+   distinct from the text string "5".  The digests use digests-type
+   semantic (Section 1.3.8).
 
    integrity-register-id-type-choice = uint / text
 
    integrity-registers = {
-     + integrity-register-id-type-choice => [ + digest ]
+     + integrity-register-id-type-choice => digests-type
    }
 
    All the measured objects in an Integrity Registers map are explicitly
    named and the order in which they appear in the map is irrelevant.
-   Any digests associated with a measured object represent an acceptable
-   state for the object.  Therefore, if multiple digests are provided,
-   the acceptable state is their cross-product.  For example, given the
-   following Integrity Registers:
+   Therefore, if multiple digests are provided, the acceptable state is
+   their cross-product.  For example, given the following Integrity
+   Registers:
 
    {
      0: [ [ 0, h'00' ] ],
@@ -3162,7 +3167,7 @@ Appendix A.  Full CoRIM CDDL
    measurement-values-map = non-empty<{
      ? &(version: 0) => version-map
      ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => [ + digest ]
+     ? &(digests: 2) => digests-type
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
@@ -3262,10 +3267,12 @@ Appendix A.  Full CoRIM CDDL
      val: bytes
    ]
 
+   digests-type = [ + digest ]
+
    integrity-register-id-type-choice = uint / text
 
    integrity-registers = {
-     + integrity-register-id-type-choice => [ + digest ]
+     + integrity-register-id-type-choice => digests-type
    }
 
    concise-swid-tag = {

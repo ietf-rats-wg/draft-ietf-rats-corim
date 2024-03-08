@@ -1042,7 +1042,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 8 September 2024</td>
+<td class="center">Expires 9 September 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1055,12 +1055,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-03-07" class="published">7 March 2024</time>
+<time datetime="2024-03-08" class="published">8 March 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-09-08">8 September 2024</time></dd>
+<dd class="expires"><time datetime="2024-09-09">9 September 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1127,7 +1127,7 @@ representing Endorsements and Reference Values in CBOR format.<a href="#section-
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1871,8 +1871,13 @@ digest = [
   alg: (int / text),
   val: bytes
 ]
+
+digests-type = [ + digest ]
 </pre><a href="#section-1.3.8-2" class="pilcrow">¶</a>
 </div>
+<p id="section-1.3.8-3">An environment can be measured using different hash algorithms.
+A <code>digests-type</code> can be used to collect multiple digest values obtained applying different hash algorithms on the same input.
+All entries in the <code>digests-type</code> MUST have different <code>alg</code> values.<a href="#section-1.3.8-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-common-tagged-bytes">
@@ -2797,7 +2802,7 @@ and whether the processing is applied by the Verifier or the Relying Party.<a hr
 measurement-values-map = non-empty&lt;{
   ? &amp;(version: 0) =&gt; version-map
   ? &amp;(svn: 1) =&gt; svn-type-choice
-  ? &amp;(digests: 2) =&gt; [ + digest ]
+  ? &amp;(digests: 2) =&gt; digests-type
   ? &amp;(flags: 3) =&gt; flags-map
   ? (
       &amp;(raw-value: 4) =&gt; $raw-value-type-choice,
@@ -2829,8 +2834,7 @@ security relevant change is made to the measured environment.  Described in
                   <li class="normal" id="section-3.1.4.1.5.2-5.3">
                     <p id="section-3.1.4.1.5.2-5.3.1"><code>digests</code> (index 2): Contains the digest(s) of the measured environment
 together with the respective hash algorithm used in the process.
-Each digest in the array represents one acceptable state of the measured object.
-See <a href="#sec-common-hash-entry" class="auto internal xref">Section 1.3.8</a>.<a href="#section-3.1.4.1.5.2-5.3.1" class="pilcrow">¶</a></p>
+It uses the <code>digests-type</code> described in <a href="#sec-common-hash-entry" class="auto internal xref">Section 1.3.8</a>.<a href="#section-3.1.4.1.5.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-3.1.4.1.5.2-5.4">
                     <p id="section-3.1.4.1.5.2-5.4.1"><code>flags</code> (index 3): Describes security relevant operational modes. For
@@ -3138,19 +3142,18 @@ tagged-cert-path-thumbprint-type = #6.561(digest)
               </h6>
 <p id="section-3.1.4.1.7-1">An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
-Each digest represents one acceptable state of the measured object.
-Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".<a href="#section-3.1.4.1.7-1" class="pilcrow">¶</a></p>
+Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
+The digests use <code>digests-type</code> semantic (<a href="#sec-common-hash-entry" class="auto internal xref">Section 1.3.8</a>).<a href="#section-3.1.4.1.7-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-3.1.4.1.7-2">
 <pre>
 integrity-register-id-type-choice = uint / text
 
 integrity-registers = {
-  + integrity-register-id-type-choice =&gt; [ + digest ]
+  + integrity-register-id-type-choice =&gt; digests-type
 }
 </pre><a href="#section-3.1.4.1.7-2" class="pilcrow">¶</a>
 </div>
 <p id="section-3.1.4.1.7-3">All the measured objects in an Integrity Registers map are explicitly named and the order in which they appear in the map is irrelevant.
-Any digests associated with a measured object represent an acceptable state for the object.
 Therefore, if multiple digests are provided, the acceptable state is their cross-product.
 For example, given the following Integrity Registers:<a href="#section-3.1.4.1.7-3" class="pilcrow">¶</a></p>
 <div class="lang-cbor-diag sourcecode" id="section-3.1.4.1.7-4">
@@ -5227,7 +5230,7 @@ measurement-map = {
 measurement-values-map = non-empty&lt;{
   ? &amp;(version: 0) =&gt; version-map
   ? &amp;(svn: 1) =&gt; svn-type-choice
-  ? &amp;(digests: 2) =&gt; [ + digest ]
+  ? &amp;(digests: 2) =&gt; digests-type
   ? &amp;(flags: 3) =&gt; flags-map
   ? (
       &amp;(raw-value: 4) =&gt; $raw-value-type-choice,
@@ -5327,10 +5330,12 @@ digest = [
   val: bytes
 ]
 
+digests-type = [ + digest ]
+
 integrity-register-id-type-choice = uint / text
 
 integrity-registers = {
-  + integrity-register-id-type-choice =&gt; [ + digest ]
+  + integrity-register-id-type-choice =&gt; digests-type
 }
 
 concise-swid-tag = {
