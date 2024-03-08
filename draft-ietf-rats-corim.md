@@ -1599,11 +1599,11 @@ The ACS must maintain the authority information for each EMT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
 and a different `authorized-by` field (see {{sec-authorized-by}}).
 
-If the merged measurement-value-map contains duplicate codepoints and the
+If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
-If the merged measurement-value-map contains duplicate codepoints and the
+If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
@@ -1759,7 +1759,7 @@ A CoRIM profile may define additional tags and their matching algorithms.
 
 If the Verifier does not recognize the stateful environment CBOR tag value then the stateful environment does not match.
 
-If the stateful environment is not tagged and the measurement-value-map key is a value with handling described in  the sub-sections below, then the algorithm appropriate to that key is used to match the entries.
+If the stateful environment is not tagged and the `measurement-values-map` key is a value with handling described in  the sub-sections below, then the algorithm appropriate to that key is used to match the entries.
 
 If the stateful environment is not tagged, and the `measurement-values-map` key is not a value described below, then the entries are compared using binary comparison of their CBOR encoded values.
 If the values are not binary identical then the stateful environment does not match.
