@@ -298,7 +298,7 @@ Whenever possible, using the `int` encoding is RECOMMENDED.
 {::include cddl/digest.cddl}
 ~~~
 
-An environment can be measured using different hash algorithms.
+A measurement can be obtained using different hash algorithms.
 A `digests-type` can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.
 Each entry in the `digests-type` MUST have a unique `alg` value.
 
