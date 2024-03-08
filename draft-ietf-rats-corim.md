@@ -292,7 +292,7 @@ namespace under which the value must be understood.
 A digest represents the value of a hashing operation together with the hash algorithm used.
 The type of the digest algorithm identifier can be either `int` or `text` and is interpreted according to the {{-named-info}} registry.
 Specifically, `int` values are matched against "ID" entries, `text` values are matched against "Hash Name String" entries.
-The `int` encoding is RECOMMENDED.
+Whenever possible, using the `int` encoding is RECOMMENDED.
 
 ~~~ cddl
 {::include cddl/digest.cddl}
