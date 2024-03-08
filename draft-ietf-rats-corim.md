@@ -305,8 +305,8 @@ convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
 ~~~
 
 An environment can be measured using different hash algorithms.
-A `digests-type` can be used to collect multiple digest values obtained applying different hash algorithms on the same input.
-All entries in the `digests-type` MUST have different `alg` values.
+A `digests-type` can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.
+Each entry in the `digests-type` MUST have a unique `alg` value.
 
 ### Tagged Bytes Type {#sec-common-tagged-bytes}
 
