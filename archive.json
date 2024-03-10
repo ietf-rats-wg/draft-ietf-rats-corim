@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-07T01:01:11.011588+00:00",
+  "timestamp": "2024-03-10T01:18:21.780642+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -1746,15 +1746,15 @@
       "id": "I_kwDOH6-tI85gSuIH",
       "title": "multi-valued measurements",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/67",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/wiki/Multiple--vs-Single-measurements-Environments",
       "createdAt": "2023-03-08T16:01:19Z",
-      "updatedAt": "2023-12-13T19:00:12Z",
-      "closedAt": null,
+      "updatedAt": "2024-03-07T17:19:04Z",
+      "closedAt": "2024-03-07T13:01:13Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -2007,6 +2007,27 @@
           "body": "I have started a Draft [WIP] PR.\r\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/181\r\n\r\nI admit I will need your help in completing this neatly \ud83e\udd47 \r\n\r\nI will update examples, once we limit and evaluate the impact!",
           "createdAt": "2023-12-13T19:00:11Z",
           "updatedAt": "2023-12-13T19:00:11Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Can we close this?  Yogesh's PR #181 was closed with reason: _\"we have an alternative called integrity registers\"_.",
+          "createdAt": "2024-03-07T12:58:47Z",
+          "updatedAt": "2024-03-07T12:58:47Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sure let's close this!",
+          "createdAt": "2024-03-07T13:01:13Z",
+          "updatedAt": "2024-03-07T13:01:13Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "+1",
+          "createdAt": "2024-03-07T17:19:03Z",
+          "updatedAt": "2024-03-07T17:19:03Z"
         }
       ]
     },
@@ -4854,6 +4875,38 @@
       "body": "We currently say that _\"Profiles allow the CDDL schema to fit a specific Attester\"_.\r\n\r\n@nedmsmith commented this looks odd.",
       "createdAt": "2024-03-06T15:35:42Z",
       "updatedAt": "2024-03-06T15:50:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 214,
+      "id": "I_kwDOH6-tI86BkgGA",
+      "title": "Clarify the semantic of `[ + digest ]`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/214",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, `digests` and `integrity-registers` allow one or more digest values:\r\n```\r\nmeasurement-values-map = non-empty<{\r\n  ; ...\r\n  ? &(digests: 2) => [ + digest ]\r\n  ; ...\r\n}>\r\n\r\nintegrity-registers = {\r\n  + integrity-register-id-type-choice => [ + digest ]\r\n}\r\n```\r\n\r\nIn both cases, the intended semantics is that each digest in the array represents one possible value for the measured object (i.e., the array encodes \"OR\" semantics).\r\n\r\nUnfortunately, this is never clearly stated ([\u00a73.1.4.1.7](https://www.ietf.org/archive/id/draft-ietf-rats-corim-04.html#section-3.1.4.1.7) and [\u00a73.1.4.1.5.2](https://www.ietf.org/archive/id/draft-ietf-rats-corim-04.html#section-3.1.4.1.5.2) are the relevant sections) and a reader could instead interpret it to represent a multi-measurements object (i.e., using \"AND\" semantics).",
+      "createdAt": "2024-03-07T13:09:34Z",
+      "updatedAt": "2024-03-07T14:51:55Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 218,
+      "id": "I_kwDOH6-tI86BvZmy",
+      "title": "Use of \"stateful environment\" terminology",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/218",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The term \"stateful environment\" is being used, generally, to refer to the matching condition contained in an EMT. The definition of EMT uses the term \"Target Environment\" to refer to the expression in the ACS to which EMT Claims will be added. It might be better to use more consistent terminology throughout the document when referring to a matching condition. Such as \"TE matching condition\". \r\n\r\nWe may want to tweak the EMT definition to better explain that \"there is a TE matching condition within the EMT that is used to locate target environments within an ACS to which the EMTs Claims may be added. A TE matching condition may be stateful, meaning both environment and measurement Claims can be part of a TE matching condition\".",
+      "createdAt": "2024-03-08T19:58:54Z",
+      "updatedAt": "2024-03-08T19:58:54Z",
       "closedAt": null,
       "comments": []
     }
@@ -25274,7 +25327,7 @@
       "labels": [],
       "body": "Added section 5.2 describing the verifier theory of operation",
       "createdAt": "2024-02-05T19:17:01Z",
-      "updatedAt": "2024-03-04T16:29:40Z",
+      "updatedAt": "2024-03-09T02:31:05Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25334,6 +25387,86 @@
           "createdAt": "2024-03-04T16:29:40Z",
           "updatedAt": "2024-03-04T16:29:40Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yzOPB",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-09T00:16:29Z",
+          "updatedAt": "2024-03-09T00:16:30Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I'm a little stuck on the theory of operation for how we'll be able to practically sign our ACPI table data. Given that MMIO addresses are a part of it, and there's a good amount of variability across VM shapes\r\n\r\nFrom what I understand, since I'm not an expert in ACPI, we build asl files offline to a particular shape of machine. We don't want to rewrite asl files and run a compiler at VM creation time. We treat these asl binaries not as all the tables, but as table templates. At VM creation time, we use VM instance creation request data to rewrite very specific areas of the built templates as a way to configure that specific VM.\r\n\r\nThe EV_POST_CODE event that is measured into the TPM or CCEL is a digest of the tables after this template-substitution operation. We thus don't have a reference value that \"matches\" the digests in the measurement-values-map key 2 or tagged digest value comparison algorithm.\r\n\r\nWhat we _can_ do is require that the lead attester send the acpidump or specially-trimmed dump to find just the substituted positions for the verifier to plug into the template and compute the digest that one would expect for the ACPI EV_POST_CODE event.\r\n\r\nIf TCG were to have a profile for how to appraise TPM 2.0 quotes with their event logs, I don't imagine they'd have something this specific. I can't revise the official profile with a different profile for this supplemental ACPI table evidence. It seems like I'd be able to have \"authorized-by\" tag this extra ACPI table evidence, but not the TPM evidence.",
+              "createdAt": "2024-03-09T00:16:30Z",
+              "updatedAt": "2024-03-09T00:16:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yzWi3",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-09T01:35:53Z",
+          "updatedAt": "2024-03-09T01:35:53Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I've discussed this more with the engineer working on ACPI tables, and we may be able to pre-generate and store the digests but not the tables since the combinatorial explosion of UART count, CPU count, and PCI root bus count is prohibitive space-wise when copying whole tables. This does get into the many allowable digests problem that Andy has been trying to solve though.",
+              "createdAt": "2024-03-09T01:35:53Z",
+              "updatedAt": "2024-03-09T01:35:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yzY4j",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-09T02:24:58Z",
+          "updatedAt": "2024-03-09T02:24:59Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "The \"tables of measurements\" approach seems to resonate with what Chris Fenner has described in other forums. The basic approach for working with table of measurements is the `environment-map` refers to the table of measurements and the `measurement-values-map` contains a `digests` or `integrity-register` with the digest of the table of measurements. \r\n\r\nThe table of measurements seems to be something that is outside the spec however.  Though, it seems possible to use `integrity-register` as a way to represent the table of measurements in a reference value - at least at a high level it seems possible.",
+              "createdAt": "2024-03-09T02:24:59Z",
+              "updatedAt": "2024-03-09T02:24:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yzZR7",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-09T02:31:04Z",
+          "updatedAt": "2024-03-09T02:31:05Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "Another possibility to consider is the CCEL digest (which is dynamically generated on the Attester - if I'm not mistaken) could be reported as an `instance-id` in the `environment-map` of the evidence. This allows reference values that relate to measurments that are in a reference manifest to be matched without getting hung up on the CCEL digest not having a reference value. (I'm not close enough to the use case to know if the CCEL digest has security properties however). ",
+              "createdAt": "2024-03-09T02:31:05Z",
+              "updatedAt": "2024-03-09T02:31:05Z"
+            }
+          ]
         }
       ]
     },
@@ -25954,6 +26087,485 @@
           "createdAt": "2024-03-05T09:22:54Z",
           "updatedAt": "2024-03-05T09:22:54Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 213,
+      "id": "PR_kwDOH6-tI85o8r4i",
+      "title": "Change usage rules for the Named Info registry",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/213",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-07T10:33:21Z",
+      "updatedAt": "2024-03-08T19:21:51Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "digest-fix",
+      "headRefOid": "b598926e12d327e61f37885ea6cdd0a1ed8fe8ff",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85yn6bY",
+          "commit": {
+            "abbreviatedOid": "0f345a0"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-03-07T17:18:08Z",
+          "updatedAt": "2024-03-08T16:05:02Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yn8Za",
+          "commit": {
+            "abbreviatedOid": "0f345a0"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-03-07T17:22:14Z",
+          "updatedAt": "2024-03-08T16:05:02Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ywbef",
+          "commit": {
+            "abbreviatedOid": "0f345a0"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "CHANGES_REQUESTED",
+          "body": "Is it the wrong one, though?",
+          "createdAt": "2024-03-08T16:37:59Z",
+          "updatedAt": "2024-03-08T16:37:59Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85ywsLz",
+          "commit": {
+            "abbreviatedOid": "90892b5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-08T17:05:41Z",
+          "updatedAt": "2024-03-08T17:05:42Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nWhenever possible, using the `int` encoding is RECOMMENDED.\r\n```",
+              "createdAt": "2024-03-08T17:05:41Z",
+              "updatedAt": "2024-03-08T17:05:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yx4bq",
+          "commit": {
+            "abbreviatedOid": "b598926"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-03-08T19:21:51Z",
+          "updatedAt": "2024-03-08T19:21:51Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 215,
+      "id": "PR_kwDOH6-tI85o-btX",
+      "title": "Clarify `[+digest]` semantic",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/215",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix #214",
+      "createdAt": "2024-03-07T14:47:45Z",
+      "updatedAt": "2024-03-08T19:15:47Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "digests-semantic",
+      "headRefOid": "2181c3e1cd0ae124e407ffd257406aa58ef32932",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There is text in 5.5.4.5.2 which is incompatible with this text.\r\nTo prevent downgrade attacks, the requirement is that all entries in the digest which are present in both reference value and ACS entry and whose hash algorithm is understood by both parties must match.",
+          "createdAt": "2024-03-08T10:30:04Z",
+          "updatedAt": "2024-03-08T10:30:04Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> There is text in 5.5.4.5.2 which is incompatible with this text. To prevent downgrade attacks, the requirement is that all entries in the digest which are present in both reference value and ACS entry and whose hash algorithm is understood by both parties must match.\r\n\r\nSorry, I don't understand what this text means.",
+          "createdAt": "2024-03-08T10:36:25Z",
+          "updatedAt": "2024-03-08T10:36:25Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > There is text in 5.5.4.5.2 which is incompatible with this text. To prevent downgrade attacks, the requirement is that all entries in the digest which are present in both reference value and ACS entry and whose hash algorithm is understood by both parties must match.\r\n> \r\n> Sorry, I don't understand what this text means.\r\n\r\nBut besides that, is the term _\"acceptable state\"_ that is incompatible?  If we used _\"reference state\"_ would that work for you?",
+          "createdAt": "2024-03-08T10:39:37Z",
+          "updatedAt": "2024-03-08T10:39:37Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The text proposed here leaves open the possibility that there are two entries with the same algorithm and different values, which will not match with the 5.5.4.5.2 algorithm.\r\n\r\nI am not sure how the _same_ measured object (e.g., a specific instance of a FW blob) can be hashed to different values using the same hash function.\r\n",
+          "createdAt": "2024-03-08T10:44:48Z",
+          "updatedAt": "2024-03-08T10:44:48Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> I agree that this text needs to be clarified, but I think what is written here doesn't match 5.5.4.5.2. That section assumes that all entries in a `stateful-environment` digest array are measurements of the same object using different digest algorithms. The text proposed here leaves open the possibility that there are two entries with the same algorithm and different values, which will not match with the 5.5.4.5.2 algorithm. The 5.5.4.5.2 algorithm is written the way it is to prevent downgrade attacks. We need to decide what happens if a digests array contains multiple different values with the same algorithm. This text suggests a match if one of them matches. The 5.5.4.5.2 text will not match.\r\n\r\nOh, I see. I agree with Andrew that the change could allow for different states expressed via the same algorithm (and not only same state with different algorithm). Was that the intent?",
+          "createdAt": "2024-03-08T11:30:15Z",
+          "updatedAt": "2024-03-08T11:30:15Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have made some small refactoring, introducing an explicit `digests-type` with precise semantics that is reused by both `digests` and `integrity-registers`.",
+          "createdAt": "2024-03-08T15:23:43Z",
+          "updatedAt": "2024-03-08T15:23:43Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The updated definition seems to parallel the semantics of a TPM PCR. If modeling a full TPM, there would need to be 24 instances of `integrity-register`. How should this be accomplished? Should there be a different `environment-map` for each PCR. Maybe use the `index` value to disambiguate PCR number?",
+          "createdAt": "2024-03-08T17:10:49Z",
+          "updatedAt": "2024-03-08T17:10:49Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The updated definition seems to parallel the semantics of a TPM PCR. If modeling a full TPM, there would need to be 24 instances of `integrity-register`. How should this be accomplished? Should there be a different `environment-map` for each PCR. Maybe use the `index` value to disambiguate PCR number?\r\n\r\nThat was not my intention.\r\n\r\nI guess the problem is in the use of \"environment\" in _\"[A]n **environment** can be measured using different hash algorithms.\"_ ?\r\n\r\nWhat if we said: _\"A measurement can be obtained using different hash algorithms.\"_ instead?\r\n\r\n",
+          "createdAt": "2024-03-08T17:19:25Z",
+          "updatedAt": "2024-03-08T17:19:25Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">That was not my intention.\r\n\r\nBut it is a reasonable intention of someone. I'm just wondering how someone should complete the exercise. \r\n\r\nIf the goal is to define `digests` and `integrity-register` similarly, then they seem to be solving the same problem. Only one has a label and the other one doesn't.\r\n",
+          "createdAt": "2024-03-08T17:23:59Z",
+          "updatedAt": "2024-03-08T17:23:59Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">I guess the problem is in the use of \"environment\" \r\n\r\nTechnically, using `index` in environment map makes it a different environment. So, the current wording would still be correct. ",
+          "createdAt": "2024-03-08T17:26:56Z",
+          "updatedAt": "2024-03-08T17:26:56Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > That was not my intention.\r\n> \r\n> But it is a reasonable intention of someone. I'm just wondering how someone should complete the exercise.\r\n> \r\n> If the goal is to define `digests` and `integrity-register` similarly, then they seem to be solving the same problem. Only one has a label and the other one doesn't.\r\n\r\nI hate to say this ... but one could use `mkey` of type `uint` \ud83e\udd72 ",
+          "createdAt": "2024-03-08T17:29:01Z",
+          "updatedAt": "2024-03-08T17:30:02Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > That was not my intention.\r\n> > \r\n> > \r\n> > But it is a reasonable intention of someone. I'm just wondering how someone should complete the exercise.\r\n> > If the goal is to define `digests` and `integrity-register` similarly, then they seem to be solving the same problem. Only one has a label and the other one doesn't.\r\n> \r\n> I hate to say this ... but one could use `mkey` of type `uint` \ud83e\udd72\r\n\r\nThat said, once you have integrity registers why complicate your life?",
+          "createdAt": "2024-03-08T17:33:39Z",
+          "updatedAt": "2024-03-08T17:33:39Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> That said, once you have integrity registers why complicate your life?\r\n\r\nIs this how you would model a TPM PCR bank using integrity registers?\r\n```\r\n/ integrity registers / 14 : {\r\n\t/ pcr 0 / 0 : [ [\u201csha1\u201d, h\u20190001\u2019], [\u201csha256\u201d, h\u20190002\u2019]],\r\n\t/ pcr 1 / 1 : [ [\u201csha1\u201d, h\u20190001\u2019], [\u201csha256\u201d, h\u20190002\u2019]],\r\n\t/etc/\r\n\t/ pcr 24 / 24 : [ [\u201csha1\u201d, h\u20190001\u2019], [\u201csha256\u201d, h\u20190002\u2019]],\r\n}\r\n```\r\n\r\nyes\r\n",
+          "createdAt": "2024-03-08T17:43:37Z",
+          "updatedAt": "2024-03-08T17:47:52Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> yes\r\n\r\nIf modeling a complex object that consists for several sub-components?\r\n```\r\n/ integrity registers / 14 : {\r\n\t/ my sub-component 0 / \"Frodo\" : [ [\u201csha1\u201d, h\u20190001\u2019]],\r\n\t/ my sub-component 1 / \"Bilbo\" : [ [\u201csha1\u201d, h\u20190001\u2019]],\r\n\t/etc/\r\n\t/ my sub-component 24 / \"Smog\" : [ [\u201csha1\u201d, h\u20190001\u2019]]\r\n}\r\n```",
+          "createdAt": "2024-03-08T17:59:42Z",
+          "updatedAt": "2024-03-08T17:59:42Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > yes\r\n> \r\n> If modeling a complex object that consists for several sub-components?\r\n> \r\n> ```\r\n> / integrity registers / 14 : {\r\n> \t/ my sub-component 0 / \"Frodo\" : [ [\u201csha1\u201d, h\u20190001\u2019]],\r\n> \t/ my sub-component 1 / \"Bilbo\" : [ [\u201csha1\u201d, h\u20190001\u2019]],\r\n> \t/etc/\r\n> \t/ my sub-component 24 / \"Smog\" : [ [\u201csha1\u201d, h\u20190001\u2019]]\r\n> }\r\n> ```\r\n\r\nYes, if your measurements' metadata is limited to a \"name\".",
+          "createdAt": "2024-03-08T18:07:46Z",
+          "updatedAt": "2024-03-08T18:07:46Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85yttHn",
+          "commit": {
+            "abbreviatedOid": "e6f8286"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I agree that this text needs to be clarified, but I think what is written here doesn't match 5.5.4.5.2. That section assumes that all entries in a `stateful-environment` digest array are measurements of the same object using different digest algorithms.\r\nThe text proposed here leaves open the possibility that there are two entries with the same algorithm and different values, which will not match with the 5.5.4.5.2 algorithm.\r\nThe 5.5.4.5.2 algorithm is written the way it is to prevent downgrade attacks.\r\nWe need to decide what happens if a digests array contains multiple different values with the same algorithm. This text suggests a match if one of them matches. The 5.5.4.5.2 text will not match.",
+          "createdAt": "2024-03-08T10:37:38Z",
+          "updatedAt": "2024-03-08T10:37:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yuEPp",
+          "commit": {
+            "abbreviatedOid": "e6f8286"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "Clarifying change. LGTM",
+          "createdAt": "2024-03-08T11:27:26Z",
+          "updatedAt": "2024-03-08T11:27:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yvzJt",
+          "commit": {
+            "abbreviatedOid": "d2f92c6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-08T15:29:58Z",
+          "updatedAt": "2024-03-08T15:29:58Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nAn environment can be measured using different hash algorithms.\r\nA `digests-type` can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.\r\nEach entry in the `digests-type` MUST have a unique `alg` value.\r\n```",
+              "createdAt": "2024-03-08T15:29:58Z",
+              "updatedAt": "2024-03-08T15:29:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yv2oR",
+          "commit": {
+            "abbreviatedOid": "2ab2b13"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-08T15:36:58Z",
+          "updatedAt": "2024-03-08T15:36:59Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nAny digests associated with a measured object represent an acceptable state for the object.\r\nTherefore, if multiple digests are provided, the acceptable state is their cross-product.\r\n```",
+              "createdAt": "2024-03-08T15:36:58Z",
+              "updatedAt": "2024-03-08T15:36:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yxAlV",
+          "commit": {
+            "abbreviatedOid": "6be4120"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-08T17:41:25Z",
+          "updatedAt": "2024-03-08T17:41:25Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\nA measurement can be obtained using different hash algorithms.\r\n```",
+              "createdAt": "2024-03-08T17:41:25Z",
+              "updatedAt": "2024-03-08T17:41:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yn-1m",
+          "commit": {
+            "abbreviatedOid": "2181c3e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-07T17:27:33Z",
+          "updatedAt": "2024-03-08T17:46:13Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "This semantic departs from TPM PCR semantics if a \"state\" refers to the measured component vs. the same object but hashed under a different algorithm.\r\n\r\nIf an \"object\" has multiple \"states\" that can be measured, then a description of how the multiple \"states\" shall be disambiguated is needed. For example, the order in which each state appears in the `[ digest ]` array matters. A verifier must compare the \"state\" at position 0 in Evidence to the \"state\" at position 0 in Reference Values.  Etc...\r\n\r\nNote: If the semantics for whether the `[ digest ]` array are left unspecified, the label `integrity-register-id-type-choice` can be used to determine how the `[ digest ]` array interprets \"states\". The verifier may still follow array position rules for checking purposes, but it doesn't need to know semantics of \"states\". If a relying party has an appraisal policy that recognizes `integrity-register-id-type-choice` semantics, then it can apply logic that considers whether a state is appropriate. A profile may or may not be useful to the RP for interpretation of the `integrity-register-id-type-choice` value. This spec (should?) leaves it out of scope. It is reasonable for some other specification to define a registry and so forth. For example, the TCG PC Client specs might associate IR position 0 with a TPM PCR 0, and array position 0 of `[ digest ]` with the first hash algorithm of PCR 0 and array position 1 of `[ digest ]` with the second hash algorithm, etc..\r\n\r\nA different spec / profile might use array position to refer to different \"states\" of an object where the object may change over time and where a new digest is calculated at each state change. \r\n\r\nA third spec / profile might use array position to describe a composite object that has n sub-components at array positions 0 - (n -1) etc.\r\n\r\nThe main consideration for this spec is whether or not these semantics can be safely ignored by a Verifier. They can so long as verifier behavior clearly describes comparison is by array position. The object that the digest refers to can remain opaque to the Verifier.  (I believe these are the desired semantics for IR).",
+              "createdAt": "2024-03-07T17:27:33Z",
+              "updatedAt": "2024-03-08T17:46:13Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "LGTM",
+              "createdAt": "2024-03-08T17:46:02Z",
+              "updatedAt": "2024-03-08T17:46:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yx2fs",
+          "commit": {
+            "abbreviatedOid": "2181c3e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-03-08T19:15:47Z",
+          "updatedAt": "2024-03-08T19:15:47Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 216,
+      "id": "PR_kwDOH6-tI85o_Yjr",
+      "title": "update thofos's affil",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/216",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-07T16:52:04Z",
+      "updatedAt": "2024-03-07T17:59:59Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "1f9b06225d8825690a922ddb3b85685c99153505",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "thofos-affil",
+      "headRefOid": "050e437deef0a7b716933d94fbbbb508ef9048c1",
+      "closedAt": "2024-03-07T17:59:56Z",
+      "mergedAt": "2024-03-07T17:59:56Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843"
+      },
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Welcome to Linaro!\r\n\r\nYeah, it took a while to realize I had switched employer \ud83e\udd23 ",
+          "createdAt": "2024-03-07T16:57:54Z",
+          "updatedAt": "2024-03-07T16:57:54Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85yntnB",
+          "commit": {
+            "abbreviatedOid": "050e437"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Welcome to Linaro!",
+          "createdAt": "2024-03-07T16:53:56Z",
+          "updatedAt": "2024-03-07T16:53:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85yoReW",
+          "commit": {
+            "abbreviatedOid": "050e437"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-03-07T17:55:13Z",
+          "updatedAt": "2024-03-07T17:55:13Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 217,
+      "id": "PR_kwDOH6-tI85pEUN2",
+      "title": "change measurement-value-map to measurement-values-map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/217",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-08T10:44:30Z",
+      "updatedAt": "2024-03-08T19:49:52Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "fix-mvm-spelling",
+      "headRefOid": "fa65cbbf9088b7807df7ade0dad24e097fa00fb2",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI85yx-NS",
+          "commit": {
+            "abbreviatedOid": "fa65cbb"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple suggestions",
+          "createdAt": "2024-03-08T19:31:57Z",
+          "updatedAt": "2024-03-08T19:49:52Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I'm wondering if this case can never happen given it follows cddl. CDDL shouldn't let you have `state-triples` where the `measurement-values-map` contains duplicate code points. I wonder if we really need to describe \"merging\" since the case above describes redundant copies of an EMT.  If so, you can just delete redundant duplicate EMTs. No need to describe deeper \"merging\" semantics.",
+              "createdAt": "2024-03-08T19:31:57Z",
+              "updatedAt": "2024-03-08T19:49:52Z"
+            },
+            {
+              "originalPosition": 10,
+              "body": "ditto previous comment.",
+              "createdAt": "2024-03-08T19:36:18Z",
+              "updatedAt": "2024-03-08T19:49:53Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\nIf the stateful environment is not tagged and the `measurement-values-map` key is a value with handling described in the sub-sections below, then the algorithm appropriate to that key is used to match the entries.\r\n```",
+              "createdAt": "2024-03-08T19:48:58Z",
+              "updatedAt": "2024-03-08T19:49:53Z"
+            }
+          ]
         }
       ]
     }
