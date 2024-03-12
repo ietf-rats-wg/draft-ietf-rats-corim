@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-10T01:18:21.780642+00:00",
+  "timestamp": "2024-03-12T01:13:14.006308+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -25327,7 +25327,7 @@
       "labels": [],
       "body": "Added section 5.2 describing the verifier theory of operation",
       "createdAt": "2024-02-05T19:17:01Z",
-      "updatedAt": "2024-03-09T02:31:05Z",
+      "updatedAt": "2024-03-11T22:13:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25465,6 +25465,66 @@
               "body": "Another possibility to consider is the CCEL digest (which is dynamically generated on the Attester - if I'm not mistaken) could be reported as an `instance-id` in the `environment-map` of the evidence. This allows reference values that relate to measurments that are in a reference manifest to be matched without getting hung up on the CCEL digest not having a reference value. (I'm not close enough to the use case to know if the CCEL digest has security properties however). ",
               "createdAt": "2024-03-09T02:31:05Z",
               "updatedAt": "2024-03-09T02:31:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85y7_Uv",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-11T16:23:29Z",
+          "updatedAt": "2024-03-11T16:23:29Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I'm unfamiliar with Chris Fenner's hashed table of measurements approach. Do you have a link?\r\n\r\nI'm still unclear how profiles for interpreting evidence into an ACS are meant to match up with profiles for reference values. It seems like there is no such thing as a profile for reference values, and that you have to use the same profile as the evidence, which leads to this problem. \"A profile allows the base CoRIM schema to be customised to fit a specific Attester\", not \"A profile allows the base CoRIM CDDL to be customised to fit a specific Attester, Reference Value Provider, or Endorser\".\r\n\r\nIf I'm understanding you correctly, an attester should only use class-id and optionally group in an environment to not conflict with an RVP's use of `instance` to delineate which of the allowed sets of measurements may match a particular family of target environments. That sounds like you still need the Attester profile to account for all the ways that an RVP wants to allow for variability in its CoRIMs, correct?\r\n\r\nSpecific PCR bank subsets correspond to boot layers kinda, so PCR 0 is the launch measurement, 1 and 7 (RTMR 0) for firmware, PCRs 2-6 in RTMR 1 for UEFI driver and host platform-specific measurements (e.g., GRUB2), PCRs 8-15 in RTMR 2 for static OS. In practice 8, 9 are used by GRUB2 to measure the kernel and kernel cmdline, so 10-15 are more for Linux IMA. If the kernel build comes from Canonical and the kernel modules come from NVIDIA, and other sources, then we have a very hard time combining expected reference values into signed RVs due to the way NVIDIA has chosen to architect their attestation verification service, specifically for driver reference values. You can't easily have an indexed event log signed by a single principle, even if the boot is sliced and diced to different environments for different sets of integrity registers.\r\n\r\nIdeally one would like the event log composition to be analyzed by the Verifier against a policy of which specific events are allowed, so that the combined replay into the PCR bank in the quote is acceptable. Again we have multiple approvers for pieces of a single measurement, just like in Issue#202. If the final value of an integrity register has to be signed by a single principle, then we're going to get into the habit of the Verifier itself signing these values as a composite measurement approver. Is that the expected outcome?",
+              "createdAt": "2024-03-11T16:23:29Z",
+              "updatedAt": "2024-03-11T19:17:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85y_yaS",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-11T21:13:32Z",
+          "updatedAt": "2024-03-11T21:13:32Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": ">It seems like there is no such thing as a profile for reference values, and that you have to use the same profile as the evidence, which leads to this problem. \"A profile allows the base CoRIM schema to be customised to fit a specific Attester\", not \"A profile allows the base CoRIM CDDL to be customised to fit a specific Attester, Reference Value Provider, or Endorser\".\r\n\r\nCoRIM defines a profile, see `corim-map`. Likewise, evidence can have a profile too (see EAT `profile-label` and `spdm-toc-map` in https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf. \r\n\r\nThere could be a single profile for all of them with sections that are specific to a conceptual message or one profile could be a master profile that describes which other profiles are used for say evidence. If the CoRIM profile is selected as the master profile, then the statement \"...CoRIM CDDL to be customized to fit a specific Attester, Reference Value Provider, or Endorser\" could be reasonable.",
+              "createdAt": "2024-03-11T21:13:32Z",
+              "updatedAt": "2024-03-11T21:13:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85zAkyI",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-11T22:13:21Z",
+          "updatedAt": "2024-03-11T22:13:21Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": ">If the final value of an integrity register has to be signed by a single principle, then we're going to get into the habit of the Verifier itself signing these values as a composite measurement approver. Is that the expected outcome?\r\n\r\nGiven the use case uses multiple verifiers (say one at each layer of the boot sequence), then each layer can be evaluated according to the `integrity-registers` measurement for that layer. \r\nIf each layer verifier uses a different key to assert the results, and given the results are asserted as a digest back into an `integrity-registers` structure. Then each layer is a principal that signs a partial attestation result (for each layer). A downstream / remote verifier can verify the intermediate layer results and arrive at an overall result (according to what the last Verifier / RP / use case expects). ",
+              "createdAt": "2024-03-11T22:13:21Z",
+              "updatedAt": "2024-03-11T22:18:40Z"
             }
           ]
         }
@@ -26102,7 +26162,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-03-07T10:33:21Z",
-      "updatedAt": "2024-03-08T19:21:51Z",
+      "updatedAt": "2024-03-11T16:01:10Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
@@ -26185,6 +26245,19 @@
           "body": "LGTM",
           "createdAt": "2024-03-08T19:21:51Z",
           "updatedAt": "2024-03-08T19:21:51Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85y7sIO",
+          "commit": {
+            "abbreviatedOid": "b598926"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-03-11T16:01:10Z",
+          "updatedAt": "2024-03-11T16:01:10Z",
           "comments": []
         }
       ]
