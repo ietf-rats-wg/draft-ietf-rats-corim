@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-12T01:13:14.006308+00:00",
+  "timestamp": "2024-03-14T01:13:45.795512+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -25327,7 +25327,7 @@
       "labels": [],
       "body": "Added section 5.2 describing the verifier theory of operation",
       "createdAt": "2024-02-05T19:17:01Z",
-      "updatedAt": "2024-03-11T22:13:21Z",
+      "updatedAt": "2024-03-12T19:56:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -25527,6 +25527,66 @@
               "updatedAt": "2024-03-11T22:18:40Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85zKFf6",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-12T18:36:18Z",
+          "updatedAt": "2024-03-12T18:36:19Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "There are way too many measurements specified for the TPM PC Client platform firmware profile, and as such the measurements of binaries that themselves have build provenance signatures (like in-toto) can combine in a single PCR. This is why our current attestation verification service doesn't rely on expected PCRs and instead uses PCRs as an integrity check on the event log, and we evaluate each event in the event log against policy.",
+              "createdAt": "2024-03-12T18:36:18Z",
+              "updatedAt": "2024-03-12T18:36:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85zKQ6T",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-12T18:51:02Z",
+          "updatedAt": "2024-03-12T18:51:03Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "That's essentially what I'm suggesting. \r\nGiven this longish thread, are there wording changes you would like to see in the above proposed text?",
+              "createdAt": "2024-03-12T18:51:03Z",
+              "updatedAt": "2024-03-12T18:51:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85zLGrZ",
+          "commit": {
+            "abbreviatedOid": "f14293f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-12T19:56:48Z",
+          "updatedAt": "2024-03-12T19:56:48Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "Remove the term until it's used somewhere. There are no other uses of the term \"reference state\" and the definition that it means \"various alternative states of a Target Environment\" doesn't match up with what I understand what a CoRIM can represent. Are all these varieties only expressible within separate tags? The term is hard to interpret on its own.",
+              "createdAt": "2024-03-12T19:56:48Z",
+              "updatedAt": "2024-03-12T19:56:49Z"
+            }
+          ]
         }
       ]
     },
@@ -25657,13 +25717,13 @@
       "labels": [],
       "body": "The first use is in tagged bytes, but the meaningful first use is changed here not only to link to the fuller definition, but also to clarify that the interpretation cannot be arbitrary.\r\n\r\nGiven there are multiple references to \"base CoRIM schema\" in the profile definition, I've renamed the \"Full CoRIM CDDL\" appendix to more clearly denote the base schema concept.",
       "createdAt": "2024-02-14T17:50:35Z",
-      "updatedAt": "2024-02-21T15:40:04Z",
+      "updatedAt": "2024-03-13T16:06:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
+      "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "profile",
-      "headRefOid": "24ade22e17e91dfaf072955fdf591aa23adeb611",
+      "headRefOid": "f86155d37a0fb66098ce05ee6e22d7662e31b9c4",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -25755,6 +25815,32 @@
               "body": "#208 implies the need for more text changes for consistency. The suggestion above is also a proposal how that consistency can look like.",
               "createdAt": "2024-02-21T15:40:04Z",
               "updatedAt": "2024-02-21T15:40:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85zT9HL",
+          "commit": {
+            "abbreviatedOid": "f86155d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested edits.",
+          "createdAt": "2024-03-13T16:04:53Z",
+          "updatedAt": "2024-03-13T16:06:17Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nA profile MUST NOT change the base CoRIM CDDL definition's semantics, which includes not changing or overloading names and numbers registered at IANA registries used by this document.\r\n```",
+              "createdAt": "2024-03-13T16:04:53Z",
+              "updatedAt": "2024-03-13T16:06:17Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nFor more detail, see {{sec-corim-profile-types}},\r\n```",
+              "createdAt": "2024-03-13T16:05:36Z",
+              "updatedAt": "2024-03-13T16:06:17Z"
             }
           ]
         }
@@ -26274,7 +26360,7 @@
       "labels": [],
       "body": "Fix #214",
       "createdAt": "2024-03-07T14:47:45Z",
-      "updatedAt": "2024-03-08T19:15:47Z",
+      "updatedAt": "2024-03-12T18:13:44Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
@@ -26516,6 +26602,19 @@
           "body": "LGTM",
           "createdAt": "2024-03-08T19:15:47Z",
           "updatedAt": "2024-03-08T19:15:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI85zJzcG",
+          "commit": {
+            "abbreviatedOid": "2181c3e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "The `text` and usages of `digest` is much clear now!\r\n\r\nLGTM!",
+          "createdAt": "2024-03-12T18:13:44Z",
+          "updatedAt": "2024-03-12T18:13:44Z",
           "comments": []
         }
       ]
