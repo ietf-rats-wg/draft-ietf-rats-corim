@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-17T01:18:22.889314+00:00",
+  "timestamp": "2024-03-19T01:14:31.959596+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2043,7 +2043,7 @@
       "labels": [],
       "body": "I'd like to confirm that the following example reference value formats are both valid structures. Are they?\r\n\r\nEach of these is designed to match against an attester providing evidence in the same format. The semantics of the two formats is intended to be the same (both convey two raw value measurements).\r\n\r\nOIDs have been made up.\r\n\r\nSeparate environments:\r\n```\r\n  / comid.reference-triples / 0 : [\r\n    [\r\n      / environment-map / {\r\n        / comid.class / 0 : {\r\n          / comid.class-id / 0 : / 2.16.840.1.42.1 / 111(h'608648012A01') \r\n        }\r\n      },\r\n      [\r\n        / measurement-map / {\r\n          / comid.mval / 1 : {\r\n            / comid.raw-value / 4 : h'12121212',\r\n          }\r\n        }\r\n      ]\r\n    ],\r\n    [\r\n      / environment-map / {\r\n        / comid.class / 0 : {\r\n          / comid.class-id / 0 : / 2.16.840.1.42.2 / 111(h'608648012A02') \r\n        }\r\n      },\r\n      [\r\n        / measurement-map / {\r\n          / comid.mval / 1 : {\r\n            / comid.raw-value / 4 : h'5A5A5A5A',\r\n          }\r\n        }\r\n      ]\r\n    ],\r\n  ]\r\n```\r\n\r\nCombined environments:\r\n```\r\n  / comid.reference-triples / 0 : [\r\n    [\r\n      / environment-map / {\r\n        / comid.class / 0 : {\r\n          / comid.class-id / 0 : / 2.16.840.1.42.1 / 111(h'608648012A01') \r\n        }\r\n      },\r\n      [\r\n        / measurement-map / {\r\n          / comid.mval / 1 : {\r\n            / comid.raw-value / 4 : h'12121212',\r\n            / private value / -1 : h'5A5A5A5A',\r\n          }\r\n        }\r\n      ]\r\n    ],\r\n  ]\r\n```\r\n",
       "createdAt": "2023-03-15T12:08:21Z",
-      "updatedAt": "2023-09-01T21:52:47Z",
+      "updatedAt": "2024-03-18T18:22:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -2059,6 +2059,13 @@
           "body": "I don't think the array around measurement-map was the focus of the question. I think it is whether a private code point `-1` can be used to contain a raw-value-group.\r\n\r\nI believe this works.",
           "createdAt": "2023-09-01T21:52:47Z",
           "updatedAt": "2023-09-01T21:52:47Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @andrew-draper I think, this needs a closure as multiple measurements pertaining to an `environment` can be modelled using Integrity Registers?",
+          "createdAt": "2024-03-18T18:22:12Z",
+          "updatedAt": "2024-03-18T18:22:12Z"
         }
       ]
     },
@@ -2427,7 +2434,7 @@
       "labels": [],
       "body": "Currently, the CDDL definition of `triples-map` supports `conditional-endorsement-series-triples`. In each `conditional-endorsement-series-triple-record`, the subject is a `stateful-environment-record`, where there must be at least one field in its `measurement-values-map`.\r\n\r\nIn the new use case, the environment is stateless, without any measurement value field. A new triple record such as the `stateless-conditional-endorsement-series-triple-record` defined below will be able to support this use case.\r\n```\r\nstateless-conditional-endorsement-series-triple-record = [\r\n  environment-map\r\n  ; order matters: the first matching record wins and halts matching\r\n  [ + conditional-series-record ]\r\n  ? authorized-by: [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nIn this triple record, the optional `authorized-by` field lists the authorities for all the `measurement-values-map` structures  in the series.\r\n\r\nSince there is no ambiguity between `conditional-endorsement-series-triple-record` (with its first entry as an record) and `stateless-conditional-endorsement-series-triple-record` (with its first entry as a map), the `triples-map` entry:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record ]\r\n```\r\ncan be updated to add `stateless-conditional-endorsement-series-triple-record` as an option:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record /  stateless-conditional-endorsement-series-triple-record ]\r\n```\r\n",
       "createdAt": "2023-05-12T04:30:46Z",
-      "updatedAt": "2023-06-08T18:06:12Z",
+      "updatedAt": "2024-03-18T18:18:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -2443,6 +2450,13 @@
           "body": "To consolidate the existing `conditional-endorsement-series-triples` and `conditional-endorsement-triples` definition in `triples-map`, and the above `stateless-conditional-endorsement-series-triple-record`, we can have a single streamlined / unified CDDL definition to cover all the use cases.\r\n```\r\nconditional-endorsements-triple-record = [\r\n  subject-record\r\n  object-record\r\n  ? authorizied-by: [ + $crypto-key-type-choice ]\r\n]\r\n\r\nsubject-record = [\r\n  environment-map\r\n  ? common-reference: measurement-values-map\r\n]\r\n\r\nobject-record = non-empty{[\r\n  ? common-endorsement: measurement-values-map\r\n  ? series: [ + conditional-series-record ]\r\n]}\r\n\r\n; Note: this is existing definition\r\nconditional-series-record = [\r\n  refv: measurement-values-map\r\n  endv: measurement-values-map\r\n]\r\n\r\n```\r\n\r\nThe `triples-map` is updated to include this `conditional-endorsements-triple-record`:\r\n```\r\n  ? &(conditional-endorsements-triple: 10) =>\r\n    [ + conditional-endorsements-triple-record ]\r\n```\r\nIn the  above `conditional-endorsements-triple-record` definition, the `subject-record` is the same as `stateful-environment-record` when the optional `common-reference` entry is present, otherwise it contains the `environment-map` in the `stateless-conditional-endorsement-series-triple-record`.\r\n\r\nThe `object-record` has two optional entries, and at least one of them need to be present. If only `common-endorsement` is present, it supports the case cases for `conditional-endorsement-triples`. If only `series` is present, it supports the use cases for `conditional-endorsement-series-triples`. If both entries are present, each `conditional-series-record` in `series` contains record-specific reference and endorsement claims, while `common-reference`  and `common-endorsement` contain reference and endorsement claims common across all `conditional-series-record`s.",
           "createdAt": "2023-06-08T17:09:12Z",
           "updatedAt": "2023-06-08T17:09:12Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is this not achieved now by `MEC Triples` which is added recently. I think, this issue needs to be closed!",
+          "createdAt": "2024-03-18T18:18:20Z",
+          "updatedAt": "2024-03-18T18:18:20Z"
         }
       ]
     },
