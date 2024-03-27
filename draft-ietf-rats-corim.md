@@ -756,11 +756,7 @@ The following describes each member of the `triples-map`:
   conditional Endorsements based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 9) Triples describing conditional
-  Endorsement based on the acceptance of a stateful environment. Described
-  in {{sec-comid-triple-cond-end}}.
-
-* `mec-endorsement-triple-record` (index 10) Triples describing a series of
+* `mec-endorsement-triple-record` (index 9) Triples describing a series of
   Endorsement that are applicable based on the acceptance of a series of
   stateful environment records. Described in
   {{sec-comid-triple-mec-endorsement}}.
@@ -1293,25 +1289,6 @@ applies to all measurements in the triple, including `conditional-series-record`
 {::include cddl/conditional-series-record.cddl}
 ~~~
 
-#### Conditional Endorsement Triple {#sec-comid-triple-cond-end}
-
-A Conditional Endorsement triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
-that have matching Evidence.
-
-The stateful Target Environment is a triple subject that MUST be satisfied before the Endorsed Values in the triple object are accepted.
-
-~~~ cddl
-{::include cddl/stateful-environment-record.cddl}
-~~~
-
-The `authorized-by` value in `measurement-map` in the stateful environment, if present,
-applies to all measurements in the triple, including those in `measurement-values-map`.
-
-~~~ cddl
-{::include cddl/conditional-endorsement-triple-record.cddl}
-~~~
-
 #### Multi-Environment Conditional (MEC) Endorsement Triple {#sec-comid-triple-mec-endorsement}
 
 The semantics of the Multi-Environment Conditional (MEC) Endorsement Triple is as follows:
@@ -1692,13 +1669,6 @@ An Endorser may use CoMID tags to publish Conditional Endorsements, which are ad
 This section describes the process performed by the Verifier to determine which Conditional Endorsements from the candidate CoMIDs should be added to the ACS.
 
 The verifier checks whether Conditional Endorsements are applicable by comparing Accepted Claims Set entries against expected values provided in `stateful-environment-record` object which are part of the triple.
-
-#### Processing Conditional Endorsement Triple
-
-For each Conditional Endorsement Triple the Verifier compares the `stateful-environment-record` field in the triple against the ACS (see {{sec-match-one-se}}).
-
-If the stateful environment matches, then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}).
-The Endorsement consists of the `measurement-values-map` field in the triple, plus the authority of the entity that signed the Conditional Endorsement Triple.
 
 #### Processing Multi-Environment Conditional (MEC) Endorsement Triple
 
