@@ -22,11 +22,11 @@ Values from Endorsers and Reference Value Providers, such as manufacturers,
 distributors, or device owners. This document specifies the information elements for
 representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.20.0" name="generator">
+<meta content="xml2rfc 3.20.1" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.20.0
+  xml2rfc 3.20.1
     Python 3.11.8
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
@@ -1042,7 +1042,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 9 September 2024</td>
+<td class="center">Expires 28 September 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1055,12 +1055,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-03-08" class="published">8 March 2024</time>
+<time datetime="2024-03-27" class="published">27 March 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-09-09">9 September 2024</time></dd>
+<dd class="expires"><time datetime="2024-09-28">28 September 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1127,7 +1127,7 @@ representing Endorsements and Reference Values in CBOR format.<a href="#section-
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 9 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 28 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1548,7 +1548,7 @@ representing Endorsements and Reference Values in CBOR format.<a href="#section-
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-full-corim-cddl" class="internal xref">Full CoRIM CDDL</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-base-corim-cddl" class="internal xref">Base CoRIM CDDL</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
             <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
@@ -1918,7 +1918,10 @@ For example, Concise Trust Anchor Stores (CoTS) <span>[<a href="#I-D.ietf-rats-c
           <p id="section-2-7.1.1">A locator, which allows discovery of possibly related RIMs<a href="#section-2-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-2-7.2">
-          <p id="section-2-7.2.1">A profile identifier, which is used to interpret the information contained in the enclosed tags. A profile allows the base CoRIM schema to be customised to fit a specific Attester.  For example, see <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>.<a href="#section-2-7.2.1" class="pilcrow">¶</a></p>
+          <p id="section-2-7.2.1">A profile identifier, which is used to interpret the information contained in the enclosed tags.
+A profile allows the base CoRIM CDDL definition to be customized to fit a specific Attester by augmenting the base CDDL data definition via the specified extension points or by constraining types defined.
+A profile MUST NOT change the base CoRIM CDDL definition's semantics, which includes not changing or overloading names and numbers registered at IANA registries used by this document.
+For more detail, see <a href="#sec-corim-profile-types" class="auto internal xref">Section 2.1.4</a>,<a href="#section-2-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-2-7.3">
           <p id="section-2-7.3.1">A validity period, which indicates the time period for which the CoRIM contents are valid.<a href="#section-2-7.3.1" class="pilcrow">¶</a></p>
@@ -2082,6 +2085,7 @@ $profile-type-choice /= uri
 $profile-type-choice /= tagged-oid-type
 </pre><a href="#section-2.1.4-8" class="pilcrow">¶</a>
 </div>
+<p id="section-2.1.4-9">For an example profile definition, see <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>.<a href="#section-2.1.4-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-corim-entity">
@@ -4933,8 +4937,8 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 </section>
 <div id="sec-corim-cddl">
 <section id="appendix-A">
-      <h2 id="name-full-corim-cddl">
-<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-full-corim-cddl" class="section-name selfRef">Full CoRIM CDDL</a>
+      <h2 id="name-base-corim-cddl">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-base-corim-cddl" class="section-name selfRef">Base CoRIM CDDL</a>
       </h2>
 <div class="breakable lang-cddl sourcecode" id="appendix-A-1">
 <pre>

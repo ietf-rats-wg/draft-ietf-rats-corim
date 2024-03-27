@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 9 September 2024                                         Linaro
+Expires: 28 September 2024                                        Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            8 March 2024
+                                                           27 March 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 September 2024.
+   This Internet-Draft will expire on 28 September 2024.
 
 Copyright Notice
 
@@ -192,7 +192,7 @@ Table of Contents
    9.  References
      9.1.  Normative References
      9.2.  Informative References
-   Appendix A.  Full CoRIM CDDL
+   Appendix A.  Base CoRIM CDDL
    Acknowledgments
    Contributors
    Authors' Addresses
@@ -436,8 +436,13 @@ Table of Contents
 
    *  A profile identifier, which is used to interpret the information
       contained in the enclosed tags.  A profile allows the base CoRIM
-      schema to be customised to fit a specific Attester.  For example,
-      see [I-D.fdb-rats-psa-endorsements].
+      CDDL definition to be customized to fit a specific Attester by
+      augmenting the base CDDL data definition via the specified
+      extension points or by constraining types defined.  A profile MUST
+      NOT change the base CoRIM CDDL definition's semantics, which
+      includes not changing or overloading names and numbers registered
+      at IANA registries used by this document.  For more detail, see
+      Section 2.1.4,
 
    *  A validity period, which indicates the time period for which the
       CoRIM contents are valid.
@@ -572,6 +577,9 @@ Table of Contents
 
    $profile-type-choice /= uri
    $profile-type-choice /= tagged-oid-type
+
+   For an example profile definition, see
+   [I-D.fdb-rats-psa-endorsements].
 
 2.1.5.  Entities
 
@@ -2874,7 +2882,7 @@ Table of Contents
               <https://www.dmtf.org/sites/default/files/standards/
               documents/DSP0274_1.3.0.pdf>.
 
-Appendix A.  Full CoRIM CDDL
+Appendix A.  Base CoRIM CDDL
 
    corim = tagged-concise-rim-type-choice
 
