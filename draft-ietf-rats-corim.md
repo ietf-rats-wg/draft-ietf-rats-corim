@@ -1170,14 +1170,15 @@ Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which cas
 
 ##### Domain Types {#sec-comid-domain-type}
 
-A domain is a context for bundling a collection of related environments and
-their measurements.
+A domain is a context for bundling a collection of related environments and their measurements.
 
-Three types are defined: uint and text for local scope, UUID for global scope.
+The following CDDL describes domain type choices.
 
 ~~~ cddl
 {::include cddl/domain-type-choice.cddl}
 ~~~
+
+The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
