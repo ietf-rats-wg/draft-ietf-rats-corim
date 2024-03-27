@@ -87,7 +87,6 @@ normative:
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
 
-
 informative:
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
@@ -290,15 +289,10 @@ namespace under which the value must be understood.
 
 ### Digest {#sec-common-hash-entry}
 
-A digest represents the value of a hashing operation together with the hash
-algorithm used.  The type of the digest algorithm identifier can be either
-`int` or `text`.  When carried as an integer value, it is interpreted according
-to the "Named Information Hash Algorithm Registry" {{-named-info}}.
-When it is carried as `text`, there are no requirements with regards to its
-format.  In general, the `int` encoding is RECOMMENDED.  The `text` encoding
-should only be used when the `digest` type conveys reference value
-measurements that are matched verbatim with Evidence that uses the same
-convention - e.g., {{Section 4.4.1.5 of -psa-token}}).
+A digest represents the value of a hashing operation together with the hash algorithm used.
+The type of the digest algorithm identifier can be either `int` or `text` and is interpreted according to the {{-named-info}} registry.
+Specifically, `int` values are matched against "ID" entries, `text` values are matched against "Hash Name String" entries.
+Whenever possible, using the `int` encoding is RECOMMENDED.
 
 ~~~ cddl
 {::include cddl/digest.cddl}
