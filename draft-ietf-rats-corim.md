@@ -1759,7 +1759,7 @@ A CoRIM profile may define additional tags and their matching algorithms.
 
 If the Verifier does not recognize the stateful environment CBOR tag value then the stateful environment does not match.
 
-If the stateful environment is not tagged and the `measurement-values-map` key is a value with handling described in  the sub-sections below, then the algorithm appropriate to that key is used to match the entries.
+If the stateful environment is not tagged and the `measurement-values-map` key is a value with handling described in the sub-sections below, then the algorithm appropriate to that key is used to match the entries.
 
 If the stateful environment is not tagged, and the `measurement-values-map` key is not a value described below, then the entries are compared using binary comparison of their CBOR encoded values.
 If the values are not binary identical then the stateful environment does not match.
