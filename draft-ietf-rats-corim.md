@@ -510,27 +510,24 @@ The following describes each child element of this type.
 {::include cddl/protected-corim-header-map.cddl}
 ~~~
 
+The CoRIM protected header map uses some common COSE header parameters plus an additional `corim-meta` parameter.
 The following describes each child item of this map.
 
-* `alg-id` (index 1): An integer that identifies a signature algorithm.
+* `alg` (index 1): An integer that identifies a signature algorithm.
 
-* `content-type` (index 3): A string that represents the "MIME Content type"
-  carried in the CoRIM payload.
+* `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `issuer-key-id` (index 4): A bit string which is a key identity pertaining to
-  the CoRIM Issuer.
+* `kid` (index 4): A bit string which is a key identity pertaining to the CoRIM Issuer.
 
-* `corim-meta` (index 8): A map that contains metadata associated with a
-  signed CoRIM. Described in {{sec-corim-meta}}.
+* `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
+  Described in {{sec-corim-meta}}.
 
-Additional data can be included in the COSE header map as per {{Section 3 of
--cose}}.
+Additional data can be included in the COSE header map as per {{Section 3 of -cose}}.
 
 ### Meta Map {#sec-corim-meta}
 
-The CoRIM meta map identifies the entity or entities that create and sign the
-CoRIM. This ensures the consumer is able to identify credentials used to
-authenticate its signer.
+The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.
 
 ~~~ cddl
 {::include cddl/corim-meta-map.cddl}
