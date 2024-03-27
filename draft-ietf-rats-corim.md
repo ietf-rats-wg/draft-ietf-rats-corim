@@ -340,7 +340,7 @@ CoRIM can also carry the following optional metadata:
 * A profile identifier, which is used to interpret the information contained in the enclosed tags.
 A profile allows the base CoRIM CDDL definition to be customized to fit a specific Attester by augmenting the base CDDL data definition via the specified extension points or by constraining types defined.
 A profile MUST NOT change the base CoRIM CDDL definition's semantics, which includes not changing or overloading names and numbers registered at IANA registries used by this document.
-or more, see {{sec-corim-profile-types}},
+For more detail, see {{sec-corim-profile-types}},
 
 * A validity period, which indicates the time period for which the CoRIM contents are valid.
 
