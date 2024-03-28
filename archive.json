@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-26T01:14:05.544549+00:00",
+  "timestamp": "2024-03-28T01:14:42.996213+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2434,7 +2434,7 @@
       "labels": [],
       "body": "Currently, the CDDL definition of `triples-map` supports `conditional-endorsement-series-triples`. In each `conditional-endorsement-series-triple-record`, the subject is a `stateful-environment-record`, where there must be at least one field in its `measurement-values-map`.\r\n\r\nIn the new use case, the environment is stateless, without any measurement value field. A new triple record such as the `stateless-conditional-endorsement-series-triple-record` defined below will be able to support this use case.\r\n```\r\nstateless-conditional-endorsement-series-triple-record = [\r\n  environment-map\r\n  ; order matters: the first matching record wins and halts matching\r\n  [ + conditional-series-record ]\r\n  ? authorized-by: [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nIn this triple record, the optional `authorized-by` field lists the authorities for all the `measurement-values-map` structures  in the series.\r\n\r\nSince there is no ambiguity between `conditional-endorsement-series-triple-record` (with its first entry as an record) and `stateless-conditional-endorsement-series-triple-record` (with its first entry as a map), the `triples-map` entry:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record ]\r\n```\r\ncan be updated to add `stateless-conditional-endorsement-series-triple-record` as an option:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record /  stateless-conditional-endorsement-series-triple-record ]\r\n```\r\n",
       "createdAt": "2023-05-12T04:30:46Z",
-      "updatedAt": "2024-03-18T18:18:22Z",
+      "updatedAt": "2024-03-27T15:50:48Z",
       "closedAt": null,
       "comments": [
         {
@@ -2457,6 +2457,13 @@
           "body": "Is this not achieved now by `MEC Triples` which is added recently. I think, this issue needs to be closed!",
           "createdAt": "2024-03-18T18:18:20Z",
           "updatedAt": "2024-03-18T18:18:20Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper to check if all concerns are addressed and close it subsequently!",
+          "createdAt": "2024-03-27T15:50:47Z",
+          "updatedAt": "2024-03-27T15:50:47Z"
         }
       ]
     },
@@ -3195,15 +3202,15 @@
       "id": "I_kwDOH6-tI85wbZK1",
       "title": "PR 107 Confusing text",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/144",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "in Pull Request:\r\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/107\r\n\r\nThe following text is ambigous\r\n\r\nA Reference Value consists of an `environment-map` plus a `measurement-map`. In the\r\n`reference-values-triple-record` these are packaged together. In other triples multiple\r\nReference Values are represented more compactly by letting one `environment-map`\r\napply to multiple `measurement-map`s.\r\n\r\nNeed to re-write the same.",
       "createdAt": "2023-09-07T16:35:57Z",
-      "updatedAt": "2024-02-12T15:51:10Z",
-      "closedAt": null,
+      "updatedAt": "2024-03-27T15:48:27Z",
+      "closedAt": "2024-03-27T15:48:26Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -3232,6 +3239,13 @@
           "body": "The text mentioned at the start of this issue has been replaced as part of PR #193.\r\n\r\nIs it ok to close this issue?",
           "createdAt": "2024-02-12T15:51:09Z",
           "updatedAt": "2024-02-12T15:51:09Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as Andy has addressed this using PR #193 ",
+          "createdAt": "2024-03-27T15:48:27Z",
+          "updatedAt": "2024-03-27T15:48:27Z"
         }
       ]
     },
@@ -3240,15 +3254,15 @@
       "id": "I_kwDOH6-tI85w3QA1",
       "title": "crypto-key as instance environment identifier",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/146",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "`environment-map` supports class, instance and group identifiers. Instance identifiers can be UUID or UEID. \r\n\r\nA PRoT use case can use key-id to identify components by their key. \r\nA PRoT may dynamically discover \"platform\" devices (either via hot-plug or by rebooting). The PRoT can perform local security checks (or not) and report discover of the device(s) to a remote Verifier. \r\n\r\nThe CoMID schema can represent information about the device by identifying it using its key. For example, it may have a DICE device or alias key. \r\n\r\nHowever, the current definition of `instance` in `environment-map` doesn't allow keys as identifiers. This can be fixed by:\r\n```\r\n$instance-id-type-choice /= $crypto-key-type-choice\r\n```\r\n`$crypto-key-type-choice` is already a CBOR tagged value.",
       "createdAt": "2023-09-13T00:36:55Z",
-      "updatedAt": "2023-09-28T21:03:04Z",
-      "closedAt": null,
+      "updatedAt": "2024-03-27T15:47:01Z",
+      "closedAt": "2024-03-27T15:47:00Z",
       "comments": [
         {
           "author": "henkbirkholz",
@@ -3277,6 +3291,13 @@
           "body": "> Are \"platform\" devices simply (modular) device components, such as a NIC?\r\n\r\nCould be, the lead Attester determines which components of the platform are grouped together as part of a session with a Verifier. The lead Attester authenticates with a \"Device ID\" key.",
           "createdAt": "2023-09-28T21:02:29Z",
           "updatedAt": "2023-09-28T21:03:04Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing the issue as PR #151 has been merged!",
+          "createdAt": "2024-03-27T15:47:00Z",
+          "updatedAt": "2024-03-27T15:47:00Z"
         }
       ]
     },
@@ -3423,15 +3444,15 @@
       "id": "I_kwDOH6-tI85yZmSl",
       "title": "Need to define how Endorsements can appear in the Accepted Claims set",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/158",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The RATS Architecture defines Endorsements as the entity the Verifier may  use after the \r\nEvidence Claims Matches the Reference Values,\r\n\r\nThe Accepted Claims Set (ACS) is a Data Structure Set containing Claims which have been marked as \r\n`Ready for Appraisal` \r\n\r\nNow if the Appraisal has not been done, how ACS contains Endorsed Values/ Endorsements needs to be clearly described when this can happen.",
       "createdAt": "2023-09-29T13:51:53Z",
-      "updatedAt": "2023-10-02T15:46:53Z",
-      "closedAt": null,
+      "updatedAt": "2024-03-27T15:45:00Z",
+      "closedAt": "2024-03-27T15:44:59Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -3467,6 +3488,13 @@
           "body": "Matching Endorsements to ACS works the same way as matching RVPs to ACS in that the claims contained in the ACS at the time the endorsements are \"matched\" matters. It assumes the ACS contains accepted claims that are the result of having applied all applicable RV claims already. \r\n\r\nThe terminology \"ACS is ready for appraisal\" assumes this context (that is, the next stage can begin with the previous stage ACS \"is ready\").\r\n\r\nContinuing on the staging discussion, processing conditional endorsements also is stage dependent. This stage is separate from the endorsements stage. There should be discussion on when the ACS is ready for appraisal of condition endorsements. I believe it should follow processing of Endorsements.\r\n\r\nThere is still a question around how to stage multiple conditional endorsement triples because it is possible to get different results if different conditional endorsements are staged differently. One possible way to constrain staging to guarantee consistency is to require the condition (in conditional endorsement) to be applied to the previous (endorsements) stage results, rather than allowing each conditional endorsement triple being applied to the ACS state following application of a previously processed conditional endorsement.\r\n\r\nTo summarize stages for a given group context:\r\n- stage 1 : process evidence claims into ACS (under the authority of the Attester)\r\n- stage 2 : process RVs\r\n- stage 3 : process endorsement claims\r\n- stage 4 : process conditional endorsements (against stage 3 state)\r\n- stage 5 : process appraisal policies\r\n\r\nNote: It might make sense to treat conditional endorsements and conditional series endorsements in separate stages. The motivation is to allow flexibility in allowing series endorsements to take advantage of state changes applied by conditional endorsements. My choice of staging series endorsements after stage 3 is arbitrary. It is a way to ensure consistency.\r\n\r\nNote: There is potential for inconsistent results based on when coswid triples are processed.  The cowsid tag can contain values that this spec would describe as endorsed values (or conditional endorsed values based on acceptance of the reference values contained in the coswid payload). All of the coswid content above the payload are conditionally endorsed. Options: (a)Process coswids as a separate stage. (b) define coswid as a measurement type that extends measurement-values-map (fits into existing stages). \r\n\r\nRevised stages for a given group context:\r\n- stage 1 : process evidence claims into ACS (under the authority of the Attester)\r\n- stage 2 : process RVs\r\n- stage 3 : process endorsement claims\r\n- stage 4 : process coswid triples (assuming option (a) above)\r\n- stage 5 : process conditional endorsements (against stage 4 state)\r\n- stage 6 : process conditional series endorsements (against stage 5 state)\r\n- stage 7 : process appraisal policies\r\n\r\n",
           "createdAt": "2023-10-02T15:46:52Z",
           "updatedAt": "2023-10-02T15:46:52Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as this is no longer an issue!",
+          "createdAt": "2024-03-27T15:44:59Z",
+          "updatedAt": "2024-03-27T15:44:59Z"
         }
       ]
     },
@@ -4848,7 +4876,7 @@
       "labels": [],
       "body": "An ask from Henk",
       "createdAt": "2024-02-21T15:32:34Z",
-      "updatedAt": "2024-02-21T15:32:34Z",
+      "updatedAt": "2024-03-27T15:36:39Z",
       "closedAt": null,
       "comments": []
     },
@@ -17008,7 +17036,7 @@
       "labels": [],
       "body": "Issue #126 anticipates better clarification for identity and attest-key triples to disambiguate from keys as measurements.",
       "createdAt": "2023-09-01T20:20:39Z",
-      "updatedAt": "2024-02-02T16:52:43Z",
+      "updatedAt": "2024-03-27T15:24:16Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "957931f2a8fdd51175c752aa2d97e71c2835eae2",
@@ -17496,6 +17524,50 @@
               "body": "```suggestion\r\nThe Verifier SHOULD perform offline verification of the key(s) that may include revocation, expiration, and certificate path validation checks.\r\n```",
               "createdAt": "2024-01-31T23:12:35Z",
               "updatedAt": "2024-02-02T16:52:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI851C14b",
+          "commit": {
+            "abbreviatedOid": "271a4cf"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-03-27T15:21:46Z",
+          "updatedAt": "2024-03-27T15:24:16Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "Remove line break without new sentence",
+              "createdAt": "2024-03-27T15:21:46Z",
+              "updatedAt": "2024-03-27T15:24:16Z"
+            },
+            {
+              "originalPosition": 42,
+              "body": "Remove line break without new sentence",
+              "createdAt": "2024-03-27T15:22:11Z",
+              "updatedAt": "2024-03-27T15:24:16Z"
+            },
+            {
+              "originalPosition": 32,
+              "body": "Remove line break without new sentence.",
+              "createdAt": "2024-03-27T15:22:21Z",
+              "updatedAt": "2024-03-27T15:24:16Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "Remove line break without new sentence.",
+              "createdAt": "2024-03-27T15:22:35Z",
+              "updatedAt": "2024-03-27T15:24:16Z"
+            },
+            {
+              "originalPosition": 23,
+              "body": "What is the significance of the \"offline\" qualification?",
+              "createdAt": "2024-03-27T15:23:37Z",
+              "updatedAt": "2024-03-27T15:24:16Z"
             }
           ]
         }
@@ -25724,24 +25796,26 @@
       "id": "PR_kwDOH6-tI85m4z7B",
       "title": "Link to Profile section at first use",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/204",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The first use is in tagged bytes, but the meaningful first use is changed here not only to link to the fuller definition, but also to clarify that the interpretation cannot be arbitrary.\r\n\r\nGiven there are multiple references to \"base CoRIM schema\" in the profile definition, I've renamed the \"Full CoRIM CDDL\" appendix to more clearly denote the base schema concept.",
       "createdAt": "2024-02-14T17:50:35Z",
-      "updatedAt": "2024-03-13T16:06:17Z",
+      "updatedAt": "2024-03-27T15:17:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "profile",
-      "headRefOid": "f86155d37a0fb66098ce05ee6e22d7662e31b9c4",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6d466fa375b8316fa6cc1c0b85098e143b6c3e25",
+      "closedAt": "2024-03-27T15:17:03Z",
+      "mergedAt": "2024-03-27T15:17:03Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "f700c632d9a767fe71c40d2ca782a82f0c308c88"
+      },
       "comments": [
         {
           "author": "deeglaze",
@@ -25857,6 +25931,19 @@
               "updatedAt": "2024-03-13T16:06:17Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI851CyMP",
+          "commit": {
+            "abbreviatedOid": "6d466fa"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-03-27T15:16:29Z",
+          "updatedAt": "2024-03-27T15:16:29Z",
+          "comments": []
         }
       ]
     },
@@ -26255,24 +26342,26 @@
       "id": "PR_kwDOH6-tI85o8r4i",
       "title": "Change usage rules for the Named Info registry",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/213",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-03-07T10:33:21Z",
-      "updatedAt": "2024-03-11T16:01:10Z",
+      "updatedAt": "2024-03-27T15:22:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
+      "baseRefOid": "f700c632d9a767fe71c40d2ca782a82f0c308c88",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "digest-fix",
-      "headRefOid": "b598926e12d327e61f37885ea6cdd0a1ed8fe8ff",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "ddd1bcba3dd1af1e43a1639ad65c360ebf34bf00",
+      "closedAt": "2024-03-27T15:22:34Z",
+      "mergedAt": "2024-03-27T15:22:34Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "cf0d1ac034d85e7d76371cd78198ea9cd2589078"
+      },
       "comments": [],
       "reviews": [
         {
@@ -26337,27 +26426,27 @@
         {
           "id": "PRR_kwDOH6-tI85yx4bq",
           "commit": {
-            "abbreviatedOid": "b598926"
+            "abbreviatedOid": "ddd1bcb"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2024-03-08T19:21:51Z",
-          "updatedAt": "2024-03-08T19:21:51Z",
+          "updatedAt": "2024-03-27T15:18:49Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI85y7sIO",
           "commit": {
-            "abbreviatedOid": "b598926"
+            "abbreviatedOid": "ddd1bcb"
           },
           "author": "henkbirkholz",
           "authorAssociation": "MEMBER",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-03-11T16:01:10Z",
-          "updatedAt": "2024-03-11T16:01:10Z",
+          "updatedAt": "2024-03-27T15:18:49Z",
           "comments": []
         }
       ]
@@ -26374,7 +26463,7 @@
       "labels": [],
       "body": "Fix #214",
       "createdAt": "2024-03-07T14:47:45Z",
-      "updatedAt": "2024-03-12T18:13:44Z",
+      "updatedAt": "2024-03-27T15:31:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
@@ -26630,6 +26719,46 @@
           "createdAt": "2024-03-12T18:13:44Z",
           "updatedAt": "2024-03-12T18:13:44Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI851C8oB",
+          "commit": {
+            "abbreviatedOid": "2181c3e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-27T15:30:49Z",
+          "updatedAt": "2024-03-27T15:30:49Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "nit: \"semantics\" since I never see \"semantic\" describing program behavior.",
+              "createdAt": "2024-03-27T15:30:49Z",
+              "updatedAt": "2024-03-27T15:30:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI851C893",
+          "commit": {
+            "abbreviatedOid": "2181c3e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-03-27T15:31:17Z",
+          "updatedAt": "2024-03-27T15:31:17Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Squash single sentence into 1 line.",
+              "createdAt": "2024-03-27T15:31:17Z",
+              "updatedAt": "2024-03-27T15:31:17Z"
+            }
+          ]
         }
       ]
     },
@@ -26708,13 +26837,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-03-08T10:44:30Z",
-      "updatedAt": "2024-03-08T19:49:52Z",
+      "updatedAt": "2024-03-27T15:30:06Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "c6df0f1144d25f93b6c040c7cf5493e207c3b843",
+      "baseRefOid": "cf0d1ac034d85e7d76371cd78198ea9cd2589078",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fix-mvm-spelling",
-      "headRefOid": "fa65cbbf9088b7807df7ade0dad24e097fa00fb2",
+      "headRefOid": "7a15cf571c28a3d4f8c503bd378aef3a36ef72bb",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -26752,8 +26881,99 @@
               "updatedAt": "2024-03-08T19:49:53Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI851C4Pu",
+          "commit": {
+            "abbreviatedOid": "7a15cf5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-03-27T15:24:59Z",
+          "updatedAt": "2024-03-27T15:30:06Z",
+          "comments": []
         }
       ]
+    },
+    {
+      "number": 219,
+      "id": "PR_kwDOH6-tI85q7y3A",
+      "title": "Remove duplicate triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/219",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-27T14:12:02Z",
+      "updatedAt": "2024-03-27T18:42:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "cf0d1ac034d85e7d76371cd78198ea9cd2589078",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "tidyup-triples",
+      "headRefOid": "c8d777bc44fdffd2a6b7b27d80fd98db3c6ec161",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 220,
+      "id": "PR_kwDOH6-tI85q8kr4",
+      "title": "Change domain type wording for issue#182",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/220",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-03-27T15:45:40Z",
+      "updatedAt": "2024-03-27T15:45:41Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "cf0d1ac034d85e7d76371cd78198ea9cd2589078",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "issue182",
+      "headRefOid": "b256c84e23cc004b82b858ed8d2dac9a4a43c678",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 221,
+      "id": "PR_kwDOH6-tI85q8m_X",
+      "title": "Use COSE field name in protected header map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/221",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "RFC9052 uses alg and not alg-id.\r\n\r\nThis covers point 1 of issue #182",
+      "createdAt": "2024-03-27T15:50:16Z",
+      "updatedAt": "2024-03-27T16:08:13Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "cf0d1ac034d85e7d76371cd78198ea9cd2589078",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "issue182b",
+      "headRefOid": "3e5a07b1004b5d1764bd61375fd194ed60ae861d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
