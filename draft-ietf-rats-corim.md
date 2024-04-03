@@ -298,6 +298,10 @@ Whenever possible, using the `int` encoding is RECOMMENDED.
 {::include cddl/digest.cddl}
 ~~~
 
+A measurement can be obtained using different hash algorithms.
+A `digests-type` can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.
+Each entry in the `digests-type` MUST have a unique `alg` value.
+
 ### Tagged Bytes Type {#sec-common-tagged-bytes}
 
 An opaque, variable-length byte string.
@@ -921,8 +925,8 @@ The following describes each member of the `measurement-values-map`.
   {{sec-comid-svn}}.
 
 * `digests` (index 2): Contains the digest(s) of the measured environment
-  together with the respective hash algorithm used in the process.  See
-  {{sec-common-hash-entry}}.
+  together with the respective hash algorithm used in the process.
+  It uses the `digests-type` described in {{sec-common-hash-entry}}.
 
 * `flags` (index 3): Describes security relevant operational modes. For
   example, whether the environment is in a debug mode, recovery mode, not fully
@@ -1126,6 +1130,7 @@ checks, and trust anchor checks.
 An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
+The digests use `digests-type` semantics ({{sec-common-hash-entry}}).
 
 ~~~ cddl
 {::include cddl/integrity-registers.cddl}
