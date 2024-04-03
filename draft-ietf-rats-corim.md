@@ -1130,7 +1130,7 @@ checks, and trust anchor checks.
 An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
-The digests use `digests-type` semantic ({{sec-common-hash-entry}}).
+The digests use `digests-type` semantics ({{sec-common-hash-entry}}).
 
 ~~~ cddl
 {::include cddl/integrity-registers.cddl}
