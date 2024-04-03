@@ -230,25 +230,6 @@ The following describes each member of the `entity-map`.
 Examples of how the `entity-map` generic is instantiated can be found in
 {{sec-corim-entity}} and {{sec-comid-entity}}.
 
-### Validity {#sec-common-validity}
-
-A `validity-map` represents the time interval during which the signer
-warrants that it will maintain information about the status of the signed
-object (e.g., a manifest).
-
-In a `validity-map`, both ends of the interval are encoded as epoch-based
-date/time as per {{Section 3.4.2 of -cbor}}.
-
-~~~ cddl
-{::include cddl/validity-map.cddl}
-~~~
-
-* `not-before` (index 0): the date on which the signed manifest validity period
-  begins
-
-* `not-after` (index 1): the date on which the signed manifest validity period
-  ends
-
 ### UUID {#sec-common-uuid}
 
 Used to tag a byte string as a binary UUID defined in {{Section 4.1.2. of
@@ -340,8 +321,6 @@ A profile allows the base CoRIM CDDL definition to be customized to fit a specif
 A profile MUST NOT change the base CoRIM CDDL definition's semantics, which includes not changing or overloading names and numbers registered at IANA registries used by this document.
 For more detail, see {{sec-corim-profile-types}},
 
-* A validity period, which indicates the time period for which the CoRIM contents are valid.
-
 * Information about the supply chain entities responsible for the contents of the CoRIM and their associated roles.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
@@ -381,10 +360,7 @@ The following describes each child item of this map.
   entire CoRIM.  If missing, the profile defaults to DICE.
   Described in {{sec-corim-profile-types}}
 
-* `rim-validity` (index 4): Specifies the validity period of the CoRIM.
-  Described in {{sec-common-validity}}
-
-* `entities` (index 5): A list of entities involved in a CoRIM life-cycle.
+* `entities` (index 4): A list of entities involved in a CoRIM life-cycle.
   Described in {{sec-corim-entity}}
 
 * `$$corim-map-extension`: This CDDL socket is used to add new information
@@ -486,7 +462,7 @@ The CoRIM MUST be signed by the CoRIM creator.
 
 The following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}).
+information about the CoRIM encoded in a `corim-signer-map` ({{sec-corim-signer}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -524,24 +500,10 @@ The following describes each child item of this map.
 
 Additional data can be included in the COSE header map as per {{Section 3 of -cose}}.
 
-### Meta Map {#sec-corim-meta}
-
-The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
-This ensures the consumer is able to identify credentials used to authenticate its signer.
-
-~~~ cddl
-{::include cddl/corim-meta-map.cddl}
-~~~
-
-The following describes each child item of this group.
-
-* `signer` (index 0): Information about the entity that signs the CoRIM.
-  Described in {{sec-corim-signer}}
-
-* `signature-validity` (index 1): Validity period for the CoRIM. Described in
-  {{sec-common-validity}}
-
 #### Signer Map {#sec-corim-signer}
+
+The CoRIM signer map identifies the entity or entities that create and sign the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.
 
 ~~~ cddl
 {::include cddl/corim-signer-map.cddl}
@@ -1409,9 +1371,6 @@ The following describes each member of the `concise-bom-tag` map.
   appraisal process. The activation is atomic: all tags listed in `tags-list`
   MUST be activated or no tags are activated.
 
-* `bom-validity` (index 2): Specifies the validity period of the CoBOM.
-  Described in {{sec-common-validity}}
-
 * `$$concise-bom-tag-extension`: This CDDL socket is used to add new
   information structures to the `concise-bom-tag`.  See {{sec-iana-cobom}}.
   The `$$concise-bom-tag-extension` extension socket is empty in this
@@ -1476,7 +1435,7 @@ The primary goal of this phase is to ensure that all necessary information is av
 
 All available CoRIMs are collected.
 
-CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
+CoRIMs that cannot be associated with an authenticated and authorised source, including the time-based validity of the signing key certificate, MUST be discarded.
 
 Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
 
@@ -1492,8 +1451,6 @@ Later stages will further select the CoRIMs appropriate to the Evidence Appraisa
 This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
 
 All the available Concise Bill Of Material (CoBOMs) tags are collected from the selected CoRIMs.
-
-CoBOMs which are not within their validity period, or reference tags that are not available to the verifier, are discarded.
 
 The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 

@@ -73,7 +73,6 @@ CORIM_FRAGS += tagged-concise-swid-tag.cddl
 CORIM_FRAGS += tagged-concise-mid-tag.cddl
 CORIM_FRAGS += tagged-concise-bom-tag.cddl
 CORIM_FRAGS += unprotected-corim-header-map.cddl
-CORIM_FRAGS += validity-map.cddl
 
 CORIM_FRAGS += $(COMID_FRAGS)
 
