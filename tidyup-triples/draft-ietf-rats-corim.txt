@@ -387,6 +387,13 @@ Table of Contents
      val: bytes
    ]
 
+   digests-type = [ + digest ]
+
+   A measurement can be obtained using different hash algorithms.  A
+   digests-type can be used to collect multiple digest values obtained
+   by applying different hash algorithms on the same input.  Each entry
+   in the digests-type MUST have a unique alg value.
+
 1.3.9.  Tagged Bytes Type
 
    An opaque, variable-length byte string.  It can be used in different
@@ -630,23 +637,24 @@ Table of Contents
 2.2.1.  Protected Header Map
 
    protected-corim-header-map = {
-     &(alg-id: 1) => int
+     &(alg: 1) => int
      &(content-type: 3) => "application/corim-unsigned+cbor"
-     &(issuer-key-id: 4) => bstr
+     &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
    }
 
-   The following describes each child item of this map.
+   The CoRIM protected header map uses some common COSE header
+   parameters plus an additional corim-meta parameter.  The following
+   describes each child item of this map.
 
-   *  alg-id (index 1): An integer that identifies a signature
-      algorithm.
+   *  alg (index 1): An integer that identifies a signature algorithm.
 
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
 
-   *  issuer-key-id (index 4): A bit string which is a key identity
-      pertaining to the CoRIM Issuer.
+   *  kid (index 4): A bit string which is a key identity pertaining to
+      the CoRIM Issuer.
 
    *  corim-meta (index 8): A map that contains metadata associated with
       a signed CoRIM.  Described in Section 2.2.2.
@@ -1118,7 +1126,7 @@ Table of Contents
    measurement-values-map = non-empty<{
      ? &(version: 0) => version-map
      ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => [ + digest ]
+     ? &(digests: 2) => digests-type
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
@@ -1146,7 +1154,7 @@ Table of Contents
 
    *  digests (index 2): Contains the digest(s) of the measured
       environment together with the respective hash algorithm used in
-      the process.  See Section 1.3.8.
+      the process.  It uses the digests-type described in Section 1.3.8.
 
    *  flags (index 3): Describes security relevant operational modes.
       For example, whether the environment is in a debug mode, recovery
@@ -1405,12 +1413,13 @@ Table of Contents
    "objects".  Each measured object has a unique identifier and one or
    more associated digests.  Identifiers are either unsigned integers or
    text strings and their type matters, e.g., unsigned integer 5 is
-   distinct from the text string "5".
+   distinct from the text string "5".  The digests use digests-type
+   semantics (Section 1.3.8).
 
    integrity-register-id-type-choice = uint / text
 
    integrity-registers = {
-     + integrity-register-id-type-choice => [ + digest ]
+     + integrity-register-id-type-choice => digests-type
    }
 
    All the measured objects in an Integrity Registers map are explicitly
@@ -1450,13 +1459,14 @@ Table of Contents
    A domain is a context for bundling a collection of related
    environments and their measurements.
 
-   Three types are defined: uint and text for local scope, UUID for
-   global scope.
+   The following CDDL describes domain type choices.
 
    $domain-type-choice /= uint
    $domain-type-choice /= text
    $domain-type-choice /= tagged-uuid-type
    $domain-type-choice /= tagged-oid-type
+
+   The uint and text types MUST NOT be interpreted in a global scope.
 
 3.1.4.2.  Reference Values Triple
 
@@ -1990,13 +2000,13 @@ Table of Contents
    environment-map and a different authorized-by field (see
    Section 5.4.2.2).
 
-   If the merged measurement-value-map contains duplicate codepoints and
-   the measurement values are equivalent, then duplicate claims SHOULD
-   be omitted.  Equivalence typically means values MUST be binary
+   If the merged measurement-values-map contains duplicate codepoints
+   and the measurement values are equivalent, then duplicate claims
+   SHOULD be omitted.  Equivalence typically means values MUST be binary
    identical.
 
-   If the merged measurement-value-map contains duplicate codepoints and
-   the measurement values are not equivalent then the verifier SHALL
+   If the merged measurement-values-map contains duplicate codepoints
+   and the measurement values are not equivalent then the verifier SHALL
    report an error and stop validation processing.
 
 5.4.2.1.  Accepted Claims Set Initialization
@@ -2225,7 +2235,7 @@ Table of Contents
    If the Verifier does not recognize the stateful environment CBOR tag
    value then the stateful environment does not match.
 
-   If the stateful environment is not tagged and the measurement-value-
+   If the stateful environment is not tagged and the measurement-values-
    map key is a value with handling described in the sub-sections below,
    then the algorithm appropriate to that key is used to match the
    entries.
@@ -2895,9 +2905,9 @@ Appendix A.  Base CoRIM CDDL
    $profile-type-choice /= tagged-oid-type
 
    protected-corim-header-map = {
-     &(alg-id: 1) => int
+     &(alg: 1) => int
      &(content-type: 3) => "application/corim-unsigned+cbor"
-     &(issuer-key-id: 4) => bstr
+     &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
    }
@@ -3110,7 +3120,7 @@ Appendix A.  Base CoRIM CDDL
    measurement-values-map = non-empty<{
      ? &(version: 0) => version-map
      ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => [ + digest ]
+     ? &(digests: 2) => digests-type
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
@@ -3208,10 +3218,12 @@ Appendix A.  Base CoRIM CDDL
      val: bytes
    ]
 
+   digests-type = [ + digest ]
+
    integrity-register-id-type-choice = uint / text
 
    integrity-registers = {
-     + integrity-register-id-type-choice => [ + digest ]
+     + integrity-register-id-type-choice => digests-type
    }
 
    concise-swid-tag = {
