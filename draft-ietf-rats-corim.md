@@ -138,6 +138,7 @@ This document specifies the information elements for representing Endorsements a
 # Introduction {#sec-intro}
 
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) associated with the Attester.
+
 Endorsements and Reference Values are obtained from relevant supply chain actors, such as manufacturers, distributors, or device owners.
 In a complex supply chain, multiple actors will likely produce these values over several points in time.
 As such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module that is measured amongst a long chain of measurements.
@@ -484,11 +485,11 @@ The following describes each child item of this group.
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
-A CoMID tag contains information about hardware, firmware, or module composition.
+A CoMID tag contains information about subjects such as hardware, firmware, or module composition.
 
 Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
 
-A CoMID defines several types of Claims, using "triples" semantics.
+A CoMID represents expectations for Evidence appraisal with "triples".
 
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
@@ -500,7 +501,7 @@ The following triples are currently defined:
 * Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
-* Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
+* Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their claims ({{sec-comid-triple-domain-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
 * CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
 
@@ -768,68 +769,79 @@ The types defined for a group identified are UUID and variable-length opaque byt
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Measurements
+##### Claims
 
-Measurements can be of a variety of things including software, firmware,
-configuration files, read-only memory, fuses, IO ring configuration, partial
-reconfiguration regions, etc. Measurements comprise raw values, digests, or
-status information.
+A Claim is a key-value pair that in CoRIM represents a single piece of actual state or a possible state.
 
-An environment has one or more measurable elements. Each element can have a
-dedicated measurement or multiple elements could be combined into a single
-measurement. Measurements can have class, instance or group scope.  This is
-typically determined by the triple's environment.
+A Claim in CoRIM always appears within a triple.
+The triple expresses the intended meaning of the Claim.
+In all cases, a Claim is made by an authority, such as an Attester, Endorser, or Reference Value Provider.
 
-Class measurements apply generally to all the Attesters in the given class.
-Instance measurements apply to a specific Attester instance.  Environments
-identified by a class identifier have measurements that are common to the
-class. Environments identified by an instance identifier have measurements that
-are specific to that instance.
+A Claim from an Attester is called Evidence.
+A Claim in a `reference-triple-record` is called a Reference Value.
+A Claim in another triple is called an Endorsement.
+A Reference Value triple is expressible as a conditional Endorsement that if the Attester made some Claims, then the RVP also makes those Claims.
 
-The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
-is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
-the `authorized-by` statement can be supplied in the `measurement-map`.
+A Claim may be called an assertion, property, measurement, or many other classifications based on its role in Evidence appraisal.
+Attester-authenticated Claims are typically called measurements.
+Measurements can be of a variety of components including software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc.
+Measurements comprise raw values, digests, or status information.
 
+There may be multiple Claims made of the same Target Environment.
+A single Claim may describe a combination of multiple components.
+
+The triple's environment defines the scope of a Claim.
+Class claims apply generally to all the Attesters in the given class.
+Instance claims apply to a specific Attester instance.
+Environments identified by a class identifier have claims that are common to the class.
+Environments identified by an instance identifier have claims that are specific to that instance.
+
+<!-- TODO(Issue#244): I don't think this should be allowed, since it permits spoofing. -->
+<!-- suggestion to replace the following block: The CoRIM signer MUST be the assigned authority for the Claims it contains.-->
+The supply chain entity that is responsible for providing the claims is by default the CoRIM signer.
+
+If a different entity is authorized to provide claim values, the `authorized-by` statement can be supplied in the `claims-map`.
+<!-- end suggestion -->
 
 ~~~ cddl
-{::include cddl/measurement-map.cddl}
+{::include cddl/claims-map.cddl}
 ~~~
 
-The following describes each member of the `measurement-map`:
+The following describes each member of the `claims-map`:
 
-* `mkey` (index 0): An optional unique identifier of the measured
-  (sub-)environment.  See {{sec-comid-mkey}}.
+* `ckey` (index 0): An optional unique identifier of the claim-associated
+  (sub-)environment.  See {{sec-comid-ckey}}.
 
-* `mval` (index 1): The measurements associated with the (sub-)environment.
-  Described in {{sec-comid-mval}}.
+* `cval` (index 1): The claims associated with the (sub-)environment.
+  Described in {{sec-comid-cval}}.
 
 * `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
+ the designated authority for this claim. For example, producer of the claim or a delegated supplier.
 
-###### Measurement Keys {#sec-comid-mkey}
+###### Claim Keys {#sec-comid-ckey}
 
-The types defined for a measurement identifier are OID, UUID or uint.
+The types defined for a claim identifier are OID, UUID or uint.
 
 ~~~ cddl
-{::include cddl/measured-element-type-choice.cddl}
+{::include cddl/claimed-element-type-choice.cddl}
 ~~~
 
-###### Measurement Values {#sec-comid-mval}
+###### Claim Values {#sec-comid-cval}
 
-A `measurement-values-map` contains measurements associated with a certain
+A `claim-values-map` contains claims associated with a certain
 environment. Depending on the context (triple) in which they are found,
-elements in a `measurement-values-map` can represent class or instance
-measurements. Note that some of the elements have instance scope only.
+elements in a `claim-values-map` can represent class or instance
+claims. Note that some of the elements have instance scope only.
 
-Measurement values may support use cases beyond Verifier appraisal.
+Claim values may support use cases beyond Verifier appraisal.
 Typically, a Relying Party determines if additional processing is desirable
 and whether the processing is applied by the Verifier or the Relying Party.
 
 ~~~ cddl
-{::include cddl/measurement-values-map.cddl}
+{::include cddl/claim-values-map.cddl}
 ~~~
 
-The following describes each member of the `measurement-values-map`.
+The following describes each member of the `claim-values-map`.
 
 * `version` (index 0): Typically changes whenever the measured environment is
   updated. Described in {{sec-comid-version}}.
@@ -1082,7 +1094,7 @@ Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which cas
 
 ##### Domain Types {#sec-comid-domain-type}
 
-A domain is a context for bundling a collection of related environments and their measurements.
+A domain is a context for bundling a collection of related environments and their claims.
 
 The following CDDL describes domain type choices.
 
@@ -1106,10 +1118,10 @@ Environment.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple declares additional measurements that are valid when
+An Endorsed Values triple declares additional claims that are valid when
 a Target Environment has been verified against reference measurements. For
 Endorsed Value Claims, the subject is either a Target or Attesting Environment,
-the object contains measurements, and the predicate defines semantics for how
+the object contains claims, and the predicate defines semantics for how
 the object relates to the subject.
 
 ~~~ cddl
@@ -1202,7 +1214,7 @@ measurements for the Target Environment.
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
+that identifies a Target Environment based on an `environment-map` plus the `claims-map` measurements
 that have matching Evidence.
 
 The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
@@ -1219,7 +1231,7 @@ The first `conditional-series-record` that successfully matches an ACS Entry ter
 If none of the series conditions match an ACS Entry, the triple is not matched,
 and no Endorsed values are accepted.
 
-The `authorized-by` value in `measurement-map` in the stateful environment, if present,
+The `authorized-by` value in `claims-map` in the stateful environment, if present,
 applies to all measurements in the triple, including `conditional-series-record` records.
 
 ~~~ cddl
@@ -1986,10 +1998,10 @@ If there are no candidate entries then the triple containing the stateful enviro
 
 The stateful environment entry is compared against each of the candidate entries.
 
-For each of the candidate entries, the Verifier SHALL iterate over the codepoints which are present in the `measurement-values-map` field within the stateful environment `measurement-map`.
+For each of the candidate entries, the Verifier SHALL iterate over the codepoints which are present in the `claim-values-map` field within the stateful environment `claims-map`.
 Each of the codepoints present in the stateful environment is compared against the candidate entry.
 
-If any codepoint present in the stateful environment `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then the stateful environment does not match.
+If any codepoint present in the stateful environment `claim-values-map` does not match the same codepoint within the candidate entry `claim-values-map` then the stateful environment does not match.
 
 If all checks above have been performed successfully then the stateful environment matches.
 If none of the candidate entries match the stateful environment entry then the stateful environment does not match.
@@ -2023,18 +2035,18 @@ matched against these Reference Values.
 
 Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
 When an `endorsed-triple-record` appears within `state-triples` it
-indicates that the authority named by `measurement-map`/`authorized-by`
+indicates that the authority named by `claims-map`/`authorized-by`
 asserts that the actual state of one or more Claims within the
 Target Environment, as identified by `environment-map`, have the
-measurement values in `measurement-map`/`mval`.
+claim values in `claims-map`/`cval`.
 
 ECT authority is represented by cryptographic keys. Authority
 is asserted by digitally signing a Claim using the key. Hence, Claims are
 added to the ACS under the authority of a cryptographic key.
 
 Each Claim is encoded as an ECT. The `environment-map` and a
-key within `measurement-values-map` encode the name of the Claim.
-The value matching that key within `measurement-values-map` is the actual
+key within `claim-values-map` encode the name of the Claim.
+The value matching that key within `claim-values-map` is the actual
 state of the Claim.
 
 This specification does not assign special meanings to any Claim name,
@@ -2045,18 +2057,18 @@ trigger special encoding in the Verifier. The Verifier follows instructions
 in the CoRIM file which tell it how claims are related.
 
 If Evidence or Endorsements from different sources has the same `environment-map`
-and `authorized-by` then the `measurement-values-map`s are merged.
+and `authorized-by` then the `claim-values-map`s are merged.
 
 The ACS must maintain the authority information for each ECT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
 and a different authority (see {{sec-authorized-by}}).
 
-If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are equivalent, then duplicate claims SHOULD be omitted.
+If the merged `claim-values-map` contains duplicate codepoints and the
+claim values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
-If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are not equivalent then the verifier SHALL report
+If the merged `claim-values-map` contains duplicate codepoints and the
+claim values are not equivalent then the verifier SHALL report
 an error and stop validation processing.
 
 ### ACS Augmentation {#sec-acs-aug}
@@ -2079,14 +2091,14 @@ If a codepoint's comparison algorithm is not stated or does not default to the c
 
 ### Claims Comparison  {#sec-compare-claims}
 
-#### Comparison of measurement-values-map {#sec-match-one-codepoint}
+#### Comparison of claim-values-map {#sec-match-one-codepoint}
 
-This section describes the algorithm used to compare the `measurement-values-map` codepoints of an ECT with another ECT.
+This section describes the algorithm used to compare the `claim-values-map` codepoints of an ECT with another ECT.
 The comparison algorithm performed depends on the value of the codepoint being compared.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/203
 
-If the `measurement-values-map` value has an associated CBOR tag, the comparison algorithm should comprehend the structure identified by the CBOR tag.
+If the `claim-values-map` value has an associated CBOR tag, the comparison algorithm should comprehend the structure identified by the CBOR tag.
 
 If the Verifier does not recognize a CBOR tag value then the value MUST NOT match.
 
@@ -2094,26 +2106,26 @@ Note: CBOR tags are useful for discriminating values amongst alternates, but the
 
 Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
 
-The following subsections define the comparison algorithms for the `measurement-values-map` keys defined by this specification.
+The following subsections define the comparison algorithms for the `claim-values-map` keys defined by this specification.
 
 ##### Comparison for svn entries
 
-The value stored under `measurement-values-map` key 1 is an SVN, which must
+The value stored under `claim-values-map` key 1 is an SVN, which must
 have type UINT.
 
-If the Reference value for `measurement-values-map` key 1 is an untagged UINT or
+If the Reference value for `claim-values-map` key 1 is an untagged UINT or
 a UINT tagged with #6.552 then an equality comparison is performed. If the value
 of the SVN in ACS is not equal to the value in the Reference
 Value then the Reference Value does not match.
 
-If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
+If the Reference value for `claim-values-map` key 1 is a UINT tagged with
 #6.553 then a minimum comparison is performed. If the value of the SVN in
 ACS less than the value in the Reference Value then the
 Reference Value does not match.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
-The value stored under `measurement-values-map` key 2,
+The value stored under `claim-values-map` key 2,
 or a value tagged with
 #6.TBD is a digest entry.
 It contains one or more digests, each measuring the
@@ -2153,7 +2165,7 @@ which stores `[expect-raw-value raw-value-mask]` in an array?*
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
-The value stored under `measurement-values-map` key 12 is an array of `$crypto-key-type-choice` entries. `$crypto-key-type-choice` entries are CBOR tagged values.
+The value stored under `claim-values-map` key 12 is an array of `$crypto-key-type-choice` entries. `$crypto-key-type-choice` entries are CBOR tagged values.
 The array contains one or more entries in sequence.
 
 The CBOR tag of the first entry of the Reference Value `cryptokeys` array is compared with
