@@ -777,6 +777,9 @@ context (triple) in which the environment is used.
 An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
+An environment MUST be globally unique.
+The combination of values within `environment-map` may be combined so that the combination is globally unique.
+
 ~~~ cddl
 {::include cddl/environment-map.cddl}
 ~~~
