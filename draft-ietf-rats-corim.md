@@ -276,17 +276,6 @@ identifier {{-cbor-oids}}.
 {::include cddl/oid.cddl}
 ~~~
 
-### Tagged Integer Type {#sec-common-tagged-int}
-
-Used as a class identifier for the environment.  It is expected that the
-integer value is vendor specific rather than globally meaningful.  Therefore,
-the sibling `vendor` field in the `class-map` MUST be populated to define the
-namespace under which the value must be understood.
-
-~~~ cddl
-{::include cddl/tagged-int.cddl}
-~~~
-
 ### Digest {#sec-common-hash-entry}
 
 A digest represents the value of a hashing operation together with the hash algorithm used.
@@ -1984,7 +1973,6 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 |     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
-|     551 | `int`               | tagged-int-type, see {{sec-common-tagged-int}}                       | {{&SELF}} |
 |     552 | `uint`              | tagged-svn, see {{sec-comid-svn}}                                    | {{&SELF}} |
 |     553 | `uint`              | tagged-min-svn, see {{sec-comid-svn}}                                | {{&SELF}} |
 |     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
