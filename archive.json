@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-04-23T01:17:49.276052+00:00",
+  "timestamp": "2024-04-25T01:18:50.621582+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -4964,7 +4964,7 @@
       "labels": [],
       "body": "We should remove `validity-map` entirely. The validity of a signature is the purview of the PKI only. Validity without a signature is irrelevant.",
       "createdAt": "2024-04-03T14:57:43Z",
-      "updatedAt": "2024-04-03T15:48:06Z",
+      "updatedAt": "2024-04-24T15:22:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -5001,6 +5001,13 @@
           "body": "> Alternatively, whatever notion of validity a profile wants can be added later. There really should be a core and extended form of CoRIM for all these bells and whistles.\r\n\r\nI think that the lifetime of the information asserted in a CoRIM is a basic feature and should be provided (at least in some crude form) by the base spec.",
           "createdAt": "2024-04-03T15:48:05Z",
           "updatedAt": "2024-04-03T15:48:05Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Okay, can we say this issue is to move validity-map and uses to a Lifetime management section to discuss its use? It seems there is no removing anything at this point, but we can at least give interpretations as meant by the default (DICE) profile.",
+          "createdAt": "2024-04-24T15:21:58Z",
+          "updatedAt": "2024-04-24T15:21:58Z"
         }
       ]
     },
@@ -5033,6 +5040,22 @@
       "body": "The measurement-map type is used for non-measurement claims, such as attesting environment topology and endorsements. Shall we rename measurement-map to claims-map, and measurement-values-map to claim-values-map ?",
       "createdAt": "2024-04-07T23:26:29Z",
       "updatedAt": "2024-04-07T23:26:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 229,
+      "id": "I_kwDOH6-tI86G0X89",
+      "title": "IANA issue related to tagged integer request",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/229",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "IANA experts did not believe it makes sense to create a CBOR tag for an integer value. The context in which it is used in CoRIM is as an alternative form of a `class-map` name. In a scenario where it makes sense to use a class-map value that isn't globally unique, the tagged-bytes value can be used instead.",
+      "createdAt": "2024-04-24T18:00:58Z",
+      "updatedAt": "2024-04-24T18:00:58Z",
       "closedAt": null,
       "comments": []
     }
@@ -27413,9 +27436,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "The validity of a document should be determined by the signing key's expiration. Any other form of validity should be an extension to the base.\r\n\r\nSince the meta-map only had the signer-map in it, I've collapsed that indirection. If the overall corim validity-map is still desired, we can add that as a standard extension as per issue #223\r\n\r\nCloses Issue#222",
+      "body": "The validity of a document should be determined by the signing key's expiration. Any other form of validity should be an extension to the base.\r\n\r\nSince the meta-map only had the signer-map in it, I've collapsed that indirection. If the overall corim validity-map is still desired, we can add that as a standard extension as per issue #223\r\n\r\nCloses Issue #222",
       "createdAt": "2024-04-07T20:16:10Z",
-      "updatedAt": "2024-04-22T19:27:03Z",
+      "updatedAt": "2024-04-24T14:45:47Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
@@ -27545,6 +27568,118 @@
           ]
         }
       ]
+    },
+    {
+      "number": 226,
+      "id": "PR_kwDOH6-tI85tf79r",
+      "title": "Change Measurement to Claim where appropriate",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/226",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A claim is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrainted in points.\r\n\r\nCloses Issue#225",
+      "createdAt": "2024-04-23T16:40:06Z",
+      "updatedAt": "2024-04-24T15:00:18Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "claimsmap",
+      "headRefOid": "0fa502f541f21b2c955f3f8d5e1941f1f9dfa269",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It seems this PR is doing a global replace of the word measurement with claim while leaving the semantics in place. Is that correct?",
+          "createdAt": "2024-04-23T17:21:14Z",
+          "updatedAt": "2024-04-23T17:21:14Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Id did a quick review of 9334. It seems measurement and claim can be interchangeable. For example:\r\n \"Measurements can describe a variety\r\n   of attributes of system components, such as hardware, firmware, BIOS,\r\n   software, etc., and how they are hardened.\"\r\nand\r\n\"Endorsement:  A secure statement that an Endorser vouches for the\r\n      integrity of an Attester's various capabilities, such as Claims\r\n      collection and Evidence signing.\"\r\nI don't think use of measurement instead of claim is technically incorrect. ",
+          "createdAt": "2024-04-23T17:44:51Z",
+          "updatedAt": "2024-04-23T17:44:51Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The semantics stay in place, correct.\r\n\r\nRFC9334 states that a claim appears to be synonymous with evidence, which is different from how claims are treated in the theory of verification and the notion of Claim Sets. It then points at Claim from RFC7519, which defines claim as \"A piece of information asserted about a subject.\"\r\n\r\nEndorsements and reference measurements are claims of security attributes and authenticity for the claim values they embody.\r\n\r\nIt's confusing to use \"measurement\" to describe unmeasurable qualities, such as \"certified EAL4\".",
+          "createdAt": "2024-04-23T19:39:25Z",
+          "updatedAt": "2024-04-23T19:39:25Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 227,
+      "id": "PR_kwDOH6-tI85toeRn",
+      "title": "Update draft-ietf-rats-corim.md",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/227",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Added text requiring environment-map to be globally unique",
+      "createdAt": "2024-04-24T17:42:03Z",
+      "updatedAt": "2024-04-24T17:45:15Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "globally-unique-env",
+      "headRefOid": "e2e6c0209d238311686cf4bf060e56974e0a1a49",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR addresses issue #176",
+          "createdAt": "2024-04-24T17:43:05Z",
+          "updatedAt": "2024-04-24T17:43:05Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 228,
+      "id": "PR_kwDOH6-tI85tojNc",
+      "title": "Removed tagged-int-type",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/228",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Removed tagged-int-type and related text.\r\nThis PR addresses an issue raised by IANA.",
+      "createdAt": "2024-04-24T17:54:44Z",
+      "updatedAt": "2024-04-24T17:55:01Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "delete-tagged-int",
+      "headRefOid": "42e2912b29cb7e7e3709bc9b224b8543d51cc89f",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
