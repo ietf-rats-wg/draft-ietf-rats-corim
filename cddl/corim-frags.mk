@@ -40,7 +40,6 @@ COMID_FRAGS += tag-id-type-choice.cddl
 COMID_FRAGS += tag-identity-map.cddl
 COMID_FRAGS += tag-rel-type-choice.cddl
 COMID_FRAGS += tag-version-type.cddl
-COMID_FRAGS += tagged-int.cddl
 COMID_FRAGS += tagged-bytes.cddl
 COMID_FRAGS += triples-map.cddl
 COMID_FRAGS += ueid.cddl
