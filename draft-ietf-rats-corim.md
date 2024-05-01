@@ -778,7 +778,7 @@ An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
 An environment MUST be globally unique.
-The combination of values within `environment-map` may be combined so that the combination is globally unique.
+The combination of values within `class-map` must combine to form a globally unique identifier.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
