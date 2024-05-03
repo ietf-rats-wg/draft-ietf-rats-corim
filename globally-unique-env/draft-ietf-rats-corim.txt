@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 2 November 2024                                          Linaro
+Expires: 4 November 2024                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                              1 May 2024
+                                                              3 May 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 November 2024.
+   This Internet-Draft will expire on 4 November 2024.
 
 Copyright Notice
 
@@ -83,9 +83,8 @@ Table of Contents
        1.3.4.  UUID
        1.3.5.  UEID
        1.3.6.  OID
-       1.3.7.  Tagged Integer Type
-       1.3.8.  Digest
-       1.3.9.  Tagged Bytes Type
+       1.3.7.  Digest
+       1.3.8.  Tagged Bytes Type
    2.  Concise Reference Integrity Manifest (CoRIM)
      2.1.  CoRIM Map
        2.1.1.  Identity
@@ -366,17 +365,7 @@ Table of Contents
    oid-type = bytes
    tagged-oid-type = #6.111(oid-type)
 
-1.3.7.  Tagged Integer Type
-
-   Used as a class identifier for the environment.  It is expected that
-   the integer value is vendor specific rather than globally meaningful.
-   Therefore, the sibling vendor field in the class-map MUST be
-   populated to define the namespace under which the value must be
-   understood.
-
-   tagged-int-type = #6.551(int)
-
-1.3.8.  Digest
+1.3.7.  Digest
 
    A digest represents the value of a hashing operation together with
    the hash algorithm used.  The type of the digest algorithm identifier
@@ -398,7 +387,7 @@ Table of Contents
    by applying different hash algorithms on the same input.  Each entry
    in the digests-type MUST have a unique alg value.
 
-1.3.9.  Tagged Bytes Type
+1.3.8.  Tagged Bytes Type
 
    An opaque, variable-length byte string.  It can be used in different
    contexts: as an instance, class or group identifier in an
@@ -551,7 +540,7 @@ Table of Contents
       be fetched
 
    *  thumbprint (index 1): expected digest of the resource referenced
-      by href.  See Section 1.3.8.
+      by href.  See Section 1.3.7.
 
 2.1.4.  Profile Types
 
@@ -1018,14 +1007,13 @@ Table of Contents
 
    $class-id-type-choice /= tagged-oid-type
    $class-id-type-choice /= tagged-uuid-type
-   $class-id-type-choice /= tagged-int-type
    $class-id-type-choice /= tagged-bytes
 
    The following describes each member of the class-map:
 
    *  class-id (index 0): Identifies the environment via a well-known
       identifier.  Typically, class-id is an object identifier (OID)
-      variable-length opaque byte string (Section 1.3.9) or universally
+      variable-length opaque byte string (Section 1.3.8) or universally
       unique identifier (UUID).  Use of this attribute is preferred.
 
    *  vendor (index 1): Identifies the entity responsible for choosing
@@ -1052,7 +1040,7 @@ Table of Contents
 
    The types defined for an instance identifier are CBOR tagged
    expressions of UEID, UUID, variable-length opaque byte string
-   (Section 1.3.9), or cryptographic key identifier.
+   (Section 1.3.8), or cryptographic key identifier.
 
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
@@ -1066,7 +1054,7 @@ Table of Contents
    same anonymity set.
 
    The types defined for a group identified are UUID and variable-length
-   opaque byte string (Section 1.3.9).
+   opaque byte string (Section 1.3.8).
 
    $group-id-type-choice /= tagged-uuid-type
    $group-id-type-choice /= tagged-bytes
@@ -1167,7 +1155,7 @@ Table of Contents
 
    *  digests (index 2): Contains the digest(s) of the measured
       environment together with the respective hash algorithm used in
-      the process.  It uses the digests-type described in Section 1.3.8.
+      the process.  It uses the digests-type described in Section 1.3.7.
 
    *  flags (index 3): Describes security relevant operational modes.
       For example, whether the environment is in a debug mode, recovery
@@ -1337,7 +1325,7 @@ Table of Contents
 
    There are two parts to a raw-value-group, a measurement and an
    optional mask.  The default raw value measurement is of type tagged-
-   bytes (Section 1.3.9).  Additional raw value types can be defined,
+   bytes (Section 1.3.8).  Additional raw value types can be defined,
    but must be CBOR tagged so that parsers can distinguish between the
    various semantics of type values.
 
@@ -1427,7 +1415,7 @@ Table of Contents
    more associated digests.  Identifiers are either unsigned integers or
    text strings and their type matters, e.g., unsigned integer 5 is
    distinct from the text string "5".  The digests use digests-type
-   semantics (Section 1.3.8).
+   semantics (Section 1.3.7).
 
    integrity-register-id-type-choice = uint / text
 
@@ -2590,8 +2578,6 @@ Table of Contents
    |550    |bytes .size| tagged-ueid-type, see              |RFCthis  |
    |       |33         | Section 1.3.5                      |         |
    +-------+-----------+------------------------------------+---------+
-   |551    |int        | tagged-int-type, see Section 1.3.7 |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
    |552    |uint       | tagged-svn, see                    |RFCthis  |
    |       |           | Section 3.1.4.1.5.4                |         |
    +-------+-----------+------------------------------------+---------+
@@ -2608,7 +2594,7 @@ Table of Contents
    |       |           | see Section 3.1.4.1.6              |         |
    +-------+-----------+------------------------------------+---------+
    |557    |[int/text, | tagged-thumbprint-type, see        |RFCthis  |
-   |       |bytes]     | Section 1.3.8                      |         |
+   |       |bytes]     | Section 1.3.7                      |         |
    +-------+-----------+------------------------------------+---------+
    |558    |COSE_Key/  | tagged-cose-key-type, see          |RFCthis  |
    |       |COSE_KeySet| Section 3.1.4.1.6                  |         |
@@ -2616,7 +2602,7 @@ Table of Contents
    |559    |digest     | tagged-cert-thumbprint-type, see   |RFCthis  |
    |       |           | Section 3.1.4.1.6                  |         |
    +-------+-----------+------------------------------------+---------+
-   |560    |bytes      | tagged-bytes, see Section 1.3.9    |RFCthis  |
+   |560    |bytes      | tagged-bytes, see Section 1.3.8    |RFCthis  |
    +-------+-----------+------------------------------------+---------+
    |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
    |       |           | see Section 3.1.4.1.6              |         |
@@ -3012,7 +2998,6 @@ Appendix A.  Base CoRIM CDDL
 
    $class-id-type-choice /= tagged-oid-type
    $class-id-type-choice /= tagged-uuid-type
-   $class-id-type-choice /= tagged-int-type
    $class-id-type-choice /= tagged-bytes
 
    class-map = non-empty<{
@@ -3234,8 +3219,6 @@ Appendix A.  Base CoRIM CDDL
    $tag-rel-type-choice /= &(replaces: 1)
 
    tag-version-type = uint .default 0
-
-   tagged-int-type = #6.551(int)
 
    tagged-bytes = #6.560(bytes)
 
