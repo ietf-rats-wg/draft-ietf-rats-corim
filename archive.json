@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-05-02T01:17:02.295022+00:00",
+  "timestamp": "2024-05-05T01:22:45.355840+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -62,6 +62,11 @@
       "name": "For-next-release",
       "description": "WIll only be addressed after first publish of CoRIM",
       "color": "DEDE3B"
+    },
+    {
+      "name": "shouldfix",
+      "description": "Moderately important to fix, but not a showstopper",
+      "color": "c5def5"
     }
   ],
   "issues": [
@@ -2091,7 +2096,7 @@
       "labels": [],
       "body": "## Verifier matching measurements from a single set of attestation environments\r\n\r\nThis issue uses the term Attestation Transport to describe the transport over which evidence was passed to the Verifier. A SPDM connection is an example of an Attestation Transport, it carries measurements from the SPDM Attestation Environment and from related DICE Attestation Environments within the same entity.\r\n\r\nThe simple use case for a Verifier is where it has received a set of measurements through a single Attestation Transport and it needs to match these against a CoMID tag containing reference values.\r\n\r\nIMHO we should make the simple case easy to encode. I suggest that when matching a Reference Value Triple containing only `environment-map` and `measurement-values-map`, the Verifier must ensure that match them against evidence received from the same Attestation Transport. In some cases there may be multiple Attestation Environment groups which match against the same Reference Value Triple, if this happens then each group would receive an identical Endorsement.\r\n\r\nFor example, a CoMID tag encoding the semantics \"If this device has a measurement identified by OID 1.2.3.4 and SHA-384 hash 0x5678 then the device is an Acme Ethernet Card version 1.0\"\r\n\r\n## Verifier matching measurements from multiple attesters\r\n\r\nHigher level Verifiers, or rather the CoRIMs controlling higher level Verifiers, will want to match against more complicated sets of evidence. For example, a CoRIM might want to encode the semantics _Match against a type A PCIe card in slot 0, with firmware hash B, and against a second identical PCIe card in slot 1_.\r\n\r\nDo we need a way for a CoRIM to indicate that it must match against a set of evidence from one source (eg one Attestation Transport) and a potentially different set of evidence from a different source?\r\n\r\n## An example encoding of reference-values when matching against multiple Attestation Transports\r\n\r\nI suggest that we use the `mkey` field to identify the attestor to be chosen.\r\n\r\nFor example, the following encoding encodes the two PCIe cards case above:\r\n\r\n```\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K1\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K2\r\n      - mvalue = B\r\n\r\n```\r\nThis would be associated with an Endorsement triple or similar providing more information about the combined system.\r\n\r\nThe exact values of K1 and K2 are not important, what is important is that all measurements with the same `mkey` value must come over the same Attestation Transport. Using the integer encoding of `mkey` normally produces the smallest encoding.\r\n\r\nWe might need a profile to enable this behavior.\r\n\r\nI think this can be extended to multiple levels of compound devices, but wanted to get a sense of whether this is going in the right direction first.\r\n\r\n## Question\r\n\r\n**Is it going in the right direction?**\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2023-03-17T11:48:02Z",
-      "updatedAt": "2023-03-17T16:55:32Z",
+      "updatedAt": "2024-05-03T18:44:12Z",
       "closedAt": null,
       "comments": [
         {
@@ -2100,6 +2105,13 @@
           "body": "Attestation Transport - Is there a reason not to use RATS Arch term 'conveyance'? Conceptually they appear to be the same.  Conveyance is not a formal term. Does it need to be?\r\nThe RAT Arch also defines 'Target Environment' to refer to the various components that are measured and 'Attesting Environment' for the capability that collects these measurements. 'Attestation Environments' isn't defined by RATS Arch and it is upper case implying it needs formal definition. Would it be possible to describe the use case using these terms?\r\nI find the third paragraph difficult to follow since the reference values triple `reference-value-triple-record` is a tuple consisting of an `environment-map` and a `measurement-map`. Are you suggesting a change to the schema or commenting on how the matching algorithm is applied?\r\nThe last sentence in the 3rd paragraph is confusing since this seems to be describing matching behavior for RVs and Evidence, but then segues into Endorsements without naming the triple(s) for which the matching behavior applies.\r\n\r\nRegarding the \"multiple attesters\" topic. Use of `mkey` to disambiguate multiple instances of Target Environments that have the same measurements seems reasonable. However, if the mkey type is used for some other purpose, then overloading semantics on the same value could become problematic. For example `$measured-element-type-choice /= uint` is not CBOR tagged. If a Verifier implies that it is used to disambiguate Target Environments, and a different Verifier uses it for some other purpose then there isn't a way for the 2 verifiers to be combined into a generalized verifier. A profile could be used to select between the conflated behaviors, but a better approach might be to require CBOR tagging for `$measured-element-type-choice` definitions and require new use cases to define a new tag.\r\n",
           "createdAt": "2023-03-17T16:55:31Z",
           "updatedAt": "2023-03-17T16:55:31Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is mkey assigned by the evidence reflection through the conveyance or the CoRIM issuer? I'm confused about the phase at which the mkey value is assigned. I've opened an issue about it here too https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/230",
+          "createdAt": "2024-05-03T18:44:11Z",
+          "updatedAt": "2024-05-03T18:44:11Z"
         }
       ]
     },
@@ -2108,15 +2120,15 @@
       "id": "I_kwDOH6-tI85hHUm1",
       "title": "Need full description of the matching rules in the document",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71",
-      "state": "CLOSED",
+      "state": "OPEN",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "I plan to add full descriptions of different types of matching rules and provide them in a future pull request.\r\n\r\nI hope this is not controvertial (for example, integers should be compared as integers) but we need to make sure all edge cases are addressed.\r\n\r\nIf you are interested, the draft I will rewrite to fill in these sections is in the [andrew-draper-verifier-processing](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/tree/andrew-draper-verifier-processing) branch",
       "createdAt": "2023-03-17T13:21:21Z",
-      "updatedAt": "2023-09-08T10:37:27Z",
-      "closedAt": "2023-09-08T10:37:27Z",
+      "updatedAt": "2024-05-04T03:59:08Z",
+      "closedAt": null,
       "comments": [
         {
           "author": "andrew-draper",
@@ -2124,6 +2136,13 @@
           "body": "Closed by commit #107 48bdd67559ef7dbdee9f561981659f4bcfb8d715",
           "createdAt": "2023-09-08T10:37:27Z",
           "updatedAt": "2023-09-08T10:37:27Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Reopening since the raw value text still references this issue and the proposed resolution in PR#167 is not merged.",
+          "createdAt": "2024-05-04T03:59:08Z",
+          "updatedAt": "2024-05-04T03:59:08Z"
         }
       ]
     },
@@ -3157,15 +3176,15 @@
       "id": "I_kwDOH6-tI85wU_wY",
       "title": "Verifier terminology for internal representations of claims",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/142",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "PR #107 makes heavy use of terminology that assumes CBOR encoded internal representations. However, it isn't the intention of this draft to mandate a particular internal representation. The terminology should reflect this non-goal. \r\n\r\nLine 1520 is an example as it uses \"CBOR encoded values\" to refer to measurements in an internal representation that are in big-endian word order (which is prescribed by CBOR encoders). \r\n\r\nIf an implementation discards CBOR encoding artifacts as part of a mapping to an internal representation. The language describing Verifier behavior should be sensitive to this possibility. For example, line 1520 could change from: \"using binary comparison of their CBOR encoded values.\" to \"using an internal representation that supports binary comparison of keys and values.\"",
       "createdAt": "2023-09-06T18:37:49Z",
-      "updatedAt": "2023-09-07T15:55:58Z",
-      "closedAt": null,
+      "updatedAt": "2024-05-03T16:54:08Z",
+      "closedAt": "2024-05-03T16:54:08Z",
       "comments": [
         {
           "author": "andrew-draper",
@@ -3180,6 +3199,13 @@
           "body": "\"The `environment-map` comparison compares the objects for equality. The Verifier may translate an encoded form of the `environment-map` to an internal representation to facilitate binary compatible comparisons. The internal representation may be an encoding format, such as CBOR. The internal representation MUST ensure byte order, ASCII representation, array representation etc... are consistent across Evidence, Reference Values, and Endorsements regardless of origin encodings.\" ",
           "createdAt": "2023-09-07T15:55:41Z",
           "updatedAt": "2023-09-07T15:55:58Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Existing text explains that internal representation is exemplary. This is sufficient to close this issue.",
+          "createdAt": "2024-05-03T16:54:08Z",
+          "updatedAt": "2024-05-03T16:54:08Z"
         }
       ]
     },
@@ -3188,15 +3214,15 @@
       "id": "I_kwDOH6-tI85wVJTe",
       "title": "Verifier behavior for matching RVs to ACS containing Evidence Claims",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/143",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "PR #107 lines 1458-1466, describe RV matching of Evidence in ACS, but instead focuses on matching Endorsements / Endorsed Value Claims. It is unclear if matching Endorsements is applied before/after RV matching. I believe EV matching happens after RV matching.\r\n\r\nIt would help if terminology was more pedantic in terms of identifying the type of claim contained in the ACS. I.e., \"If any Reference Value Claim in a group does not match an Evidence Claim in the ACS then ...\"",
       "createdAt": "2023-09-06T19:05:46Z",
-      "updatedAt": "2024-02-12T17:04:05Z",
-      "closedAt": null,
+      "updatedAt": "2024-05-03T16:51:06Z",
+      "closedAt": "2024-05-03T16:51:06Z",
       "comments": [
         {
           "author": "andrew-draper",
@@ -3343,10 +3369,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "We need abstract terminology that refers to the combination consisting of environment value(s) with measurement value(s). The DICE Endorsement Architecture for Devices spec uses \"Claims\" and \"Claims triple\" as the abstract term. The I-D doesn't need to reuse this terminology, but it could rather than define a synonym. \r\n\r\nAs a place holder name EMT could be used (environment measurement tuple / triple). \r\n\r\nThe semantics of an EMT should be defined as part of this issue.\r\n\r\nCoRIM doesn't currently address a corner case of EMTs where the values asserted via the environment can be accepted into the ACS. For example, if 'model' is asserted via the environment, does it show up as an entry in the ACS? A justification for why it should show up is that if the value successfully matches (e.g., evidence and reference) then all the values in both environment and measurement are accurate representations of the Attester's actual state.\r\n\r\nTo express this logically, any environment value that matches automatically becomes a valid measurement value. Consequently, it isn't wrong if a EMT contains only environment values (because the measurement value are implicitly populated from the environment). The triple logic is still satisfied.\r\n\r\nHowever, from a data definition view, the measurement portion can be optional.  I.e.:\r\n```\r\nendorsed-triple-record = [\r\n   environment-map,\r\n   ? measurement-map\r\n]\r\n```\r\nor\r\n```\r\nendorsed-triple-record = [\r\n   environment-map,\r\n   measurement-map\r\n]\r\nmeasurement-values-map = { ; minus the non-empty constraint\r\n  ? ...\r\n}\r\n```\r\nare also valid expressions of an EMT.\r\n\r\nThe value of recognizing that environment values are also measurement values, is the data doesn't have to redundantly include the same value in two places (environment and measurement). \r\n\r\nThis also means a value defined for environment-map is also valid for measurement-values-map. However, the current CDDL restricts use cases where a valid environment that uses a subset of possible values, cannot assert a value as a measurement. E.g., Env: `class-id`=777, Meas: `model`=\"foo\" is not possible with the current schema. But EMP semantics doesn't expect this restriction.\r\n",
       "createdAt": "2023-09-14T21:08:28Z",
-      "updatedAt": "2023-09-20T20:10:30Z",
+      "updatedAt": "2024-05-03T16:50:37Z",
       "closedAt": null,
       "comments": [
         {
@@ -3367,10 +3395,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "shouldfix"
+      ],
       "body": "Issue #126  and PRs #127 and #135 are related.\r\n\r\nThe scope of PR #127 is limited to identity | attest-key triples. This issue focuses on `$crypto-key-type-choice` wording. It acknowledge the various contexts that crypto keys may be used, including:\r\n- authorized-by\r\n- measurement-values-map (see PR #127)\r\n- environment-map (see issue #146)\r\n- attest-key and identity triples (see PR #135)\r\n\r\nThe explanation of `$crypto-key-type-choice` should consider the conceptual message perspectives that may include: evidence, endorsement, and reference.",
       "createdAt": "2023-09-14T21:17:57Z",
-      "updatedAt": "2023-09-14T21:21:42Z",
+      "updatedAt": "2024-05-03T16:49:22Z",
       "closedAt": null,
       "comments": []
     },
@@ -3570,10 +3600,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "CoRIM defines a freshness mechanism as:\r\n```\r\n? &(rim-validity: 4) => validity-map\r\nvalidity-map = {\r\n  ? &(not-before: 0) => time\r\n  &(not-after: 1) => time\r\n}\r\n```\r\nHowever, `validity-map` is not extensible. Hence, alternative freshness mechanisms such as those described by RFC9334 including epoch markers, can't be used with CoRIM.\r\n\r\nIf `validity-map` was extensible, then support for alternatives could be added by a profile or later by the base schema.\r\n\r\nThis issue proposes the following change to base schema:\r\n```\r\nvalidity-map = {\r\n  ? &(not-before: 0) => time\r\n  &(not-after: 1) => time\r\n  * $$validity-map-extension\r\n}\r\n```\r\n",
       "createdAt": "2023-10-02T21:05:40Z",
-      "updatedAt": "2023-10-13T07:39:54Z",
+      "updatedAt": "2024-05-03T16:48:36Z",
       "closedAt": null,
       "comments": [
         {
@@ -3645,10 +3677,12 @@
       "assignees": [
         "nedmsmith"
       ],
-      "labels": [],
+      "labels": [
+        "shouldfix"
+      ],
       "body": "Coswid triple is separate from reference / endorsement triples. Coswid triple can describe evidence state natively using `evidence-entry`.  Reference values are contained in `payload-entry`. The remaining values in the coswid tag can be treated as endorsed values. That is, the rest of the coswid tag values (not in `payoad-entry`) are accepted on the condition that the `payload-entry` values match `evidence-entry` values. \r\n\r\nOnce processed (via appraisal), these claims are added to the ACS. They can be added to the ACS logically under the `measurement-values-map` by extension. However, if the external representation of ACS follows the `measurement-values-map` structure, there needs to be code points that don't conflict with other `measurement-values-map` code points.\r\n\r\nThis suggests the need to identify a code point range for `measurement-values-map` that is dedicated to coswid claims. Alternatively, the ACS models ARs using the coswid triple and Relying Parties map the AR format to an internal format.\r\n\r\nThe coswid-triple-record doesn't include and `authorized-by` field. Given the current default authority is the RIM signer, and that satisfies known use cases, then the `authorized-by` field in the ACS schema can be used to track authorization. \r\n\r\nHowever, if the default authority is insufficient. There are a couple of possible ways to model authority.\r\n1) update `coswid-triple-record` to include 'authorized-by'\r\n2) allow signed coswids in the corim schema\r\n\r\nOption 2 is reasonable since RFC9393 defines `signed-coswid` which could be a `$concise-tag-type-choice`. If so, a signed coswid tag could provide authority that differs (or is in addition to) the RIM signer authority.\r\n\r\nAuthority delegation may not be achieved using option 2 unless the counter-signature from the RIM signature over the `signed-coswid` signature is interpreted as delegation.\r\n",
       "createdAt": "2023-10-11T22:13:14Z",
-      "updatedAt": "2023-10-12T13:59:32Z",
+      "updatedAt": "2024-05-03T16:47:39Z",
       "closedAt": null,
       "comments": []
     },
@@ -3916,10 +3950,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
-      "body": "Section 5.4.3 \"Adding CoMID Endorsed Values to the Accepted Claims Set\" hasn't been authored yet. It seems relevant to work on this text since there is on-going work to define and refine endorsement triples.\r\n\r\nSuggested text:\r\n\"An Endorser may publish Endorsements, which add new claims to the Accepted Claims Set (ACS) if specified conditions of the ACE are met. This section describes the process performed by the Verifier to determine if the ACS status satisfies the Endorsement condition and where to add the Endorsement claims.\r\n\r\nThe verifier compares the condition specified by endorsement triples to the ACS. Endorsement conditions may describe environments, or combinations of environment-measurement pairings, specific measurement values, and the authority that asserted the claims.\r\n\r\nIf the condition matches, the Endorsement claims, including the Endorser's authority, are added to the ACS. The new Endorsed claims are added to the part of the ACS as described by Endorsement triples (see {{sec-comid-triple-endval}}, {{sec-comid-triple-cond-series}}, {{sec-comid-triple-cond-end}}, {{sec-comid-triple-mec-endorsement}}).\"\r\n\r\n",
+      "labels": [
+        "wontfix"
+      ],
+      "body": "Section 5.4.3 \"Adding CoMID Endorsed Values to the Accepted Claims Set\" hasn't been authored yet. It seems relevant to work on this text since there is on-going work to define and refine endorsement triples.\r\n\r\nSuggested text:\r\n\"An Endorser may publish Endorsements, which add new claims to the Accepted Claims Set (ACS) if specified conditions of the ACS are met. This section describes the process performed by the Verifier to determine if the ACS status satisfies the Endorsement condition and where to add the Endorsement claims.\r\n\r\nThe verifier compares the condition specified by endorsement triples to the ACS. Endorsement conditions may describe environments, or combinations of environment-measurement pairings, specific measurement values, and the authority that asserted the claims.\r\n\r\nIf the condition matches, the Endorsement claims, including the Endorser's authority, are added to the ACS. The new Endorsed claims are added to the part of the ACS as described by Endorsement triples (see {{sec-comid-triple-endval}}, {{sec-comid-triple-cond-series}}, {{sec-comid-triple-cond-end}}, {{sec-comid-triple-mec-endorsement}}).\"\r\n\r\n",
       "createdAt": "2023-12-06T22:04:39Z",
-      "updatedAt": "2023-12-06T22:16:26Z",
+      "updatedAt": "2024-05-03T16:47:03Z",
       "closedAt": null,
       "comments": []
     },
@@ -3932,10 +3968,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "RFC9090 defines: \r\noid=#6.111(bstr) \r\n\r\nCoRIM defines:\r\noid-type = bytes\r\ntagged-oid-type = #6.111(oid-type)\r\n\r\nTo be more closely aligned with RFC9090 instances of `tagged-oid-type` can be replaced with `oid`.\r\n",
       "createdAt": "2023-12-12T00:45:15Z",
-      "updatedAt": "2024-01-19T23:28:06Z",
+      "updatedAt": "2024-05-03T16:44:43Z",
       "closedAt": null,
       "comments": [
         {
@@ -4978,10 +5016,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "shouldfix"
+      ],
       "body": "The term \"stateful environment\" is being used, generally, to refer to the matching condition contained in an EMT. The definition of EMT uses the term \"Target Environment\" to refer to the expression in the ACS to which EMT Claims will be added. It might be better to use more consistent terminology throughout the document when referring to a matching condition. Such as \"TE matching condition\". \r\n\r\nWe may want to tweak the EMT definition to better explain that \"there is a TE matching condition within the EMT that is used to locate target environments within an ACS to which the EMTs Claims may be added. A TE matching condition may be stateful, meaning both environment and measurement Claims can be part of a TE matching condition\".",
       "createdAt": "2024-03-08T19:58:54Z",
-      "updatedAt": "2024-03-08T19:58:54Z",
+      "updatedAt": "2024-05-03T16:41:12Z",
       "closedAt": null,
       "comments": []
     },
@@ -5088,9 +5128,83 @@
       "labels": [],
       "body": "IANA experts did not believe it makes sense to create a CBOR tag for an integer value. The context in which it is used in CoRIM is as an alternative form of a `class-map` name. In a scenario where it makes sense to use a class-map value that isn't globally unique, the tagged-bytes value can be used instead.",
       "createdAt": "2024-04-24T18:00:58Z",
-      "updatedAt": "2024-04-24T18:00:58Z",
+      "updatedAt": "2024-05-03T16:40:05Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #228 and #227 ",
+          "createdAt": "2024-05-03T16:40:03Z",
+          "updatedAt": "2024-05-03T16:40:03Z"
+        }
+      ]
+    },
+    {
+      "number": 230,
+      "id": "I_kwDOH6-tI86HyV4a",
+      "title": "What is an mkey really?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/230",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I'm confused what mkey is supposed to mean. Why isn't the mkey an element of the environment itself? What is a sub-environment if not just a more specific environment? It seems like it was added to help represent accepted claims and not as a way to represent a reference integrity manifest.\r\n\r\nThe ACS reusing the CoRIM CDDL seems to have had ill effects.",
+      "createdAt": "2024-05-03T17:25:30Z",
+      "updatedAt": "2024-05-04T15:01:14Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As far as I know Intel isn't using mkey. I agree that the 'sub-environment' philosophical context doesn't make a lot of sense, but it has been used to provide some additional context in terms of providing hints for identifying the entity that is responsible for the environment-map name space. But as an extensible value, it could be used for other things too. I don't think it is absolutely necessary to try to resolve the philosophy / justification right now, but it may be worth some text that discourages its use? ",
+          "createdAt": "2024-05-03T17:55:18Z",
+          "updatedAt": "2024-05-03T17:55:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">The ACS reusing the CoRIM CDDL seems to have had ill effects.\r\n\r\nThis statement seems like a non-sequitur. Does it belong in a different issue?",
+          "createdAt": "2024-05-03T17:56:07Z",
+          "updatedAt": "2024-05-03T17:56:07Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">Is mkey assigned by the evidence reflection through the conveyance or the CoRIM issuer? I'm confused about the phase at which the mkey value is assigned. \r\n\r\nThis is quoted from #70 which points to #230 as the discussion thread for this question.",
+          "createdAt": "2024-05-03T19:25:11Z",
+          "updatedAt": "2024-05-03T19:25:11Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I believe the original intent was for mkey values to be created as part of manifest authoring.\r\nHowever, since mkey is extensible, it's possible that an extension defines different semantics.",
+          "createdAt": "2024-05-03T19:26:22Z",
+          "updatedAt": "2024-05-03T19:28:00Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "When you say manifest authoring, are you talking about reference manifests or manifests that are reflected from evidence at the time of verification? The latter is the part I'm confused about. I don't know how you identify an ephemeral SPDM channel ahead of time for reference values.",
+          "createdAt": "2024-05-03T21:40:55Z",
+          "updatedAt": "2024-05-03T21:40:55Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">When you say manifest authoring, are you talking about reference manifests\r\n\r\nReference/Endorsement Manifests\r\n>manifests that are reflected from evidence at the time of verification?\r\n\r\nConsider a hot-plug use case (or other similar use case) where a component is discovered to be in the system but a Reference / Endorsement Manifest didn't predict its discovery. Lets say it was a second NIC card. Upon insertion a system bus starts reporting activity on the endpoint. An Attesting Environment might collect claims and include additional evidence. If only the class-map environment is used, both NICs would have the same measurements, but there would be two instances of evidence. How should a Verifier disambiguate the two? Possibly there was a glitch that reported the same evidence block twice? Or it was a hot-plug event that shows two NICs when there used to only be one. If the Attesting Env had a way to disambiguate each NIC, that might help the Verifier. One possible approach is to leverage mkey to encode bus endpoint identifiers (but an alternative is to define a new measurement/claim type and add it to the other measurements in the evidence block) - I don't think this is resolved yet. In terms of handling reference values, it is possible that an endorsement manifest reports the existence of the system bus. But it can't know if the endpoint is populated (until the hot plug event).  The ephemeral SPDM channel use case seems to have similar dynamics. The challenge with SPDM and the way it reports evidence is there isn't the logical equivalent of `environment-map` only measurements. If you argue that the SPDM session key / transcript is equal to an `instance-id` this also doesn't work because the transcript is dynamically generated (kind of like a hot-plug event). So there needs to be a way for Attesting Environments to assert new context but where Verifiers don't expect to find corresponding reference values. I think an elegant approach is to let Attesting Envs assert additional claims in Evidence. Normally, the verifier just accepts these assertions anyway - it just records the authority by which they're asserted. It's up to RPs / policy to determine its relevance to trustworthiness. It's a matter of using the measurement-values-map extension mechanisms to satisfy the particular use case be it hot-plug or something similar.",
+          "createdAt": "2024-05-03T23:05:25Z",
+          "updatedAt": "2024-05-03T23:34:51Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Attesters report evidence though, not reference values and endorsements. There's a phase distinction between provisioning and runtime here. I don't think that attesters should be reusing CoRIM as a representation of evidence, here adding in some kind of mkey metadata.",
+          "createdAt": "2024-05-04T15:01:14Z",
+          "updatedAt": "2024-05-04T15:01:14Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -17173,10 +17287,12 @@
       "assignees": [
         "nedmsmith"
       ],
-      "labels": [],
+      "labels": [
+        "shouldfix"
+      ],
       "body": "Issue #126 anticipates better clarification for identity and attest-key triples to disambiguate from keys as measurements.",
       "createdAt": "2023-09-01T20:20:39Z",
-      "updatedAt": "2024-04-10T14:53:08Z",
+      "updatedAt": "2024-05-03T16:33:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "957931f2a8fdd51175c752aa2d97e71c2835eae2",
@@ -20723,7 +20839,7 @@
       "labels": [],
       "body": "This fixes issue #124 and part of issue #71",
       "createdAt": "2023-10-15T10:04:50Z",
-      "updatedAt": "2024-04-17T14:18:49Z",
+      "updatedAt": "2024-05-04T04:03:05Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
@@ -20987,6 +21103,26 @@
               "body": "> The CDDL says that the raw-value has to be of type BSTR. I guess it has an extension point but I think extending it with something that isn't a tagged bstr would probably cause problems.\r\n\r\nAgree. It seems safest if the typing always requires a CBOR tag. Plus changing it now will impact code, examples and so forth.",
               "createdAt": "2023-10-18T16:34:48Z",
               "updatedAt": "2023-10-18T16:34:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI855jCCC",
+          "commit": {
+            "abbreviatedOid": "542fabd"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-04T04:03:05Z",
+          "updatedAt": "2024-05-04T04:03:05Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "I think this is the only `measurement-values-map` entry that isn't independent. Can we put the mask and raw value together in a single compound value so its semantics can be self-contained so a single key?",
+              "createdAt": "2024-05-04T04:03:05Z",
+              "updatedAt": "2024-05-04T04:03:05Z"
             }
           ]
         }
@@ -25601,10 +25737,12 @@
       "assignees": [
         "nedmsmith"
       ],
-      "labels": [],
+      "labels": [
+        "documentation"
+      ],
       "body": "Added section 5.2 describing the verifier theory of operation",
       "createdAt": "2024-02-05T19:17:01Z",
-      "updatedAt": "2024-03-12T19:56:48Z",
+      "updatedAt": "2024-05-03T16:37:25Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
@@ -27771,16 +27909,18 @@
       "assignees": [
         "nedmsmith"
       ],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "Added text requiring environment-map to be globally unique",
       "createdAt": "2024-04-24T17:42:03Z",
-      "updatedAt": "2024-05-01T17:39:17Z",
+      "updatedAt": "2024-05-03T17:28:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
+      "baseRefOid": "ce6d1557d871e0b68ac546a9123deca5a0cdcf36",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "globally-unique-env",
-      "headRefOid": "0236d356c21ea4270c36bda60642cc833af1329a",
+      "headRefOid": "8e5475016086b47997036e8c8ca2085985ccd288",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -27839,14 +27979,14 @@
         {
           "id": "PRR_kwDOH6-tI855OIaC",
           "commit": {
-            "abbreviatedOid": "0236d35"
+            "abbreviatedOid": "8e54750"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2024-05-01T14:40:47Z",
-          "updatedAt": "2024-05-01T14:40:47Z",
+          "updatedAt": "2024-05-03T16:34:14Z",
           "comments": []
         },
         {
@@ -27900,6 +28040,19 @@
           "body": "I resolved the threads related to exemplary text since we can add this later.",
           "createdAt": "2024-05-01T17:39:17Z",
           "updatedAt": "2024-05-01T17:39:17Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI855g_1k",
+          "commit": {
+            "abbreviatedOid": "8e54750"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I think the proposed changes attached to this revision make the spec better.\r\nI suggest we approve these now, and to put additional changes into another PR.",
+          "createdAt": "2024-05-03T17:28:07Z",
+          "updatedAt": "2024-05-03T17:28:07Z",
           "comments": []
         }
       ]
