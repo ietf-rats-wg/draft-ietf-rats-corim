@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-05-09T01:18:29.952687+00:00",
+  "timestamp": "2024-05-12T01:25:19.080538+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5424,9 +5424,24 @@
       "labels": [],
       "body": "We talked today about reference values and endorsements expressed in the same manner of conditions and assertions. I'd like to say I like the direction this is going. I think that the expression of condition is still coarse and can be specified in simpler language.\r\n\r\nWe say \"match\" and \"assert\" a lot, and I want to get to the heart of their meaning. I mentioned that a meet-semilattice seems like an appropriate abstraction, but I'll break down the bare bones requirements here. A meet-semilattice is not required.\r\n\r\nWe have individual claims that have their own theory behind their interpretation, either by standard or by profile. A claim is now an atomic proposition `c` interpreted in theory `T_p` (theory of the profile) asserted by `A`. The theory of the profile gets to determine if the conjunction of claims `(and c ...)` is consistent or not, and whether `(and c ...) => c'`, a collection of claims `c ...` implies another claim `c'`.\r\n\r\nAssert becomes the addition of `(c, p, A)` into the context, or \"ACS\". The `T_p` decides if appraisal has failed with this new assertion.\r\n\r\nThe interface we have now for `match` is \"do I know if `(c,p,a)` is implied by the ACS?\" An expression language that allows complex conditionals is left to the language design, say an array of ECTs meaning an `and` of the orthogonal claims represented by each ECT.\r\n\r\nSo here we have it: implication and conjunction. The expression language for the standard can be limited but not prescriptive of all manners of expressing combinations of assert and match. We do not allow asserting complex combinations of atoms like `(and c0 (or c1 (not c2)))` to maintain reasonable complexity, but a theory may decide that its atoms get to be interpreted as more complex expressions\u2013it is then responsible for any further interpretation of the atoms it contains. Combining theories modularly is not easy, and is the topic of many papers in the realm of satisfiability modulo theories.\r\n\r\nGiven this limited interface, we know first that `c => c`, or exact matching. The rest of the semantics of matching comes from how we interpret other measured values.\r\n\r\n`svn(x) and minsvn(y)` is consistent only if `y <= x`.\r\n`digests(alg_i => digest_i ...) and digests(alg_j => digest_j ...)` only if the same algorithms map to the same digests. Expressing each map as a finite function, you can say the condition for consistency is `let d = dom(d_0) intersect dom(d_1). d_0|d = d_1|d` (where `f|d` is the notation of a function `f` restricted to a domain `d`).\r\n\r\nThe implication decision procedure follows similarly, but now it behooves us to express \"combination\" for easier description of implication. This is the augmentation process. How do you combine digests? Provided they don't collide, you can say `Digests(d_0) meet Digests(d_1) = Digests(lambda alg. if alg in dom(d_0). d_0(alg) else d_1(alg))` since if the algorithm is in both, the result is the same.\r\n\r\nYou can further lift the meet operation over integrity registers pointwise, or allow for textual and integer names to compare according to the IANA table before performing the meet of the values under the names.\r\n\r\nIf folks agree with this, we can start describing the condition language as first reflecting an ECT into a set of claims `(c, p, A) ...` and then performing some logical combination querying them before continuing to an assert. ",
       "createdAt": "2024-05-08T15:41:57Z",
-      "updatedAt": "2024-05-08T15:41:57Z",
+      "updatedAt": "2024-05-10T21:21:14Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">Assert becomes the addition of (c, p, A) into the context, or \"ACS\". The T_p decides if appraisal has failed with this new assertion.\r\n\r\nThis may be giving profile too much authority. Profiles don't undo what's in the spec. It would be more correct to say that a profile extends the spec. If p = corim base spec, then the above representation seems correct. ",
+          "createdAt": "2024-05-10T18:19:03Z",
+          "updatedAt": "2024-05-10T18:19:03Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ah yes, an unwritten assumption was that the meaning of claim c is defined by p, so you can\u2019t pair a claim from profile \u2018a\u2019 with profile \u2018b\u2019 when a!=b",
+          "createdAt": "2024-05-10T21:21:12Z",
+          "updatedAt": "2024-05-10T21:21:12Z"
+        }
+      ]
     }
   ],
   "pulls": [
