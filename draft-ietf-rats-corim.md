@@ -69,10 +69,8 @@ normative:
   STD66:
     -: uri
     =: RFC3986
-  I-D.ietf-sacm-coswid: coswid
+  RFC9393: coswid
   RFC9334: rats-arch
-  I-D.ietf-rats-eat: eat
-  I-D.ietf-rats-concise-ta-stores: ta-store
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -111,9 +109,9 @@ informative:
     title: TCG DICE Concise Evidence Binding for SPDM
     author:
       org: Trusted Computing Group
-    seriesinfo: Version 1.00, Revision 0.53, public review
-    date: June 2023
-    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-53_1August2023.pdf
+    seriesinfo: Version 1.00, Revision 0.54
+    date: January 2024
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf
   DICE.AA:
     title: DICE Attestation Architecture
     author:
@@ -121,49 +119,99 @@ informative:
     seriesinfo: Version 1.1, Revision 0.17, public review
     date: May 2023
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
+  I-D.ietf-rats-eat: eat
+  I-D.ietf-rats-concise-ta-stores: ta-store
 
 entity:
   SELF: "RFCthis"
 
 --- abstract
 
-Remote Attestation Procedures (RATS) enable Relying Parties to assess the
-trustworthiness of a remote Attester and therefore to decide whether to engage
-in secure interactions with it. Evidence about trustworthiness can be rather
-complex and it is deemed unrealistic that every Relying Party is capable of the
-appraisal of Evidence. Therefore that burden is typically offloaded to a
-Verifier. In order to conduct Evidence appraisal, a Verifier requires not only
-fresh Evidence from an Attester, but also trusted Endorsements and Reference
-Values from Endorsers and Reference Value Providers, such as manufacturers,
-distributors, or device owners. This document specifies the information elements for
-representing Endorsements and Reference Values in CBOR format.
+Remote Attestation Procedures (RATS) enable Relying Parties to assess the trustworthiness of a remote Attester and therefore to decide whether to engage in secure interactions with it - or not.
+Evidence about trustworthiness can be rather complex and it is deemed unrealistic that every Relying Party is capable of the appraisal of Evidence.
+Therefore that burden is typically offloaded to a Verifier.
+In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
+This document specifies the information elements for representing Endorsements and Reference Values in CBOR format.
 
 --- middle
 
-# Introduction
+# Introduction {#sec-intro}
 
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) associated with the Attester.
-Such Endorsements and Reference Values are obtained from the relevant supply chain actors, such as manufacturers, distributors, or device owners.
-In a complex supply chain, it is likely that multiple actors will produce these values at different points in time.
-Besides, one supply chain actor will only provide the subset of characteristics that they know about the Attester.
-Attesters vary from one vendor to another, and for a given vendor from one product to another.
+Endorsements and Reference Values are obtained from relevant supply chain actors, such as manufacturers, distributors, or device owners.
+In a complex supply chain, multiple actors will likely produce these values over several points in time.
+As such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module that is measured amongst a long chain of measurements.
+Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
-This document specifies Concise Reference Integrity Manifests (CoRIM) a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
-CoRIM enables Verifiers to reconcile a complex and scattered supply chain into a single homogeneous view.
+This document specifies Concise Reference Integrity Manifests (CoRIM) - a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
+CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view. See {{sec-verifier-rec}}.
 
 ## Terminology and Requirements Language
 
 This document uses terms and concepts defined by the RATS architecture.
 For a complete glossary see {{Section 4 of -rats-arch}}.
 
+In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.
+
 The terminology from CBOR {{-cbor}}, CDDL {{-cddl}} and COSE {{-cose}} applies;
 in particular, CBOR diagnostic notation is defined in {{Section 8 of -cbor}}
-and {{Section G of -cddl}}.
+and {{Section G of -cddl}}. Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.
 
 {::boilerplate bcp14}
 
-## CDDL Typographical Conventions
+# Verifier Reconciliation {#sec-verifier-rec}
+
+This specification describes the CoRIM format and documents how a Verifier should process the CoRIM to enable CoRIM authors to convey their intended meaning.
+A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
+In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
+By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
+The origin of the inputs is tracked as *authority*.
+The authority for the Claims in a CoRIM is the CoRIM issuer.
+
+Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
+Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
+The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
+Producers of RATS Conceptual Messages can assert contradictory assertions.
+For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
+In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the internal representation of an Attester's actual state, a.k.a., Appraisal Claims Set (ACS).
+
+A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
+For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
+The Verifier may produce new assertions as a result of an applied appraisal policy.
+For example, if an appraisal procedure finds all of the components of a subsystem are configured correctly, the policy may direct the Verifier to produce new assertions, "Subsystem=X" has the Claim "TRUSTED=TRUE".
+Consequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual Messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion (the authority), and has applied Conceptual Message constraints to the assertion.
+
+The CoRIM data model specified in this document covers the RATS Conceptual Message types, "Reference Values" and "Endorsements".
+Reference values and Endorsements are required for Verifier reconciliation, and Evidence is required for corresponding internal ACS creation as illustrated in {{sec-interact-acs}}.
+
+## Internal Representation {#sec-internal-rep}
+
+In this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the appraisal procedure.
+The actual internal representation of a Verifier is implementation-specific and out-of-scope of this document.
+Requirements for an internal representation of Conceptual Messages are defined in {{tbl-cmrr}}, where each Conceptual Message type has a structure as depicted by the *Structure* column.
+The internal representations used by this document are defined in {{sec-ir-cm}}.
+
+## Interacting with an ACS {#sec-interact-acs}
+
+Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
+Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) should satisfy the following requirements for Verifier reconciliation and appraisal processing:
+
+| CM Type | Structure | Description |
+|---
+| Evidence | List of Evidence claims | If the Attester is authenticated, add Evidence claims to the ACS with Attester authority |
+| Reference Values | List of Reference Values claims | If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer is added to those claims. |
+| Endorsements | List of expected actual state claims, List of Endorsed Values claims | If the list of expected claims are in the ACS, then add the list of Endorsed Values claims to the ACS with Endorser authority |
+| Series Endorsements | List of expected actual state claims and a series of selection-addition tuples | If the expected claims are in the ACS, and if the series selection condition is satisfied, then add the additional claims to the ACS with Endorser authority. See {{sec-ir-end-val}} |
+| Verifier | List of expected actual state claims, List of Verifier-generated claims | If the list of expected claims are in the ACS, then add the list of Verifier-generated claims to the ACS with Verifier authority |
+| Policy | List of expected actual state claims, List of Policy-generated claims | If the list of expected claims are in the ACS, then add the list of Policy-generated claims to the ACS with Policy Owner authority |
+| Attestation Results | List of expected actual state claims, List of expected Attestation Results claims | If the list of expected claims are in the ACS, then copy the list of Attestation Results claims into the ARS. See {{sec-ir-ars}} |
+{: #tbl-cmrr title="Conceptual Message Representation Requirements"}
+
+## Quantizing Inputs {#sec-quantize}
+[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/242
+
+# Typographical Conventions for CDDL {#sec-type-conv}
 
 The CDDL definitions in this document follow the naming conventions illustrated
 in {{tbl-typography}}.
@@ -180,131 +228,11 @@ in {{tbl-typography}}.
 | flags | `&( a: 1, b: 2 )` | NAME-`flags` |
 {: #tbl-typography title="Type Traits & Typographical Conventions"}
 
-## Common Types
-
-The following CDDL types are used in both CoRIM and CoMID.
-
-### Non-Empty
-
-The `non-empty` generic type is used to express that a map with only optional
-members MUST at least include one of the members.
-
-~~~~ cddl
-{::include cddl/non-empty.cddl}
-~~~~
-
-### Entity {#sec-common-entity}
-
-The `entity-map` is a generic type describing an organization responsible for
-the contents of a manifest. It is instantiated by supplying two parameters:
-
-* A `role-type-choice`, i.e., a selection of roles that entities of the
-  instantiated type can claim
-
-* An `extension-socket`, i.e., a CDDL socket that can be used to extend
-  the attributes associated with entities of the instantiated type
-
-~~~cddl
-{::include cddl/entity-map.cddl}
-
-{::include cddl/entity-name-type-choice.cddl}
-~~~
-
-The following describes each member of the `entity-map`.
-
-* `entity-name` (index 0): The name of entity which is responsible for the
-  action(s) as defined by the role. `$entity-name-type-choice` can only be
-  text.  Other specifications can extend the `$entity-name-type-choice` (see
-  {{sec-iana-comid}}).
-
-* `reg-id` (index 1): A URI associated with the organization that owns the
-  entity name
-
-* `role` (index 2): A type choice defining the roles that the entity is
-  claiming.  The role is supplied as a parameter at the time the `entity-map`
-  generic is instantiated.
-
-* `extension-socket`: A CDDL socket used to add new information structures to
-  the `entity-map`.
-
-Examples of how the `entity-map` generic is instantiated can be found in
-{{sec-corim-entity}} and {{sec-comid-entity}}.
-
-### Validity {#sec-common-validity}
-
-A `validity-map` represents the time interval during which the signer
-warrants that it will maintain information about the status of the signed
-object (e.g., a manifest).
-
-In a `validity-map`, both ends of the interval are encoded as epoch-based
-date/time as per {{Section 3.4.2 of -cbor}}.
-
-~~~ cddl
-{::include cddl/validity-map.cddl}
-~~~
-
-* `not-before` (index 0): the date on which the signed manifest validity period
-  begins
-
-* `not-after` (index 1): the date on which the signed manifest validity period
-  ends
-
-### UUID {#sec-common-uuid}
-
-Used to tag a byte string as a binary UUID defined in {{Section 4.1.2. of
--uuid}}.
-
-~~~ cddl
-{::include cddl/uuid.cddl}
-~~~
-
-### UEID {#sec-common-ueid}
-
-Used to tag a byte string as Universal Entity ID Claim (UUID) defined in
-{{Section 4.2.1 of -eat}}.
-
-~~~ cddl
-{::include cddl/ueid.cddl}
-~~~
-
-### OID {#sec-common-oid}
-
-Used to tag a byte string as the BER encoding {{X.690}} of an absolute object
-identifier {{-cbor-oids}}.
-
-~~~ cddl
-{::include cddl/oid.cddl}
-~~~
-
-### Digest {#sec-common-hash-entry}
-
-A digest represents the value of a hashing operation together with the hash algorithm used.
-The type of the digest algorithm identifier can be either `int` or `text` and is interpreted according to the {{-named-info}} registry.
-Specifically, `int` values are matched against "ID" entries, `text` values are matched against "Hash Name String" entries.
-Whenever possible, using the `int` encoding is RECOMMENDED.
-
-~~~ cddl
-{::include cddl/digest.cddl}
-~~~
-
-A measurement can be obtained using different hash algorithms.
-A `digests-type` can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.
-Each entry in the `digests-type` MUST have a unique `alg` value.
-
-### Tagged Bytes Type {#sec-common-tagged-bytes}
-
-An opaque, variable-length byte string.
-It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
-Its semantics are defined by the context in which it is found, and by the overarching CoRIM profile.
-When used as an identifier the responsible allocator entity SHOULD ensure uniqueness within the context that it is used.
-
-~~~ cddl
-{::include cddl/tagged-bytes.cddl}
-~~~
-
 # Concise Reference Integrity Manifest (CoRIM) {#sec-corim}
 
-A CoRIM is a collection of tags and related metadata as described below.
+A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
+A CoRIM can be digitally signed with a COSE {{-cose}} signature.
+A tag identifies and describes properties of modules or components of a system.
 
 Tags can be of different types:
 
@@ -755,9 +683,7 @@ The following describes each member of the `triples-map`:
   stateful environment records. Described in
   {{sec-comid-triple-mec-endorsement}}.
 
-#### Common Types
-
-##### Environment
+##### Environments
 
 An `environment-map` may be used to represent a whole Attester, an Attesting
 Environment, or a Target Environment.  The exact semantic depends on the
@@ -784,7 +710,7 @@ The following describes each member of the `environment-map`:
 * `group` (index 2): identifier for a group of instances, e.g., if an
   anonymization scheme is used.
 
-##### Class {#sec-comid-class}
+##### Environment Class {#sec-comid-class}
 
 The Class name consists of class attributes that distinguish the class of
 environment from other classes. The class attributes include class-id, vendor,
@@ -819,7 +745,7 @@ The following describes each member of the `class-map`:
   with several network interface controllers (NIC), each NIC can be given a
   different index value.
 
-##### Instance {#sec-comid-instance}
+##### Environment Instance {#sec-comid-instance}
 
 An instance carries a unique identifier that is reliably bound to a Target Environment
 that is an instance of the Attester.
@@ -831,7 +757,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Group
+##### Environment Group
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -1311,7 +1237,7 @@ applies to all measurements in the triple, including those in `measurement-value
 
 The semantics of the Multi-Environment Conditional (MEC) Endorsement Triple is as follows:
 
-> "IF accepted state matches all `conds` values, THEN every  entry in the `endorsements` is added to the accepted state"
+> "IF accepted state matches all `conds` values, THEN every entry in the `endorsements` is added to the accepted state"
 
 ~~~ cddl
 {::include cddl/mec-endorsement-triple-record.cddl}
@@ -1409,27 +1335,190 @@ The following describes each member of the `concise-bom-tag` map.
   The `$$concise-bom-tag-extension` extension socket is empty in this
   specification.
 
-# CoRIM-based Appraisal of Evidence
+# Common Types {#sec-common-types}
 
-The verification procedure is divided into three separate phases:
+The following CDDL types may be shared by CoRIM, CoMID, and CoBOM.
 
-* Appraisal Context initialisation ({{sec-app-ctx-init}})
-* Evidence collection ({{sec-ev-coll}})
-* Evidence appraisal ({{sec-ev-appraisal}})
+## Non-Empty {#sec-non-empty}
 
-At a few well-defined points in the procedure, the Verifier behaviour will
-depend on the specific CoRIM profile.
-Each CoRIM profile MUST provide a description of the expected Verifier behavior
-for each of those well-defined points.
+The `non-empty` generic type is used to express that a map with only optional
+members MUST at least include one of the members.
 
-Note that what follows describes a simplified and standard algorithm.
-Verifiers claiming compliance with this specification MUST exhibit the same
-externally visible behavior as described here,
-they are not required to use the same internal data structures.
-For example, it is expected that the resources used during the initialisation
-phase can be amortised across multiple appraisals.
+~~~~ cddl
+{::include cddl/non-empty.cddl}
+~~~~
 
-## Verifier Abstraction
+## Entity {#sec-common-entity}
+
+The `entity-map` is a generic type describing an organization responsible for
+the contents of a manifest. It is instantiated by supplying two parameters:
+
+* A `role-type-choice`, i.e., a selection of roles that entities of the
+  instantiated type can claim
+
+* An `extension-socket`, i.e., a CDDL socket that can be used to extend
+  the attributes associated with entities of the instantiated type
+
+~~~cddl
+{::include cddl/entity-map.cddl}
+
+{::include cddl/entity-name-type-choice.cddl}
+~~~
+
+The following describes each member of the `entity-map`.
+
+* `entity-name` (index 0): The name of entity which is responsible for the
+  action(s) as defined by the role. `$entity-name-type-choice` can only be
+  text.  Other specifications can extend the `$entity-name-type-choice` (see
+  {{sec-iana-comid}}).
+
+* `reg-id` (index 1): A URI associated with the organization that owns the
+  entity name
+
+* `role` (index 2): A type choice defining the roles that the entity is
+  claiming.  The role is supplied as a parameter at the time the `entity-map`
+  generic is instantiated.
+
+* `extension-socket`: A CDDL socket used to add new information structures to
+  the `entity-map`.
+
+Examples of how the `entity-map` generic is instantiated can be found in
+{{sec-corim-entity}} and {{sec-comid-entity}}.
+
+## Validity {#sec-common-validity}
+
+A `validity-map` represents the time interval during which the signer
+warrants that it will maintain information about the status of the signed
+object (e.g., a manifest).
+
+In a `validity-map`, both ends of the interval are encoded as epoch-based
+date/time as per {{Section 3.4.2 of -cbor}}.
+
+~~~ cddl
+{::include cddl/validity-map.cddl}
+~~~
+
+* `not-before` (index 0): the date on which the signed manifest validity period
+  begins
+
+* `not-after` (index 1): the date on which the signed manifest validity period
+  ends
+
+## UUID {#sec-common-uuid}
+
+Used to tag a byte string as a binary UUID defined in {{Section 4.1.2. of
+-uuid}}.
+
+~~~ cddl
+{::include cddl/uuid.cddl}
+~~~
+
+## UEID {#sec-common-ueid}
+
+Used to tag a byte string as Universal Entity ID Claim (UUID) defined in
+{{Section 4.2.1 of -eat}}.
+
+~~~ cddl
+{::include cddl/ueid.cddl}
+~~~
+
+## OID {#sec-common-oid}
+
+Used to tag a byte string as the BER encoding {{X.690}} of an absolute object
+identifier {{-cbor-oids}}.
+
+~~~ cddl
+{::include cddl/oid.cddl}
+~~~
+
+## Digest {#sec-common-hash-entry}
+
+A digest represents the value of a hashing operation together with the hash algorithm used.
+The type of the digest algorithm identifier can be either `int` or `text` and is interpreted according to the {{-named-info}} registry.
+Specifically, `int` values are matched against "ID" entries, `text` values are matched against "Hash Name String" entries.
+Whenever possible, using the `int` encoding is RECOMMENDED.
+
+~~~ cddl
+{::include cddl/digest.cddl}
+~~~
+
+A measurement can be obtained using different hash algorithms.
+A `digests-type` can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.
+Each entry in the `digests-type` MUST have a unique `alg` value.
+
+## Tagged Bytes Type {#sec-common-tagged-bytes}
+
+An opaque, variable-length byte string.
+It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
+Its semantics are defined by the context in which it is found, and by the overarching CoRIM profile.
+When used as an identifier the responsible allocator entity SHOULD ensure uniqueness within the context that it is used.
+
+~~~ cddl
+{::include cddl/tagged-bytes.cddl}
+~~~
+
+# Appraisal of CoRIM-based Inputs {#sec-appr-corim-inputs}
+
+Inputs to a Verifier are mapped from their external representation to an internal representation.
+CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
+CoRIM data structures may be used by Evidence and Attestation Results that wish to describe overlapping structure.
+CoRIM-based data structures define an external representation of Conceptual Messages that are mapped to an internal representation.
+Appraisal processing describes both mapping transformations and Verifier reconciliation {{sec-verifier-rec}}.
+Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.
+
+If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
+The CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.
+
+Verifier implementations MUST exhibit the same externally visible behavior as described in this specification.
+They are not required to use the same internal representation or evaluation order described by this specification.
+
+## Appraisal Procedure {#sec-appraisal-procedure}
+
+The appraisal procedure is divided into several logical phases for clarity.
+
++ **Phase 1**: Input Validation and Transformation
+
+During Phase 1, Conceptual Message inputs are cryptographically validated, such as checking digital signatures.
+Inputs are transformed from their external representations to an internal representation.
+Internal representations are staged for appraisal processing, such as populating an input queue.
+
++ **Phase 2**: Evidence Augmentation
+
+During Phase 2, Evidence inputs are added to a list that describes the Attester's actual state.
+These inputs are added with the Attester's authority.
+
++ **Phase 3**: Reference Values Corroboration and Augmentation
+
+During Phase 3, Reference Values inputs are compared with Evidence inputs.
+Reference Values inputs describe possible states of Attesters.
+If the actual state of the Attester is described by the possible Attester states, then the overlapping (corroborated) actual states are added to the Attester's actual state.
+These inputs are added with the Reference Value Provider's authority.
+
++ **Phase 4**: Endorsed Values Augmentation
+
+During Phase 4, Endorsed Values inputs containing conditions that describe expected Attester state are processed.
+If the comparison is satisfied, then additional Claims about the Attester are added to the ACS.
+These inputs are added with the Endorser's authority.
+
++ **Phase 5**: Verifier Augmentation
+
+During Phase 5, the Verifier may perform consistency, integrity, or additional validity checks.
+
+These checks may result in additional Claims about the Attester that are added to the ACS.
+These Claims are added with the Verifier's authority.
+
++ **Phase 6**: Policy Augmentation
+
+During Phase 6, appraisal policies are processed that describe Attester states that are desirable or undesirable.
+If these conditions exist, the policy may add additional Claims about the Attester, to the ACS.
+These Claims are added with the policy author's authority.
+
++ **Phase 7**: Attestation Results Production and Transformation
+
+During Phase 7, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
+The Claims in the output staging area and other Verifier related metadata are transformed into an external representation suitable for consumption by a Relying Party.
+
+## Verifier Abstraction {#sec-verifier-abstraction}
 
 This document assumes that Verifier implementations may differ.
 To facilitate the description of normative Verifier behavior, this document uses an abstract representation of Verifier internals.
@@ -1440,8 +1529,12 @@ The following terms are used:
 Claim:
 : A piece of information, in the form of a key-value pair.
 
-Environment Measurement Tuple (EMT):
-: A structure containing a set of environment Claims that describe a Target Environment and a set of measurement Claims that describe attributes of the Target Environment.
+Environment-Claim Tuple (ECT):
+
+: A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
+The ECT also contains authority which identifies the entity that authored the ECT.
+
+> *[Ned] Suggest we use Environment-Properties Tuple (EPT) since the use of claim here is more focused than what is possible given the definition above.*
 
 reference state:
 : Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
@@ -1450,21 +1543,227 @@ actual state:
 : Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.  See also {{Section 2 of -rats-endorsements}}.
 
 Authority:
-: The entity asserting that a claim is true.  Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
+: The entity asserting that a claim is true.
+Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
 
-Accepted Claims Set (ACS):
-: A structure that holds EMT Claims that have been vetted following the appraisal process. The ACS describes the actual state of an Attester that has been vetted by Appraisal Policy. The ACS also keeps track of a Claim's authority.
+Appraisal Claims Set (ACS):
+: A structure that holds ECTs that have been appraised.
+The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
 
 Appraisal Policy:
 : A description of the conditions that, if met, allow acceptance of Claims. Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion. Appraisal Policy resolves which entities are credible and under what conditions.  See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
-## Appraisal Context initialisation {#sec-app-ctx-init}
+Attestation Results Set (ARS):
+: A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various objects such as CoMID tags, CoSWID tags, and cryptographic validation key material (including raw public keys, root certificates, and intermediate CA certificate chains).
+### Internal Representation of Conceptual Messages {#sec-ir-cm}
+
+Conceptual Messages are the inputs to a Verifier and may include Evidence, Reference Values, Endorsed Values, or Appraisal Policy.
+Internal representations of Conceptual Messages are defined by {{sec-ir-evidence}}, {{sec-ir-ref-val}}, and {{sec-ir-end-val}}.
+The internal representation of Conceptual Messages are constructed from a common building block structure called Environment-Claims Tuple (ECT).
+Additionally, ECTs define an internal representation of the ACS and ARS. See {{sec-ir-acs}} and {{sec-ir-ars}}.
+
+ECTs have six attributes:
+
+1. The environment.
+2. The properties of the environment.
+3. The authority.
+4. The name space.
+5. The Conceptual Message type.
+6. The profile.
+
+Environment (label 1):
+
+: Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Typically,  composite Attester's are composed of components, each having an environment identifier.
+
+Properties (label 2):
+
+: Properties of the Target Environment.
+
+Authority (label 3):
+
+: Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
+
+Name Space (label 4):
+
+: Identifies the name space from which the tuple was created.
+
+CM Type (label 5):
+
+: Identifies the type of Conceptual Message that originated the tuple.
+
+Profile (label 6):
+
+: The profile that defines this tuple. If no profile is used, this attribute is omitted.
+
+~~~ cddl
+ECT = {
+  ? e: environment-map
+  ? c: claims-map / [ + local-claim ]
+  ? a: [ + $crypto-key-type-choice ]
+  ? ns: text
+  ? cm: cm-type
+  ? p: $profile-type-choice
+}
+local-claim = {
+  le: local-environment
+  c: claims-map
+}
+local-environment =  bstr / tstr
+cm-type =  &(
+  reference-values: 0
+  endorsements: 1
+  evidence: 2
+  attestation-results: 3
+  verifier: 4
+  policy: 5
+)
+~~~
+
+Although all of the ECT attributes are optional, the Conceptual Message type implies certain attributes are mandatory.
+See {{sec-ir-evidence}}, {{sec-ir-ref-val}}, and {{sec-ir-end-val}}.
+
+#### Internal Representation of Evidence {#sec-ir-evidence}
+
+An internal representation of attestation Evidence uses the `ae` relation.
+
+The `addition` is a list of ECTs with Evidence to be appraised.
+
+A Verifier may maintain multiple simultaneous sessions to different Attesters.
+Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
+The `addition` is added to the ACS for a specific Attester.
+
+~~~ cddl
+ae = [
+  addition: [ + ECT ]
+]
+~~~
+
+| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+|---
+| addition | T | T | T | F | T | F |
+{: #tbl-ae-ect-optionality title="Mandatory fields for Evidence tuples"}
+
+'T' means mandatory.
+
+#### Internal Representation of Reference Values {#sec-ir-ref-val}
+
+An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
+
+The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
+If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.
+
+The reference ECTs define the matching conditions that are applied to Evidence ECTs.
+If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
+
+~~~ cddl
+rv = + {
+  condition: ECT
+  addition: ECT
+}
+~~~
+
+| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+|---
+| condition | T | T | F | F | F | F |
+| addition | T | T | T | F | T | F |
+{: #tbl-rv-ect-optionality title="Mandatory fields for Reference Values tuples"}
+
+#### Internal Representation of Endorsed Values {#sec-ir-end-val}
+
+An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
+
+The `ev` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS.
+
+The `evs` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
+The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
+If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
+
+~~~ cddl
+ev = [
+  condition: [ + ECT ]
+  addition: [ + ECT ]
+]
+evs = [
+  condition: [ + ECT ]
+  series: + {
+    selection: [ + ECT ]
+    addition: [ + ECT ]
+  }
+]
+~~~
+
+| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+|---
+| condition | F | T | F | F | F | F |
+| selection | F | T | F | F | F | F |
+| addition | T | T | T | F | T | F |
+{: #tbl-ev-ect-optionality title="Mandatory fields for Endorsed Values tuples"}
+
+#### Internal Representation of Policy Statements {#sec-ir-policy}
+
+The `policy` relation compares the `condition` ECTs to the ACS.
+If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
+
+~~~ cddl
+policy = [
+    condition: [ + ECT ]
+    addition: [ + ECT ]
+]
+~~~
+
+| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+|---
+| condition | F | F | F | F | F | F |
+| addition | T | T | T | F | T | F |
+{: #tbl-policy-ect-optionality title="Mandatory fields for policy tuples"}
+
+#### Internal Representation of Attestation Results {#sec-ir-ar}
+
+The `ar` relation compares the `acs-condition` to the ACS.
+If the condition is satisfied, the `ars-additions` are copied from the ACS to the ARS.
+If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
+
+~~~ cddl
+ar = [
+    acs-condition: [ + ECT ]
+    ars-addition: [ + ECT ]
+]
+~~~
+
+| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+|---
+| acs-condition | F | F | F | F | F | F |
+| ars-addition | T | T | T | F | F | F |
+{: #tbl-ar-ect-optionality title="Mandatory fields for Attestation Results tuples"}
+
+### Internal Representation of ACS {#sec-ir-acs}
+
+An ACS is a list of ECTs that describe an Attester's actual state.
+
+~~~ cddl
+ACS = [ + ECT ]
+~~~
+
+### Internal Representation of Attestation Results Set (ARS) {#sec-ir-ars}
+
+An ARS is a list of ECTs that describe ACS entries that are selected for use as Attestation Results.
+
+~~~ cddl
+ARS = [ + ECT ]
+~~~
+
+## Input Validation and Transformationn (Phase 1) {#sec-phase1}
+
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags {{sec-comid}}, CoSWID tags {{-coswid}}, CoBOM {{sec-cobom}} and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, {{-ta-store}})).
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
-### CoRIM Selection
+After context initialization, additional inputs are held back until appraisal processing has completed.
+
+### Input Validation {#sec-phase1-valid}
+
+#### CoRIM Selection
 
 All available CoRIMs are collected.
 
@@ -1479,13 +1778,18 @@ The selection process MUST yield at least one usable tag.
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
-### CoBOM Extraction
+#### Tags Extraction and Validation
+
+The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
+
+The Verifier MUST discard all tags which are not syntactically and semantically valid.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+
+#### CoBOM Extraction
 
 This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
 
-All the available Concise Bill Of Material (CoBOMs) tags are collected from the selected CoRIMs.
-
-CoBOMs which are not within their validity period, or reference tags that are not available to the verifier, are discarded.
+CoBOMs which are not within their validity period are discarded.
 
 The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 
@@ -1496,131 +1800,93 @@ In such case, the Verifier Owner may instruct the Verifier to discard tags activ
 
 After the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
-### Tags Identification and Validation
+### Evidence Collection {#sec-ev-coll}
 
-The Verifier chooses tags - including Concise Module ID Tags (CoMID, {{sec-comid}}), Concise Software ID Tags (CoSWID, {{-coswid}}), and/or Concise Trust Anchor Stores (CoTS, {{-ta-store}}) - from the selected CoRIMs.
+During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
+The first part of this phase does not require any cryptographic validation.
+This means that Verifiers can use untrusted code to discover Evidence sources.
+Attesters are Evidence sources.
 
-The Verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
 
-### Appraisal Context Construction
+The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
 
-All of the validated and potentially useful tags are loaded into the Appraisal Context.
-This concludes the Appraisal Context initialisation phase.
+#### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
+If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
 
-## Evidence Collection {#sec-ev-coll}
+If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.
 
-During the Evidence collection phase, the Verifier communicates with attesters to gather Evidence.
-The first part of this phase does not involve any cryptographic validation.
-This means that Verifiers can use untrusted code for their initial Evidence collection.
-The Evidence collection generates protocol-specific data and transcripts that are used as input to appraisal by the Verifier.
-
-## Evidence Appraisal {#sec-ev-appraisal}
-
-### Cryptographic validation of Evidence {#sec-crypto-validate-evidence}
-
-If Evidence is cryptographically signed, its validation is the first step in Appraisal.
-
-The way cryptographic signature validation works depends on the specific Evidence collection protocol being used.
+The way cryptographic signature validation works depends on the specific Evidence collection method used.
 For instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}).
 If a trusted root certificate is found, the usual X.509 certificate validation is performed.
+
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.
 
-Regardless of the specific integrity protection method used, the Evidence's integrity MUST be verified successfully.
+Regardless of the specific integrity protection method used, the Evidence's integrity MUST be validated successfully.
 
-> A CoRIM profile MUST describe:
+> If a CoRIM profile is supplied, it MUST describe:
 >
 > * How cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags)
 > * How key material is associated with the Attesting Environment
 > * How the Attesting Environment is identified in Evidence
 
-### The Accepted Claims Set
+### Input Transformation {#sec-phase1-trans}
 
-At the end of the Evidence collection process Evidence has been converted into
-a format suitable for appraisal. To this end, this document describes an
-`accepted-claims-set` format and the algorithms used to compare it against
-CoMID Reference Values.
+Inputs, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs.
 
-~~~ cddl
-{::include cddl/accepted-claims-set.cddl}
-~~~
+The following mapping conventions apply to all forms of input transformation:
+The `e` field is populated with a Target Environment identifier.
+The `c` field is populated with the measurements collected by an Attesting Environment.
+The `a` field is populated with the identity of the entity that asserted (e.g., signed) the Evidence.
+The `ns` field is populated with the namespace context if supplied. For example, the Attester's manufacturer may have a URI that identifies the manufacturing series, family or architecture.
+The `cm` field is set based on the type of Conceptual Message inputted or to be outputed.
 
-Verifiers are not required to use this as their internal state, for the
-purposes of this document a sample Verifier is discussed which uses this format.
+#### Appraisal Context Construction
 
-The Accepted Claims Set (ACS) contains the actual state of Target Environments (TEs).
-The `state-triples` field contains Evidence (from Attesters) and Endorsements
-(e.g. from `endorsed-triple-record`).
+All of the extracted and validated tags are loaded into an *appraisal context*.
+The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
+The selected tags are mapped to the internal representation, making them suitable for appraisal processing.
 
-CoMID Reference Values will be matched against the Accepted Claims Set, as per
-the appraisal policy of the Verifier.
-This document describes an example evidence structure which can be easily
-matched against these Reference Values.
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
-Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
-When an `endorsed-triple-record` appears within `state-triples` it
-indicates that the authority named by `measurement-map`/`authorized-by`
-asserts that the actual state of one or more Claims within the
-Target Environment, as identified by `environment-map`, have the
-measurement values in `measurement-map`/`mval`.
+#### Reference and Endorsed Values Tranformation
 
-In `authorized-by`, authority is represented by cryptographic keys. Authority
-is asserted by digitally signing a Claim using the key. Hence, Claims are
-added to the ACS under the authority of a key.
+The Reference Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-ref-val}.
 
-Each Claim is encoded as an Environment Measurement Tuple (a contraction
-of `environment-map`, `measurement-map` tuple). The `environment-map` and a
-key within `measurement-values-map` encode the name of the Claim.
-The value matching that key within `measurement-values-map` is the actual
-state of the Claim.
+The Endorsement Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-end-val}.
 
-This specification does not assign special meanings to any Claim name,
-it only specifies rules for determining when two Claim names are the same.
+#### Evidence Tranformation
 
-If two Claims have the same `environment-map` encoding then this does not
-trigger special encoding in the Verifier. The Verifier follows instructions
-in the CoRIM file which tell it how claims are related.
+Evidence is divided up into one or more `ev` relations where the `condition` ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.
 
-If Evidence or Endorsements from different sources has the same `environment-map`
-and `authorized-by` then the `measurement-values-map`s are merged.
+Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence doesn't have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
 
-The ACS must maintain the authority information for each EMT. There can be
-multiple entries in `state-triples` which have the same `environment-map`
-and a different `authorized-by` field (see {{sec-authorized-by}}).
+The Evidence ECT fields are populated as described above {{sec-phase1-trans}} and {{sec-ir-evidence}}.
 
-If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are equivalent, then duplicate claims SHOULD be omitted.
-Equivalence typically means values MUST be binary identical.
+Evidence transformation algorithms may be well-known, see {{sec-spdm}} and {{sec-dice}};
+may be defined by a CoRIM profile ({{sec-corim-profile-types}}); or may be supplied dynamically.
+The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
-If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are not equivalent then the verifier SHALL report
-an error and stop validation processing.
+## Evidence Augmentation (Phase 2) {#sec-phase2}
 
-#### Accepted Claims Set Initialization {#sec-acs-initialization}
+### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
-The Accepted Claims Set is initialized by copying Evidence claims describing
-authenticated Attester's Target Environments into the Verifier's Accepted Claims Set.
+The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
+See {{sec-add-to-acs}}.
 
-Evidence formats may require format translation before being added to the Accepted Claims Set.
-If format translation is required, a CoRIM profile, see {{sec-corim-profile-types}}, defines an Evidence translation function.
+#### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
 
-{{sec-dice-spdm}} provides information on how DICE and SPDM Evidence is reformatted into CoMID schema compliant expressions before being added to the Accepted Claims Set.
-
-#### The authorized-by field in Accepted Claims Set {#sec-authorized-by}
-
-The `authorized-by` field in an Accepted Claims Set entry indicates the entity
-whose authority backs the claim.
+The `a` field in an ECT in the ACS indicates the entity whose authority backs the claim.
 
 An entity is authoritative when it makes Claims that are inside its area of
 competence. The Verifier keeps track of the authorities that assert Claims so
 that it can filter out claims from entities that do not satisfy appraisal
 policies.
 
-When adding an Evidence Claim to the Accepted Claims Set, the
+When adding an Evidence Claim to the ACS, the
 Verifier SHALL set the `authorized-by` field in that Claim to the trusted
 authority keys at the head of each key chain which signed that Evidence. This
 key is often the subject of a self-signed certificate.
@@ -1630,30 +1896,30 @@ If multiple authorities approve the same Claim, for example if multiple key chai
 are available, then the `authorized-by` field SHALL be set to include the trusted
 authority keys used by each of those authorities.
 
-When adding Endorsement Claims to the Accepted Claims Set that resulted
+When adding Endorsement Claims to the ACS that resulted
 from CoRIM processing (see {{sec-add-to-acs}}) the Verifier SHALL set the
 `authorized-by` field in that Evidence to the trusted authority key that is
 at the head of the key chain that signed the CoRIM.
 
-When searching the Accepted Claims Set for an entry which matches a Reference
+When searching the ACS for an entry which matches a Reference
 Value containing an `authorized-by` field, the Verifier SHALL ignore ACS
 entries if none of the keys present in the Reference Value `authorized-by` field
 are also present in the ACS `authorized-by` field.
 
-The Verifier SHOULD set the `authorized-by` field in Accepted Claims Set entries
+The Verifier SHOULD set the `authorized-by` field in ACS entries
 to a format which contains only a key, for example the `tagged-cose-key-type`
 format. Using a common format makes it easier to compare the field.
 
-## Accepted Claims Set augmentation using CoMID triples
+#### Appraisal Claims Set augmentation using CoMID triples
 
-In the Accepted Claims Set augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the Accepted Claims Set (ACS).
+In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
 Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
 
 Each triple is processed independently of other triples.
 However, the ACS state may change as a result of processing a triple.
 If a triple condition does not match, then the Verifier continues to process other triples.
 
-### Ordering of triple processing
+#### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
 Most triples use an `environment-map` field to select the AES entries to match or modify.
@@ -1666,7 +1932,7 @@ The Verifier MUST ensure that a triple including a matching condition is process
 
 This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
 
-### Processing Reference Values Triple
+## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values triples that are matched against ACS entries.
 Reference Values may describe multiple acceptable states for Attesters; hence "matching" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.
@@ -1677,16 +1943,18 @@ If all fields of the `reference-triple-record` match the ACS, then the Verifier 
 
 If any `reference-triple-record` in the Reference Value triple does not match the ACS then the entire triple is ignored.
 
-### Processing Endorsed Value Triple
+## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
+> [Ned] *The following sections should describe augmentation in the context of the `ev` and `evs` relations containing ECTs staged for ACS augmentation*
+
 ### Processing triples representing Conditional Endorsements
 
-An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the Accepted Claims Set only if specified conditions are satisfied.
+An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the ACS only if specified conditions are satisfied.
 This section describes the process performed by the Verifier to determine which Conditional Endorsements from the candidate CoMIDs should be added to the ACS.
 
-The verifier checks whether Conditional Endorsements are applicable by comparing Accepted Claims Set entries against expected values provided in `stateful-environment-record` object which are part of the triple.
+The verifier checks whether Conditional Endorsements are applicable by comparing ACS entries against expected values provided in `stateful-environment-record` object which are part of the triple.
 
 #### Processing Conditional Endorsement Triple
 
@@ -1711,12 +1979,12 @@ For each iteration, the Verifier creates a temporary `stateful-environment-recor
 If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
 This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
 
-#### Matching a stateful environment against the Accepted Claims Set {#sec-match-one-se}
+#### Processing a stateful environment against the Appraisal Claims Set {#sec-match-one-se}
 
-This section describes how a stateful environment is matched against an Accepted Claims Set entry.
+This section describes how a stateful environment is matched against an ACS entry.
 If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.
 
-The Verifier initializes a temporary "candidate entries" variable with all entries in the Accepted Claims Set (ACS) where the stateful enviromnment `environment-map` is a subset of the ACS `environment-map`.
+The Verifier initializes a temporary "candidate entries" variable with all entries in the ACS where the stateful enviromnment `environment-map` is a subset of the ACS `environment-map`.
 
 A stateful environment `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the stateful environment `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
 If a field is not present in the stateful environment `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
@@ -1737,18 +2005,104 @@ If any codepoint present in the stateful environment `measurement-values-map` do
 If all checks above have been performed successfully then the stateful environment matches.
 If none of the candidate entries match the stateful environment entry then the stateful environment does not match.
 
-#### Matching a single `measurement-values-map` codepoint {#sec-match-one-codepoint}
+## Verifier Augmentation (Phase 5) {#sec-phase5}
 
-The algorithm used to match the `measurement-values-map` codepoints is described in this section.
-The comparison performed depends on the value of the codepoint being compared and whether the `measurement-values-map` value associated with that codepoint is tagged.
+## Policy Augmentation (Phase 6) {#sec-phase6}
+
+## Attestation Results Production and Transformationn (Phase 7) {#sec-phase7}
+
+## Adding to the Appraisal Claims Set {#sec-add-to-acs}
+
+### Appraisal Claims Set Requirements {#sec-acs-reqs}
+
+At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
+See {{sec-ir-cm}}.
+
+Verifiers are not required to use this as their internal representation.
+For the purposes of this document, appraisal is described in terms of the above cited internal representation.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232
+
+The ACS contains the actual state of Attester's Target Environments (TEs).
+The `state-triples` field contains Evidence (from Attesters) and Endorsements
+(e.g. from `endorsed-triple-record`).
+
+CoMID Reference Values will be matched against the ACS, as per
+the appraisal policy of the Verifier.
+This document describes an example evidence structure which can be easily
+matched against these Reference Values.
+
+Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
+When an `endorsed-triple-record` appears within `state-triples` it
+indicates that the authority named by `measurement-map`/`authorized-by`
+asserts that the actual state of one or more Claims within the
+Target Environment, as identified by `environment-map`, have the
+measurement values in `measurement-map`/`mval`.
+
+ECT authority is represented by cryptographic keys. Authority
+is asserted by digitally signing a Claim using the key. Hence, Claims are
+added to the ACS under the authority of a cryptographic key.
+
+Each Claim is encoded as an ECT. The `environment-map` and a
+key within `measurement-values-map` encode the name of the Claim.
+The value matching that key within `measurement-values-map` is the actual
+state of the Claim.
+
+This specification does not assign special meanings to any Claim name,
+it only specifies rules for determining when two Claim names are the same.
+
+If two Claims have the same `environment-map` encoding then this does not
+trigger special encoding in the Verifier. The Verifier follows instructions
+in the CoRIM file which tell it how claims are related.
+
+If Evidence or Endorsements from different sources has the same `environment-map`
+and `authorized-by` then the `measurement-values-map`s are merged.
+
+The ACS must maintain the authority information for each ECT. There can be
+multiple entries in `state-triples` which have the same `environment-map`
+and a different authority (see {{sec-authorized-by}}).
+
+If the merged `measurement-values-map` contains duplicate codepoints and the
+measurement values are equivalent, then duplicate claims SHOULD be omitted.
+Equivalence typically means values MUST be binary identical.
+
+If the merged `measurement-values-map` contains duplicate codepoints and the
+measurement values are not equivalent then the verifier SHALL report
+an error and stop validation processing.
+
+### ACS Augmentation {#sec-acs-aug}
+
+The ordering of ECTs in the ACS is not significant.
+Logically, new ECT entries are appended to the existing ACS.
+But implementations may optimize ECT order to achieve better performance.
+Additions to the ACS MUST be atomic.
+
+## ECT Comparison {#sec-ect-compare}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+
+This specification defines the comparison algorithm for the codepoints and CBOR tagged values described in sub-sections below.
+A CoRIM profile may define additional tags and their matching algorithms.
+Specifications that extend CoMID MUST also define comparison algorithms for the extended values.
+Any new codepoints requiring non-default comparison MUST add a CBOR tag to the extension that describs the desired behaviour.
+
+### Environment Comparison {#sec-compare-env}
+
+### Claims Comparison  {#sec-compare-claims}
+
+#### Comparison of measurement-values-map {#sec-match-one-codepoint}
+
+This section describes the algorithm used to compare the `measurement-values-map` codepoints of an ECT with another ECT.
+The comparison algorithm performed depends on the value of the codepoint being compared.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/203
+
+If the `measurement-values-map` value has an associated CBOR tag.
+The comparison algorithm should comprehend the structure identified by the CBOR tag.
 
 If the stateful environment `measurement-values-map` value is tagged with a CBOR tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated with that tag.
 
 If the value is not tagged then the Verifier MUST use the comparison algorithm associated with the `measurement-values-map` codepoint for the entry.
-
-This specification defines the matching algorithm for some codepoints and CBOR tagged values, which are described in sub-sections below.
-
-A CoRIM profile may define additional tags and their matching algorithms.
 
 If the Verifier does not recognize the stateful environment CBOR tag value then the stateful environment does not match.
 
@@ -1757,9 +2111,6 @@ If the stateful environment is not tagged and the `measurement-values-map` key i
 If the stateful environment is not tagged, and the `measurement-values-map` key is not a value described below, then the entries are compared using binary comparison of their CBOR encoded values.
 If the values are not binary identical then the stateful environment does not match.
 
-Note that while specifications may extend the matching semantics using CBOR tags, there is no way to extend the matching semantics of codepoints.
-Any new codepoints requiring non-default comparison must add a CBOR tag to the Reference Value describing the desired behaviour.
-
 ##### Comparison for svn entries
 
 The value stored under `measurement-values-map` key 1 is an SVN, which must
@@ -1767,12 +2118,12 @@ have type UINT.
 
 If the Reference value for `measurement-values-map` key 1 is an untagged UINT or
 a UINT tagged with #6.552 then an equality comparison is performed. If the value
-of the SVN in Accepted Claims Set is not equal to the value in the Reference
+of the SVN in ACS is not equal to the value in the Reference
 Value then the Reference Value does not match.
 
 If the Reference value for `measurement-values-map` key 1 is a UINT tagged with
 #6.553 then a minimum comparison is performed. If the value of the SVN in
-Accepted Claims Set less than the value in the Reference Value then the
+ACS less than the value in the Reference Value then the
 Reference Value does not match.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
@@ -1792,26 +2143,26 @@ both the Evidence and Reference Value then the digests calculated using all
 shared algorithms must match.
 
 If the CBOR encoding of the `digests` entry in the Reference Value or the
-Accepted Claim Set value with the same key is incorrect (for example if fields
+ACS value with the same key is incorrect (for example if fields
 are missing or the wrong type) then the Reference Value does not match.
 
 The Verifier MUST iterate over the Reference Value `digests` array, locating
 hash algorithm identifiers that are present in the Reference Value and
-in the Accepted Claims Set entry.
+in the ACS entry.
 
 If the hash algorithm identifier which is present in the Reference Value
-differs from the hash algorithm identifier in the Accepted Claims Set entry then the Reference Value does not match.
+differs from the hash algorithm identifier in the ACS entry then the Reference Value does not match.
 
 If a hash algorithm identifier is present in both the Reference Value and
-the Accepted Claims Set, but the value of the hash is not binary identical
-between the Reference Value and the Accepted Claims Set entry then the
+the ACS, but the value of the hash is not binary identical
+between the Reference Value and the ACS entry then the
 Reference Value does not match.
 
 ##### Comparison for raw-value entries
 
-> I think this comparison method only works if the entry is at key 4 (because
+> [Andy] *I think this comparison method only works if the entry is at key 4 (because
 there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores `[expect-raw-value raw-value-mask]` in an array?
+which stores `[expect-raw-value raw-value-mask]` in an array?*
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
@@ -1821,13 +2172,13 @@ The value stored under `measurement-values-map` key 12 is an array of `$crypto-k
 The array contains one or more entries in sequence.
 
 The CBOR tag of the first entry of the Reference Value `cryptokeys` array is compared with
-the CBOR tag of the first entry of the Accepted Claims Set `cryptokeys` value.
+the CBOR tag of the first entry of the ACS `cryptokeys` value.
 If the CBOR tags match, then the bytes following the CBOR tag from the Reference Value entry
-are compared with the bytes following the CBOR tag from the Accepted Claims Set entry.
+are compared with the bytes following the CBOR tag from the ACS entry.
 If the byte strings match, and there is another array entry,
 then the next entry from the Reference Values array is likewise
-compared with the next entry of the Accepted Claims Set array.
-If all entries of the Reference Values array match a corresponding entry in the Accepted Claims Set array, then the `cryptokeys` Reference Value matches.
+compared with the next entry of the ACS array.
+If all entries of the Reference Values array match a corresponding entry in the ACS array, then the `cryptokeys` Reference Value matches.
 Otherwise, `cryptokeys` does not match.
 
 ##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
@@ -1837,63 +2188,26 @@ If no entry is found, the Reference Value does not match.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in Evidence to be used during matching: the Reference Value could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a Reference Value could describe a subset of PCRs.
 
-##### Handling of new tags
+### Authority Comparison  {#sec-compare-auth}
 
-A profile may specify handling for new CBOR tagged Reference Values. The
-profile must specify how to compare the CBOR tagged Reference Value against
-the Accepted Claims Set.
+The `a` field comparison tests for trust path termination.
+If the authority of the first ECT is a trust anchor for the authority of the second ECT, the second ECT is valid.
+If the authority values are identical, then the second ECT is valid.
 
-Note that the verifier may compare Reference Values in any order, so the
-comparison should not be stateful.
+### Name Space Comparison  {#sec-compare-ns}
 
-### Adding CoMID Endorsed Values to the Accepted Claims Set {#sec-add-to-acs}
+The `ns` field comparison tests equality where the text values are identical.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+### Conceptual Message Type Comparison  {#sec-compare-cm}
 
-## Adding DICE/SPDM Evidence to the Accepted Claims Set {#sec-dice-spdm}
+The `cm` field comparison tests equality of one or more bits.
 
-This section defines how Evidence from DICE {{DICE.AA}} and/or SPDM {{SPDM}} is transformed into a
-format where it can be added to an accepted claims set.
-A Verifier supporting DICE/SPDM format Evidence should implement this section.
+### Profile-directed Comparison {#sec-compare-profile}
 
-### Transforming SPDM Evidence to a format usable for matching
+A profile may specify handling for new CBOR tagged Reference Values.
+The profile must specify how to compare the CBOR tagged Reference Value against the ACS.
 
-The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which
-measurements in an SPDM Measurement Block are converted to Evidence suitable for
-matching using the rules below.
-The SPDM measurements are converted to `concise-evidence` which has a format that is similar
-to CoRIM `triples-map` (their semantics follows the matching rules described above).
-
-
-### Transforming DICE Evidence to a format usable for matching
-
-DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
-Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an
-`endorsed-triple-record` using the rules in this section.
-In a MultiTcbInfo each entry in the sequence is treated as independent and
-translated into a separate Evidence object.
-
-The Verifier SHALL translate each field in the TcbInfo into a field in the
-created endorsed-triple-record
-
-- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id` and tagged with tag #6.111
-- The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
-- The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
-- The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
-- The TcbInfo `index` field SHALL be copied to the field named `environment-map / class / index`
-
-- The TcbInfo `version` field SHALL be translated to the field named `measurement-map / mval / version / version`
-- The TcbInfo `svn` field SHALL be copied to the field named `measurement-map / mval / svn`
-- The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / mval / digests`
-  - Each digest within fwids is translated to a CoMID digest object, with an appropriate algorithm identifier
-- The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / mval / flags`
-  - Each flag is translated independently
-- The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
-
-If there are multiple `endorsed-triple-record`s with the same `environment-map`
-then they MUST be merged into a single entry.
-If the `measurement-values-map` fields in Evidence triples have conflicting
-values then the Verifier MUST fail validation.
+Note that the verifier may compare Reference Values in any order, so the comparison should not be stateful.
 
 # Implementation Status
 
@@ -2146,11 +2460,57 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 --- back
 
+# Transforming SPDM Evidence {#sec-spdm}
+
+This section defines how Evidence from SPDM {{SPDM}} is transformed into a format where it can be added to an appraisal claims set.
+A Verifier supporting SPDM format Evidence should implement this section.
+
+The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which measurements in an SPDM Measurement Block are converted to Evidence suitable for matching using the rules below.
+The SPDM measurements are converted to `concise-evidence` which has a format that is similar to CoRIM `triples-map` (their semantics follows the matching rules described above).
+
+# Transforming DICE Evidence {#sec-dice}
+
+This section defines how Evidence from DICE {{DICE.AA}} is transformed into a format where it can be added to an appraisal claims set.
+A Verifier supporting DICE format Evidence should implement this section.
+
+DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
+Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an `endorsed-triple-record` using the rules in this section.
+In a MultiTcbInfo each entry in the sequence is treated as independent and translated into a separate Evidence object.
+
+The Verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record
+
+- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id` and tagged with tag #6.111
+- The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
+- The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
+- The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
+- The TcbInfo `index` field SHALL be copied to the field named `environment-map / class / index`
+
+- The TcbInfo `version` field SHALL be translated to the field named `measurement-map / mval / version / version`
+- The TcbInfo `svn` field SHALL be copied to the field named `measurement-map / mval / svn`
+- The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / mval / digests`
+  - Each digest within fwids is translated to a CoMID digest object, with an appropriate algorithm identifier
+- The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / mval / flags`
+  - Each flag is translated independently
+- The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
+
+If there are multiple `endorsed-triple-record`s with the same `environment-map` then they MUST be merged into a single entry.
+If the `measurement-values-map` fields in Evidence triples have conflicting values then the Verifier MUST fail validation.
+
 # Base CoRIM CDDL {#sec-corim-cddl}
 
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
 ~~~
+# Contributors
+The authors would like to thank the following members for their valuable contributions to the specification.
+
+Andrew Draper
+
+Email: andrew.draper@intel.com
+
+Dionna Glaze
+
+Email: dionnaglaze@google.com
 
 # Acknowledgments
 {:unnumbered}
