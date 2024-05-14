@@ -1595,26 +1595,28 @@ CoRIM enables Verifiers to reconcile a complex and scattered supply chain into a
         <h3 id="name-verifier-reconciliation">
 <a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-verifier-reconciliation" class="section-name selfRef">Verifier Reconciliation</a>
         </h3>
-<p id="section-1.1-1">A Verifier hast to reconcile its various inputs, CoRIM being one of them.
-A Verifier is assumed to construct an internal representation of each input and map each external representation to the internal representation.
-Using the internal representation, the Verifier processes inputs as though they are parts of a conversation where the Verifier keeps track who said what.
-Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier can contributed to the conversation.
-Each inputer asserts Claims about Attester actual or possible state.
-The Verifier's objective is to produce a list of statements that describe the Attester's presumed actual state, a.k.a., Actual Claims Set (ACS).
-Inputters may assert contradictory statements. For example, a compromised Attester may assert a false statements that a RVP contradicts with valid Reference Values.
-If Evidence statements are not corroborated by RVP statements, then the RVP statements are not included in the ACS.
-The Verifier relies on input from appraisal policy to identify interesting statements contained in the ACS.
-For example, if a policy shows interest in corroborated statements by a particular RVP, then those statements may be conveyed as Attestation Results.
-The Verifier may assert new statements as a result of an appraisal policy.
-For example, if an appraisal finds all of the components of a sub-system are configured correctly,
-the policy may direct the Verifier to assert a new statement, "Sub-system=X" has the Claim "TRUSTED=TRUE".
-Consequently, the ACS log is a reconciled conversation between several inputters that has mapped each input into a consistent internal representation, has associated the identity of the asserter with each statement, and has applied concenptual massage constraints to the asserted statements.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-1">While this specification focusses on the CoRIM format itself, understanding the procedures how Verifiers are assumed to digest CoRIM documents provides vital context.
+A Verifier hast to reconcile its various inputs, CoRIM being one of them.
+Complementary to the external CoRIM documents, a Verifier is assumed to construct an internal representation of each input and map each external representation to the internal representation.
+Using the internal representation, the Verifier processes inputs as though they are parts of a conversation where the Verifier keeps track who said what -- the provenance of the inputs; in case of CoRIM: the respective authority that issues certain CoRIM.
+Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to that conversation.
+Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
+The Verifier's objective is to produce a list of assertions that describe the Attester's presumed actual state, a.k.a., Actual-State Claims Set (ACS).
+Producers of RATS Conceptual Messages may assert contradictory assertions. For example, a compromised Attester may produce false assertions that create a conflict with an RVP's issued Reference Values.
+In essence, if Evidence is not corroborated by RVP assertions, then the RVP assertions are not included in the ACS constructed by a Verifier.
+A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
+For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
+The Verifier may produce new assertions as a result of an applied appraisal policy.
+For example, if an appraisal procedure finds all of the components of a sub-system are configured correctly,
+the policy may direct the Verifier to produce new assertions, "Sub-system=X" has the Claim "TRUSTED=TRUE".
+Consequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion, and has applied conceptual massage constraints to the assertion.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">The CoRIM data model specified in this document covers the RATS Conceptual messages Reference Values and Endorsements required for the Verifier reconciliation (and corresponding internal ACS creation) as illustrated in this Section.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 <div id="sec-internal-rep">
 <section id="section-1.1.1">
           <h4 id="name-internal-representation">
 <a href="#section-1.1.1" class="section-number selfRef">1.1.1. </a><a href="#name-internal-representation" class="section-name selfRef">Internal Representation</a>
           </h4>
-<p id="section-1.1.1-1">The internal representation of a statement is called the Environment Claim Tuple (ECT).
+<p id="section-1.1.1-1">The internal representation of an assertion is called the Environment Claim Tuple (ECT).
 ECTs have four attributes:<a href="#section-1.1.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1.1.1-2.1">
@@ -1640,7 +1642,7 @@ Each Conceptual Message type has a structure as depicted by the <em>Structure</e
           <h4 id="name-interacting-with-an-acs">
 <a href="#section-1.1.2" class="section-number selfRef">1.1.2. </a><a href="#name-interacting-with-an-acs" class="section-name selfRef">Interacting with an ACS</a>
           </h4>
-<p id="section-1.1.2-1">Conceptual messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the statements that should be added to the ACS if the criteria is satisfied.
+<p id="section-1.1.2-1">Conceptual messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria is satisfied.
 An internal representation of Conceptual Messages has the following expectations:<a href="#section-1.1.2-1" class="pilcrow">¶</a></p>
 <span id="name-conceptual-message-represen"></span><div id="tbl-cmrr">
 <table class="center" id="table-1">
