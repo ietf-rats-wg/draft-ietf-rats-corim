@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-05-19T01:25:07.966208+00:00",
+  "timestamp": "2024-06-18T01:23:59.334721+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5073,7 +5073,7 @@
       "id": "I_kwDOH6-tI85_-SnC",
       "title": "Reword  \"standard CoRIM type\" definition",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/207",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -5084,9 +5084,17 @@
       ],
       "body": "       In context of PR #206: Redefine meaning of standard CoRIM       types and clarify a para on use of Extensions.",
       "createdAt": "2024-02-21T15:25:42Z",
-      "updatedAt": "2024-05-07T08:38:51Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-06-12T14:18:21Z",
+      "closedAt": "2024-06-12T14:18:21Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as we have clarified standard CoRIM types!",
+          "createdAt": "2024-06-12T14:18:21Z",
+          "updatedAt": "2024-06-12T14:18:21Z"
+        }
+      ]
     },
     {
       "number": 208,
@@ -5122,7 +5130,7 @@
       ],
       "body": "The contents of environment-map are chosen by the attesting environment (AE) making measurements, but it is constrained by the protocol used to collect the evidence.\r\n\r\nIf an target environment (TE) being measured has multiple measurements of the same type, for example multiple digest measurements or multiple raw value entries, then one option is for the AE to store each measurement under a different environment-map. This is not always the natural way to store the data.\r\n\r\nI suggest that a solution to this is to store the first measurement of a particular type under the standard measurement-map entry (eg 2 for digest or 4 for raw value) and to store the other measurements of this type using negative codepoints within `measurement-values-map`.\r\n\r\nThe verifier needs to know which comparison algorithm to use for measurements at negative codepoints.\r\n\r\nI suggest that, for measurements at negative codepoints, the verifier should use the CBOR tag at the start of the reference value to select the comparison algorithm. Some types, for example svn(1) and raw-value(4), already have tags defined.\r\n\r\nIf we choose this mechanism then we need to change the CDDL to add optional tags to relevant `measurement-values-map` values so that `stateful-environment`s can indicate which comparison algorithm should be used for negative types.\r\n\r\nIf we do not use the CBOR tag of the `stateful-environment` to select the comparison algorithm for a negative codepoint then we need to define a different way to do this. Using profiles to do this will mean either additional code in every verifier or the need for a profile definition language to indicate that _environment E with codepoint -X must use comparison algorithm A_.\r\n\r\nA related problem occurs when the data format requires extended comparison algorithms which differ from those described in the base specification. The specification of an extended comparison algorithm should define a CBOR tag which tells the verifier to use that algorithm, and the stateful-environment which provides the expected value should be tagged with that tag.\r\n\r\nPR #203 requests adding a tag for digests.",
       "createdAt": "2024-03-06T15:31:39Z",
-      "updatedAt": "2024-05-07T09:21:58Z",
+      "updatedAt": "2024-06-12T14:16:31Z",
       "closedAt": null,
       "comments": [
         {
@@ -5131,6 +5139,13 @@
           "body": "I think \"a TE with multiple measurements of the same type\" is a category error, no? It is a family of target environments. Your claim \"This is not always the natural way to store the data.\" may be valid intuitively, but it breaks the model I understand.\r\n\r\nI don't know how you you store multiple measurements in the same environment of the same type when appraising evidence. Can you go into more detail about that?\r\n\r\n---\r\n\r\nOutside of that, assigning meaning to values in negative codepoints I think is already specified but just not clearly enough.\r\n\r\nA CBOR tag's comparison semantics must be global since the tag is IANA-registered. Since there was confusion about this in the meeting, we need new text in the definition of a profile to clarify the \"syntax and semantics of a standard CoRIM type\" wording to include the meaning of tagged values in extensions. We can point to the following existing wording to solidify the point:\r\n\r\n\"If the stateful environment measurement-values-map value is tagged with a CBOR tag [[STD94](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#STD94)] then the Verifier MUST use the comparison algorithm associated with that tag.\"\r\n\r\nSo, your proposal to have a tagged digest satisfies using the right algorithm, but it doesn't give extra meaning like an ACS with digests in /2/ can have reference values in /-8/ match and give \"authorized-by\" tags in /2/.",
           "createdAt": "2024-03-06T16:46:51Z",
           "updatedAt": "2024-03-06T16:46:51Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper Can we close this, as we think, this has been addressed!",
+          "createdAt": "2024-06-12T14:16:29Z",
+          "updatedAt": "2024-06-12T14:16:29Z"
         }
       ]
     },
@@ -5198,7 +5213,7 @@
       "id": "I_kwDOH6-tI86Egtf8",
       "title": "Delegate \"validity\" to signing key certificates",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/222",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -5207,8 +5222,8 @@
       ],
       "body": "We should remove `validity-map` entirely. The validity of a signature is the purview of the PKI only. Validity without a signature is irrelevant.",
       "createdAt": "2024-04-03T14:57:43Z",
-      "updatedAt": "2024-05-07T08:36:34Z",
-      "closedAt": null,
+      "updatedAt": "2024-05-23T15:16:08Z",
+      "closedAt": "2024-05-23T15:16:08Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -5251,6 +5266,13 @@
           "body": "Okay, can we say this issue is to move validity-map and uses to a Lifetime management section to discuss its use? It seems there is no removing anything at this point, but we can at least give interpretations as meant by the default (DICE) profile.",
           "createdAt": "2024-04-24T15:21:58Z",
           "updatedAt": "2024-04-24T15:21:58Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm going to close this as a dupe for https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/236 given the change in direction.",
+          "createdAt": "2024-05-23T15:16:08Z",
+          "updatedAt": "2024-05-23T15:16:08Z"
         }
       ]
     },
@@ -5275,7 +5297,7 @@
     {
       "number": 225,
       "id": "I_kwDOH6-tI86E6zGf",
-      "title": "measurement-map misnomer?",
+      "title": "measurement-map misnomer? (measurement/claim/assertion/property/proposition...?)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/225",
       "state": "OPEN",
       "author": "deeglaze",
@@ -5286,16 +5308,38 @@
       ],
       "body": "The measurement-map type is used for non-measurement claims, such as attesting environment topology and endorsements. Shall we rename measurement-map to claims-map, and measurement-values-map to claim-values-map ?",
       "createdAt": "2024-04-07T23:26:29Z",
-      "updatedAt": "2024-05-07T08:35:20Z",
+      "updatedAt": "2024-06-05T16:26:54Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Let's determine in this issue which term we want to use for the logical propositions that are used by endorsements, reference values, and abstract verifier state.",
+          "createdAt": "2024-06-05T14:37:00Z",
+          "updatedAt": "2024-06-05T14:37:00Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To recap the discussion,\r\n\r\n*   \"Measurement\" is not particularly helpful given that endorsements can be about unmeasured properties, such as a certifying body's assignment of a \"security level\".\r\n*  \"Claim\" is not appropriate because while analogous to the JWT/CWT term, the general definition of key/value pair is in fact too general.\r\n*  \"Assertion\" is a candidate. It has precedent in the Asylo attestation terminology of assertions and their dual, conditions. It does have the unfortunate connotation of a program-crashing check.\r\n*  \"Statement\" is a candidate, but doesn't carry the logical connotation we want to convey.\r\n*  \"Proposition\" is a candidate, but might have too absolute of a connotation.\r\n* \"Property\" is a candidate, but is overloaded with the JavaScript notion of \"property\". The distance from CoRIM->CWT->JWT->JavaScript might be too short to keep the terms from being too confusing during discussion.\r\n\r\nHowever way we slice it there will be tradeoffs. I think the least offensive to folks' sensibilities given text proposed by everyone at some point is \"Assertion\". Let's make a final decision though.",
+          "createdAt": "2024-06-05T15:26:47Z",
+          "updatedAt": "2024-06-05T15:26:47Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I wouldn't rule out Claims: I see its generality as a feature rather than a bug.  This would still be my preference.\r\n\r\nAmong the other proposals, I can live with Property or Assertion.",
+          "createdAt": "2024-06-05T16:26:53Z",
+          "updatedAt": "2024-06-05T16:26:53Z"
+        }
+      ]
     },
     {
       "number": 229,
       "id": "I_kwDOH6-tI86G0X89",
       "title": "IANA issue related to tagged integer request",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/229",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -5304,8 +5348,8 @@
       ],
       "body": "IANA experts did not believe it makes sense to create a CBOR tag for an integer value. The context in which it is used in CoRIM is as an alternative form of a `class-map` name. In a scenario where it makes sense to use a class-map value that isn't globally unique, the tagged-bytes value can be used instead.",
       "createdAt": "2024-04-24T18:00:58Z",
-      "updatedAt": "2024-05-07T08:35:08Z",
-      "closedAt": null,
+      "updatedAt": "2024-06-12T14:14:59Z",
+      "closedAt": "2024-06-12T14:14:59Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -5440,6 +5484,312 @@
           "body": "Ah yes, an unwritten assumption was that the meaning of claim c is defined by p, so you can\u2019t pair a claim from profile \u2018a\u2019 with profile \u2018b\u2019 when a!=b",
           "createdAt": "2024-05-10T21:21:12Z",
           "updatedAt": "2024-05-10T21:21:12Z"
+        }
+      ]
+    },
+    {
+      "number": 233,
+      "id": "I_kwDOH6-tI86JtUcy",
+      "title": "N/A in Conceptual Message Representation Requirements table",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/233",
+      "state": "OPEN",
+      "author": "henkbirkholz",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "Is that policy (the \"yet undefined RATS Conceptual Message\")? `Verifier_ECTs` seem to be an indirect way to say either policy or \"RVP or Endorser that is co-located with Verifier Owner\". The N/A seems weirdly undefined to me - and i think it must be possible to map it to existing CMs, right?",
+      "createdAt": "2024-05-22T12:03:58Z",
+      "updatedAt": "2024-05-23T17:48:14Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do you have a reference to the text you're talking about? I'm not quite able to follow what this issue is discussing.",
+          "createdAt": "2024-05-23T15:18:34Z",
+          "updatedAt": "2024-05-23T15:18:34Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Since ECT isn't defined until later in the document, it didn't make sense to use terms that assume the reader understands it. I took a stab at rewording using common language. \r\n\r\nI also replaced n/a with Verifier:\r\n| Verifier | List of expected actual state claims, List of Verifier generated claims | If the list of expected claims are in the ACS, then add the list of Verifier generated claims to the ACS with Verifier authority |\r\n\r\nThe goal is to provide a concise description of verifier objectives.\r\n\r\n> i think it must be possible to map it to existing CMs, right?\r\n\r\nYes. There is an unwritten section for Phase 5 where this should be documented. There are two use cases from existing comid that logically fit into phase 5. The `triples-map` defines:\r\n```\r\n  ? &(identity-triples: 2) =>  [ + identity-triple-record ]\r\n  ? &(attest-key-triples: 3) => [ + attest-key-triple-record ]\r\n  ? &(dependency-triples: 4) => [ + domain-dependency-triple-record ]\r\n```\r\nThe identity and attest-key triples are essentially asking the Verifier to perform key validation checks. If validity checking isn't desired, the key object can be supplied as a measurement-values-map entry. If the keys are valid, the keys are added to the ACS with Verifier authority.\r\nThe dependency triple is asking the Verifier to check the graph of which AEs attested which TEs based on an expected graph. If the graph checks out, the Verifier adds the environments that check out under the Verifier authority.\r\nWe have not yet pulled in the internal representations for these use cases.\r\n\r\nPhase 6 describes policy additions. This could also be a use case for Verifier making assertions if the policy is Appraisal Policy for Evidence where the Verifier Owner authors the policy. If the policy is satisfied, the new claims asserted are asserted with the policy owner authority. Given the policy owner and verifier are the same entity, this would be a case where the new claims are added under Verifier authority. This case is probably best described in phase 6 though. ",
+          "createdAt": "2024-05-23T15:41:31Z",
+          "updatedAt": "2024-05-23T17:48:14Z"
+        }
+      ]
+    },
+    {
+      "number": 234,
+      "id": "I_kwDOH6-tI86Jtaw2",
+      "title": "The use of `context` might be overloaded in PR #232 (but also previously)",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/234",
+      "state": "OPEN",
+      "author": "henkbirkholz",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "* `context` is now (preliminary) part of ECT\r\n* Verifier Reconciliation provides `context`\r\n* Claims in ECT somehow rely on `context`\r\n* Attester_ECT provide a `context`\r\n* A Verifier establishes `context` for interacting with an Attester\r\n* a `context` is the scope of application of a certain language used in tstr\r\n* the semantics of the environment-map or measurement-values-map depend on the `context` they are used in\r\n* a domain is a `context` for bundling a collection of related environments and their measurements\r\n* a condition must must describe the expected `context`\r\n\r\nThere are more instances of examples, but I think the examples above already convey the point I am trying to make.\r\n\r\nWhenever `context` means not the exact same thing in the document, we must reshuffle the use of the term, significantly (and probably introduce or reuse other terms).",
+      "createdAt": "2024-05-22T12:16:33Z",
+      "updatedAt": "2024-05-22T12:16:33Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 235,
+      "id": "I_kwDOH6-tI86Jvmzq",
+      "title": "Profile-defined claim scope extrusion flaw",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/235",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Writing up what I've brought up before so we can discuss it more thoroughly.\r\n\r\nIn programming languages, when a variable name manages to flow to a reference point where the name is not bound, or it's bound to a different value and shouldn't be reinterpreted, we call that semantic flaw \"scope extrusion\". The reason Lisps of old didn't allow returning functions that refer to local variables  (\"upwards funargs\") is because they hadn't invented closures yet. Functional programming language compilers will perform \"escape analysis\" to determine if a local function value will flow to a call site outside the lexical scope of the variables it refers to in order to avoid allocating a closure.\r\n\r\nIn analogy to the CoRIM spec, consider negative keys in claim-values-map as variables that are bound by the profile name in the CoRIM document. The claims have meaning within an individual document.\r\n\r\nWhen we go to the abstract verifier discussion, we can have evidence and reference values from multiple profiles within the same ACS, but there are no longer any profile names as binding sites. We have a scope extrusion problem. I think each ECT needs to include the profile from whence the claims came. This is the analogous \"closure\".\r\n\r\nWhen processing a condition on a profile-defined claim, we have to match against the ACS. The ACS could have an ECT with the same environment and claim-values-map key value, but be meant to be interpreted in a different profile. We thus cannot correctly match conditions.\r\n\r\n---\r\n\r\nSimilarly, and this is more of an expressive limitation than a flaw per-say, a condition in one profile may wish to name claims that were added from evidence that is governed by a different profile. For instance, suppose there is a profile for transforming the AMD SEV-SNP attestation report into a collection of claims that correspond to the components of the report. The authority for the claims is the AMD SEV root key. The claim key values can be some negative integer.\r\n\r\nNow I come along and say, if AMD authorized measurement M, and TCB_VERSION T, then I endorse this as \"Y-proprietary security level L\". This is contrived, but still there are possible cross-profile conditions that folks will want to express. You can't do this now, since the negative values in the condition and consequent will both be scoped to the 1 document's profile, and you'd end up having to have a strict superset of the AMD evidence profile for the Y-proprietary claim profile. Perhaps that's the correct way to do it anyway.",
+      "createdAt": "2024-05-22T16:22:47Z",
+      "updatedAt": "2024-06-12T15:08:11Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To extend this with today's meeting's comment, we need the condition representation to be asymmetric with the consequent.\r\n\r\nFrom (roughly)\r\n```\r\ncondition: ECT / [+ ECT]\r\n\r\nECT = [\r\nenvironment-map\r\n? measurement-map\r\n]\r\n```\r\n\r\nTo\r\n```\r\ncondition: PECT / [+ PECT]\r\n\r\nPECT = [\r\nenvironment-map\r\n? measurement-map\r\n? profile-reference\r\n]\r\n\r\nprofile-reference /= $profile-type-choice / profile-binding\r\n```\r\n\r\nWhere the `profile-binding` is part of a top level `corim-map` field\r\n\r\n```\r\n $$corim-map-extension /= &( 6 => dependent-profiles-map )\r\ndependent-profiles-map = { profile-binding => $profile-type-choice }\r\nprofile-binding = int / text\r\n```\r\n\r\n(or however a map extension is supposed to be written in CDDL)\r\n\r\nNow profile-local claim definitions can be named appropriately in conditions.",
+          "createdAt": "2024-06-12T15:07:09Z",
+          "updatedAt": "2024-06-12T15:08:11Z"
+        }
+      ]
+    },
+    {
+      "number": 236,
+      "id": "I_kwDOH6-tI86J4HHE",
+      "title": "Add a lifecycle management section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/236",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The validity-map usage across the format is confusing given what we know about managing expiration with PKI infrastructure.\r\n\r\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/224 sought to remove it entirely, but since there are existing uses and we shouldn't try to impose complex PKI management on issuers, I think it's better to more holistically discuss what lifecycle management options are modellable given the inclusion of both validity-map in CoRIM and PKI for the issuer's key certificate.",
+      "createdAt": "2024-05-23T15:15:00Z",
+      "updatedAt": "2024-05-23T15:15:00Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 237,
+      "id": "I_kwDOH6-tI86J4Pah",
+      "title": "Extract a common core between reference and evidence",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/237",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In PR#232 the addition \"CoRIM data structures may be used by Evidence and Attestation Results that wish to describe overlapping structure\" is particularly concerning. I've seen Ned describe the desire to avoid needing to define new translations between all new evidence formats by declaring that industry evidence formats are just always going to use CoRIM triples. That's not at all decided, and I think there are phase distinction concerns to address when trying to blend the provisioning+signing time and run time representations of both expectations and raw evidence.\r\n\r\nGiven that, just saying that \"CoRIM data structures may be used\" is certainly a possibility, but it's too hypothetical to solidify in the standard. When another entity decides their message representation, they are of course well within their rights to reuse CoRIM encodings, but without a standard to describe the common core between evidence, attestation results, and CoRIMs, it's too early to muddy the waters. A concrete example of the bleeding between reference and evidence is the mkey https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/230, and I don't think that it belongs there in the reference structure.",
+      "createdAt": "2024-05-23T15:30:11Z",
+      "updatedAt": "2024-05-29T14:01:49Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The internal representation reuses ECTs for everything from evidence to endorsement to attestation results. The semantics of ECTs overlaps all the various conceptual messages. Hence, the idea of a schema that \"overlaps\" or in other words is multi-purpose isn't out of the question.\r\n\r\nThe TCG specs that define concise-evidence, DiceTcbInfo, and SPDM formats overlap portions of the CoRIM schema on purpose to ensure a mapping to the internal representation is (ideally) non-lossy. The definition of evidence that borrows some of the CDDL in CoRIM nevertheless relies on different CBOR tagging that distinguishes it as Evidence vs Reference or Endorsed Values (which is what the CBOR tagging in CoMID distinguish.  \r\n\r\nThe language in section 8 is in the context of a description of appraisal processing where all the inputs are transformed into internal representations. This text is setting the stage for use of ECTs.",
+          "createdAt": "2024-05-23T15:53:57Z",
+          "updatedAt": "2024-05-23T15:53:57Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Maybe referencing TCG concise-evidence as an example in the context of Dionna's proposed \"\"CoRIM data structures may be used\" is good enough?",
+          "createdAt": "2024-05-29T13:28:44Z",
+          "updatedAt": "2024-05-29T13:28:44Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "That still seems unguided. Is the goal not to converge on an industry standard attestation evidence format? Without that goal, we can see diverging uses of CoRIM CDDL codepoints.",
+          "createdAt": "2024-05-29T14:01:49Z",
+          "updatedAt": "2024-05-29T14:01:49Z"
+        }
+      ]
+    },
+    {
+      "number": 238,
+      "id": "I_kwDOH6-tI86KfaIZ",
+      "title": "Need a better Introduction overall...",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/238",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-05-29T14:32:25Z",
+      "updatedAt": "2024-05-29T14:32:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 239,
+      "id": "I_kwDOH6-tI86KfiFm",
+      "title": "Plurality mismatch. Best to attempt to use singular terms when possible.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/239",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Concept of RV's going into ACS needs to be revisited!\r\n\r\nWhen Evidence is not corroborated with RVP",
+      "createdAt": "2024-05-29T14:46:40Z",
+      "updatedAt": "2024-05-31T14:10:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The wording I used for this in the meeting is, approximately:\r\n\r\n\"If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer  is added to those claims.\"",
+          "createdAt": "2024-05-29T15:03:32Z",
+          "updatedAt": "2024-05-31T14:10:45Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Replace CoRIM provider with CoRIM issuer and I agree.",
+          "createdAt": "2024-05-29T15:22:37Z",
+          "updatedAt": "2024-05-29T15:22:37Z"
+        }
+      ]
+    },
+    {
+      "number": 240,
+      "id": "I_kwDOH6-tI86Kwtio",
+      "title": "Create new RFC draft for appendices",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/240",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The SPDM and DICE concise evidence appendices ought to be follow-on RFCs to the CoRIM RFC @andrew-draper ",
+      "createdAt": "2024-05-31T14:51:16Z",
+      "updatedAt": "2024-05-31T14:51:16Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 241,
+      "id": "I_kwDOH6-tI86LPWeK",
+      "title": "Clarify first paragraph of Verifier Reconciliation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/241",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "              ```suggestion\r\nWhile this specification focuses on the CoRIM format itself, it is also vital to  document how a Verifier should process the CoRIM so as to enable the CoRIM authors to appropriately encode it.\r\n```\r\n\r\n_Originally posted by @yogeshbdeshpande in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/232#discussion_r1627880853_\r\n            ",
+      "createdAt": "2024-06-05T14:18:34Z",
+      "updatedAt": "2024-06-05T14:24:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@yogeshbdeshpande do we really need this issue?",
+          "createdAt": "2024-06-05T14:24:43Z",
+          "updatedAt": "2024-06-05T14:24:43Z"
+        }
+      ]
+    },
+    {
+      "number": 242,
+      "id": "I_kwDOH6-tI86LQEnX",
+      "title": "Complete the section on Quantisation of inputs",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/242",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Need to complete the section - that deals with \r\nQuantizing Inputs {#sec-quantize}",
+      "createdAt": "2024-06-05T15:41:31Z",
+      "updatedAt": "2024-06-07T23:23:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we need to clarify that we're specifying a single step of logical propagation in the context of computing a fixed point. We need to clarify if the CoRIM author can depend on the fixed point getting computed, or whether they have to be concerned about an arbitrary limit to the number of steps that the Verifier may take. That boils down to the question, what is a CoRIM-compliant Verifier?\r\n\r\nTo further get rid of the need for the notion of \"quantum\", we need a way of describing the verification status of certificates, and that that status is an input to the appraisal process. The time that a CoRIM is accepted to the knowledge base is different from the time that appraisal happens.\r\n\r\nThe knowledge base's certificates should have their revocation status and expiry checked periodically. The validity period of a CoRIM included in the knowledge base should be checked periodically. We won't demand a specific periodicity or that a check precedes every single appraisal request.\r\n\r\nThe revocation status of certificates are determined through multiple messages to different services. Time passes between each request. The time at which expiry is checked could be wall clock time or the time that appraisal began. There is no simultaneity of the state of consistency of all facts checked to admit a CoRIM to the knowledge base.\r\n\r\nI don't think we can specify that knowledge base checks must happen at the time of appraisal, since there is no one time.",
+          "createdAt": "2024-06-05T21:19:40Z",
+          "updatedAt": "2024-06-05T21:19:40Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If the appraisal process is broken down into a sequence of well-defined and non-overlapping phases (which I think is already the case), then it is sufficient to define an \"appraisal context preparation\" phase and say that such a phase happens once and before all other phases.\r\n\r\nThe goal of the \"appraisal context preparation\" phase is to gather the needed knowledge base && determine the suitability of each knowledge base component in terms of its freshness, revocation status, etc.\r\n",
+          "createdAt": "2024-06-05T22:07:32Z",
+          "updatedAt": "2024-06-05T22:07:32Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do you want all those phases to happen every appraisal request is the question. If we want to say suitability can be \"predetermined\" such as \"this has been checked in the last hour, so we don't need to check it again\", then I'm fine with including that in the phasing documentation.",
+          "createdAt": "2024-06-05T22:31:57Z",
+          "updatedAt": "2024-06-05T22:34:54Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Do you want all those phases to happen every appraisal request is the question.\r\n\r\nformally, yes.  implementations can optimise/amortise provided they do not violate the security invariants, i.e.:\r\n1. allowing stale\r\n2. allowing revoked\r\n\r\n> If we want to say suitability can be \"predetermined\" such as \"this has been checked in the last hour, so we don't need to check it again\", then I'm fine with including that in the phasing documentation.\r\n\r\nyes, exactly.\r\n",
+          "createdAt": "2024-06-05T23:05:57Z",
+          "updatedAt": "2024-06-05T23:05:57Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "You're asking for contradictory things. Stale and revoked are time-dependent properties that must have room for error and or time-limited caching.",
+          "createdAt": "2024-06-06T00:13:48Z",
+          "updatedAt": "2024-06-06T00:13:48Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> You're asking for contradictory things. Stale and revoked are time-dependent properties that must have room for error and or time-limited caching.\r\n\r\nSure.  I am not sure I see the contradiction: however one implements the appraisal machine, it needs to refuse artefacts that are stale or revoked at the time appraisal starts.\r\n",
+          "createdAt": "2024-06-06T02:14:16Z",
+          "updatedAt": "2024-06-06T02:14:16Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Every appraisal needs request needs to make multiple ocsp requests to check for certificate revocation even it just did so a second or a minute ago? You said you would allow caching, but if the checks have to be performed before every appraisal then you\u2019re caching nothing.",
+          "createdAt": "2024-06-06T02:20:42Z",
+          "updatedAt": "2024-06-06T02:20:42Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Every appraisal needs request needs to make multiple ocsp requests to check for certificate revocation even it just did so a second or a minute ago?\r\n> You said you would allow caching, but if the checks have to be performed before every appraisal then you\u2019re caching nothing.\r\n\r\nIt is not impossible to cache OCSP responses, see [Section 6 of RFC5019]( https://datatracker.ietf.org/doc/html/rfc5019#section-6).\r\nA similar argument can be made for CRLs.",
+          "createdAt": "2024-06-06T04:58:13Z",
+          "updatedAt": "2024-06-06T04:58:13Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "While I quite agree with a need for an \"appraisal context preparation\" phase, we should avoid implementation specific `caching` and any details about how revocation/freshness is  determined by each Verifier. ",
+          "createdAt": "2024-06-06T08:44:22Z",
+          "updatedAt": "2024-06-06T08:44:22Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> While I quite agree with a need for an \"appraisal context preparation\" phase, we should avoid implementation specific `caching` and any details about how revocation/freshness is determined by each Verifier.\r\n\r\nexactly my point.",
+          "createdAt": "2024-06-06T08:53:14Z",
+          "updatedAt": "2024-06-06T08:53:14Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Okay, we're in violent agreement.",
+          "createdAt": "2024-06-07T23:23:42Z",
+          "updatedAt": "2024-06-07T23:23:42Z"
         }
       ]
     }
@@ -27958,21 +28308,21 @@
       "id": "PR_kwDOH6-tI85r8XJR",
       "title": "Remove validity-map from core and remove meta-map",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/224",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The validity of a document should be determined by the signing key's expiration. Any other form of validity should be an extension to the base.\r\n\r\nSince the meta-map only had the signer-map in it, I've collapsed that indirection. If the overall corim validity-map is still desired, we can add that as a standard extension as per issue #223\r\n\r\nCloses Issue #222",
       "createdAt": "2024-04-07T20:16:10Z",
-      "updatedAt": "2024-04-24T14:45:47Z",
+      "updatedAt": "2024-05-23T15:10:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "novalidity",
       "headRefOid": "ba2ba5a65d75b9951e3e865bd80914e3142a0aa0",
-      "closedAt": null,
+      "closedAt": "2024-05-23T15:10:10Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -28025,6 +28375,13 @@
           "body": "> I put it in the PR for line-by-line comments in case folks want to discuss.\r\n\r\nIt's unfortunate that GitHub dosn't support line-by-line discussion threads on wiki pages and so forth. However, I find it confusing to put ancillary discussion threads in the build image.",
           "createdAt": "2024-04-22T19:11:53Z",
           "updatedAt": "2024-04-22T19:11:53Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "My understanding is that removing the validity map at this point is a non-option. I'll close this and open an issue to create a lifecycle management section that describes lifecycle management a bit more holistically in such a way that it's clear that validity-map is an option but not prescriptive for lifecycle management.",
+          "createdAt": "2024-05-23T15:10:11Z",
+          "updatedAt": "2024-05-23T15:10:11Z"
         }
       ],
       "reviews": [
@@ -28108,13 +28465,13 @@
       "labels": [],
       "body": "A claim is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrainted in points.\r\n\r\nCloses Issue#225",
       "createdAt": "2024-04-23T16:40:06Z",
-      "updatedAt": "2024-05-01T17:42:37Z",
+      "updatedAt": "2024-05-29T14:03:14Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
+      "baseRefOid": "d401b68c49f3f8f959f4b75a441f91064762a301",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "claimsmap",
-      "headRefOid": "0fa502f541f21b2c955f3f8d5e1941f1f9dfa269",
+      "headRefOid": "0196a34aba402de3939ac36e1f97c828ea9a99a4",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -28140,20 +28497,34 @@
           "body": "The semantics stay in place, correct.\r\n\r\nRFC9334 states that a claim appears to be synonymous with evidence, which is different from how claims are treated in the theory of verification and the notion of Claim Sets. It then points at Claim from RFC7519, which defines claim as \"A piece of information asserted about a subject.\"\r\n\r\nEndorsements and reference measurements are claims of security attributes and authenticity for the claim values they embody.\r\n\r\nIt's confusing to use \"measurement\" to describe unmeasurable qualities, such as \"certified EAL4\".",
           "createdAt": "2024-04-23T19:39:25Z",
           "updatedAt": "2024-04-23T19:39:25Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that the current definition of \"Claim: A piece of information, in the form of a key-value pair.\" is very broad and open ended. Pretty much any map or record expressed in CDDL fits this definition. The use of Claim in ECT is intended to be more focused on the properties that are associated with environments. I prefer using something different such as Environment-Properties-Tuple (EPT). \r\n\r\nIt is OK to talk about claims in the abstract such as when describing CMs as consisting of \"claims\". \r\n\r\nThe history behind the term being used in RATS is that it intends to follow the definition originated by JWT. It is a non-goal that ECT imply there's a JWT embedded in an ECT.",
+          "createdAt": "2024-05-23T16:01:27Z",
+          "updatedAt": "2024-05-23T16:01:27Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "The `C`laim in `ECT` came up several times. The generic use of Claims (as defined in JWT) and the increasingly specific use in RFC 9334 and then here seem to create more confusion than necessary.\r\n\r\nWe are considering changing Claim to a less overloaded synonym, such as property or characteristic. In the end it is just naming and I'd typically refrain from doing name changes at this stage. Then again, the topic starts to eat time and maybe it is better to go with a synonym for now?",
+          "createdAt": "2024-05-29T13:32:54Z",
+          "updatedAt": "2024-05-29T13:32:54Z"
         }
       ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI854Rdb9",
           "commit": {
-            "abbreviatedOid": "0fa502f"
+            "abbreviatedOid": "0196a34"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2024-04-23T17:18:55Z",
-          "updatedAt": "2024-05-01T17:42:37Z",
+          "updatedAt": "2024-05-29T14:03:13Z",
           "comments": [
             {
               "originalPosition": 35,
@@ -28427,13 +28798,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-05-13T12:38:44Z",
-      "updatedAt": "2024-05-17T23:48:14Z",
+      "updatedAt": "2024-06-12T15:35:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d401b68c49f3f8f959f4b75a441f91064762a301",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "simplification-refactoring",
-      "headRefOid": "30ccb96b6422087768b94f8f48decc22ab9afd24",
+      "headRefOid": "ff7c7a7845a8a50d968d292106f44557343381b7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -28445,6 +28816,27 @@
           "body": "I added sections at the beginning of the appraisal description section. However, the existing text that anticipates using a different internal representation still needs attention. I left and Issue Tracked at marker (Tracked at: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232) to identify this point in the document. ",
           "createdAt": "2024-05-14T23:17:38Z",
           "updatedAt": "2024-05-14T23:21:02Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "ECT are not actually tuples anymore (even if we agree that authority moves into environment), right?",
+          "createdAt": "2024-05-21T13:36:23Z",
+          "updatedAt": "2024-05-21T13:36:23Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> ECT are not actually tuples anymore (even if we agree that authority moves into environment), right?\r\n\r\nIt's a 4-tuple or 5-tuple instead of a 2-tuple. But a tuple nevertheless.",
+          "createdAt": "2024-05-21T18:27:39Z",
+          "updatedAt": "2024-05-21T18:27:39Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> ECT are not actually tuples anymore (even if we agree that authority moves into environment), right?\r\n\r\nOver-obsessing on \"tuple\". Tuple and therefore ECT is fine (independent of number of items tuple'ed).",
+          "createdAt": "2024-05-22T15:15:15Z",
+          "updatedAt": "2024-05-22T15:15:15Z"
         }
       ],
       "reviews": [
@@ -28493,6 +28885,1476 @@
           "createdAt": "2024-05-17T16:39:05Z",
           "updatedAt": "2024-05-17T16:39:05Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI857IiwV",
+          "commit": {
+            "abbreviatedOid": "30ccb96"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-20T09:56:19Z",
+          "updatedAt": "2024-05-20T09:56:19Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Compared against whom ?",
+              "createdAt": "2024-05-20T09:56:19Z",
+              "updatedAt": "2024-05-20T09:56:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857TUU7",
+          "commit": {
+            "abbreviatedOid": "61cd554"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-21T13:32:12Z",
+          "updatedAt": "2024-05-21T13:32:12Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nIf the comparison is satisfied, then additional Claims about the Attester are added to the ACS.\r\n```",
+              "createdAt": "2024-05-21T13:32:12Z",
+              "updatedAt": "2024-05-22T14:12:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857TViG",
+          "commit": {
+            "abbreviatedOid": "61cd554"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-21T13:34:05Z",
+          "updatedAt": "2024-05-21T13:34:05Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Addressed in [4857331](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/232/commits/48573314c87a73fda94200a755c207e2efd21ec5)",
+              "createdAt": "2024-05-21T13:34:05Z",
+              "updatedAt": "2024-05-21T13:34:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857TX_f",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-21T13:38:02Z",
+          "updatedAt": "2024-05-21T13:38:02Z",
+          "comments": [
+            {
+              "originalPosition": 233,
+              "body": "Isn't this going a bit far? This document definitely comes with CDDL for CoRIM in CBOR, right?",
+              "createdAt": "2024-05-21T13:38:02Z",
+              "updatedAt": "2024-05-21T13:38:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857TbGo",
+          "commit": {
+            "abbreviatedOid": "61cd554"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-21T13:42:57Z",
+          "updatedAt": "2024-05-21T13:42:57Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Bulk of the document states ACS as Accepted Claims Set.  We need to agree on a common term and replace the entire document for consistency!",
+              "createdAt": "2024-05-21T13:42:57Z",
+              "updatedAt": "2024-05-21T13:42:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857T66o",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-05-21T14:32:00Z",
+          "updatedAt": "2024-05-21T18:02:49Z",
+          "comments": [
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\r\nProducers of RATS Conceptual Messages can assert contradictory assertions.\r\nFor example, a compromised Attester may produce false assertions that create a conflict with an RVP's issued Reference Values.\r\nIn essence, if Evidence is not corroborated by Reference Value Providers' (RVP) assertions, then the RVP's assertions are not included in the internal representation of an Attester's actual state constructed by Verifiers: Attester-specific Actual-state Claims Set (ACS).\r\n```",
+              "createdAt": "2024-05-21T14:32:00Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 113,
+              "body": "```suggestion\r\nFor example, if an appraisal procedure finds all of the components of a subsystem are configured correctly, the policy may direct the Verifier to produce new assertions, \"Subsystem=X\" has the Claim \"TRUSTED=TRUE\".\r\n```",
+              "createdAt": "2024-05-21T14:33:29Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 114,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-05-21T14:33:53Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 115,
+              "body": "```suggestion\r\nConsequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual Messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion (the authority), and has applied Conceptual Message constraints to the assertion.\r\n```\r\n\r\nWhat is a conceptual message constraint?",
+              "createdAt": "2024-05-21T14:34:41Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 118,
+              "body": "```suggestion\r\nThe CoRIM data model specified in this document covers the RATS Conceptual Message types, `Reference Values` and `Endorsements`.\r\nReference values and endorsements are required for Verifier reconciliation (and corresponding internal ACS creation) as illustrated in this Section.\r\n```",
+              "createdAt": "2024-05-21T14:35:35Z",
+              "updatedAt": "2024-05-21T18:33:27Z"
+            },
+            {
+              "originalPosition": 156,
+              "body": "```suggestion\r\n  ? &(authority: 3) => [ + $crypto-key-type-choice ]\r\n```",
+              "createdAt": "2024-05-21T15:05:43Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 816,
+              "body": "```suggestion\r\nEvidence is divided up into one or more `ev` relations where the `condition` ECT identifies the Attester from which Evidence was collected.\r\nIf the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.\r\n```\r\nWhat is meant by a session? Just serving simultaneous requests? I'm not sure this \"may be identified\" comment is valuable. I might even consider it detrimental since it could lead to subtle semantic errors.",
+              "createdAt": "2024-05-21T15:11:55Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 818,
+              "body": "```suggestion\r\nEvidence information is mapped to an `addition` ECT that populates each of the ECT fields.\r\nIf the Evidence doesn't have a value for the mandatory fields, the Verifier MUST NOT accept any assertions from the Evidence.\r\n```\r\n\"process\" is not specific enough.",
+              "createdAt": "2024-05-21T15:13:56Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 825,
+              "body": "are `;` delimiters also considered a cause for a line break?",
+              "createdAt": "2024-05-21T15:15:49Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 827,
+              "body": "```suggestion\r\nor may be supplied dynamically.\r\nThe handling of dynamic Evidence transformation algorithms is out of scope for this document.\r\n```",
+              "createdAt": "2024-05-21T15:16:10Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 831,
+              "body": "```suggestion\r\n### The Accepted Claims Set\r\n```",
+              "createdAt": "2024-05-21T15:16:30Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 837,
+              "body": "coalesce into 1 line per sentence?",
+              "createdAt": "2024-05-21T15:16:54Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 843,
+              "body": "Coalesce to 1 line?",
+              "createdAt": "2024-05-21T15:17:06Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 843,
+              "body": "```suggestion\r\nfor the purposes of this document, appraisal is described in terms of the above cited internal representation.\r\n```",
+              "createdAt": "2024-05-21T15:17:25Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 954,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:01:09Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 958,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:01:23Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 961,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:01:34Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 966,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:01:42Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 971,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:01:52Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 973,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:01:57Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 976,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:02:02Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 995,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:02:25Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 993,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:02:33Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 530,
+              "body": "I don't think phases 3 and 4 are distinct, since reference values are just a special case of conditional endorsements, i.e., if attester makes claims {c, ...}, then rvp makes claims {c, ...}.",
+              "createdAt": "2024-05-21T17:31:50Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 515,
+              "body": "```suggestion\r\nInputs are transformed from their external representations to an internal representation.\r\n```",
+              "createdAt": "2024-05-21T17:32:17Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 518,
+              "body": "I don't see this as distinct from phase 1, since transforming CMW to an internal representation can just be transforming to the augmentation. You don't necessarily need an intermediate representation.\r\n\r\nKeeping them distinct is fine for clarity so long as that's called out. Recommendation above.",
+              "createdAt": "2024-05-21T17:33:28Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 543,
+              "body": "Phases 5 and 6 are about verifier policy and therefore outside the RATS charter. I don't think we necessarily impose a phasing on policy engines. You might instead document this phasing in the Veraison implementation's documentation.\r\n\r\nThis is also why I think that separating policy from RATS is arbitrary, since the ACS abstract machine is obviously a mini policy engine, and CoRIM documents are obviously policy fragments. By imposing any semantics on their interpretation, you're imposing policy. There is no IETF standard for a policy evaluation language, though Rego is a potential implementation. CoRIM triples are thus a simplified policy evaluation language with a semantics specified through the ACS assert/match abstract machine. We can address the rewrite of \"augmentation\" and \"matching\" to be more clear about the semantic laws we're specifying in a follow-up PR related to https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/231\r\n\r\nI think the Appraisal Procedure section is good to include, but it should be considered an example implementation rather than exactly how the process should proceed.",
+              "createdAt": "2024-05-21T17:43:34Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 492,
+              "body": "\"CoRIM-based inputs\" is confusing. Evidence is not necessarily in CoRIM. Indeed your inputs are CoRIM and CMW and [...]. I see this section as more an appraisal of evidence with a CoRIM-encoded knowledge base plus unspecified policy representation and logic.",
+              "createdAt": "2024-05-21T17:45:46Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 156,
+              "body": "I don't think this authority has a single meaning. As a condition, it's meant as an OR. As a claim it's meant as an AND. By using the same data model and names, that becomes confusing. Further down you say comparisons are looking for overlap.. :(",
+              "createdAt": "2024-05-21T17:50:58Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 496,
+              "body": "I think this is a dangerous proposition to pose without referencing standards work underway to do this unification. I think there are phase distinction problems that muddy the waters and thus there should be a shared core that is neither concise evidence entirely nor CoRIM entirely. That shared core needs to be specified and not quod libet.",
+              "createdAt": "2024-05-21T17:53:10Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 495,
+              "body": "```suggestion\r\nCoRIM defines content media types for Conceptual Messages that include Endorsements and Reference Values.\r\n```",
+              "createdAt": "2024-05-21T17:55:08Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 502,
+              "body": "1 line?",
+              "createdAt": "2024-05-21T17:55:27Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 506,
+              "body": "```suggestion\r\nThey are not required to use the same internal representation or evaluation order described by this specification.\r\n```",
+              "createdAt": "2024-05-21T17:57:10Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 510,
+              "body": "```suggestion\r\nThe appraisal procedure is divided into several logical phases for clarity.\r\n```",
+              "createdAt": "2024-05-21T17:57:46Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "Indeed \"actual\" is more philosophical. We're only accepting an authority's attestation of actual state. Ceci n'est pas une pipe.",
+              "createdAt": "2024-05-21T18:00:09Z",
+              "updatedAt": "2024-05-21T18:02:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857V315",
+          "commit": {
+            "abbreviatedOid": "61cd554"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-21T18:26:58Z",
+          "updatedAt": "2024-05-21T18:26:58Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I'm OK with \"Actual-state Claims Set\" but it should be applied consistently. I prefer using ACS everywhere and define ACS in one place. Then it's easy to make a global change.",
+              "createdAt": "2024-05-21T18:26:58Z",
+              "updatedAt": "2024-05-21T18:26:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857V6fl",
+          "commit": {
+            "abbreviatedOid": "4a31c56"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-21T18:32:00Z",
+          "updatedAt": "2024-05-22T14:13:09Z",
+          "comments": [
+            {
+              "originalPosition": 118,
+              "body": "I don't understand what \"(0)\" and \"(1)\" are adding.",
+              "createdAt": "2024-05-21T18:32:00Z",
+              "updatedAt": "2024-05-22T14:13:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857dxbA",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:20:48Z",
+          "updatedAt": "2024-05-22T14:20:48Z",
+          "comments": [
+            {
+              "originalPosition": 502,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:20:48Z",
+              "updatedAt": "2024-05-22T14:20:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eL_9",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:49:02Z",
+          "updatedAt": "2024-05-22T14:49:02Z",
+          "comments": [
+            {
+              "originalPosition": 825,
+              "body": "no, not a cause for a line break\r\nin simple kramdown `;` is just a character used in sentences",
+              "createdAt": "2024-05-22T14:49:02Z",
+              "updatedAt": "2024-05-22T14:49:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eNcx",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:51:16Z",
+          "updatedAt": "2024-05-22T14:51:17Z",
+          "comments": [
+            {
+              "originalPosition": 837,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:51:17Z",
+              "updatedAt": "2024-05-22T14:51:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eNn1",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:51:29Z",
+          "updatedAt": "2024-05-22T14:51:29Z",
+          "comments": [
+            {
+              "originalPosition": 827,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:51:29Z",
+              "updatedAt": "2024-05-22T14:51:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eOHV",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:51:58Z",
+          "updatedAt": "2024-05-22T14:51:59Z",
+          "comments": [
+            {
+              "originalPosition": 843,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:51:58Z",
+              "updatedAt": "2024-05-22T14:51:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eO8L",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:52:53Z",
+          "updatedAt": "2024-05-22T14:52:54Z",
+          "comments": [
+            {
+              "originalPosition": 843,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:52:54Z",
+              "updatedAt": "2024-05-22T14:52:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857ePdS",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:53:42Z",
+          "updatedAt": "2024-05-22T14:53:42Z",
+          "comments": [
+            {
+              "originalPosition": 954,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:53:42Z",
+              "updatedAt": "2024-05-22T14:53:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857ePu0",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:54:07Z",
+          "updatedAt": "2024-05-22T14:54:07Z",
+          "comments": [
+            {
+              "originalPosition": 958,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:54:07Z",
+              "updatedAt": "2024-05-22T14:54:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eP9s",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:54:27Z",
+          "updatedAt": "2024-05-22T14:54:27Z",
+          "comments": [
+            {
+              "originalPosition": 961,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:54:27Z",
+              "updatedAt": "2024-05-22T14:54:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eQZF",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:55:06Z",
+          "updatedAt": "2024-05-22T14:55:06Z",
+          "comments": [
+            {
+              "originalPosition": 966,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:55:06Z",
+              "updatedAt": "2024-05-22T14:55:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eQfQ",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:55:15Z",
+          "updatedAt": "2024-05-22T14:55:15Z",
+          "comments": [
+            {
+              "originalPosition": 971,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:55:15Z",
+              "updatedAt": "2024-05-22T14:55:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eQmP",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:55:25Z",
+          "updatedAt": "2024-05-22T14:55:25Z",
+          "comments": [
+            {
+              "originalPosition": 973,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:55:25Z",
+              "updatedAt": "2024-05-22T14:55:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eQ8D",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:55:54Z",
+          "updatedAt": "2024-05-22T14:55:55Z",
+          "comments": [
+            {
+              "originalPosition": 973,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:55:55Z",
+              "updatedAt": "2024-05-22T14:55:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eREI",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:56:06Z",
+          "updatedAt": "2024-05-22T14:56:06Z",
+          "comments": [
+            {
+              "originalPosition": 976,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:56:06Z",
+              "updatedAt": "2024-05-22T14:56:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eRXN",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:56:33Z",
+          "updatedAt": "2024-05-22T14:56:34Z",
+          "comments": [
+            {
+              "originalPosition": 995,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:56:33Z",
+              "updatedAt": "2024-05-22T14:56:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eRj_",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:56:51Z",
+          "updatedAt": "2024-05-22T14:56:51Z",
+          "comments": [
+            {
+              "originalPosition": 993,
+              "body": "fixed",
+              "createdAt": "2024-05-22T14:56:51Z",
+              "updatedAt": "2024-05-22T14:56:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eSh4",
+          "commit": {
+            "abbreviatedOid": "4857331"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T14:57:52Z",
+          "updatedAt": "2024-05-22T14:57:52Z",
+          "comments": [
+            {
+              "originalPosition": 495,
+              "body": "combined old and new",
+              "createdAt": "2024-05-22T14:57:52Z",
+              "updatedAt": "2024-05-22T14:57:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857eeRN",
+          "commit": {
+            "abbreviatedOid": "787c0c2"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T15:11:35Z",
+          "updatedAt": "2024-05-22T15:11:36Z",
+          "comments": [
+            {
+              "originalPosition": 492,
+              "body": "CMW is an umbrella structure ofr all types of RATS Conceptual Messages. You could - I am making things up here - bundle TPM Evidence, EAT Attestation Results, and a CoRIM in a CMW (each with their own media type).",
+              "createdAt": "2024-05-22T15:11:35Z",
+              "updatedAt": "2024-05-22T15:11:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI857efGk",
+          "commit": {
+            "abbreviatedOid": "787c0c2"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-22T15:12:51Z",
+          "updatedAt": "2024-05-22T15:12:51Z",
+          "comments": [
+            {
+              "originalPosition": 496,
+              "body": "I do not want to loose this concern/comment when we merge the PR. @deeglaze Do you want to rescue this comment into a better visible issue?",
+              "createdAt": "2024-05-22T15:12:51Z",
+              "updatedAt": "2024-05-22T15:12:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8570pNj",
+          "commit": {
+            "abbreviatedOid": "e3ee627"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-05-24T16:36:14Z",
+          "updatedAt": "2024-05-24T18:17:39Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "```suggestion\r\nThis document specifies Concise Reference Integrity Manifests (CoRIM)\u2013a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.\r\n```\r\nSemicolon is the wrong punctuation for the explanatory fragment. An emdash is suitable.",
+              "createdAt": "2024-05-24T16:36:14Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "A semicolon is where you could have chosen to end the sentence but didn't. The following text should be a grammatically a sentence of its own, but the manner of use of \"because\" makes this a fragment and not a complete sentence.\r\n\r\nI also don't quite understand the use of \"besides,\" here, since it's typically used as an argumentative follow-up to a rhetorical dismissal. I would suggest \"As such,\".\r\n\r\n```suggestion\r\nAs such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module that is measured amongst a long chain of measurements.\r\n```\r\n\r\n```",
+              "createdAt": "2024-05-24T16:44:55Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 66,
+              "body": "```suggestion\r\nAttesters vary across vendors and even across products from a single vendor.\r\n```",
+              "createdAt": "2024-05-24T16:46:12Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 67,
+              "body": "Run-on passive sentence. Attesters are named globally uniquely by environment, no? A family of attesters over a system's lifecycle can evolve. Or are we talking about the mutable state of an attester changing and therefore affecting the measurements that the attester signs? This hints at a confusing overloading of \"Attester\" as either the  the root of trust for measurement or the node that is being measured. Presumably the attester itself isn't changing, and even if the evidence collection code changes, that state change is pre-approved by the initially measured logic of the attester.\r\n\r\nThis sentence also doesn't fit the narrative prior or following. What do you mean to convey here? Are you continuing the thought that within a single product the attester may vary? I think that calls back to the notion of a family of attesters as new product versions roll out.\r\n\r\n```suggestion\r\nWithin a single product even, a newly deployed version may alter the Attester's semantics amongst the product's prior family of Attesters.\r\nNew versions may bring new measurement types from Evidence and new security attributes from an Endorser.\r\n```",
+              "createdAt": "2024-05-24T16:52:05Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\r\nCoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view. See {{sec-verifier-rec}}.\r\n```",
+              "createdAt": "2024-05-24T17:00:38Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "\"Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.\"",
+              "createdAt": "2024-05-24T17:02:12Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 173,
+              "body": "Passive.\r\n```suggestion\r\nWhile this specification focuses on the CoRIM format itself, it is vital to understand its intended meaning for the mechanics of how Verifiers should process CoRIM documents.\r\n```",
+              "createdAt": "2024-05-24T17:05:25Z",
+              "updatedAt": "2024-05-29T14:38:05Z"
+            },
+            {
+              "originalPosition": 177,
+              "body": "```suggestion\r\nNamely, the provenance of the inputs is tracked as *authority*.\r\nIn the case of CoRIM, the CoRIM issuer identifies its authority.\r\n```",
+              "createdAt": "2024-05-24T17:06:56Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 182,
+              "body": "```suggestion\r\nThe Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.\r\n```\r\nThough see below.",
+              "createdAt": "2024-05-24T17:08:17Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 185,
+              "body": "Plurality mismatch. Best to attempt to use singular terms when possible.\r\n```suggestion\r\nIn essence, if Evidence is not corroborated by a Reference Value Provider's (RVP) assertions, then the RVP's Claims are not included in the internal representation of an Attester's actual state, a.k.a., Accepted Claims Set (ACS).\r\n```\r\nThough we should get on the same page about what is a property, assertion, claim, etc. Given Ned's comment that this is not a JWT, probably using \"Claim\" is indeed the wrong approach. He proposed \"property\", but that doesn't sound right to me.\r\n\r\nWe use the term \"assertion\" a lot, so perhaps just \"assertions\" is better, like you have here? Each authority asserts a measurement, (conditional) endorsement, or reference value, and acceptance is based on policy for who asserted what.\r\n\r\nBy using \"assertion\", the logical connection between matching and implication is clearer as well. The ACS becomes the CAS, or \"current assertions set\"?\r\n\r\nLook, pink is clearly the best color for bike sheds.\r\n\r\n---\r\n\r\nFor another note, \"corroborated\" as the chosen term is going to cause some communication problems with my colleagues whose first language is not English. It's a bit of a tongue twister. I've been calling this notion \"support\" in my own writings, and its use in programming languages' description of scope follows similar semantics.\r\n\r\nWhen I want to know if an assertion is supported by an authority X, then I check if only assertions with X in their support collectively imply the assertion. That's the entirety of the logical interpretation of the ACS and its interaction with verifier semantics. The (profile-specific) model then contains the meat of what implications hold for what data representations.",
+              "createdAt": "2024-05-24T17:09:49Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 211,
+              "body": "Appraisal policy and appraisal procedure are terms previously encountered, but not an appraisal itself, which I understand as describing a result.\r\n```suggestion\r\nIn this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the appraisal procedure.\r\n```\r\nThe language describing a language is a metalanguage. There is no \"internal\" for a standard.",
+              "createdAt": "2024-05-24T17:27:10Z",
+              "updatedAt": "2024-05-29T14:53:25Z"
+            },
+            {
+              "originalPosition": 221,
+              "body": "Plurality mismatch\r\n```suggestion\r\nConceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.\r\n```",
+              "createdAt": "2024-05-24T17:29:58Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 222,
+              "body": "Are ACS and ARS the only two things that have internal representations or do Conceptual Messages have as well? If so, please add the Oxford comma. If not, please rephrase for unambiguous parse.\r\n```suggestion\r\nInternal representations of Conceptual Messages, ACS, and ARS should satisfy the following requirements for Verifier reconciliation and appraisal processing:\r\n```\r\n\r\nThis also appears to be the first use of \"ARS\", so I don't know what its meaning is. Line 1754 appears to give a technical definition, but not the acronym expansion. It looks like it should be \"ARs\" for \"Attestation Results\", but maybe there's a different meaning for the 'S'?",
+              "createdAt": "2024-05-24T17:32:03Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 236,
+              "body": "```suggestion\r\n| Evidence | List of Evidence claims | If the Attester is authenticated, add Evidence claims to the ACS with Attester authority |\r\n```",
+              "createdAt": "2024-05-24T17:35:39Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 237,
+              "body": "```suggestion\r\n| Reference Values | List of Reference Values claims | If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer is added to those claims. |\r\n```",
+              "createdAt": "2024-05-24T17:36:54Z",
+              "updatedAt": "2024-05-31T14:11:29Z"
+            },
+            {
+              "originalPosition": 239,
+              "body": "```suggestion\r\n| Series Endorsements | List of expected actual state claims, Series of tuples containing selection and series Endorsement claims | If the list of expected claims are in the ACS, and if the series selection condition is satisfied, then add the series Endorsement claims for the first series tuple with satisfied condition to the ACS with Endorser authority |\r\n```",
+              "createdAt": "2024-05-24T17:38:51Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 240,
+              "body": "```suggestion\r\n| Verifier | List of expected actual state claims, List of Verifier-generated claims | If the list of expected claims are in the ACS, then add the list of Verifier-generated claims to the ACS with Verifier authority |\r\n```",
+              "createdAt": "2024-05-24T17:41:09Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 241,
+              "body": "```suggestion\r\n| Policy | List of expected actual state claims, List of Policy-generated claims | If the list of expected claims are in the ACS, then add the list of Policy-generated claims to the ACS with Policy Owner authority |\r\n```",
+              "createdAt": "2024-05-24T17:41:22Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 253,
+              "body": "I think in terms of math, so inputs are immutable values provided to a deterministic function. I don't think of inputs as changing. Can we change the opening to immediately dispel any \"quantum woo\" that the section title induces?\r\n\r\n\"Input quantization refers to the approximation of a continuous stream of knowledge base state changes (i.e., the set of inputs to appraisal). Approximation is required because system latency is always non-zero. For example, a certificate can be revoked immediately after checking that it's current. A missing security property may be added because the analysis job to assign it just finished.\"\r\n\r\nEven still, the use of quantum seems unnecessary. I would just ask for appraisal to be hermetic given the same starting knowledge base.",
+              "createdAt": "2024-05-24T17:48:44Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 254,
+              "body": "```suggestion\r\nThe input quantum refers to the interval when a Verifier stops accepting new inputs and processes current inputs.\r\n```",
+              "createdAt": "2024-05-24T17:59:25Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 546,
+              "body": "```suggestion\r\n: A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.\r\nThe ECT also contains authority which identifies the entity that authored the ECT.\r\n```",
+              "createdAt": "2024-05-24T18:02:46Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 557,
+              "body": "```suggestion\r\n: The entity asserting that a claim is true.\r\nTypically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.\r\n```",
+              "createdAt": "2024-05-24T18:03:09Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 560,
+              "body": "```suggestion\r\n: A structure that holds ECTs that have been appraised.\r\nThe ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.\r\n```",
+              "createdAt": "2024-05-24T18:03:59Z",
+              "updatedAt": "2024-05-31T14:27:35Z"
+            },
+            {
+              "originalPosition": 644,
+              "body": "```suggestion\r\nThe `addition` is a list of ECTs with Evidence to be appraised.\r\n```",
+              "createdAt": "2024-05-24T18:04:41Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 669,
+              "body": "```suggestion\r\nIf the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.\r\n```\r\nOverlap is not the right property, since you don't want to authorize claims by line-item, but rather as a whole.",
+              "createdAt": "2024-05-24T18:07:40Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 1278,
+              "body": "I don't think we've discussed semantics of assigning namespaces at all. They appear to be a means of sharing profile-local extensions across multiple profiles, but there is no discussions for how these come into being. We can punt on this for now, but please add a reference to https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/235",
+              "createdAt": "2024-05-24T18:12:34Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 1322,
+              "body": "```suggestion\r\nA profile may specify handling for new CBOR tagged Reference Values.\r\nThe profile must specify how to compare the CBOR tagged Reference Value against the ACS.\r\n```",
+              "createdAt": "2024-05-24T18:13:19Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 1323,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-05-24T18:13:26Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 1324,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-05-24T18:13:33Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 1330,
+              "body": "```suggestion\r\nNote that the verifier may compare Reference Values in any order, so the comparison should not be stateful.\r\n```",
+              "createdAt": "2024-05-24T18:13:56Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 1331,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-05-24T18:14:04Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 665,
+              "body": "```suggestion\r\nAn internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states\r\n```\r\n```suggestion\r\nAn internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states assserted with RVP authority.\r\n```",
+              "createdAt": "2024-05-24T18:14:26Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 666,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-05-24T18:14:38Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            },
+            {
+              "originalPosition": 868,
+              "body": "```suggestion\r\n> * How the Attesting Environment is identified in Evidence\r\n> * Which namespace each of its local extensions are bound to\r\n```\r\n\r\nMaybe, but feel free to kick over do issue #235",
+              "createdAt": "2024-05-24T18:16:15Z",
+              "updatedAt": "2024-05-24T18:17:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858odHe",
+          "commit": {
+            "abbreviatedOid": "e32c461"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-31T14:21:17Z",
+          "updatedAt": "2024-05-31T14:21:17Z",
+          "comments": [
+            {
+              "originalPosition": 253,
+              "body": "Recommend creating a new issue to reword the \"quantizing inputs\" section to remove \"quantum\".",
+              "createdAt": "2024-05-31T14:21:17Z",
+              "updatedAt": "2024-05-31T14:21:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858ofgO",
+          "commit": {
+            "abbreviatedOid": "e32c461"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-31T14:25:46Z",
+          "updatedAt": "2024-05-31T14:25:46Z",
+          "comments": [
+            {
+              "originalPosition": 561,
+              "body": "```suggestion\r\nAccepted Claims Set (ACS):\r\n```",
+              "createdAt": "2024-05-31T14:25:46Z",
+              "updatedAt": "2024-05-31T14:25:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858T8j8",
+          "commit": {
+            "abbreviatedOid": "54ebcc6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-29T14:31:19Z",
+          "updatedAt": "2024-05-31T14:48:02Z",
+          "comments": [
+            {
+              "originalPosition": 67,
+              "body": "Need to express it better !\r\n",
+              "createdAt": "2024-05-29T14:31:19Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            },
+            {
+              "originalPosition": 191,
+              "body": "`Appraisal Claims Set` (Again this is ACS)",
+              "createdAt": "2024-05-29T14:50:23Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            },
+            {
+              "originalPosition": 222,
+              "body": "ARS is not defined till this point!",
+              "createdAt": "2024-05-29T14:56:53Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            },
+            {
+              "originalPosition": 255,
+              "body": "```suggestion\r\nTo be completed!\r\nInputs may change soon after a Verifier processes them causing the Verifier to consider how often it should check for updated inputs.\r\n```",
+              "createdAt": "2024-05-31T14:23:34Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            },
+            {
+              "originalPosition": 561,
+              "body": "```suggestion\r\nAccepted Claims Set (ACS):\r\n```\r\n",
+              "createdAt": "2024-05-31T14:28:05Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            },
+            {
+              "originalPosition": 580,
+              "body": "```suggestion\r\nAdditionally, ECTs define an internal representation of the ACS and ARS. See {{sec-ir-acs}} and {{sec-ir-ars}}.\r\n```",
+              "createdAt": "2024-05-31T14:31:26Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            },
+            {
+              "originalPosition": 669,
+              "body": "```suggestion\r\nAn internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.\r\n```",
+              "createdAt": "2024-05-31T14:36:14Z",
+              "updatedAt": "2024-05-31T14:48:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858ou9R",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGMT!",
+          "createdAt": "2024-05-31T14:51:05Z",
+          "updatedAt": "2024-05-31T14:51:05Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI858ovQF",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-05-31T14:51:44Z",
+          "updatedAt": "2024-05-31T14:51:44Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI858prIi",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "some late comments, apologies",
+          "createdAt": "2024-05-31T16:48:16Z",
+          "updatedAt": "2024-05-31T17:24:21Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "```suggestion\r\nIn a complex supply chain, multiple actors will likely produce these values over several points in time.\r\n```",
+              "createdAt": "2024-05-31T16:48:16Z",
+              "updatedAt": "2024-05-31T17:24:21Z"
+            },
+            {
+              "originalPosition": 71,
+              "body": "```suggestion\r\nThis document specifies Concise Reference Integrity Manifests (CoRIM), a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.\r\n```",
+              "createdAt": "2024-05-31T16:50:12Z",
+              "updatedAt": "2024-05-31T17:24:21Z"
+            },
+            {
+              "originalPosition": 91,
+              "body": "This sentence is not entirely clear to me.",
+              "createdAt": "2024-05-31T16:53:54Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            },
+            {
+              "originalPosition": 96,
+              "body": "```suggestion\r\nA Verifier needs to reconcile its various inputs, with CoRIM being one of them.\r\nIn addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.\r\nBy using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.\r\nThe origin of the inputs is tracked as *authority*.\r\nThe authority for the Claims in a CoRIM is the CoRIM issuer.\r\n```",
+              "createdAt": "2024-05-31T16:57:04Z",
+              "updatedAt": "2024-06-05T14:48:44Z"
+            },
+            {
+              "originalPosition": 102,
+              "body": "```suggestion\r\nFor example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).\r\n```",
+              "createdAt": "2024-05-31T17:09:20Z",
+              "updatedAt": "2024-06-05T14:26:17Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "```suggestion\r\nIn essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the internal representation of an Attester's actual state, a.k.a., Accepted Claims Set (ACS).\r\n```",
+              "createdAt": "2024-05-31T17:10:45Z",
+              "updatedAt": "2024-06-05T14:29:02Z"
+            },
+            {
+              "originalPosition": 113,
+              "body": "```suggestion\r\nThe CoRIM data model specified in this document covers the RATS Conceptual Message types, \"Reference Values\" and \"Endorsements\".\r\n```",
+              "createdAt": "2024-05-31T17:15:16Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            },
+            {
+              "originalPosition": 114,
+              "body": "```suggestion\r\nReference values and Endorsements are required for Verifier reconciliation, and Evidence is required for corresponding internal ACS creation as illustrated in {{sec-interact-acs}}.\r\n```",
+              "createdAt": "2024-05-31T17:16:39Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            },
+            {
+              "originalPosition": 126,
+              "body": "need to expand \"ARS\" on first use :-)",
+              "createdAt": "2024-05-31T17:18:27Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            },
+            {
+              "originalPosition": 133,
+              "body": "unclear what \"selection\" means in this context",
+              "createdAt": "2024-05-31T17:19:36Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            },
+            {
+              "originalPosition": 141,
+              "body": "add a reference to the tracking issue instead",
+              "createdAt": "2024-05-31T17:20:53Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            },
+            {
+              "originalPosition": 253,
+              "body": "I agree with @deeglaze ",
+              "createdAt": "2024-05-31T17:22:00Z",
+              "updatedAt": "2024-05-31T17:24:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858qBKX",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-31T17:38:24Z",
+          "updatedAt": "2024-05-31T17:38:25Z",
+          "comments": [
+            {
+              "originalPosition": 133,
+              "body": "It is a second stage condition. \r\nThe series structure is a list of condition-addition 2-tuples. Selection is another word for condition that isn't confused with the endorsement's first-stage condition.\r\nPossibly, the second sentence here is a clearer explanation of selection. The current text assumes the reader read ahead to understand it's use here.",
+              "createdAt": "2024-05-31T17:38:24Z",
+              "updatedAt": "2024-05-31T17:38:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858qUPv",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-31T18:20:57Z",
+          "updatedAt": "2024-05-31T18:20:57Z",
+          "comments": [
+            {
+              "originalPosition": 133,
+              "body": "OK, thanks. The problem is this is not self-contained.  At least there should be a forward reference.",
+              "createdAt": "2024-05-31T18:20:57Z",
+              "updatedAt": "2024-05-31T18:20:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858q1w5",
+          "commit": {
+            "abbreviatedOid": "b7c9e50"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested change",
+          "createdAt": "2024-05-31T19:45:19Z",
+          "updatedAt": "2024-05-31T19:46:11Z",
+          "comments": [
+            {
+              "originalPosition": 133,
+              "body": "```suggestion\r\n| Series Endorsements | List of expected actual state claims and a series of selection-addition tuples | If the expected claims are in the ACS, and if the series selection condition is satisfied, then add the additional claims to the ACS with Endorser authority. See {{sec-ir-end-val}} |\r\n```",
+              "createdAt": "2024-05-31T19:45:19Z",
+              "updatedAt": "2024-05-31T19:46:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI858rBAH",
+          "commit": {
+            "abbreviatedOid": "b7c9e50"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-05-31T20:15:12Z",
+          "updatedAt": "2024-05-31T20:15:12Z",
+          "comments": [
+            {
+              "originalPosition": 133,
+              "body": "nice, thanks!",
+              "createdAt": "2024-05-31T20:15:12Z",
+              "updatedAt": "2024-05-31T20:15:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859Ibfn",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:17:47Z",
+          "updatedAt": "2024-06-05T14:17:47Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "```suggestion\r\nThis specification describes the CoRIM format and documents how a Verifier should process the CoRIM to enable CoRIM authors to convey their intended meaning.\r\n```",
+              "createdAt": "2024-06-05T14:17:47Z",
+              "updatedAt": "2024-06-05T14:55:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859Iffs",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:23:40Z",
+          "updatedAt": "2024-06-05T14:23:40Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "Thanks for the attempt to clarify the sentence.\r\n\r\nHowever, the document focuses on the description of the data format & the processing.  There is no primary vs secondary focus.",
+              "createdAt": "2024-06-05T14:23:40Z",
+              "updatedAt": "2024-06-05T14:23:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859IgPN",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:24:46Z",
+          "updatedAt": "2024-06-05T14:24:46Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "We agreed to keep the older version, of the text as there is no permanent external representation and New text 167 creates that `ambiguity`",
+              "createdAt": "2024-06-05T14:24:46Z",
+              "updatedAt": "2024-06-05T14:24:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859IpX1",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:36:45Z",
+          "updatedAt": "2024-06-05T14:36:45Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "which \"older version\" are you referring to?\r\n\r\nBoth OLD and NEW have the same \"external\"...",
+              "createdAt": "2024-06-05T14:36:45Z",
+              "updatedAt": "2024-06-05T14:36:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859IqDh",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:37:45Z",
+          "updatedAt": "2024-06-05T14:37:45Z",
+          "comments": [
+            {
+              "originalPosition": 126,
+              "body": "```suggestion\r\nInternal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) should satisfy the following requirements for Verifier reconciliation and appraisal processing:\r\n```",
+              "createdAt": "2024-06-05T14:37:45Z",
+              "updatedAt": "2024-06-05T14:37:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859IrcI",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:39:41Z",
+          "updatedAt": "2024-06-05T14:39:42Z",
+          "comments": [
+            {
+              "originalPosition": 126,
+              "body": "Add a reference to ARS",
+              "createdAt": "2024-06-05T14:39:42Z",
+              "updatedAt": "2024-06-05T14:39:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859ItT2",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:42:34Z",
+          "updatedAt": "2024-06-05T14:42:34Z",
+          "comments": [
+            {
+              "originalPosition": 146,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-06-05T14:42:34Z",
+              "updatedAt": "2024-06-05T14:42:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859ItkZ",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T14:42:59Z",
+          "updatedAt": "2024-06-05T14:42:59Z",
+          "comments": [
+            {
+              "originalPosition": 142,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-06-05T14:42:59Z",
+              "updatedAt": "2024-06-05T14:42:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859JT1j",
+          "commit": {
+            "abbreviatedOid": "8750da9"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T15:45:07Z",
+          "updatedAt": "2024-06-05T15:45:07Z",
+          "comments": [
+            {
+              "originalPosition": 141,
+              "body": "issue #242 ",
+              "createdAt": "2024-06-05T15:45:07Z",
+              "updatedAt": "2024-06-05T15:45:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI859JeuK",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-05T16:01:22Z",
+          "updatedAt": "2024-06-05T16:01:22Z",
+          "comments": [
+            {
+              "originalPosition": 126,
+              "body": "Done",
+              "createdAt": "2024-06-05T16:01:22Z",
+              "updatedAt": "2024-06-05T16:01:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8599vuR",
+          "commit": {
+            "abbreviatedOid": "69acee3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-12T15:07:50Z",
+          "updatedAt": "2024-06-12T15:07:51Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "> which \"older version\" are you referring to?\r\n> \r\n> Both OLD and NEW have the same \"external\"...\r\n\r\nThe changes from @thomas-fossati has been addressed.",
+              "createdAt": "2024-06-12T15:07:50Z",
+              "updatedAt": "2024-06-12T15:07:51Z"
+            }
+          ]
         }
       ]
     }
