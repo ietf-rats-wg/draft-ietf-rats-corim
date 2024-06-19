@@ -489,11 +489,11 @@ The following describes each child item of this group.
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
-A CoMID tag contains information about hardware, firmware, or module composition.
+A CoMID tag contains information about subjects such as hardware, firmware, or module composition.
 
 Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
 
-A CoMID defines several types of rules for accumulating EPTs, using "triples" semantics.
+A CoMID represents expectations for Evidence appraisal with "triples".
 
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
@@ -781,19 +781,17 @@ The types defined for a group identified are UUID and variable-length opaque byt
 
 A Property may either be a measurement that can be directly compared with attestation evidence, or it can be an endorsement of a quality that is not directly comparable with evidence.
 The scope of a Property is defined by the `environment-map` and optional `pkey` it appears with.
+
+Measurements can be of a variety of things including software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc. Measurements comprise raw values, digests, or status information.
+
+Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
 An `environment-map` contains at least one of: class, instance, or group.
 The more elements in the `environment-map`, the narrower the scope, since more elements must be in common to match.
 Properties paired with an `environment-map` that contains only a class may be referred to as class Properties, and similarly with instance and group Properties for respective elements of the `environment-map`.
 
-Measurements can be of a variety of things including software, firmware,
-configuration files, read-only memory, fuses, IO ring configuration, partial
-reconfiguration regions, etc. Measurements comprise raw values, digests, or
-status information.
-
-An environment may have one or more elements.
-Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
-Claims can have class, instance or group scope.
-This is typically determined by the triple's environment.
+A property from an Attester is called Evidence.
+A property in a `reference-triple-record` is called a Reference Value.
+A property in another triple is called an Endorsement.
 
 The supply chain entity that is responsible for providing the the properties (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
 If a different entity is authorized to provide property values, the CoRIM signer may delegate authorization of specific properties to a different authority with the `authorized-by` entry in the `properties-map`.
