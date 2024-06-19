@@ -791,11 +791,13 @@ reconfiguration regions, etc. Measurements comprise raw values, digests, or
 status information.
 
 An environment may have one or more elements.
-Each element can have a dedicated measurement/endorsement or multiple elements could be combined into a single measurement.
+Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
+Claims can have class, instance or group scope.
+This is typically determined by the triple's environment.
 
-The supply chain entity that is responsible for providing the the claims (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
-If a different entity is authorized to provide claim values, the CoRIM signer may delegate authorization of specific claims to a different authority with the `authorized-by` entry in the `properties-map`.
-The meaning of `authorized-by` should be read as an "only if" implication that the CoRIM signer authorizes a claim only if the named authority also authorizes the claim.
+The supply chain entity that is responsible for providing the the properties (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
+If a different entity is authorized to provide property values, the CoRIM signer may delegate authorization of specific properties to a different authority with the `authorized-by` entry in the `properties-map`.
+The meaning of `authorized-by` should be read as an "only if" implication that the CoRIM signer authorizes a property only if the named authority also authorizes the property.
 Note that circular `authorized-by` references do not constitute authorization by any authority in the cycle.
 
 
