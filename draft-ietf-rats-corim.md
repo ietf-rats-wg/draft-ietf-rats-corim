@@ -2068,10 +2068,10 @@ Additions to the ACS MUST be atomic.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-This specification defines the comparison algorithm for the codepoints and CBOR tagged values described in sub-sections below.
-A CoRIM profile may define additional tags and their matching algorithms.
-Specifications that extend CoMID MUST also define comparison algorithms for the extended values.
-Any new codepoints requiring non-default comparison MUST add a CBOR tag to the extension that describs the desired behaviour.
+This specification defines the comparison algorithm for the codepoints described in sub-sections below.
+A CoRIM profile may define additional negative codepoints and their matching algorithms.
+Specifications that extend CoMID MUST also define comparison algorithms for their added codepoints, and augment comparison algorithms if existing codepoints' value CDDL expands.
+If a codepoint's comparison algorithm is not stated or is referred to as "default", then the Verifier MUST compare the binary equality of the CBOR encodings of the values.
 
 ### Environment Comparison {#sec-compare-env}
 
@@ -2084,19 +2084,15 @@ The comparison algorithm performed depends on the value of the codepoint being c
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/203
 
-If the `measurement-values-map` value has an associated CBOR tag.
-The comparison algorithm should comprehend the structure identified by the CBOR tag.
+If the `measurement-values-map` value has an associated CBOR tag, the comparison algorithm should comprehend the structure identified by the CBOR tag.
 
-If the stateful environment `measurement-values-map` value is tagged with a CBOR tag {{-cbor}} then the Verifier MUST use the comparison algorithm associated with that tag.
+If the Verifier does not recognize a CBOR tag value then the value MUST NOT match.
 
-If the value is not tagged then the Verifier MUST use the comparison algorithm associated with the `measurement-values-map` codepoint for the entry.
+Note: CBOR tags are useful for discriminating values amongst alternates, but the comparison of tagged values is still determined by the codepoint they appear under. It is recommended but not required to compare values with a specific CBOR tag the same way across codepoints. For this reason, it is recommended to specify a default comparison algorithm with the CBOR tag's registration.
 
-If the Verifier does not recognize the stateful environment CBOR tag value then the stateful environment does not match.
+Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
 
-If the stateful environment is not tagged and the `measurement-values-map` key is a value with handling described in the sub-sections below, then the algorithm appropriate to that key is used to match the entries.
-
-If the stateful environment is not tagged, and the `measurement-values-map` key is not a value described below, then the entries are compared using binary comparison of their CBOR encoded values.
-If the values are not binary identical then the stateful environment does not match.
+The following subsections define non-default comparison algorithms for some `measurement-values-map` key codepoints.
 
 ##### Comparison for svn entries
 
