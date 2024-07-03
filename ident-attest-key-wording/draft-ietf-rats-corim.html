@@ -1324,7 +1324,7 @@ representing Endorsements and Reference Values in CBOR format.<a href="#section-
                         <p id="section-toc.1-1.3.2.1.2.4.2.4.1"><a href="#section-3.1.4.4" class="auto internal xref">3.1.4.4</a>.  <a href="#name-device-identity-triple" class="internal xref">Device Identity Triple</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.4.2.5">
-                        <p id="section-toc.1-1.3.2.1.2.4.2.5.1"><a href="#section-3.1.4.5" class="auto internal xref">3.1.4.5</a>.  <a href="#name-attestation-keys-triple" class="internal xref">Attestation Keys Triple</a></p>
+                        <p id="section-toc.1-1.3.2.1.2.4.2.5.1"><a href="#section-3.1.4.5" class="auto internal xref">3.1.4.5</a>.  <a href="#name-attest-key-triple" class="internal xref">Attest Key Triple</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.4.2.6">
                         <p id="section-toc.1-1.3.2.1.2.4.2.6.1"><a href="#section-3.1.4.6" class="auto internal xref">3.1.4.6</a>.  <a href="#name-domain-dependency-triple" class="internal xref">Domain Dependency Triple</a></p>
@@ -3129,20 +3129,22 @@ The Verifier SHOULD perform offline verification of keys contained in Device Ide
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as  <code>endorsed-triples</code>.<a href="#section-3.1.4.4-3" class="pilcrow">¶</a></p>
 <p id="section-3.1.4.4-4">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-3.1.4.4-4" class="pilcrow">¶</a></p>
 <p id="section-3.1.4.4-5">If a key has usage restrictions that limits its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.<a href="#section-3.1.4.4-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-3.1.4.4-6">
+<p id="section-3.1.4.4-6">Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Alternatively, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-3.1.4.4-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-3.1.4.4-7">
 <pre>
 identity-triple-record = [
   environment-map
   [ + $crypto-key-type-choice ]
 ]
-</pre><a href="#section-3.1.4.4-6" class="pilcrow">¶</a>
+</pre><a href="#section-3.1.4.4-7" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="sec-comid-triple-attest-key">
 <section id="section-3.1.4.5">
-            <h5 id="name-attestation-keys-triple">
-<a href="#section-3.1.4.5" class="section-number selfRef">3.1.4.5. </a><a href="#name-attestation-keys-triple" class="section-name selfRef">Attestation Keys Triple</a>
+            <h5 id="name-attest-key-triple">
+<a href="#section-3.1.4.5" class="section-number selfRef">3.1.4.5. </a><a href="#name-attest-key-triple" class="section-name selfRef">Attest Key Triple</a>
             </h5>
 <p id="section-3.1.4.5-1">An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
 The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
@@ -3153,13 +3155,15 @@ The Verifier SHOULD perform offline verification of keys contained in Attest Key
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as  <code>endorsed-triples</code>.<a href="#section-3.1.4.5-3" class="pilcrow">¶</a></p>
 <p id="section-3.1.4.5-4">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-3.1.4.5-4" class="pilcrow">¶</a></p>
 <p id="section-3.1.4.5-5">If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.<a href="#section-3.1.4.5-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-3.1.4.5-6">
+<p id="section-3.1.4.5-6">Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Alternatively, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-3.1.4.5-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-3.1.4.5-7">
 <pre>
 attest-key-triple-record = [
   environment-map
   [ + $crypto-key-type-choice ]
 ]
-</pre><a href="#section-3.1.4.5-6" class="pilcrow">¶</a>
+</pre><a href="#section-3.1.4.5-7" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
