@@ -166,11 +166,19 @@ This specification describes the CoRIM format and documents how a Verifier shoul
 A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
 In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
 By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
-The origin of the inputs is tracked as *authority*.
-The authority for the Claims in a CoRIM is the CoRIM issuer.
 
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
-Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
+These individual principals of the conversation may have their identity rooted back to some *authority* farther up the certificate chain than the signing key itself, such as a digital certificate authority intermediate or root key.
+The origin of contributions/inputs to the conversation are tracked at the granularity of authority, so CoRIM authors can predicate their reference measurements or endorsements based on existing properties rooted from the same authority.
+
+CoRIM inputs to the conversation include measurements within a specific Environment.
+A measurement never appears outside the scope of an associated Environment, so the Environment-Claim Tuple (ECT) is a data structure used to encapsulate all scope context for a given set of measurements.
+The authority for an ECT from a CoRIM is the CoRIM issuer.
+The collective content of an ECT may be referred to as a property, claim, or assertion when the content need not be presented in the ECT data structure.
+
+Important: The Verifier's objective is to produce a list of properties that describe the Attester's presumed actual state.
+
+Each producer of corresponding RATS Conceptual Messages can assert claims about an Attester's actual or allowed state.
 The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
 Producers of RATS Conceptual Messages can assert contradictory assertions.
 For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
@@ -485,7 +493,7 @@ A CoMID tag contains information about hardware, firmware, or module composition
 
 Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
 
-A CoMID defines several types of Claims, using "triples" semantics.
+A CoMID represents expectations for Evidence appraisal with "triples".
 
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
@@ -767,26 +775,24 @@ The types defined for a group identified are UUID and variable-length opaque byt
 
 ##### Measurements
 
-Measurements can be of a variety of things including software, firmware,
-configuration files, read-only memory, fuses, IO ring configuration, partial
-reconfiguration regions, etc. Measurements comprise raw values, digests, or
-status information.
+A measurement can be directly compared with attestation evidence, or it can be a quality that is not directly comparable with evidence.
+The scope of a mroperty is defined by the `environment-map` and optional `mkey` it appears with.
 
-An environment has one or more measurable elements. Each element can have a
-dedicated measurement or multiple elements could be combined into a single
-measurement. Measurements can have class, instance or group scope.  This is
-typically determined by the triple's environment.
+Measurements can be of a variety of things including software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc. Measurements comprise raw values, digests, or status information.
 
-Class measurements apply generally to all the Attesters in the given class.
-Instance measurements apply to a specific Attester instance.  Environments
-identified by a class identifier have measurements that are common to the
-class. Environments identified by an instance identifier have measurements that
-are specific to that instance.
+Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
+An `environment-map` contains at least one of: class, instance, or group.
+The more elements in the `environment-map`, the narrower the scope, since more elements must be in common to match.
+Measurements paired with an `environment-map` that contains only a class may be referred to as class mroperties, and similarly with instance and group measurements for respective elements of the `environment-map`.
 
-The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
-is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
-the `authorized-by` statement can be supplied in the `measurement-map`.
+A measurement from an Attester is called Evidence.
+A measurement in a `reference-triple-record` is called a Reference Value.
+A measurement in another triple is called an Endorsement.
 
+The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
+If a different entity is authorized to provide measurement values, the CoRIM signer may delegate authorization of specific measurements to a different authority with the `authorized-by` entry in the `measurement-map`.
+The meaning of `authorized-by` should be read as an "only if" implication that the CoRIM signer authorizes a measurement only if the named authority also authorizes the measurement.
+Note that circular `authorized-by` references do not constitute authorization by any authority in the cycle.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -805,7 +811,8 @@ The following describes each member of the `measurement-map`:
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-The types defined for a measurement identifier are OID, UUID or uint.
+A measurement-associated (sub-)environment is at the granularity of a single element, such as the second enumerated network interface card.
+The types of this measured element identifier are OID, UUID or uint.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
