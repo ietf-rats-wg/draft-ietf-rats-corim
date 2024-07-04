@@ -1866,7 +1866,7 @@ Evidence information is mapped to an `addition` ECT that populates each of the E
 
 The Evidence ECT fields are populated as described above {{sec-phase1-trans}} and {{sec-ir-evidence}}.
 
-Evidence transformation algorithms may be well-known, see {{sec-spdm}} and {{sec-dice}};
+Evidence transformation algorithms may be well-known;
 may be defined by a CoRIM profile ({{sec-corim-profile-types}}); or may be supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
@@ -2459,42 +2459,6 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 {: align="left" title="New Content-Formats"}
 
 --- back
-
-# Transforming SPDM Evidence {#sec-spdm}
-
-This section defines how Evidence from SPDM {{SPDM}} is transformed into a format where it can be added to an appraisal claims set.
-A Verifier supporting SPDM format Evidence should implement this section.
-
-The TCG DICE Concise Evidence Binding for SPDM specification {{CE.SPDM}} describes the process by which measurements in an SPDM Measurement Block are converted to Evidence suitable for matching using the rules below.
-The SPDM measurements are converted to `concise-evidence` which has a format that is similar to CoRIM `triples-map` (their semantics follows the matching rules described above).
-
-# Transforming DICE Evidence {#sec-dice}
-
-This section defines how Evidence from DICE {{DICE.AA}} is transformed into a format where it can be added to an appraisal claims set.
-A Verifier supporting DICE format Evidence should implement this section.
-
-DICE Evidence appears in certificates in the TcbInfo or MultiTcbInfo extension.
-Each TcbInfo, and each entry in the MultiTcbInfo, is converted to an `endorsed-triple-record` using the rules in this section.
-In a MultiTcbInfo each entry in the sequence is treated as independent and translated into a separate Evidence object.
-
-The Verifier SHALL translate each field in the TcbInfo into a field in the created endorsed-triple-record
-
-- The TcbInfo `type` field SHALL be copied to the field named `environment-map / class / class-id` and tagged with tag #6.111
-- The TcbInfo `vendor` field SHALL be copied to the field named `environment-map / class / vendor`
-- The TcbInfo `model` field SHALL be copied to the field named `environment-map / class / model`
-- The TcbInfo `layer` field SHALL be copied to the field named `environment-map / class / layer`
-- The TcbInfo `index` field SHALL be copied to the field named `environment-map / class / index`
-
-- The TcbInfo `version` field SHALL be translated to the field named `measurement-map / mval / version / version`
-- The TcbInfo `svn` field SHALL be copied to the field named `measurement-map / mval / svn`
-- The TcbInfo `fwids` field SHALL be translated to the field named `measurement-map / mval / digests`
-  - Each digest within fwids is translated to a CoMID digest object, with an appropriate algorithm identifier
-- The TcbInfo `flags` field SHALL be translated to the field named `measurement-map / mval / flags`
-  - Each flag is translated independently
-- The TcbInfo `vendorInfo` SHALL shall be copied to the field named `measurement-map / mval / raw-value`
-
-If there are multiple `endorsed-triple-record`s with the same `environment-map` then they MUST be merged into a single entry.
-If the `measurement-values-map` fields in Evidence triples have conflicting values then the Verifier MUST fail validation.
 
 # Base CoRIM CDDL {#sec-corim-cddl}
 
