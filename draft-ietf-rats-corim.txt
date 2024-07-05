@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 5 January 2025                                           Linaro
+Expires: 6 January 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             4 July 2024
+                                                             5 July 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 January 2025.
+   This Internet-Draft will expire on 6 January 2025.
 
 Copyright Notice
 
@@ -124,8 +124,6 @@ Table of Contents
          5.1.4.8.  CoMID-CoSWID Linking Triple
          5.1.4.9.  Conditional Endorsement Series Triple
          5.1.4.10. Conditional Endorsement Triple
-         5.1.4.11. Multi-Environment Conditional (MEC) Endorsement
-                 Triple
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
@@ -174,10 +172,8 @@ Table of Contents
        8.6.1.  Processing triples representing Conditional
                Endorsements
          8.6.1.1.  Processing Conditional Endorsement Triple
-         8.6.1.2.  Processing Multi-Environment Conditional (MEC)
-                 Endorsement Triple
-         8.6.1.3.  Processing Conditional Endorsement Series Triple
-         8.6.1.4.  Processing a stateful environment against the
+         8.6.1.2.  Processing Conditional Endorsement Series Triple
+         8.6.1.3.  Processing a stateful environment against the
                  Appraisal Claims Set
      8.7.  Verifier Augmentation (Phase 5)
      8.8.  Policy Augmentation (Phase 6)
@@ -942,10 +938,8 @@ Table of Contents
        [ + coswid-triple-record ]
      ? &(conditional-endorsement-series-triples: 8) =>
        [ + conditional-endorsement-series-triple-record ]
-     ? &(conditional-endorsement-triples: 9) =>
+     ? &(conditional-endorsement-triples: 10) =>
        [ + conditional-endorsement-triple-record ]
-     ? &(mec-endorsement-triples: 10) =>
-       [ + mec-endorsement-triple-record ]
      * $$triples-map-extension
    }>
 
@@ -979,14 +973,10 @@ Table of Contents
       acceptance of a stateful environment.  Described in
       Section 5.1.4.9.
 
-   *  conditional-endorsement-triples (index 9) Triples describing
-      conditional Endorsement based on the acceptance of a stateful
-      environment.  Described in Section 5.1.4.10.
-
-   *  mec-endorsement-triple-record (index 10) Triples describing a
+   *  conditional-endorsement-triples (index 9) Triples describing a
       series of Endorsement that are applicable based on the acceptance
       of a series of stateful environment records.  Described in
-      Section 5.1.4.11.
+      Section 5.1.4.10.
 
 5.1.4.1.  Environments
 
@@ -1637,70 +1627,43 @@ Table of Contents
 
 5.1.4.10.  Conditional Endorsement Triple
 
-   A Conditional Endorsement triple uses a stateful environment, (i.e.,
-   stateful-environment-record), that identifies a Target Environment
-   based on an environment-map plus the measurement-map measurements
-   that have matching Evidence.
-
-   The stateful Target Environment is a triple subject that MUST be
-   satisfied before the Endorsed Values in the triple object are
-   accepted.
-
-   ; an environment with a set of measurements that must match evidence
-   stateful-environment-record = [
-     environment-map,
-     measurement-map
-   ]
-
-   The authorized-by value in measurement-map in the stateful
-   environment, if present, applies to all measurements in the triple,
-   including those in measurement-values-map.
-
-   conditional-endorsement-triple-record = [
-     stateful-environment-record,
-     ; endorsed values
-     measurement-values-map
-   ]
-
-5.1.4.11.  Multi-Environment Conditional (MEC) Endorsement Triple
-
-   The semantics of the Multi-Environment Conditional (MEC) Endorsement
-   Triple is as follows:
+   The semantics of the Conditional Endorsement Triple is as follows:
 
       "IF accepted state matches all conds values, THEN every entry in
       the endorsements is added to the accepted state"
 
-   mec-endorsement-triple-record = [
-     conds: [ + stateful-environment-record ]
+   conditional-endorsement-triple-record = [
+     conditions: [ + stateful-environment-record ]
      endorsements: [ + endorsed-triple-record ]
    ]
 
-   A mec-endorsement-triple-record has the following parameters:
+   A conditional-endorsement-triple-record has the following parameters:
 
-   *  conds: all target environments, along with a specific state, that
-      need to match state-triples entries in the ACS for the
+   *  conditions: all target environments, along with a specific state,
+      that need to match state-triples entries in the ACS for the
       endorsement(s) to apply
 
    *  endorsements: endorsements that are added to the ACS state-triples
       if all conds match.
 
-   The order in which MEC Endorsement triples are evaluated is
+   The order in which Conditional Endorsement triples are evaluated is
    important: different sorting may produce different end-results in the
    computed ACS.
 
-   Therefore, the set of applicable MEC Endorsement triple MUST be
-   topologically sorted based on the criterion that a MEC Endorsement
-   triple is evaluated before another if its Target Environment and
-   Endorsement pair is found in any of the stateful environments of the
-   second triple.
+   Therefore, the set of applicable Conditional Endorsement triples MUST
+   be topologically sorted based on the criterion that a Conditional
+   Endorsement triple is evaluated before another if its Target
+   Environment and Endorsement pair is found in any of the stateful
+   environments of the subsequent triple.
 
    Notes:
 
    *  In order to give the expected result, the condition must describe
       the expected context completely.
 
-   *  The scope of a single MEC triple encompasses an arbitrary amount
-      of environments across all layers in an Attester.
+   *  The scope of a single Conditional Endorsement triple encompasses
+      an arbitrary amount of environments across all layers in an
+      Attester.
 
    There are scope-related questions that need to be answered.  (
    // Tracked at: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/
@@ -2563,7 +2526,7 @@ Table of Contents
    entries.
 
    The Verifier compares each reference-triple-record against ACS
-   entries as described in Section 8.6.1.4, where the reference-triple-
+   entries as described in Section 8.6.1.3, where the reference-triple-
    record takes the place of a stateful-environment-record.  If all
    fields of the reference-triple-record match the ACS, then the
    Verifier MUST add the RVP authority to each matching ACS field.
@@ -2595,30 +2558,17 @@ Table of Contents
 
 8.6.1.1.  Processing Conditional Endorsement Triple
 
-   For each Conditional Endorsement Triple the Verifier compares the
-   stateful-environment-record field in the triple against the ACS (see
-   Section 8.6.1.4).
-
-   If the stateful environment matches, then the Verifier MUST add an
-   Endorsement entry to the ACS (see Section 8.10).  The Endorsement
-   consists of the measurement-values-map field in the triple, plus the
-   authority of the entity that signed the Conditional Endorsement
-   Triple.
-
-8.6.1.2.  Processing Multi-Environment Conditional (MEC) Endorsement
-          Triple
-
-   For each MEC Endorsement Triple the Verifier compares each of the
-   stateful-environment-record fields from the cond field in the triple
-   against the ACS (see Section 8.6.1.4).
+   For each Conditional Endorsement Triple the Verifier compares each of
+   the stateful-environment-record fields from the cond field in the
+   triple against the ACS (see Section 8.6.1.3).
 
    If every stateful environment matches a corresponding ACS entry, then
    the Verifier MUST add an Endorsement entry to the ACS (see
    Section 8.10) for each endorsed-triple-record in the endorsements
    field.  Each Endorsement from the endorsed-triple-record includes the
-   authority which signed the MEC Endorsement Triple.
+   authority which signed the Conditional Endorsement Triple.
 
-8.6.1.3.  Processing Conditional Endorsement Series Triple
+8.6.1.2.  Processing Conditional Endorsement Series Triple
 
    For each Conditional Endorsement Series Triple the Verifier iterates
    over the conditional-series-records within the triple, stopping if it
@@ -2627,13 +2577,13 @@ Table of Contents
    For each iteration, the Verifier creates a temporary stateful-
    environment-record by merging the stateful-environment-record in the
    triple with the refv field in the conditional-series-record.  It
-   compares this temporary record against the ACS (see Section 8.6.1.4).
+   compares this temporary record against the ACS (see Section 8.6.1.3).
 
    If one of the temporary records matches then the Verifier MUST add
    the endv Endorsement entry to the ACS.  This Endorsement includes the
    authority which signed the Conditional Endorsement Series Triple.
 
-8.6.1.4.  Processing a stateful environment against the Appraisal Claims
+8.6.1.3.  Processing a stateful environment against the Appraisal Claims
           Set
 
    This section describes how a stateful environment is matched against
@@ -3486,12 +3436,6 @@ Appendix A.  Base CoRIM CDDL
      [ + conditional-series-record ]
    ]
 
-   conditional-endorsement-triple-record = [
-     stateful-environment-record,
-     ; endorsed values
-     measurement-values-map
-   ]
-
    conditional-series-record = [
      ; reference values to be matched against evidence
      refv: measurement-values-map
@@ -3546,8 +3490,8 @@ Appendix A.  Base CoRIM CDDL
      [ + environment-map ]
    ]
 
-   mec-endorsement-triple-record = [
-     conds: [ + stateful-environment-record ]
+   conditional-endorsement-triple-record = [
+     conditions: [ + stateful-environment-record ]
      endorsements: [ + endorsed-triple-record ]
    ]
 
@@ -3704,10 +3648,8 @@ Appendix A.  Base CoRIM CDDL
        [ + coswid-triple-record ]
      ? &(conditional-endorsement-series-triples: 8) =>
        [ + conditional-endorsement-series-triple-record ]
-     ? &(conditional-endorsement-triples: 9) =>
+     ? &(conditional-endorsement-triples: 10) =>
        [ + conditional-endorsement-triple-record ]
-     ? &(mec-endorsement-triples: 10) =>
-       [ + mec-endorsement-triple-record ]
      * $$triples-map-extension
    }>
 
