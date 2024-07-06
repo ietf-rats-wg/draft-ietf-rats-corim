@@ -1316,9 +1316,6 @@ This document specifies the information elements for representing Endorsements a
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.10">
                         <p id="section-toc.1-1.5.2.1.2.4.2.10.1"><a href="#section-5.1.4.10" class="auto internal xref">5.1.4.10</a>. <a href="#name-conditional-endorsement-tri" class="internal xref">Conditional Endorsement Triple</a></p>
 </li>
-                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.11">
-                        <p id="section-toc.1-1.5.2.1.2.4.2.11.1"><a href="#section-5.1.4.11" class="auto internal xref">5.1.4.11</a>. <a href="#name-multi-environment-condition" class="internal xref">Multi-Environment Conditional (MEC) Endorsement Triple</a></p>
-</li>
                     </ul>
 </li>
                 </ul>
@@ -1483,13 +1480,10 @@ This document specifies the information elements for representing Endorsements a
                         <p id="section-toc.1-1.8.2.6.2.1.2.1.1"><a href="#section-8.6.1.1" class="auto internal xref">8.6.1.1</a>.  <a href="#name-processing-conditional-endo" class="internal xref">Processing Conditional Endorsement Triple</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.6.2.1.2.2">
-                        <p id="section-toc.1-1.8.2.6.2.1.2.2.1"><a href="#section-8.6.1.2" class="auto internal xref">8.6.1.2</a>.  <a href="#name-processing-multi-environmen" class="internal xref">Processing Multi-Environment Conditional (MEC) Endorsement Triple</a></p>
+                        <p id="section-toc.1-1.8.2.6.2.1.2.2.1"><a href="#section-8.6.1.2" class="auto internal xref">8.6.1.2</a>.  <a href="#name-processing-conditional-endor" class="internal xref">Processing Conditional Endorsement Series Triple</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.6.2.1.2.3">
-                        <p id="section-toc.1-1.8.2.6.2.1.2.3.1"><a href="#section-8.6.1.3" class="auto internal xref">8.6.1.3</a>.  <a href="#name-processing-conditional-endor" class="internal xref">Processing Conditional Endorsement Series Triple</a></p>
-</li>
-                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.6.2.1.2.4">
-                        <p id="section-toc.1-1.8.2.6.2.1.2.4.1"><a href="#section-8.6.1.4" class="auto internal xref">8.6.1.4</a>.  <a href="#name-processing-a-stateful-envir" class="internal xref">Processing a stateful environment against the Appraisal Claims Set</a></p>
+                        <p id="section-toc.1-1.8.2.6.2.1.2.3.1"><a href="#section-8.6.1.3" class="auto internal xref">8.6.1.3</a>.  <a href="#name-processing-a-stateful-envir" class="internal xref">Processing a stateful environment against the Appraisal Claims Set</a></p>
 </li>
                     </ul>
 </li>
@@ -2509,10 +2503,8 @@ triples-map = non-empty&lt;{
     [ + coswid-triple-record ]
   ? &amp;(conditional-endorsement-series-triples: 8) =&gt;
     [ + conditional-endorsement-series-triple-record ]
-  ? &amp;(conditional-endorsement-triples: 9) =&gt;
+  ? &amp;(conditional-endorsement-triples: 10) =&gt;
     [ + conditional-endorsement-triple-record ]
-  ? &amp;(mec-endorsement-triples: 10) =&gt;
-    [ + mec-endorsement-triple-record ]
   * $$triples-map-extension
 }&gt;
 </pre><a href="#section-5.1.4-2" class="pilcrow">¶</a>
@@ -2554,15 +2546,10 @@ conditional Endorsements based on the acceptance of a stateful environment. Desc
 in <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.9</a>.<a href="#section-5.1.4-4.8.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.9">
-              <p id="section-5.1.4-4.9.1"><code>conditional-endorsement-triples</code> (index 9) Triples describing conditional
-Endorsement based on the acceptance of a stateful environment. Described
-in <a href="#sec-comid-triple-cond-end" class="auto internal xref">Section 5.1.4.10</a>.<a href="#section-5.1.4-4.9.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-5.1.4-4.10">
-              <p id="section-5.1.4-4.10.1"><code>mec-endorsement-triple-record</code> (index 10) Triples describing a series of
+              <p id="section-5.1.4-4.9.1"><code>conditional-endorsement-triples</code> (index 9) Triples describing a series of
 Endorsement that are applicable based on the acceptance of a series of
 stateful environment records. Described in
-<a href="#sec-comid-triple-mec-endorsement" class="auto internal xref">Section 5.1.4.11</a>.<a href="#section-5.1.4-4.10.1" class="pilcrow">¶</a></p>
+<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.10</a>.<a href="#section-5.1.4-4.9.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <div id="environments">
@@ -3374,77 +3361,46 @@ conditional-series-record = [
 </div>
 </section>
 </div>
-<div id="sec-comid-triple-cond-end">
+<div id="sec-comid-triple-cond-endors">
 <section id="section-5.1.4.10">
             <h5 id="name-conditional-endorsement-tri">
 <a href="#section-5.1.4.10" class="section-number selfRef">5.1.4.10. </a><a href="#name-conditional-endorsement-tri" class="section-name selfRef">Conditional Endorsement Triple</a>
             </h5>
-<p id="section-5.1.4.10-1">A Conditional Endorsement triple uses a stateful environment, (i.e., <code>stateful-environment-record</code>),
-that identifies a Target Environment based on an <code>environment-map</code> plus the <code>measurement-map</code> measurements
-that have matching Evidence.<a href="#section-5.1.4.10-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.10-2">The stateful Target Environment is a triple subject that MUST be satisfied before the Endorsed Values in the triple object are accepted.<a href="#section-5.1.4.10-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.10-1">The semantics of the Conditional Endorsement Triple is as follows:<a href="#section-5.1.4.10-1" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-5.1.4.10-2.1">
+                <p id="section-5.1.4.10-2.1.1">"IF accepted state matches all <code>conds</code> values, THEN every entry in the <code>endorsements</code> is added to the accepted state"<a href="#section-5.1.4.10-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
 <div class="lang-cddl sourcecode" id="section-5.1.4.10-3">
 <pre>
-; an environment with a set of measurements that must match evidence
-stateful-environment-record = [
-  environment-map,
-  measurement-map
+conditional-endorsement-triple-record = [
+  conditions: [ + stateful-environment-record ]
+  endorsements: [ + endorsed-triple-record ]
 ]
 </pre><a href="#section-5.1.4.10-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.10-4">The <code>authorized-by</code> value in <code>measurement-map</code> in the stateful environment, if present,
-applies to all measurements in the triple, including those in <code>measurement-values-map</code>.<a href="#section-5.1.4.10-4" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.10-5">
-<pre>
-conditional-endorsement-triple-record = [
-  stateful-environment-record,
-  ; endorsed values
-  measurement-values-map
-]
-</pre><a href="#section-5.1.4.10-5" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
-<div id="sec-comid-triple-mec-endorsement">
-<section id="section-5.1.4.11">
-            <h5 id="name-multi-environment-condition">
-<a href="#section-5.1.4.11" class="section-number selfRef">5.1.4.11. </a><a href="#name-multi-environment-condition" class="section-name selfRef">Multi-Environment Conditional (MEC) Endorsement Triple</a>
-            </h5>
-<p id="section-5.1.4.11-1">The semantics of the Multi-Environment Conditional (MEC) Endorsement Triple is as follows:<a href="#section-5.1.4.11-1" class="pilcrow">¶</a></p>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-5.1.4.11-2.1">
-                <p id="section-5.1.4.11-2.1.1">"IF accepted state matches all <code>conds</code> values, THEN every entry in the <code>endorsements</code> is added to the accepted state"<a href="#section-5.1.4.11-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<div class="lang-cddl sourcecode" id="section-5.1.4.11-3">
-<pre>
-mec-endorsement-triple-record = [
-  conds: [ + stateful-environment-record ]
-  endorsements: [ + endorsed-triple-record ]
-]
-</pre><a href="#section-5.1.4.11-3" class="pilcrow">¶</a>
-</div>
-<p id="section-5.1.4.11-4">A <code>mec-endorsement-triple-record</code> has the following parameters:<a href="#section-5.1.4.11-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.10-4">A <code>conditional-endorsement-triple-record</code> has the following parameters:<a href="#section-5.1.4.10-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.11-5.1">
-                <p id="section-5.1.4.11-5.1.1"><code>conds</code>: all target environments, along with a specific state, that need to match <code>state-triples</code> entries in the ACS for the endorsement(s) to apply<a href="#section-5.1.4.11-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.10-5.1">
+                <p id="section-5.1.4.10-5.1.1"><code>conditions</code>: all target environments, along with a specific state, that need to match <code>state-triples</code> entries in the ACS for the endorsement(s) to apply<a href="#section-5.1.4.10-5.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-5.1.4.11-5.2">
-                <p id="section-5.1.4.11-5.2.1"><code>endorsements</code>: endorsements that are added to the ACS <code>state-triples</code> if all <code>conds</code> match.<a href="#section-5.1.4.11-5.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-5.1.4.10-5.2">
+                <p id="section-5.1.4.10-5.2.1"><code>endorsements</code>: endorsements that are added to the ACS <code>state-triples</code> if all <code>conds</code> match.<a href="#section-5.1.4.10-5.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.11-6">The order in which MEC Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.<a href="#section-5.1.4.11-6" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.11-7">Therefore, the set of applicable MEC Endorsement triple MUST be topologically sorted based on the criterion that a MEC Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the second triple.<a href="#section-5.1.4.11-7" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.11-8">Notes:<a href="#section-5.1.4.11-8" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.10-6">The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.<a href="#section-5.1.4.10-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.10-7">Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.<a href="#section-5.1.4.10-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.10-8">Notes:<a href="#section-5.1.4.10-8" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.11-9.1">
-                <p id="section-5.1.4.11-9.1.1">In order to give the expected result, the condition must describe the expected context completely.<a href="#section-5.1.4.11-9.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.10-9.1">
+                <p id="section-5.1.4.10-9.1.1">In order to give the expected result, the condition must describe the expected context completely.<a href="#section-5.1.4.10-9.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-5.1.4.11-9.2">
-                <p id="section-5.1.4.11-9.2.1">The scope of a single MEC triple encompasses an arbitrary amount of environments across all layers in an Attester.<a href="#section-5.1.4.11-9.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-5.1.4.10-9.2">
+                <p id="section-5.1.4.10-9.2.1">The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.<a href="#section-5.1.4.10-9.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.11-10">There are scope-related questions that need to be answered.  (<span class="cref" id="tracked-at_2">Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)<a href="#section-5.1.4.11-10" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.10-10">There are scope-related questions that need to be answered.  (<span class="cref" id="tracked-at_2">Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)<a href="#section-5.1.4.10-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -4529,7 +4485,7 @@ Processing a triple may result in ACS modifications that affect matching behavio
 <p id="section-8.5-1">Reference Value Providers (RVP) publish Reference Values triples that are matched against ACS entries.
 Reference Values may describe multiple acceptable states for Attesters; hence "matching" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.
 If the appropriate subset matches, the authority of the RVP is added to the appropriate ACS entries.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.5-2">The Verifier compares each <code>reference-triple-record</code> against ACS entries as described in <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.4</a>, where the <code>reference-triple-record</code> takes the place of a <code>stateful-environment-record</code>.
+<p id="section-8.5-2">The Verifier compares each <code>reference-triple-record</code> against ACS entries as described in <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.3</a>, where the <code>reference-triple-record</code> takes the place of a <code>stateful-environment-record</code>.
 If all fields of the <code>reference-triple-record</code> match the ACS, then the Verifier MUST add the RVP authority to each matching ACS field.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
 <p id="section-8.5-3">If any <code>reference-triple-record</code> in the Reference Value triple does not match the ACS then the entire triple is ignored.<a href="#section-8.5-3" class="pilcrow">¶</a></p>
 </section>
@@ -4558,51 +4514,41 @@ This section describes the process performed by the Verifier to determine which 
             <h5 id="name-processing-conditional-endo">
 <a href="#section-8.6.1.1" class="section-number selfRef">8.6.1.1. </a><a href="#name-processing-conditional-endo" class="section-name selfRef">Processing Conditional Endorsement Triple</a>
             </h5>
-<p id="section-8.6.1.1-1">For each Conditional Endorsement Triple the Verifier compares the <code>stateful-environment-record</code> field in the triple against the ACS (see <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.4</a>).<a href="#section-8.6.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.1-2">If the stateful environment matches, then the Verifier MUST add an Endorsement entry to the ACS (see <a href="#sec-add-to-acs" class="auto internal xref">Section 8.10</a>).
-The Endorsement consists of the <code>measurement-values-map</code> field in the triple, plus the authority of the entity that signed the Conditional Endorsement Triple.<a href="#section-8.6.1.1-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="processing-multi-environment-conditional-mec-endorsement-triple">
-<section id="section-8.6.1.2">
-            <h5 id="name-processing-multi-environmen">
-<a href="#section-8.6.1.2" class="section-number selfRef">8.6.1.2. </a><a href="#name-processing-multi-environmen" class="section-name selfRef">Processing Multi-Environment Conditional (MEC) Endorsement Triple</a>
-            </h5>
-<p id="section-8.6.1.2-1">For each MEC Endorsement Triple the Verifier compares each of the <code>stateful-environment-record</code> fields from the <code>cond</code> field in the triple against the ACS (see <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.4</a>).<a href="#section-8.6.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.2-2">If every stateful environment matches a corresponding ACS entry, then the Verifier MUST add an Endorsement entry to the ACS (see <a href="#sec-add-to-acs" class="auto internal xref">Section 8.10</a>) for each <code>endorsed-triple-record</code> in the <code>endorsements</code> field.
-Each Endorsement from the <code>endorsed-triple-record</code> includes the authority which signed the MEC Endorsement Triple.<a href="#section-8.6.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.1-1">For each Conditional Endorsement Triple the Verifier compares each of the <code>stateful-environment-record</code> fields from the <code>cond</code> field in the triple against the ACS (see <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.3</a>).<a href="#section-8.6.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.1-2">If every stateful environment matches a corresponding ACS entry, then the Verifier MUST add an Endorsement entry to the ACS (see <a href="#sec-add-to-acs" class="auto internal xref">Section 8.10</a>) for each <code>endorsed-triple-record</code> in the <code>endorsements</code> field.
+Each Endorsement from the <code>endorsed-triple-record</code> includes the authority which signed the Conditional Endorsement Triple.<a href="#section-8.6.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="processing-conditional-endorsement-series-triple">
-<section id="section-8.6.1.3">
+<section id="section-8.6.1.2">
             <h5 id="name-processing-conditional-endor">
-<a href="#section-8.6.1.3" class="section-number selfRef">8.6.1.3. </a><a href="#name-processing-conditional-endor" class="section-name selfRef">Processing Conditional Endorsement Series Triple</a>
+<a href="#section-8.6.1.2" class="section-number selfRef">8.6.1.2. </a><a href="#name-processing-conditional-endor" class="section-name selfRef">Processing Conditional Endorsement Series Triple</a>
             </h5>
-<p id="section-8.6.1.3-1">For each Conditional Endorsement Series Triple the Verifier iterates over the <code>conditional-series-record</code>s within the triple, stopping if it finds a match.<a href="#section-8.6.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.3-2">For each iteration, the Verifier creates a temporary <code>stateful-environment-record</code> by merging the <code>stateful-environment-record</code> in the triple with the <code>refv</code> field in the <code>conditional-series-record</code>. It compares this temporary record against the ACS (see <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.4</a>).<a href="#section-8.6.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.3-3">If one of the temporary records matches then the Verifier MUST add the <code>endv</code> Endorsement entry to the ACS.
-This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.<a href="#section-8.6.1.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.2-1">For each Conditional Endorsement Series Triple the Verifier iterates over the <code>conditional-series-record</code>s within the triple, stopping if it finds a match.<a href="#section-8.6.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.2-2">For each iteration, the Verifier creates a temporary <code>stateful-environment-record</code> by merging the <code>stateful-environment-record</code> in the triple with the <code>refv</code> field in the <code>conditional-series-record</code>. It compares this temporary record against the ACS (see <a href="#sec-match-one-se" class="auto internal xref">Section 8.6.1.3</a>).<a href="#section-8.6.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.2-3">If one of the temporary records matches then the Verifier MUST add the <code>endv</code> Endorsement entry to the ACS.
+This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.<a href="#section-8.6.1.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-match-one-se">
-<section id="section-8.6.1.4">
+<section id="section-8.6.1.3">
             <h5 id="name-processing-a-stateful-envir">
-<a href="#section-8.6.1.4" class="section-number selfRef">8.6.1.4. </a><a href="#name-processing-a-stateful-envir" class="section-name selfRef">Processing a stateful environment against the Appraisal Claims Set</a>
+<a href="#section-8.6.1.3" class="section-number selfRef">8.6.1.3. </a><a href="#name-processing-a-stateful-envir" class="section-name selfRef">Processing a stateful environment against the Appraisal Claims Set</a>
             </h5>
-<p id="section-8.6.1.4-1">This section describes how a stateful environment is matched against an ACS entry.
-If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.<a href="#section-8.6.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-2">The Verifier initializes a temporary "candidate entries" variable with all entries in the ACS where the stateful enviromnment <code>environment-map</code> is a subset of the ACS <code>environment-map</code>.<a href="#section-8.6.1.4-2" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-3">A stateful environment <code>environment-map</code> is a subset of an ACS entry <code>environment-map</code> if each field (for example <code>class</code>, <code>instance</code> etc.) which is present in the stateful environment <code>environment-map</code> is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
-If a field is not present in the stateful environment <code>environment-map</code> then the presence of, and value of, the corresponding ACS entry field does not affect whether the <code>environment-map</code>s are subsets.<a href="#section-8.6.1.4-3" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-4">Before performing the binary comparison, a Verifier SHOULD convert <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.6.1.4-4" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-5">If the stateful environment contains an <code>authorized-by</code> field then the Verifier SHALL remove all candidate entries whose <code>authorized-by</code> field does not contain one of the keys listed in the stateful environment <code>authorized-by</code> field (see <a href="#sec-authorized-by" class="auto internal xref">Section 8.4.1.1</a> for more details).<a href="#section-8.6.1.4-5" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-6">If there are no candidate entries then the triple containing the stateful environment does not match.<a href="#section-8.6.1.4-6" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-7">The stateful environment entry is compared against each of the candidate entries.<a href="#section-8.6.1.4-7" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-8">For each of the candidate entries, the Verifier SHALL iterate over the codepoints which are present in the <code>measurement-values-map</code> field within the stateful environment <code>measurement-map</code>.
-Each of the codepoints present in the stateful environment is compared against the candidate entry.<a href="#section-8.6.1.4-8" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-9">If any codepoint present in the stateful environment <code>measurement-values-map</code> does not match the same codepoint within the candidate entry <code>measurement-values-map</code> then the stateful environment does not match.<a href="#section-8.6.1.4-9" class="pilcrow">¶</a></p>
-<p id="section-8.6.1.4-10">If all checks above have been performed successfully then the stateful environment matches.
-If none of the candidate entries match the stateful environment entry then the stateful environment does not match.<a href="#section-8.6.1.4-10" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-1">This section describes how a stateful environment is matched against an ACS entry.
+If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.<a href="#section-8.6.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-2">The Verifier initializes a temporary "candidate entries" variable with all entries in the ACS where the stateful enviromnment <code>environment-map</code> is a subset of the ACS <code>environment-map</code>.<a href="#section-8.6.1.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-3">A stateful environment <code>environment-map</code> is a subset of an ACS entry <code>environment-map</code> if each field (for example <code>class</code>, <code>instance</code> etc.) which is present in the stateful environment <code>environment-map</code> is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
+If a field is not present in the stateful environment <code>environment-map</code> then the presence of, and value of, the corresponding ACS entry field does not affect whether the <code>environment-map</code>s are subsets.<a href="#section-8.6.1.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-4">Before performing the binary comparison, a Verifier SHOULD convert <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.6.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-5">If the stateful environment contains an <code>authorized-by</code> field then the Verifier SHALL remove all candidate entries whose <code>authorized-by</code> field does not contain one of the keys listed in the stateful environment <code>authorized-by</code> field (see <a href="#sec-authorized-by" class="auto internal xref">Section 8.4.1.1</a> for more details).<a href="#section-8.6.1.3-5" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-6">If there are no candidate entries then the triple containing the stateful environment does not match.<a href="#section-8.6.1.3-6" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-7">The stateful environment entry is compared against each of the candidate entries.<a href="#section-8.6.1.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-8">For each of the candidate entries, the Verifier SHALL iterate over the codepoints which are present in the <code>measurement-values-map</code> field within the stateful environment <code>measurement-map</code>.
+Each of the codepoints present in the stateful environment is compared against the candidate entry.<a href="#section-8.6.1.3-8" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-9">If any codepoint present in the stateful environment <code>measurement-values-map</code> does not match the same codepoint within the candidate entry <code>measurement-values-map</code> then the stateful environment does not match.<a href="#section-8.6.1.3-9" class="pilcrow">¶</a></p>
+<p id="section-8.6.1.3-10">If all checks above have been performed successfully then the stateful environment matches.
+If none of the candidate entries match the stateful environment entry then the stateful environment does not match.<a href="#section-8.6.1.3-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5759,12 +5705,6 @@ conditional-endorsement-series-triple-record = [
   [ + conditional-series-record ]
 ]
 
-conditional-endorsement-triple-record = [
-  stateful-environment-record,
-  ; endorsed values
-  measurement-values-map
-]
-
 conditional-series-record = [
   ; reference values to be matched against evidence
   refv: measurement-values-map
@@ -5819,8 +5759,8 @@ domain-membership-triple-record = [
   [ + environment-map ]
 ]
 
-mec-endorsement-triple-record = [
-  conds: [ + stateful-environment-record ]
+conditional-endorsement-triple-record = [
+  conditions: [ + stateful-environment-record ]
   endorsements: [ + endorsed-triple-record ]
 ]
 
@@ -5977,10 +5917,8 @@ triples-map = non-empty&lt;{
     [ + coswid-triple-record ]
   ? &amp;(conditional-endorsement-series-triples: 8) =&gt;
     [ + conditional-endorsement-series-triple-record ]
-  ? &amp;(conditional-endorsement-triples: 9) =&gt;
+  ? &amp;(conditional-endorsement-triples: 10) =&gt;
     [ + conditional-endorsement-triple-record ]
-  ? &amp;(mec-endorsement-triples: 10) =&gt;
-    [ + mec-endorsement-triple-record ]
   * $$triples-map-extension
 }&gt;
 
