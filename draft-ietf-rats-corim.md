@@ -1146,7 +1146,6 @@ Alternatively, Verifiers MAY report key verification results as part of an error
 An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
 The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
 The cryptographic keys sign Evidence.
-
 Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.
 
