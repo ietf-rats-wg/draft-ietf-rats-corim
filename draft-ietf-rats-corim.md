@@ -1132,7 +1132,7 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
-If a key has usage restrictions that limits its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
+If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
 
 Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
