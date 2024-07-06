@@ -1153,7 +1153,6 @@ Attest Key triples endorse that the keys were securely provisioned to the named 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as  `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-
 If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
 
 Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
