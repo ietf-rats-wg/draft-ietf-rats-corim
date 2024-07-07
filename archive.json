@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-06-18T01:23:59.334721+00:00",
+  "timestamp": "2024-07-07T01:37:19.883282+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -481,9 +481,17 @@
       ],
       "body": "Add needed CoMID registries. Most likely this needs to be just copy-pasted from [-02](https://www.ietf.org/archive/id/draft-birkholz-rats-corim-02.html#section-7).",
       "createdAt": "2022-09-23T16:43:25Z",
-      "updatedAt": "2024-05-07T09:18:21Z",
+      "updatedAt": "2024-07-04T09:30:46Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Codepoints that have been in use and then deprecated (e.g., for triples that have gone out of fashion) need to be marked explicitly as \"reserved\" in the corresponding IANA registries.",
+          "createdAt": "2024-07-04T09:30:45Z",
+          "updatedAt": "2024-07-04T09:30:45Z"
+        }
+      ]
     },
     {
       "number": 16,
@@ -4078,9 +4086,17 @@
       ],
       "body": "Section 5.4.3 \"Adding CoMID Endorsed Values to the Accepted Claims Set\" hasn't been authored yet. It seems relevant to work on this text since there is on-going work to define and refine endorsement triples.\r\n\r\nSuggested text:\r\n\"An Endorser may publish Endorsements, which add new claims to the Accepted Claims Set (ACS) if specified conditions of the ACS are met. This section describes the process performed by the Verifier to determine if the ACS status satisfies the Endorsement condition and where to add the Endorsement claims.\r\n\r\nThe verifier compares the condition specified by endorsement triples to the ACS. Endorsement conditions may describe environments, or combinations of environment-measurement pairings, specific measurement values, and the authority that asserted the claims.\r\n\r\nIf the condition matches, the Endorsement claims, including the Endorser's authority, are added to the ACS. The new Endorsed claims are added to the part of the ACS as described by Endorsement triples (see {{sec-comid-triple-endval}}, {{sec-comid-triple-cond-series}}, {{sec-comid-triple-cond-end}}, {{sec-comid-triple-mec-endorsement}}).\"\r\n\r\n",
       "createdAt": "2023-12-06T22:04:39Z",
-      "updatedAt": "2024-05-03T16:47:03Z",
+      "updatedAt": "2024-06-22T17:26:24Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't understand the wontfix, since I don't understand endorsed triples from the text as written.\r\n\r\n> An Endorsed Values triple declares additional claims that are valid when a Target Environment has been verified against reference measurements.\r\n\r\nThere is no separation of the measurement-values-map contents into evidence property or endorsement property, so I'm not sure what the actual condition is that you're checking. If \"A says X only if B says X about environment E\", then are we supposed to track that X came from reference triples instead of endorsement triples, so that to process an endorsement \"A says Y only if C says Y about environment E\", we check that E had a reference triple already accepted by A (A is the CoRIM issuer)? And the properties in question are irrelevant? Are all reference triples required preconditions or is does just one need to be accepted?\r\n\r\nI don't see similar conditions on reference values for the conditional endorsements triples, so it seems only this triple has a triple-type processing order requirement. Is the order across CoMID processing, within fixed point, or only locally to the single CoMID in a single step?",
+          "createdAt": "2024-06-22T17:26:23Z",
+          "updatedAt": "2024-06-22T17:26:23Z"
+        }
+      ]
     },
     {
       "number": 180,
@@ -5792,6 +5808,140 @@
           "updatedAt": "2024-06-07T23:23:42Z"
         }
       ]
+    },
+    {
+      "number": 243,
+      "id": "I_kwDOH6-tI86M0RdW",
+      "title": "The CI is broken on `main`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/243",
+      "state": "CLOSED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "As per title line.\r\n\r\nSee also https://github.com/ietf-rats-wg/draft-ietf-rats-corim/actions/runs/8990233955/job/25851350085",
+      "createdAt": "2024-06-19T14:20:40Z",
+      "updatedAt": "2024-07-04T08:01:33Z",
+      "closedAt": "2024-07-04T08:01:33Z",
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Done in 542276ab",
+          "createdAt": "2024-07-04T08:01:33Z",
+          "updatedAt": "2024-07-04T08:01:33Z"
+        }
+      ]
+    },
+    {
+      "number": 244,
+      "id": "I_kwDOH6-tI86M1kvQ",
+      "title": "authority baselines and authority delegation (was authorized-by appears to be a security flaw)",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/244",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I don't think it's appropriate at all for X to sign a document that Y is the one that actually authorized the claims. There is no signature by Y. This is a clear spoofing problem. Even if the Verifier is supposedly forwarding an authorization that it had previously seen by including it in the CoRIM, I don't think that Y has delegated that authority to the Verifier. The Verifier would need to use a \"hearsay\" claim that it had already shown that Y authorized the claim.",
+      "createdAt": "2024-06-19T17:25:35Z",
+      "updatedAt": "2024-07-05T00:52:00Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think one way to address unsoundness is to remove authorized-by from measurement-map and add an optional \u2018authorities\u2019 entry to \u2018stateful-environment-record\u2019.",
+          "createdAt": "2024-06-20T16:20:36Z",
+          "updatedAt": "2024-06-20T16:20:36Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> X to sign a document that Y is the one that actually authorized the claims\r\n\r\nThis isn't the intended semantics of `authorized-by`. The motivating use case is entity A wants to specify whether entity B is authorized to say X (where X is a set of claims aka an ECT). The logic is \"A says B says X\".  Note, it is still necessary for B to say X. `authorized-by` is therefore a matching condition (as opposed to an addition).\r\n\r\nWe think AEs are not likely to need this, so it is excluded from Evidence. \r\n\r\nBut it is reasonable that X could be applied to RVs or Endorsements. \r\n\r\nThe suggested change: \r\n\"remove authorized-by from measurement-map and add an optional \u2018authorities\u2019 entry to `stateful-environment-record`\"\r\n\r\nwould have the same semantics as `authorized-by` only it restricts its use to Endorsements as `stateful-environment-record` is only used by Endorsements. To make a symmetric change to the CDDL `reference-triple-record` should be updated too.\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n ? authority: [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nIn both structures, the authority is used as a matching condition that determines if B did in fact assert X. In the case above, authority and environment-map are the matching condition, and environment-map and measurement-map are the addition (which is added under the authority of the RIM signer - A). \r\n\r\nAn internal representation is supposed to keep track of the dynamic that A says B says X. \r\n\r\nI don't think the current internal representation using ECTs is sufficient to represent this dynamic. We could modify ECT so that there is an outer authority. I'll use `policy` to explain what I mean:\r\nGiven:\r\n```\r\npolicy = [\r\n    condition: [ + ECT ]\r\n    addition: [ + ECT ]\r\n]\r\n```\r\nBy defining a nested ECT:\r\n```\r\nnested-ECT = [\r\n  ECT\r\n  ? a: [ + $crypto-key-type-choice ]\r\n  ? cm: cm-type\r\n]\r\n```\r\nPolicy can be changed to:\r\n```\r\npolicy = [\r\n    condition: [ + ECT ]\r\n    addition: [ + ECT / nested-ECT ]\r\n]\r\n```\r\nThis would allow expressions such as:\r\n```\r\n/cbor diag example/\r\n[\r\n  [\r\n    e: 'x0',\r\n    c: 'x1',\r\n    a: B,\r\n    cm: 0 /ref-val/\r\n  ]\r\n  a: A,\r\n  cm: 5 /policy/\r\n]\r\n```\r\nIt would be interpreted as: A says [ B says (x0, x1) ]\r\n\r\nAs a policy, it is applied after all the inputs are processed, including an input that includes:  B says (x0, x1)\r\n\r\nIf an RP has policy that says A is trusted, but is silent about B. Then the statement asserted by A (that B says (x0, x1)) would evaluate to true and be eligible as a matching condition for attestation results.\r\n\r\nSomething to consider is whether it makes sense to restrict transitive trust statements like A says B says X to policy statements or if these should still be supported by Endorsements and RV statements. \r\n\r\nMore complex transitive trust statements such as: `A says B says C says X` seems unnecessary at this point since the primary motivation for this type of delegation is a dominant supplier wants to maintain some control over downstream suppliers' clobbering upstream reference values. It's implied that the authority to delegate is not delegated. \r\n\r\nIf downstream suppliers beyond the first supplier need to be authorized, the originator (A) can do something like:\r\n(A says B says X,\r\nA says C says X)\r\n\r\nIf we see value in restricting transitive trust statements to policies, then we might consider a new triple:\r\n`policy-triple-record = policy` \r\nand we can remove `authorized-by` from measurement-values-map. \r\n\r\nThis approach might have some beneficial flexibility such as allowing statements like \"A says B says -any-\" by:\r\n```\r\n/cbor diag example/\r\n[\r\n  [\r\n    a: B,\r\n    cm: 0 /ref-val/\r\n  ]\r\n  a: A,\r\n  cm: 5 /policy/\r\n]\r\n```\r\nwhere the absence of `e` and `c` is interpreted as -any-.\r\n\r\nWe wouldn't want to complicate RV and Endorsement with such semantics IMO.\r\n\r\n\r\n",
+          "createdAt": "2024-06-20T21:38:17Z",
+          "updatedAt": "2024-06-20T21:38:17Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm not so much asking for a hearsay triple as I am confused by the intended semantics.\r\n\r\nI can propose some words to make the role of `authorized-by` clearer since its meaning is different whether it's in the ACS (\"was authorized by all...\") or in the CoRIM (\"must also be authorized by one of...\").\r\n\r\nThis makes me wonder if we accept cycles or if we reject them.\r\n\r\n> Kid to parents: Can I go to the concert with Foo?\r\n> Bar: I'm okay with it if your Baz's okay with it.\r\n> Baz: I'm okay with it if your Bar's okay with it.\r\n> Kid: My parents said I could go!\r\n\r\nor\r\n\r\n> Kid: My parents are deadlocked, so I can't go.\r\n\r\nBoth seem like valid interpretations, but a simple fixed point calculation would not collapse the co-dependence, and thus rejection is easier to implement. I can also see resolving bounded length cycles by having primary endorsement keys and hedged-n-levels endorsement keys to stratify the trust relationship. I'd thus err on the side of rejection for simplicity.\r\n\r\nRegarding\r\n> An internal representation is supposed to keep track of the dynamic that A says B says X.\r\n\r\nThis doesn't match the words in the document, which is simply that the ACS ends up saying \"both A and B say X\", unless you have some order dependence in the authorized-by codepoint processing, which I don't see any evidence of. Sure, you might only say \"A says X only if B says X\" in your CoRIM, but that relationship is lost and irrelevant unless we add hearsay triples (which I don't want).\r\n",
+          "createdAt": "2024-06-22T16:51:50Z",
+          "updatedAt": "2024-06-22T17:01:06Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "In a sidebar with Thomas, he suggested defining a new triple for doing authority delegation as a way to compare and contrast current use of `authorized-by`.  I'll tweak naming so as to borrow semantic context from existing CDDL, but slightly different names help prevent bringing over baggage.\r\n\r\nAuthority is delegated using a triple.\r\nThe signer of the RIM identifies principal making the delegation assertion/statement.\r\nThe triples-map is extended to include an authority delegation triple:\r\n```\r\ntriples-map = non-empty<{\r\n...\r\n? &(authority-delegation-triples: 11) =>\r\n    [ + authority-delegation-record ]\r\n...\r\n}>\r\n\r\nauthority-delegation-record = [\r\n    acs-conditions: [ + eect ]\r\n    delegations: [ + delegation-record ]\r\n]\r\n```\r\n\r\nSince ECT is a common building block (used in above example) but is intended as an internal representation. I'll define External ECT (EECT) as follows:\r\n```\r\neect = [\r\n ? a: [ + $crypto-key-type-choice ]\r\n ? e: environment-map\r\n ? m: measurement-map\r\n]\r\n```\r\n`a` is a matching condition that is used to conditionally apply the delegation when certain principals have asserted claims. For example, only when principal A asserted someting or when principal B asserted something.\r\n`e` are target environment claims that have been asserted / appraised.\r\n`m` are measurement claims that have been asserted / appraised.\r\n\r\nIf the acs-conditions are met, the delegation record is applied.\r\n\r\nI don't think it makes sense to put delegations in the ACS since they are policy statements rather than actual Attester state. Note that this CDDL is an external representation. An internal representation of delegations may require a different structure than an ECT. Possibly, a nested ECT as defined above `nested-ECT`.\r\n\r\nA delegation record describes what is delegated:\r\n```\r\ndelegation-record = [\r\n  ? delegate: $crypto-key-type-choice\r\n  ? ct: cm-type2\r\n  ? env: environment-map2\r\n  ? mea: measurement-values-map2\r\n]\r\n```\r\n`delegate` identifies the principal that is the target of delegation.\r\n`ct` means a delegate may be constrained to a subset of possible message types such as reference values only.\r\n`env` means the delegate may be constrained to specific target environments.\r\n`mea` means the delegate may be constrained to a specific set of measurement values.\r\nNote: a variation of environment-map and measurement-map is used that allows a wildcard for -any- set of measurements or environments. I didn't write the CDDL for this yet. It means that a delegate may supply any measurement values, but may be restricted to a subset of possible measurement types such as `digests` only - no `svn` measurements...\r\n```\r\n/cbor diag example/\r\n/ Authority-delegation-record / [\r\n  / acs condition /  [\r\n    principal_A, / authority /\r\n    h'0xDEADBEEF', / uuid environment /\r\n    '1', / svn measurement /\r\n    0 / cm-type : ref-vals /\r\n  ],\r\n  / delegation / [\r\n    principal_B, / delegate /\r\n    0 / ref-vals /\r\n    \"cm.class-id.uuid\" h'0xFEEDABBE', / constrained to the FEEDABBE environment /\r\n    \"mm.mvm.version\" \"-any-\" / constrained to version claims of any value /\r\n  ]\r\n]\r\n```\r\n",
+          "createdAt": "2024-07-02T23:28:09Z",
+          "updatedAt": "2024-07-02T23:28:09Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks @nedmsmith for putting forward a proposal.\r\n\r\nThe statement we need to model is, I think, the following:\r\n\r\n> `A` \"delegates\" `B` \"to make\" `ConceptualMessages` \"statements about\" `ClaimsNames` \"claims of\" `Env` \"environment\"\r\n\r\nWhere:\r\n* `A` and `B` are `$crypto-key-type-choice`\r\n* `ConceptualMessages` is one of reference-values, endorsements, or \"any\"\r\n* `ClaimsNames` is a list of measurement-map code-points or \"any\"\r\n* `Env` is an `environment-map` or \"any\"\r\n\r\nThis allows us to say things like:\r\n1. _`A` delegates `B` to make any statements about any claims of any environment_\r\n2. _`A` delegates `B` to make ref-value and endorsements statements about any claims of any environment_\r\n3. _`A` delegates `B` to make endorsements statements about SVN and version claims of any environment_\r\n4. _`A` delegates `B` to make endorsements statements about SVN and version claims of environment with class-id=1825_\r\n\r\netc.\r\n\r\nIn CDDL, this could be expressed as:\r\n\r\n```\r\ndelegation-statement = {\r\n  authority: $crypto-key-type-choice\r\n  delegate: $crypto-key-type-choice\r\n  ? cm: uint .bits cm-type-restricted\r\n  ? claim-names: [ + int / text ]\r\n  ? environment: environment-map\r\n}\r\n\r\n$crypto-key-type-choice = bytes .size 4\r\nenvironment-map = \"an environment\"\r\n\r\ncm-type-restricted = &(\r\n  reference-values: 0\r\n  endorsements: 1\r\n)\r\n```\r\n\r\nMorphing it into a triple shape is a matter of rearranging and grouping things, but I believe the highlighted types are the core ones.  In particular, it looks like we need `cm-type-restricted` and a sensible definition for `claim-names` (which may include a profile indicator alongside the raw numbers & strings).\r\n\r\n",
+          "createdAt": "2024-07-04T06:07:14Z",
+          "updatedAt": "2024-07-04T06:25:27Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Stepping back from just how the wildcarding is supposed to be expressed, I want to make sure I understand the concept. What\u2019s the theory of operation?\r\nIt seems that there\u2019s\r\n\r\n* the delegation definer, i.e., the issuer of the corim that contains this triple,\r\n* the issuer\u2019s trusted delegator, A, or \u201cauthority\u201d\r\n* the permitted delegate(s) to sign corims with some substructure that is defined by\r\n* a corim filter, i.e., a means of accepting or rejecting the contents of the delegate\u2019s signed corim. It will take careful language design to express a good enough filter for most, but there absolutely should be a way to introduce new filter logic with cbor tags.\r\n\r\nis that about right?\r\nIn the theory of operation, we then have ECTs with first party signing authorities as a field, and new ECTs with delegated authorities.\r\n\r\nIf some CoRIM measurement-map/authority (say, B) is compared against, it\u2019s that CoRIM\u2019s issuer (C) that wants the ECT to be signed by B. But integrator (I) signed a delegation that B can delegate to D for anything. Let\u2019s say D signs the corim that would otherwise match that C wants. If we have a list of all ects in the ACS that match without considering authority, we then need to check delegations.\r\n\r\nD is allowed to sign for B if you trust I to provide delegations. So now the C-signed corim triple gets added to the ACS with authorities C(if you trust I), B(if you trust I), and D.\r\n\r\nThe delegated authority becomes infectious for anything that depends on the authority to match, until you get first-hand knowledge that oh, B actually signed the data first hand, and now we need to backtrack to all the provisional assignments to make them direct authorities?\r\n\r\nProbably the verifier would want to ensure that I is certainly trusted to assign delegations as a matter of a priori policy to remove this complicated provisional authority tracking.\r\n\r\nDoes this pass our litmus tests?\r\n\r\n1. Vertical integration: each layer of a measured boot can be seen as a system integrator up to their point of boot, but with specific delegated authorities for who can sign the previous layers.  \r\n\r\n2. Right to repair: can integrator further in the chain allow for delegations above them that the prior layers did not delegate to themselves?\r\n\r\nVertical integration I would say specialized versions of a linux distribution can delegate pcrs 0-10,12-15 to the main distribution while they sign their own measurements for higher pcrs. That\u2019s not expressible with the proposed syntax since it\u2019s too coarse to limit to specific integrity registers. Say it were.\r\n\r\nS: special version authority\r\nD: distro authority\r\nH: shim authority\r\nG: grub authority.\r\nF: firmware authority \r\nS signs high pcrs reference values and a delegation of pcrs 0-10,12-15 to D. But whose authority is delegated? Let\u2019s say S.\r\nD signs pcr 9,10,12-15 reference values (oops this is merged with shim measurements. Drat) and a delegation of D\u2019s authority to G for pcrs 0-8.\r\nG signs pcr 8 (oops this is merged with shim. Drat) and a delegation of G\u2019s authority to H for pcrs 0-7.\r\nH does its thing that breaks this example and delegates H to F for pcrs 0-7.\r\nF signs reference values for pcrs 0-7 (oops ESP from D gets mixed in here).\r\n\r\nSo pcrs are messy. Lets say we have signed CELRs instead and some policy for safely rearranging them for the verifier to then add an ECT that measured boot passes a TPM integration policy. However it\u2019s do e, it\u2019s not the most important thing.\r\nWhen the Verifier gets a request and has all these corims, then it doesn\u2019t look like the filter syntax would allow redelegation like the distro to grub or shim to firmware. If you did, then it would need to be a narrowing of what was permitted to the delegate. You can\u2019t limit an app to only have read access for it to then call another app that needs write access. It\u2019s the capabilities model.\r\n\r\nSay we allow delegating delegations but only within the scope of what has been delegated. Does S authorize the firmware measurement? S let D authorize it as if it were S. D let G authorize as if it were D (which is also as S), G let H authorize it as if it were G (which is also as D and then S), etc with cascading authority additions. So S authorizes the firmware.\r\n\r\nThat test failed with the current proposal. What about test 2? I\u2019ll edit this later when I\u2019m not getting pulled away.\r\n",
+          "createdAt": "2024-07-05T00:51:58Z",
+          "updatedAt": "2024-07-05T00:51:58Z"
+        }
+      ]
+    },
+    {
+      "number": 249,
+      "id": "I_kwDOH6-tI86OYvHF",
+      "title": "Should we deprecate endorsed value triple in favour of conditional endorsments triple?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/249",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It looks like the former is a superset of the latter.",
+      "createdAt": "2024-07-03T14:54:37Z",
+      "updatedAt": "2024-07-03T22:07:19Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is this the same as PR #219?  Is this issue necessary?",
+          "createdAt": "2024-07-03T20:35:27Z",
+          "updatedAt": "2024-07-03T20:35:27Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Is this the same as PR #219? Is this issue necessary?\r\n\r\nThis issue exists precisely because #219 doesn't do the whole thing.  It only merges MEC and CET, it doesn't deal with EVT at all.",
+          "createdAt": "2024-07-03T22:07:18Z",
+          "updatedAt": "2024-07-03T22:07:18Z"
+        }
+      ]
+    },
+    {
+      "number": 250,
+      "id": "I_kwDOH6-tI86OqY2G",
+      "title": "Add details on key provisioning/protection assertions",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/250",
+      "state": "OPEN",
+      "author": "henkbirkholz",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "              Should we say how? Or, if we do already, reference the place(s) that contain the relevant text.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/135#discussion_r1666725465_\r\n            ",
+      "createdAt": "2024-07-06T08:43:31Z",
+      "updatedAt": "2024-07-06T08:43:31Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -17879,13 +18029,13 @@
       ],
       "body": "Issue #126 anticipates better clarification for identity and attest-key triples to disambiguate from keys as measurements.",
       "createdAt": "2023-09-01T20:20:39Z",
-      "updatedAt": "2024-05-03T16:33:03Z",
+      "updatedAt": "2024-07-06T09:33:14Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "957931f2a8fdd51175c752aa2d97e71c2835eae2",
+      "baseRefOid": "0032f832d43d33463a9ff748bc590977807e0824",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "ident-attest-key-wording",
-      "headRefOid": "271a4cf16ebd884375bc6507a6f6cf378051892d",
+      "headRefOid": "4989d61f4952f2b37778f17f592aa978649c41fe",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -17904,6 +18054,13 @@
           "body": "Ned to progress this on return!",
           "createdAt": "2024-04-10T14:53:07Z",
           "updatedAt": "2024-04-10T14:53:07Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I resolved most of the conversations due to outdated content. Revised text is provided in the most recent updates.",
+          "createdAt": "2024-07-03T19:44:01Z",
+          "updatedAt": "2024-07-03T19:44:01Z"
         }
       ],
       "reviews": [
@@ -18420,6 +18577,308 @@
               "updatedAt": "2024-03-27T15:24:16Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ait0c",
+          "commit": {
+            "abbreviatedOid": "271a4cf"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-03T14:16:30Z",
+          "updatedAt": "2024-07-03T14:16:31Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-07-03T14:16:31Z",
+              "updatedAt": "2024-07-03T14:16:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ai3iw",
+          "commit": {
+            "abbreviatedOid": "271a4cf"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-03T14:31:47Z",
+          "updatedAt": "2024-07-03T14:31:47Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "@nedmsmith to wordsmith this",
+              "createdAt": "2024-07-03T14:31:47Z",
+              "updatedAt": "2024-07-03T14:31:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ax9vK",
+          "commit": {
+            "abbreviatedOid": "a115c54"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-05T12:01:15Z",
+          "updatedAt": "2024-07-05T12:09:13Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\nA Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.\r\n```",
+              "createdAt": "2024-07-05T12:01:15Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            },
+            {
+              "originalPosition": 30,
+              "body": "Should we say how? Or, if we do already, reference the place(s) that contain the relevant text.",
+              "createdAt": "2024-07-05T12:03:19Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            },
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nIf a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.\r\n```",
+              "createdAt": "2024-07-05T12:04:20Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            },
+            {
+              "originalPosition": 51,
+              "body": "Isn't this a MUST?  The overall security of the system depends on being able to validate evidence's signatures.",
+              "createdAt": "2024-07-05T12:07:05Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nAttest Key triples endorse that the keys were securely provisioned to the named Attesting Environment.\r\n```",
+              "createdAt": "2024-07-05T12:07:52Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            },
+            {
+              "originalPosition": 54,
+              "body": "ditto (symmetric to identity keys)",
+              "createdAt": "2024-07-05T12:08:25Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            },
+            {
+              "originalPosition": 58,
+              "body": "To me this too is a MUST.",
+              "createdAt": "2024-07-05T12:08:53Z",
+              "updatedAt": "2024-07-05T12:09:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AyiDO",
+          "commit": {
+            "abbreviatedOid": "a115c54"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-07-05T13:28:55Z",
+          "updatedAt": "2024-07-05T13:28:55Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A02Rq",
+          "commit": {
+            "abbreviatedOid": "1bc158c"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T00:44:13Z",
+          "updatedAt": "2024-07-06T00:44:13Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "If the verifier decides not to do the check and therefore doesn't add a claim containing the verification results claim and the RP expects to find the claim, then the RP applies the enforcement decision and likely doesn't grant access to the resource requested by the Attester. This approach would not force the verifier into becoming an enforcement point if a deployment architecture didn't want that.",
+              "createdAt": "2024-07-06T00:44:13Z",
+              "updatedAt": "2024-07-06T00:44:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A02Yp",
+          "commit": {
+            "abbreviatedOid": "51186b5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T00:45:45Z",
+          "updatedAt": "2024-07-06T00:45:45Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "I'm confused what action to take?",
+              "createdAt": "2024-07-06T00:45:45Z",
+              "updatedAt": "2024-07-06T00:45:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A02eq",
+          "commit": {
+            "abbreviatedOid": "51186b5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T00:46:24Z",
+          "updatedAt": "2024-07-06T00:46:25Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "See answer to the previous question about MUST",
+              "createdAt": "2024-07-06T00:46:24Z",
+              "updatedAt": "2024-07-06T00:46:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1d9q",
+          "commit": {
+            "abbreviatedOid": "a115c54"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T08:39:03Z",
+          "updatedAt": "2024-07-06T08:39:03Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "I am not convinced that your argument justifies a SHOULD, but for the sake of the cut-off, this is good enough for now.",
+              "createdAt": "2024-07-06T08:39:03Z",
+              "updatedAt": "2024-07-06T08:39:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1eFt",
+          "commit": {
+            "abbreviatedOid": "51186b5"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T08:42:22Z",
+          "updatedAt": "2024-07-06T08:42:22Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Let's move that issue to -08",
+              "createdAt": "2024-07-06T08:42:22Z",
+              "updatedAt": "2024-07-06T08:42:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1ePl",
+          "commit": {
+            "abbreviatedOid": "51186b5"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T08:48:46Z",
+          "updatedAt": "2024-07-06T08:48:46Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "```suggestion\r\n```\r\nCo-authored-by: Ned Smith <nedmsmith@users.noreply.github.com>\r\nnedmsmith  ",
+              "createdAt": "2024-07-06T08:48:46Z",
+              "updatedAt": "2024-07-06T08:48:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1eT_",
+          "commit": {
+            "abbreviatedOid": "075cbbc"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T08:51:41Z",
+          "updatedAt": "2024-07-06T08:51:42Z",
+          "comments": [
+            {
+              "originalPosition": 52,
+              "body": "```suggestion\r\nAttest Key triples endorse that the keys were securely provisioned to the named (identified via an Environment Map) Attesting Environment.\r\n```",
+              "createdAt": "2024-07-06T08:51:41Z",
+              "updatedAt": "2024-07-06T08:51:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1eWr",
+          "commit": {
+            "abbreviatedOid": "5ec8853"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T08:53:16Z",
+          "updatedAt": "2024-07-06T08:53:16Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "If there should be additional symmetric text about identity key, that goes into -08",
+              "createdAt": "2024-07-06T08:53:16Z",
+              "updatedAt": "2024-07-06T08:53:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1eXv",
+          "commit": {
+            "abbreviatedOid": "5ec8853"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T08:53:59Z",
+          "updatedAt": "2024-07-06T08:54:00Z",
+          "comments": [
+            {
+              "originalPosition": 56,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2024-07-06T08:53:59Z",
+              "updatedAt": "2024-07-06T08:54:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1eaG",
+          "commit": {
+            "abbreviatedOid": "4989d61"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "let's :ship: this for now",
+          "createdAt": "2024-07-06T08:55:25Z",
+          "updatedAt": "2024-07-06T09:33:13Z",
+          "comments": []
         }
       ]
     },
@@ -21419,7 +21878,7 @@
       "id": "PR_kwDOH6-tI85c071m",
       "title": "Define matching rules for raw-value",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/167",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -21428,14 +21887,14 @@
       ],
       "body": "This fixes issue #124 and part of issue #71",
       "createdAt": "2023-10-15T10:04:50Z",
-      "updatedAt": "2024-05-07T19:26:46Z",
+      "updatedAt": "2024-07-03T14:10:51Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8d7f85affabf990b0471f143f87c33ea615d2349",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "124-untagged-raw-value",
       "headRefOid": "542fabd428b1399009a270aea9558451e71d679c",
-      "closedAt": null,
+      "closedAt": "2024-07-03T14:10:51Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -21453,6 +21912,13 @@
           "body": "Added `mustfix` label to align with priority of #71 \r\nClosing this PR closes issue #71 ",
           "createdAt": "2024-05-07T19:26:45Z",
           "updatedAt": "2024-05-07T19:26:45Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "07/03/2024 - we agreed @andrew-draper would come up with a new PR for issues #71 and #124.",
+          "createdAt": "2024-07-03T14:10:51Z",
+          "updatedAt": "2024-07-03T14:10:51Z"
         }
       ],
       "reviews": [
@@ -26354,7 +26820,7 @@
       "id": "PR_kwDOH6-tI85mED88",
       "title": "Theory of operation",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/201",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -26365,14 +26831,14 @@
       ],
       "body": "Added section 5.2 describing the verifier theory of operation",
       "createdAt": "2024-02-05T19:17:01Z",
-      "updatedAt": "2024-05-03T16:37:25Z",
+      "updatedAt": "2024-07-03T14:35:08Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "theory-of-operation",
       "headRefOid": "f14293f2b23065707a096211f2352721f62c9c47",
-      "closedAt": null,
+      "closedAt": "2024-07-03T14:35:08Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -26390,6 +26856,13 @@
           "body": ">if we assume that all claims are conjunctive, then the problem becomes HORNSAT\r\n\r\nThe conditional series triple is possibly the most complex, which is a 2-step condition, but both steps are conjunctive. The idea of an update form that is a function could become problematic if the function somehow introduces negation or disjunction. But the anticipated use with identity-key and attest-key triples doesn't do this. At most, the function result is a conjunction that adds new claims to ACS. Most likely it produces a nil result. ",
           "createdAt": "2024-02-07T17:09:34Z",
           "updatedAt": "2024-02-07T17:11:01Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "superseded by #197 ",
+          "createdAt": "2024-07-03T14:35:08Z",
+          "updatedAt": "2024-07-03T14:35:08Z"
         }
       ],
       "reviews": [
@@ -26633,21 +27106,21 @@
       "id": "PR_kwDOH6-tI85mph0-",
       "title": "Assign tag for digests",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/203",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Issue #154 notes that there is no tag assigned for a digests measurement when it appears at a local codepoint (for example at measurement-values-map codepoint -42).\r\n\r\nThis diff allocates the next available codepoint to inform the verifier that it should use the digests type.",
       "createdAt": "2024-02-12T15:31:58Z",
-      "updatedAt": "2024-05-01T18:24:52Z",
+      "updatedAt": "2024-07-03T14:37:42Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fe0d0d88e557fbd55b8d6110f49767e1ff7bc246",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "154-assign-tag-for-digest",
       "headRefOid": "985723adcba5a837bbe30c50c8dfd1e64b57dbed",
-      "closedAt": null,
+      "closedAt": "2024-07-03T14:37:42Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -26686,6 +27159,13 @@
           "body": "Section 1.3.8 contains a description of a singleton digest but also says `A measurement can be obtained using different hash algorithms. A digests-type can be used to collect multiple digest values obtained by applying different hash algorithms on the same input.` Arguably, this statement could be moved to section 3.1.4.1.5.2 measurement-values-map where the semantics of code point 2 are described because the multiple digests describe the same object. But possibly `integrity-registers` intended this semantic also? \r\n\r\nCode point 2 was defined with algorithm agility in mind, where some implementations may use one hash algorithm while others may use another. \r\n\r\nGiven there is another use case for multiple digests. Typically, the code point assignment documents the semantics of RHS Claim. Additionally, it might make sense for the second usage to require algorithm agility properties, in which case the structure might need to be an array of arrays? (e.g. `integrity-registers`).\r\n\r\nOtherwise, this PR becomes a request for an extensibility point on code point 2 which seems nuanced and subtle when taken in the context of all the other possible ways to extend corim.",
           "createdAt": "2024-05-01T18:09:22Z",
           "updatedAt": "2024-05-01T18:24:52Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper to file an issue discussing extension points and data types, that can be discussed before a new PR is created.",
+          "createdAt": "2024-07-03T14:37:42Z",
+          "updatedAt": "2024-07-03T14:37:42Z"
         }
       ],
       "reviews": [
@@ -27989,26 +28469,28 @@
     {
       "number": 219,
       "id": "PR_kwDOH6-tI85q7y3A",
-      "title": "Remove duplicate triples",
+      "title": "Merge MEC and conditional endorsements triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/219",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-03-27T14:12:02Z",
-      "updatedAt": "2024-05-01T16:58:58Z",
+      "updatedAt": "2024-07-05T09:51:50Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e6f31f7f61d123224a49dde58f2b8938077572c4",
+      "baseRefOid": "8a150bb9d96ce8d9825ea5565291e47fc9448cbc",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tidyup-triples",
-      "headRefOid": "0d7d26e1dc465cb3b3103f1e8a8982894107949a",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "8b169ef4a50c32bc3befca087ad36e62cf0d4325",
+      "closedAt": "2024-07-05T09:51:47Z",
+      "mergedAt": "2024-07-05T09:51:47Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "0032f832d43d33463a9ff748bc590977807e0824"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -28023,6 +28505,41 @@
           "body": "Is this a breaking change? Do existing examples break?\r\nWe should not break existing work but rather deprecate anything that could be regarded as adding unnecessary complexity.\r\n\r\nA possibly better way to handle deprecated code points is to not clobber '9' but mark it as reserved. \r\n\r\nAlso, avoid breaking repos that depend on corim schema by keeping the cddl for code point 9 but exclude it from the I-D. Possibly, the repo should have a folder for deprecated cddl? At some point in time in the future, when it is safe to remove deprecated features the repo can be updated to delete it? ",
           "createdAt": "2024-04-26T17:03:12Z",
           "updatedAt": "2024-04-26T18:10:59Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@yogeshbdeshpande to fix the associated tests.",
+          "createdAt": "2024-07-03T14:53:22Z",
+          "updatedAt": "2024-07-03T14:53:22Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [...] code point 9 should be marked as \"reserved\" in IANA considerations.\r\n\r\ngood point.  Except we don't have the IANA section in place at the moment.  I have added a note to #15 \r\n\r\n",
+          "createdAt": "2024-07-04T09:29:13Z",
+          "updatedAt": "2024-07-04T09:31:20Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati I have now addressed your comments, please check once, if you have any more comments?",
+          "createdAt": "2024-07-04T11:10:35Z",
+          "updatedAt": "2024-07-04T11:10:35Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @thomas-fossati I have now addressed your comments, please check once,\\\r\n\r\nThanks.\r\n\r\n> if you have any more comments?\r\n\r\nStill puzzled by the renaming strategy but I can live with it.",
+          "createdAt": "2024-07-04T11:21:19Z",
+          "updatedAt": "2024-07-04T11:21:19Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks @thomas-fossati , I will await for @henkbirkholz and @nedmsmith  to approve before merging!",
+          "createdAt": "2024-07-04T11:23:30Z",
+          "updatedAt": "2024-07-04T11:23:30Z"
         }
       ],
       "reviews": [
@@ -28110,6 +28627,144 @@
           "body": "+1 on Andy's suggested change to use code point 10 instead of 9 and that code point 9 should be marked as \"reserved\" in IANA considerations.",
           "createdAt": "2024-05-01T16:58:58Z",
           "updatedAt": "2024-05-01T16:58:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ApwKN",
+          "commit": {
+            "abbreviatedOid": "61fea70"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-04T09:19:46Z",
+          "updatedAt": "2024-07-04T09:25:56Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "no reason to abbreviate one and not the other\r\n\r\n```suggestion\r\n  conditions: [ + stateful-environment-record ]\r\n```",
+              "createdAt": "2024-07-04T09:19:46Z",
+              "updatedAt": "2024-07-04T09:25:56Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "it looks like we are doing this half way.\r\n\r\nSince we are happy to allocate a new code point, why not picking 11 and deprecating 9 and 10.  While this may not be strictly needed in this case, I think it's a good way to put in place \"best practices\"\r\n",
+              "createdAt": "2024-07-04T09:24:47Z",
+              "updatedAt": "2024-07-04T09:25:56Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "We are removing some existing testing harness.  Have we got equivalent coverage for the \"merged\" triple?",
+              "createdAt": "2024-07-04T09:25:48Z",
+              "updatedAt": "2024-07-04T09:25:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ap5xF",
+          "commit": {
+            "abbreviatedOid": "61fea70"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-04T09:33:03Z",
+          "updatedAt": "2024-07-04T09:33:03Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "@thomas-fossati : it is not like that : code point 10 was already used by MEC, so will continue, using this code point. It just make code point 9 redundant! No need to mint code point 11 here!",
+              "createdAt": "2024-07-04T09:33:03Z",
+              "updatedAt": "2024-07-04T09:33:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AqON7",
+          "commit": {
+            "abbreviatedOid": "61fea70"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-04T10:10:23Z",
+          "updatedAt": "2024-07-04T10:10:23Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "To summarise:\r\n* On `main`: 9=CET and 10=MEC.\r\n* On `tidyup-triples`: 9=/dev/null and 10=MEC, but it's now called CET \ud83e\udee8",
+              "createdAt": "2024-07-04T10:10:23Z",
+              "updatedAt": "2024-07-04T10:10:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AqRvh",
+          "commit": {
+            "abbreviatedOid": "61fea70"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-04T10:17:35Z",
+          "updatedAt": "2024-07-04T10:17:35Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Correct ! Got it 100% right ",
+              "createdAt": "2024-07-04T10:17:35Z",
+              "updatedAt": "2024-07-04T10:17:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AqrtF",
+          "commit": {
+            "abbreviatedOid": "61fea70"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-04T11:10:03Z",
+          "updatedAt": "2024-07-04T11:10:03Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Yes done now, please check!",
+              "createdAt": "2024-07-04T11:10:03Z",
+              "updatedAt": "2024-07-04T11:10:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AqwpY",
+          "commit": {
+            "abbreviatedOid": "8b169ef"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-07-04T11:21:31Z",
+          "updatedAt": "2024-07-04T11:21:31Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AtkTa",
+          "commit": {
+            "abbreviatedOid": "8b169ef"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-07-04T19:22:25Z",
+          "updatedAt": "2024-07-04T19:22:25Z",
           "comments": []
         }
       ]
@@ -28456,22 +29111,22 @@
     {
       "number": 226,
       "id": "PR_kwDOH6-tI85tf79r",
-      "title": "Change Measurement to Claim where appropriate",
+      "title": "Change Measurement to Property where appropriate",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/226",
       "state": "OPEN",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "A claim is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrainted in points.\r\n\r\nCloses Issue#225",
+      "body": "A property is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrained in points.\r\n\r\nCloses Issue#225",
       "createdAt": "2024-04-23T16:40:06Z",
-      "updatedAt": "2024-05-29T14:03:14Z",
+      "updatedAt": "2024-06-24T15:02:50Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d401b68c49f3f8f959f4b75a441f91064762a301",
+      "baseRefOid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "claimsmap",
-      "headRefOid": "0196a34aba402de3939ac36e1f97c828ea9a99a4",
+      "headRefOid": "0213dc9ecd8892ea2fada92871f781eab06956bb",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -28511,6 +29166,20 @@
           "body": "The `C`laim in `ECT` came up several times. The generic use of Claims (as defined in JWT) and the increasingly specific use in RFC 9334 and then here seem to create more confusion than necessary.\r\n\r\nWe are considering changing Claim to a less overloaded synonym, such as property or characteristic. In the end it is just naming and I'd typically refrain from doing name changes at this stage. Then again, the topic starts to eat time and maybe it is better to go with a synonym for now?",
           "createdAt": "2024-05-29T13:32:54Z",
           "updatedAt": "2024-05-29T13:32:54Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR doesn't fully address the terminology differences between measurement and claim as the `mkey` and `mval` members borrow `m` from measurement. \r\nAdditionally, the 9334 definition of claim is at a higher level of abstraction and applies equally to `enviornment-map` as it does `measurement-map` or some other CDDL expression. \r\nMy preference is to leave \"claim\" as an abstract term and come up with different vocabulary to refer to the values not in environment-map. \r\nMaybe use properties `properties-map` instead of `claims-map`? \r\nThis would suggest `mval` would change to `pval` and `mkey` to `pkey`. \r\nI guess I'm indifferent whether `claim-values-map` changes to `property-values-map` if the bounding structure is called `properties-map`.\r\n\r\nThis implies ECT becomes EPT.\r\n",
+          "createdAt": "2024-06-20T22:00:08Z",
+          "updatedAt": "2024-06-20T22:00:08Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I've updated the text to used \"property\" instead.",
+          "createdAt": "2024-06-24T15:02:48Z",
+          "updatedAt": "2024-06-24T15:02:48Z"
         }
       ],
       "reviews": [
@@ -28521,10 +29190,10 @@
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
-          "state": "APPROVED",
+          "state": "DISMISSED",
           "body": "LGTM",
           "createdAt": "2024-04-23T17:18:55Z",
-          "updatedAt": "2024-05-29T14:03:13Z",
+          "updatedAt": "2024-06-20T21:52:55Z",
           "comments": [
             {
               "originalPosition": 35,
@@ -28537,6 +29206,92 @@
               "body": "```suggestion\r\nmeasurement/endorsement value. Claims can have class, instance or group scope.  This is\r\n```",
               "createdAt": "2024-04-24T15:59:04Z",
               "updatedAt": "2024-05-01T17:42:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85-37vE",
+          "commit": {
+            "abbreviatedOid": "28d3322"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-19T15:21:53Z",
+          "updatedAt": "2024-06-19T15:21:53Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "Trying to recover a suggestion that got lost in the discussion.\r\n```suggestion\r\nA Claim represents a single piece of actual or reference state.\r\nA Claim may either be a measurement that can be directly compared with attestation evidence, or it can be an endorsement of a quality that is not directly comparable with evidence.\r\n```\r\nThere was a further suggestion to s/measurement/reference value/ in L848",
+              "createdAt": "2024-06-19T15:21:53Z",
+              "updatedAt": "2024-06-19T15:21:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85-5U-p",
+          "commit": {
+            "abbreviatedOid": "37ec10a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM\r\n\r\nI've left a couple of purely editorial comments.",
+          "createdAt": "2024-06-19T19:48:10Z",
+          "updatedAt": "2024-06-19T20:05:54Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\nA Reference Value triple can be expressed as a conditional Endorsement, indicating that if the Attester makes certain Claims, then the RVP also makes those Claims.\r\n```",
+              "createdAt": "2024-06-19T19:48:10Z",
+              "updatedAt": "2024-06-19T20:05:54Z"
+            },
+            {
+              "originalPosition": 46,
+              "body": "```suggestion\r\nThe triple\u2019s environment defines the scope of a Claim.\r\n```",
+              "createdAt": "2024-06-19T20:04:34Z",
+              "updatedAt": "2024-06-19T20:05:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85-_KUP",
+          "commit": {
+            "abbreviatedOid": "cdc332d"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-20T13:46:19Z",
+          "updatedAt": "2024-06-20T13:46:20Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "[\"key-value pair\"](https://en.wikipedia.org/wiki/Name\u2013value_pair)",
+              "createdAt": "2024-06-20T13:46:19Z",
+              "updatedAt": "2024-06-20T13:46:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85_C2Z6",
+          "commit": {
+            "abbreviatedOid": "cdc332d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-20T22:05:51Z",
+          "updatedAt": "2024-06-20T22:05:51Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "If we're following the endorsements draft terminology it would read something like: \"A Claim is a key-value pair that in CoRIM represents a single piece of actual or possible state.",
+              "createdAt": "2024-06-20T22:05:51Z",
+              "updatedAt": "2024-06-20T22:05:51Z"
             }
           ]
         }
@@ -28791,24 +29546,26 @@
       "id": "PR_kwDOH6-tI85vQLql",
       "title": "Major Overhaul: Scope of Core & Simplification",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/232",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-05-13T12:38:44Z",
-      "updatedAt": "2024-06-12T15:35:48Z",
+      "updatedAt": "2024-06-19T15:04:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d401b68c49f3f8f959f4b75a441f91064762a301",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "simplification-refactoring",
-      "headRefOid": "ff7c7a7845a8a50d968d292106f44557343381b7",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "a5bde54e293e131ecbc3feaf842c3702e0b99936",
+      "closedAt": "2024-06-19T15:04:16Z",
+      "mergedAt": "2024-06-19T15:04:16Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -28837,6 +29594,13 @@
           "body": "> ECT are not actually tuples anymore (even if we agree that authority moves into environment), right?\r\n\r\nOver-obsessing on \"tuple\". Tuple and therefore ECT is fine (independent of number of items tuple'ed).",
           "createdAt": "2024-05-22T15:15:15Z",
           "updatedAt": "2024-05-22T15:15:15Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The CI is broken.\r\n\r\nLocally, this PR compiles fine.\r\n\r\nWe decided to merge it into main nevertheless to prioritise functionality over safety.\r\n\r\nSee #243 ",
+          "createdAt": "2024-06-19T14:21:07Z",
+          "updatedAt": "2024-06-19T14:21:07Z"
         }
       ],
       "reviews": [
@@ -30353,6 +31117,473 @@
               "body": "> which \"older version\" are you referring to?\r\n> \r\n> Both OLD and NEW have the same \"external\"...\r\n\r\nThe changes from @thomas-fossati has been addressed.",
               "createdAt": "2024-06-12T15:07:50Z",
               "updatedAt": "2024-06-12T15:07:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85-3QTU",
+          "commit": {
+            "abbreviatedOid": "9f6a91f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-06-19T14:12:17Z",
+          "updatedAt": "2024-06-19T14:12:17Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "The corrected text fixes my previous concern.",
+              "createdAt": "2024-06-19T14:12:17Z",
+              "updatedAt": "2024-06-19T14:12:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI85-3Ydu",
+          "commit": {
+            "abbreviatedOid": "a5bde54"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-06-19T14:25:54Z",
+          "updatedAt": "2024-06-19T14:25:54Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 245,
+      "id": "PR_kwDOH6-tI85zYSOP",
+      "title": "Clarify untagged value comparison requirements",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/245",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As stated, it appears that keys of measurement-values-map in this document are given more leeway for specifying comparisons than profiles. I interpret the text as saying any untagged value for a key that is not 0 through 14 must be compared with binary equality. There is no MUST in the current language, so that does not seem to be the intention. A profile should be allowed to specify a comparison method as irregular as raw-value and raw-value-mask without the need for registering a CBOR tag number with the IANA.\r\n\r\nIf a profile's comparison method will be common to multiple profiles that are intended for general verifier consumption, then we just recommend that the comparison gets registered with a CBOR tag to avoid having to duplicate language and potentially very slightly deviate from the original meaning in different profiles.",
+      "createdAt": "2024-06-24T14:54:32Z",
+      "updatedAt": "2024-06-24T14:54:33Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "comparison",
+      "headRefOid": "eee4bd21d2742aea11d71792d5e93da05adbcf3a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 246,
+      "id": "PR_kwDOH6-tI85zyfx6",
+      "title": "ascii art",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/246",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "some ascii art I have made that may be useful as-is or as a starting point",
+      "createdAt": "2024-06-27T15:20:43Z",
+      "updatedAt": "2024-07-04T08:46:01Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "542276abae48a7bf96e15d318649f2c126fd0592",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "pics",
+      "headRefOid": "e0242a44f3a531dd54e04bf229270c9b196b9620",
+      "closedAt": "2024-07-04T08:45:55Z",
+      "mergedAt": "2024-07-04T08:45:55Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "8a150bb9d96ce8d9825ea5565291e47fc9448cbc"
+      },
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It is reasonable for the Verifier to assert new claims (which could be treated like endorsements) but the diagrams don't suggest this possibility exists. The use case for this is if the Verifier applies additional integrity checking operations (which is implied by the identity-key/attest-key triples and trust dependency triples. These are applied after the other endorsements, so it makes sense to show another ECS'''' IMHO. Possibly, our revised RATS Arch diagram should include a flow from the RP to the Verifier labeled \"Interesting Claims\". Trying to do this through some sort of backchannel between RP Owner and Verifier Owner seems dubious.\r\n\r\nAlso, the RATS Arch omitted a flow from the RP to the Verifier that allows the Verifier to know which claims are \"interesting\". This is different from Appraisal Policy because of the entity that originates it. Of course, we can say that this flow is out of scope (but exists), but it affects the staging. If the diagram models policy evaluation as a separate (but logical) phase, and the only input is appraisal policy then there isn't enough information available for an RP to specify a condition of which types of claims are interesting. \r\n\r\nI also think there should be a box for Attestation Results Processing that formats internal formatted ARs into external formatted ARs and applies signatures. This is symmetrical with the CoRIM Processor box that verifies signatures on inputs and transforms external representations to internal representation.",
+          "createdAt": "2024-06-27T19:56:03Z",
+          "updatedAt": "2024-06-27T20:00:23Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86AmuoH",
+          "commit": {
+            "abbreviatedOid": "e0242a4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-07-03T23:09:39Z",
+          "updatedAt": "2024-07-04T08:42:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 247,
+      "id": "PR_kwDOH6-tI850HJtO",
+      "title": "Remove appendices describing evidence translation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/247",
+      "state": "MERGED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "removed evidence translation appendices and references to these sections.\r\nThey can now be found in: https://github.com/ietf-rats-wg/draft-smith-rats-evidence-trans",
+      "createdAt": "2024-07-01T19:45:24Z",
+      "updatedAt": "2024-07-03T16:09:14Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "remove-evidence-trans-sections",
+      "headRefOid": "98bbf3d5581d96fbc8302eaa2385005a18f13798",
+      "closedAt": "2024-07-03T16:09:10Z",
+      "mergedAt": "2024-07-03T16:09:10Z",
+      "mergedBy": "nedmsmith",
+      "mergeCommit": {
+        "oid": "0bac1fb8b5c4e6d3988f1d0bb25ff3b00300771d"
+      },
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This addresses issue #240 ",
+          "createdAt": "2024-07-01T19:48:20Z",
+          "updatedAt": "2024-07-01T19:48:20Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86Air1l",
+          "commit": {
+            "abbreviatedOid": "98bbf3d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-07-03T14:13:16Z",
+          "updatedAt": "2024-07-03T14:13:16Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ajtvf",
+          "commit": {
+            "abbreviatedOid": "98bbf3d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-07-03T15:59:50Z",
+          "updatedAt": "2024-07-03T15:59:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ajtxn",
+          "commit": {
+            "abbreviatedOid": "98bbf3d"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Looks excellent to me :-)",
+          "createdAt": "2024-07-03T15:59:54Z",
+          "updatedAt": "2024-07-03T15:59:54Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AjxtK",
+          "commit": {
+            "abbreviatedOid": "98bbf3d"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "lgtm (including local tool chain)",
+          "createdAt": "2024-07-03T16:07:58Z",
+          "updatedAt": "2024-07-03T16:07:58Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 248,
+      "id": "PR_kwDOH6-tI850VqA6",
+      "title": "Editorial changes to measurement discussion",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/248",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "These are have been separated from the renaming in PR#226",
+      "createdAt": "2024-07-03T14:52:24Z",
+      "updatedAt": "2024-07-06T11:57:13Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "claimprose",
+      "headRefOid": "89bd3d7dcfc9b22af08d6d3a73f8d1ba3d69cf96",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86A1i4G",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:41:57Z",
+          "updatedAt": "2024-07-06T11:41:58Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "This might require en example to be less abstract?",
+              "createdAt": "2024-07-06T11:41:57Z",
+              "updatedAt": "2024-07-06T11:41:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1i6K",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:43:34Z",
+          "updatedAt": "2024-07-06T11:43:34Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "you are introducing \"the conversation\" here. Is there some similar wording that already exists in the I-D to use instead. Otherwise, we have to clarify a bit of the scope, involved actors, and subject of the conversation, I think ",
+              "createdAt": "2024-07-06T11:43:34Z",
+              "updatedAt": "2024-07-06T11:43:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1i-B",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:46:31Z",
+          "updatedAt": "2024-07-06T11:46:31Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "Maybe: \r\n```suggestion\r\nA specific set of measuremenst always originates from a single identifiable and associated Environment. Hence. an Environment-Claim Tuple (ECT) is a data structure used to encapsulate that scope context for a given set of measurements.\r\n```",
+              "createdAt": "2024-07-06T11:46:31Z",
+              "updatedAt": "2024-07-06T11:46:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jDr",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:50:28Z",
+          "updatedAt": "2024-07-06T11:50:28Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nWhen the content of an a ECT data structure is presented to roles external to the Verifier, it MAY be referred to via different terms, such as property, claim, or assertion. Whenever an ECT is consumed by a role external to the Verifer, the consuming party MUST always attribute provenance and the ECT's intended use.\r\n```",
+              "createdAt": "2024-07-06T11:50:28Z",
+              "updatedAt": "2024-07-06T11:50:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jFi",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:51:41Z",
+          "updatedAt": "2024-07-06T11:51:41Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "Are you also implying that Evidence can assert claims about allowed state?",
+              "createdAt": "2024-07-06T11:51:41Z",
+              "updatedAt": "2024-07-06T11:51:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jHf",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:52:49Z",
+          "updatedAt": "2024-07-06T11:52:49Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "I cannot really follow \"[A Measurement] can be a quality that is not directly comparable with evidence\". Could you maybe provide an example so it becomes more clear?",
+              "createdAt": "2024-07-06T11:52:49Z",
+              "updatedAt": "2024-07-06T11:53:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jJH",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:54:00Z",
+          "updatedAt": "2024-07-06T11:54:00Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "In general, I think that Evidence is composed of \"Measurements\" and there might be a bigger disconnect here that I cannot follow.",
+              "createdAt": "2024-07-06T11:54:00Z",
+              "updatedAt": "2024-07-06T11:54:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jJe",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:54:17Z",
+          "updatedAt": "2024-07-06T11:54:18Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nThe scope of a property is defined by the `environment-map` and optional `mkey` it appears with.\r\n```",
+              "createdAt": "2024-07-06T11:54:18Z",
+              "updatedAt": "2024-07-06T11:54:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jLA",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:55:11Z",
+          "updatedAt": "2024-07-06T11:55:11Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\r\nMeasurements can be of a variety of things including measurement values about software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc. Measurements comprise raw values, digests, or status information.\r\n```",
+              "createdAt": "2024-07-06T11:55:11Z",
+              "updatedAt": "2024-07-06T11:55:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jLs",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:55:45Z",
+          "updatedAt": "2024-07-06T11:55:46Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "This might benefit from another example.",
+              "createdAt": "2024-07-06T11:55:46Z",
+              "updatedAt": "2024-07-06T11:55:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jM5",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:56:40Z",
+          "updatedAt": "2024-07-06T11:56:40Z",
+          "comments": [
+            {
+              "originalPosition": 57,
+              "body": "```suggestion\r\nMeasurements paired with an `environment-map` that contains only a class may be referred to as class properties, and similarly with instance and group measurements for respective elements of the `environment-map`.\r\n```",
+              "createdAt": "2024-07-06T11:56:40Z",
+              "updatedAt": "2024-07-06T11:56:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A1jN8",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-06T11:57:13Z",
+          "updatedAt": "2024-07-06T11:57:13Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Another triple?",
+              "createdAt": "2024-07-06T11:57:13Z",
+              "updatedAt": "2024-07-06T11:57:13Z"
             }
           ]
         }
