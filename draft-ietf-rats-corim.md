@@ -791,7 +791,7 @@ Measurements paired with an `environment-map` that contains only a class may be 
 
 A measurement from an Attester is called Evidence.
 A measurement in a `reference-triple-record` is called a Reference Value.
-A measurement any other triple is called an Endorsement.
+A measurement in any other triple is called an Endorsement.
 
 The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
 If a different entity is authorized to provide measurement values, the CoRIM signer may delegate authorization of specific measurements to a different authority with the `authorized-by` entry in the `measurement-map`.
