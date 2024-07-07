@@ -170,6 +170,7 @@ By using the internal representation, the Verifier processes inputs as if they a
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
 These individual principals of the conversation may have their identity rooted back to some *authority* farther up the certificate chain than the signing key itself, such as a digital certificate authority intermediate or root key.
 The origin of contributions/inputs to the conversation are tracked at the granularity of authority, so CoRIM authors can predicate their reference measurements or endorsements based on existing properties rooted from the same authority.
+For example, a CoRIM can state it endorses reference values from Attesters certified by ACME Inc.'s intermediate certificate authority for issuing FPGA attestation key certificates, and not have to specify which individual attesting key is trusted.
 
 CoRIM inputs to the conversation include measurements within a specific Environment.
 A measurement never appears outside the scope of an associated Environment, so the Environment-Claim Tuple (ECT) is a data structure used to encapsulate all scope context for a given set of measurements.
