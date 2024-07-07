@@ -173,9 +173,11 @@ The origin of contributions/inputs to the conversation are tracked at the granul
 For example, a CoRIM can state it endorses reference values from Attesters certified by ACME Inc.'s intermediate certificate authority for issuing FPGA attestation key certificates, and not have to specify which individual attesting key is trusted.
 
 CoRIM inputs to the conversation include measurements within a specific Environment.
-A measurement never appears outside the scope of an associated Environment, so the Environment-Claim Tuple (ECT) is a data structure used to encapsulate all scope context for a given set of measurements.
+A specific occurrence of a set of measurements always from a single identifiable and associated environment.
+Hence, the Environment-Claim Tuple (ECT) is a data structure used to encapsulate all scope context for a given set of measurements.
 The authority for an ECT from a CoRIM is the CoRIM issuer.
-The collective content of an ECT may be referred to as a property, claim, or assertion when the content need not be presented in the ECT data structure.
+When the content of an ECT data structure is presented to roles external to the Verifier, it MAY be referred to via different terms, such as property, claim, or assertion.
+Whenever an ECT is consumed by a role external to the Verifer, the consuming party MUST always attribute provenance and the ECT's intended use.
 
 Important: The Verifier's objective is to produce a list of properties that describe the Attester's presumed actual state.
 
@@ -776,19 +778,20 @@ The types defined for a group identified are UUID and variable-length opaque byt
 
 ##### Measurements
 
-A measurement can be directly compared with attestation evidence, or it can be a quality that is not directly comparable with evidence.
-The scope of a mroperty is defined by the `environment-map` and optional `mkey` it appears with.
+A measurement can be directly compared with attestation evidence (e.g., digests), or it can be a quality that is not directly comparable with evidence (e.g., a human-readable name).
+The scope of a property is defined by the `environment-map` and optional `mkey` it appears with.
 
-Measurements can be of a variety of things including software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc. Measurements comprise raw values, digests, or status information.
+Measurements can be of a variety of things including measurement values about software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc. Measurements comprise raw values, digests, or status information.
 
 Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
+For example, an attester may provide the version of the microcode in its own field, whereas the combined contents of all firmware modules are measured cumulatively into a single integrity register.
 An `environment-map` contains at least one of: class, instance, or group.
 The more elements in the `environment-map`, the narrower the scope, since more elements must be in common to match.
-Measurements paired with an `environment-map` that contains only a class may be referred to as class mroperties, and similarly with instance and group measurements for respective elements of the `environment-map`.
+Measurements paired with an `environment-map` that contains only a class may be referred to as class properties, and similarly with instance and group measurements for respective elements of the `environment-map`.
 
 A measurement from an Attester is called Evidence.
 A measurement in a `reference-triple-record` is called a Reference Value.
-A measurement in another triple is called an Endorsement.
+A measurement any other triple is called an Endorsement.
 
 The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
 If a different entity is authorized to provide measurement values, the CoRIM signer may delegate authorization of specific measurements to a different authority with the `authorized-by` entry in the `measurement-map`.
