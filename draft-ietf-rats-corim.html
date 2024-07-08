@@ -1036,7 +1036,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 6 January 2025</td>
+<td class="center">Expires 9 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1049,12 +1049,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-07-05" class="published">5 July 2024</time>
+<time datetime="2024-07-08" class="published">8 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-01-06">6 January 2025</time></dd>
+<dd class="expires"><time datetime="2025-01-09">9 January 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1116,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 6 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1299,7 +1299,7 @@ This document specifies the information elements for representing Endorsements a
                         <p id="section-toc.1-1.5.2.1.2.4.2.4.1"><a href="#section-5.1.4.4" class="auto internal xref">5.1.4.4</a>.  <a href="#name-device-identity-triple" class="internal xref">Device Identity Triple</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.5">
-                        <p id="section-toc.1-1.5.2.1.2.4.2.5.1"><a href="#section-5.1.4.5" class="auto internal xref">5.1.4.5</a>.  <a href="#name-attestation-keys-triple" class="internal xref">Attestation Keys Triple</a></p>
+                        <p id="section-toc.1-1.5.2.1.2.4.2.5.1"><a href="#section-5.1.4.5" class="auto internal xref">5.1.4.5</a>.  <a href="#name-attest-key-triple" class="internal xref">Attest Key Triple</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.6">
                         <p id="section-toc.1-1.5.2.1.2.4.2.6.1"><a href="#section-5.1.4.6" class="auto internal xref">5.1.4.6</a>.  <a href="#name-domain-dependency-triple" class="internal xref">Domain Dependency Triple</a></p>
@@ -3063,11 +3063,7 @@ The digest value may be used to find the certificate if contained in a lookup ta
 The digest value may be used to find the certificate path if contained in a lookup table.<a href="#section-5.1.4.1.5-4.3.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
-<p id="section-5.1.4.1.5-5">In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
-then compute a digest of the key that is forwarded to a second Verifier. The second Verifier
-completes the signature verification by performing certificate path validation, revocation
-checks, and trust anchor checks.<a href="#section-5.1.4.1.5-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.5-6">
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.5-5">
 <pre>
 $crypto-key-type-choice /= tagged-pkix-base64-key-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-type
@@ -3084,7 +3080,7 @@ tagged-thumbprint-type = #6.557(digest)
 tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
 tagged-cert-thumbprint-type = #6.559(digest)
 tagged-cert-path-thumbprint-type = #6.561(digest)
-</pre><a href="#section-5.1.4.1.5-6" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.1.5-5" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -3205,37 +3201,51 @@ endorsed-triple-record = [
             <h5 id="name-device-identity-triple">
 <a href="#section-5.1.4.4" class="section-number selfRef">5.1.4.4. </a><a href="#name-device-identity-triple" class="section-name selfRef">Device Identity Triple</a>
             </h5>
-<p id="section-5.1.4.4-1">A Device Identity triple relates one or more cryptographic keys to a device.
-The subject of an Identity triple uses an instance or class identifier to refer
-to a device, and a cryptographic key is the object. The predicate asserts that
-the identity is authenticated by the key. A common application for this triple
-is device identity.<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.4-2">
+<p id="section-5.1.4.4-1">A Device Identity triple record relates one or more cryptographic keys to a device identity.
+The cryptographic keys are bound to or associated with a Target Environment that is within the device.
+The device identifier may be part of the Target Environment's <code>environment-map</code> or may be part of some other device identity credential, such as a certificate.
+The cryptographic keys are expected to be used to authenticate the device.<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-2">Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
+The Verifier SHOULD perform offline verification of keys contained in Device Identity triples.<a href="#section-5.1.4.4-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-3">A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
+Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.4-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-4">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-5.1.4.4-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-5">If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.<a href="#section-5.1.4.4-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-6">Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Alternatively, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.4-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.4-7">
 <pre>
 identity-triple-record = [
   environment-map
   [ + $crypto-key-type-choice ]
 ]
-</pre><a href="#section-5.1.4.4-2" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.4-7" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="sec-comid-triple-attest-key">
 <section id="section-5.1.4.5">
-            <h5 id="name-attestation-keys-triple">
-<a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-attestation-keys-triple" class="section-name selfRef">Attestation Keys Triple</a>
+            <h5 id="name-attest-key-triple">
+<a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-attest-key-triple" class="section-name selfRef">Attest Key Triple</a>
             </h5>
-<p id="section-5.1.4.5-1">An Attestation Keys triple relates one or more cryptographic keys to an
-Attesting Environment. The Attestation Key triple subject is an Attesting
-Environment whose object is a cryptographic key. The predicate asserts that the
-Attesting Environment signs Evidence that can be verified using the key.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-2">
+<p id="section-5.1.4.5-1">An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
+The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
+The cryptographic keys sign Evidence.
+Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
+The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-2">Attest Key triples endorse that the keys were securely provisioned to the named (identified via an <code>environment-map</code>) Attesting Environment.
+Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-3">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
+If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-4">Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Alternatively, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-5">
 <pre>
 attest-key-triple-record = [
   environment-map
   [ + $crypto-key-type-choice ]
 ]
-</pre><a href="#section-5.1.4.5-2" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-5" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -3625,7 +3635,7 @@ tagged-uuid-type = #6.37(uuid-type)
 <a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-ueid" class="section-name selfRef">UEID</a>
         </h3>
 <p id="section-7.5-1">Used to tag a byte string as Universal Entity ID Claim (UUID) defined in
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-28#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#I-D.ietf-rats-eat" class="cite xref">I-D.ietf-rats-eat</a>]</span>.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-29#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#I-D.ietf-rats-eat" class="cite xref">I-D.ietf-rats-eat</a>]</span>.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-7.5-2">
 <pre>
 ueid-type = bytes .size 33
@@ -5524,7 +5534,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-eat">[I-D.ietf-rats-eat]</dt>
         <dd>
-<span class="refAuthor">Lundblade, L.</span>, <span class="refAuthor">Mandyam, G.</span>, <span class="refAuthor">O'Donoghue, J.</span>, and <span class="refAuthor">C. Wallace</span>, <span class="refTitle">"The Entity Attestation Token (EAT)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-eat-28</span>, <time datetime="2024-06-25" class="refDate">25 June 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-28">https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-28</a>&gt;</span>. </dd>
+<span class="refAuthor">Lundblade, L.</span>, <span class="refAuthor">Mandyam, G.</span>, <span class="refAuthor">O'Donoghue, J.</span>, and <span class="refAuthor">C. Wallace</span>, <span class="refTitle">"The Entity Attestation Token (EAT)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-eat-29</span>, <time datetime="2024-07-08" class="refDate">8 July 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-29">https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-29</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-endorsements">[I-D.ietf-rats-endorsements]</dt>
         <dd>
