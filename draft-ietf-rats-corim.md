@@ -1146,7 +1146,7 @@ Attest Key triples instruct a Verifier to perform key validation checks, such as
 The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.
 
 Attest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as  `endorsed-triples`.
+Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
