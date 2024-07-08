@@ -1027,6 +1027,11 @@ A cryptographic key digest can be one of the following formats:
 * `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
 
+In a split Verifier scenario, a first Verifier may verify the signature of a cryptographic key
+then compute a digest of the key that is forwarded to a second Verifier. The second Verifier
+completes the signature verification by performing certificate path validation, revocation
+checks, and trust anchor checks.
+
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
 ~~~
@@ -1115,44 +1120,22 @@ the object relates to the subject.
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
-A Device Identity triple record relates one or more cryptographic keys to a device identity.
-The cryptographic keys are bound to or associated with a Target Environment that is within the device.
-The device identifier may be part of the Target Environment's `environment-map` or may be part of some other device identity credential, such as a certificate.
-The cryptographic keys are expected to be used to authenticate the device.
-
-Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
-The Verifier SHOULD perform offline verification of keys contained in Device Identity triples.
-
-A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
-
-Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-
-If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
-
-Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
-Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
+A Device Identity triple relates one or more cryptographic keys to a device.
+The subject of an Identity triple uses an instance or class identifier to refer
+to a device, and a cryptographic key is the object. The predicate asserts that
+the identity is authenticated by the key. A common application for this triple
+is device identity.
 
 ~~~ cddl
 {::include cddl/identity-triple-record.cddl}
 ~~~
 
-#### Attest Key Triple {#sec-comid-triple-attest-key}
+#### Attestation Keys Triple {#sec-comid-triple-attest-key}
 
-An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
-The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
-The cryptographic keys sign Evidence.
-Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
-The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.
-
-Attest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
-
-Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
-
-Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
-Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
+An Attestation Keys triple relates one or more cryptographic keys to an
+Attesting Environment. The Attestation Key triple subject is an Attesting
+Environment whose object is a cryptographic key. The predicate asserts that the
+Attesting Environment signs Evidence that can be verified using the key.
 
 ~~~ cddl
 {::include cddl/attest-key-triple-record.cddl}
