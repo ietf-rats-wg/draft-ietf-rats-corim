@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 6 January 2025                                           Linaro
+Expires: 9 January 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             5 July 2024
+                                                             8 July 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 January 2025.
+   This Internet-Draft will expire on 9 January 2025.
 
 Copyright Notice
 
@@ -118,7 +118,7 @@ Table of Contents
          5.1.4.2.  Reference Values Triple
          5.1.4.3.  Endorsed Values Triple
          5.1.4.4.  Device Identity Triple
-         5.1.4.5.  Attestation Keys Triple
+         5.1.4.5.  Attest Key Triple
          5.1.4.6.  Domain Dependency Triple
          5.1.4.7.  Domain Membership Triple
          5.1.4.8.  CoMID-CoSWID Linking Triple
@@ -1402,12 +1402,6 @@ Table of Contents
       path.  The digest value may be used to find the certificate path
       if contained in a lookup table.
 
-   In a split Verifier scenario, a first Verifier may verify the
-   signature of a cryptographic key then compute a digest of the key
-   that is forwarded to a second Verifier.  The second Verifier
-   completes the signature verification by performing certificate path
-   validation, revocation checks, and trust anchor checks.
-
    $crypto-key-type-choice /= tagged-pkix-base64-key-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
@@ -1514,24 +1508,67 @@ Table of Contents
 
 5.1.4.4.  Device Identity Triple
 
-   A Device Identity triple relates one or more cryptographic keys to a
-   device.  The subject of an Identity triple uses an instance or class
-   identifier to refer to a device, and a cryptographic key is the
-   object.  The predicate asserts that the identity is authenticated by
-   the key.  A common application for this triple is device identity.
+   A Device Identity triple record relates one or more cryptographic
+   keys to a device identity.  The cryptographic keys are bound to or
+   associated with a Target Environment that is within the device.  The
+   device identifier may be part of the Target Environment's
+   environment-map or may be part of some other device identity
+   credential, such as a certificate.  The cryptographic keys are
+   expected to be used to authenticate the device.
+
+   Device Identity triples instruct a Verifier to perform key validation
+   checks, such as revocation, certificate path construction &
+   verification, or proof of possession.  The Verifier SHOULD perform
+   offline verification of keys contained in Device Identity triples.
+
+   A Device Identity triple endorses that the keys were securely
+   provisioned to the named Target Environment.  Additional details
+   about how a key was provisioned or is protected may be asserted using
+   Endorsements such as endorsed-triples.
+
+   Depending on key formatting, as defined by $crypto-key-type-choice,
+   the Verifier may take different steps to locate and verify the key.
+
+   If a key has usage restrictions that limit its use to device identity
+   challenges, Verifiers SHOULD check for key use that violates usage
+   restrictions.
+
+   Offline verification of keys or verification of key use restrictions
+   MAY produce Claims that are added to the ACS.  Alternatively,
+   Verifiers MAY report key verification results as part of an error
+   reporting function.
 
    identity-triple-record = [
      environment-map
      [ + $crypto-key-type-choice ]
    ]
 
-5.1.4.5.  Attestation Keys Triple
+5.1.4.5.  Attest Key Triple
 
-   An Attestation Keys triple relates one or more cryptographic keys to
-   an Attesting Environment.  The Attestation Key triple subject is an
-   Attesting Environment whose object is a cryptographic key.  The
-   predicate asserts that the Attesting Environment signs Evidence that
-   can be verified using the key.
+   An Attest Key triple record relates one or more cryptographic keys to
+   an Attesting Environment.  The cryptographic keys are wielded by an
+   Attesting Environment that collects measurements from a Target
+   Environment.  The cryptographic keys sign Evidence.  Attest Key
+   triples instruct a Verifier to perform key validation checks, such as
+   revocation, certificate path construction & verification, or proof of
+   possession.  The Verifier SHOULD perform offline verification of keys
+   contained in Attest Key triples.
+
+   Attest Key triples endorse that the keys were securely provisioned to
+   the named (identified via an environment-map) Attesting Environment.
+   Additional details about how a key was provisioned or is protected
+   may be asserted using Endorsements such as endorsed-triples.
+
+   Depending on key formatting, as defined by $crypto-key-type-choice,
+   the Verifier may take different steps to locate and verify the key.
+   If a key has usage restrictions that limits its use to Evidence
+   signing, Verifiers SHOULD check for key use that violates usage
+   restrictions.
+
+   Offline verification of keys or verification of key use restrictions
+   MAY produce Claims that are added to the ACS.  Alternatively,
+   Verifiers MAY report key verification results as part of an error
+   reporting function.
 
    attest-key-triple-record = [
      environment-map
@@ -3263,9 +3300,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-28, 25 June
+              Progress, Internet-Draft, draft-ietf-rats-eat-29, 8 July
               2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              rats-eat-28>.
+              rats-eat-29>.
 
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
