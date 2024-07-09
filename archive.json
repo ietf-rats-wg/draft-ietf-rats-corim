@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-07T01:37:19.883282+00:00",
+  "timestamp": "2024-07-09T01:25:50.932874+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2901,7 +2901,7 @@
       "id": "I_kwDOH6-tI85u2td7",
       "title": "Key measurements that don't have prescribed semantics",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/126",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -2912,8 +2912,8 @@
       ],
       "body": "The `identity-triple-record` and `attest-key-triple-record` have encoded key usage semantics into the triple predicate. \r\n\r\nThere are vendor specific or otherwise additional possible key usages that differ. \r\n\r\nOne way to overload the above triples with different key usage semantics is to allow the `environment-map` to carry vendor-specific key usage semantics. For example, a `class-id` OID might define an arc for software update (.111.0) and enumerate keys from the arc (.111.1, .111.2, ..., .111.n) etc.\r\n\r\nAlternatively, the $crypto-key-type-choice could be included in `measurement-values-map` with the semantics of \"this key belongs to this environment\". Omitting key usage semantics.\r\n\r\nThe option to encode key usage semantics into the `environment-map` is still available. \r\n\r\nIf, for example, there is a SW update use case tied to attestation, the SW update Relying Party code will recognize the use case context and as needed check the environment context or identify an alternative form (such as a certificate) that contains additional key usage context.\r\n\r\nThe minimal attestation statement is \"this key belongs to this environment\". \r\n\r\n`measurement-values-map` becomes:\r\n```\r\nmeasurement-values-map = non-empty<{\r\n  ? &(version: 0) => version-map\r\n  ? &(svn: 1) => svn-type-choice\r\n  ? &(digests: 2) => [ + digest ]\r\n  ? &(flags: 3) => flags-map\r\n  ? (\r\n      &(raw-value: 4) => $raw-value-type-choice,\r\n      ? &(raw-value-mask: 5) => raw-value-mask-type\r\n    )\r\n  ? &(mac-addr: 6) => mac-addr-type-choice\r\n  ? &(ip-addr: 7) =>  ip-addr-type-choice\r\n  ? &(serial-number: 8) => text\r\n  ? &(ueid: 9) => ueid-type\r\n  ? &(uuid: 10) => uuid-type\r\n  ? &(name: 11) => text\r\n  ? &(keyid: 12) => $crypto-key-type-choice\r\n  * $$measurement-values-map-extension\r\n}>\r\n```\r\nIdentity and attest key triples can remain in `triples-map` since the triple predicate as additional semantics over what is proposed.\r\n```\r\n...\r\n  ? &(identity-triples: 2) =>\r\n    [ + identity-triple-record ]\r\n  ? &(attest-key-triples: 3) =>\r\n    [ + attest-key-triple-record ]\r\n...\r\n```\r\n",
       "createdAt": "2023-08-21T17:34:43Z",
-      "updatedAt": "2024-05-07T09:25:00Z",
-      "closedAt": null,
+      "updatedAt": "2024-07-08T16:39:31Z",
+      "closedAt": "2024-07-08T16:39:30Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -18018,7 +18018,7 @@
       "id": "PR_kwDOH6-tI85ZXsSA",
       "title": "Identity and attest key triples rewording",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/135",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -18029,17 +18029,19 @@
       ],
       "body": "Issue #126 anticipates better clarification for identity and attest-key triples to disambiguate from keys as measurements.",
       "createdAt": "2023-09-01T20:20:39Z",
-      "updatedAt": "2024-07-06T09:33:14Z",
+      "updatedAt": "2024-07-08T16:39:29Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "0032f832d43d33463a9ff748bc590977807e0824",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "ident-attest-key-wording",
-      "headRefOid": "4989d61f4952f2b37778f17f592aa978649c41fe",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "eb3e92b7684f761b128267e1555ad0a0f1761857",
+      "closedAt": "2024-07-08T16:39:29Z",
+      "mergedAt": "2024-07-08T16:39:29Z",
+      "mergedBy": "nedmsmith",
+      "mergeCommit": {
+        "oid": "e183357c3523024de14256261f798f9486d7c6dc"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -18879,6 +18881,70 @@
           "createdAt": "2024-07-06T08:55:25Z",
           "updatedAt": "2024-07-06T09:33:13Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A9ra0",
+          "commit": {
+            "abbreviatedOid": "4989d61"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-07-08T15:15:15Z",
+          "updatedAt": "2024-07-08T15:21:45Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "Is this the only key use limitation that should imply key usage checks? What key usage is associated with device identity challenges? Non-repudiation? I'm only considering x.509 key usage OIDs here. What else could you be referring to?",
+              "createdAt": "2024-07-08T15:15:15Z",
+              "updatedAt": "2024-07-08T15:21:45Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "We already know that a Verifier can add claims of whatever sort. What measurement-value-map code point are you talking about for these? If there is nothing specific, I think this is too vague to be a useful addition.",
+              "createdAt": "2024-07-08T15:17:20Z",
+              "updatedAt": "2024-07-08T15:21:45Z"
+            },
+            {
+              "originalPosition": 52,
+              "body": "```suggestion\r\nAttest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.\r\n```\r\n\r\nThe type is used throughout the document. I don't see capitalized usage.",
+              "createdAt": "2024-07-08T15:20:26Z",
+              "updatedAt": "2024-07-08T15:21:45Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nAdditional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.\r\n```",
+              "createdAt": "2024-07-08T15:20:45Z",
+              "updatedAt": "2024-07-08T15:21:45Z"
+            },
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nAdditional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.\r\n```",
+              "createdAt": "2024-07-08T15:20:59Z",
+              "updatedAt": "2024-07-08T15:21:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A-W1Y",
+          "commit": {
+            "abbreviatedOid": "4989d61"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-08T16:28:22Z",
+          "updatedAt": "2024-07-08T16:28:22Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "DICE and SPDM have additional key usage constraints.",
+              "createdAt": "2024-07-08T16:28:22Z",
+              "updatedAt": "2024-07-08T16:28:23Z"
+            }
+          ]
         }
       ]
     },
@@ -31334,13 +31400,13 @@
       "labels": [],
       "body": "These are have been separated from the renaming in PR#226",
       "createdAt": "2024-07-03T14:52:24Z",
-      "updatedAt": "2024-07-06T11:57:13Z",
+      "updatedAt": "2024-07-07T22:47:56Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b",
+      "baseRefOid": "0032f832d43d33463a9ff748bc590977807e0824",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "claimprose",
-      "headRefOid": "89bd3d7dcfc9b22af08d6d3a73f8d1ba3d69cf96",
+      "headRefOid": "41bb7db6ad071d8e8b7b0bd910202daf11b7d22a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -31584,6 +31650,166 @@
               "body": "Another triple?",
               "createdAt": "2024-07-06T11:57:13Z",
               "updatedAt": "2024-07-06T11:57:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3Gzu",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T21:52:19Z",
+          "updatedAt": "2024-07-07T21:52:19Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I'm not introducing it here. It's introduced in text immediately prior about all parties that contribute to \"the conversation\" with authorities tracking \"who said what\".",
+              "createdAt": "2024-07-07T21:52:19Z",
+              "updatedAt": "2024-07-07T21:52:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3HOV",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:06:12Z",
+          "updatedAt": "2024-07-07T22:06:12Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "This suggestion is saying much more than I'm saying, since I don't insist that each specific set of measurements has a single environment. Indeed, sets of measurements don't necessarily have a globally unique identifier for distinguishing them across individual measurements. I can have the same card on two different sockets and have the same measurement set, but a different environment due to my assignment of card to group.\r\n\r\nPerhaps \"specific set\" is too ambiguous. Let's go with \"a specific occurrence of a set\", since the occurrence refers to where it is in the CoRIM.",
+              "createdAt": "2024-07-07T22:06:12Z",
+              "updatedAt": "2024-07-07T22:06:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3Hxu",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:10:06Z",
+          "updatedAt": "2024-07-07T22:10:06Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "What is \"intended use\"? I'm not sure how to comply with that. My code that touches it could be my intention because I'm a hot shot with \"self-documenting code\". Is that enough?\r\n\r\nI thought ECT is a representation of an utterance in the conversation, with all scope-closing elements provided.",
+              "createdAt": "2024-07-07T22:10:06Z",
+              "updatedAt": "2024-07-07T22:10:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3Hz5",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:11:03Z",
+          "updatedAt": "2024-07-07T22:11:03Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "Conceptual messages aren't all evidence. I thought there was already a cm-ind allocated for policy?",
+              "createdAt": "2024-07-07T22:11:03Z",
+              "updatedAt": "2024-07-07T22:11:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3Isv",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:37:34Z",
+          "updatedAt": "2024-07-07T22:37:34Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "I don't think that an assigned name or serial number is always provided by an attesting environment's measurement mechanism. That information is added metadata provided the reference values are as expected.\r\n\r\npseudocode:\r\n\r\n```\r\nreference-values-triple [E, M[integrity-registers: X]]\r\nconditional-endorsement-triple [\r\n  conds: [E, [integrity-registers: X authorities: [me]]]\r\n  [E, M'[name: \"Product: Enterprise Edition\", svn: 5]]\r\n]\r\n```\r\n\r\nI'm not really sure how to express associated metadata in a less-clunky way, unless this conditionality is what is the expected semantics of the non-conditional endorsement-triple. It's unclear from the text https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179#issuecomment-2184116580",
+              "createdAt": "2024-07-07T22:37:34Z",
+              "updatedAt": "2024-07-07T22:37:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3I5s",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:43:09Z",
+          "updatedAt": "2024-07-07T22:43:09Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Every non-reference-value-triple that contains measurement-map is some flavor of endorsement, so that's the most concise way I could state that. I'm still unclear if there's a conditional relationship between reference triples and the rest of the triples in the same CoMID.",
+              "createdAt": "2024-07-07T22:43:09Z",
+              "updatedAt": "2024-07-07T22:43:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3JAL",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:45:58Z",
+          "updatedAt": "2024-07-07T22:45:59Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "Added. Resolve if it's okay.",
+              "createdAt": "2024-07-07T22:45:58Z",
+              "updatedAt": "2024-07-07T22:45:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86A3JA7",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-07T22:46:18Z",
+          "updatedAt": "2024-07-07T22:46:18Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Added. Resolve if it's okay.",
+              "createdAt": "2024-07-07T22:46:18Z",
+              "updatedAt": "2024-07-07T22:46:18Z"
             }
           ]
         }
