@@ -2073,8 +2073,8 @@ Additions to the ACS MUST be atomic.
 
 This specification defines the comparison algorithm for the codepoints described in sub-sections below.
 A CoRIM profile may define additional negative codepoints and their matching algorithms.
-Specifications that extend CoMID MUST also define comparison algorithms for their added codepoints, and augment comparison algorithms if existing codepoints' value CDDL expands.
-If a codepoint's comparison algorithm is not stated or is referred to as "default", then the Verifier MUST compare the binary equality of the CBOR encodings of the values.
+Specifications that extend CoMID MUST also define comparison algorithms for their added codepoints.
+If a codepoint's comparison algorithm is not stated or does not default to the comparison algorithms described in this specification, then the Verifier MUST compare the binary equality of the CBOR encodings of the values.
 
 ### Environment Comparison {#sec-compare-env}
 
@@ -2095,7 +2095,7 @@ Note: CBOR tags are useful for discriminating values amongst alternates, but the
 
 Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
 
-The following subsections define non-default comparison algorithms for some `measurement-values-map` key codepoints.
+The following subsections define the comparison algorithms for the `measurement-values-map` keys defined by this specification.
 
 ##### Comparison for svn entries
 
