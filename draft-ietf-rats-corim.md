@@ -166,21 +166,10 @@ This specification describes the CoRIM format and documents how a Verifier shoul
 A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
 In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
 By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
+The origin of the inputs is tracked as *authority*.
+The authority for the Claims in a CoRIM is the CoRIM issuer.
 
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
-These individual principals of the conversation may have their identity rooted back to some *authority* farther up the certificate chain than the signing key itself, such as a digital certificate authority intermediate or root key.
-The origin of contributions/inputs to the conversation are tracked at the granularity of authority, so CoRIM authors can predicate their reference measurements or endorsements based on existing properties rooted from the same authority.
-For example, a CoRIM can state it endorses reference values from Attesters certified by ACME Inc.'s intermediate certificate authority for issuing FPGA attestation key certificates, and not have to specify which individual attesting key is trusted.
-
-CoRIM inputs to the conversation include measurements within a specific Environment.
-A specific occurrence of a set of measurements always from a single identifiable and associated environment.
-Hence, the Environment-Claim Tuple (ECT) is a data structure used to encapsulate all scope context for a given set of measurements.
-The authority for an ECT from a CoRIM is the CoRIM issuer.
-When the content of an ECT data structure is presented to roles external to the Verifier, it MAY be referred to via different terms, such as property, claim, or assertion.
-Whenever an ECT is consumed by a role external to the Verifer, the consuming party MUST always attribute provenance and the ECT's intended use.
-
-Important: The Verifier's objective is to produce a list of properties that describe the Attester's presumed actual state.
-
 Each producer of corresponding RATS Conceptual Messages can assert claims about an Attester's actual or allowed state.
 The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
 Producers of RATS Conceptual Messages can assert contradictory assertions.
@@ -794,9 +783,6 @@ A measurement in a `reference-triple-record` is called a Reference Value.
 A measurement in any other triple is called an Endorsement.
 
 The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values) is by default the CoRIM signer.
-If a different entity is authorized to provide measurement values, the CoRIM signer may delegate authorization of specific measurements to a different authority with the `authorized-by` entry in the `measurement-map`.
-The meaning of `authorized-by` should be read as an "only if" implication that the CoRIM signer authorizes a measurement only if the named authority also authorizes the measurement.
-Note that circular `authorized-by` references do not constitute authorization by any authority in the cycle.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -810,8 +796,9 @@ The following describes each member of the `measurement-map`:
 * `mval` (index 1): The measurements associated with the (sub-)environment.
   Described in {{sec-comid-mval}}.
 
-* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
+* `authorized-by` (index 2): The cryptographic identity of the individual or organization that must sign the measurements in order to match.
+This may be used to specify which Attester should sign measurements in order for reference values to be valid, or as part of a conditional endorsement's condition.
+The meaning of `authorized-by` should be read as an "only if" implication that the CoRIM signer authorizes a measurement only if the named authority authorizes the measurement.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
@@ -1477,6 +1464,8 @@ The CoRIM profile MUST provide a description of the expected Verifier behavior f
 Verifier implementations MUST exhibit the same externally visible behavior as described in this specification.
 They are not required to use the same internal representation or evaluation order described by this specification.
 
+Important: The Verifier's objective is to produce a list of properties that describe the Attester's presumed actual state.
+
 ## Appraisal Procedure {#sec-appraisal-procedure}
 
 The appraisal procedure is divided into several logical phases for clarity.
@@ -1538,6 +1527,7 @@ Environment-Claim Tuple (ECT):
 
 : A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
 The ECT also contains authority which identifies the entity that authored the ECT.
+When the content of an ECT data structure is presented to roles external to the Verifier, it MAY be referred to via different terms, such as property, claim, or assertion.
 
 > *[Ned] Suggest we use Environment-Properties Tuple (EPT) since the use of claim here is more focused than what is possible given the definition above.*
 
@@ -1572,7 +1562,7 @@ ECTs have six attributes:
 
 1. The environment.
 2. The properties of the environment.
-3. The authority.
+3. The authorities.
 4. The name space.
 5. The Conceptual Message type.
 6. The profile.
@@ -1585,9 +1575,10 @@ Properties (label 2):
 
 : Properties of the Target Environment.
 
-Authority (label 3):
+Authorities (label 3):
 
-: Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
+: Identifies the entities that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
+ECT additions will always have a singleton list of authorities, but when two ECTs are added to the ACS with equal fields apart from authorities, then the result is one ECT with all the same fields except the authorities represent a union of the two ECTs' authorities.
 
 Name Space (label 4):
 
@@ -1604,7 +1595,7 @@ Profile (label 6):
 ~~~ cddl
 ECT = {
   ? e: environment-map
-  ? c: claims-map / [ + local-claim ]
+  ? c: measurement-map / [ + local-claim ]
   ? a: [ + $crypto-key-type-choice ]
   ? ns: text
   ? cm: cm-type
@@ -1612,7 +1603,7 @@ ECT = {
 }
 local-claim = {
   le: local-environment
-  c: claims-map
+  c: measurement-map
 }
 local-environment =  bstr / tstr
 cm-type =  &(
@@ -1627,6 +1618,9 @@ cm-type =  &(
 
 Although all of the ECT attributes are optional, the Conceptual Message type implies certain attributes are mandatory.
 See {{sec-ir-evidence}}, {{sec-ir-ref-val}}, and {{sec-ir-end-val}}.
+
+When an ECT is added to the ACS, the `authorized-by` field of any `measurement-map` is removed.
+This is to ensure comparisons for combining authorities do not need to compare the some expected `authorized-by` matching condition.
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
@@ -2088,7 +2082,20 @@ Any new codepoints requiring non-default comparison MUST add a CBOR tag to the e
 
 ### Claims Comparison  {#sec-compare-claims}
 
-#### Comparison of measurement-values-map {#sec-match-one-codepoint}
+#### Comparison of `measurement-map` {#sec-match-measurement-map}
+
+A `measurement-map` does not compare directly to the `measurement-map` in an ECT.
+The `authorized-by` codepoint of a `measurement-map`, if present, is not compared with the `authorized-by` of the `measurement-map` of the ECT it is comparing with, but with the authorities listed in the ECT.
+Specifically, the `authorized-by` value of a `measurement-map` matches an ECT if and only if the value is rooted to at least one of the authorities in the ECT.
+Thus, CoRIM authors can predicate their reference measurements or endorsements based on existing properties rooted from the same authority.
+For example, a CoRIM can state it endorses reference values from Attesters certified by ACME Inc.'s intermediate certificate authority for issuing FPGA attestation key certificates, and not have to specify which individual attesting key must be used.
+
+The `$crypto-key-type-choice` involved determine the exact method to find a chain of trust from one key to another.
+
+The `mkey` codepoint of a `measurement-map,` if present, is compared with CBOR encoding binary equality from the `measurement-map` in the ECT.
+The `measurement-values-map` comparison method is in the following section.
+
+#### Comparison of `measurement-values-map` {#sec-match-one-codepoint}
 
 This section describes the algorithm used to compare the `measurement-values-map` codepoints of an ECT with another ECT.
 The comparison algorithm performed depends on the value of the codepoint being compared.
