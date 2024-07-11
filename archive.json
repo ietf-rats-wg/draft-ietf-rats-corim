@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-09T01:25:50.932874+00:00",
+  "timestamp": "2024-07-11T01:26:16.239170+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5849,7 +5849,7 @@
       "labels": [],
       "body": "I don't think it's appropriate at all for X to sign a document that Y is the one that actually authorized the claims. There is no signature by Y. This is a clear spoofing problem. Even if the Verifier is supposedly forwarding an authorization that it had previously seen by including it in the CoRIM, I don't think that Y has delegated that authority to the Verifier. The Verifier would need to use a \"hearsay\" claim that it had already shown that Y authorized the claim.",
       "createdAt": "2024-06-19T17:25:35Z",
-      "updatedAt": "2024-07-05T00:52:00Z",
+      "updatedAt": "2024-07-10T00:14:20Z",
       "closedAt": null,
       "comments": [
         {
@@ -5893,6 +5893,13 @@
           "body": "Stepping back from just how the wildcarding is supposed to be expressed, I want to make sure I understand the concept. What\u2019s the theory of operation?\r\nIt seems that there\u2019s\r\n\r\n* the delegation definer, i.e., the issuer of the corim that contains this triple,\r\n* the issuer\u2019s trusted delegator, A, or \u201cauthority\u201d\r\n* the permitted delegate(s) to sign corims with some substructure that is defined by\r\n* a corim filter, i.e., a means of accepting or rejecting the contents of the delegate\u2019s signed corim. It will take careful language design to express a good enough filter for most, but there absolutely should be a way to introduce new filter logic with cbor tags.\r\n\r\nis that about right?\r\nIn the theory of operation, we then have ECTs with first party signing authorities as a field, and new ECTs with delegated authorities.\r\n\r\nIf some CoRIM measurement-map/authority (say, B) is compared against, it\u2019s that CoRIM\u2019s issuer (C) that wants the ECT to be signed by B. But integrator (I) signed a delegation that B can delegate to D for anything. Let\u2019s say D signs the corim that would otherwise match that C wants. If we have a list of all ects in the ACS that match without considering authority, we then need to check delegations.\r\n\r\nD is allowed to sign for B if you trust I to provide delegations. So now the C-signed corim triple gets added to the ACS with authorities C(if you trust I), B(if you trust I), and D.\r\n\r\nThe delegated authority becomes infectious for anything that depends on the authority to match, until you get first-hand knowledge that oh, B actually signed the data first hand, and now we need to backtrack to all the provisional assignments to make them direct authorities?\r\n\r\nProbably the verifier would want to ensure that I is certainly trusted to assign delegations as a matter of a priori policy to remove this complicated provisional authority tracking.\r\n\r\nDoes this pass our litmus tests?\r\n\r\n1. Vertical integration: each layer of a measured boot can be seen as a system integrator up to their point of boot, but with specific delegated authorities for who can sign the previous layers.  \r\n\r\n2. Right to repair: can integrator further in the chain allow for delegations above them that the prior layers did not delegate to themselves?\r\n\r\nVertical integration I would say specialized versions of a linux distribution can delegate pcrs 0-10,12-15 to the main distribution while they sign their own measurements for higher pcrs. That\u2019s not expressible with the proposed syntax since it\u2019s too coarse to limit to specific integrity registers. Say it were.\r\n\r\nS: special version authority\r\nD: distro authority\r\nH: shim authority\r\nG: grub authority.\r\nF: firmware authority \r\nS signs high pcrs reference values and a delegation of pcrs 0-10,12-15 to D. But whose authority is delegated? Let\u2019s say S.\r\nD signs pcr 9,10,12-15 reference values (oops this is merged with shim measurements. Drat) and a delegation of D\u2019s authority to G for pcrs 0-8.\r\nG signs pcr 8 (oops this is merged with shim. Drat) and a delegation of G\u2019s authority to H for pcrs 0-7.\r\nH does its thing that breaks this example and delegates H to F for pcrs 0-7.\r\nF signs reference values for pcrs 0-7 (oops ESP from D gets mixed in here).\r\n\r\nSo pcrs are messy. Lets say we have signed CELRs instead and some policy for safely rearranging them for the verifier to then add an ECT that measured boot passes a TPM integration policy. However it\u2019s do e, it\u2019s not the most important thing.\r\nWhen the Verifier gets a request and has all these corims, then it doesn\u2019t look like the filter syntax would allow redelegation like the distro to grub or shim to firmware. If you did, then it would need to be a narrowing of what was permitted to the delegate. You can\u2019t limit an app to only have read access for it to then call another app that needs write access. It\u2019s the capabilities model.\r\n\r\nSay we allow delegating delegations but only within the scope of what has been delegated. Does S authorize the firmware measurement? S let D authorize it as if it were S. D let G authorize as if it were D (which is also as S), G let H authorize it as if it were G (which is also as D and then S), etc with cascading authority additions. So S authorizes the firmware.\r\n\r\nThat test failed with the current proposal. What about test 2? I\u2019ll edit this later when I\u2019m not getting pulled away.\r\n",
           "createdAt": "2024-07-05T00:51:58Z",
           "updatedAt": "2024-07-05T00:51:58Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I tried working out test 2 and it's not worth sharing. I confused myself with the `authority` field. I don't see how `authority` in `delegation-statement` would be anything other than the CoRIM issuer. I think that's why Ned's `delegation-record` does not include it. I suppose that's why Thomas, you said something about morphing it into a triple shape?\r\n\r\nIt does appear that test 2 would pass if you allow every delegated authority to sign any pcr index value, but that's generally not what I'd want to express.",
+          "createdAt": "2024-07-10T00:14:20Z",
+          "updatedAt": "2024-07-10T00:14:20Z"
         }
       ]
     },
@@ -21800,7 +21807,7 @@
       ],
       "body": "Adds extension point to validity-map",
       "createdAt": "2023-10-04T17:41:15Z",
-      "updatedAt": "2024-04-26T19:50:18Z",
+      "updatedAt": "2024-07-10T14:11:43Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a597257e393a376f1ac65c26710ee31055342501",
@@ -21853,6 +21860,13 @@
           "body": "Sgrm",
           "createdAt": "2024-04-26T19:50:16Z",
           "updatedAt": "2024-04-26T19:50:16Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Awaiting some actions in EPOCH markers draft to introduce an Extensibility points. @Henk to follow up on this and then only close this Pull Request!",
+          "createdAt": "2024-07-10T14:11:42Z",
+          "updatedAt": "2024-07-10T14:11:42Z"
         }
       ],
       "reviews": [
@@ -31233,19 +31247,73 @@
       "labels": [],
       "body": "As stated, it appears that keys of measurement-values-map in this document are given more leeway for specifying comparisons than profiles. I interpret the text as saying any untagged value for a key that is not 0 through 14 must be compared with binary equality. There is no MUST in the current language, so that does not seem to be the intention. A profile should be allowed to specify a comparison method as irregular as raw-value and raw-value-mask without the need for registering a CBOR tag number with the IANA.\r\n\r\nIf a profile's comparison method will be common to multiple profiles that are intended for general verifier consumption, then we just recommend that the comparison gets registered with a CBOR tag to avoid having to duplicate language and potentially very slightly deviate from the original meaning in different profiles.",
       "createdAt": "2024-06-24T14:54:32Z",
-      "updatedAt": "2024-06-24T14:54:33Z",
+      "updatedAt": "2024-07-10T16:20:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "854d4c2113d2a0f24ad1c02acf973cd7ca74246b",
+      "baseRefOid": "e183357c3523024de14256261f798f9486d7c6dc",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "comparison",
-      "headRefOid": "eee4bd21d2742aea11d71792d5e93da05adbcf3a",
+      "headRefOid": "3acde3457dd5332ebdca6426991ca3250861fe32",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @yogeshbdeshpande updated following the meeting discussion.",
+          "createdAt": "2024-07-10T15:46:43Z",
+          "updatedAt": "2024-07-10T15:46:43Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'll add the evidence transformation changes in another commit soon.",
+          "createdAt": "2024-07-10T15:55:17Z",
+          "updatedAt": "2024-07-10T15:55:17Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86BUYTi",
+          "commit": {
+            "abbreviatedOid": "14ca269"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested changes.",
+          "createdAt": "2024-07-10T15:55:05Z",
+          "updatedAt": "2024-07-10T16:20:45Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "```suggestion\r\nIf a codepoint's comparison algorithm is not stated or does not default to the comparison algorithms described in this document, then the Verifier MUST compare the binary equality of the CBOR encodings of the values.\r\n```",
+              "createdAt": "2024-07-10T15:55:05Z",
+              "updatedAt": "2024-07-10T16:20:45Z"
+            },
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\nSpecifications that extend CoMID MUST also define comparison algorithms for their added codepoints.\r\n```\r\nA requirement to define a comparison alg is sufficient to cover hybrid cases as well.",
+              "createdAt": "2024-07-10T15:57:23Z",
+              "updatedAt": "2024-07-10T16:20:45Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\nThe CBOR tag's registration specification SHOULD specify a comparison algorithm if not defined in this or other specification.\r\n\r\nNote: The comparison algorithm of CBOR tagged values is determined by the key (i.e., codepoint) they appear under.\r\nIt is recommended, but not required, that comparison algorithms involving the same CBOR tag process the tagged information similarly across the different keys.\r\n```",
+              "createdAt": "2024-07-10T16:13:38Z",
+              "updatedAt": "2024-07-10T16:22:14Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\nThe following subsections define the comparison algorithms for the `measurement-values-map` keys defined by this specification.\r\n```",
+              "createdAt": "2024-07-10T16:19:11Z",
+              "updatedAt": "2024-07-10T16:20:45Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 246,
@@ -31400,7 +31468,7 @@
       "labels": [],
       "body": "These are have been separated from the renaming in PR#226",
       "createdAt": "2024-07-03T14:52:24Z",
-      "updatedAt": "2024-07-07T22:47:56Z",
+      "updatedAt": "2024-07-10T14:18:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "0032f832d43d33463a9ff748bc590977807e0824",
@@ -31810,6 +31878,26 @@
               "body": "Added. Resolve if it's okay.",
               "createdAt": "2024-07-07T22:46:18Z",
               "updatedAt": "2024-07-07T22:46:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BTNUF",
+          "commit": {
+            "abbreviatedOid": "41bb7db"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-10T14:18:13Z",
+          "updatedAt": "2024-07-10T14:18:21Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "@Dionna This is aintroductory text, making some high level statements. \r\n- This is way too a technical details in the introductory sections\r\n- Specific items like authority for entities like Relying Party are not in scope of this document.",
+              "createdAt": "2024-07-10T14:18:14Z",
+              "updatedAt": "2024-07-10T14:18:21Z"
             }
           ]
         }
