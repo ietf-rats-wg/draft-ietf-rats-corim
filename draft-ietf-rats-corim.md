@@ -778,7 +778,7 @@ configuration files, read-only memory, fuses, IO ring configuration, partial
 reconfiguration regions, etc. Measurements comprise raw values, digests, or
 status information.
 
-Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
+Each measured object can have a dedicated measurement/endorsement value or multiple objects' measurements could be combined into a single measurement.
 For example, an attester may provide the version of the microcode in its own field, whereas the combined contents of all firmware modules are measured cumulatively into a single integrity register.
 Measurements paired with an `environment-map` that contains only a class may be referred to as class properties, and similarly with instance and group measurements for respective elements of the `environment-map`.
 
@@ -806,11 +806,11 @@ The meaning of `authorized-by` should be read as an "only if" implication that t
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-A measurement-associated (sub-)environment is at the granularity of a single element, such as the second enumerated network interface card.
-The types of this measured element identifier are OID, UUID or uint.
+A measurement-associated (sub-)environment is at the granularity of a single object, such as the second enumerated network interface card.
+The types of this measured object identifier are OID, UUID or uint.
 
 ~~~ cddl
-{::include cddl/measured-element-type-choice.cddl}
+{::include cddl/measured-object-id-type-choice.cddl}
 ~~~
 
 ###### Measurement Values {#sec-comid-mval}
@@ -847,7 +847,7 @@ The following describes each member of the `measurement-values-map`.
   `flags` field indicates which operational modes are currently associated with
   measured environment.  Described in {{sec-comid-flags}}.
 
-* `raw-value` (index 4): Contains the actual (not hashed) value of the element.
+* `raw-value` (index 4): Contains the actual (not hashed) value of the object.
   An optional `raw-value-mask` (index 5) indicates which bits in the
   `raw-value` field are relevant for verification. A mask of all ones ("1")
   means all bits in the `raw-value` field are relevant. Multiple values could
