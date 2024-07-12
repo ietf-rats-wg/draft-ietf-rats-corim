@@ -706,6 +706,9 @@ The following describes each member of the `environment-map`:
 * `group` (index 2): identifier for a group of instances, e.g., if an
   anonymization scheme is used.
 
+An `environment-map` contains at least one of `class`, `instance`, or `group`.
+The more elements in the `environment-map`, the narrower the scope, since more elements must be in common to match.
+
 ##### Environment Class {#sec-comid-class}
 
 The Class name consists of class attributes that distinguish the class of
@@ -777,8 +780,6 @@ status information.
 
 Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
 For example, an attester may provide the version of the microcode in its own field, whereas the combined contents of all firmware modules are measured cumulatively into a single integrity register.
-An `environment-map` contains at least one of: class, instance, or group.
-The more elements in the `environment-map`, the narrower the scope, since more elements must be in common to match.
 Measurements paired with an `environment-map` that contains only a class may be referred to as class properties, and similarly with instance and group measurements for respective elements of the `environment-map`.
 
 A measurement from an Attester is called Evidence.
