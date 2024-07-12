@@ -170,7 +170,7 @@ The origin of the inputs is tracked as *authority*.
 The authority for the Claims in a CoRIM is the CoRIM issuer.
 
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
-Each producer of corresponding RATS Conceptual Messages can assert claims about an Attester's actual or allowed state.
+Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or reference state.
 The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
 Producers of RATS Conceptual Messages can assert contradictory assertions.
 For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
@@ -485,7 +485,7 @@ A CoMID tag contains information about hardware, firmware, or module composition
 
 Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
 
-A CoMID represents expectations for Evidence appraisal with "triples".
+A CoMID defines several types of Claims, using "triples" semantics.
 
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
@@ -770,7 +770,10 @@ The types defined for a group identified are UUID and variable-length opaque byt
 A measurement can be directly compared with attestation evidence (e.g., digests), or it can be a quality that is not directly comparable with evidence (e.g., a human-readable name).
 The scope of a property is defined by the `environment-map` and optional `mkey` it appears with.
 
-Measurements can be of a variety of things including measurement values about software, firmware, configuration files, read-only memory, fuses, IO ring configuration, partial reconfiguration regions, etc. Measurements comprise raw values, digests, or status information.
+Measurements can be of a variety of things including software, firmware,
+configuration files, read-only memory, fuses, IO ring configuration, partial
+reconfiguration regions, etc. Measurements comprise raw values, digests, or
+status information.
 
 Each element can have a dedicated measurement/endorsement value or multiple elements could be combined into a single measurement.
 For example, an attester may provide the version of the microcode in its own field, whereas the combined contents of all firmware modules are measured cumulatively into a single integrity register.
