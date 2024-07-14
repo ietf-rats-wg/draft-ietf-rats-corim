@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-11T01:26:16.239170+00:00",
+  "timestamp": "2024-07-14T01:39:07.395492+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -4972,7 +4972,7 @@
       "id": "I_kwDOH6-tI85-kclP",
       "title": "authorized-by: change type to [ + $authorized-by-type-choice ]",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/202",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -4981,8 +4981,8 @@
       ],
       "body": "Hey y'all, I discussed this in the Veraison meeting, but I'll make it an issue here.\r\n\r\nFirst off, let's not change anything yet, just add a code point.\r\n```\r\n$authorized-by-type-choice /= $crypto-key-type-choice\r\n```\r\n\r\nThe reason I'm asking for this change is for the Qemu OVMF profile for SEV-SNP to model composite authorizers. The SEV_HASH_TABLE in OVMF allows for different initial measurements of the boot chain to get locked into the initial launch measurement. The firmware itself that allocates space for this table can be created by a different entity. This effectively squashes multiple events with individual authorizers into a single event that is captured by the hardware attestation report's launch measurement.\r\n\r\nIf the profile has the ability to represent a composite authorized-by representation, then we can compose disparate claims about the components of the initial measurement into a profile-defined X+Y+Z = Reference-value operation that means the reference value is authorized by all of X, Y, and Z's endorsers.",
       "createdAt": "2024-02-07T17:01:43Z",
-      "updatedAt": "2024-05-07T08:40:14Z",
-      "closedAt": null,
+      "updatedAt": "2024-07-11T16:46:41Z",
+      "closedAt": "2024-07-11T16:46:41Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -5081,6 +5081,13 @@
           "body": "What is to be done with the hardware attestation report, then? It doesn't seem appropriate for a virtual firmware profile to override the profile for the measuring technology. When you interpret the evidence of a hardware attestation report, you get the measurement as an accepted claim, which that needs to be (collectively) authorized. Now every use of SEV-SNP that has multiple entities represented in the measurement need to specify that their profile should be used instead of AMD's for interpreting the hardware attestation report. Admittedly they could say, \"we use AMD's profile for everything except we don't admit the sevsnpvm-measurement as an accepted claim.\r\n\r\nThe SEV-SNP attestation report measurement must be computed from \"ovmf-sevsnp-base-measurement, ovmf-seves-rip, ovmf-seves-csbase\" as the baseline from the OVMF binary provider, then \"ovmf-sevhash-kernel, ovmf-sevhash-cmdline, ovmf-sevhash-initrd\" from the VM operator, then \"ovmf-seves-bspvmsa, ovmf-seves-apvmsa\" (with the seves-rip and seves-csbase plugged in appropriately) from the VMM operator.\r\n\r\nI suppose for this use case I could live with this awkward this, though I wonder how to collect all these values as evidence in the first place. Maybe /sys/firmware/qemu_fw_cfg, but that would need additional changes to qemu.\r\n",
           "createdAt": "2024-02-12T16:58:17Z",
           "updatedAt": "2024-02-12T16:58:17Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This issue is I think based on my flawed understanding of authorized-by at the time. See also https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/244.\r\n\r\nI think I've accounted for what this issue is getting at adequately with my response to Jag for \"computed measurements\", which is basically me finally understanding Ned's response above https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/202#issuecomment-1936226881.\r\n\r\nThe multiple principals involved in one measurement need to be represented as individual events that _lead to_ the one measurement. The events become the evidence that is admitted to the ACS only if they combine to the measurement signed by the Attester. The ECT `[ + $authorized-by-type-choice ]` tracks all authorities that agree on the same properties. The `measurement-map`/`authorized-by` should not be where the complexity gets shifted.",
+          "createdAt": "2024-07-11T16:46:41Z",
+          "updatedAt": "2024-07-11T16:46:41Z"
         }
       ]
     },
@@ -31247,13 +31254,13 @@
       "labels": [],
       "body": "As stated, it appears that keys of measurement-values-map in this document are given more leeway for specifying comparisons than profiles. I interpret the text as saying any untagged value for a key that is not 0 through 14 must be compared with binary equality. There is no MUST in the current language, so that does not seem to be the intention. A profile should be allowed to specify a comparison method as irregular as raw-value and raw-value-mask without the need for registering a CBOR tag number with the IANA.\r\n\r\nIf a profile's comparison method will be common to multiple profiles that are intended for general verifier consumption, then we just recommend that the comparison gets registered with a CBOR tag to avoid having to duplicate language and potentially very slightly deviate from the original meaning in different profiles.",
       "createdAt": "2024-06-24T14:54:32Z",
-      "updatedAt": "2024-07-10T16:20:45Z",
+      "updatedAt": "2024-07-11T23:25:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e183357c3523024de14256261f798f9486d7c6dc",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "comparison",
-      "headRefOid": "3acde3457dd5332ebdca6426991ca3250861fe32",
+      "headRefOid": "7acc5c1a545caeaeb746ccfbdbf48745ef8d770e",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -31272,6 +31279,13 @@
           "body": "I'll add the evidence transformation changes in another commit soon.",
           "createdAt": "2024-07-10T15:55:17Z",
           "updatedAt": "2024-07-10T15:55:17Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze I agree with Ned's comments. So if you apply them, I am happy to approve this..",
+          "createdAt": "2024-07-11T17:57:07Z",
+          "updatedAt": "2024-07-11T17:57:07Z"
         }
       ],
       "reviews": [
@@ -31289,9 +31303,9 @@
           "comments": [
             {
               "originalPosition": 11,
-              "body": "```suggestion\r\nIf a codepoint's comparison algorithm is not stated or does not default to the comparison algorithms described in this document, then the Verifier MUST compare the binary equality of the CBOR encodings of the values.\r\n```",
+              "body": "```suggestion\r\nIf a codepoint's comparison algorithm is not stated or does not default to the comparison algorithms described in this specification, then the Verifier MUST compare the binary equality of the CBOR encodings of the values.\r\n```",
               "createdAt": "2024-07-10T15:55:05Z",
-              "updatedAt": "2024-07-10T16:20:45Z"
+              "updatedAt": "2024-07-11T18:41:20Z"
             },
             {
               "originalPosition": 10,
@@ -31301,15 +31315,108 @@
             },
             {
               "originalPosition": 27,
-              "body": "```suggestion\r\nThe CBOR tag's registration specification SHOULD specify a comparison algorithm if not defined in this or other specification.\r\n\r\nNote: The comparison algorithm of CBOR tagged values is determined by the key (i.e., codepoint) they appear under.\r\nIt is recommended, but not required, that comparison algorithms involving the same CBOR tag process the tagged information similarly across the different keys.\r\n```",
+              "body": "```suggestion\r\nThe CBOR tag's registration specification SHOULD refer to a comparison algorithm found in this specification, specify it in another standard, or specify it in a CoRIM profile document.\r\n\r\nNote: The comparison algorithm of CBOR tagged values is determined by the key (i.e., codepoint) they appear under.\r\nIt is recommended, but not required, that comparison algorithms involving the same CBOR tag process the tagged information similarly across the different keys.\r\n```",
               "createdAt": "2024-07-10T16:13:38Z",
-              "updatedAt": "2024-07-10T16:22:14Z"
+              "updatedAt": "2024-07-11T18:39:14Z"
             },
             {
               "originalPosition": 36,
               "body": "```suggestion\r\nThe following subsections define the comparison algorithms for the `measurement-values-map` keys defined by this specification.\r\n```",
               "createdAt": "2024-07-10T16:19:11Z",
               "updatedAt": "2024-07-10T16:20:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Bf8Gy",
+          "commit": {
+            "abbreviatedOid": "3acde34"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-11T18:04:36Z",
+          "updatedAt": "2024-07-11T18:04:37Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I would correct the `suggested` edit on New Line  2107 to:\r\n\r\nThe CBOR tag's registration specification SHOULD specify a comparison algorithm either in this specification or in an equivalent profile document of this specification",
+              "createdAt": "2024-07-11T18:04:37Z",
+              "updatedAt": "2024-07-11T18:04:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BgQTS",
+          "commit": {
+            "abbreviatedOid": "14ca269"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-11T18:28:56Z",
+          "updatedAt": "2024-07-11T18:28:56Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": ">this specification or in an equivalent profile\r\n\r\nI was leaving the door open for other I-Ds or even other standards bodies could define extensions that result in the need for a comparison algorithm definition. The IANA experts are in charge of overseeing that the extensions are aligned with base corim and other standard extensions. CBOR Tags registry has corim earmarks that imply the alignment checks should happen. \r\n\r\nWhile a profile can't define a \"standard\" extension / comparison algorithm (based on an IANA registry), it can define non-standard one using CBOR tags' vendor specific range. \r\n\r\nI'm assuming the reader understands that to specify it in profile means they must be using CBOR tag's vendor specific range.",
+              "createdAt": "2024-07-11T18:28:56Z",
+              "updatedAt": "2024-07-11T18:44:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Bgbut",
+          "commit": {
+            "abbreviatedOid": "3acde34"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See additional comments / suggestions.",
+          "createdAt": "2024-07-11T18:45:07Z",
+          "updatedAt": "2024-07-11T18:45:07Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Bh6kN",
+          "commit": {
+            "abbreviatedOid": "b87d855"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-11T22:03:34Z",
+          "updatedAt": "2024-07-11T22:03:34Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I don't know what vendor specific range you're talking about. https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml has 3 classes of ranges, and none of them suggest that a tag number can be reinterpreted in a vendor-specific way.",
+              "createdAt": "2024-07-11T22:03:34Z",
+              "updatedAt": "2024-07-11T22:03:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BiUqY",
+          "commit": {
+            "abbreviatedOid": "14ca269"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-11T23:25:15Z",
+          "updatedAt": "2024-07-11T23:25:15Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "> I don't know what vendor specific range you're talking about. https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml has 3 classes of ranges, and none of them suggest that a tag number can be reinterpreted in a vendor-specific way.\r\n\r\nThe semantics for allocating from the first come first served range is the definition of what is behind the tag doesn't have to be in a standard specification. The requester can just say what it is. This process makes it effectively a vendor specific / defined CBOR tag. ",
+              "createdAt": "2024-07-11T23:25:15Z",
+              "updatedAt": "2024-07-11T23:25:16Z"
             }
           ]
         }
@@ -31468,13 +31575,13 @@
       "labels": [],
       "body": "These are have been separated from the renaming in PR#226",
       "createdAt": "2024-07-03T14:52:24Z",
-      "updatedAt": "2024-07-10T14:18:21Z",
+      "updatedAt": "2024-07-12T19:55:16Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "0032f832d43d33463a9ff748bc590977807e0824",
+      "baseRefOid": "e183357c3523024de14256261f798f9486d7c6dc",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "claimprose",
-      "headRefOid": "41bb7db6ad071d8e8b7b0bd910202daf11b7d22a",
+      "headRefOid": "25b4afade12f34b66a46f795c57d643117f84765",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -31898,6 +32005,284 @@
               "body": "@Dionna This is aintroductory text, making some high level statements. \r\n- This is way too a technical details in the introductory sections\r\n- Specific items like authority for entities like Relying Party are not in scope of this document.",
               "createdAt": "2024-07-10T14:18:14Z",
               "updatedAt": "2024-07-10T14:18:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86AlwQ6",
+          "commit": {
+            "abbreviatedOid": "288399d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see various comments and suggestions",
+          "createdAt": "2024-07-03T20:40:09Z",
+          "updatedAt": "2024-07-11T23:15:22Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "\"These\" implies the subject of the previous sentence. But since the previous sentence was removed, it now refers to the roles rather than principals, making this sentence incorrect. What is the problem with the previous line such that it should be removed?",
+              "createdAt": "2024-07-03T20:40:09Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 10,
+              "body": "The part of the sentence after the comma seems abstract. What does \"exiting properties\" mean? Why must they be rooted to a common authority?",
+              "createdAt": "2024-07-03T20:43:41Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "Claims should be capitalized. \r\nWhat is \"allowed state\" - is it intended to be synonymous with the Endorsement I-D that defines \"reference state\"?",
+              "createdAt": "2024-07-03T20:46:53Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Why should this text be deleted, is it incorrect?",
+              "createdAt": "2024-07-03T20:50:26Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "A measurement in the abstract can't be compared as the conceptual message context is needed. If we're going to talk about Evidence then we may need to explain the CM context is Reference Values. \r\nI don't understand what it means to be a \"quality\" or how that relates to CM context.",
+              "createdAt": "2024-07-03T20:52:56Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "mkey is a feature in measurement-map not environment-map. I'm confused as to why we need to talk about scope. The earlier discussion on ECTs makes it clear that the measurements in \"C\" are scoped to the values in \"E\".",
+              "createdAt": "2024-07-03T20:55:38Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "These sentences seem as though they belong in the section about environments / environment-map. ",
+              "createdAt": "2024-07-03T21:01:39Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 46,
+              "body": "What is incorrect with these sentences such that they should be removed?",
+              "createdAt": "2024-07-03T21:02:56Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 69,
+              "body": "Given we're contemplating refactoring the way we do authority delegation, shouldn't we hold off on introducing new text here?",
+              "createdAt": "2024-07-03T21:07:30Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 78,
+              "body": "When describing device composition we could be describing logical composition (e.g., Target Environments) or physical composition (e.g., device, component, sub-component, and even \"object\"). But this sentence uses 'element' which is used in other places to mean a part of a CDDL statement. Can we agree to use these terms consistently?",
+              "createdAt": "2024-07-03T21:12:15Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 79,
+              "body": "The text in line 812 that was deleted seems more correct.",
+              "createdAt": "2024-07-03T21:13:00Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 28,
+              "body": "I think \"represents expectations for Evidence\" is too narrow for what is being described. ",
+              "createdAt": "2024-07-03T21:17:41Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 64,
+              "body": ">I'm still unclear if there's a conditional relationship between reference triples and the rest of the triples \r\n\r\nIf they're related, the relationship is defined by the 'condition' portion of the RV triple. In the `reference-triples` case, both the `environment-map` and `measurement-map` are the condition. If there is a match, the \"corroborated\" values (the actual state representation) is added to the ACS under the RVP authority. If RVs are already expressed as actual state representations, then you can say \"corroboration\" is passthrough and the RVPs are copied into the ACS (differing only by authority from what was matched).\r\n\r\nThere is an ongoing discussion whether RVs should be used to \"corroborate\" ACS values that originated from Endorsers vs. Attesters. Both are representations of **actual state**. So, its technically possible. The use case for allowing it is when there are claims that can't reasonably be asserted by an AE that a vendor of that Attester wishes to supply reference values. A contrived example is if a CC certifying lab reports that an Attester meets EAL4+, but the Attester vendor wants to restrict the upper bound (for some reason), then the attester vendor could create a RV for a range, say EAL2+ to EAL4. The RV condition applies to claims that only an endorser would make. But the Verifier can easily process them just like RVs written to match Evidence.\r\n\r\nThe concern is a constrained verifier might not have resources necessary to handle a large set of inputs and one way to reduce them is to disallow processing of RVs aimed at matching Endorsements. ",
+              "createdAt": "2024-07-11T23:10:42Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            },
+            {
+              "originalPosition": 64,
+              "body": "> Another triple?\r\n\r\nIt would be clearer to mention a specific endorsement triple such as `endorsed-triples`",
+              "createdAt": "2024-07-11T23:13:19Z",
+              "updatedAt": "2024-07-11T23:15:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BprJC",
+          "commit": {
+            "abbreviatedOid": "288399d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T15:25:45Z",
+          "updatedAt": "2024-07-12T15:25:45Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "I find lowercase \"environment\" difficult to map to a single concept. Here's my understanding. An `environment-map` does not contain measurements. An Attesting Environment has measurable elements. A Target Environment has reference values for elements.\r\n\r\nI reword or reformat the rest of these sentences below. I don't like \"typically\" here since measurements always are within the scope on an environment-map.",
+              "createdAt": "2024-07-12T15:25:45Z",
+              "updatedAt": "2024-07-12T15:25:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BprUo",
+          "commit": {
+            "abbreviatedOid": "288399d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T15:26:07Z",
+          "updatedAt": "2024-07-12T15:26:07Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "I would like to, but given the existing use of \"measured-element-type-choice\" to refer to those logically composed objects, I'd like to know what word we want to use that's not the \"element\" from the CDDL spec. Do we want to say measured-object?",
+              "createdAt": "2024-07-12T15:26:07Z",
+              "updatedAt": "2024-07-12T15:26:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Bpr8Z",
+          "commit": {
+            "abbreviatedOid": "288399d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T15:27:26Z",
+          "updatedAt": "2024-07-12T15:27:27Z",
+          "comments": [
+            {
+              "originalPosition": 79,
+              "body": "Why? mkey has type `measured-element-type-choice`, so I say \"measured element\" instead of \"measurement identifier\". Do you want to change the codepoint to measurement-id-type-choice?",
+              "createdAt": "2024-07-12T15:27:26Z",
+              "updatedAt": "2024-07-12T15:27:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BpseX",
+          "commit": {
+            "abbreviatedOid": "288399d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T15:28:37Z",
+          "updatedAt": "2024-07-12T15:28:38Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "Yes, fixed.",
+              "createdAt": "2024-07-12T15:28:38Z",
+              "updatedAt": "2024-07-12T15:28:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BptpX",
+          "commit": {
+            "abbreviatedOid": "59cb30b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T15:31:09Z",
+          "updatedAt": "2024-07-12T15:31:09Z",
+          "comments": [
+            {
+              "originalPosition": 56,
+              "body": "Moved.",
+              "createdAt": "2024-07-12T15:31:09Z",
+              "updatedAt": "2024-07-12T15:31:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BqbKe",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T17:21:33Z",
+          "updatedAt": "2024-07-12T17:21:33Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "An environment (aka Target Environment) is the thing that is being measured by an Attesting Environment. The name of the environment is expressed as key-value pairs (which is what environment-map and stateful-environment-record do). An AE collects measurements about the TE and those measurements are expressed as key-value pairs. The measurement-value-map structure does this. \r\n\r\nWe can change \"environment\" to use TE if lower case environment is confusing.\r\nI'm OK with removing \"typically\".",
+              "createdAt": "2024-07-12T17:21:33Z",
+              "updatedAt": "2024-07-12T17:21:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Bqe7i",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T17:30:23Z",
+          "updatedAt": "2024-07-12T17:30:23Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "I suppose everyone has different intuition around what words to use to describe compositions of things. Using RFC9334 as a guide, it uses environment (TE/AE) and \"sub-Attester\" which is another way of saying some sort of construction of TEs and AEs, but it didn't use \"sub-TE\" or \"sub-AE\" and some would find this awkward. \r\n\r\nThe current wording reflects the idea that a TE can be broken into finer granularity sub-parts and the English dictionary definition of \"element\" is a word that isn't too overloaded.\r\nIf a lay person described a computing environment as something that consisted of several sub-elements it wouldn't be too far from reality while still being abstract enough to fit a wide variety of implementations.",
+              "createdAt": "2024-07-12T17:30:23Z",
+              "updatedAt": "2024-07-12T17:30:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BqgtL",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T17:35:07Z",
+          "updatedAt": "2024-07-12T17:35:07Z",
+          "comments": [
+            {
+              "originalPosition": 79,
+              "body": "Since there is a pending discussion around whether or not we want to key mkey. We should hold off on making changes to mkey related content until that discussion is resolved.",
+              "createdAt": "2024-07-12T17:35:07Z",
+              "updatedAt": "2024-07-12T17:35:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86BrXC5",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-12T19:55:16Z",
+          "updatedAt": "2024-07-12T19:55:16Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "I say (sub-)enviroment consistently with the existing text for `mkey`. Notion of it being a sub-environment is that it is further limiting the scope of the subject named by the `environment-map`, but is not itself an element of `environment-map`.\r\n\r\nI changed from \"element\" to \"object-id\" since I read that you wanted element to consistently mean the same thing, i.e., the meaning from CDDL. Are you suggesting that \"element\" is not too overloaded as an English term, so we _don't_ have to use \"element\" to consistently refer to the CDDL concept? I'm confused what you want.",
+              "createdAt": "2024-07-12T19:55:16Z",
+              "updatedAt": "2024-07-12T19:55:16Z"
             }
           ]
         }
