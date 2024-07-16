@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-14T01:39:07.395492+00:00",
+  "timestamp": "2024-07-16T01:34:10.025472+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5153,7 +5153,7 @@
       ],
       "body": "The contents of environment-map are chosen by the attesting environment (AE) making measurements, but it is constrained by the protocol used to collect the evidence.\r\n\r\nIf an target environment (TE) being measured has multiple measurements of the same type, for example multiple digest measurements or multiple raw value entries, then one option is for the AE to store each measurement under a different environment-map. This is not always the natural way to store the data.\r\n\r\nI suggest that a solution to this is to store the first measurement of a particular type under the standard measurement-map entry (eg 2 for digest or 4 for raw value) and to store the other measurements of this type using negative codepoints within `measurement-values-map`.\r\n\r\nThe verifier needs to know which comparison algorithm to use for measurements at negative codepoints.\r\n\r\nI suggest that, for measurements at negative codepoints, the verifier should use the CBOR tag at the start of the reference value to select the comparison algorithm. Some types, for example svn(1) and raw-value(4), already have tags defined.\r\n\r\nIf we choose this mechanism then we need to change the CDDL to add optional tags to relevant `measurement-values-map` values so that `stateful-environment`s can indicate which comparison algorithm should be used for negative types.\r\n\r\nIf we do not use the CBOR tag of the `stateful-environment` to select the comparison algorithm for a negative codepoint then we need to define a different way to do this. Using profiles to do this will mean either additional code in every verifier or the need for a profile definition language to indicate that _environment E with codepoint -X must use comparison algorithm A_.\r\n\r\nA related problem occurs when the data format requires extended comparison algorithms which differ from those described in the base specification. The specification of an extended comparison algorithm should define a CBOR tag which tells the verifier to use that algorithm, and the stateful-environment which provides the expected value should be tagged with that tag.\r\n\r\nPR #203 requests adding a tag for digests.",
       "createdAt": "2024-03-06T15:31:39Z",
-      "updatedAt": "2024-06-12T14:16:31Z",
+      "updatedAt": "2024-07-15T18:49:21Z",
       "closedAt": null,
       "comments": [
         {
@@ -5169,6 +5169,13 @@
           "body": "@andrew-draper Can we close this, as we think, this has been addressed!",
           "createdAt": "2024-06-12T14:16:29Z",
           "updatedAt": "2024-06-12T14:16:29Z"
+        },
+        {
+          "author": "fdamato",
+          "authorAssociation": "NONE",
+          "body": "One usage case for an Attester to report more than a single digest (computed with the same algorithm) for a given environment-map is the Impactless Update.\r\nIn this specific case, it is recommended for the Attester to report both current and the cumulative measurement, allowing the Verifier to assert whether a potential vulnerable firmware has executed since cold boot.\r\nIt would not be practical for an Attester to report those 2 in separate environment-map, oversizing the overall evidence-triple array",
+          "createdAt": "2024-07-15T18:49:20Z",
+          "updatedAt": "2024-07-15T18:49:20Z"
         }
       ]
     },
@@ -5397,7 +5404,7 @@
       ],
       "body": "I'm confused what mkey is supposed to mean. Why isn't the mkey an element of the environment itself? What is a sub-environment if not just a more specific environment? It seems like it was added to help represent accepted claims and not as a way to represent a reference integrity manifest.\r\n\r\nThe ACS reusing the CoRIM CDDL seems to have had ill effects.",
       "createdAt": "2024-05-03T17:25:30Z",
-      "updatedAt": "2024-05-07T20:08:53Z",
+      "updatedAt": "2024-07-16T00:02:41Z",
       "closedAt": null,
       "comments": [
         {
@@ -5459,9 +5466,9 @@
         {
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
-          "body": ">added the [preferable first release](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/labels/preferable%20first%20release) label\r\n\r\nThis issue, #230, is referenced from issue #70. A resolution to #70 is needed which may resolve the #230 thread as well?\r\n\r\nIt isn't clear to me that there is an issue here. The thread seems to be soliciting clarification and context. Hence, I think its premature to prioritize it as something to be fixed.",
+          "body": ">added the [preferable first release](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/labels/preferable%20first%20release) label\r\n\r\nThis issue, #230, is referenced from issue #70. A resolution to #70 is needed which may resolve the #230 thread as well?\r\n\r\nIt isn't clear to me that there is an issue here. The thread seems to be soliciting clarification and context. Hence, I think its premature to prioritize it as something to be fixed.\r\n\r\nIssue #248 also has an `mkey` thread (and my feedback there is to resolve #70 first as well)",
           "createdAt": "2024-05-07T18:49:26Z",
-          "updatedAt": "2024-05-07T18:53:34Z"
+          "updatedAt": "2024-07-15T23:38:29Z"
         },
         {
           "author": "deeglaze",
@@ -5476,6 +5483,27 @@
           "body": "> problem with measurement-map's authorized-by\r\n\r\nSeems like we need an issue detailing the concern with `authorized-by`.  \r\nThis doesn't seem related to `mkey` however.",
           "createdAt": "2024-05-07T20:08:52Z",
           "updatedAt": "2024-05-07T20:08:52Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Okay, might I suggest that we change this issue to deprecate mkey in favor of something like $$environment-map-extensions? I'm finding it particularly difficult to model SEV-SNP attestations to account for CHIP_ID as instance of the host, and REPORT_ID as instance of the guest on the host, and REPORT_ID_MA as instance of the guest across migrations. @thomas-fossati have you thought more about Realms CCA ephemeral instance ids?",
+          "createdAt": "2024-07-15T23:06:49Z",
+          "updatedAt": "2024-07-15T23:06:49Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It probably doesn't make sense for environment-map to be extensible by profile since you need to be able to name specific instances across profiles. But that also makes mkey difficult to account for as profile-extensible, since that is also naming the subject :-/",
+          "createdAt": "2024-07-15T23:27:31Z",
+          "updatedAt": "2024-07-15T23:27:31Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">It probably doesn't make sense for environment-map to be extensible by profile\r\n>But that also makes mkey difficult\r\n\r\nRemoving `mkey` would force data models to consider using an environment identifier instead. \r\n\r\nNevertheless, all three forms are extensible using $class-id-type-choice, $group-id-type-choice, or $instance-id-type-choice. But given tagged-bytes is common to all of them (`tagged-bytes = #6.560(bytes)`). There's little / no reason for a profile to need to extend the identifier since `bytes` can contain any value opaquely. It just has to be globally unique.\r\n\r\nSome have positioned that `mkey` has value in that it could use a small (number/string) value as an environment (or object or component or measurement or ...) identifier that is locally scoped to more efficiently build RIMs. This idea is explained in more detail in #248\r\n",
+          "createdAt": "2024-07-16T00:02:40Z",
+          "updatedAt": "2024-07-16T00:02:40Z"
         }
       ]
     },
@@ -31575,7 +31603,7 @@
       "labels": [],
       "body": "These are have been separated from the renaming in PR#226",
       "createdAt": "2024-07-03T14:52:24Z",
-      "updatedAt": "2024-07-12T19:55:16Z",
+      "updatedAt": "2024-07-15T23:34:53Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e183357c3523024de14256261f798f9486d7c6dc",
@@ -32283,6 +32311,26 @@
               "body": "I say (sub-)enviroment consistently with the existing text for `mkey`. Notion of it being a sub-environment is that it is further limiting the scope of the subject named by the `environment-map`, but is not itself an element of `environment-map`.\r\n\r\nI changed from \"element\" to \"object-id\" since I read that you wanted element to consistently mean the same thing, i.e., the meaning from CDDL. Are you suggesting that \"element\" is not too overloaded as an English term, so we _don't_ have to use \"element\" to consistently refer to the CDDL concept? I'm confused what you want.",
               "createdAt": "2024-07-12T19:55:16Z",
               "updatedAt": "2024-07-12T19:55:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86B3peA",
+          "commit": {
+            "abbreviatedOid": "89bd3d7"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-07-15T23:34:53Z",
+          "updatedAt": "2024-07-15T23:34:53Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": ">I'm confused what you want.\r\n\r\nI'm suggesting that before making changes to CDDL and spec text as it pertains to `mkey`, we should resolve the meta conversation of whether mkey is going to be removed. \r\nIssue #70 was tracking a use case that possibly justifies its use. The other use cases (that I'm aware of) are profile specific. \r\n\r\nThere was a thread related to `mkey` as part of the internal representation conversation that resulted in the following CDDL being included:\r\n```\r\nECT = {\r\n  ? e: environment-map\r\n  ? c: claims-map / [ + local-claim ]\r\n  ? a: [ + $crypto-key-type-choice ]\r\n  ? ns: text\r\n  ? cm: cm-type\r\n  ? p: $profile-type-choice\r\n}\r\nlocal-claim = {\r\n  le: local-environment\r\n  c: claims-map\r\n}\r\nlocal-environment =  bstr / tstr\r\n```\r\nThe strongest reason to remove `mkey` is its another form of an ECT structure (that is awkwardly nested in the Claim part of a \"parent?\" ECT). Since we clarified that the identifier scope for environment values in `environment-map` is global. If an `mkey` has global scope, another ECT could be used instead.  \r\n\r\nSo, the salient benefit that `mkey` brings is some syntactic sugar when `mkey` identifiers are locally scoped (relative to the parent ECT) to make RIMs less verbose. Instead of having to define another OID or UUID to disambiguate multiple measurements of the same kind (i.e., multiple entries with the same measurement-values-map code point). A local scope identifier, such as a number or string, is used.\r\n\r\nBut we need to have this conversation in the context of a use case (e.g., issue #70). So, lets prioritize #70 above #248 and #230.",
+              "createdAt": "2024-07-15T23:34:53Z",
+              "updatedAt": "2024-07-15T23:59:57Z"
             }
           ]
         }
