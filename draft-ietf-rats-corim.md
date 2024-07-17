@@ -1620,9 +1620,6 @@ See {{sec-ir-evidence}}, {{sec-ir-ref-val}}, and {{sec-ir-end-val}}.
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
 An internal representation of attestation Evidence uses the `ae` relation.
-The profile identifier for attestation Evidence does not need to be the same as a CoRIM profile that provides reference values.
-A CoRIM profile that provides reference values for Evidence MUST be compatible with the Evidence profile.
-How a Verifier achieves "compatibility" is out of scope of this document, but will be represented in this document as an implicit transformation of an Evidence `addition` ECT of the Evidence profile into another `addition` ECT, this time with the CoRIM profile.
 
 The `addition` is a list of ECTs with Evidence to be appraised.
 
