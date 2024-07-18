@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-16T01:34:10.025472+00:00",
+  "timestamp": "2024-07-18T01:24:59.266358+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2152,9 +2152,9 @@
       "labels": [
         "mustfix"
       ],
-      "body": "## Verifier matching measurements from a single set of attestation environments\r\n\r\nThis issue uses the term Attestation Transport to describe the transport over which evidence was passed to the Verifier. A SPDM connection is an example of an Attestation Transport, it carries measurements from the SPDM Attestation Environment and from related DICE Attestation Environments within the same entity.\r\n\r\nThe simple use case for a Verifier is where it has received a set of measurements through a single Attestation Transport and it needs to match these against a CoMID tag containing reference values.\r\n\r\nIMHO we should make the simple case easy to encode. I suggest that when matching a Reference Value Triple containing only `environment-map` and `measurement-values-map`, the Verifier must ensure that match them against evidence received from the same Attestation Transport. In some cases there may be multiple Attestation Environment groups which match against the same Reference Value Triple, if this happens then each group would receive an identical Endorsement.\r\n\r\nFor example, a CoMID tag encoding the semantics \"If this device has a measurement identified by OID 1.2.3.4 and SHA-384 hash 0x5678 then the device is an Acme Ethernet Card version 1.0\"\r\n\r\n## Verifier matching measurements from multiple attesters\r\n\r\nHigher level Verifiers, or rather the CoRIMs controlling higher level Verifiers, will want to match against more complicated sets of evidence. For example, a CoRIM might want to encode the semantics _Match against a type A PCIe card in slot 0, with firmware hash B, and against a second identical PCIe card in slot 1_.\r\n\r\nDo we need a way for a CoRIM to indicate that it must match against a set of evidence from one source (eg one Attestation Transport) and a potentially different set of evidence from a different source?\r\n\r\n## An example encoding of reference-values when matching against multiple Attestation Transports\r\n\r\nI suggest that we use the `mkey` field to identify the attestor to be chosen.\r\n\r\nFor example, the following encoding encodes the two PCIe cards case above:\r\n\r\n```\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K1\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K2\r\n      - mvalue = B\r\n\r\n```\r\nThis would be associated with an Endorsement triple or similar providing more information about the combined system.\r\n\r\nThe exact values of K1 and K2 are not important, what is important is that all measurements with the same `mkey` value must come over the same Attestation Transport. Using the integer encoding of `mkey` normally produces the smallest encoding.\r\n\r\nWe might need a profile to enable this behavior.\r\n\r\nI think this can be extended to multiple levels of compound devices, but wanted to get a sense of whether this is going in the right direction first.\r\n\r\n## Question\r\n\r\n**Is it going in the right direction?**\r\n\r\n\r\n\r\n\r\n",
+      "body": "## Verifier matching measurements from a single set of attestation environments\r\n\r\nThis issue uses the term Attestation Transport to describe the transport over which evidence was passed to the Verifier. A SPDM connection is an example of an Attestation Transport, it carries measurements from the SPDM Attestation Environment and from related DICE Attestation Environments within the same entity.\r\n\r\nThe simple use case for a Verifier is where it has received a set of measurements through a single Attestation Transport and it needs to match these against a CoMID tag containing reference values.\r\n\r\nIMHO we should make the simple case easy to encode. I suggest that when matching a Reference Value Triple containing only `environment-map` and `measurement-values-map`, the Verifier must ensure that match them against evidence received from the same Attestation Transport. In some cases there may be multiple Attestation Environment groups which match against the same Reference Value Triple, if this happens then each group would receive an identical Endorsement.\r\n\r\nFor example, a CoMID tag encoding the semantics \"If this device has a measurement identified by OID 1.2.3.4 and SHA-384 hash 0x5678 then the device is an Acme Ethernet Card version 1.0\"\r\n\r\n## Verifier matching measurements from multiple attesters\r\n\r\nHigher level Verifiers, or rather the CoRIMs controlling higher level Verifiers, will want to match against more complicated sets of evidence. For example, a CoRIM might want to encode the semantics _Match against a type A PCIe card in slot 0, with firmware hash B, and against a second identical PCIe card in slot 1_.\r\n\r\nDo we need a way for a CoRIM to indicate that it must match against a set of evidence from one source (eg one Attestation Transport) and a potentially different set of evidence from a different source?\r\n\r\n## An example encoding of reference-values when matching against multiple Attestation Transports\r\n\r\nI suggest that we use the `mkey` field to identify the attestor to be chosen.\r\n\r\nFor example, the following encoding encodes the two PCIe cards case above:\r\nSolution 1:\r\n```\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K1\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K2\r\n      - mvalue = B\r\n\r\n```\r\nThis would be associated with an Endorsement triple or similar providing more information about the combined system.\r\n\r\nThe exact values of K1 and K2 are not important, what is important is that all measurements with the same `mkey` value must come over the same Attestation Transport. Using the integer encoding of `mkey` normally produces the smallest encoding.\r\n\r\nWe might need a profile to enable this behavior.\r\n\r\nI think this can be extended to multiple levels of compound devices, but wanted to get a sense of whether this is going in the right direction first.\r\n\r\n## Question\r\n\r\n**Is it going in the right direction?**\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2023-03-17T11:48:02Z",
-      "updatedAt": "2024-05-07T19:03:06Z",
+      "updatedAt": "2024-07-17T21:36:28Z",
       "closedAt": null,
       "comments": [
         {
@@ -2177,6 +2177,34 @@
           "body": "An alternative approach is for the AE to add distinguishing values to the evidence set (i.e., add a (first card)/(second card) measurement to the set of claims-value-map (was: measurement-values-map). \r\n\r\nThis approach fits easily into the ECT (was: EMT) abstraction. The verifier can detect they are values from different component instances (and therefore can avoid conflating them as some sort of erroneous duplication). The reference values matching algorithm only cares about the subset of the evidence claims. Therefore, the (first card)/(second card) information is accepted under the authority of the AE but not under the authority of the RVP. \r\n\r\nAssuming this approach makes sense, the representation of (first card)/(second card) etc... using class-values-map or an extension to it is needed next.",
           "createdAt": "2024-05-07T19:03:05Z",
           "updatedAt": "2024-05-07T19:03:05Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "How do you represent the evidence of same transport? It would seem that the transport itself becomes the \"lead attester\", and thus you need an authority to associate with it, no?",
+          "createdAt": "2024-07-17T15:27:09Z",
+          "updatedAt": "2024-07-17T15:27:09Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another option is to assign an instance ID to each instance of a card in RVs and/or in Evidence. Environments can have both a class ID (e.g., A) and an instance ID (K1, K2). This eliminates the need for mkey. If cards are hot plugged, then RV Env only populates class-id and Evidence populates both Class-id and Instance-id.\r\nOption 2:\r\n\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map Class-ID=A, Instance-ID=K1\r\n    - Measurement Map\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map Class-ID=A, Instance-ID=K2\r\n    - Measurement Map\r\n      - mvalue = B",
+          "createdAt": "2024-07-17T16:12:27Z",
+          "updatedAt": "2024-07-17T16:12:27Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> How do you represent the evidence of same transport? It would seem that the transport itself becomes the \"lead attester\", and thus you need an authority to associate with it, no?\r\n\r\nTracking authority seems orthogonal to this issue. If Evidence isn't signed independently of the conveyance protocol, then the authority of the conveyance protocol is assumed (this is documented in RFC9334). ",
+          "createdAt": "2024-07-17T16:14:22Z",
+          "updatedAt": "2024-07-17T16:14:22Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Another option is to assign an instance ID to each instance of a card in RVs and/or in Evidence. Environments can have both a class ID (e.g., A) and an instance ID (K1, K2). This eliminates the need for mkey. If cards are hot plugged, then RV Env only populates class-id and Evidence populates both Class-id and Instance-id. Option 2:\r\n> \r\n\r\nThe same conveyance seems to mean a particular attestation session with these instances. I understand Andy's ask as referring to an abstract \"same\" session without having to name it. @andrew-draper Is that right? If so, I would recommend adding a $measured-element-type-choice alternative that is a session id unification variable. Every attestation verification request leads to a fresh mapping for unification variables. Once it matches, the variable always stands for the value it's bound to. (Think [algorithm W](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system))",
+          "createdAt": "2024-07-17T21:36:27Z",
+          "updatedAt": "2024-07-17T21:36:27Z"
         }
       ]
     },
@@ -5153,7 +5181,7 @@
       ],
       "body": "The contents of environment-map are chosen by the attesting environment (AE) making measurements, but it is constrained by the protocol used to collect the evidence.\r\n\r\nIf an target environment (TE) being measured has multiple measurements of the same type, for example multiple digest measurements or multiple raw value entries, then one option is for the AE to store each measurement under a different environment-map. This is not always the natural way to store the data.\r\n\r\nI suggest that a solution to this is to store the first measurement of a particular type under the standard measurement-map entry (eg 2 for digest or 4 for raw value) and to store the other measurements of this type using negative codepoints within `measurement-values-map`.\r\n\r\nThe verifier needs to know which comparison algorithm to use for measurements at negative codepoints.\r\n\r\nI suggest that, for measurements at negative codepoints, the verifier should use the CBOR tag at the start of the reference value to select the comparison algorithm. Some types, for example svn(1) and raw-value(4), already have tags defined.\r\n\r\nIf we choose this mechanism then we need to change the CDDL to add optional tags to relevant `measurement-values-map` values so that `stateful-environment`s can indicate which comparison algorithm should be used for negative types.\r\n\r\nIf we do not use the CBOR tag of the `stateful-environment` to select the comparison algorithm for a negative codepoint then we need to define a different way to do this. Using profiles to do this will mean either additional code in every verifier or the need for a profile definition language to indicate that _environment E with codepoint -X must use comparison algorithm A_.\r\n\r\nA related problem occurs when the data format requires extended comparison algorithms which differ from those described in the base specification. The specification of an extended comparison algorithm should define a CBOR tag which tells the verifier to use that algorithm, and the stateful-environment which provides the expected value should be tagged with that tag.\r\n\r\nPR #203 requests adding a tag for digests.",
       "createdAt": "2024-03-06T15:31:39Z",
-      "updatedAt": "2024-07-15T18:49:21Z",
+      "updatedAt": "2024-07-17T01:08:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -5174,8 +5202,22 @@
           "author": "fdamato",
           "authorAssociation": "NONE",
           "body": "One usage case for an Attester to report more than a single digest (computed with the same algorithm) for a given environment-map is the Impactless Update.\r\nIn this specific case, it is recommended for the Attester to report both current and the cumulative measurement, allowing the Verifier to assert whether a potential vulnerable firmware has executed since cold boot.\r\nIt would not be practical for an Attester to report those 2 in separate environment-map, oversizing the overall evidence-triple array",
-          "createdAt": "2024-07-15T18:49:20Z",
-          "updatedAt": "2024-07-15T18:49:20Z"
+          "createdAt": "2024-07-16T20:29:47Z",
+          "updatedAt": "2024-07-16T20:29:47Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> One usage case for an Attester to report more than a single digest (computed with the same algorithm) for a given environment-map is the Impactless Update. In this specific case, it is recommended for the Attester to report both current and the cumulative measurement, allowing the Verifier to assert whether a potential vulnerable firmware has executed since cold boot. It would not be practical for an Attester to report those 2 in separate environment-map, oversizing the overall evidence-triple array\r\n\r\nThis seems like a good use case for `integrity-registers` measurement type. Each digest can be labeled for disambiguation (string / numeric). As long as the reference value uses the same labels, the verifier can keep things straight. \r\n\r\nIf you expect to have cases where one, or the other, or both `integrity-registers` measurements could be produced by the AE (and that isn't an error condition), the reference values list should include the various permutations of `integrity-registers`. Each permutation is fully an environment-map:measurement-map pair (aka triple structure), where the environment-map is the same for each permutation.",
+          "createdAt": "2024-07-17T00:45:15Z",
+          "updatedAt": "2024-07-17T00:49:59Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that `integrity-registers` is a multi-valued analog to `digests` which describes a singleton. \r\nThis approach suggests that every singleton should have a multi-valued analog for there to be a general solution. This approach differs from what Andy suggested above where a block of code points becomes the method for realizing multi-valued measurements for any given singleton. I suppose the CDDL could have defined both the singleton and multi-valued representations behind the same code point by:\r\n```\r\nmeasurement-values-map = {\r\n  ? &(digests: 2) => digests-type / integrity-registers\r\n}\r\n```\r\nAs a BCP for defining singleton/multi-valued representations it could be contrasted with other approaches.",
+          "createdAt": "2024-07-17T01:05:57Z",
+          "updatedAt": "2024-07-17T01:08:57Z"
         }
       ]
     },
@@ -5982,6 +6024,22 @@
       "body": "              Should we say how? Or, if we do already, reference the place(s) that contain the relevant text.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/135#discussion_r1666725465_\r\n            ",
       "createdAt": "2024-07-06T08:43:31Z",
       "updatedAt": "2024-07-06T08:43:31Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 251,
+      "id": "I_kwDOH6-tI86P30GA",
+      "title": "Endorsements are implicitly conditional on reference values. Which ones?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/251",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> An Endorsed Values triple declares additional measurements that are valid when a Target Environment has been verified against reference measurements.\r\n\r\nThere can be multiple reference measurements that are signed for a certain class-id. I don't expect reference measurements to be signed as limited to any specific instance. It doesn't seem correct to just accept anything from the `authorized-by`. The only interpretation that I can think of that could work is if the endorsement triple's environment is also associated with a reference-value-triple in the same CoMID, and that reference value has been added to the ACS.\r\n\r\nThe 1 environment to identify the reference values doesn't apply to the conditional-endorsement-triple now though, so I'm guessing those _aren't_ implicitly conditional on the reference values? I'd really like if we could solidify the semantics by giving explicit transformations of triples in CoRIM to the relations that have more explicitly defined semantics?\r\n\r\n> Evidence is divided up into one or more `ev` relations where the condition ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.\r\n\r\nIs this \"Evidence is\" meant to be \"Endorsements are\"? The `ev` relation is for endorsements.\r\n\r\n> Evidence information is mapped to an addition ECT that populates each of the ECT fields.\r\n\r\nThis seems more correct, but by saying `addition` instead of the `ae` relation doesn't match the use of relation in the previous sentence.",
+      "createdAt": "2024-07-17T14:29:13Z",
+      "updatedAt": "2024-07-17T14:29:14Z",
       "closedAt": null,
       "comments": []
     }
@@ -31275,24 +31333,26 @@
       "id": "PR_kwDOH6-tI85zYSOP",
       "title": "Clarify untagged value comparison requirements",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/245",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "As stated, it appears that keys of measurement-values-map in this document are given more leeway for specifying comparisons than profiles. I interpret the text as saying any untagged value for a key that is not 0 through 14 must be compared with binary equality. There is no MUST in the current language, so that does not seem to be the intention. A profile should be allowed to specify a comparison method as irregular as raw-value and raw-value-mask without the need for registering a CBOR tag number with the IANA.\r\n\r\nIf a profile's comparison method will be common to multiple profiles that are intended for general verifier consumption, then we just recommend that the comparison gets registered with a CBOR tag to avoid having to duplicate language and potentially very slightly deviate from the original meaning in different profiles.",
       "createdAt": "2024-06-24T14:54:32Z",
-      "updatedAt": "2024-07-11T23:25:15Z",
+      "updatedAt": "2024-07-17T15:04:08Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e183357c3523024de14256261f798f9486d7c6dc",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "comparison",
-      "headRefOid": "7acc5c1a545caeaeb746ccfbdbf48745ef8d770e",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "eb53817a64082a3d76dd4c956032f90225f245d7",
+      "closedAt": "2024-07-17T14:56:19Z",
+      "mergedAt": "2024-07-17T14:56:19Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "03d0c398efb99ac14f0ea3147f00b5db8f029d05"
+      },
       "comments": [
         {
           "author": "deeglaze",
@@ -31447,6 +31507,58 @@
               "updatedAt": "2024-07-11T23:25:16Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86CIA31",
+          "commit": {
+            "abbreviatedOid": "7acc5c1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-07-17T14:40:32Z",
+          "updatedAt": "2024-07-17T14:40:32Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86CIMgJ",
+          "commit": {
+            "abbreviatedOid": "eb53817"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-07-17T14:55:49Z",
+          "updatedAt": "2024-07-17T14:55:49Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86CIMtJ",
+          "commit": {
+            "abbreviatedOid": "eb53817"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-07-17T14:56:06Z",
+          "updatedAt": "2024-07-17T14:56:06Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86CISaI",
+          "commit": {
+            "abbreviatedOid": "eb53817"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-07-17T15:04:08Z",
+          "updatedAt": "2024-07-17T15:04:08Z",
+          "comments": []
         }
       ]
     },
