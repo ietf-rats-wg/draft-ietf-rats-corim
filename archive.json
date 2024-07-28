@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-25T01:26:19.731529+00:00",
+  "timestamp": "2024-07-28T01:38:58.742476+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5446,7 +5446,7 @@
       ],
       "body": "I'm confused what mkey is supposed to mean. Why isn't the mkey an element of the environment itself? What is a sub-environment if not just a more specific environment? It seems like it was added to help represent accepted claims and not as a way to represent a reference integrity manifest.\r\n\r\nThe ACS reusing the CoRIM CDDL seems to have had ill effects.",
       "createdAt": "2024-05-03T17:25:30Z",
-      "updatedAt": "2024-07-16T00:02:41Z",
+      "updatedAt": "2024-07-26T08:20:36Z",
       "closedAt": null,
       "comments": [
         {
@@ -5546,6 +5546,27 @@
           "body": ">It probably doesn't make sense for environment-map to be extensible by profile\r\n>But that also makes mkey difficult\r\n\r\nRemoving `mkey` would force data models to consider using an environment identifier instead. \r\n\r\nNevertheless, all three forms are extensible using $class-id-type-choice, $group-id-type-choice, or $instance-id-type-choice. But given tagged-bytes is common to all of them (`tagged-bytes = #6.560(bytes)`). There's little / no reason for a profile to need to extend the identifier since `bytes` can contain any value opaquely. It just has to be globally unique.\r\n\r\nSome have positioned that `mkey` has value in that it could use a small (number/string) value as an environment (or object or component or measurement or ...) identifier that is locally scoped to more efficiently build RIMs. This idea is explained in more detail in #248\r\n",
           "createdAt": "2024-07-16T00:02:40Z",
           "updatedAt": "2024-07-16T00:02:40Z"
+        },
+        {
+          "author": "savithahh",
+          "authorAssociation": "NONE",
+          "body": "- reference-triple-record definition  in https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf:\r\n\r\nreference-triple-record = [\r\n environment-map ; target environment\r\n **[ + measurement-map ]** ; reference measurements\r\n]\r\nIn this case can the mkey be used identify the subcomponent in each measurement-map within the same environment?\r\n\r\n- This differs from the definition in https://www.ietf.org/archive/id/draft-ietf-rats-corim-05.html#:\r\n\r\nreference-triple-record = [\r\n  environment-map\r\n  measurement-map\r\n] \r\nClarification will help. Thank you!",
+          "createdAt": "2024-07-25T16:58:58Z",
+          "updatedAt": "2024-07-25T16:58:58Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> * reference-triple-record definition  in https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf:\r\n> \r\n> reference-triple-record = [ environment-map ; target environment **[ + measurement-map ]** ; reference measurements ] In this case can the mkey be used identify the subcomponent in each measurement-map within the same environment?\r\n> \r\n> * This differs from the definition in https://www.ietf.org/archive/id/draft-ietf-rats-corim-05.html#:\r\n> \r\n> reference-triple-record = [ environment-map measurement-map ] Clarification will help. Thank you!\r\n\r\nThe IETF corim design team, at one point, thought the multiplicity of measurement-maps wasn't desirable since it requires disambiguation in terms of which environment it belongs in. mkey could be used for that purpose, but it also could be used to provide other information such as identifying an originator of the measurement. It also seems to be a less elegant way to model parent-child relationships.\r\n\r\nSince then, the scope of environment-map was clarified to be global. But the namespace scope for mkey, if used, has some value as a locally scoped identifier (which seems to reduce the verbosity of the overall expression). \r\n",
+          "createdAt": "2024-07-25T21:01:24Z",
+          "updatedAt": "2024-07-25T21:01:24Z"
+        },
+        {
+          "author": "savithahh",
+          "authorAssociation": "NONE",
+          "body": "> The IETF corim design team, at one point, thought the multiplicity of measurement-maps wasn't desirable since it requires disambiguation in terms of which environment it belongs in. mkey could be used for that purpose, but it also could be used to provide other information such as identifying an originator of the measurement. It also seems to be a less elegant way to model parent-child relationships.\r\n> \r\n> Since then, the scope of environment-map was clarified to be global. But the namespace scope for mkey, if used, has some value as a locally scoped identifier (which seems to reduce the verbosity of the overall expression).\r\n\r\nThank you for the info!\r\n\r\n- What are the other options available to model parent-child relationships?\r\n\r\n-  Will the definition of reference-triple-record be considered for an update with [ + measurement-map ], to be uniform across specifications?",
+          "createdAt": "2024-07-26T08:20:35Z",
+          "updatedAt": "2024-07-26T08:20:35Z"
         }
       ]
     },
