@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-30T01:33:15.613113+00:00",
+  "timestamp": "2024-08-01T01:40:25.317897+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -72,6 +72,11 @@
       "name": "preferable first release",
       "description": "Desirable to accommodate in initial release",
       "color": "D6F345"
+    },
+    {
+      "name": "for-guidance",
+      "description": "An issue for describing \"best use\" of the format, and is not a strict disambiguation.",
+      "color": "FEBA66"
     }
   ],
   "issues": [
@@ -455,14 +460,16 @@
       "state": "OPEN",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "henkbirkholz"
+      ],
       "labels": [
         "enhancement",
         "mustfix"
       ],
       "body": "Add needed CoRIM registries. Most likely this needs to be just copy-pasted from [-02](https://www.ietf.org/archive/id/draft-birkholz-rats-corim-02.html#section-7).",
       "createdAt": "2022-09-23T16:42:52Z",
-      "updatedAt": "2024-05-07T09:09:57Z",
+      "updatedAt": "2024-07-31T14:55:45Z",
       "closedAt": null,
       "comments": []
     },
@@ -474,14 +481,16 @@
       "state": "OPEN",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "henkbirkholz"
+      ],
       "labels": [
         "enhancement",
         "mustfix"
       ],
       "body": "Add needed CoMID registries. Most likely this needs to be just copy-pasted from [-02](https://www.ietf.org/archive/id/draft-birkholz-rats-corim-02.html#section-7).",
       "createdAt": "2022-09-23T16:43:25Z",
-      "updatedAt": "2024-07-04T09:30:46Z",
+      "updatedAt": "2024-07-31T14:55:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -879,7 +888,7 @@
       "id": "I_kwDOH6-tI85YCsDj",
       "title": "define matching rules for the \"base\" profile (i.e., DICE)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/31",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -891,8 +900,8 @@
       ],
       "body": "We must clarify how a receiver is supposed to process unknown semantics.\r\n\r\nCurrently CoRIM does not have a way to say: _\"if you don\u2019t understand this triple you should abort processing, because it contains critical semantics.\"_\r\n\r\nThe implicit assumption (which we should clearly state) is that any such decision belongs to the definition of a CoRIM profile.\r\n\r\nAdditionally, we need to say\r\n1. what is the default behaviour that all profiles should implement\r\n2. what to do if a profile is not specified",
       "createdAt": "2022-12-05T17:56:03Z",
-      "updatedAt": "2024-05-07T09:27:36Z",
-      "closedAt": null,
+      "updatedAt": "2024-07-31T14:57:32Z",
+      "closedAt": "2024-07-31T14:57:32Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -914,6 +923,13 @@
           "body": "Noting: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/wiki/Notes-on-the-appraisal-flow ",
           "createdAt": "2023-02-27T19:45:57Z",
           "updatedAt": "2023-02-27T19:45:57Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "https://ietf-rats-wg.github.io/draft-smith-rats-evidence-trans/draft-smith-rats-evidence-trans.html",
+          "createdAt": "2024-07-31T14:57:32Z",
+          "updatedAt": "2024-07-31T14:57:32Z"
         }
       ]
     },
@@ -1390,7 +1406,8 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
-        "thomas-fossati"
+        "thomas-fossati",
+        "henkbirkholz"
       ],
       "labels": [
         "mustfix"
@@ -2154,7 +2171,7 @@
       ],
       "body": "## Verifier matching measurements from a single set of attestation environments\r\n\r\nThis issue uses the term Attestation Transport to describe the transport over which evidence was passed to the Verifier. A SPDM connection is an example of an Attestation Transport, it carries measurements from the SPDM Attestation Environment and from related DICE Attestation Environments within the same entity.\r\n\r\nThe simple use case for a Verifier is where it has received a set of measurements through a single Attestation Transport and it needs to match these against a CoMID tag containing reference values.\r\n\r\nIMHO we should make the simple case easy to encode. I suggest that when matching a Reference Value Triple containing only `environment-map` and `measurement-values-map`, the Verifier must ensure that match them against evidence received from the same Attestation Transport. In some cases there may be multiple Attestation Environment groups which match against the same Reference Value Triple, if this happens then each group would receive an identical Endorsement.\r\n\r\nFor example, a CoMID tag encoding the semantics \"If this device has a measurement identified by OID 1.2.3.4 and SHA-384 hash 0x5678 then the device is an Acme Ethernet Card version 1.0\"\r\n\r\n## Verifier matching measurements from multiple attesters\r\n\r\nHigher level Verifiers, or rather the CoRIMs controlling higher level Verifiers, will want to match against more complicated sets of evidence. For example, a CoRIM might want to encode the semantics _Match against a type A PCIe card in slot 0, with firmware hash B, and against a second identical PCIe card in slot 1_.\r\n\r\nDo we need a way for a CoRIM to indicate that it must match against a set of evidence from one source (eg one Attestation Transport) and a potentially different set of evidence from a different source?\r\n\r\n## An example encoding of reference-values when matching against multiple Attestation Transports\r\n\r\nI suggest that we use the `mkey` field to identify the attestor to be chosen.\r\n\r\nFor example, the following encoding encodes the two PCIe cards case above:\r\nSolution 1:\r\n```\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K1\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K2\r\n      - mvalue = B\r\n\r\n```\r\nThis would be associated with an Endorsement triple or similar providing more information about the combined system.\r\n\r\nThe exact values of K1 and K2 are not important, what is important is that all measurements with the same `mkey` value must come over the same Attestation Transport. Using the integer encoding of `mkey` normally produces the smallest encoding.\r\n\r\nWe might need a profile to enable this behavior.\r\n\r\nI think this can be extended to multiple levels of compound devices, but wanted to get a sense of whether this is going in the right direction first.\r\n\r\n## Question\r\n\r\n**Is it going in the right direction?**\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2023-03-17T11:48:02Z",
-      "updatedAt": "2024-07-17T21:36:28Z",
+      "updatedAt": "2024-07-31T14:57:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -2205,6 +2222,13 @@
           "body": "> Another option is to assign an instance ID to each instance of a card in RVs and/or in Evidence. Environments can have both a class ID (e.g., A) and an instance ID (K1, K2). This eliminates the need for mkey. If cards are hot plugged, then RV Env only populates class-id and Evidence populates both Class-id and Instance-id. Option 2:\r\n> \r\n\r\nThe same conveyance seems to mean a particular attestation session with these instances. I understand Andy's ask as referring to an abstract \"same\" session without having to name it. @andrew-draper Is that right? If so, I would recommend adding a $measured-element-type-choice alternative that is a session id unification variable. Every attestation verification request leads to a fresh mapping for unification variables. Once it matches, the variable always stands for the value it's bound to. (Think [algorithm W](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system))",
           "createdAt": "2024-07-17T21:36:27Z",
           "updatedAt": "2024-07-17T21:36:27Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The ECT `ns` field is pretty much unused in the draft, so that could be set to the session identifier when adding evidence to the ACS to act as an already assigned unification variable.",
+          "createdAt": "2024-07-31T14:57:38Z",
+          "updatedAt": "2024-07-31T14:57:38Z"
         }
       ]
     },
@@ -2538,7 +2562,7 @@
       ],
       "body": "Issue is inherited from the parent Issue #77 : where profile extensibility is discussed.\r\n\r\nHowever the profile type choice for CoRIM differs from EAT Profile Type though the intent of the profile is the same!\r\n\r\nShould we consider harmonization of EAT profile type and CoRIM profile type?",
       "createdAt": "2023-05-11T17:56:51Z",
-      "updatedAt": "2024-05-07T09:24:00Z",
+      "updatedAt": "2024-07-31T15:27:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -2547,6 +2571,13 @@
           "body": "CoRIM can handle an EAT profile type now that #77 is resolved. \r\nIt would be helpful if EAT profile could support a CoRIM profile type too.\r\nBut this seems like an issue with EAT rather than CoRIM.\r\nShould this issue be \"won't fix\"?",
           "createdAt": "2023-05-11T18:21:24Z",
           "updatedAt": "2023-09-01T20:32:19Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I vote close. I think we've decided this belongs to the evidence -> internal representation transformation specification, which is separate from the CoRIM profile for values that can match the internal representation.",
+          "createdAt": "2024-07-31T15:27:29Z",
+          "updatedAt": "2024-07-31T15:27:29Z"
         }
       ]
     },
@@ -3786,7 +3817,7 @@
       ],
       "body": "The base CoRIM specification refers to signer and signer details via signer-map.\r\n\r\nHowever use cases coming from real world indicates that CoRIM should support multiple signers.\r\n\r\nOne such use case is the case of counter signatures, especially when CoRIM is blessed by a `trusted auditor`.\r\n\r\nSpecification should be enhanced to add the required text highlighting multiple signature support + CDDL needs to be revisited for any changes to support this enhancement",
       "createdAt": "2023-10-04T10:58:33Z",
-      "updatedAt": "2024-05-07T08:51:42Z",
+      "updatedAt": "2024-07-31T15:48:49Z",
       "closedAt": null,
       "comments": [
         {
@@ -3802,6 +3833,13 @@
           "body": "I am not sure there's anything to do here:  RFC9338 countersignatures can already be added to the COSE_Sign1 message that wraps the CoRIM tag",
           "createdAt": "2023-10-04T15:41:13Z",
           "updatedAt": "2023-10-04T15:56:10Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agreed with @thomas-fossati that this should be closed.",
+          "createdAt": "2024-07-31T15:48:48Z",
+          "updatedAt": "2024-07-31T15:48:48Z"
         }
       ]
     },
@@ -5653,15 +5691,15 @@
       "id": "I_kwDOH6-tI86Jvmzq",
       "title": "Profile-defined claim scope extrusion flaw",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/235",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Writing up what I've brought up before so we can discuss it more thoroughly.\r\n\r\nIn programming languages, when a variable name manages to flow to a reference point where the name is not bound, or it's bound to a different value and shouldn't be reinterpreted, we call that semantic flaw \"scope extrusion\". The reason Lisps of old didn't allow returning functions that refer to local variables  (\"upwards funargs\") is because they hadn't invented closures yet. Functional programming language compilers will perform \"escape analysis\" to determine if a local function value will flow to a call site outside the lexical scope of the variables it refers to in order to avoid allocating a closure.\r\n\r\nIn analogy to the CoRIM spec, consider negative keys in claim-values-map as variables that are bound by the profile name in the CoRIM document. The claims have meaning within an individual document.\r\n\r\nWhen we go to the abstract verifier discussion, we can have evidence and reference values from multiple profiles within the same ACS, but there are no longer any profile names as binding sites. We have a scope extrusion problem. I think each ECT needs to include the profile from whence the claims came. This is the analogous \"closure\".\r\n\r\nWhen processing a condition on a profile-defined claim, we have to match against the ACS. The ACS could have an ECT with the same environment and claim-values-map key value, but be meant to be interpreted in a different profile. We thus cannot correctly match conditions.\r\n\r\n---\r\n\r\nSimilarly, and this is more of an expressive limitation than a flaw per-say, a condition in one profile may wish to name claims that were added from evidence that is governed by a different profile. For instance, suppose there is a profile for transforming the AMD SEV-SNP attestation report into a collection of claims that correspond to the components of the report. The authority for the claims is the AMD SEV root key. The claim key values can be some negative integer.\r\n\r\nNow I come along and say, if AMD authorized measurement M, and TCB_VERSION T, then I endorse this as \"Y-proprietary security level L\". This is contrived, but still there are possible cross-profile conditions that folks will want to express. You can't do this now, since the negative values in the condition and consequent will both be scoped to the 1 document's profile, and you'd end up having to have a strict superset of the AMD evidence profile for the Y-proprietary claim profile. Perhaps that's the correct way to do it anyway.",
       "createdAt": "2024-05-22T16:22:47Z",
-      "updatedAt": "2024-06-12T15:08:11Z",
-      "closedAt": null,
+      "updatedAt": "2024-07-31T15:40:29Z",
+      "closedAt": "2024-07-31T15:40:29Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -5669,6 +5707,13 @@
           "body": "To extend this with today's meeting's comment, we need the condition representation to be asymmetric with the consequent.\r\n\r\nFrom (roughly)\r\n```\r\ncondition: ECT / [+ ECT]\r\n\r\nECT = [\r\nenvironment-map\r\n? measurement-map\r\n]\r\n```\r\n\r\nTo\r\n```\r\ncondition: PECT / [+ PECT]\r\n\r\nPECT = [\r\nenvironment-map\r\n? measurement-map\r\n? profile-reference\r\n]\r\n\r\nprofile-reference /= $profile-type-choice / profile-binding\r\n```\r\n\r\nWhere the `profile-binding` is part of a top level `corim-map` field\r\n\r\n```\r\n $$corim-map-extension /= &( 6 => dependent-profiles-map )\r\ndependent-profiles-map = { profile-binding => $profile-type-choice }\r\nprofile-binding = int / text\r\n```\r\n\r\n(or however a map extension is supposed to be written in CDDL)\r\n\r\nNow profile-local claim definitions can be named appropriately in conditions.",
           "createdAt": "2024-06-12T15:07:09Z",
           "updatedAt": "2024-06-12T15:08:11Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing since profile in ECT disambiguates.",
+          "createdAt": "2024-07-31T15:40:29Z",
+          "updatedAt": "2024-07-31T15:40:29Z"
         }
       ]
     },
@@ -5700,7 +5745,7 @@
       "labels": [],
       "body": "In PR#232 the addition \"CoRIM data structures may be used by Evidence and Attestation Results that wish to describe overlapping structure\" is particularly concerning. I've seen Ned describe the desire to avoid needing to define new translations between all new evidence formats by declaring that industry evidence formats are just always going to use CoRIM triples. That's not at all decided, and I think there are phase distinction concerns to address when trying to blend the provisioning+signing time and run time representations of both expectations and raw evidence.\r\n\r\nGiven that, just saying that \"CoRIM data structures may be used\" is certainly a possibility, but it's too hypothetical to solidify in the standard. When another entity decides their message representation, they are of course well within their rights to reuse CoRIM encodings, but without a standard to describe the common core between evidence, attestation results, and CoRIMs, it's too early to muddy the waters. A concrete example of the bleeding between reference and evidence is the mkey https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/230, and I don't think that it belongs there in the reference structure.",
       "createdAt": "2024-05-23T15:30:11Z",
-      "updatedAt": "2024-05-29T14:01:49Z",
+      "updatedAt": "2024-07-31T15:31:24Z",
       "closedAt": null,
       "comments": [
         {
@@ -5723,6 +5768,13 @@
           "body": "That still seems unguided. Is the goal not to converge on an industry standard attestation evidence format? Without that goal, we can see diverging uses of CoRIM CDDL codepoints.",
           "createdAt": "2024-05-29T14:01:49Z",
           "updatedAt": "2024-05-29T14:01:49Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Perhaps we can make a label for issues that are better handled in a \"User guide\" type of document to accompany the reference document? If we have that, I'd say label it that and close so we can come back to it in a follow-up doc.",
+          "createdAt": "2024-07-31T15:31:23Z",
+          "updatedAt": "2024-07-31T15:31:23Z"
         }
       ]
     },
