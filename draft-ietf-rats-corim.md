@@ -162,19 +162,20 @@ and {{Section G of -cddl}}. Terms and concepts are always referenced as proper n
 
 # Verifier Reconciliation {#sec-verifier-rec}
 
-This specification describes the CoRIM format and documents how a Verifier should process the CoRIM to enable CoRIM authors to convey their intended meaning.
+This specification describes the CoRIM format and documents how a Verifier should process the CoRIM. This enables CoRIM authors, to use CoRIM such that it conveys its intended meaning.
+
 A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
 In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
-By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
-The origin of the inputs is tracked as *authority*.
-The authority for the Claims in a CoRIM is the CoRIM issuer.
+By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what. The origin of the inputs is tracked as *authority*. The authority for the Claims in a CoRIM is the CoRIM issuer.
+
+To this effect, this specification defines, one possible internal representation for use during the appraisal procedure, known as Appraisal Claims Set (ACS).
 
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
 Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
 The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
 Producers of RATS Conceptual Messages can assert contradictory assertions.
 For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
-In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the internal representation of an Attester's actual state, a.k.a., Appraisal Claims Set (ACS).
+In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the internal representation of an Attester's actual state, a.k.a., ACS.
 
 A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
 For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
@@ -1455,7 +1456,7 @@ When used as an identifier the responsible allocator entity SHOULD ensure unique
 
 Inputs to a Verifier are mapped from their external representation to an internal representation.
 CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
-CoRIM data structures may be used by Evidence and Attestation Results that wish to describe overlapping structure.
+CoRIM data structures may also be used by Evidence and Attestation Results that wish to describe overlapping structure.
 CoRIM-based data structures define an external representation of Conceptual Messages that are mapped to an internal representation.
 Appraisal processing describes both mapping transformations and Verifier reconciliation {{sec-verifier-rec}}.
 Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.
@@ -1568,7 +1569,7 @@ ECTs have six attributes:
 
 Environment (label 1):
 
-: Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Typically,  composite Attester's are composed of components, each having an environment identifier.
+: Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Typically, composite Attester's are composed of components, each having an environment identifier.
 
 Properties (label 2):
 
