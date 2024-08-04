@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-01T01:40:25.317897+00:00",
+  "timestamp": "2024-08-04T01:39:12.751117+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -32516,6 +32516,93 @@
               "body": ">I'm confused what you want.\r\n\r\nI'm suggesting that before making changes to CDDL and spec text as it pertains to `mkey`, we should resolve the meta conversation of whether mkey is going to be removed. \r\nIssue #70 was tracking a use case that possibly justifies its use. The other use cases (that I'm aware of) are profile specific. \r\n\r\nThere was a thread related to `mkey` as part of the internal representation conversation that resulted in the following CDDL being included:\r\n```\r\nECT = {\r\n  ? e: environment-map\r\n  ? c: claims-map / [ + local-claim ]\r\n  ? a: [ + $crypto-key-type-choice ]\r\n  ? ns: text\r\n  ? cm: cm-type\r\n  ? p: $profile-type-choice\r\n}\r\nlocal-claim = {\r\n  le: local-environment\r\n  c: claims-map\r\n}\r\nlocal-environment =  bstr / tstr\r\n```\r\nThe strongest reason to remove `mkey` is its another form of an ECT structure (that is awkwardly nested in the Claim part of a \"parent?\" ECT). Since we clarified that the identifier scope for environment values in `environment-map` is global. If an `mkey` has global scope, another ECT could be used instead.  \r\n\r\nSo, the salient benefit that `mkey` brings is some syntactic sugar when `mkey` identifiers are locally scoped (relative to the parent ECT) to make RIMs less verbose. Instead of having to define another OID or UUID to disambiguate multiple measurements of the same kind (i.e., multiple entries with the same measurement-values-map code point). A local scope identifier, such as a number or string, is used.\r\n\r\nBut we need to have this conversation in the context of a use case (e.g., issue #70). So, lets prioritize #70 above #248 and #230.",
               "createdAt": "2024-07-15T23:34:53Z",
               "updatedAt": "2024-07-15T23:59:57Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 252,
+      "id": "PR_kwDOH6-tI853PDVI",
+      "title": "Minor Word alignment to clarify intended meaning",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/252",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-08-02T09:47:29Z",
+      "updatedAt": "2024-08-02T15:41:07Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "03d0c398efb99ac14f0ea3147f00b5db8f029d05",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "word-smithing",
+      "headRefOid": "5ff564d311fa93c0efe80987cac8c4ad11a378da",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86EE79G",
+          "commit": {
+            "abbreviatedOid": "5ff564d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-08-02T15:37:52Z",
+          "updatedAt": "2024-08-02T15:37:52Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Prefer to split sentences with a line break. The comma after authors is wrong and the sentence itself is awkward.",
+              "createdAt": "2024-08-02T15:37:52Z",
+              "updatedAt": "2024-08-02T15:37:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86EE84R",
+          "commit": {
+            "abbreviatedOid": "5ff564d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-08-02T15:39:46Z",
+          "updatedAt": "2024-08-02T15:39:46Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Why collapse to a single line? It renders the same and is counter to the convention of keeping separate sentences on separate lines",
+              "createdAt": "2024-08-02T15:39:46Z",
+              "updatedAt": "2024-08-02T15:39:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86EE90D",
+          "commit": {
+            "abbreviatedOid": "5ff564d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-08-02T15:41:06Z",
+          "updatedAt": "2024-08-02T15:41:07Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "Paragraphs should not start with pronouns that refer to the previous paragraph. Comma after defines is incorrect. Awkward sentence.",
+              "createdAt": "2024-08-02T15:41:06Z",
+              "updatedAt": "2024-08-02T15:41:07Z"
             }
           ]
         }
