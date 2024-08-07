@@ -1109,6 +1109,10 @@ Endorsed Value Claims, the subject is either a Target or Attesting Environment,
 the object contains measurements, and the predicate defines semantics for how
 the object relates to the subject.
 
+Said another way, take the pair of `environment-map` and `measurement-map / mkey` from a `endorsed-triple-record`.
+If this same pair matches the pair from a `reference-triple-record` from the same CoMID, consider that record to be an implicit condition for adding the `endorsed-triple-record` to the ACS.
+<!-- Issue#251: is this also an implicit condition for the other endorsement triples? -->
+
 ~~~ cddl
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
