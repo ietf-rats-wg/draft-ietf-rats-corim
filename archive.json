@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-06T01:33:46.212591+00:00",
+  "timestamp": "2024-08-08T01:34:20.096252+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5484,7 +5484,7 @@
       ],
       "body": "I'm confused what mkey is supposed to mean. Why isn't the mkey an element of the environment itself? What is a sub-environment if not just a more specific environment? It seems like it was added to help represent accepted claims and not as a way to represent a reference integrity manifest.\r\n\r\nThe ACS reusing the CoRIM CDDL seems to have had ill effects.",
       "createdAt": "2024-05-03T17:25:30Z",
-      "updatedAt": "2024-07-26T08:20:36Z",
+      "updatedAt": "2024-08-07T15:01:08Z",
       "closedAt": null,
       "comments": [
         {
@@ -5605,6 +5605,20 @@
           "body": "> The IETF corim design team, at one point, thought the multiplicity of measurement-maps wasn't desirable since it requires disambiguation in terms of which environment it belongs in. mkey could be used for that purpose, but it also could be used to provide other information such as identifying an originator of the measurement. It also seems to be a less elegant way to model parent-child relationships.\r\n> \r\n> Since then, the scope of environment-map was clarified to be global. But the namespace scope for mkey, if used, has some value as a locally scoped identifier (which seems to reduce the verbosity of the overall expression).\r\n\r\nThank you for the info!\r\n\r\n- What are the other options available to model parent-child relationships?\r\n\r\n-  Will the definition of reference-triple-record be considered for an update with [ + measurement-map ], to be uniform across specifications?",
           "createdAt": "2024-07-26T08:20:35Z",
           "updatedAt": "2024-07-26T08:20:35Z"
+        },
+        {
+          "author": "savithahh",
+          "authorAssociation": "NONE",
+          "body": "> > The IETF corim design team, at one point, thought the multiplicity of measurement-maps wasn't desirable since it requires disambiguation in terms of which environment it belongs in. mkey could be used for that purpose, but it also could be used to provide other information such as identifying an originator of the measurement. It also seems to be a less elegant way to model parent-child relationships.\r\n> > Since then, the scope of environment-map was clarified to be global. But the namespace scope for mkey, if used, has some value as a locally scoped identifier (which seems to reduce the verbosity of the overall expression).\r\n> \r\n> Thank you for the info!\r\n> \r\n> * What are the other options available to model parent-child relationships?\r\n> * Will the definition of reference-triple-record be considered for an update with [ + measurement-map ], to be uniform across specifications?\r\n\r\nThis will help to have the evidence and the reference triple records aligned per \"TCG DICE Concise Evidence Binding for SPDM\". Should this be opened as a separate topic? Appreciate your comments.",
+          "createdAt": "2024-08-06T19:01:11Z",
+          "updatedAt": "2024-08-06T19:01:11Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I also agree that mkey is really part of the `environment-map`/`class`. My products are not dependent on mkey but I am ok with the field existing in the correct place in the syntax.\r\n\r\nOne significant issue will be backwards compatibility with DICE/SPDM import of manifests which include mkey. That process has moved to a new draft `draft-smith-rats-evidence-trans` - I think that document needs to provide backwards compatibility with manifests published by existing attesters.\r\n\r\nIf we decide that we have to keep mkey then IMHO it should move to `environment-map`/`class`",
+          "createdAt": "2024-08-07T15:01:06Z",
+          "updatedAt": "2024-08-07T15:01:06Z"
         }
       ]
     },
@@ -6115,6 +6129,37 @@
       "updatedAt": "2024-07-17T14:29:14Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 253,
+      "id": "I_kwDOH6-tI86SPEtD",
+      "title": "Claim naming, data types and matching rules",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/253",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "An Attesting Environment creates claims about a Target Environment which are processed and added to the Attestation Claim Set. These claims are later matched against reference values from CoMIDs.\r\n\r\nFor this issue, I am defining a claim as including:\r\n- a name indicating what was measured\r\n- the value of the measurement\r\n- authority information about the measurement\r\nThere may be other information associated with the claim, but it is not relevant to this issue.\r\n\r\nIn some cases, each environment contains a single claim, or a single claim of each type, and the matching rules for that type are acceptable. For example if there is one digest claim and one raw value claim in an environment). This case is easy to encode within the reference claims. I will call these \"standard claims\".\r\n\r\nIn other cases, extensions are required. In this issue I will use the name \"extension claim\" for a claim which cannot be encoded using the standard fields within `measurement-values-map` (perhaps renamed to `claims-map`). \r\n\r\nUses for extension claims may include:\r\n1. multiple claims with the same data-type in the same environment\r\n2. claims whose semantics cannot be easily represented by the standard data types\r\n3. claims which require custom matching rules\r\n\r\nThe current text suggests that for each of these uses, negative labels within `measurement-values-map`  can be used as part of the solution.\r\n\r\nFor each extension claim, the verifier and/or relying party needs to know three things:\r\n- Its name, that is what was measured to generate the claim\r\n  - For the verifier, environment maps are opaque.\r\n  - CoRIM authors and relying parties understand what names are\r\n- How the data is represented within the claim\r\n  - The verifier can sometimes treat this as opaque\r\n- How to import and export the claim\r\n- How to compare the claim data against a reference value\r\n  - There may be multiple comparison options for the same data\r\n\r\nImport, export and comparison operations for extension claims with new data types will normally require custom code in the verifier. This is to be expected, especially for legacy data whose semantics are already established.\r\n\r\nShould we design CoMID so that it is easy to add some extension claims without having to write significant code in the verifier?\r\n\r\nI assume that import of extension claims will be handled by the document which describes import of values into the ACS, so that is not a problem for us to consider here. We can similarly defer consideration of export until later.\r\n\r\nWe do need to consider comparison of extension claims here, as that affects the syntax of reference values etc. in CoRIM files.\r\n\r\nTo me, the key issue is how the verifier determines the data type of a CoRIM file. The data type will be an internal identifier which triggers appropriate code for matching, serialization, etc.\r\n\r\nThe data type of standard claims is determined from the `measurement-values-map` index.\r\n\r\nMost data types have a single matching rule which triggers code which will match an ACS claim against the corresponding reference value.\r\n\r\nSome data types, for example `svn`, have multiple data matching rules. The type of matching is chosen by a CBOR TAG on the reference value (specifically, on the value within the `measurement-values-map`).\r\n\r\nFor extension claims, how should the verifier determine the data type and the matching rules to be used when matching a reference value against that claim?\r\n\r\nWe have discussed several options for selecting data type and matching rules. The fields which we have discussed using to select include:\r\n- CoRIM profile (of the CoRIM which contains the reference value)\r\n- All fields in the `environment-map`\r\n- The `class` field within `environment-map`\r\n- The `measurement-value-map` label\r\n- The CBOR TAG on the reference value being measured\r\n- Are there any others?\r\n\r\nWhich of these should be used?\r\n\r\nIs it worth adding a way to add extension claims without requiring new code in the verifier?\r\n\r\nFor example, a profile could describe an encoding and a set of matching rules for a data type. Implementing this will require new code in the verifier. An imported claim and/or a reference value could then indicate that the claim with a particular `environment-map`/`class` and `measurement-value-map` label uses the defined data type.\r\n\r\nIf this is worthwhile then how should this be encoded in CoRIM files and in internal data structures?\r\n\r\nIf so then how should the data type be encoded?\r\n",
+      "createdAt": "2024-08-07T12:58:14Z",
+      "updatedAt": "2024-08-07T14:49:06Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "All extensions are determined by the profile, so you'll dispatch from profile id to typeclass instance (or whathaveyou) to implement matching for the extensions and restrictions for standard fields.\r\n\r\n> Should we design CoMID so that it is easy to add some extension claims without having to write significant code in the verifier?\r\n\r\nNo, since that bleeds into becoming a full programming language.",
+          "createdAt": "2024-08-07T14:30:14Z",
+          "updatedAt": "2024-08-07T14:30:14Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that my proposed text about tagging data types having a \"default\" comparison method can perhaps work for a lot of profiles, so you can map multiple profile ids to \"use default semantics\" for extensions' measurement-values-map extensions. That doesn't eliminate the choice that some profiles may make to specify alternative matching semantics for their extensions.",
+          "createdAt": "2024-08-07T14:49:04Z",
+          "updatedAt": "2024-08-07T14:49:04Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -32607,6 +32652,32 @@
           ]
         }
       ]
+    },
+    {
+      "number": 254,
+      "id": "PR_kwDOH6-tI853u-mo",
+      "title": "Disambiguate endorsed-triples semantics.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/254",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses Issue#251. It's unclear if this implicit condition is also expected of the conditional-endorsement-series-triples and conditional-endorsement-triples. The phasing in the appraisal section seems to suggest that it should be. That would seem to mean that if you want \"unconditional\" endorsements, you need to have a reference-triple-record that has an empty measurement-values-map, but that is ill-formed.\r\n\r\nProbably the location is wrong and this should be a subsection of `Endorsed Values Augmentation (Phase 4)`, but I want to at least clarify if this is the intended meaning. The \"Interacting with an ACS\" section suggests that an endorsement always has a list of conditions, but that isn't material in the representation of an endorsed-triple-record.",
+      "createdAt": "2024-08-07T16:23:47Z",
+      "updatedAt": "2024-08-07T16:23:48Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "03d0c398efb99ac14f0ea3147f00b5db8f029d05",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "evimplicit",
+      "headRefOid": "f482726d715c9e542fcbb0fd786745bfb927c156",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
