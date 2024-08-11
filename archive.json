@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-08T01:34:20.096252+00:00",
+  "timestamp": "2024-08-11T01:40:47.768629+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5484,7 +5484,7 @@
       ],
       "body": "I'm confused what mkey is supposed to mean. Why isn't the mkey an element of the environment itself? What is a sub-environment if not just a more specific environment? It seems like it was added to help represent accepted claims and not as a way to represent a reference integrity manifest.\r\n\r\nThe ACS reusing the CoRIM CDDL seems to have had ill effects.",
       "createdAt": "2024-05-03T17:25:30Z",
-      "updatedAt": "2024-08-07T15:01:08Z",
+      "updatedAt": "2024-08-09T19:29:35Z",
       "closedAt": null,
       "comments": [
         {
@@ -5619,6 +5619,27 @@
           "body": "I also agree that mkey is really part of the `environment-map`/`class`. My products are not dependent on mkey but I am ok with the field existing in the correct place in the syntax.\r\n\r\nOne significant issue will be backwards compatibility with DICE/SPDM import of manifests which include mkey. That process has moved to a new draft `draft-smith-rats-evidence-trans` - I think that document needs to provide backwards compatibility with manifests published by existing attesters.\r\n\r\nIf we decide that we have to keep mkey then IMHO it should move to `environment-map`/`class`",
           "createdAt": "2024-08-07T15:01:06Z",
           "updatedAt": "2024-08-07T15:01:06Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If we decide that we have to keep mkey then IMHO it should move to environment-map/class\r\n\r\n\ud83d\udc4d",
+          "createdAt": "2024-08-09T17:16:15Z",
+          "updatedAt": "2024-08-09T17:16:15Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I've dug a little into the corim repo and see an example for PSA tokens that mkey is used to distinguish the bootloader and PRoT as separately measured components.\r\n\r\nGiven that the corim repo represents a value triple with an evironment and an array of measurements and the draft has no such array, there is no added benefit of mkey given the \"merge\" semantics, unless the idea is that\r\n\r\n```\r\nTriple[E, [M, ...]]\r\n```\r\nshould be interpreted as duplicating `E`, and `mkey` is still allowed to keep `measurement-values-map` from getting merged together.\r\n\r\n```\r\n[Triple[E, M], ...]\r\n```\r\n\r\nNow I wonder, given this example, if `mkey` is expected to be the name of \"one of the things the attester measured\", and not simply a distinguishing name for otherwise identical components. The BL/PRoT example suggests that the constraint of \"identical\" wasn't intended.\r\nIt certainly makes more sense to me to allow an attestation report with multiple fields to use mkey as a field name and mval as a representation of the value kind, instead of having a profile add duplicate value kinds to account for the many fields (see [my draft profile for SEV-SNP](https://deeglaze.github.io/draft-deeglaze-amd-sev-snp-corim-profile/draft-deeglaze-amd-sev-snp-corim-profile.html))\r\n\r\nWith this interpretation of mkey, it makes verifiers less burdensome to write. There's little reason for me to use the values map extension. I can use `svn-type` for all the different TCB values, all given a different `mkey`. I can use `version` for the build/major/minor tuples.",
+          "createdAt": "2024-08-09T17:48:24Z",
+          "updatedAt": "2024-08-09T17:48:24Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "For PSA, we could (re)use EAT measured components, e.g.:\r\n\r\n```\r\n[\r\n  / env / {\r\n    / class / 1 : {\r\n      / class-id / 1 : 1234(h'0123456789')\r\n    }\r\n  },\r\n  / measurement / {\r\n    / EAT measured components / 5678 : [\r\n      [\r\n        / id / [\r\n          / name / \"PRoT\",\r\n          / version / [ \"3.2.1\" ]\r\n        ],\r\n        / measurement / [\r\n          / alg / \"sha-256\",\r\n          / val / h'3996003d486fb91ffb056f7d03f2b2992b215b31dbe7af4b373431fc7d319da3'\r\n        ],\r\n        / signers / [ h'4277bb97ba7b51577a0d38151d3e08b40bdf946753f5b5bdeb814d6ff57a8a5e' ]\r\n      ],\r\n      [\r\n        / id / [\r\n          / name / \"BL\",\r\n          / version / [ \"1.2.3\" ]\r\n        ],\r\n        / measurement / [\r\n          / alg / \"sha-256\",\r\n          / val / h'ffaf003d486fb91ffb056f7d03f2b2992b215b31dbe7af4b373431fc7d319da3'\r\n        ],\r\n        / signers / [ h'4277bb97ba7b51577a0d38151d3e08b40bdf946753f5b5bdeb814d6ff57a8a5e' ]\r\n      ]\r\n    ]\r\n  }\r\n]\r\n```",
+          "createdAt": "2024-08-09T19:29:34Z",
+          "updatedAt": "2024-08-09T19:29:34Z"
         }
       ]
     },
