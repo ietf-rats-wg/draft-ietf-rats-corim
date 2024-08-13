@@ -162,12 +162,14 @@ and {{Section G of -cddl}}. Terms and concepts are always referenced as proper n
 
 # Verifier Reconciliation {#sec-verifier-rec}
 
-This specification describes the CoRIM format and documents how a Verifier should process the CoRIM. This enables CoRIM authors, to use CoRIM such that it conveys its intended meaning.
+This specification describes the CoRIM format and documents how a Verifier should process the CoRIM.
+This enables CoRIM authors to use CoRIM such that it conveys its intended meaning.
 
 A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
 In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
-By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what. The origin of the inputs is tracked as *authority*. The authority for the Claims in a CoRIM is the CoRIM issuer.
-
+By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
+The origin of the inputs is tracked as *authority*.
+The authority for the Claims in a CoRIM is the CoRIM issuer.
 To this effect, this specification defines, one possible internal representation for use during the appraisal procedure, known as Appraisal Claims Set (ACS).
 
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
