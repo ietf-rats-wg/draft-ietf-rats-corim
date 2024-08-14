@@ -176,7 +176,7 @@ Each producer of corresponding RATS Conceptual Messages can assert Claims about 
 The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
 Producers of RATS Conceptual Messages can assert contradictory assertions.
 For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
-In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the internal representation of an Attester's actual state, a.k.a., ACS.
+In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the ACS.
 
 A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
 For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
