@@ -163,6 +163,7 @@ and {{Section G of -cddl}}. Terms and concepts are always referenced as proper n
 # Verifier Reconciliation {#sec-verifier-rec}
 
 This specification describes the CoRIM format and documents how a Verifier must process the CoRIM.
+This ensures that the behaviour of the CoRIM-based appraisal is predictable and consistent, in a word deterministic.
 
 A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
 In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
