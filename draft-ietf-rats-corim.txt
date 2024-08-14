@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 18 January 2025                                          Linaro
+Expires: 15 February 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            17 July 2024
+                                                          14 August 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 January 2025.
+   This Internet-Draft will expire on 15 February 2025.
 
 Copyright Notice
 
@@ -268,16 +268,21 @@ Table of Contents
 2.  Verifier Reconciliation
 
    This specification describes the CoRIM format and documents how a
-   Verifier should process the CoRIM to enable CoRIM authors to convey
-   their intended meaning.  A Verifier needs to reconcile its various
-   inputs, with CoRIM being one of them.  In addition to the external
-   CoRIM documents, the Verifier is expected to create an internal
-   representation for each input and map each external representation to
-   an internal one.  By using the internal representation, the Verifier
-   processes inputs as if they are part of a conversation, keeping track
-   of who said what.  The origin of the inputs is tracked as
-   _authority_. The authority for the Claims in a CoRIM is the CoRIM
-   issuer.
+   Verifier must process the CoRIM.  This ensures that the behaviour of
+   the CoRIM-based appraisal is predictable and consistent, in a word
+   deterministic.
+
+   A Verifier needs to reconcile its various inputs, with CoRIM being
+   one of them.  In addition to the external CoRIM documents, the
+   Verifier is expected to create an internal representation for each
+   input and map each external representation to an internal one.  By
+   using the internal representation, the Verifier processes inputs as
+   if they are part of a conversation, keeping track of who said what.
+   The origin of the inputs is tracked as _authority_. The authority for
+   the Claims in a CoRIM is the CoRIM issuer.  To this effect, this
+   specification defines one possible internal representation of the
+   attester's actual state for use during the appraisal procedure, known
+   as Appraisal Claims Set (ACS).
 
    Effectively, Attesters, Reference Value Providers, Endorsers,
    Verifier Owners, Relying Parties, and even the Verifier potentially
@@ -289,9 +294,7 @@ Table of Contents
    example, a compromised Attester may produce false claims that
    conflict with the Reference Values provided by a Reference Value
    Provider (RVP).  In essence, if Evidence is not corroborated by an
-   RVP's Claims, then the RVP's Claims are not included in the internal
-   representation of an Attester's actual state, a.k.a., Appraisal
-   Claims Set (ACS).
+   RVP's Claims, then the RVP's Claims are not included in the ACS.
 
    A Verifier relies on input from appraisal policy to identify relevant
    assertions included in the ACS.  For example, if a policy requires
@@ -1937,14 +1940,14 @@ Table of Contents
    Inputs to a Verifier are mapped from their external representation to
    an internal representation.  CoRIM defines CBOR structures and
    content media types for Conceptual Messages that include Endorsements
-   and Reference Values.  CoRIM data structures may be used by Evidence
-   and Attestation Results that wish to describe overlapping structure.
-   CoRIM-based data structures define an external representation of
-   Conceptual Messages that are mapped to an internal representation.
-   Appraisal processing describes both mapping transformations and
-   Verifier reconciliation Section 2.  Non-CoRIM-based data structures
-   require mapping transformation, but these are out of scope for this
-   document.
+   and Reference Values.  CoRIM data structures may also be used by
+   Evidence and Attestation Results that wish to describe overlapping
+   structure.  CoRIM-based data structures define an external
+   representation of Conceptual Messages that are mapped to an internal
+   representation.  Appraisal processing describes both mapping
+   transformations and Verifier reconciliation Section 2.  Non-CoRIM-
+   based data structures require mapping transformation, but these are
+   out of scope for this document.
 
    If a CoRIM profile is specified, there are a few well-defined points
    in the procedure where Verifier behaviour depends on the profile.
@@ -3177,12 +3180,11 @@ Table of Contents
 
    [IANA.cbor-tags]
               IANA, "Concise Binary Object Representation (CBOR) Tags",
-              19 September 2013,
               <https://www.iana.org/assignments/cbor-tags>.
 
    [IANA.core-parameters]
               IANA, "Constrained RESTful Environments (CoRE)
-              Parameters", 8 June 2012,
+              Parameters",
               <https://www.iana.org/assignments/core-parameters>.
 
    [IANA.language-subtag-registry]
@@ -3191,11 +3193,11 @@ Table of Contents
               registry>.
 
    [IANA.media-types]
-              IANA, "Media Types", 5 July 2024,
+              IANA, "Media Types",
               <https://www.iana.org/assignments/media-types>.
 
    [IANA.named-information]
-              IANA, "Named Information", 14 August 2012,
+              IANA, "Named Information",
               <https://www.iana.org/assignments/named-information>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
@@ -3296,16 +3298,16 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-29, 8 July
+              Progress, Internet-Draft, draft-ietf-rats-eat-30, 2 August
               2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              rats-eat-29>.
+              rats-eat-30>.
 
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
               Endorsements", Work in Progress, Internet-Draft, draft-
-              ietf-rats-endorsements-02, 8 July 2024,
+              ietf-rats-endorsements-03, 23 July 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              endorsements-02>.
+              endorsements-03>.
 
    [I-D.tschofenig-rats-psa-token]
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
@@ -3316,8 +3318,8 @@ Table of Contents
               rats-psa-token-23>.
 
    [IANA.coswid]
-              IANA, "Concise Software Identifier (CoSWID)", 1 August
-              2022, <https://www.iana.org/assignments/coswid>.
+              IANA, "Concise Software Identifier (CoSWID)",
+              <https://www.iana.org/assignments/coswid>.
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
