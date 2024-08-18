@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-15T01:23:35.549566+00:00",
+  "timestamp": "2024-08-18T01:39:15.740099+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5895,15 +5895,15 @@
       "id": "I_kwDOH6-tI86LPWeK",
       "title": "Clarify first paragraph of Verifier Reconciliation",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/241",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "              ```suggestion\r\nWhile this specification focuses on the CoRIM format itself, it is also vital to  document how a Verifier should process the CoRIM so as to enable the CoRIM authors to appropriately encode it.\r\n```\r\n\r\n_Originally posted by @yogeshbdeshpande in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/232#discussion_r1627880853_\r\n            ",
       "createdAt": "2024-06-05T14:18:34Z",
-      "updatedAt": "2024-06-05T14:24:45Z",
-      "closedAt": null,
+      "updatedAt": "2024-08-16T12:43:24Z",
+      "closedAt": "2024-08-16T12:43:24Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -5911,6 +5911,13 @@
           "body": "@yogeshbdeshpande do we really need this issue?",
           "createdAt": "2024-06-05T14:24:43Z",
           "updatedAt": "2024-06-05T14:24:43Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "resolved by PR #252",
+          "createdAt": "2024-08-16T12:43:24Z",
+          "updatedAt": "2024-08-16T12:43:24Z"
         }
       ]
     },
@@ -6231,7 +6238,7 @@
       "labels": [],
       "body": "With recent discussions with various teams using CoRIMs with their own profile it has become evident that there is a requirement to express in CoRIM, the following:\r\n\r\n_For a given single Environment, there can be multiple measurements of the same type, i.e. For an Environment there can be a series of SVN\u2019s pertaining to the environment. The other example is: for a given environment, it can have multiple acceptable states where each state has a unique measurement expressed either by a Digest or a Serial Number or a UUID (each of these are entries in a Measurement Values Map), in the base CoRIM schema._\r\n\r\nThis issue tracks the requirement and CoRIM Authors are requested to provide suitable possible options to debate on. \r\n\r\nHere are few which was discussed during Extended Meeting 14th August 2024:\r\n\r\nOption 1: Individual CoRIM Profile extends the Measurement Values Map. The singular Measurement is expressed using Base CoRIM Schema and the Extension slot offer mechanism for expressing multiplicity.\r\n\r\nPros: The base schema is NOT impacted. The Implementation is specific to required profile where individual measurements for an Environment is uniquely identified by the profile owner. The matching rules are profile specific\r\n\r\nCons: Multiple profiles requiring a similar extension will end up duplicating implementation. A single Verifier supporting these profiles will have difficulty scaling the implementation.\r\n\r\n",
       "createdAt": "2024-08-14T16:19:09Z",
-      "updatedAt": "2024-08-15T00:53:56Z",
+      "updatedAt": "2024-08-16T12:54:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -6258,9 +6265,9 @@
         {
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
-          "body": "We need to be able to describe two multiplicity-related situations:\r\n\r\ncase 1: multiplicity of acceptable states for a given environment (essentially, multiplicity which describes alternatives);\r\n\r\nIn this case, multiple reference value triples, in the same or different CoMIDs/CoRIMs, with the same environment (and mkey, sigh!) seem to be the right construct.\r\n\r\ncase 2: multiplicity of measurements that represent, _en bloc_, one acceptable state of a given environment.\r\n\r\nA simple and clear way to model this other case is to group all the measurements into the same measurement map using a map/array type, similar to what we did with the integrity registers.\r\n",
+          "body": "We need to be able to describe two multiplicity-related situations:\r\n\r\ncase 1: multiplicity of acceptable states for a given environment (essentially, multiplicity which describes alternatives);\r\n\r\nIn this case, multiple reference value triples, in the same or different CoMIDs/CoRIMs, with the same environment (and mkey, sigh!) seem to be the right construct.\r\n\r\ncase 2: multiplicity of measurements that represent, _en bloc_, one acceptable state of a given environment.  (To be clear, I am talking about a target environment made of multiple individually measured components.)\r\n\r\nA simple and clear way to model this other case is to group all the measurements into the same measurement map using a map/array type, similar to what we did with the integrity registers.\r\n\r\n",
           "createdAt": "2024-08-14T17:05:34Z",
-          "updatedAt": "2024-08-14T17:12:53Z"
+          "updatedAt": "2024-08-16T12:54:15Z"
         },
         {
           "author": "thomas-fossati",
@@ -6317,6 +6324,20 @@
           "body": "> @deeglaze I was referring to CoRIM that a supply chain actor needs to specify to the Verifier. I am not referring to ACS which is an Internal representation where of course smart filtering will remove such need anyway!\r\n\r\nAh you were just talking about multiple possible measurements in the same environment, not different measurements of the same type (e.g., TDX's 16 CPU SVNs) in the same environment. Understood.",
           "createdAt": "2024-08-15T00:53:55Z",
           "updatedAt": "2024-08-15T00:53:55Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Agreed with Thomas that my usage of mkey above is more `en bloc` and not multiple acceptable states. If you want multiple acceptable states irrespective of other pieces of information, then `mval` itself should have multiplicity.\r\n\r\nThis requires changing a non-leaf element of the schema.  IMHO we should look for minimally intrusive modifications first, and do disruptive ones only if there are no good alternatives.\r\n\r\n> If you need different combinations of acceptable states, you should have different CoMIDs to express those.\r\n\r\nOr different triples within the same CoMID.  (A CoMID does not define any semantic boundary, it's just a packaging construct.)\r\n\r\n",
+          "createdAt": "2024-08-15T08:28:24Z",
+          "updatedAt": "2024-08-15T08:28:24Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Agreed with Thomas that my usage of mkey above is more `en bloc` and not multiple acceptable states. If you want multiple acceptable states irrespective of other pieces of information, then `mval` itself should have multiplicity.\r\n> \r\n> This requires changing a non-leaf element of the schema. IMHO we should look for minimally intrusive modifications first, and do disruptive ones only if there are no good alternatives.\r\n> \r\nYes, fair enough. Do we want to add a generically typed tag, then, that is for `measurement-values-map / codepoint / T` where we can always have `#6.5xx([ + T ])` to represent \"any of these are allowed irrespective of surrounding context\"?\r\n\r\n> > If you need different combinations of acceptable states, you should have different CoMIDs to express those.\r\n> \r\n> Or different triples within the same CoMID. (A CoMID does not define any semantic boundary, it's just a packaging construct.)\r\n\r\nOkay, agreed. I was still working from the idea that we needed to merge",
+          "createdAt": "2024-08-15T15:49:21Z",
+          "updatedAt": "2024-08-15T15:49:21Z"
         }
       ]
     }
