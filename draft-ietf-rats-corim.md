@@ -1260,7 +1260,7 @@ There are scope-related questions that need to be answered.  ([^tracked-at] http
 
 The base CoRIM document definition is described using CDDL {{-cddl}} that can be extended only at specific allowed points known as "extension points".
 
-The following types of extensions are supported in CoRIM:
+The following types of extensions are supported in CoRIM.
 
 ### Map Extensions
 
@@ -1275,7 +1275,7 @@ Non-negative integers are reserved for IANA to assign meaning globally.
 
 Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name and '$' signifies type extensibility.
 
-New data type extensions MUST be documented to facilitate interoperability.
+New data type extensions SHOULD be documented to facilitate interoperability.
 CoRIM profiles are best used to document vendor or industry defined extensions.
 
 # CoBOM {#sec-cobom}
