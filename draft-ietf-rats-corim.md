@@ -883,6 +883,20 @@ Matching is described in {{sec-cryptokeys-matching}}.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
+##### Matching operators {#sec-match-op}
+
+When authoring conditions or specifying reference values, it is often useful to allow for many alternatives locally to avoid having to duplicate the conditions around all other fields that may be in a condition.
+The `any-of<T>` template makes use of a tagged list #6.562 to indicate to the core matching algorithm that comparing a `T` against an `any-of<T>` should match if and only if `T` matches some element of the tagged list.
+
+~~~ cddl
+{::include cddl/any-of.cddl}
+~~~
+
+The #6.562 tag is meant for flexible matching semantics for conditions and reference values.
+The meaning of matching an `any-of<T>` to another value is undefined—it may only be matched against.
+Evidence translation to measurement values SHOULD NOT use the #6.562 tag.
+Measurement values in an `endorsed-triple-record` SHOULD NOT use the #6.562 tag.
+Measurement values in a `conditional-series-record`/`endv` SHOULD NOT use the #6.562 tag.
 
 ###### Version {#sec-comid-version}
 
@@ -2286,7 +2300,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                        | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
-| 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     562 | `array`             | any-of parametric measurement value, see {{sec-match-op}}            | {{&SELF}} |
+| 563-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
