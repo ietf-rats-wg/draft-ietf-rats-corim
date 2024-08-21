@@ -350,7 +350,7 @@ The following describes each child element of this type.
 
 ### Profile Types {#sec-corim-profile-types}
 
-Profiling is the mechanism that allows the base CoRIM schema to be customised to fit a specific Attester.
+Profiling is the mechanism that allows the base CoRIM schema to be customized to fit a specific Attester.
 
 A profile defines which of the optional parts of a CoRIM are required, which are prohibited and which extension points are exercised and how.
 A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this document.
@@ -1764,7 +1764,7 @@ After context initialization, additional inputs are held back until appraisal pr
 
 All available CoRIMs are collected.
 
-CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorised source MUST be discarded.
+CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
 
 Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
 
