@@ -29,6 +29,7 @@ COMID_FRAGS += mac-addr-type-choice.cddl
 COMID_FRAGS += measured-element-type-choice.cddl
 COMID_FRAGS += measurement-map.cddl
 COMID_FRAGS += measurement-values-map.cddl
+COMID_FRAGS += mkeyvalue-pair.cddl
 COMID_FRAGS += non-empty.cddl
 COMID_FRAGS += oid.cddl
 COMID_FRAGS += raw-value.cddl

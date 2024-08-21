@@ -795,24 +795,42 @@ the `authorized-by` statement can be supplied in the `measurement-map`.
 {::include cddl/measurement-map.cddl}
 ~~~
 
+where `mkeyvalue-pair` is
+
+~~~ cddl
+{::include cddl/mkeyvalue-pair.cddl}
+~~~
+
 The following describes each member of the `measurement-map`:
 
-* `mkey` (index 0): An optional unique identifier of the measured
-  (sub-)environment.  See {{sec-comid-mkey}}.
+* `mkey` (index 0): DEPRECATED (remove for final RFC) An optional identifier of the measured element.
+  Mutually exclusive with `mkeyvalues`.
+  See {{sec-comid-mkey}}.
 
-* `mval` (index 1): The measurements associated with the (sub-)environment.
+* `mval` (index 1): The measurements associated with the environment's measured element.
+  If not present, `mkeyvalues` MUST be present. Mutually exclusive with `mkeyvalues`.
   Described in {{sec-comid-mval}}.
 
 * `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
  the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
 
+* `mkeyvalues` (index 3): Measurements associated with the environment with local names to distinguish measured elements of the same measurement value type.
+  Each `mkey` in the list must be unique within the list. If not present, `mval` MUST be present. Mutually exclusive with use of `mkey` and `mval`.
+
 ###### Measurement Keys {#sec-comid-mkey}
 
-The types defined for a measurement identifier are OID, UUID or uint.
+The types defined for a measurement key are ~OID, UUID~ (DEPRECATED: remove for final RFC), uint, or a textual string.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
+
+A measurement key serves is a local identifier within the scope of the Environment.
+A measurement key SHOULD be associated with a `measurement-values-map` to disambiguate values of the same type that are associated with different measured elements.
+For example, Evidence may include both the firmware version at boot and the firmware version at evidence collection time when a firmware hotloading feature does not require a reboot.
+Both versions use codepoint 0 in the `measurement-values-map`, but they are semantically distinct measured elements.
+
+A measurement key MUST NOT be used as a refinement on the `environment-map`, since it names an element from a specific Environment's collection of measurements in one appraisal context.
 
 ###### Measurement Values {#sec-comid-mval}
 
@@ -2027,12 +2045,13 @@ indicates that the authority named by `measurement-map`/`authorized-by`
 asserts that the actual state of one or more Claims within the
 Target Environment, as identified by `environment-map`, have the
 measurement values in `measurement-map`/`mval`.
+If the Claim name is associated with an `mkey` the measurement value may be in `measurement-map`/`mkeyvalues`[`mkey`]/`mval`.
 
 ECT authority is represented by cryptographic keys. Authority
 is asserted by digitally signing a Claim using the key. Hence, Claims are
 added to the ACS under the authority of a cryptographic key.
 
-Each Claim is encoded as an ECT. The `environment-map` and a
+Each Claim is encoded as an ECT. The `environment-map`, the `mkey`, and the
 key within `measurement-values-map` encode the name of the Claim.
 The value matching that key within `measurement-values-map` is the actual
 state of the Claim.
