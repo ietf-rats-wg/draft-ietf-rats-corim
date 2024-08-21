@@ -2290,17 +2290,88 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
-## New CoRIM Registries {#sec-iana-corim}
+## CoRIM Map Registry {#sec-iana-corim}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/14
+This document defines a new registry titled "CoRIM Map".
+The registry uses integer values as index values for items in 'unsigned-corim-map' CBOR maps.
 
-## New CoMID Registries {#sec-iana-comid}
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/15
+| Range             | Registration Procedures
+|---
+| 0-127    | Standards Action
+| 128-255  | Specification Required
+{: #tbl-iana-corim-map-items-reg-procedures title="CoRIM Map Items Registration Procedures"}
 
-## New CoBOM Registries {#sec-iana-cobom}
+All negative values are reserved for Private Use.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/45
+Initial registrations for the "CoRIM Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name | Specification
+|---
+| 0 | id | {{&SELF}}
+| 1 | tags | {{&SELF}}
+| 2 | dependent-rims | {{&SELF}}
+| 3 | profile | {{&SELF}}
+| 4 | rim-validity | {{&SELF}}
+| 5 | entities | {{&SELF}}
+| 3-255 | Unassigned
+{: #tbl-iana-corim-map-items title="CoRIM Map Items Initial Registrations"}
+
+## CoMID Map Registry {#sec-iana-comid}
+
+This document defines a new registry titled "CoMID Map".
+The registry uses integer values as index values for items in 'concise-mid-tag' CBOR maps.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range             | Registration Procedures
+|---
+| 0-127    | Standards Action
+| 128-255  | Specification Required
+{: #tbl-iana-comid-map-items-reg-procedures title="CoMID Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoMID Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name | Specification
+|---
+| 0 | language | {{&SELF}}
+| 1 | tag-identity | {{&SELF}}
+| 2 | entity | {{&SELF}}
+| 3 | linked-tags | {{&SELF}}
+| 4 | triples | {{&SELF}}
+| 5-255 | Unassigned
+{: #tbl-iana-comid-map-items title="CoMID Map Items Initial Registrations"}
+
+## CoBOM Map Registry {#sec-iana-cobom}
+
+This document defines a new registry titled "CoBOM Map".
+The registry uses integer values as index values for items in 'concise-bom-tag' CBOR maps.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range             | Registration Procedures
+|---
+| 0-127    | Standards Action
+| 128-255  | Specification Required
+{: #tbl-iana-cobom-map-items-reg-procedures title="CoBOM Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoBOM Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name | Specification
+|---
+| 0 | tag-identity | {{&SELF}}
+| 1 | tags-list | {{&SELF}}
+| 2 | bom-validity | {{&SELF}}
+| 5-255 | Unassigned
+{: #tbl-iana-cobom-map-items title="CoBOM Map Items Initial Registrations"}
 
 ## New Media Types {#sec-iana-media-types}
 
