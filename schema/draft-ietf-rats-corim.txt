@@ -201,9 +201,9 @@ Table of Contents
    11. IANA Considerations
      11.1.  New COSE Header Parameters
      11.2.  New CBOR Tags
-     11.3.  New CoRIM Registries
-     11.4.  New CoMID Registries
-     11.5.  New CoBOM Registries
+     11.3.  CoRIM Map Registry
+     11.4.  CoMID Map Registry
+     11.5.  CoBOM Map Registry
      11.6.  New Media Types
        11.6.1.  corim-signed+cbor
        11.6.2.  corim-unsigned+cbor
@@ -2327,7 +2327,7 @@ Table of Contents
    All available CoRIMs are collected.
 
    CoRIMs that are not within their validity period, or that cannot be
-   associated with an authenticated and authorised source MUST be
+   associated with an authenticated and authorized source MUST be
    discarded.
 
    Any CoRIM that has been secured by a cryptographic mechanism, such as
@@ -3069,23 +3069,138 @@ Table of Contents
    based on advice from the designated expert for the CBOR Tags
    registry.
 
-11.3.  New CoRIM Registries
+11.3.  CoRIM Map Registry
 
+   This document defines a new registry titled "CoRIM Map".  The
+   registry uses integer values as index values for items in 'unsigned-
+   corim-map' CBOR maps.
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/14
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
 
-11.4.  New CoMID Registries
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
 
+                          Table 9: CoRIM Map Items
+                          Registration Procedures
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/15
+   All negative values are reserved for Private Use.
 
-11.5.  New CoBOM Registries
+   Initial registrations for the "CoRIM Map" registry are provided
+   below.  Assignments consist of an integer index value, the item name,
+   and a reference to the defining specification.
 
+                +=======+================+===============+
+                | Index | Item Name      | Specification |
+                +=======+================+===============+
+                | 0     | id             | RFCthis       |
+                +-------+----------------+---------------+
+                | 1     | tags           | RFCthis       |
+                +-------+----------------+---------------+
+                | 2     | dependent-rims | RFCthis       |
+                +-------+----------------+---------------+
+                | 3     | profile        | RFCthis       |
+                +-------+----------------+---------------+
+                | 4     | rim-validity   | RFCthis       |
+                +-------+----------------+---------------+
+                | 5     | entities       | RFCthis       |
+                +-------+----------------+---------------+
+                | 3-255 | Unassigned     |               |
+                +-------+----------------+---------------+
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/45
+                    Table 10: CoRIM Map Items Initial
+                              Registrations
+
+11.4.  CoMID Map Registry
+
+   This document defines a new registry titled "CoMID Map".  The
+   registry uses integer values as index values for items in 'concise-
+   mid-tag' CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                         Table 11: CoMID Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoMID Map" registry are provided
+   below.  Assignments consist of an integer index value, the item name,
+   and a reference to the defining specification.
+
+                 +=======+==============+===============+
+                 | Index | Item Name    | Specification |
+                 +=======+==============+===============+
+                 | 0     | language     | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 1     | tag-identity | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 2     | entity       | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 3     | linked-tags  | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 4     | triples      | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 5-255 | Unassigned   |               |
+                 +-------+--------------+---------------+
+
+                    Table 12: CoMID Map Items Initial
+                              Registrations
+
+11.5.  CoBOM Map Registry
+
+   This document defines a new registry titled "CoBOM Map".  The
+   registry uses integer values as index values for items in 'concise-
+   bom-tag' CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                         Table 13: CoBOM Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoBOM Map" registry are provided
+   below.  Assignments consist of an integer index value, the item name,
+   and a reference to the defining specification.
+
+                 +=======+==============+===============+
+                 | Index | Item Name    | Specification |
+                 +=======+==============+===============+
+                 | 0     | tag-identity | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 1     | tags-list    | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 2     | bom-validity | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 5-255 | Unassigned   |               |
+                 +-------+--------------+---------------+
+
+                    Table 14: CoBOM Map Items Initial
+                              Registrations
 
 11.6.  New Media Types
 
@@ -3102,7 +3217,7 @@ Table of Contents
    |                     | unsigned+cbor       | Section 11.6.2 |
    +---------------------+---------------------+----------------+
 
-                      Table 9: New Media Types
+                     Table 15: New Media Types
 
 11.6.1.  corim-signed+cbor
 
@@ -3173,7 +3288,7 @@ Table of Contents
    | unsigned+cbor                 |                |      |           |
    +-------------------------------+----------------+------+-----------+
 
-                       Table 10: New Content-Formats
+                       Table 16: New Content-Formats
 
 12.  References
 
@@ -3326,6 +3441,11 @@ Table of Contents
               Code: The Implementation Status Section", BCP 205,
               RFC 7942, DOI 10.17487/RFC7942, July 2016,
               <https://www.rfc-editor.org/rfc/rfc7942>.
+
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/rfc/rfc8126>.
 
    [SPDM]     Distributed Management Task Force, "Security Protocol and
               Data Model (SPDM)", Version 1.3.0 , May 2023,
