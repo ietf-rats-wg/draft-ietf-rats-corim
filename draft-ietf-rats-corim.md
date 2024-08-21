@@ -216,8 +216,7 @@ Internal representations of Conceptual Messages, ACS, and Attestation Results Se
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
-The CDDL definitions in this document follow the naming conventions illustrated
-in {{tbl-typography}}.
+The CDDL definitions in this document follows the naming conventions illustrated in {{tbl-typography}}.
 
 | Type trait | Example | Typographical convention |
 |---
@@ -316,8 +315,9 @@ The following describes each child item of this map.
 
 ### Identity {#sec-corim-id}
 
-A CoRIM Identifier uniquely identifies a CoRIM instance. The base schema allows UUID and text
-identifiers. Other types of identifiers could be defined as needed.
+A CoRIM Identifier uniquely identifies a CoRIM instance.
+The base CDDL definition allows UUID and text identifiers.
+Other types of identifiers could be defined as needed.
 
 ~~~ cddl
 {::include cddl/corim-id-type-choice.cddl}
@@ -350,7 +350,7 @@ The following describes each child element of this type.
 
 ### Profile Types {#sec-corim-profile-types}
 
-Profiling is the mechanism that allows the base CoRIM schema to be customised to fit a specific Attester.
+Profiling is the mechanism that allows the base CoRIM CDDL definition to be customized to fit a specific Attester.
 
 A profile defines which of the optional parts of a CoRIM are required, which are prohibited and which extension points are exercised and how.
 A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this document.
@@ -1258,26 +1258,25 @@ There are scope-related questions that need to be answered.  ([^tracked-at] http
 
 ## Extensibility {#sec-extensibility}
 
-The base CORIM schema is described using CDDL {{-cddl}} that can be extended
-only at specific allowed points known as "extension points"
+The base CoRIM document definition is described using CDDL {{-cddl}} that can be extended only at specific allowed points known as "extension points".
 
-The following types of extensions are supported in CoRIM
+The following types of extensions are supported in CoRIM:
 
 ### Map Extensions
-Map Extensions provides extensibility support to CoRIM Map structures.
-CDDL map extensibility enables a CoRIM profile to extend the base CoRIM definition.
-CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map
-and '$$' signifies map extensibility. Typically, map extension requires a convention
-for code point naming that avoids code-point reuse.
+
+Map extensions provide extensibility support to CoRIM map structures.
+CDDL map extensibility enables a CoRIM profile to extend the base CoRIM CDDL definition.
+CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map and '$$' signifies map extensibility.
+Typically, map extension requires a convention for code point naming that avoids code-point reuse.
 Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
 Non-negative integers are reserved for IANA to assign meaning globally.
 
 ### Data Type Extensions
 
-Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name
-and '$' signifies type extensibility.
+Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the type name and '$' signifies type extensibility.
 
-Schema extensions (Map or Data Type) should be documented to facilitate interoperability. CoRIM profiles are best used to document vendor or industry defined extensions.
+New data type extensions MUST be documented to facilitate interoperability.
+CoRIM profiles are best used to document vendor or industry defined extensions.
 
 # CoBOM {#sec-cobom}
 
