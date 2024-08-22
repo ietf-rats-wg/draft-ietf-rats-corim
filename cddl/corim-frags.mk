@@ -29,7 +29,6 @@ COMID_FRAGS += mac-addr-type-choice.cddl
 COMID_FRAGS += measured-element-type-choice.cddl
 COMID_FRAGS += measurement-map.cddl
 COMID_FRAGS += measurement-values-map.cddl
-COMID_FRAGS += mkeyvalue-pair.cddl
 COMID_FRAGS += non-empty.cddl
 COMID_FRAGS += oid.cddl
 COMID_FRAGS += raw-value.cddl
@@ -46,7 +45,6 @@ COMID_FRAGS += ueid.cddl
 COMID_FRAGS += uuid.cddl
 COMID_FRAGS += version-map.cddl
 COMID_FRAGS += digest.cddl
-COMID_FRAGS += integrity-registers.cddl
 COMID_FRAGS += concise-swid-tag.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)

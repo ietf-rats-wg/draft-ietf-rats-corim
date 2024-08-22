@@ -775,10 +775,12 @@ configuration files, read-only memory, fuses, IO ring configuration, partial
 reconfiguration regions, etc. Measurements comprise raw values, digests, or
 status information.
 
-An environment has one or more measurable elements. Each element can have a
-dedicated measurement or multiple elements could be combined into a single
-measurement. Measurements can have class, instance or group scope.  This is
-typically determined by the triple's environment.
+An environment has one or more measured elements.
+A measured element can have a dedicated measurement, such as a security version number.
+Multiple elements could be combined into a single measurement, such as a running hash of multiple files.
+A measured element can also have several measurement values, such as a name, version, and digest.
+Measurements can have class, instance or group scope.
+A `measurement-map`'s scope is determined by the `environment-map` it is paired with.
 
 Class measurements apply generally to all the Attesters in the given class.
 Instance measurements apply to a specific Attester instance.  Environments
@@ -786,51 +788,40 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
-The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
-is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
-the `authorized-by` statement can be supplied in the `measurement-map`.
-
+The supply chain entity that is defined as the authority responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+is by default the CoRIM signer.
+If different authorities may provide measurement values, the `"__authorities"` statement can be supplied in the `measurement-map`.
+If the `"__authorities"` statement is used within a condition, at least one of the listed authorities must match the respective ACS entry for the statement to match.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
 ~~~
 
-where `mkeyvalue-pair` is
-
-~~~ cddl
-{::include cddl/mkeyvalue-pair.cddl}
-~~~
 
 The following describes each member of the `measurement-map`:
 
-* `mkey` (index 0): DEPRECATED (remove for final RFC) An optional identifier of the measured element.
-  Mutually exclusive with `mkeyvalues`.
-  See {{sec-comid-mkey}}.
+* `"__authorities"`: The cryptographic identities of individuals or organizations that are
+ designated authorities for this measurement. For example, producer of the measurement or a delegated supplier.
 
-* `mval` (index 1): The measurements associated with the environment's measured element.
-  If not present, `mkeyvalues` MUST be present. Mutually exclusive with `mkeyvalues`.
-  Described in {{sec-comid-mval}}.
+* `$measured-element-type-choice`: A map key distinct from `"__authorities"` that names a measured element. See {{sec-comid-mkey}}.
 
-* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
+* `measurement-values-map`: A map value that associates measurement values with the named measured element within the environment. Described in {{sec-comid-mval}}.
 
-* `mkeyvalues` (index 3): Measurements associated with the environment with local names to distinguish measured elements of the same measurement value type.
-  Each `mkey` in the list must be unique within the list. If not present, `mval` MUST be present. Mutually exclusive with use of `mkey` and `mval`.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-The types defined for a measurement key are ~OID, UUID~ (DEPRECATED: remove for final RFC), uint, or a textual string.
+The types defined for identifying a measured element are uint, or a textual string different from `"__authorities"`.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
 
-A measurement key serves is a local identifier within the scope of the Environment.
-A measurement key SHOULD be associated with a `measurement-values-map` to disambiguate values of the same type that are associated with different measured elements.
-For example, Evidence may include both the firmware version at boot and the firmware version at evidence collection time when a firmware hotloading feature does not require a reboot.
-Both versions use codepoint 0 in the `measurement-values-map`, but they are semantically distinct measured elements.
+A measured element serves is a local identifier within the scope of the Environment.
 
-A measurement key MUST NOT be used as a refinement on the `environment-map`, since it names an element from a specific Environment's collection of measurements in one appraisal context.
+A measured element MUST NOT be used as a refinement on the `environment-map`, since it names an element from a specific Environment's collection of measurements in one appraisal context.
+
+An example of a measured element could be `"PCR0"` from the TCG-specified Trusted Platform Module's bank of platform configuration registers.
+The value it maps to would contain a `digests: 2` entry at least.
 
 ###### Measurement Values {#sec-comid-mval}
 
@@ -898,8 +889,6 @@ The following describes each member of the `measurement-values-map`.
   An Attesting Environment determines that keys are protected as part of Claims collection.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
 Matching is described in {{sec-cryptokeys-matching}}.
-
-* `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
 
 ###### Version {#sec-comid-version}
@@ -1052,52 +1041,6 @@ A cryptographic key digest can be one of the following formats:
 {::include cddl/crypto-key-type-choice.cddl}
 ~~~
 
-##### Integrity Registers {#sec-comid-integrity-registers}
-
-An Integrity Registers map groups together one or more measured "objects".
-Each measured object has a unique identifier and one or more associated digests.
-Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
-The digests use `digests-type` semantics ({{sec-common-hash-entry}}).
-
-~~~ cddl
-{::include cddl/integrity-registers.cddl}
-~~~
-
-All the measured objects in an Integrity Registers map are explicitly named and the order in which they appear in the map is irrelevant.
-Any digests associated with a measured object represent an acceptable state for the object.
-Therefore, if multiple digests are provided, the acceptable state is their cross-product.
-For example, given the following Integrity Registers:
-
-~~~cbor-diag
-{
-  0: [ [ 0, h'00' ] ],
-  1: [ [ 0, h'11' ], [ 1, h'12' ] ]
-}
-~~~
-
-then both
-
-~~~ cbor-diag
-{
-  0: [ 0, h'00' ],
-  1: [ 0, h'11' ]
-}
-~~~
-
-and
-
-~~~cbor-diag
-{
-  0: [ 0, h'00' ],
-  1: [ 1, h'12' ]
-}
-~~~
-
-are acceptable states.
-
-Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
-
-
 ##### Domain Types {#sec-comid-domain-type}
 
 A domain is a context for bundling a collection of related environments and their measurements.
@@ -1237,7 +1180,7 @@ The first `conditional-series-record` that successfully matches an ACS Entry ter
 If none of the series conditions match an ACS Entry, the triple is not matched,
 and no Endorsed values are accepted.
 
-The `authorized-by` value in `measurement-map` in the stateful environment, if present,
+The `"__authorities"` value in `measurement-map` in the stateful environment, if present,
 applies to all measurements in the triple, including `conditional-series-record` records.
 
 ~~~ cddl
@@ -1891,7 +1834,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
 See {{sec-add-to-acs}}.
 
-#### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
+#### The "__authorities" field in Appraisal Claims Set {#sec-authorities}
 
 The `a` field in an ECT in the ACS indicates the entity whose authority backs the claim.
 
@@ -1901,26 +1844,26 @@ that it can filter out claims from entities that do not satisfy appraisal
 policies.
 
 When adding an Evidence Claim to the ACS, the
-Verifier SHALL set the `authorized-by` field in that Claim to the trusted
+Verifier SHALL set the `"__authorities"` field in that Claim to the trusted
 authority keys at the head of each key chain which signed that Evidence. This
 key is often the subject of a self-signed certificate.
 The Verifier has already verified the certificate chain (see {{sec-crypto-validate-evidence}}).
 
 If multiple authorities approve the same Claim, for example if multiple key chains
-are available, then the `authorized-by` field SHALL be set to include the trusted
+are available, then the `"__authorities"` field SHALL be set to include the trusted
 authority keys used by each of those authorities.
 
 When adding Endorsement Claims to the ACS that resulted
 from CoRIM processing (see {{sec-add-to-acs}}) the Verifier SHALL set the
-`authorized-by` field in that Evidence to the trusted authority key that is
+`"__authorities"` field in that Evidence to the trusted authority key that is
 at the head of the key chain that signed the CoRIM.
 
 When searching the ACS for an entry which matches a Reference
-Value containing an `authorized-by` field, the Verifier SHALL ignore ACS
-entries if none of the keys present in the Reference Value `authorized-by` field
-are also present in the ACS `authorized-by` field.
+Value containing an `"__authorities"` field, the Verifier SHALL ignore ACS
+entries if none of the keys present in the Reference Value `"__authorities"` field
+are also present in the ACS `"__authorities"` field.
 
-The Verifier SHOULD set the `authorized-by` field in ACS entries
+The Verifier SHOULD set the `"__authorities"` field in ACS entries
 to a format which contains only a key, for example the `tagged-cose-key-type`
 format. Using a common format makes it easier to compare the field.
 
@@ -1998,7 +1941,7 @@ If a field is not present in the stateful environment `environment-map` then the
 
 Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If the stateful environment contains an `authorized-by` field then the Verifier SHALL remove all candidate entries whose `authorized-by` field does not contain one of the keys listed in the stateful environment `authorized-by` field (see {{sec-authorized-by}} for more details).
+If the stateful environment contains an `"__authorities"` field then the Verifier SHALL remove all candidate entries whose `"__authorities"` field does not contain one of the keys listed in the stateful environment `authorized-by` field (see {{sec-authorities}} for more details).
 
 If there are no candidate entries then the triple containing the stateful environment does not match.
 
@@ -2041,11 +1984,10 @@ matched against these Reference Values.
 
 Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
 When an `endorsed-triple-record` appears within `state-triples` it
-indicates that the authority named by `measurement-map`/`authorized-by`
-asserts that the actual state of one or more Claims within the
+indicates that the authorities named by `measurement-map`/`"__authorities"`
+assert that the actual state of one or more Claims named by the `$measured-element-type-choice` and `measurement-values-map` keys within the
 Target Environment, as identified by `environment-map`, have the
-measurement values in `measurement-map`/`mval`.
-If the Claim name is associated with an `mkey` the measurement value may be in `measurement-map`/`mkeyvalues`[`mkey`]/`mval`.
+measurement values in `measurement-map`[`$measured-element-type-choice`].
 
 ECT authority is represented by cryptographic keys. Authority
 is asserted by digitally signing a Claim using the key. Hence, Claims are
@@ -2064,11 +2006,11 @@ trigger special encoding in the Verifier. The Verifier follows instructions
 in the CoRIM file which tell it how claims are related.
 
 If Evidence or Endorsements from different sources has the same `environment-map`
-and `authorized-by` then the `measurement-values-map`s are merged.
+and `"__authorities"` then the `measurement-values-map`s are merged.
 
 The ACS must maintain the authority information for each ECT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
-and a different authority (see {{sec-authorized-by}}).
+and a different authority (see {{sec-authorities}}).
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
@@ -2184,13 +2126,6 @@ then the next entry from the Reference Values array is likewise
 compared with the next entry of the ACS array.
 If all entries of the Reference Values array match a corresponding entry in the ACS array, then the `cryptokeys` Reference Value matches.
 Otherwise, `cryptokeys` does not match.
-
-##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
-
-For each Integrity Register entry in the Reference Value, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in Evidence.
-If no entry is found, the Reference Value does not match.
-Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
-Note that it is not required for all the entries in Evidence to be used during matching: the Reference Value could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a Reference Value could describe a subset of PCRs.
 
 ### Authority Comparison  {#sec-compare-auth}
 
