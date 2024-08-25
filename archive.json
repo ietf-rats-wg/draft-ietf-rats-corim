@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-22T01:36:09.451767+00:00",
+  "timestamp": "2024-08-25T01:41:45.739431+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -33515,13 +33515,13 @@
       "labels": [],
       "body": "This change addresses the multiplicity of the same type issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256.\r\n\r\nA follow-up PR will address the multiplicity of reference values to avoid representation combinatorial explosion for cartesian products.",
       "createdAt": "2024-08-21T03:42:39Z",
-      "updatedAt": "2024-08-21T18:45:09Z",
+      "updatedAt": "2024-08-22T12:17:00Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "fd67b62321ec9b4259e436f06ea66db596b5f980",
+      "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "mkey-proposal",
-      "headRefOid": "f6d1f13a7a6096dc604090e35830ec27042ee88f",
+      "headRefOid": "c587c4bafa1d6e5bc4be6cf0767a760203e5e410",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -33653,6 +33653,78 @@
               "body": "> [...] since both OIDs and UUIDs have canonical string representations, limiting the key types to `tstr` and `uint` doesn't look like a serious loss.\r\n\r\nThat said, if we _really_ wanted we could define the key as an extensible type choice and do:\r\n```\r\nmeasurement-map = {\r\n  \"__authorized-by\" : [ + $crypto-key-type-choice ]\r\n  + $mkey-type-choice => measurement-value-map\r\n}\r\n\r\n$mkey-type-choice /= uint\r\n$mkey-type-choice /= tstr\r\n; $mkey-type-choice /= tagged-uuid ...\r\n```\r\n\r\nNot sure we'd have any strong reason for doing so; I just wanted to make it clear that the restriction in my proposal above is purely artificial.",
               "createdAt": "2024-08-21T18:45:09Z",
               "updatedAt": "2024-08-21T18:45:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86GV2lT",
+          "commit": {
+            "abbreviatedOid": "c587c4b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Very nice, thanks.\r\n\r\nThe only thing lacking is a clear description of how the element key interacts with the matching rules.",
+          "createdAt": "2024-08-22T08:43:35Z",
+          "updatedAt": "2024-08-22T08:51:00Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nThe supply chain entity that is defined as the authority responsible for providing the measurements (i.e. Reference Values or Endorsed Values)\r\n```",
+              "createdAt": "2024-08-22T08:43:35Z",
+              "updatedAt": "2024-08-22T08:51:00Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "I \u2764\ufe0f \"element\"",
+              "createdAt": "2024-08-22T08:44:19Z",
+              "updatedAt": "2024-08-22T08:51:00Z"
+            },
+            {
+              "originalPosition": 60,
+              "body": "```suggestion\r\nA measured element serves as a local identifier within the scope of the Environment.\r\n```",
+              "createdAt": "2024-08-22T08:46:52Z",
+              "updatedAt": "2024-08-22T08:51:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86GV_iC",
+          "commit": {
+            "abbreviatedOid": "f6d1f13"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-08-22T08:58:41Z",
+          "updatedAt": "2024-08-22T08:58:41Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "@deeglaze & @thomas-fossati : I am not convinced this is the right approach given the nature of complexity  for users to grasp, + lack of deterministic encoding for `measurement-values-map`.\r\n\r\nAlso we need the Mkey to be a bit more flexible, which in cases I am modelling could be a UUID or a UEID.\r\n\r\nLet us discuss this in the next call, before fixating on this approach!",
+              "createdAt": "2024-08-22T08:58:41Z",
+              "updatedAt": "2024-08-22T08:58:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86GXrJm",
+          "commit": {
+            "abbreviatedOid": "f6d1f13"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-08-22T12:17:00Z",
+          "updatedAt": "2024-08-22T12:17:00Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "> I am not convinced this is the right approach given\r\n> * the nature of complexity for users to grasp,\r\n\r\nThis statement is entirely subjective. To me, it looks very simple and natural - in fact, much simpler than the originally proposed array of tuples.\r\n\r\n> * lack of deterministic encoding for `measurement-values-map`.\r\n\r\n\"deterministic encoding\" has a precise meaning (e.g., [S4.2. of STD 94](https://www.rfc-editor.org/rfc/rfc8949.html#section-4.2), which I believe is not what you meant.\r\n\r\nCould you please clarify?\r\n \r\n> Also we need the Mkey to be a bit more flexible, which in cases I am modelling could be a UUID or a UEID.\r\n\r\nIt *is* flexible already: `$measured-element-type-choice` is an extensible type.\r\n\r\nWhat kind of extra flexibility do you need?\r\n\r\n> Let us discuss this in the next call, before fixating on this approach!\r\n\r\nSure, and we can discuss it here as well.\r\n",
+              "createdAt": "2024-08-22T12:17:00Z",
+              "updatedAt": "2024-08-22T12:17:23Z"
             }
           ]
         }
