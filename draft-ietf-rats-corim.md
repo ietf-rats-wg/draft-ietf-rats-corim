@@ -789,7 +789,7 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
-The supply chain entity that is defined as the authority responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+The supply chain entity that is defined as the authority responsible for providing the measurements (i.e. Reference Values or Endorsed Values)
 is by default the CoRIM signer.
 If different authorities may provide measurement values, the `"__authorities"` statement can be supplied in the `measurement-map`.
 If the `"__authorities"` statement is used within a condition, at least one of the listed authorities must match the respective ACS entry for the statement to match.
@@ -1994,7 +1994,7 @@ ECT authority is represented by cryptographic keys. Authority
 is asserted by digitally signing a Claim using the key. Hence, Claims are
 added to the ACS under the authority of a cryptographic key.
 
-Each Claim is encoded as an ECT. The `environment-map`, the `mkey`, and the
+Each Claim is encoded as an ECT. The `environment-map`, the `measurement-map` key, and the
 key within `measurement-values-map` encode the name of the Claim.
 The value matching that key within `measurement-values-map` is the actual
 state of the Claim.
