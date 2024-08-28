@@ -819,8 +819,6 @@ The types defined for identifying a measured element are uint, or a textual stri
 
 A measured element serves as a local identifier within the scope of the Environment.
 
-A measured element MUST NOT be used as a refinement on the `environment-map`, since it names an element from a specific Environment's collection of measurements in one appraisal context.
-
 An example of a measured element could be `"PCR0"` from the TCG-specified Trusted Platform Module's bank of platform configuration registers.
 The value it maps to would contain a `digests: 2` entry at least.
 
