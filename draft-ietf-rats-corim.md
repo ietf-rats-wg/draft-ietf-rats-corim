@@ -791,8 +791,8 @@ are specific to that instance.
 
 The supply chain entity that is defined as the authority responsible for providing the measurements (i.e. Reference Values or Endorsed Values)
 is by default the CoRIM signer.
-If different authorities may provide measurement values, the `"__authorities"` statement can be supplied in the `measurement-map`.
-If the `"__authorities"` statement is used within a condition, at least one of the listed authorities must match the respective ACS entry for the statement to match.
+If different authorities may provide measurement values, the `&(fixme-authorities: -1)` statement can be supplied in the `measurement-map`.
+If the `&(fixme-authorities: -1)` statement is used within a condition, at least one of the listed authorities must match the respective ACS entry for the statement to match.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -801,17 +801,17 @@ If the `"__authorities"` statement is used within a condition, at least one of t
 
 The following describes each member of the `measurement-map`:
 
-* `"__authorities"`: The cryptographic identities of individuals or organizations that are
+* `fixme-authorities"`: The cryptographic identities of individuals or organizations that are
  designated authorities for this measurement. For example, producer of the measurement or a delegated supplier.
 
-* `$measured-element-type-choice`: A map key distinct from `"__authorities"` that names a measured element. See {{sec-comid-mkey}}.
+* `$measured-element-type-choice`: A map key distinct from `fixme-authorities` that names a measured element. See {{sec-comid-mkey}}.
 
 * `measurement-values-map`: A map value that associates measurement values with the named measured element within the environment. Described in {{sec-comid-mval}}.
 
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-The types defined for identifying a measured element are uint, or a textual string different from `"__authorities"`.
+The types defined for identifying a measured element are uint, or a textual string.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
@@ -1179,7 +1179,7 @@ The first `conditional-series-record` that successfully matches an ACS Entry ter
 If none of the series conditions match an ACS Entry, the triple is not matched,
 and no Endorsed values are accepted.
 
-The `"__authorities"` value in `measurement-map` in the stateful environment, if present,
+The `fixme-authorities` value in `measurement-map` in the stateful environment, if present,
 applies to all measurements in the triple, including `conditional-series-record` records.
 
 ~~~ cddl
@@ -1833,7 +1833,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
 See {{sec-add-to-acs}}.
 
-#### The "__authorities" field in Appraisal Claims Set {#sec-authorities}
+#### The fixme-authorities field in Appraisal Claims Set {#sec-authorities}
 
 The `a` field in an ECT in the ACS indicates the entity whose authority backs the claim.
 
@@ -1843,26 +1843,26 @@ that it can filter out claims from entities that do not satisfy appraisal
 policies.
 
 When adding an Evidence Claim to the ACS, the
-Verifier SHALL set the `"__authorities"` field in that Claim to the trusted
+Verifier SHALL set the `fixme-authorities` field in that Claim to the trusted
 authority keys at the head of each key chain which signed that Evidence. This
 key is often the subject of a self-signed certificate.
 The Verifier has already verified the certificate chain (see {{sec-crypto-validate-evidence}}).
 
 If multiple authorities approve the same Claim, for example if multiple key chains
-are available, then the `"__authorities"` field SHALL be set to include the trusted
+are available, then the `fixme-authorities` field SHALL be set to include the trusted
 authority keys used by each of those authorities.
 
 When adding Endorsement Claims to the ACS that resulted
 from CoRIM processing (see {{sec-add-to-acs}}) the Verifier SHALL set the
-`"__authorities"` field in that Evidence to the trusted authority key that is
+`fixme-authorities` field in that Evidence to the trusted authority key that is
 at the head of the key chain that signed the CoRIM.
 
 When searching the ACS for an entry which matches a Reference
-Value containing an `"__authorities"` field, the Verifier SHALL ignore ACS
-entries if none of the keys present in the Reference Value `"__authorities"` field
-are also present in the ACS `"__authorities"` field.
+Value containing an `fixme-authorities` field, the Verifier SHALL ignore ACS
+entries if none of the keys present in the Reference Value `fixme-authorities` field
+are also present in the ACS `fixme-authorities` field.
 
-The Verifier SHOULD set the `"__authorities"` field in ACS entries
+The Verifier SHOULD set the `fixme-authorities` field in ACS entries
 to a format which contains only a key, for example the `tagged-cose-key-type`
 format. Using a common format makes it easier to compare the field.
 
@@ -1940,7 +1940,7 @@ If a field is not present in the stateful environment `environment-map` then the
 
 Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If the stateful environment contains an `"__authorities"` field then the Verifier SHALL remove all candidate entries whose `"__authorities"` field does not contain one of the keys listed in the stateful environment `authorized-by` field (see {{sec-authorities}} for more details).
+If the stateful environment contains an `&(fixme-authorities: -1)` field then the Verifier SHALL remove all candidate entries whose `&(fixme-authorities: -1)` field does not contain one of the keys listed in the stateful environment `authorized-by` field (see {{sec-authorities}} for more details).
 
 If there are no candidate entries then the triple containing the stateful environment does not match.
 
@@ -1983,7 +1983,7 @@ matched against these Reference Values.
 
 Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
 When an `endorsed-triple-record` appears within `state-triples` it
-indicates that the authorities named by `measurement-map`/`"__authorities"`
+indicates that the authorities named by `measurement-map`/`fixme-authorities`
 assert that the actual state of one or more Claims named by the `$measured-element-type-choice` and `measurement-values-map` keys within the
 Target Environment, as identified by `environment-map`, have the
 measurement values in `measurement-map`[`$measured-element-type-choice`].
@@ -2005,7 +2005,7 @@ trigger special encoding in the Verifier. The Verifier follows instructions
 in the CoRIM file which tell it how claims are related.
 
 If Evidence or Endorsements from different sources has the same `environment-map`
-and `"__authorities"` then the `measurement-values-map`s are merged.
+and `&(fixme-authorities: -1)` then the `measurement-values-map`s are merged.
 
 The ACS must maintain the authority information for each ECT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
