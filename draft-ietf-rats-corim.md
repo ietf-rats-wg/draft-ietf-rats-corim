@@ -1933,10 +1933,10 @@ This Endorsement includes the authority which signed the Conditional Endorsement
 This section describes how a stateful environment is matched against an ACS entry.
 If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.
 
-The Verifier initializes a temporary "candidate entries" variable with all entries in the ACS where the stateful enviromnment `environment-map` is a subset of the ACS `environment-map`.
-
+The Verifier initializes a temporary "candidate entries" variable with all entries in the ACS where the stateful environment `environment-map` and measured element identifier is a subset of the ACS `environment-map` and measured element identifier.
 A stateful environment `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the stateful environment `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
 If a field is not present in the stateful environment `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
+A stateful environment measured element identifier is a subset of an ACS entry measured element identifier if their CBOR encodings are binary identical.
 
 Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
