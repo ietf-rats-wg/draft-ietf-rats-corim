@@ -816,7 +816,7 @@ The types defined for identifying a measured element are uint, or a textual stri
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
 
-A measured element serves is a local identifier within the scope of the Environment.
+A measured element serves as a local identifier within the scope of the Environment.
 
 A measured element MUST NOT be used as a refinement on the `environment-map`, since it names an element from a specific Environment's collection of measurements in one appraisal context.
 
