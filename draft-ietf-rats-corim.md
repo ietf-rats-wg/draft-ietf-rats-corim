@@ -776,6 +776,7 @@ reconfiguration regions, etc. Measurements comprise raw values, digests, or
 status information.
 
 An environment has one or more measured elements.
+Measured elements are distinguished from each other by the `measurement-map` key.
 A measured element can have a dedicated measurement, such as a security version number.
 Multiple elements could be combined into a single measurement, such as a running hash of multiple files.
 A measured element can also have several measurement values, such as a name, version, and digest.
