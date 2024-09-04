@@ -16,6 +16,9 @@ See the
 Contributions can be made by creating pull requests.
 The GitHub interface supports creating pull requests using the Edit (✏) button.
 
+Weekly working meetings about open PRs and Issues are held Wednesdays 7-8am PDT (UTC-07), 3-4pm BST (UTC+01) on [Zoom](https://armltd.zoom.us/j/99985360691?pwd=dDR4K2Z2Z2hhdUtJY2h2VzkwN0VNUT09).
+
+Import the [invite.ics](/invite.ics) into your calendar software to get any updates to the event.
 
 ## Command Line Usage
 
@@ -27,4 +30,3 @@ $ make
 
 Command line usage requires that you have the necessary software installed.  See
 [the instructions](https://github.com/martinthomson/i-d-template/blob/main/doc/SETUP.md).
-
