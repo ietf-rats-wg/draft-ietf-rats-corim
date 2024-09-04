@@ -797,10 +797,10 @@ the `authorized-by` statement can be supplied in the `measurement-map`.
 
 The following describes each member of the `measurement-map`:
 
-* `mkey` (index 0): An optional unique identifier of the measured
-  (sub-)environment.  See {{sec-comid-mkey}}.
+* `mkey` (index 0): An optional environment-local unique identifier of the measured
+  environment.  See {{sec-comid-mkey}}.
 
-* `mval` (index 1): The measurements associated with the (sub-)environment.
+* `mval` (index 1): The measurements associated with the environment and optional `mkey`.
   Described in {{sec-comid-mval}}.
 
 * `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
@@ -1202,33 +1202,28 @@ measurements for the Target Environment.
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus either measurements for a single measured element
-via `measurement-map` or multiple measured elements using `[measurement-map]`that have matching Evidence.
-
-The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
-matched.
+that identifies a Target Environment based on an `environment-map` plus measurements.
 
 ~~~ cddl
 {::include cddl/stateful-environment-record.cddl}
 ~~~
 
-The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
-Each `conditional-series-record` record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
-The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match an ACS Entry, the triple is not matched,
-and no Endorsed values are accepted.
+The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
+matched.
 
-The `authorized-by` value in `measurement-map` in the stateful environment, if present,
-applies to all measurements in the triple, including `conditional-series-record` records.
-
-~~~ cddl
-{::include cddl/conditional-endorsement-series-triple-record.cddl}
-~~~
+The series object is an array of `conditional-series-record`.
+The condition records have both Reference and Endorsed Values, possibly for multiple `mkey`s.
 
 ~~~ cddl
 {::include cddl/conditional-series-record.cddl}
 ~~~
+
+Each element of the array is evaluated in the order it appears.
+The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
+Each condition may expect measurements of multiple `mkey`s, and may add endorsements for multiple `mkey`s.
+The first record that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
+If none of the series conditions match an ACS Entry, the triple is not matched,
+and no Endorsed values are accepted.
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
@@ -1253,6 +1248,7 @@ Notes:
 
 * In order to give the expected result, the condition must describe the expected context completely.
 * The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.
+* The `authorized-by` field of measurements in `endorsements` is ignored.
 
 There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
 
@@ -1963,9 +1959,25 @@ Each Endorsement from the `endorsed-triple-record` includes the authority which 
 
 For each Conditional Endorsement Series Triple the Verifier iterates over the `conditional-series-record`s within the triple, stopping if it finds a match.
 
-For each iteration, the Verifier creates a temporary `stateful-environment-record` by merging the `stateful-environment-record` in the triple with the `refv` field in the `conditional-series-record`. It compares this temporary record against the ACS (see {{sec-match-one-se}}).
+For each iteration, the Verifier creates a temporary `stateful-environment-record` by merging the `stateful-environment-record` in the triple with the `refv` field of the `conditional-series-record`. It compares this temporary record against the ACS (see {{sec-match-one-se}}).
+
+It compares this temporary record against the ACS (see {{sec-match-one-se}}).
 
 If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
+The full `endorsement-triple-record` the result represents is
+
+~~~ cddl
+[
+  stateful-environment-record[0] ; environment-map
+  [ / measurement-map / {
+      / mkey: / 0: mkey
+      / mval: / 1: mval
+      / authorized-by: / 2: [ CoRIM-issuer ]
+    }
+   for [mkey, mval] in endv ]
+]
+~~~
+
 This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
 
 #### Processing a stateful environment against the Appraisal Claims Set {#sec-match-one-se}

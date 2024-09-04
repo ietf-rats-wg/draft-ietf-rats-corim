@@ -47,7 +47,6 @@ COMID_FRAGS += version-map.cddl
 COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
 COMID_FRAGS += concise-swid-tag.cddl
-COMID_FRAGS += measurement-maps-type-choice.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
 
