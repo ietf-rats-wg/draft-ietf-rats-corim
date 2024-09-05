@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-03T01:38:07.004241+00:00",
+  "timestamp": "2024-09-05T01:39:22.237764+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5418,7 +5418,7 @@
       ],
       "body": "The measurement-map type is used for non-measurement claims, such as attesting environment topology and endorsements. Shall we rename measurement-map to claims-map, and measurement-values-map to claim-values-map ?",
       "createdAt": "2024-04-07T23:26:29Z",
-      "updatedAt": "2024-06-05T16:26:54Z",
+      "updatedAt": "2024-09-04T17:05:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -5441,6 +5441,13 @@
           "body": "I wouldn't rule out Claims: I see its generality as a feature rather than a bug.  This would still be my preference.\r\n\r\nAmong the other proposals, I can live with Property or Assertion.",
           "createdAt": "2024-06-05T16:26:53Z",
           "updatedAt": "2024-06-05T16:26:53Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The challenge is that we want to use a common CDDL structure to represent information that has multiple contexts / domains of interpretation. Namely, Evidence, Reference, Endorsement. We've found it helpful to describe Reference and Endorsement as \"values\" while Evidence seems appropriate to use \"measurement\". Those of us with a TCG bias seem happy to use 'measurement' for all three cases since that has been a convention in the TCG for a long time.\r\nA pragmatic consideration when writing prose is we typically provide qualifying wording such as \"reference values\" or \"endorsement values\", and could easily follow a convention such as \"evidence values\". This suggests that an unqualified \"values\" could be used in CDDL where the CDDL applies to all three contexts. Note that the triple itself already provides \"reference\" and \"endorsement\" context, (and in the `concise-evidence` context); so regardless of what wording is used deeper in the CDDL, the reader is able to disambiguate.\r\n\r\nWhat is wrong with using \"Value\" or \"Values\" as the value part of a named-value pairing that involves a collection of Environment claims (aka the name) and a collection of Value claims (aka the value)? \r\n\r\nThe upper level CDDL still supplies context for Reference, Endorsement, or Evidence - as before - so using generalized wording still doesn't make the structure any less descriptive.\r\n\r\n\"Assertion\" is also reasonable though 9334 uses \"assert\", \"asserted\", and \"asserted information\" frequently to describe in more general terms \"Claim\" and other hand-wavey concepts. Nevertheless, it doesn't specifically use \"assertion\".\r\n\r\nNevertheless, I'm not passionate about any particular alternative, nor am I passionate about changing what's already there as I believe the CDDL supplies the needed disambiguation context. Hence, it doesn't feel like a problem that needs fixing IMHO.",
+          "createdAt": "2024-09-04T17:05:21Z",
+          "updatedAt": "2024-09-04T17:05:21Z"
         }
       ]
     },
@@ -29626,13 +29633,13 @@
       ],
       "body": "A property is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrained in points.\r\n\r\nCloses Issue#225",
       "createdAt": "2024-04-23T16:40:06Z",
-      "updatedAt": "2024-08-28T15:42:04Z",
+      "updatedAt": "2024-09-04T02:40:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "claimsmap",
-      "headRefOid": "ce0f467fd38fbac6d57d7461f7cd7d8b0f4634a9",
+      "headRefOid": "91f2783faa3a321cf498695dd5a8b1cf2f041b4a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -29707,6 +29714,13 @@
           "body": "We will retain 'Claim', waiting for all editors to agree on that.",
           "createdAt": "2024-08-28T15:41:37Z",
           "updatedAt": "2024-08-28T15:41:37Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> We will retain 'Claim', waiting for all editors to agree on that.\r\n\r\nThanks, just let me know when and I'll revert the claim->property commit of this PR.",
+          "createdAt": "2024-09-04T02:40:46Z",
+          "updatedAt": "2024-09-04T02:40:46Z"
         }
       ],
       "reviews": [
@@ -33581,21 +33595,21 @@
       "id": "PR_kwDOH6-tI8547Y1Q",
       "title": "Assert mkey as local to the environment and add mkeyvalues to measurement-map.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/257",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This change addresses the multiplicity of the same type issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256.\r\n\r\nA follow-up PR will address the multiplicity of reference values to avoid representation combinatorial explosion for cartesian products.",
       "createdAt": "2024-08-21T03:42:39Z",
-      "updatedAt": "2024-09-02T16:08:10Z",
+      "updatedAt": "2024-09-04T17:29:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "mkey-proposal",
       "headRefOid": "b0b204c3f2a2621a922c4c34bc62ae5a0e451a71",
-      "closedAt": null,
+      "closedAt": "2024-09-04T15:48:10Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -33606,6 +33620,118 @@
           "body": "Consider this a draft as I work out the kinks with multiple authorized-by. I can't find the button to change to Draft mode.",
           "createdAt": "2024-08-21T03:59:37Z",
           "updatedAt": "2024-08-21T03:59:37Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing in favor of a PR181 revival.",
+          "createdAt": "2024-09-04T15:48:10Z",
+          "updatedAt": "2024-09-04T15:48:10Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Closing in favor of a PR181 revival.\r\n\r\nWhat? Why?  This PR was *very* good.",
+          "createdAt": "2024-09-04T15:51:33Z",
+          "updatedAt": "2024-09-04T15:54:17Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Closing in favor of a PR181 revival.\r\n> \r\n> What? Why? This PR was _very_ good.\r\n\r\nIt has encoding problems with an extensible type as a map key and is a breaking change. We can get the same behavior by bringing back measurement-map multiplicity with the requirement that every measurement-map must match (the only OR semantics is in the triple multiplicity).\r\n\r\nI think that we ought to organize the CDDL a little more instructively though, so that any position that has non-exact matching semantics has a codepoint name *-pattern or some such.",
+          "createdAt": "2024-09-04T15:59:02Z",
+          "updatedAt": "2024-09-04T15:59:02Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > Closing in favor of a PR181 revival.\r\n> > \r\n> > \r\n> > What? Why? This PR was _very_ good.\r\n> \r\n> It has encoding problems with an extensible type as a map key\r\n\r\nI'll put my implementer hat on to argue that there are no problems that I can see in the encoding/decoding realm.\r\n\r\n> and is a breaking change.\r\n\r\nYes, and we agreed in previous meetings (more than one) that backwards compatibility was not an issue anymore.  If we *really* need to be backwards compatible we can keep the old ref-val triple around (as deprecated) and mint a new codepoint for this.\r\n\r\n> We can get the same behavior by bringing back measurement-map multiplicity with the requirement that every measurement-map must match (the only OR semantics is in the triple multiplicity).\r\n\r\nWhich is, semantically, a kludge.\r\nBesides, the \"authorities\" scope is not the same.\r\n\r\n> I think that we ought to organize the CDDL a little more instructively though, so that any position that has non-exact matching semantics has a codepoint name *-pattern or some such.\r\n\r\nYes, agreed, so we'd be breaking compatibility anyway...",
+          "createdAt": "2024-09-04T16:05:44Z",
+          "updatedAt": "2024-09-04T16:05:44Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "One more aspect in favour of introducing multiplicity inside measurement-map is we align with TCG specification which advises multiplicity of `measurement-map`",
+          "createdAt": "2024-09-04T16:07:25Z",
+          "updatedAt": "2024-09-04T16:07:25Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Also, the proposal is to add the multiplicity in such a way that it does not break the existing CDDL in a way that it preserves those implementations which honour singularity of measurement-map, so that it comes out as a non breaking change!",
+          "createdAt": "2024-09-04T16:10:04Z",
+          "updatedAt": "2024-09-04T16:10:04Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Also, the proposal is to add the multiplicity in such a way that it does not break the existing CDDL in a way that it preserves those implementations which honour singularity of measurement-map, so that it comes out as a non breaking change!\r\n\r\nWe decided that backwards compatibility was a non-goal.  Why is this suddenly a criterion now?",
+          "createdAt": "2024-09-04T16:14:05Z",
+          "updatedAt": "2024-09-04T16:14:05Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> One more aspect in favour of introducing multiplicity inside measurement-map is we align with TCG specification which advises multiplicity of `measurement-map`\r\n\r\nThe same effect can be obtained by minting a new triple.",
+          "createdAt": "2024-09-04T16:15:05Z",
+          "updatedAt": "2024-09-04T16:15:05Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">> I think that we ought to organize the CDDL a little more instructively though, so that any position that has non-exact matching semantics has a codepoint name *-pattern or some such.\r\n\r\n>Yes, agreed, so we'd be breaking compatibility anyway...\r\n\r\nWe agreed to stage the separable proposals; one that deals with multiplicity of measurement values and one that deals with matching rules. The latter is a significant shift from previous assumptions about exact-match matching rules. Given the Intel Profile is mostly about non-exact-match matching and the ability to specify reference values as such, more attention is needed on what is being proposed (and PRs should be focused only on this aspect of functionality).",
+          "createdAt": "2024-09-04T16:15:48Z",
+          "updatedAt": "2024-09-04T16:15:48Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> We agreed to stage the separable proposals;\r\n\r\nAbsolutely.  In fact, they are already separate.",
+          "createdAt": "2024-09-04T16:17:10Z",
+          "updatedAt": "2024-09-04T16:17:10Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Also, the proposal is to add the multiplicity in such a way that it does not break the existing CDDL in a way that it preserves those implementations which honour singularity of measurement-map, so that it comes out as a non breaking change!\r\n> \r\n> We decided that backwards compatibility was a non-goal. Why is this suddenly a criterion now?\r\n\r\nI don't believe that that was the case. The goal is to append first, deprecate second, and remove third (possibly in the distant future). ",
+          "createdAt": "2024-09-04T16:18:18Z",
+          "updatedAt": "2024-09-04T16:18:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > We agreed to stage the separable proposals;\r\n> \r\n> Absolutely. In fact, they are already separate.\r\n\r\nThe PR (i think #257) was removing code points in `measurement-map`, changing `authorized-by`, adding new code point with multiplicity semantics and adding a pattern macro. \r\n\r\nMaybe you can explain how these are in separate PRs?",
+          "createdAt": "2024-09-04T16:21:32Z",
+          "updatedAt": "2024-09-04T16:21:32Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The PR (i think #257) was removing code points in `measurement-map`\r\n\r\nYes, #257 is doing that.\r\n\r\n> changing `authorized-by`, \r\n\r\nIt's only changing the codepoint, not the semantics or the encoding or the relative position - which are the fundamental aspects of \"auth\"\r\n\r\n> adding new code point with multiplicity semantics and adding a pattern macro.\r\n\r\nNo, that is done in #258\r\n",
+          "createdAt": "2024-09-04T16:24:38Z",
+          "updatedAt": "2024-09-04T16:25:32Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > Also, the proposal is to add the multiplicity in such a way that it does not break the existing CDDL in a way that it preserves those implementations which honour singularity of measurement-map, so that it comes out as a non breaking change!\r\n> > \r\n> > \r\n> > We decided that backwards compatibility was a non-goal. Why is this suddenly a criterion now?\r\n> \r\n> I don't believe that that was the case. The goal is to append first, deprecate second, and remove third (possibly in the distant future).\r\n\r\nIn the last few meetings, we had a few backwards compatibility-related discussions and the consensus was that for measurements we should have no constraints.  The way we got to the current shape was by starting with the backwards compatible proposal, removing the constraint, and reorganising the data structure accordingly.\r\n",
+          "createdAt": "2024-09-04T16:29:47Z",
+          "updatedAt": "2024-09-04T16:31:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> In the last few meetings, we had a few backwards compatibility-related discussions and the consensus was that for measurements we should have no constraints.\r\n\r\nOK. I would like to respectfully disagree then. ",
+          "createdAt": "2024-09-04T16:39:24Z",
+          "updatedAt": "2024-09-04T16:39:24Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Multiple measurement-map and multiplicity in the measurement-map here both have flaws for `conditional-endorsement-series-triple-record` that I'm not sure what the taste is for the changes.\r\n\r\nThere's Target Environment targeting via stateful-environment-map, and a series of conditions that inherit the authorized-by of the measurement-map in stateful-environment-map. With multiple measurement-map, there's no singular authorized-by to apply to each series record. There's also no singular measurement-map key that the condition or consequence measurement-values-map are meant to match against/contribute to.\r\n\r\nThere's also the design choice of allowing the consequence to contribute endorsements to multiple measurement-map keys if the condition matches. This is a shared problem between multiple measurement-map and this PR's + mkey => mval encoding.",
+          "createdAt": "2024-09-04T17:29:52Z",
+          "updatedAt": "2024-09-04T17:29:52Z"
         }
       ],
       "reviews": [
@@ -34253,6 +34379,66 @@
               "updatedAt": "2024-09-02T16:08:11Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H1DMN",
+          "commit": {
+            "abbreviatedOid": "c587c4b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T02:43:31Z",
+          "updatedAt": "2024-09-04T02:43:31Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I've changed the placeholder string to a &(fixme-authority: -1) codepoint since I plan to follow up with another PR that lifts authorities out of measurement-map and into the surrounding uses when appropriate.",
+              "createdAt": "2024-09-04T02:43:31Z",
+              "updatedAt": "2024-09-04T02:43:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H1Gf-",
+          "commit": {
+            "abbreviatedOid": "c587c4b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T03:00:36Z",
+          "updatedAt": "2024-09-04T03:00:36Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "Oh interesting, I didn't think it was a list of required authorities but rather a list of allowed authorities. At least one must match. Perhaps authorities should be an explicit pattern that is consistent with that interpretation:\r\n\r\nauthority = $crypto-key-type-choice\r\nauthorities = [ + authority ] / #6.562([ + authorities ]) / #6.563([ + authorities ])\r\n\r\nWe ensure #6.563 has a subset relationship with the list it's matched against, so all listed authority patterns in #6.563 must match some entry of acs-authorities.\r\n\r\nThis is different from #6.562 since that is any pattern fully matches the value (not an entry of the value, presumed array)",
+              "createdAt": "2024-09-04T03:00:36Z",
+              "updatedAt": "2024-09-04T03:00:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H2Y-7",
+          "commit": {
+            "abbreviatedOid": "b0b204c"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T07:10:06Z",
+          "updatedAt": "2024-09-04T07:10:07Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nThe types defined for identifying a measured element are uint, or a textual string.\r\nThe negative integers range is reserved and MUST NOT be used as a measurement key.\r\n```",
+              "createdAt": "2024-09-04T07:10:07Z",
+              "updatedAt": "2024-09-04T07:10:07Z"
+            }
+          ]
         }
       ]
     },
@@ -34268,7 +34454,7 @@
       "labels": [],
       "body": "When you have requirements that fields 1-100 must be certain values, and field 0 may be one of many values when in the presence of those other field values, the representation of the matching condition repeats the same 100 certain values for each alternative for field 0. It's far simpler to allow for measurement values to have independently flexible measurement conditions when in that case.\r\n\r\nThis is still a weak pattern expression language, but the \"any-of\" use case is a particularly commonly needed one.\r\n\r\nThis PR seeks to solve one aspect of the multiplicity problem discussed in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256",
       "createdAt": "2024-08-21T05:13:03Z",
-      "updatedAt": "2024-09-02T11:03:40Z",
+      "updatedAt": "2024-09-04T18:27:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fd67b62321ec9b4259e436f06ea66db596b5f980",
@@ -34367,6 +34553,166 @@
           "createdAt": "2024-09-02T11:03:40Z",
           "updatedAt": "2024-09-02T11:03:40Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Hw46_",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-03T15:08:54Z",
+          "updatedAt": "2024-09-03T15:08:54Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Is the description in the matching operators section insufficient for defining the comparison semantics?\r\n\r\nWhat do you mean comparison logics?",
+              "createdAt": "2024-09-03T15:08:54Z",
+              "updatedAt": "2024-09-03T15:08:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86HxhX8",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-03T16:15:12Z",
+          "updatedAt": "2024-09-03T16:15:13Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "It may be worth trying to frame this more generally in terms of \"matchers\", of which `any-of` would be an instance.\r\n\r\nFor example, we could make the type of each claim value a `$type-matcher`:\r\n\r\n```\r\nmeasurement-values-map = non-empty<{\r\n  ? svn: $svn-matchers\r\n  ? digest: $digest-matchers\r\n  ; ...\r\n}>\r\n```\r\n\r\nA matcher would be defined as a choice between different high-level matcher types, e.g., the _naked_ type, a _multiple_ type (similar to `any-of` here), a _range_ type, etc., depending on what makes sense for that claim.\r\n\r\n```\r\nmatch-multiple<T> = #6.554([ 2* T ])\r\nmatch-range<T> = #6.555(range-desc<T>)\r\n; match-regex, match-masked-bytes, etc.\r\n```\r\n\r\n\r\nFor example, for SVNs, it makes sense to define all three above:\r\n\r\n```\r\n$svn-type = uint\r\n\r\n$svn-matchers /= $svn-type\r\n$svn-matchers /= match-multiple<$svn-type>\r\n$svn-matchers /= match-range<$svn-type>\r\n```\r\n\r\nFor digests (typically, random binary blobs) it makes little sense to add anything more than the \"multiple\" matcher:\r\n\r\n```\r\n$digest-type = [ val: bytes, alg: int ]\r\n\r\n$digest-matchers /= $digest-type\r\n$digest-matchers /= match-multiple<$digest-type>\r\n```\r\n\r\netc.\r\n",
+              "createdAt": "2024-09-03T16:15:12Z",
+              "updatedAt": "2024-09-03T16:15:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H0_cA",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T02:23:53Z",
+          "updatedAt": "2024-09-04T02:23:54Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "The idea is generally that base CoRIM measurement values should allow for basic patterns for comparisons. The RVP doesn't have to use the new tag, but being choosey about where is \"more appropriate\" for it I think isn't necessarily our place to say.",
+              "createdAt": "2024-09-04T02:23:53Z",
+              "updatedAt": "2024-09-04T02:23:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H1AW4",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T02:28:25Z",
+          "updatedAt": "2024-09-04T02:28:25Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "\"matcher\" is more often called a \"pattern\" in programming languages (as in \"pattern matching\"). I could definitely be down for framing the values as having their own generic or specific pattern forms, but I don't think making them extensible is necessarily the right choice. If there are profile-specific representation choices, then they should use the values map extension socket, IMHO.",
+              "createdAt": "2024-09-04T02:28:25Z",
+              "updatedAt": "2024-09-04T02:28:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H1BPy",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T02:33:02Z",
+          "updatedAt": "2024-09-04T02:33:03Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "In this regard, raw-value-mask could be a specific pattern for raw-value, such that a bstr matches a pattern #6.TBD(mask, raw-value-after-zeroextended-mask) instead of needing two values, but that representation choice is only good if the mask isn't needed on its own for lookup.",
+              "createdAt": "2024-09-04T02:33:02Z",
+              "updatedAt": "2024-09-04T02:33:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H2V62",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T07:04:04Z",
+          "updatedAt": "2024-09-04T07:04:04Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "> \"matcher\" is more often called a \"pattern\" in programming languages (as in \"pattern matching\").\r\n\r\nWFM, **Pattern Matching** looks like a good section title :-D\r\n\r\n> I could definitely be down for framing the values as having their own generic or specific pattern forms, but I don't think making them extensible is necessarily the right choice.\r\n\r\nThe proposal is not to make them extensible.\r\nThe proposal is to define a few useful pattern-matching constructs in terms of their semantics, rules and CBOR tagging.  Then define the type of a claim in terms of a _fixed_ type choice that is built from those blocks.\r\n\r\n> If there are profile-specific representation choices, then they should use the values map extension socket, IMHO.\r\n\r\nYes.",
+              "createdAt": "2024-09-04T07:04:04Z",
+              "updatedAt": "2024-09-04T07:04:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H82W_",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T17:40:53Z",
+          "updatedAt": "2024-09-04T17:40:53Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "If I characterize this vs. what is described in [Intel Profile](https://github.com/nedmsmith/draft-cds-rats-intel-corim-profile/tree/main). This uses CDDL macros to define \"possible state\" while Intel Profile uses CDDL directly. Use of CDDL directly is possibly more flexible as it is not limited by assumptions of the macro processor. For example, any-of<> models subset semantics, but what about superset and disjoint set? These are use cases that Intel would like to support. \r\n\r\nThe Intel Profile supports numeric ranges (greater-than, less-than, greater-equal, less-equal, inequality etc). The above suggests there could be a range macro,  but didn't define it, so it isn't clear that it would have the same utility as the CDDL definition. \r\n\r\nThe Intel Profile also supports time and epoch types. \r\n\r\nI think the use of macros is interesting and creative, but why is it better than using CDDL directly? ",
+              "createdAt": "2024-09-04T17:40:53Z",
+              "updatedAt": "2024-09-04T17:40:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86H9Lk6",
+          "commit": {
+            "abbreviatedOid": "62cba42"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T18:27:26Z",
+          "updatedAt": "2024-09-04T18:27:26Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "any-of is not subset semantics, I think it's your `<evidence_object><member><reference_set>`, where the reference set is the [ + T ], and evidence_object is provided by the ECT, if I understand correctly.\r\n\r\nIf this is the case, then I'd want to allow for these set expressions in any reference value. Where you have set-type = [ * any ], I'd suggest `set-type<T> = [ * T ]`.",
+              "createdAt": "2024-09-04T18:27:26Z",
+              "updatedAt": "2024-09-04T18:28:01Z"
+            }
+          ]
         }
       ]
     },
@@ -34671,6 +35017,124 @@
           "createdAt": "2024-08-21T14:31:52Z",
           "updatedAt": "2024-08-21T14:31:52Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 264,
+      "id": "PR_kwDOH6-tI856UaAr",
+      "title": "Add meeting info to README",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/264",
+      "state": "MERGED",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I am unsure how to share this meeting with others. I cannot seem to find the public posting of it anywhere. I think Yogesh sent me an invite over email.",
+      "createdAt": "2024-09-03T22:18:07Z",
+      "updatedAt": "2024-09-04T03:46:45Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "meeting",
+      "headRefOid": "05567f6ccb4340f31a6f81a0d6d89261743d43dc",
+      "closedAt": "2024-09-04T03:46:41Z",
+      "mergedAt": "2024-09-04T03:46:41Z",
+      "mergedBy": "deeglaze",
+      "mergeCommit": {
+        "oid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86H1Bpc",
+          "commit": {
+            "abbreviatedOid": "05567f6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "cool move!",
+          "createdAt": "2024-09-04T02:34:54Z",
+          "updatedAt": "2024-09-04T02:34:54Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 265,
+      "id": "PR_kwDOH6-tI856a_Em",
+      "title": "Proposal to add multiplicity of Measurement Maps",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/265",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Modern day attesters have Multiple Measured Elements, within a Target Environment. This PR intends to allow multiple measured elements to be expressed using a single Reference Value Triple.",
+      "createdAt": "2024-09-04T16:33:59Z",
+      "updatedAt": "2024-09-04T22:46:29Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "multiplicity",
+      "headRefOid": "0ff26bef340181bf4ea3c2b6fa5ad759b7511021",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I am working on scanning the conditionality checks, so will make more commits to the PR!",
+          "createdAt": "2024-09-04T16:38:40Z",
+          "updatedAt": "2024-09-04T16:38:40Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is a slight modification to already closed PR #181 in which the new PR introduces `backward compatibility` with existing CDDL in Rev-01 to Rev-5 of the specification and also the Base TCG Specification",
+          "createdAt": "2024-09-04T16:39:49Z",
+          "updatedAt": "2024-09-04T16:40:12Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze If you feel al-right, feel free to make more commits on the branch!",
+          "createdAt": "2024-09-04T16:41:20Z",
+          "updatedAt": "2024-09-04T16:41:20Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @deeglaze If you feel al-right, feel free to make more commits on the branch!\r\n\r\nI don't have push rights to this branch, so I have suggestions in my own commit on top in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/compare/multiplicity...deeglaze:draft-ietf-rats-corim:multiplicity",
+          "createdAt": "2024-09-04T22:46:28Z",
+          "updatedAt": "2024-09-04T22:46:28Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86H-vH-",
+          "commit": {
+            "abbreviatedOid": "0ff26be"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-04T21:06:42Z",
+          "updatedAt": "2024-09-04T21:06:42Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "What is the meaning of this tag? I'm not sure why you need one when arrays and maps have different CBOR major type tags.",
+              "createdAt": "2024-09-04T21:06:42Z",
+              "updatedAt": "2024-09-04T21:06:43Z"
+            }
+          ]
         }
       ]
     }
