@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-05T01:39:22.237764+00:00",
+  "timestamp": "2024-09-08T01:45:49.398473+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -6363,6 +6363,32 @@
       "updatedAt": "2024-08-21T14:29:50Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 266,
+      "id": "I_kwDOH6-tI86VrU9_",
+      "title": "TCG compatibility",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/266",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "documentation"
+      ],
+      "body": "Some of the changes to CDDL in this repo are incompatible with the TCG Endorsement Architecture. \r\n\r\nThis thread maintains a list of incompatibilities and possible ways to address them.\r\n\r\n1. reference-triple-record - The measurement-map in `reference-triple-record` no longer has multiples. The incompatibility can be addressed by:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  (measurement-map / [ + measurement-map])\r\n]\r\n```\r\n2. endorsed-triple-record - The measurement-map in `endorsed-triple-record` no longer has multiples. The incompatibility can be addressed by:\r\n```\r\nendorsed-triple-record = [\r\n  environment-map\r\n  (measurement-map / [ + measurement-map])\r\n]\r\n```\r\n3. *next-tbd*",
+      "createdAt": "2024-09-06T20:39:50Z",
+      "updatedAt": "2024-09-06T20:52:04Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note: I created the `tcg-compatible` branch to validate the cddl. See examples `comid-1a.diag` and `comid-2a.diag`. \r\n\r\nThis is for documation purposes only. I don't anticipate this should be followed by a PR necessarily.",
+          "createdAt": "2024-09-06T20:50:52Z",
+          "updatedAt": "2024-09-06T20:52:04Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -33602,7 +33628,7 @@
       "labels": [],
       "body": "This change addresses the multiplicity of the same type issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256.\r\n\r\nA follow-up PR will address the multiplicity of reference values to avoid representation combinatorial explosion for cartesian products.",
       "createdAt": "2024-08-21T03:42:39Z",
-      "updatedAt": "2024-09-04T17:29:54Z",
+      "updatedAt": "2024-09-07T04:10:44Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
@@ -33732,6 +33758,97 @@
           "body": "Multiple measurement-map and multiplicity in the measurement-map here both have flaws for `conditional-endorsement-series-triple-record` that I'm not sure what the taste is for the changes.\r\n\r\nThere's Target Environment targeting via stateful-environment-map, and a series of conditions that inherit the authorized-by of the measurement-map in stateful-environment-map. With multiple measurement-map, there's no singular authorized-by to apply to each series record. There's also no singular measurement-map key that the condition or consequence measurement-values-map are meant to match against/contribute to.\r\n\r\nThere's also the design choice of allowing the consequence to contribute endorsements to multiple measurement-map keys if the condition matches. This is a shared problem between multiple measurement-map and this PR's + mkey => mval encoding.",
           "createdAt": "2024-09-04T17:29:52Z",
           "updatedAt": "2024-09-04T17:29:52Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "The meeting yesterday seems to have started the unraveling of progress of the last month. And that while we started to consolidate publication goals. IMHO, this discussion basically sets us back - significantly so - and I apologize for highlighting that so bluntly. There is no technical issue with this PR. An underlying question that this discussion uncovers, though, might be something to the extend of: \"where does the authority member go\" or \"on which granularity level do we need it\". That would be a fine discussion. Unearthing #181 does not necessarily help here (reflection my opinion again with my initial statement, I started this comment with: I think it actually is a detriment to progression).\r\n\r\n> >In the last few meetings, we had a few backwards compatibility-related discussions and the consensus was that for measurements we should have no constraints.\r\n\r\n> OK. I would like to respectfully disagree then.\r\n\r\nI think the discussion should focus on \"where does the authority member go\", yes. We also re-confirmed to follow the \"augment, deprecate, remove later (maybe in the far future)\" approach that Dionna emphasized in the past weeks. This approach can be reflected in this PR (addressing \"removing code points in measurement-map\"). As Thomas highlighted the \"adding new code point with multiplicity semantics and adding a pattern macro\" issue is handled in #258.\r\n\r\n@nedmsmith why do you disagree? Could we address your first and second point in this PR?\r\n",
+          "createdAt": "2024-09-05T07:26:11Z",
+          "updatedAt": "2024-09-05T07:29:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> There is no technical issue with this PR\r\n\r\nPart of the PR removes code points which is a breaking change. That seems like a technical issue.",
+          "createdAt": "2024-09-05T17:03:01Z",
+          "updatedAt": "2024-09-05T17:03:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> \"adding new code point with multiplicity semantics and adding a pattern macro\" issue is handled in #258.\r\n\r\nThese are separable issues / changes that appear to be conflated into a single PR. The \"multiplicity\" discussion has been ongoing for a long time where we agreed to remove multiplicity in measurements - which places heavier use of environment-map to disambiguate individual measurements of the same type. Now we are reconsidering that decision, but instead of reverting back to the original approach (which has the additional benefit of compatibility with the TCG spec) we're introducing something different. It's not clear what the benefit is while also not addressing the incompatibility concern.\r\n\r\nThe any-of macro is aimed at addressing the non-exact-match semantics that we agreed to not touch until after the current draft was in WGLC and a follow-on draft could address it. Given the Intel Profile addresses this consideration, it makes sense for the design team to consider it as a starting point.\r\n\r\n",
+          "createdAt": "2024-09-05T17:12:34Z",
+          "updatedAt": "2024-09-05T17:12:34Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> \"where does the authority member go\" or \"on which granularity level do we need it\".\r\n\r\nThis is a third separable technical issue. There has been a discussion topic for a long time as well. The main consideration is scope. Although, some of the thread discussion seems to question semantics of how the authority mechanism works. It would be helpful to avoid conflating these two topics IMHO also. Given the general case doesn't need to use `authorized-by`, we should consider whether spending a lot of time on name change or scope vs. getting to WGLC is justified. For example, if we can't identify something that is broken or a security flaw etc., then maybe its OK to leave it as is?",
+          "createdAt": "2024-09-05T17:19:59Z",
+          "updatedAt": "2024-09-05T17:19:59Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Multiple measurement-map and multiplicity in the measurement-map here both have flaws for `conditional-endorsement-series-triple-record`\r\n\r\nIt would be helpful to identify the flaws explicitly.",
+          "createdAt": "2024-09-05T17:30:49Z",
+          "updatedAt": "2024-09-05T17:30:49Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > There is no technical issue with this PR\r\n> \r\n> Part of the PR removes code points which is a breaking change. That seems like a technical issue.\r\n\r\nI strongly disagree with this characterisation.\r\n(Note that if we really need to keep compatibility with TCG's CoRIM, we can always mint a new triple that uses the new measurements-map and keep the old one around and maybe slowly deprecate it.)\r\n\r\nBut the core question is: Why is it a requirement for IETF CoRIM to be backwards compatible with TCG CoRIM?",
+          "createdAt": "2024-09-05T18:35:56Z",
+          "updatedAt": "2024-09-05T18:35:56Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > There is no technical issue with this PR\r\n> > \r\n> > \r\n> > Part of the PR removes code points which is a breaking change. That seems like a technical issue.\r\n> \r\n> I strongly disagree with this characterisation. (Note that if we really need to keep compatibility with TCG's CoRIM, we can always mint a new triple that uses the new measurements-map and keep the old one around and maybe slowly deprecate it.)\r\n> \r\n> But the core question is: Why is it a requirement for IETF CoRIM to be backwards compatible with TCG CoRIM?\r\n\r\nIn cddl/measurement-map.cddl (see below), the minus show lines deleted and + shows lines added. The deleted lines breaks existing examples. Hence, all the examples have been updated.\r\n``` \r\nmeasurement-map = {\r\n  - ? &(mkey: 0) => $measured-element-type-choice\r\n  - &(mval: 1) => measurement-values-map\r\n  - ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\r\n  + ? &(fixme-authorities: -1) => [ + $crypto-key-type-choice ]\r\n  + + $measured-element-type-choice => measurement-values-map\r\n}\r\n```\r\nIf the idea is TCG can create new code points that preserve existing behavior, then that would be a breaking change for TCG since the code points will differ. On the other hand, if IETF corim wants to do something different all it has to do is define a new code point leaving the existing ones alone. \r\n\r\nWe could re-ask the question above: \"Why break backwards compatibility to add new capabilities?\"\r\n\r\nAnother point to recall is IANA is assigning CBOR tags based on the TCG specs. \r\n\r\nIf IETF corim wants to avoid documenting the removed stuff it could deprecate them:\r\n```\r\nmeasurement-map = {\r\n  // &(mkey: 0) depreciated\r\n  // &(mval: 1) deprecated\r\n  // &(authorized-by: 2) deprecated\r\n  + ? &(fixme-authorities: -1) => [ + $crypto-key-type-choice ]\r\n  + + $measured-element-type-choice => measurement-values-map\r\n}\r\n$measured-element-type-choice /= uint // where uint is in the range 3..max-uint since 0..2 are deprecated\r\n$measured-element-type-choice /= tstr\r\n```\r\nBTW: allocating from the negative code point space contradicts the previously agreed convention that this is reserved for profiles/vendor specific use which has been discussed with IANA. Other than the code point change and name change, which is thrown away anyway, there doesn't seem to be value in deprecating authorized-by.",
+          "createdAt": "2024-09-05T19:21:29Z",
+          "updatedAt": "2024-09-05T19:24:53Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If the idea is TCG can create new code points that preserve existing behavior, then that would be a breaking change for TCG since the code points will differ.\r\n\r\nThe other way around.\r\n\r\n> On the other hand, if IETF corim wants to do something different all it has to do is define a new code point leaving the existing ones alone.\r\n\r\nThis \ud83d\udc46  (_**If**_ we need to maintain backwards compatibility.)\r\n\r\n> Another point to recall is IANA is assigning CBOR tags based on the TCG specs.\r\n\r\nIf their semantics are preserved, the CBOR tags can be reused in other contexts.\r\n\r\n> BTW: allocating from the negative code point space contradicts the previously agreed convention that this is reserved for profiles/vendor specific use which has been discussed with IANA.\r\n\r\nThe convention doesn't apply to the `measurement-map` because there is no extension registry associated with it.\r\n\r\n> Other than the code point change and name change, which is thrown away anyway, there doesn't seem to be value in deprecating authorized-by.\r\n\r\nReserving the negative codepoint space seems like a cleaner solution.\r\n\r\n\r\n",
+          "createdAt": "2024-09-06T12:19:36Z",
+          "updatedAt": "2024-09-06T12:52:59Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another way to approach the multi-valued attributes for measurements conversation is to ask the question of how many instances of measurements, that are of the same type, are needed for a given environment? Do we need 10s, 100s, 1000s, millions, billions etc.? \r\n\r\nBy defining the code point space using both strings and uints, there are effectively two infinities of measurements (of the same type) supported. Do we need that many?\r\n\r\nIf we think the pragmatic answer is less than 2 * infinity, then can we reduce the uint space by 2 or 3, or maybe 100 such that the code points from 0-99 are reserved? Given past specs have used some of the code point space, what is the rationale for clobbering them? Or can we get by with ( 2 * infinity) - 3 or (2 * infinity) - 99?\r\n\r\nWe could ask the same question for UUIDs. Can we get by with (2 * infinity) - all values size(2^16)? \r\n\r\nIf realistically we only need on the order of 1000, then we could define $measured-element-type-choice /= uint  to be in the range of say 100 - 1100. There would still be an infinity of text labels for corner cases that needed more than 1000. ",
+          "createdAt": "2024-09-06T17:08:17Z",
+          "updatedAt": "2024-09-06T17:08:17Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The `&(fixme-authorities: -1)` number choice was intentional to keep it out of the way but also feel wrong so that we fix it in a follow-up. I can revert this. My goal was to allow for a single authority to apply to all mkey/mval pairs (I see it still does, just with an awkward 2 key). We can instead keep authority where it is and if you want a different authority, you add another triple with that authority.\r\n\r\nNow there's the contention of removing a single level of indirection by keeping multiplicity in the measurement-map versus lifting to a choice between measurement-map and [ + measurement-map ]. I like the former but yes the value space does clash with $measured-element-type-choice.\r\n\r\nWe can make $measured-element-type-choice's non-negative value space a registry and change uint to int. Negative numbers can be local to the environment, as their interpretation is dependent on the profile anyway. I don't want to try to argue that 1000 fields ought to be good enough for anybody.\r\n\r\nSo for example, we can maintain backward compatibility by\r\n\r\n```\r\nmeasurement-map = {\r\n  ? &(mkey: 0) => $measured-element-type-choice / measurement-values-map\r\n  ? &(authorities: 2) => authorities\r\n  + $measured-element-type-choice => measurement-values-map\r\n}\r\n\r\n$measured-element-type-choice /= int except 2 (how do you say this?)\r\n$measured-element-type-choice /= tstr\r\n$measured-element-type-choice /= tagged-oid\r\n$measured-element-type-choice /= tagged-uuid\r\nauthorities = [ + $crypto-key-type-choice ]\r\n```\r\n\r\nIf `mkey: 0` is provided with a value from the base spec's $measured-element-type-choice, then `mval: 1` must be provided. We treat key 1 as the mkey's value during processing of the key/value pairs for backward compatibility. W\r\n\r\nIf the argument is that it's weird to have a registry that contains just 0, 1, 2 and unlikely to contain anything else, then don't create a registry and leave it open for a future RFC to assign the values, no? Or is that reservation only guaranteed by having a registry?",
+          "createdAt": "2024-09-06T18:34:23Z",
+          "updatedAt": "2024-09-06T18:36:26Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think that works since a $measured-element-type-choice = 0 is possible and could result in use of the same code point in the same map. This will produce indeterminate behavior. \r\n\r\nA safer and possibly more prudent approach is to carve out a code point namespace for dynamically supplied code points e.g., 100 - 10000 or something like that. This way there is room for measurement-map to retain use of a portion of the code point namespace for future challenges if needed.\r\n```\r\n$measured-element-type-choice /= 100..10000\r\n```",
+          "createdAt": "2024-09-06T18:59:43Z",
+          "updatedAt": "2024-09-06T18:59:43Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's not indeterminant because $measured-element-type-choice doesn't contain map types. If you use 0 as a regular key, you can have the measurement-values-map as the value.",
+          "createdAt": "2024-09-06T19:37:36Z",
+          "updatedAt": "2024-09-06T19:37:36Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To clarify this point, where there seems to be a bit of confusion:\r\n\r\n> If the argument is that it's weird to have a registry that contains just 0, 1, 2 and unlikely to contain anything else, then don't create a registry and leave it open for a future RFC to assign the values, no? Or is that reservation only guaranteed by having a registry?\r\n\r\nThere is no registry associated with `measurement-map`.  The 0, 1, and 2 codepoints are just locally-scoped placeholders.  In this regard, we are not constrained by IANA, only by what we write in the CDDL.  The `measurement-map` case is very different from, say, the `triples` space or the `measurement-values-map`'s where the codepoints have global (IANA-regulated) values. (This is also the reason why the nint/uint codepoints-space partitioning convention we use in other places is not meaningful here.)\r\n\r\nStepping back a meter or two, it seems to me we are constraining ourselves unnecessarily only to keep backwards compatibility with the CDDL presented in the TCG document, which is provided just as an example in an appendix (i.e., it is **not** normative).\r\n\r\nAnd, I am still having a very hard time understanding **why** keeping \"on-the-wire\" compatibility with TCG has become a necessity.  We work on the assumption that TCG CoRIM provides the info model, whilst IETF CoRIM is (one possible) data model.  Therefore, if IETF CoRIM wants to implement the k-v in [Figure 9 of DICE Endorsement](https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf#page=25) using `[ + k => v]` rather than a clumsy `[ + [ k, v ] ]`, it should be free to do that.  That's entirely a data model choice. \ud83d\ude15 \r\n\r\nIf instead on-the-wire compatibility with TCG is a requirement, then the CDDL should be considered frozen, and IETF should only be working on clarifying the semantics and processing rules.",
+          "createdAt": "2024-09-07T02:12:11Z",
+          "updatedAt": "2024-09-07T04:10:44Z"
         }
       ],
       "reviews": [
