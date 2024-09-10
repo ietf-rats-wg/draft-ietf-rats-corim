@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-08T01:45:49.398473+00:00",
+  "timestamp": "2024-09-10T01:40:38.754581+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -33628,7 +33628,7 @@
       "labels": [],
       "body": "This change addresses the multiplicity of the same type issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256.\r\n\r\nA follow-up PR will address the multiplicity of reference values to avoid representation combinatorial explosion for cartesian products.",
       "createdAt": "2024-08-21T03:42:39Z",
-      "updatedAt": "2024-09-07T04:10:44Z",
+      "updatedAt": "2024-09-09T15:28:20Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
@@ -33849,6 +33849,41 @@
           "body": "To clarify this point, where there seems to be a bit of confusion:\r\n\r\n> If the argument is that it's weird to have a registry that contains just 0, 1, 2 and unlikely to contain anything else, then don't create a registry and leave it open for a future RFC to assign the values, no? Or is that reservation only guaranteed by having a registry?\r\n\r\nThere is no registry associated with `measurement-map`.  The 0, 1, and 2 codepoints are just locally-scoped placeholders.  In this regard, we are not constrained by IANA, only by what we write in the CDDL.  The `measurement-map` case is very different from, say, the `triples` space or the `measurement-values-map`'s where the codepoints have global (IANA-regulated) values. (This is also the reason why the nint/uint codepoints-space partitioning convention we use in other places is not meaningful here.)\r\n\r\nStepping back a meter or two, it seems to me we are constraining ourselves unnecessarily only to keep backwards compatibility with the CDDL presented in the TCG document, which is provided just as an example in an appendix (i.e., it is **not** normative).\r\n\r\nAnd, I am still having a very hard time understanding **why** keeping \"on-the-wire\" compatibility with TCG has become a necessity.  We work on the assumption that TCG CoRIM provides the info model, whilst IETF CoRIM is (one possible) data model.  Therefore, if IETF CoRIM wants to implement the k-v in [Figure 9 of DICE Endorsement](https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf#page=25) using `[ + k => v]` rather than a clumsy `[ + [ k, v ] ]`, it should be free to do that.  That's entirely a data model choice. \ud83d\ude15 \r\n\r\nIf instead on-the-wire compatibility with TCG is a requirement, then the CDDL should be considered frozen, and IETF should only be working on clarifying the semantics and processing rules.",
           "createdAt": "2024-09-07T02:12:11Z",
           "updatedAt": "2024-09-07T04:10:44Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have evaluated both the options => WE have discussed so far:\r\n\r\nI will try to summarise my view prior to going on holidays from tomorrow: \r\n\r\n**Option 1:** Model a series of key-val inside single measurement-map\r\n\r\nlike Env: meas-map {+mkey => v}\r\n\r\nThis semantics make sense if the ONE Measured Element/Component of an Environment has multiple Measurements at say different points in time, or some other some other variation aspect. The reason I say so is I am not clear Where does Authorities go?\r\n\r\nOutside in the Meas-map i.e., like\r\nmeas-map {\r\nauthorities \r\n+mkey => val\r\n}\r\n\r\nIt implies I can specify only one authority for the entire series ?\r\n\r\nOR I can specify multiple, then I am not clear how to express the same, in an un-ambiguous manner?\r\nWhich authority belong to which row of key-val ??\r\n\r\n<<Please help me here >>\r\n\r\n**Option 2:**\r\n\r\nEnv : [+meas-map]\r\nwith each meas-map has a single \r\n{ ? key => mkey\r\nval => mVal\r\n? authority:  [crypto]\r\n }\r\n\r\n\r\nThis is the one proposed in Rev-0 and in TCG DICE.\r\n\r\nHere, Each meas-map has one or more authority for the Measured Element specified and identified by mkey (Optionally)\r\n\r\nIf I have Multiple measured elements of the same Platform TCB (identified by a unique Environment) I can specify multiple measurement-map each identifying individual Measured Element ..?\r\n\r\nSo Option 2, seems more clear to me , unless I am missing something on Option -1 \r\n\r\n@thomas-fossati : On your comment above, rather than clumsy :\r\n`rather than a clumsy [ + [ k, v ] ]`\r\nWhy do you have two brackets here ?\r\n\r\nShould not it be: [k,v, a ] ??\r\n",
+          "createdAt": "2024-09-09T11:36:13Z",
+          "updatedAt": "2024-09-09T11:36:13Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @thomas-fossati : On your comment above, rather than clumsy : `rather than a clumsy [ + [ k, v ] ]` Why do you have two brackets here ?\r\n\r\nBecause this is what Dionna's first proposal in this PR looked like, in order to be backwards compatible with the current layout of the `measurement-map`.",
+          "createdAt": "2024-09-09T13:18:21Z",
+          "updatedAt": "2024-09-09T13:18:21Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > @thomas-fossati : On your comment above, rather than clumsy : `rather than a clumsy [ + [ k, v ] ]` Why do you have two brackets here ?\r\n> \r\n> Because this is what Dionna's first proposal in this PR looked like, in order to be backwards compatible with the current layout of the `measurement-map`.\r\n\r\nok I got it! the reference was to her earlier proposal",
+          "createdAt": "2024-09-09T13:25:22Z",
+          "updatedAt": "2024-09-09T13:25:22Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There are reasons for keeping an authority with an individual k/v pair, so the original measurement-map multiplicity is more expressive. It would be nice to have a simple way to put an authority over a gaggle of pairs instead of one or all, but in the spirit of simplicity we should just stick with the v0 multiplicity and drop the + k => v approach.",
+          "createdAt": "2024-09-09T14:45:38Z",
+          "updatedAt": "2024-09-09T14:45:38Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There are multiple different ways to slice this cake, e.g.: `{ + k => [ a, v ] }`.\r\n\r\nIt seems to me that we can run in circles forever unless we clarify the point I raised previously, which is still unanswered:\r\n\r\n> If instead on-the-wire compatibility with TCG is a requirement, then the CDDL should be considered frozen, and IETF should only be working on clarifying the semantics and processing rules.",
+          "createdAt": "2024-09-09T15:27:56Z",
+          "updatedAt": "2024-09-09T15:28:20Z"
         }
       ],
       "reviews": [
