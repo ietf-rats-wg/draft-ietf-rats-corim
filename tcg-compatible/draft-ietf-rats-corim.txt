@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 14 March 2025                                            Linaro
+Expires: 15 March 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       10 September 2024
+                                                       11 September 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 March 2025.
+   This Internet-Draft will expire on 15 March 2025.
 
 Copyright Notice
 
@@ -1092,8 +1092,10 @@ Table of Contents
    group scope.  This is typically determined by the triple's
    environment.
 
-   Class measurements apply generally to all the Attesters in the given
-   class.  Instance measurements apply to a specific Attester instance.
+   Class measurements apply generally to all the Attesters in a given
+   class.
+
+   Instance measurements apply to a specific Attester instance.
    Environments identified by a class identifier have measurements that
    are common to the class.  Environments identified by an instance
    identifier have measurements that are specific to that instance.
@@ -1104,6 +1106,9 @@ Table of Contents
    provide measurement values, the authorized-by statement can be
    supplied in the measurement-map.
 
+   An environment may have multiple measurements of the same type.
+   Measurement keys may be used to disambiguate these measurements.
+
    measurement-map = {
      ? &(mkey: 0) => $measured-element-type-choice
      &(mval: 1) => measurement-values-map
@@ -1112,20 +1117,23 @@ Table of Contents
 
    The following describes each member of the measurement-map:
 
-   *  mkey (index 0): An optional unique identifier of the measured
-      (sub-)environment.  See Section 5.1.4.1.4.1.
+   *  mkey (index 0): An optional measurement key.  See
+      Section 5.1.4.1.4.1.
 
-   *  mval (index 1): The measurements associated with the
-      (sub-)environment.  Described in Section 5.1.4.1.4.2.
+   *  mval (index 1): The measurements associated with the environment.
+      Described in Section 5.1.4.1.4.2.
 
    *  authorized-by (index 2): The cryptographic identity of the
       individual or organization that is the designated authority for
-      this measurement.  For example, producer of the measurement or a
-      delegated supplier.
+      this measurement.  For example, the producer of the measurement or
+      a delegate.
 
 5.1.4.1.4.1.  Measurement Keys
 
-   The types defined for a measurement identifier are OID, UUID or uint.
+   Measurement keys are locally scoped identifiers that disambiguate
+   multiple instances of measurements of the same type.
+
+   Mkey identifiers can be either OID, UUID or uint.
 
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
@@ -1492,7 +1500,7 @@ Table of Contents
 
    reference-triple-record = [
      environment-map
-     (measurement-map / [ + measurement-map])
+     [ + measurement-map ]
    ]
 
 5.1.4.3.  Endorsed Values Triple
@@ -1506,7 +1514,7 @@ Table of Contents
 
    endorsed-triple-record = [
      environment-map
-     ( measurement-map / [ + measurement-map])
+     [ + measurement-map ]
    ]
 
 5.1.4.4.  Device Identity Triple
@@ -3658,7 +3666,7 @@ Appendix A.  Base CoRIM CDDL
 
    endorsed-triple-record = [
      environment-map
-     ( measurement-map / [ + measurement-map])
+     [ + measurement-map ]
    ]
 
    entity-map<role-type-choice, extension-socket> = {
@@ -3757,7 +3765,7 @@ Appendix A.  Base CoRIM CDDL
 
    reference-triple-record = [
      environment-map
-     (measurement-map / [ + measurement-map])
+     [ + measurement-map ]
    ]
 
    stateful-environment-record = [

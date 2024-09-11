@@ -1036,7 +1036,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 14 March 2025</td>
+<td class="center">Expires 15 March 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1049,12 +1049,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-09-10" class="published">10 September 2024</time>
+<time datetime="2024-09-11" class="published">11 September 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-03-14">14 March 2025</time></dd>
+<dd class="expires"><time datetime="2025-03-15">15 March 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1116,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 14 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 15 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2693,36 +2693,38 @@ status information.<a href="#section-5.1.4.1.4-1" class="pilcrow">¶</a></p>
 dedicated measurement or multiple elements could be combined into a single
 measurement. Measurements can have class, instance or group scope.  This is
 typically determined by the triple's environment.<a href="#section-5.1.4.1.4-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4-3">Class measurements apply generally to all the Attesters in the given class.
-Instance measurements apply to a specific Attester instance.  Environments
+<p id="section-5.1.4.1.4-3">Class measurements apply generally to all the Attesters in a given class.<a href="#section-5.1.4.1.4-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-4">Instance measurements apply to a specific Attester instance.  Environments
 identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
-are specific to that instance.<a href="#section-5.1.4.1.4-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4-4">The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+are specific to that instance.<a href="#section-5.1.4.1.4-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-5">The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
 is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
-the <code>authorized-by</code> statement can be supplied in the <code>measurement-map</code>.<a href="#section-5.1.4.1.4-4" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.4-5">
+the <code>authorized-by</code> statement can be supplied in the <code>measurement-map</code>.<a href="#section-5.1.4.1.4-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-6">An environment may have multiple measurements of the same type.
+Measurement keys may be used to disambiguate these measurements.<a href="#section-5.1.4.1.4-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.4-7">
 <pre>
 measurement-map = {
   ? &amp;(mkey: 0) =&gt; $measured-element-type-choice
   &amp;(mval: 1) =&gt; measurement-values-map
   ? &amp;(authorized-by: 2) =&gt; [ + $crypto-key-type-choice ]
 }
-</pre><a href="#section-5.1.4.1.4-5" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.1.4-7" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.1.4-6">The following describes each member of the <code>measurement-map</code>:<a href="#section-5.1.4.1.4-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-8">The following describes each member of the <code>measurement-map</code>:<a href="#section-5.1.4.1.4-8" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.1.4-7.1">
-                  <p id="section-5.1.4.1.4-7.1.1"><code>mkey</code> (index 0): An optional unique identifier of the measured
-(sub-)environment.  See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>.<a href="#section-5.1.4.1.4-7.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.1.4-9.1">
+                  <p id="section-5.1.4.1.4-9.1.1"><code>mkey</code> (index 0): An optional measurement key.
+ See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>.<a href="#section-5.1.4.1.4-9.1.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-5.1.4.1.4-7.2">
-                  <p id="section-5.1.4.1.4-7.2.1"><code>mval</code> (index 1): The measurements associated with the (sub-)environment.
-Described in <a href="#sec-comid-mval" class="auto internal xref">Section 5.1.4.1.4.2</a>.<a href="#section-5.1.4.1.4-7.2.1" class="pilcrow">¶</a></p>
+                <li class="normal" id="section-5.1.4.1.4-9.2">
+                  <p id="section-5.1.4.1.4-9.2.1"><code>mval</code> (index 1): The measurements associated with the environment.
+ Described in <a href="#sec-comid-mval" class="auto internal xref">Section 5.1.4.1.4.2</a>.<a href="#section-5.1.4.1.4-9.2.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-5.1.4.1.4-7.3">
-                  <p id="section-5.1.4.1.4-7.3.1"><code>authorized-by</code> (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.<a href="#section-5.1.4.1.4-7.3.1" class="pilcrow">¶</a></p>
+                <li class="normal" id="section-5.1.4.1.4-9.3">
+                  <p id="section-5.1.4.1.4-9.3.1"><code>authorized-by</code> (index 2): The cryptographic identity of the individual or organization that is
+ the designated authority for this measurement. For example, the producer of the measurement or a delegate.<a href="#section-5.1.4.1.4-9.3.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 <div id="sec-comid-mkey">
@@ -2730,13 +2732,14 @@ Described in <a href="#sec-comid-mval" class="auto internal xref">Section 5.1.4.
                 <h6 id="name-measurement-keys">
 <a href="#section-5.1.4.1.4.1" class="section-number selfRef">5.1.4.1.4.1. </a><a href="#name-measurement-keys" class="section-name selfRef">Measurement Keys</a>
                 </h6>
-<p id="section-5.1.4.1.4.1-1">The types defined for a measurement identifier are OID, UUID or uint.<a href="#section-5.1.4.1.4.1-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.4.1-2">
+<p id="section-5.1.4.1.4.1-1">Measurement keys are locally scoped identifiers that disambiguate multiple instances of measurements of the same type.<a href="#section-5.1.4.1.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4.1-2"><code>Mkey</code> identifiers can be either OID, UUID or uint.<a href="#section-5.1.4.1.4.1-2" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.4.1-3">
 <pre>
 $measured-element-type-choice /= tagged-oid-type
 $measured-element-type-choice /= tagged-uuid-type
 $measured-element-type-choice /= uint
-</pre><a href="#section-5.1.4.1.4.1-2" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.1.4.1-3" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -3172,7 +3175,7 @@ Environment.<a href="#section-5.1.4.2-1" class="pilcrow">¶</a></p>
 <pre>
 reference-triple-record = [
   environment-map
-  (measurement-map / [ + measurement-map])
+  [ + measurement-map ]
 ]
 </pre><a href="#section-5.1.4.2-2" class="pilcrow">¶</a>
 </div>
@@ -3192,7 +3195,7 @@ the object relates to the subject.<a href="#section-5.1.4.3-1" class="pilcrow">�
 <pre>
 endorsed-triple-record = [
   environment-map
-  ( measurement-map / [ + measurement-map])
+  [ + measurement-map ]
 ]
 </pre><a href="#section-5.1.4.3-2" class="pilcrow">¶</a>
 </div>
@@ -5997,7 +6000,7 @@ $domain-type-choice /= tagged-oid-type
 
 endorsed-triple-record = [
   environment-map
-  ( measurement-map / [ + measurement-map])
+  [ + measurement-map ]
 ]
 
 entity-map&lt;role-type-choice, extension-socket&gt; = {
@@ -6096,7 +6099,7 @@ raw-value-mask-type = bytes
 
 reference-triple-record = [
   environment-map
-  (measurement-map / [ + measurement-map])
+  [ + measurement-map ]
 ]
 
 stateful-environment-record = [
