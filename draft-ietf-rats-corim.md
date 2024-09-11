@@ -780,7 +780,8 @@ dedicated measurement or multiple elements could be combined into a single
 measurement. Measurements can have class, instance or group scope.  This is
 typically determined by the triple's environment.
 
-Class measurements apply generally to all the Attesters in the given class.
+Class measurements apply generally to all the Attesters in a given class.
+
 Instance measurements apply to a specific Attester instance.  Environments
 identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
@@ -790,6 +791,8 @@ The supply chain entity that is responsible for providing the the measurements (
 is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
 the `authorized-by` statement can be supplied in the `measurement-map`.
 
+An environment may have multiple measurements of the same type.
+Measurement keys may be used to disambiguate these measurements.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -797,18 +800,20 @@ the `authorized-by` statement can be supplied in the `measurement-map`.
 
 The following describes each member of the `measurement-map`:
 
-* `mkey` (index 0): An optional unique identifier of the measured
-  (sub-)environment.  See {{sec-comid-mkey}}.
+* `mkey` (index 0): An optional measurement key.
+ See {{sec-comid-mkey}}.
 
-* `mval` (index 1): The measurements associated with the (sub-)environment.
-  Described in {{sec-comid-mval}}.
+* `mval` (index 1): The measurements associated with the environment.
+ Described in {{sec-comid-mval}}.
 
 * `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, producer of the measurement or a delegated supplier.
+ the designated authority for this measurement. For example, the producer of the measurement or a delegate.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-The types defined for a measurement identifier are OID, UUID or uint.
+Measurement keys are locally scoped identifiers that disambiguate multiple instances of measurements of the same type.
+
+`Mkey` identifiers can be either OID, UUID or uint.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
