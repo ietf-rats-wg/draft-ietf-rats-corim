@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-10T01:40:38.754581+00:00",
+  "timestamp": "2024-09-12T01:39:56.862711+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -29659,7 +29659,7 @@
       ],
       "body": "A property is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrained in points.\r\n\r\nCloses Issue#225",
       "createdAt": "2024-04-23T16:40:06Z",
-      "updatedAt": "2024-09-04T02:40:48Z",
+      "updatedAt": "2024-09-10T22:45:19Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
@@ -29747,6 +29747,13 @@
           "body": "> We will retain 'Claim', waiting for all editors to agree on that.\r\n\r\nThanks, just let me know when and I'll revert the claim->property commit of this PR.",
           "createdAt": "2024-09-04T02:40:46Z",
           "updatedAt": "2024-09-04T02:40:46Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do we give up and just change ACS to AMS and ECT to EMT to keep internal consistency?",
+          "createdAt": "2024-09-10T22:45:17Z",
+          "updatedAt": "2024-09-10T22:45:17Z"
         }
       ],
       "reviews": [
@@ -33316,7 +33323,7 @@
       "labels": [],
       "body": "Addresses Issue #251. It's unclear if this implicit condition is also expected of the conditional-endorsement-series-triples and conditional-endorsement-triples. The phasing in the appraisal section seems to suggest that it should be. That would seem to mean that if you want \"unconditional\" endorsements, you need to have a reference-triple-record that has an empty measurement-values-map, but that is ill-formed.\r\n\r\nProbably the location is wrong and this should be a subsection of `Endorsed Values Augmentation (Phase 4)`, but I want to at least clarify if this is the intended meaning. The \"Interacting with an ACS\" section suggests that an endorsement always has a list of conditions, but that isn't material in the representation of an endorsed-triple-record.",
       "createdAt": "2024-08-07T16:23:47Z",
-      "updatedAt": "2024-08-28T15:50:10Z",
+      "updatedAt": "2024-09-10T23:19:37Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
@@ -33327,7 +33334,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The Endorsement triples sections should be grouped so that they can be described / understood together but with increasing detail / nuance.\r\nI suggest the ordering be: Endorsed Values Triple, Conditional Endorsement Triple, Conditional Endorsement Series Triple.\r\n\r\n",
+          "createdAt": "2024-09-10T21:17:48Z",
+          "updatedAt": "2024-09-10T23:19:37Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86FPeKH",
@@ -33613,6 +33628,72 @@
           "createdAt": "2024-08-28T15:50:10Z",
           "updatedAt": "2024-08-28T15:50:10Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86It_r5",
+          "commit": {
+            "abbreviatedOid": "9cb2eb0"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-10T20:59:25Z",
+          "updatedAt": "2024-09-10T21:06:15Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "```suggestion\r\nEndorsements are added to the ACS if the environment matches an environment already found in the ACS.\r\n```\r\n",
+              "createdAt": "2024-09-10T20:59:25Z",
+              "updatedAt": "2024-09-10T22:58:41Z"
+            },
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-09-10T21:02:05Z",
+              "updatedAt": "2024-09-10T21:06:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Iu_US",
+          "commit": {
+            "abbreviatedOid": "9cb2eb0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-10T22:36:25Z",
+          "updatedAt": "2024-09-10T22:36:25Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "The 1111 is informative to refer the reader to the conditional endorsements. Your added text seems to refer to the semantics described above in the text \"These claims are added to the ACS when its environment matches.\"",
+              "createdAt": "2024-09-10T22:36:25Z",
+              "updatedAt": "2024-09-10T22:36:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86IvikT",
+          "commit": {
+            "abbreviatedOid": "9cb2eb0"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-10T23:03:37Z",
+          "updatedAt": "2024-09-10T23:03:37Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "> The 1111 is informative to refer the reader to the conditional endorsements. Your added text seems to refer to the semantics described above in the text \"These claims are added to the ACS when its environment matches.\"\r\n\r\nI wasn't paying attention to the link - just preserving what was there before. If the document structure groups the sections related to endorsement there is less of a need to cross-reference them. A one sentence explanation of conditional endorsement might follow in a straightforward way such as: \"Conditional Endorsements are added to the ACS if additional Claims match, in addition to environment Claims.\"",
+              "createdAt": "2024-09-10T23:03:37Z",
+              "updatedAt": "2024-09-10T23:03:37Z"
+            }
+          ]
         }
       ]
     },
@@ -35226,7 +35307,7 @@
       "labels": [],
       "body": "Modern day attesters have Multiple Measured Elements, within a Target Environment. This PR intends to allow multiple measured elements to be expressed using a single Reference Value Triple.",
       "createdAt": "2024-09-04T16:33:59Z",
-      "updatedAt": "2024-09-04T22:46:29Z",
+      "updatedAt": "2024-09-10T22:57:18Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
@@ -35265,6 +35346,20 @@
           "body": "> @deeglaze If you feel al-right, feel free to make more commits on the branch!\r\n\r\nI don't have push rights to this branch, so I have suggestions in my own commit on top in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/compare/multiplicity...deeglaze:draft-ietf-rats-corim:multiplicity",
           "createdAt": "2024-09-04T22:46:28Z",
           "updatedAt": "2024-09-04T22:46:28Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agreed it doesn't need the tag, but I do believe that conditional endorsements need to be updated to describe multiple mkeys at a time.",
+          "createdAt": "2024-09-10T22:33:56Z",
+          "updatedAt": "2024-09-10T22:33:56Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Agreed it doesn't need the tag, but I do believe that conditional endorsements need to be updated to describe multiple mkeys at a time.\r\n\r\nConditional endorsements were an IETF invention. Hence, no backwards compatibility concerns. The conditional endorsement triple was already updated to add multiplicity. The conditional series triple has the needed multiplicity properties already (at least I haven't had any requests to change it from the people I work with).",
+          "createdAt": "2024-09-10T22:57:17Z",
+          "updatedAt": "2024-09-10T22:57:17Z"
         }
       ],
       "reviews": [
@@ -35287,8 +35382,49 @@
               "updatedAt": "2024-09-04T21:06:43Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86It6Zt",
+          "commit": {
+            "abbreviatedOid": "0ff26be"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "A straightforward solution is added to the tcg-compatible branch https://github.com/ietf-rats-wg/draft-ietf-rats-corim/tree/tcg-compatible\r\n\r\nIt includes examples that are backward compatible with the TCG specs. It doesn't seem to need a CBOR tag.\r\n\r\n",
+          "createdAt": "2024-09-10T20:46:16Z",
+          "updatedAt": "2024-09-10T20:48:32Z",
+          "comments": []
         }
       ]
+    },
+    {
+      "number": 268,
+      "id": "PR_kwDOH6-tI857N_cj",
+      "title": "Revert endorsement and reference triple records to original",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "This PR reverts `endorsement-triple-record` and `reference-triple-record` to original CDDL by adding array brackets around `measurement-map` to allow multiplicity of measurements for a given environment.\r\n\r\nThe Measurements and Measurement Keys sections are updated to better describe measurement multiplicity and disambiguation of measurement values.",
+      "createdAt": "2024-09-11T21:16:30Z",
+      "updatedAt": "2024-09-11T21:16:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "tcg-compatible",
+      "headRefOid": "36da9cf95b0e6ef1e6d9801660c8498c847dcab0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
