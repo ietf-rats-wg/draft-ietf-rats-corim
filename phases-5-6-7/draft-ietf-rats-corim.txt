@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 15 February 2025                                         Linaro
+Expires: 17 March 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          14 August 2024
+                                                       13 September 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 February 2025.
+   This Internet-Draft will expire on 17 March 2025.
 
 Copyright Notice
 
@@ -175,35 +175,32 @@ Table of Contents
          8.6.1.2.  Processing Conditional Endorsement Series Triple
          8.6.1.3.  Processing a stateful environment against the
                  Appraisal Claims Set
-     8.7.  Verifier Augmentation (Phase 5)
-     8.8.  Policy Augmentation (Phase 6)
-     8.9.  Attestation Results Production and Transformationn (Phase
-            7)
-     8.10. Adding to the Appraisal Claims Set
-       8.10.1.  Appraisal Claims Set Requirements
-       8.10.2.  ACS Augmentation
-     8.11. ECT Comparison
-       8.11.1.  Environment Comparison
-       8.11.2.  Claims Comparison
-         8.11.2.1.  Comparison of measurement-values-map
-           8.11.2.1.1.  Comparison for svn entries
-           8.11.2.1.2.  Comparison for digests entries
-           8.11.2.1.3.  Comparison for raw-value entries
-           8.11.2.1.4.  Comparison for cryptokeys entries
-           8.11.2.1.5.  Comparison for Integrity Registers
-       8.11.3.  Authority Comparison
-       8.11.4.  Name Space Comparison
-       8.11.5.  Conceptual Message Type Comparison
-       8.11.6.  Profile-directed Comparison
+     8.7.  Phases 5, 6, and 7
+     8.8.  Adding to the Appraisal Claims Set
+       8.8.1.  Appraisal Claims Set Requirements
+       8.8.2.  ACS Augmentation
+     8.9.  ECT Comparison
+       8.9.1.  Environment Comparison
+       8.9.2.  Claims Comparison
+         8.9.2.1.  Comparison of measurement-values-map
+           8.9.2.1.1.  Comparison for svn entries
+           8.9.2.1.2.  Comparison for digests entries
+           8.9.2.1.3.  Comparison for raw-value entries
+           8.9.2.1.4.  Comparison for cryptokeys entries
+           8.9.2.1.5.  Comparison for Integrity Registers
+       8.9.3.  Authority Comparison
+       8.9.4.  Name Space Comparison
+       8.9.5.  Conceptual Message Type Comparison
+       8.9.6.  Profile-directed Comparison
    9.  Implementation Status
      9.1.  Veraison
    10. Security and Privacy Considerations
    11. IANA Considerations
      11.1.  New COSE Header Parameters
      11.2.  New CBOR Tags
-     11.3.  New CoRIM Registries
-     11.4.  New CoMID Registries
-     11.5.  New CoBOM Registries
+     11.3.  CoRIM Map Registry
+     11.4.  CoMID Map Registry
+     11.5.  CoBOM Map Registry
      11.6.  New Media Types
        11.6.1.  corim-signed+cbor
        11.6.2.  corim-unsigned+cbor
@@ -395,7 +392,7 @@ Table of Contents
 
 3.  Typographical Conventions for CDDL
 
-   The CDDL definitions in this document follow the naming conventions
+   The CDDL definitions in this document follows the naming conventions
    illustrated in Table 2.
 
    +========================+===============+==========================+
@@ -536,8 +533,8 @@ Table of Contents
 4.1.1.  Identity
 
    A CoRIM Identifier uniquely identifies a CoRIM instance.  The base
-   schema allows UUID and text identifiers.  Other types of identifiers
-   could be defined as needed.
+   CDDL definition allows UUID and text identifiers.  Other types of
+   identifiers could be defined as needed.
 
    $corim-id-type-choice /= tstr
    $corim-id-type-choice /= uuid-type
@@ -572,8 +569,8 @@ Table of Contents
 
 4.1.4.  Profile Types
 
-   Profiling is the mechanism that allows the base CoRIM schema to be
-   customised to fit a specific Attester.
+   Profiling is the mechanism that allows the base CoRIM CDDL definition
+   to be customized to fit a specific Attester.
 
    A profile defines which of the optional parts of a CoRIM are
    required, which are prohibited and which extension points are
@@ -1217,7 +1214,7 @@ Table of Contents
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 8.11.2.1.4.
+      Value entry.  Matching is described in Section 8.9.2.1.4.
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
@@ -1711,16 +1708,17 @@ Table of Contents
 
 5.2.  Extensibility
 
-   The base CORIM schema is described using CDDL [RFC8610] that can be
-   extended only at specific allowed points known as "extension points"
+   The base CoRIM document definition is described using CDDL [RFC8610]
+   that can be extended only at specific allowed points known as
+   "extension points".
 
-   The following types of extensions are supported in CoRIM
+   The following types of extensions are supported in CoRIM.
 
 5.2.1.  Map Extensions
 
-   Map Extensions provides extensibility support to CoRIM Map
-   structures.  CDDL map extensibility enables a CoRIM profile to extend
-   the base CoRIM definition.  CDDL map extension points have the form
+   Map extensions provide extensibility support to CoRIM map structures.
+   CDDL map extensibility enables a CoRIM profile to extend the base
+   CoRIM CDDL definition.  CDDL map extension points have the form
    ($$NAME-extension) where "NAME" is the name of the map and '$$'
    signifies map extensibility.  Typically, map extension requires a
    convention for code point naming that avoids code-point reuse.  Well-
@@ -1733,9 +1731,9 @@ Table of Contents
    Data type extensibility has the form ($NAME-type-choice) where "NAME"
    is the type name and '$' signifies type extensibility.
 
-   Schema extensions (Map or Data Type) should be documented to
-   facilitate interoperability.  CoRIM profiles are best used to
-   document vendor or industry defined extensions.
+   New data type extensions SHOULD be documented to facilitate
+   interoperability.  CoRIM profiles are best used to document vendor or
+   industry defined extensions.
 
 6.  CoBOM
 
@@ -2326,7 +2324,7 @@ Table of Contents
    All available CoRIMs are collected.
 
    CoRIMs that are not within their validity period, or that cannot be
-   associated with an authenticated and authorised source MUST be
+   associated with an authenticated and authorized source MUST be
    discarded.
 
    Any CoRIM that has been secured by a cryptographic mechanism, such as
@@ -2484,7 +2482,7 @@ Table of Contents
 8.4.1.  Appraisal Claims Set Initialization
 
    The ACS is initialized by copying the internal representation of
-   Evidence claims to the ACS.  See Section 8.10.
+   Evidence claims to the ACS.  See Section 8.8.
 
 8.4.1.1.  The authorized-by field in Appraisal Claims Set
 
@@ -2508,8 +2506,8 @@ Table of Contents
    authorities.
 
    When adding Endorsement Claims to the ACS that resulted from CoRIM
-   processing (see Section 8.10) the Verifier SHALL set the authorized-
-   by field in that Evidence to the trusted authority key that is at the
+   processing (see Section 8.8) the Verifier SHALL set the authorized-by
+   field in that Evidence to the trusted authority key that is at the
    head of the key chain that signed the CoRIM.
 
    When searching the ACS for an entry which matches a Reference Value
@@ -2604,7 +2602,7 @@ Table of Contents
 
    If every stateful environment matches a corresponding ACS entry, then
    the Verifier MUST add an Endorsement entry to the ACS (see
-   Section 8.10) for each endorsed-triple-record in the endorsements
+   Section 8.8) for each endorsed-triple-record in the endorsements
    field.  Each Endorsement from the endorsed-triple-record includes the
    authority which signed the Conditional Endorsement Triple.
 
@@ -2675,15 +2673,48 @@ Table of Contents
    the stateful environment entry then the stateful environment does not
    match.
 
-8.7.  Verifier Augmentation (Phase 5)
+8.7.  Phases 5, 6, and 7
 
-8.8.  Policy Augmentation (Phase 6)
+   Phase 5 is optional depending on implementation design.  Verifier
+   implementation of consistency, integrity, or validity checks could be
+   represented as Claims that augment the ACS.  Such Claims originate
+   from the Verifier and are asserted under the authority of the
+   Verifier.  For example, the attest-key-triple-record may contain a
+   cryptographic key to which the Verifier applies certificate path
+   construction and verification.  The verification result may reveal an
+   expired certificate.  The Verifier implementation might generate a
+   certificate path validation exception that is handled externally, or
+   it could generate a Claim that the certificate path isn't valid.
 
-8.9.  Attestation Results Production and Transformationn (Phase 7)
+   Phase 6 is optional depending on implementation design as external
+   representations of appraisal policy is out-of-scope for this
+   document.  Appraisal policy inputs could result in Claims that
+   augment the ACS.  For example, an Appraisel Policy for Evidence may
+   specify that if all of a collection of subcomponents satisfy a
+   particular quality metric, the top-level component also satisfies the
+   quality metric.  The Verifier might generate an Endorsement ECT for
+   the top-level component that asserts a quality metric.  Details about
+   the policy applied may also augment the ACS.  An internal
+   representation of policy detials, based on the policy ECT as
+   described in Section 8.2.1.4, contain the environments affected by
+   the policy with policy identifers as Claims.
 
-8.10.  Adding to the Appraisal Claims Set
+   Phase 7 is optional depending on implementation design.  Attestation
+   Results rely on input from the ACS, but may not be interested in
+   actual ACS entries.  For example, Attestation Results processing may
+   map the ACS state to a generalized trustworthiness state such as
+   [I-D.ietf-rats-ar4si].  Generated Attestation Results Claims may be
+   specific to a particular Relying Party.  Hence, the Verifier may need
+   to maintain multiple Attestation Results contexts.  An internal
+   representation of Attestation Results as separate contexts, (see
+   Section 8.2.3), ensures Relying Party specific processing doesn't
+   modify the ACS, which is common to all Relying Parties.  Attestation
+   Results contexts are the inputs to Attestation Results procedures
+   that produce external representations.
 
-8.10.1.  Appraisal Claims Set Requirements
+8.8.  Adding to the Appraisal Claims Set
+
+8.8.1.  Appraisal Claims Set Requirements
 
    At the end of the Evidence collection process Evidence has been
    converted into an internal represenetation suitable for appraisal.
@@ -2747,14 +2778,14 @@ Table of Contents
    and the measurement values are not equivalent then the verifier SHALL
    report an error and stop validation processing.
 
-8.10.2.  ACS Augmentation
+8.8.2.  ACS Augmentation
 
    The ordering of ECTs in the ACS is not significant.  Logically, new
    ECT entries are appended to the existing ACS.  But implementations
    may optimize ECT order to achieve better performance.  Additions to
    the ACS MUST be atomic.
 
-8.11.  ECT Comparison
+8.9.  ECT Comparison
 
 
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
@@ -2769,11 +2800,11 @@ Table of Contents
    algorithms described in this specification, then the Verifier MUST
    compare the binary equality of the CBOR encodings of the values.
 
-8.11.1.  Environment Comparison
+8.9.1.  Environment Comparison
 
-8.11.2.  Claims Comparison
+8.9.2.  Claims Comparison
 
-8.11.2.1.  Comparison of measurement-values-map
+8.9.2.1.  Comparison of measurement-values-map
 
    This section describes the algorithm used to compare the measurement-
    values-map codepoints of an ECT with another ECT.  The comparison
@@ -2804,7 +2835,7 @@ Table of Contents
    The following subsections define the comparison algorithms for the
    measurement-values-map keys defined by this specification.
 
-8.11.2.1.1.  Comparison for svn entries
+8.9.2.1.1.  Comparison for svn entries
 
    The value stored under measurement-values-map key 1 is an SVN, which
    must have type UINT.
@@ -2820,7 +2851,7 @@ Table of Contents
    value of the SVN in ACS less than the value in the Reference Value
    then the Reference Value does not match.
 
-8.11.2.1.2.  Comparison for digests entries
+8.9.2.1.2.  Comparison for digests entries
 
    The value stored under measurement-values-map key 2, or a value
    tagged with #6.TBD is a digest entry.  It contains one or more
@@ -2852,7 +2883,7 @@ Table of Contents
    between the Reference Value and the ACS entry then the Reference
    Value does not match.
 
-8.11.2.1.3.  Comparison for raw-value entries
+8.9.2.1.3.  Comparison for raw-value entries
 
       [Andy] _I think this comparison method only works if the entry is
       at key 4 (because there needs to be a mask at key 5).  Should we
@@ -2863,7 +2894,7 @@ Table of Contents
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/71
 
-8.11.2.1.4.  Comparison for cryptokeys entries
+8.9.2.1.4.  Comparison for cryptokeys entries
 
    The value stored under measurement-values-map key 12 is an array of
    $crypto-key-type-choice entries. $crypto-key-type-choice entries are
@@ -2881,37 +2912,37 @@ Table of Contents
    corresponding entry in the ACS array, then the cryptokeys Reference
    Value matches.  Otherwise, cryptokeys does not match.
 
-8.11.2.1.5.  Comparison for Integrity Registers
+8.9.2.1.5.  Comparison for Integrity Registers
 
    For each Integrity Register entry in the Reference Value, the
    Verifier will use the associated identifier (i.e., integrity-
    register-id-type-choice) to look up the matching Integrity Register
    entry in Evidence.  If no entry is found, the Reference Value does
    not match.  Instead, if an entry is found, the digest comparison
-   proceeds as defined in Section 8.11.2.1.2 after equivalence has been
+   proceeds as defined in Section 8.9.2.1.2 after equivalence has been
    found according to Section 5.1.4.1.6.  Note that it is not required
    for all the entries in Evidence to be used during matching: the
    Reference Value could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a Reference Value could describe a subset of PCRs.
 
-8.11.3.  Authority Comparison
+8.9.3.  Authority Comparison
 
    The a field comparison tests for trust path termination.  If the
    authority of the first ECT is a trust anchor for the authority of the
    second ECT, the second ECT is valid.  If the authority values are
    identical, then the second ECT is valid.
 
-8.11.4.  Name Space Comparison
+8.9.4.  Name Space Comparison
 
    The ns field comparison tests equality where the text values are
    identical.
 
-8.11.5.  Conceptual Message Type Comparison
+8.9.5.  Conceptual Message Type Comparison
 
    The cm field comparison tests equality of one or more bits.
 
-8.11.6.  Profile-directed Comparison
+8.9.6.  Profile-directed Comparison
 
    A profile may specify handling for new CBOR tagged Reference Values.
    The profile must specify how to compare the CBOR tagged Reference
@@ -3068,23 +3099,138 @@ Table of Contents
    based on advice from the designated expert for the CBOR Tags
    registry.
 
-11.3.  New CoRIM Registries
+11.3.  CoRIM Map Registry
 
+   This document defines a new registry titled "CoRIM Map".  The
+   registry uses integer values as index values for items in 'unsigned-
+   corim-map' CBOR maps.
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/14
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
 
-11.4.  New CoMID Registries
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
 
+                          Table 9: CoRIM Map Items
+                          Registration Procedures
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/15
+   All negative values are reserved for Private Use.
 
-11.5.  New CoBOM Registries
+   Initial registrations for the "CoRIM Map" registry are provided
+   below.  Assignments consist of an integer index value, the item name,
+   and a reference to the defining specification.
 
+                +=======+================+===============+
+                | Index | Item Name      | Specification |
+                +=======+================+===============+
+                | 0     | id             | RFCthis       |
+                +-------+----------------+---------------+
+                | 1     | tags           | RFCthis       |
+                +-------+----------------+---------------+
+                | 2     | dependent-rims | RFCthis       |
+                +-------+----------------+---------------+
+                | 3     | profile        | RFCthis       |
+                +-------+----------------+---------------+
+                | 4     | rim-validity   | RFCthis       |
+                +-------+----------------+---------------+
+                | 5     | entities       | RFCthis       |
+                +-------+----------------+---------------+
+                | 3-255 | Unassigned     |               |
+                +-------+----------------+---------------+
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/45
+                    Table 10: CoRIM Map Items Initial
+                              Registrations
+
+11.4.  CoMID Map Registry
+
+   This document defines a new registry titled "CoMID Map".  The
+   registry uses integer values as index values for items in 'concise-
+   mid-tag' CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                         Table 11: CoMID Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoMID Map" registry are provided
+   below.  Assignments consist of an integer index value, the item name,
+   and a reference to the defining specification.
+
+                 +=======+==============+===============+
+                 | Index | Item Name    | Specification |
+                 +=======+==============+===============+
+                 | 0     | language     | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 1     | tag-identity | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 2     | entity       | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 3     | linked-tags  | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 4     | triples      | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 5-255 | Unassigned   |               |
+                 +-------+--------------+---------------+
+
+                    Table 12: CoMID Map Items Initial
+                              Registrations
+
+11.5.  CoBOM Map Registry
+
+   This document defines a new registry titled "CoBOM Map".  The
+   registry uses integer values as index values for items in 'concise-
+   bom-tag' CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                         Table 13: CoBOM Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoBOM Map" registry are provided
+   below.  Assignments consist of an integer index value, the item name,
+   and a reference to the defining specification.
+
+                 +=======+==============+===============+
+                 | Index | Item Name    | Specification |
+                 +=======+==============+===============+
+                 | 0     | tag-identity | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 1     | tags-list    | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 2     | bom-validity | RFCthis       |
+                 +-------+--------------+---------------+
+                 | 5-255 | Unassigned   |               |
+                 +-------+--------------+---------------+
+
+                    Table 14: CoBOM Map Items Initial
+                              Registrations
 
 11.6.  New Media Types
 
@@ -3101,7 +3247,7 @@ Table of Contents
    |                     | unsigned+cbor       | Section 11.6.2 |
    +---------------------+---------------------+----------------+
 
-                      Table 9: New Media Types
+                     Table 15: New Media Types
 
 11.6.1.  corim-signed+cbor
 
@@ -3172,7 +3318,7 @@ Table of Contents
    | unsigned+cbor                 |                |      |           |
    +-------------------------------+----------------+------+-----------+
 
-                       Table 10: New Content-Formats
+                       Table 16: New Content-Formats
 
 12.  References
 
@@ -3284,9 +3430,17 @@ Table of Contents
               Fossati, T., Deshpande, Y., and H. Birkholz, "Arm's
               Platform Security Architecture (PSA) Attestation Verifier
               Endorsements", Work in Progress, Internet-Draft, draft-
-              fdb-rats-psa-endorsements-04, 4 March 2024,
+              fdb-rats-psa-endorsements-05, 30 August 2024,
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
-              endorsements-04>.
+              endorsements-05>.
+
+   [I-D.ietf-rats-ar4si]
+              Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
+              Scarlata, "Attestation Results for Secure Interactions",
+              Work in Progress, Internet-Draft, draft-ietf-rats-ar4si-
+              07, 2 September 2024,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
+              ar4si-07>.
 
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
@@ -3298,9 +3452,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-30, 2 August
-              2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              rats-eat-30>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-31, 6
+              September 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-31>.
 
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
@@ -3325,6 +3479,11 @@ Table of Contents
               Code: The Implementation Status Section", BCP 205,
               RFC 7942, DOI 10.17487/RFC7942, July 2016,
               <https://www.rfc-editor.org/rfc/rfc7942>.
+
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/rfc/rfc8126>.
 
    [SPDM]     Distributed Management Task Force, "Security Protocol and
               Data Model (SPDM)", Version 1.3.0 , May 2023,
