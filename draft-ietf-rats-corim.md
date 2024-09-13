@@ -791,8 +791,9 @@ The supply chain entity that is responsible for providing the the measurements (
 is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
 the `authorized-by` statement can be supplied in the `measurement-map`.
 
-An environment may have multiple measurements of the same type.
-Measurement keys may be used to disambiguate these measurements.
+An environment may have multiple measured elements.
+Measured elements are distinguished from each other by measurement keys.
+Measurement keys may be used to disambiguate measurements of the same type originating from different elements.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -811,7 +812,8 @@ The following describes each member of the `measurement-map`:
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-Measurement keys are locally scoped identifiers that disambiguate multiple instances of measurements of the same type.
+Measurement keys are locally scoped identifiers.
+`Mkey` values may be necessary to disambiguate multiple measurements of the same type.
 
 `Mkey` identifiers can be either OID, UUID or uint.
 
@@ -1600,17 +1602,18 @@ Profile (label 6):
 ~~~ cddl
 ECT = {
   ? e: environment-map
-  ? c: claims-map / [ + local-claim ]
+  ? c: [ + local-claim ]
   ? a: [ + $crypto-key-type-choice ]
   ? ns: text
   ? cm: cm-type
   ? p: $profile-type-choice
 }
 local-claim = {
-  le: local-environment
+  ? eid: element-id
   c: claims-map
 }
-local-environment =  bstr / tstr
+element-id =  bstr / tstr / uint / tagged-oid-type / tagged-uuid-type
+claims-map = measurement-values-map
 cm-type =  &(
   reference-values: 0
   endorsements: 1
@@ -1937,12 +1940,13 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 Reference Value Providers (RVP) publish Reference Values triples that are matched against ACS entries.
 Reference Values may describe multiple acceptable states for Attesters; hence "matching" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.
+
 If the appropriate subset matches, the authority of the RVP is added to the appropriate ACS entries.
 
-The Verifier compares each `reference-triple-record` against ACS entries as described in {{sec-match-one-se}}, where the `reference-triple-record` takes the place of a `stateful-environment-record`.
-If all fields of the `reference-triple-record` match the ACS, then the Verifier MUST add the RVP authority to each matching ACS field.
+The Verifier compares each `rv` reference value condition ECT against ECT entries in the ACS as described in {{sec-match-one-se}}.
 
-If any `reference-triple-record` in the Reference Value triple does not match the ACS then the entire triple is ignored.
+Foreach entry in the `rv` list, if any part of an `rv` condition does not match an ACS entry, then the entire `rv` additon is not added to the ACS.
+If all fields of the `rv` condition match an ACS entry, the Verifier MUST add the `rv` addition to the ACS where the RVP authority is included in the `rv` addition ECT.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
