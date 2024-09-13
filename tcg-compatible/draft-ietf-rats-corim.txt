@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 15 March 2025                                            Linaro
+Expires: 17 March 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       11 September 2024
+                                                       13 September 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 March 2025.
+   This Internet-Draft will expire on 17 March 2025.
 
 Copyright Notice
 
@@ -1106,8 +1106,10 @@ Table of Contents
    provide measurement values, the authorized-by statement can be
    supplied in the measurement-map.
 
-   An environment may have multiple measurements of the same type.
-   Measurement keys may be used to disambiguate these measurements.
+   An environment may have multiple measured elements.  Measured
+   elements are distinguished from each other by measurement keys.
+   Measurement keys may be used to disambiguate measurements of the same
+   type originating from different elements.
 
    measurement-map = {
      ? &(mkey: 0) => $measured-element-type-choice
@@ -1130,8 +1132,8 @@ Table of Contents
 
 5.1.4.1.4.1.  Measurement Keys
 
-   Measurement keys are locally scoped identifiers that disambiguate
-   multiple instances of measurements of the same type.
+   Measurement keys are locally scoped identifiers.  Mkey values may be
+   necessary to disambiguate multiple measurements of the same type.
 
    Mkey identifiers can be either OID, UUID or uint.
 
@@ -2130,17 +2132,18 @@ Table of Contents
 
    ECT = {
      ? e: environment-map
-     ? c: claims-map / [ + local-claim ]
+     ? c: [ + local-claim ]
      ? a: [ + $crypto-key-type-choice ]
      ? ns: text
      ? cm: cm-type
      ? p: $profile-type-choice
    }
    local-claim = {
-     le: local-environment
+     ? eid: element-id
      c: claims-map
    }
-   local-environment =  bstr / tstr
+   element-id =  bstr / tstr / uint / tagged-oid-type / tagged-uuid-type
+   claims-map = measurement-values-map
    cm-type =  &(
      reference-values: 0
      endorsements: 1
@@ -2570,18 +2573,19 @@ Table of Contents
    are matched against ACS entries.  Reference Values may describe
    multiple acceptable states for Attesters; hence "matching" determines
    that Evidence (contained in the ACS) satisfies an appropriate subset
-   of the available Reference Values.  If the appropriate subset
-   matches, the authority of the RVP is added to the appropriate ACS
-   entries.
+   of the available Reference Values.
 
-   The Verifier compares each reference-triple-record against ACS
-   entries as described in Section 8.6.1.3, where the reference-triple-
-   record takes the place of a stateful-environment-record.  If all
-   fields of the reference-triple-record match the ACS, then the
-   Verifier MUST add the RVP authority to each matching ACS field.
+   If the appropriate subset matches, the authority of the RVP is added
+   to the appropriate ACS entries.
 
-   If any reference-triple-record in the Reference Value triple does not
-   match the ACS then the entire triple is ignored.
+   The Verifier compares each rv reference value condition ECT against
+   ECT entries in the ACS as described in Section 8.6.1.3.
+
+   Foreach entry in the rv list, if any part of an rv condition does not
+   match an ACS entry, then the entire rv additon is not added to the
+   ACS.  If all fields of the rv condition match an ACS entry, the
+   Verifier MUST add the rv addition to the ACS where the RVP authority
+   is included in the rv addition ECT.
 
 8.6.  Endorsed Values Augmentation (Phase 4)
 
