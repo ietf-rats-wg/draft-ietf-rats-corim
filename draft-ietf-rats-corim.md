@@ -1918,7 +1918,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 #### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the AES entries to match or modify.
+Most triples use an `environment-map` field to select the ACS entries to match or modify.
 This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
 
 The order of triples processing is important.
