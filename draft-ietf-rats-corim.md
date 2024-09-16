@@ -1945,7 +1945,7 @@ If the appropriate subset matches, the authority of the RVP is added to the appr
 
 The Verifier compares each `rv` reference value condition ECT against ECT entries in the ACS as described in {{sec-match-one-se}}.
 
-Foreach entry in the `rv` list, if any part of an `rv` condition does not match an ACS entry, then the entire `rv` additon is not added to the ACS.
+For each entry in the `rv` list, if any part of an `rv` condition does not match an ACS entry, then the entire `rv` addition is not added to the ACS.
 If all fields of the `rv` condition match an ACS entry, the Verifier MUST add the `rv` addition to the ACS where the RVP authority is included in the `rv` addition ECT.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
