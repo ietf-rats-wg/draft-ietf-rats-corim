@@ -2004,7 +2004,7 @@ The Verifier implementation might generate a certificate path validation excepti
 
 Phase 6 is optional depending on implementation design as external representations of appraisal policy is out-of-scope for this document.
 Appraisal policy inputs could result in Claims that augment the ACS.
-For example, an Appraisel Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
+For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
 The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
 Details about the policy applied may also augment the ACS.
 An internal representation of policy detials, based on the policy ECT as described in {{sec-ir-policy}}, contain the environments affected by the policy with policy identifers as Claims.
