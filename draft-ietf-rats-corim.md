@@ -2010,7 +2010,7 @@ Details about the policy applied may also augment the ACS.
 An internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contain the environments affected by the policy with policy identifiers as Claims.
 
 Phase 7 is optional depending on implementation design.
-Attestation Results rely on input from the ACS, but may not be interested in actual ACS entries.
+Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
 For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
 Generated Attestation Results Claims may be specific to a particular Relying Party.
 Hence, the Verifier may need to maintain multiple Attestation Results contexts.
