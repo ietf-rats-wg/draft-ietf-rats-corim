@@ -2014,7 +2014,7 @@ Attestation Results rely on input from the ACS, but may not bear any similarity 
 For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
 Generated Attestation Results Claims may be specific to a particular Relying Party.
 Hence, the Verifier may need to maintain multiple Attestation Results contexts.
-An internal representation of Attestation Results as separate contexts, (see {{sec-ir-ars}}), ensures Relying Party specific processing doesn't modify the ACS, which is common to all Relying Parties.
+An internal representation of Attestation Results as separate contexts (see {{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Adding to the Appraisal Claims Set {#sec-add-to-acs}
