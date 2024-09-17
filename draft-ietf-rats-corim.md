@@ -2007,7 +2007,7 @@ Appraisal policy inputs could result in Claims that augment the ACS.
 For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
 The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
 Details about the policy applied may also augment the ACS.
-An internal representation of policy detials, based on the policy ECT as described in {{sec-ir-policy}}, contain the environments affected by the policy with policy identifers as Claims.
+An internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contain the environments affected by the policy with policy identifiers as Claims.
 
 Phase 7 is optional depending on implementation design.
 Attestation Results rely on input from the ACS, but may not be interested in actual ACS entries.
