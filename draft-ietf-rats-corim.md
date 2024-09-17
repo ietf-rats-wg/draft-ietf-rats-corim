@@ -1995,7 +1995,7 @@ If any codepoint present in the stateful environment `measurement-values-map` do
 If all checks above have been performed successfully then the stateful environment matches.
 If none of the candidate entries match the stateful environment entry then the stateful environment does not match.
 
-## Phases 5, 6, and 7 {#sec-phases567}
+## Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
 Phase 5 is optional depending on implementation design. Verifier implementation of consistency, integrity, or validity checks could be represented as Claims that augment the ACS.
 Such Claims originate from the Verifier and are asserted under the authority of the Verifier.
