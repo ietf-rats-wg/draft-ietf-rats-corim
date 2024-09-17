@@ -1124,7 +1124,7 @@ The device identifier may be part of the Target Environment's `environment-map` 
 The cryptographic keys are expected to be used to authenticate the device.
 
 Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
-The Verifier SHOULD perform offline verification of keys contained in Device Identity triples.
+The Verifier SHOULD verify keys contained in Device Identity triples.
 
 A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -1133,7 +1133,7 @@ Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifi
 
 If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
 
-Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Verification of key use restrictions MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
@@ -1146,7 +1146,7 @@ An Attest Key triple record relates one or more cryptographic keys to an Attesti
 The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
 The cryptographic keys sign Evidence.
 Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
-The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.
+The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Attest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -1154,7 +1154,7 @@ Additional details about how a key was provisioned or is protected may be assert
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
 
-Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Verification of key use restrictions MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
