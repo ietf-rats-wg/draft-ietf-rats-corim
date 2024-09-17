@@ -2000,7 +2000,7 @@ If none of the candidate entries match the stateful environment entry then the s
 Phase 5 is optional depending on implementation design. Verifier implementation of consistency, integrity, or validity checks could be represented as Claims that augment the ACS.
 Such Claims originate from the Verifier and are asserted under the authority of the Verifier.
 For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and verification. The verification result may reveal an expired certificate.
-The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path isn't valid.
+The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.
 
 Phase 6 is optional depending on implementation design as external representations of appraisal policy is out-of-scope for this document.
 Appraisal policy inputs could result in Claims that augment the ACS.
