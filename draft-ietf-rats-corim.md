@@ -2005,7 +2005,7 @@ Additionally, the creation of Attestation Results is out-of-scope for this docum
 Phase 5: Verifier Augmentation
 
 Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
-For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and verification.
+For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and validation.
 The verification result may reveal an expired certificate.
 The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.
 
