@@ -1576,7 +1576,7 @@ ECTs have six attributes:
 
 Environment (label 1):
 
-: Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Typically, composite Attester's are composed of components, each having an environment identifier.
+: Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
 
 Properties (label 2):
 
