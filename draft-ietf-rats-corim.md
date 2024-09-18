@@ -812,11 +812,9 @@ The following describes each member of the `measurement-map`:
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-Measurement keys are locally scoped identifiers.
-`mkey` may be necessary to disambiguate multiple measurements of the same type.
-Alternatively, `Mkey` may also be used to  distinguish multiple measured elements in an environment.
-
-`mkey` is an extensible identifier. The initial types defined are OID, UUID, and uint.
+Measurement keys are locally scoped extensible identifiers.
+The initial types defined are OID, UUID, and uint.
+`mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
@@ -1582,7 +1580,7 @@ Environment (label 1):
 
 Properties (label 2):
 
-: Properties of the Target Environment.
+: Trustworthiness properties associated with the Target Environment and its elements.
 
 Authority (label 3):
 
@@ -1600,21 +1598,22 @@ Profile (label 6):
 
 : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
+The following CDDL describes the ECT structure in more detail.
+
 ~~~ cddl
 ECT = {
-  ? e: environment-map
-  ? c: [ + local-claim ]
-  ? a: [ + $crypto-key-type-choice ]
-  ? ns: text
-  ? cm: cm-type
-  ? p: $profile-type-choice
+  ? environment: environment-map
+  ? properties: [ + properties-map ]
+  ? authority: [ + $crypto-key-type-choice ]
+  ? namespace: text
+  ? cmtype: cm-type
+  ? profile: $profile-type-choice
 }
-local-claim = {
+properties-map = {
   ? eid: element-id
-  c: claims-map
+  claims: measurement-values-map
 }
-element-id =  bstr / tstr / uint / tagged-oid-type / tagged-uuid-type
-claims-map = measurement-values-map
+element-id =  $measured-element-type-choice
 cm-type =  &(
   reference-values: 0
   endorsements: 1
