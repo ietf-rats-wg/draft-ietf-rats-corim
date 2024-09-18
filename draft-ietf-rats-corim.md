@@ -128,7 +128,7 @@ entity:
 
 --- abstract
 
-Remote Attestation Procedures (RATS) enable Relying Parties to assess the trustworthiness of a remote Attester and therefore to decide whether to engage in secure interactions with it - or not.
+Remote Attestation Procedures (RATS) enable Relying Parties to assess the trustworthiness of a remote Attester and therefore to decide whether or not to engage in secure interactions with it.
 Evidence about trustworthiness can be rather complex and it is deemed unrealistic that every Relying Party is capable of the appraisal of Evidence.
 Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
@@ -229,7 +229,7 @@ The CDDL definitions in this document follows the naming conventions illustrated
 | tagged type | `#6.123(int)` | `tagged-`NAME`-type`|
 | map | `{ 1 => int, 2 => text }` | NAME-`map` |
 | flags | `&( a: 1, b: 2 )` | NAME-`flags` |
-{: #tbl-typography title="Type Traits & Typographical Conventions"}
+{: #tbl-typography title="Type Traits and Typographical Conventions"}
 
 # Concise Reference Integrity Manifest (CoRIM) {#sec-corim}
 
@@ -487,7 +487,7 @@ The following describes each child item of this group.
 
 A CoMID tag contains information about hardware, firmware, or module composition.
 
-Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
+Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
 
 A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -787,7 +787,7 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
-The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+The supply chain entity that is responsible for providing the measurements (i.e. Reference Values or Endorsed Values)
 is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
 the `authorized-by` statement can be supplied in the `measurement-map`.
 
@@ -915,8 +915,8 @@ $version-scheme /= int / text
 
 The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
 A security version number is used to track changes to an object (e.g., a secure enclave, a boot loader executable, a configuration file, etc.) that are security relevant.
-Rollback of a security relevant change is considered to be an attack vector, as such, security version numbers can't be decremented.
-If a security relevant flaw is discovered in the Target Environment and subsequently fiexed, the `svn` value is typically incremented.
+Rollback of a security relevant change is considered to be an attack vector; as such, security version numbers cannot be decremented.
+If a security relevant flaw is discovered in the Target Environment and is subsequently fixed, the `svn` value is typically incremented.
 
 There may be several revisions to a Target Environment that are in use at the same time.
 If there are multiple revisions with different `svn` values, the revision with a lower `svn` value may
@@ -1120,7 +1120,7 @@ The cryptographic keys are bound to or associated with a Target Environment that
 The device identifier may be part of the Target Environment's `environment-map` or may be part of some other device identity credential, such as a certificate.
 The cryptographic keys are expected to be used to authenticate the device.
 
-Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction and verification, or proof of possession.
 The Verifier SHOULD perform offline verification of keys contained in Device Identity triples.
 
 A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
@@ -1142,7 +1142,7 @@ Alternatively, Verifiers MAY report key verification results as part of an error
 An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
 The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
 The cryptographic keys sign Evidence.
-Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction and verification, or proof of possession.
 The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.
 
 Attest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.
@@ -1856,7 +1856,7 @@ The Endorsement Values ECT fields are populated as described in {{sec-phase1-tra
 
 Evidence is divided up into one or more `ev` relations where the `condition` ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.
 
-Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence doesn't have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
+Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence does not have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
 
 The Evidence ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-evidence}}.
 
@@ -2449,7 +2449,7 @@ File extension(s):
 Macintosh file type code(s):
 : n/a
 
-Person & email address to contact for further information:
+Person and email address to contact for further information:
 : RATS WG mailing list (rats@ietf.org)
 
 Intended usage:
@@ -2509,7 +2509,7 @@ File extension(s):
 Macintosh file type code(s):
 : n/a
 
-Person & email address to contact for further information:
+Person and email address to contact for further information:
 : RATS WG mailing list (rats@ietf.org)
 
 Intended usage:
