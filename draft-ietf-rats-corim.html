@@ -1408,7 +1408,7 @@ This document specifies the information elements for representing Endorsements a
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
-                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-input-validation-and-transf" class="internal xref">Input Validation and Transformationn (Phase 1)</a></p>
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-input-validation-and-transf" class="internal xref">Input Validation and Transformation (Phase 1)</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.1">
                     <p id="section-toc.1-1.8.2.3.2.1.1"><a href="#section-8.3.1" class="auto internal xref">8.3.1</a>.  <a href="#name-input-validation" class="internal xref">Input Validation</a></p>
@@ -3700,7 +3700,7 @@ tagged-bytes = #6.560(bytes)
 CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
 CoRIM data structures may also be used by Evidence and Attestation Results that wish to describe overlapping structure.
 CoRIM-based data structures define an external representation of Conceptual Messages that are mapped to an internal representation.
-Appraisal processing describes both mapping transformations and Verifier reconciliation <a href="#sec-verifier-rec" class="auto internal xref">Section 2</a>.
+Appraisal processing describes both mapping transformations and Verifier reconciliation (<a href="#sec-verifier-rec" class="auto internal xref">Section 2</a>).
 Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.<a href="#section-8-1" class="pilcrow">¶</a></p>
 <p id="section-8-2">If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
 The CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.<a href="#section-8-2" class="pilcrow">¶</a></p>
@@ -4043,6 +4043,7 @@ ev = [
   condition: [ + ECT ]
   addition: [ + ECT ]
 ]
+
 evs = [
   condition: [ + ECT ]
   series: + {
@@ -4248,9 +4249,9 @@ ARS = [ + ECT ]
 <div id="sec-phase1">
 <section id="section-8.3">
         <h3 id="name-input-validation-and-transf">
-<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-input-validation-and-transf" class="section-name selfRef">Input Validation and Transformationn (Phase 1)</a>
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-input-validation-and-transf" class="section-name selfRef">Input Validation and Transformation (Phase 1)</a>
         </h3>
-<p id="section-8.3-1">During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags <a href="#sec-comid" class="auto internal xref">Section 5</a>, CoSWID tags <span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>, CoBOM <a href="#sec-cobom" class="auto internal xref">Section 6</a> and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, <span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span>)).
+<p id="section-8.3-1">During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags (<a href="#sec-comid" class="auto internal xref">Section 5</a>), CoSWID tags <span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>, CoBOM (<a href="#sec-cobom" class="auto internal xref">Section 6</a>) and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, <span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span>).
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 <p id="section-8.3-2">After context initialization, additional inputs are held back until appraisal processing has completed.<a href="#section-8.3-2" class="pilcrow">¶</a></p>
@@ -4373,8 +4374,8 @@ The selected tags are mapped to the internal representation, making them suitabl
             <h5 id="name-reference-and-endorsed-valu">
 <a href="#section-8.3.3.2" class="section-number selfRef">8.3.3.2. </a><a href="#name-reference-and-endorsed-valu" class="section-name selfRef">Reference and Endorsed Values Tranformation</a>
             </h5>
-<p id="section-8.3.3.2-1">The Reference Values ECT fields are populated as described above <a href="#sec-phase1-trans" class="auto internal xref">Section 8.3.3</a> and {#sec-ir-ref-val}.<a href="#section-8.3.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.2-2">The Endorsement Values ECT fields are populated as described above <a href="#sec-phase1-trans" class="auto internal xref">Section 8.3.3</a> and {#sec-ir-end-val}.<a href="#section-8.3.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.2-1">The Reference Values ECT fields are populated as described in <a href="#sec-phase1-trans" class="auto internal xref">Section 8.3.3</a> and <a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a>.<a href="#section-8.3.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.2-2">The Endorsement Values ECT fields are populated as described in <a href="#sec-phase1-trans" class="auto internal xref">Section 8.3.3</a> and <a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>.<a href="#section-8.3.3.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="evidence-tranformation">
@@ -4384,9 +4385,8 @@ The selected tags are mapped to the internal representation, making them suitabl
             </h5>
 <p id="section-8.3.3.3-1">Evidence is divided up into one or more <code>ev</code> relations where the <code>condition</code> ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.<a href="#section-8.3.3.3-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.3-2">Evidence information is mapped to an <code>addition</code> ECT that populates each of the ECT fields. If the Evidence doesn't have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.<a href="#section-8.3.3.3-2" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.3-3">The Evidence ECT fields are populated as described above <a href="#sec-phase1-trans" class="auto internal xref">Section 8.3.3</a> and <a href="#sec-ir-evidence" class="auto internal xref">Section 8.2.1.1</a>.<a href="#section-8.3.3.3-3" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.3-4">Evidence transformation algorithms may be well-known;
-may be defined by a CoRIM profile (<a href="#sec-corim-profile-types" class="auto internal xref">Section 4.1.4</a>); or may be supplied dynamically.
+<p id="section-8.3.3.3-3">The Evidence ECT fields are populated as described in <a href="#sec-phase1-trans" class="auto internal xref">Section 8.3.3</a> and <a href="#sec-ir-evidence" class="auto internal xref">Section 8.2.1.1</a>.<a href="#section-8.3.3.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.3-4">Evidence transformation algorithms may be well-known, may be defined by a CoRIM profile (<a href="#sec-corim-profile-types" class="auto internal xref">Section 4.1.4</a>), or may be supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.<a href="#section-8.3.3.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
