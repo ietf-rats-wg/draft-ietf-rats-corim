@@ -678,7 +678,7 @@ The following describes each member of the `triples-map`:
   conditional Endorsements based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 9) Triples describing a series of
+* `conditional-endorsement-triples` (index 10) Triples describing a series of
   Endorsement that are applicable based on the acceptance of a series of
   stateful environment records. Described in
   {{sec-comid-triple-cond-endors}}.
@@ -1456,7 +1456,7 @@ Inputs to a Verifier are mapped from their external representation to an interna
 CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
 CoRIM data structures may also be used by Evidence and Attestation Results that wish to describe overlapping structure.
 CoRIM-based data structures define an external representation of Conceptual Messages that are mapped to an internal representation.
-Appraisal processing describes both mapping transformations and Verifier reconciliation {{sec-verifier-rec}}.
+Appraisal processing describes both mapping transformations and Verifier reconciliation ({{sec-verifier-rec}}).
 Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.
 
 If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
@@ -1677,6 +1677,7 @@ ev = [
   condition: [ + ECT ]
   addition: [ + ECT ]
 ]
+
 evs = [
   condition: [ + ECT ]
   series: + {
@@ -1748,7 +1749,7 @@ ARS = [ + ECT ]
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags {{sec-comid}}, CoSWID tags {{-coswid}}, CoBOM {{sec-cobom}} and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, {{-ta-store}})).
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM ({{sec-cobom}}) and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, {{-ta-store}}).
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
@@ -1847,9 +1848,9 @@ The selected tags are mapped to the internal representation, making them suitabl
 
 #### Reference and Endorsed Values Tranformation
 
-The Reference Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-ref-val}.
+The Reference Values ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-ref-val}}.
 
-The Endorsement Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-end-val}.
+The Endorsement Values ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-end-val}}.
 
 #### Evidence Tranformation
 
@@ -1857,10 +1858,9 @@ Evidence is divided up into one or more `ev` relations where the `condition` ECT
 
 Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence does not have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
 
-The Evidence ECT fields are populated as described above {{sec-phase1-trans}} and {{sec-ir-evidence}}.
+The Evidence ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-evidence}}.
 
-Evidence transformation algorithms may be well-known;
-may be defined by a CoRIM profile ({{sec-corim-profile-types}}); or may be supplied dynamically.
+Evidence transformation algorithms may be well-known, may be defined by a CoRIM profile ({{sec-corim-profile-types}}), or may be supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
@@ -1915,7 +1915,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 #### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the AES entries to match or modify.
+Most triples use an `environment-map` field to select the ACS entries to match or modify.
 This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
 
 The order of triples processing is important.
