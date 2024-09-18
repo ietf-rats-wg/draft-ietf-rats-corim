@@ -121,6 +121,7 @@ informative:
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
+  I-D.ietf-rats-ar4si: ar4si
 
 entity:
   SELF: "RFCthis"
@@ -1994,11 +1995,36 @@ If any codepoint present in the stateful environment `measurement-values-map` do
 If all checks above have been performed successfully then the stateful environment matches.
 If none of the candidate entries match the stateful environment entry then the stateful environment does not match.
 
-## Verifier Augmentation (Phase 5) {#sec-phase5}
+## Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
-## Policy Augmentation (Phase 6) {#sec-phase6}
+Phases 5, 6, and 7 are optional depending on implementation design.
+Verifier implementations that apply consistency, integrity, or validity checks could be represented as Claims that augment the ACS or could be handled by application specific interfaces.
+Processing appraisal policies may result in augmentation or modification of the ACS, but techniques for tracking the application of policies during appraisal need not result in ACS augmentation.
+Additionally, the creation of Attestation Results is out-of-scope for this document, nevertheless internal staging may facilitate processing of Attestation Results.
 
-## Attestation Results Production and Transformationn (Phase 7) {#sec-phase7}
+Phase 5: Verifier Augmentation
+
+Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
+For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and validation.
+Validation may reveal an expired certificate.
+The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.
+
+Phase 6: Policy Augmentation
+
+Appraisal policy inputs could result in Claims that augment the ACS.
+For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
+The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
+Details about the policy applied may also augment the ACS.
+An internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
+
+Phase 7: Attestation Results Production and Transformation
+
+Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
+For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
+Generated Attestation Results Claims may be specific to a particular Relying Party.
+Hence, the Verifier may need to maintain multiple Attestation Results contexts.
+An internal representation of Attestation Results as separate contexts (see {{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
+Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Adding to the Appraisal Claims Set {#sec-add-to-acs}
 
