@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 8 March 2025                                             Linaro
+Expires: 22 March 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        4 September 2024
+                                                       18 September 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 March 2025.
+   This Internet-Draft will expire on 22 March 2025.
 
 Copyright Notice
 
@@ -175,26 +175,23 @@ Table of Contents
          8.6.1.2.  Processing Conditional Endorsement Series Triple
          8.6.1.3.  Processing a stateful environment against the
                  Appraisal Claims Set
-     8.7.  Verifier Augmentation (Phase 5)
-     8.8.  Policy Augmentation (Phase 6)
-     8.9.  Attestation Results Production and Transformationn (Phase
-            7)
-     8.10. Adding to the Appraisal Claims Set
-       8.10.1.  Appraisal Claims Set Requirements
-       8.10.2.  ACS Augmentation
-     8.11. ECT Comparison
-       8.11.1.  Environment Comparison
-       8.11.2.  Claims Comparison
-         8.11.2.1.  Comparison of measurement-values-map
-           8.11.2.1.1.  Comparison for svn entries
-           8.11.2.1.2.  Comparison for digests entries
-           8.11.2.1.3.  Comparison for raw-value entries
-           8.11.2.1.4.  Comparison for cryptokeys entries
-           8.11.2.1.5.  Comparison for Integrity Registers
-       8.11.3.  Authority Comparison
-       8.11.4.  Name Space Comparison
-       8.11.5.  Conceptual Message Type Comparison
-       8.11.6.  Profile-directed Comparison
+     8.7.  Examples for optional phases 5, 6, and 7
+     8.8.  Adding to the Appraisal Claims Set
+       8.8.1.  Appraisal Claims Set Requirements
+       8.8.2.  ACS Augmentation
+     8.9.  ECT Comparison
+       8.9.1.  Environment Comparison
+       8.9.2.  Claims Comparison
+         8.9.2.1.  Comparison of measurement-values-map
+           8.9.2.1.1.  Comparison for svn entries
+           8.9.2.1.2.  Comparison for digests entries
+           8.9.2.1.3.  Comparison for raw-value entries
+           8.9.2.1.4.  Comparison for cryptokeys entries
+           8.9.2.1.5.  Comparison for Integrity Registers
+       8.9.3.  Authority Comparison
+       8.9.4.  Name Space Comparison
+       8.9.5.  Conceptual Message Type Comparison
+       8.9.6.  Profile-directed Comparison
    9.  Implementation Status
      9.1.  Veraison
    10. Security and Privacy Considerations
@@ -1217,7 +1214,7 @@ Table of Contents
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 8.11.2.1.4.
+      Value entry.  Matching is described in Section 8.9.2.1.4.
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
@@ -2485,7 +2482,7 @@ Table of Contents
 8.4.1.  Appraisal Claims Set Initialization
 
    The ACS is initialized by copying the internal representation of
-   Evidence claims to the ACS.  See Section 8.10.
+   Evidence claims to the ACS.  See Section 8.8.
 
 8.4.1.1.  The authorized-by field in Appraisal Claims Set
 
@@ -2509,8 +2506,8 @@ Table of Contents
    authorities.
 
    When adding Endorsement Claims to the ACS that resulted from CoRIM
-   processing (see Section 8.10) the Verifier SHALL set the authorized-
-   by field in that Evidence to the trusted authority key that is at the
+   processing (see Section 8.8) the Verifier SHALL set the authorized-by
+   field in that Evidence to the trusted authority key that is at the
    head of the key chain that signed the CoRIM.
 
    When searching the ACS for an entry which matches a Reference Value
@@ -2605,7 +2602,7 @@ Table of Contents
 
    If every stateful environment matches a corresponding ACS entry, then
    the Verifier MUST add an Endorsement entry to the ACS (see
-   Section 8.10) for each endorsed-triple-record in the endorsements
+   Section 8.8) for each endorsed-triple-record in the endorsements
    field.  Each Endorsement from the endorsed-triple-record includes the
    authority which signed the Conditional Endorsement Triple.
 
@@ -2676,15 +2673,60 @@ Table of Contents
    the stateful environment entry then the stateful environment does not
    match.
 
-8.7.  Verifier Augmentation (Phase 5)
+8.7.  Examples for optional phases 5, 6, and 7
 
-8.8.  Policy Augmentation (Phase 6)
+   Phases 5, 6, and 7 are optional depending on implementation design.
+   Verifier implementations that apply consistency, integrity, or
+   validity checks could be represented as Claims that augment the ACS
+   or could be handled by application specific interfaces.  Processing
+   appraisal policies may result in augmentation or modification of the
+   ACS, but techniques for tracking the application of policies during
+   appraisal need not result in ACS augmentation.  Additionally, the
+   creation of Attestation Results is out-of-scope for this document,
+   nevertheless internal staging may facilitate processing of
+   Attestation Results.
 
-8.9.  Attestation Results Production and Transformationn (Phase 7)
+   Phase 5: Verifier Augmentation
 
-8.10.  Adding to the Appraisal Claims Set
+   Claims related to Verifier-applied consistency checks are asserted
+   under the authority of the Verifier.  For example, the attest-key-
+   triple-record may contain a cryptographic key to which the Verifier
+   applies certificate path construction and validation.  Validation may
+   reveal an expired certificate.  The Verifier implementation might
+   generate a certificate path validation exception that is handled
+   externally, or it could generate a Claim that the certificate path is
+   invalid.
 
-8.10.1.  Appraisal Claims Set Requirements
+   Phase 6: Policy Augmentation
+
+   Appraisal policy inputs could result in Claims that augment the ACS.
+   For example, an Appraisal Policy for Evidence may specify that if all
+   of a collection of subcomponents satisfy a particular quality metric,
+   the top-level component also satisfies the quality metric.  The
+   Verifier might generate an Endorsement ECT for the top-level
+   component that asserts a quality metric.  Details about the policy
+   applied may also augment the ACS.  An internal representation of
+   policy details, based on the policy ECT as described in
+   Section 8.2.1.4, contains the environments affected by the policy
+   with policy identifiers as Claims.
+
+   Phase 7: Attestation Results Production and Transformation
+
+   Attestation Results rely on input from the ACS, but may not bear any
+   similarity to its content.  For example, Attestation Results
+   processing may map the ACS state to a generalized trustworthiness
+   state such as [I-D.ietf-rats-ar4si].  Generated Attestation Results
+   Claims may be specific to a particular Relying Party.  Hence, the
+   Verifier may need to maintain multiple Attestation Results contexts.
+   An internal representation of Attestation Results as separate
+   contexts (see Section 8.2.3) ensures Relying Party–specific
+   processing does not modify the ACS, which is common to all Relying
+   Parties.  Attestation Results contexts are the inputs to Attestation
+   Results procedures that produce external representations.
+
+8.8.  Adding to the Appraisal Claims Set
+
+8.8.1.  Appraisal Claims Set Requirements
 
    At the end of the Evidence collection process Evidence has been
    converted into an internal represenetation suitable for appraisal.
@@ -2748,14 +2790,14 @@ Table of Contents
    and the measurement values are not equivalent then the verifier SHALL
    report an error and stop validation processing.
 
-8.10.2.  ACS Augmentation
+8.8.2.  ACS Augmentation
 
    The ordering of ECTs in the ACS is not significant.  Logically, new
    ECT entries are appended to the existing ACS.  But implementations
    may optimize ECT order to achieve better performance.  Additions to
    the ACS MUST be atomic.
 
-8.11.  ECT Comparison
+8.9.  ECT Comparison
 
 
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
@@ -2770,11 +2812,11 @@ Table of Contents
    algorithms described in this specification, then the Verifier MUST
    compare the binary equality of the CBOR encodings of the values.
 
-8.11.1.  Environment Comparison
+8.9.1.  Environment Comparison
 
-8.11.2.  Claims Comparison
+8.9.2.  Claims Comparison
 
-8.11.2.1.  Comparison of measurement-values-map
+8.9.2.1.  Comparison of measurement-values-map
 
    This section describes the algorithm used to compare the measurement-
    values-map codepoints of an ECT with another ECT.  The comparison
@@ -2805,7 +2847,7 @@ Table of Contents
    The following subsections define the comparison algorithms for the
    measurement-values-map keys defined by this specification.
 
-8.11.2.1.1.  Comparison for svn entries
+8.9.2.1.1.  Comparison for svn entries
 
    The value stored under measurement-values-map key 1 is an SVN, which
    must have type UINT.
@@ -2821,7 +2863,7 @@ Table of Contents
    value of the SVN in ACS less than the value in the Reference Value
    then the Reference Value does not match.
 
-8.11.2.1.2.  Comparison for digests entries
+8.9.2.1.2.  Comparison for digests entries
 
    The value stored under measurement-values-map key 2, or a value
    tagged with #6.TBD is a digest entry.  It contains one or more
@@ -2853,7 +2895,7 @@ Table of Contents
    between the Reference Value and the ACS entry then the Reference
    Value does not match.
 
-8.11.2.1.3.  Comparison for raw-value entries
+8.9.2.1.3.  Comparison for raw-value entries
 
       [Andy] _I think this comparison method only works if the entry is
       at key 4 (because there needs to be a mask at key 5).  Should we
@@ -2864,7 +2906,7 @@ Table of Contents
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/71
 
-8.11.2.1.4.  Comparison for cryptokeys entries
+8.9.2.1.4.  Comparison for cryptokeys entries
 
    The value stored under measurement-values-map key 12 is an array of
    $crypto-key-type-choice entries. $crypto-key-type-choice entries are
@@ -2882,37 +2924,37 @@ Table of Contents
    corresponding entry in the ACS array, then the cryptokeys Reference
    Value matches.  Otherwise, cryptokeys does not match.
 
-8.11.2.1.5.  Comparison for Integrity Registers
+8.9.2.1.5.  Comparison for Integrity Registers
 
    For each Integrity Register entry in the Reference Value, the
    Verifier will use the associated identifier (i.e., integrity-
    register-id-type-choice) to look up the matching Integrity Register
    entry in Evidence.  If no entry is found, the Reference Value does
    not match.  Instead, if an entry is found, the digest comparison
-   proceeds as defined in Section 8.11.2.1.2 after equivalence has been
+   proceeds as defined in Section 8.9.2.1.2 after equivalence has been
    found according to Section 5.1.4.1.6.  Note that it is not required
    for all the entries in Evidence to be used during matching: the
    Reference Value could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a Reference Value could describe a subset of PCRs.
 
-8.11.3.  Authority Comparison
+8.9.3.  Authority Comparison
 
    The a field comparison tests for trust path termination.  If the
    authority of the first ECT is a trust anchor for the authority of the
    second ECT, the second ECT is valid.  If the authority values are
    identical, then the second ECT is valid.
 
-8.11.4.  Name Space Comparison
+8.9.4.  Name Space Comparison
 
    The ns field comparison tests equality where the text values are
    identical.
 
-8.11.5.  Conceptual Message Type Comparison
+8.9.5.  Conceptual Message Type Comparison
 
    The cm field comparison tests equality of one or more bits.
 
-8.11.6.  Profile-directed Comparison
+8.9.6.  Profile-directed Comparison
 
    A profile may specify handling for new CBOR tagged Reference Values.
    The profile must specify how to compare the CBOR tagged Reference
@@ -3404,6 +3446,14 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
               endorsements-05>.
 
+   [I-D.ietf-rats-ar4si]
+              Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
+              Scarlata, "Attestation Results for Secure Interactions",
+              Work in Progress, Internet-Draft, draft-ietf-rats-ar4si-
+              07, 2 September 2024,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
+              ar4si-07>.
+
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
               "Concise TA Stores (CoTS)", Work in Progress, Internet-
@@ -3414,9 +3464,9 @@ Table of Contents
    [I-D.ietf-rats-eat]
               Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-30, 2 August
-              2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              rats-eat-30>.
+              Progress, Internet-Draft, draft-ietf-rats-eat-31, 6
+              September 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-31>.
 
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
