@@ -1210,7 +1210,7 @@ measurements for the Target Environment.
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
+that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
 that have matching Evidence.
 
 The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
@@ -1221,7 +1221,7 @@ matched.
 ~~~
 
 The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
-Each `conditional-series-record` record is evaluated in the order it appears in the series array.
+Each `conditional-series-record` is evaluated in the order it appears in the series array.
 The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
 The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
 If none of the series conditions match an ACS Entry, the triple is not matched,
