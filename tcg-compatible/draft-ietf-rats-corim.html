@@ -2733,16 +2733,15 @@ measurement-map = {
                 <h6 id="name-measurement-keys">
 <a href="#section-5.1.4.1.4.1" class="section-number selfRef">5.1.4.1.4.1. </a><a href="#name-measurement-keys" class="section-name selfRef">Measurement Keys</a>
                 </h6>
-<p id="section-5.1.4.1.4.1-1">Measurement keys are locally scoped identifiers.
-<code>mkey</code> may be necessary to disambiguate multiple measurements of the same type.
-Alternatively, <code>Mkey</code> may also be used to  distinguish multiple measured elements in an environment.<a href="#section-5.1.4.1.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4.1-2"><code>mkey</code> is an extensible identifier. The initial types defined are OID, UUID, and uint.<a href="#section-5.1.4.1.4.1-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.4.1-3">
+<p id="section-5.1.4.1.4.1-1">Measurement keys are locally scoped extensible identifiers.
+The initial types defined are OID, UUID, and uint.
+<code>mkey</code> may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.<a href="#section-5.1.4.1.4.1-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.4.1-2">
 <pre>
 $measured-element-type-choice /= tagged-oid-type
 $measured-element-type-choice /= tagged-uuid-type
 $measured-element-type-choice /= uint
-</pre><a href="#section-5.1.4.1.4.1-3" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.1.4.1-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -3883,7 +3882,7 @@ Additionally, ECTs define an internal representation of the ACS and ARS. See <a 
             <dd class="break"></dd>
 <dt id="section-8.2.1-4.3">Properties (label 2):</dt>
             <dd style="margin-left: 1.5em" id="section-8.2.1-4.4">
-              <p id="section-8.2.1-4.4.1">Properties of the Target Environment.<a href="#section-8.2.1-4.4.1" class="pilcrow">¶</a></p>
+              <p id="section-8.2.1-4.4.1">Trustworthiness properties associated with the Target Environment and its elements.<a href="#section-8.2.1-4.4.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-8.2.1-4.5">Authority (label 3):</dt>
@@ -3907,22 +3906,22 @@ Additionally, ECTs define an internal representation of the ACS and ARS. See <a 
 </dd>
           <dd class="break"></dd>
 </dl>
-<div class="lang-cddl sourcecode" id="section-8.2.1-5">
+<p id="section-8.2.1-5">The following CDDL describes the ECT structure in more detail.<a href="#section-8.2.1-5" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-8.2.1-6">
 <pre>
 ECT = {
-  ? e: environment-map
-  ? c: [ + local-claim ]
-  ? a: [ + $crypto-key-type-choice ]
-  ? ns: text
-  ? cm: cm-type
-  ? p: $profile-type-choice
+  ? environment: environment-map
+  ? properties: [ + properties-map ]
+  ? authority: [ + $crypto-key-type-choice ]
+  ? namespace: text
+  ? cmtype: cm-type
+  ? profile: $profile-type-choice
 }
-local-claim = {
+properties-map = {
   ? eid: element-id
-  c: claims-map
+  claims: measurement-values-map
 }
-element-id =  bstr / tstr / uint / tagged-oid-type / tagged-uuid-type
-claims-map = measurement-values-map
+element-id =  $measured-element-type-choice
 cm-type =  &amp;(
   reference-values: 0
   endorsements: 1
@@ -3931,10 +3930,10 @@ cm-type =  &amp;(
   verifier: 4
   policy: 5
 )
-</pre><a href="#section-8.2.1-5" class="pilcrow">¶</a>
+</pre><a href="#section-8.2.1-6" class="pilcrow">¶</a>
 </div>
-<p id="section-8.2.1-6">Although all of the ECT attributes are optional, the Conceptual Message type implies certain attributes are mandatory.
-See <a href="#sec-ir-evidence" class="auto internal xref">Section 8.2.1.1</a>, <a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a>, and <a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>.<a href="#section-8.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.1-7">Although all of the ECT attributes are optional, the Conceptual Message type implies certain attributes are mandatory.
+See <a href="#sec-ir-evidence" class="auto internal xref">Section 8.2.1.1</a>, <a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a>, and <a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>.<a href="#section-8.2.1-7" class="pilcrow">¶</a></p>
 <div id="sec-ir-evidence">
 <section id="section-8.2.1.1">
             <h5 id="name-internal-representation-of-e">
