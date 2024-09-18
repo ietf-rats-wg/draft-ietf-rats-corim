@@ -1856,7 +1856,7 @@ The selected tags are mapped to the internal representation, making them suitabl
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
-#### Reference and Endorsed Values Tranformation
+#### Reference and Endorsed Values Tranformation {#sec-ref-end-trans}
 
 The Reference Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-ref-val}.
 
@@ -1938,15 +1938,13 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 ## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
-Reference Value Providers (RVP) publish Reference Values triples that are matched against ACS entries.
-Reference Values may describe multiple acceptable states for Attesters; hence "matching" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.
+Reference Value Providers (RVP) publish Reference Values that are transformed {{sec-ref-end-trans}} into an internal representation {{sec-ir-ref-val}}. Reference Values may describe multiple possible Attester states.
 
-If the appropriate subset matches, the authority of the RVP is added to the appropriate ACS entries.
+Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values. If satisfied, the RVP authority is added to the matching ACS entry.
 
-The Verifier compares each `rv` reference value condition ECT against ECT entries in the ACS as described in {{sec-match-one-se}}.
-
-For each entry in the `rv` list, if any part of an `rv` condition does not match an ACS entry, then the entire `rv` addition is not added to the ACS.
-If all fields of the `rv` condition match an ACS entry, the Verifier MUST add the `rv` addition to the ACS where the RVP authority is included in the `rv` addition ECT.
+Reference Values are matched with ACS entries by iterating through the `rv` list.
+For each `rv` entry, the `condition` ECT is compared with an ACS ECT.
+If the ECTs are identical except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
