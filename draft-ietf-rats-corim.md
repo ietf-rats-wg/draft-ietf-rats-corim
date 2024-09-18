@@ -1133,7 +1133,7 @@ Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifi
 
 If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
 
-Verification of key use restrictions MAY produce Claims that are added to the ACS.
+Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
@@ -1154,7 +1154,7 @@ Additional details about how a key was provisioned or is protected may be assert
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
 
-Verification of key use restrictions MAY produce Claims that are added to the ACS.
+Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
