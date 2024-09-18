@@ -1107,11 +1107,7 @@ Environment.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple declares additional measurements that are valid when
-a Target Environment has been verified against reference measurements. For
-Endorsed Value Claims, the subject is either a Target or Attesting Environment,
-the object contains measurements, and the predicate defines semantics for how
-the object relates to the subject.
+An Endorsed Values triple declares additional measurements to add to the ACS.
 
 ~~~ cddl
 {::include cddl/endorsed-triple-record.cddl}
