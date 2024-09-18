@@ -678,7 +678,7 @@ The following describes each member of the `triples-map`:
   conditional Endorsements based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 9) Triples describing a series of
+* `conditional-endorsement-triples` (index 10) Triples describing a series of
   Endorsement that are applicable based on the acceptance of a series of
   stateful environment records. Described in
   {{sec-comid-triple-cond-endors}}.
@@ -1915,7 +1915,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 #### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the AES entries to match or modify.
+Most triples use an `environment-map` field to select the ACS entries to match or modify.
 This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
 
 The order of triples processing is important.
