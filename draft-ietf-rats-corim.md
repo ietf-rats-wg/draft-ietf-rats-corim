@@ -816,7 +816,7 @@ Measurement keys are locally scoped identifiers.
 `mkey` may be necessary to disambiguate multiple measurements of the same type.
 Alternatively, `Mkey` may also be used to  distinguish multiple measured elements in an environment.
 
-`Mkey` is an extensible identifier. The initial types defined are OID, UUID, and uint.
+`mkey` is an extensible identifier. The initial types defined are OID, UUID, and uint.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
