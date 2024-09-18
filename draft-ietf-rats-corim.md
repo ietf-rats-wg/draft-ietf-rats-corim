@@ -813,9 +813,10 @@ The following describes each member of the `measurement-map`:
 ###### Measurement Keys {#sec-comid-mkey}
 
 Measurement keys are locally scoped identifiers.
-`Mkey` values may be necessary to disambiguate multiple measurements of the same type.
+`Mkey` may be necessary to disambiguate multiple measurements of the same type.
+Alternatively, `Mkey` may also be used to  distinguish multiple measured elements in an environment.
 
-`Mkey` identifiers can be either OID, UUID or uint.
+`Mkey` identifiers can be either OID, UUID or uint. `Mkey` is an extensible type.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
