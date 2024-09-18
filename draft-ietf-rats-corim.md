@@ -813,7 +813,7 @@ The following describes each member of the `measurement-map`:
 ###### Measurement Keys {#sec-comid-mkey}
 
 Measurement keys are locally scoped identifiers.
-`Mkey` may be necessary to disambiguate multiple measurements of the same type.
+`mkey` may be necessary to disambiguate multiple measurements of the same type.
 Alternatively, `Mkey` may also be used to  distinguish multiple measured elements in an environment.
 
 `Mkey` is an extensible identifier. The initial types defined are OID, UUID, and uint.
