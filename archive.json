@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-12T01:39:56.862711+00:00",
+  "timestamp": "2024-09-19T01:42:03.635565+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -6373,12 +6373,10 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [
-        "documentation"
-      ],
+      "labels": [],
       "body": "Some of the changes to CDDL in this repo are incompatible with the TCG Endorsement Architecture. \r\n\r\nThis thread maintains a list of incompatibilities and possible ways to address them.\r\n\r\n1. reference-triple-record - The measurement-map in `reference-triple-record` no longer has multiples. The incompatibility can be addressed by:\r\n```\r\nreference-triple-record = [\r\n  environment-map\r\n  (measurement-map / [ + measurement-map])\r\n]\r\n```\r\n2. endorsed-triple-record - The measurement-map in `endorsed-triple-record` no longer has multiples. The incompatibility can be addressed by:\r\n```\r\nendorsed-triple-record = [\r\n  environment-map\r\n  (measurement-map / [ + measurement-map])\r\n]\r\n```\r\n3. *next-tbd*",
       "createdAt": "2024-09-06T20:39:50Z",
-      "updatedAt": "2024-09-06T20:52:04Z",
+      "updatedAt": "2024-09-17T21:38:56Z",
       "closedAt": null,
       "comments": [
         {
@@ -6387,8 +6385,178 @@
           "body": "Note: I created the `tcg-compatible` branch to validate the cddl. See examples `comid-1a.diag` and `comid-2a.diag`. \r\n\r\nThis is for documation purposes only. I don't anticipate this should be followed by a PR necessarily.",
           "createdAt": "2024-09-06T20:50:52Z",
           "updatedAt": "2024-09-06T20:52:04Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "see PR #268 ",
+          "createdAt": "2024-09-17T21:38:55Z",
+          "updatedAt": "2024-09-17T21:38:55Z"
         }
       ]
+    },
+    {
+      "number": 271,
+      "id": "I_kwDOH6-tI86WmXPJ",
+      "title": "Define or remove `offline`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/271",
+      "state": "CLOSED",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The specification talks about `offline` verification of keys. For example\r\n>The Verifier SHOULD perform offline verification of keys contained in Device Identity triples.\r\n\r\nI'm not sure what `offline` means here. Either `offline` should be defined, or it can probably be removed since\r\n>The Verifier SHOULD perform verification of keys contained in Device Identity triples.\r\n\r\nsounds good to me.\r\n",
+      "createdAt": "2024-09-14T22:28:29Z",
+      "updatedAt": "2024-09-18T17:18:12Z",
+      "closedAt": "2024-09-18T17:18:12Z",
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "see PR #274 \r\n\r\nOffline refers to checks that can't be performed by an attesting environment in the context of collecting measurements. For example, an AE could do proof-of-possession on the TE that wields a key. Removing the term makes sense there isn't industry consensus that offline refers to key verification sans PoP.",
+          "createdAt": "2024-09-17T21:37:42Z",
+          "updatedAt": "2024-09-17T21:37:42Z"
+        }
+      ]
+    },
+    {
+      "number": 278,
+      "id": "I_kwDOH6-tI86XCQzG",
+      "title": "Need to explain claims_map better on ECT map description",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/278",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "              Line 1583 which describes the claims needs to be:\r\n1. Reworded with a more appropriate name, like a set of claims \r\n2. Needs to explain better, regarding the claims pertaining to each of the measured elements belonging to a target environment\r\n\r\n_Originally posted by @yogeshbdeshpande in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268#discussion_r1765100087_\r\n            ",
+      "createdAt": "2024-09-18T14:46:35Z",
+      "updatedAt": "2024-09-18T14:46:35Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 279,
+      "id": "I_kwDOH6-tI86XCkn_",
+      "title": "Change sec-match-one-se to be matching one ECT to another.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/279",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We have matching semantics sometimes in terms of external representation, and sometimes internal representation.\r\n\r\nThe translation from external triples to internal relations like `rv` is incomplete in the definition of the semantics. The crux of the representation is matching an ECT condition against an ECT in the ACS.",
+      "createdAt": "2024-09-18T15:17:31Z",
+      "updatedAt": "2024-09-18T16:42:18Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I recommend that we name the condition ECT the \"pattern\" and the ACS entry against which to match, the \"entry\".",
+          "createdAt": "2024-09-18T15:34:38Z",
+          "updatedAt": "2024-09-18T15:34:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is there a problem naming the condition ECT \"condition\" as it currently exists?",
+          "createdAt": "2024-09-18T16:19:21Z",
+          "updatedAt": "2024-09-18T16:19:21Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I suppose not. I have a bigger follow-up to this suggestion though to use ordering sequents as an initial definition to start writing the prose.",
+          "createdAt": "2024-09-18T16:20:24Z",
+          "updatedAt": "2024-09-18T16:20:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> ordering sequents\r\n\r\nAre you suggesting that a reader of this spec needs to have a working knowledge of formal logics in order to understand this spec?",
+          "createdAt": "2024-09-18T16:27:46Z",
+          "updatedAt": "2024-09-18T16:27:46Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "No, I'm saying I'm summarizing my semantics in relationships in a comment here to help folks understand my intention behind the prose to come, since it's very technical.",
+          "createdAt": "2024-09-18T16:28:58Z",
+          "updatedAt": "2024-09-18T16:28:58Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To get roughly on the same page before writing the prose, here's my interpretation as a mathematical relation.\r\n\r\nI'll treat `? x : cddl` to mean `x: optional<encodeType(cddl)>`.\r\n\r\n```\r\np  \u22a2 ce <= ee : optional<environment-map>\r\np  \u22a2 cc <= ec : optional<[ + local-claim]>\r\np  \u22a2 ca <= ea: optional<[ + $crypto-key-type-choice ]>\r\n \u22a2 ccm <= ecm : optional<cm-type>\r\n-------------------------------------------------- [ ECT matching ]\r\n \u22a2 { ce cc ca ns ccm p } <= { ee ec ea ns ecm p }\r\n```\r\n\r\nNote `ns` and 'p' on both sides on the bottom to require exact equality for namespace and profile whether given or not.\r\n\r\nFor optional type ordering, we treat `none` as logical bottom:\r\n\r\n```\r\n-------------- [ optional<T> refl ]\r\n \u22a2 none <= none : optional<T>\r\n\r\n--------------- [ optional<T> bottom ]\r\n \u22a2 none <= some v : T\r\n\r\nP \u22a2 v0 <= v1 : T\r\n--------------------- [ optional<T> <= ]\r\nP \u22a2 some v0 <= some v1 : optional<T>\r\n```\r\nRelations can be refined by the profile or not. The P context can be empty or a profile identifier.\r\n\r\n\r\ncm-type, bstr, uint, and tstr have no extra structure to match.\r\n```\r\n----- [cm-type refl ]\r\nP \u22a2 x <= x : cm-type\r\n\r\n----- [tstr refl ]\r\nP \u22a2 x <= x : tstr\r\n\r\n----- [bstr refl ]\r\nP \u22a2 x <= x : bstr\r\n\r\n----- [uint refl ]\r\nP \u22a2 x <= x : uint\r\n```\r\nNote uint is treated as an identifier and not with numerical inequality.\r\n\r\nA list of local-claims all must match for the list to match.\r\n```\r\nAND_{ clc in clcs }{Exists ecl in elcs such that P \u22a2 clc <= elc : local-claim }\r\n--------------------------------- [ [ + local-claim ] <= ]\r\nP \u22a2 clcs <= elcs  : [ + local-claim ]\r\n```\r\n\r\nA local-claim can only match its _exact_ mkey and a subset of authorities.\r\n```\r\ncmv <= emv : measurement-values-map\r\nca <= ea : optional<[ + $crypto-key-type-choice]>\r\n--------------------------------------------------- [ local-claim/measurement-map <= ]\r\n[ mkey: mk, mval: cmv, authorities: ca ] <= [ mkey: mk, mval: emv, authorities: ea ] : local-claim\r\n```\r\n\r\nThe measurement-values-map subset relation is defined on a per-codepoint basis, and with the optional<T> semantics.\r\nI will not rehash the ordering of the right-hand-side codepoints here.\r\n```\r\nAND_{ cmvk => cmvv in cmvs } {\r\n  some emvv := emvs[cmvk]\r\n  P \u22a2 cmvv <= emvv : measurement-values-order(P, cmvk)\r\n}\r\n--------------------------------------------------- [ measurement-values-map <= ]\r\nP \u22a2 cmvs <= emvs : measurement-values-map\r\n```\r\nThe `measurement-values-order(none, uint)` definition is as defined for each of the measurement-values-map codepoints in the spec.\r\n\r\n```\r\nP \u22a2 cclass <= eclass : optional<class-map>\r\nP \u22a2 cgroup <= egroup : optional<$group-id-type-choice>\r\nP \u22a2 cinstance <= einstance : optional<$instance-id-type-choice>\r\n---------------------------------------------------------- [ environment-map <= ]\r\nP \u22a2 { cclass cgroup cinstance } <= { eclass egroup einstance } : environment-map\r\n```\r\n\r\n```\r\nP \u22a2 cclassid <= eclassid : optional<$class-id-type-choice>\r\n\u22a2 cvendor <= evendor : optional<tstr>\r\n\u22a2 cmodel <= emodel : optional<tstr>\r\n\u22a2 clayer <= elayer : optional<uint>\r\n\u22a2 cindex <= eindex : optional<uint>\r\n---------- [ class-map <= ]\r\nP \u22a2 { cclassid cvendor cmodel  clayer cindex } <= { eclassid evendor emodel elayer eindex } : class-map\r\n```\r\n\r\nAuthorities are matched with a subset relationship:\r\n\r\n```\r\nAND_{ ck in ca }{Exists ek in ea such that P \u22a2 ck <= ek }\r\n------------------------ [ authority <= ]\r\nP \u22a2 ca <= ea : [ + $crypto-key-type-choice ] \r\n```\r\n\r\nA profile MAY define an ordering relation on $crypto-key-type-choice extensions, $class-id-type-choice, $group-id-type-choice, and $instance-id-type-choice may be defined by a profile. For the base CDDL choices, only CBOR-encoding-equality is a match.\r\n\r\n```\r\ncrypto-key-ordering(p, ck, ek)\r\n------------------------------- [ profile-defined crypto key type choice ordering ]\r\np \u22a2 ck <= ek : $crypto-key-type-choice (not in base CDDL)\r\n```\r\n\r\nAll of this setup gives much more structure to how a profile may impose extra matching semantics.",
+          "createdAt": "2024-09-18T16:39:27Z",
+          "updatedAt": "2024-09-18T16:42:18Z"
+        }
+      ]
+    },
+    {
+      "number": 280,
+      "id": "I_kwDOH6-tI86XFImc",
+      "title": "DICE and SPDM references no longer needed",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/280",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The sections on DICE and SPDM were moved into another draft. The references to DICE and SPDM are not cited within the document, hence should be removed.",
+      "createdAt": "2024-09-18T20:51:33Z",
+      "updatedAt": "2024-09-18T20:51:33Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 281,
+      "id": "I_kwDOH6-tI86XFJoZ",
+      "title": "Remove 'namespace' from ECT",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/281",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The 'namespace' member of ECT is not needed going forward, hence it can be removed.",
+      "createdAt": "2024-09-18T20:53:40Z",
+      "updatedAt": "2024-09-18T20:53:40Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 282,
+      "id": "I_kwDOH6-tI86XFKl6",
+      "title": "Internal representation CDDL needs CI integration",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/282",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Since the internal representation should be valid CDDL, it needs CI integration and code snippets should be imported into the document.",
+      "createdAt": "2024-09-18T20:55:07Z",
+      "updatedAt": "2024-09-18T20:55:07Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 283,
+      "id": "I_kwDOH6-tI86XF8s4",
+      "title": "Section describing how to compare two ECTs needed",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/283",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The corroboration section, which is part of Phase 3, anticipates the need for a section that describes how to compare two ECTs \"identically\". Once this section is written, a reference to it from the section that describes Phase 3 can be added.",
+      "createdAt": "2024-09-18T23:00:41Z",
+      "updatedAt": "2024-09-18T23:00:41Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -33316,24 +33484,26 @@
       "id": "PR_kwDOH6-tI853u-mo",
       "title": "Disambiguate endorsed-triples semantics.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/254",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Addresses Issue #251. It's unclear if this implicit condition is also expected of the conditional-endorsement-series-triples and conditional-endorsement-triples. The phasing in the appraisal section seems to suggest that it should be. That would seem to mean that if you want \"unconditional\" endorsements, you need to have a reference-triple-record that has an empty measurement-values-map, but that is ill-formed.\r\n\r\nProbably the location is wrong and this should be a subsection of `Endorsed Values Augmentation (Phase 4)`, but I want to at least clarify if this is the intended meaning. The \"Interacting with an ACS\" section suggests that an endorsement always has a list of conditions, but that isn't material in the representation of an endorsed-triple-record.",
       "createdAt": "2024-08-07T16:23:47Z",
-      "updatedAt": "2024-09-10T23:19:37Z",
+      "updatedAt": "2024-09-18T14:27:57Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
+      "baseRefOid": "209a55e71b12cdf1e7567756d8086fa282ecea7c",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "evimplicit",
-      "headRefOid": "9cb2eb009518742c789c2b40e06e808df61ce5e5",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "059c5edb5f9f82ce57532a34192df3b2a6066eb9",
+      "closedAt": "2024-09-18T14:27:57Z",
+      "mergedAt": "2024-09-18T14:27:57Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "67aa74ef02d9c7c067fbf815fee1f76f70bb2630"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -33643,9 +33813,9 @@
           "comments": [
             {
               "originalPosition": 11,
-              "body": "```suggestion\r\nEndorsements are added to the ACS if the environment matches an environment already found in the ACS.\r\n```\r\n",
+              "body": "```suggestion\r\n\r\n```\r\n",
               "createdAt": "2024-09-10T20:59:25Z",
-              "updatedAt": "2024-09-10T22:58:41Z"
+              "updatedAt": "2024-09-17T22:52:37Z"
             },
             {
               "originalPosition": 10,
@@ -33689,11 +33859,50 @@
           "comments": [
             {
               "originalPosition": 11,
-              "body": "> The 1111 is informative to refer the reader to the conditional endorsements. Your added text seems to refer to the semantics described above in the text \"These claims are added to the ACS when its environment matches.\"\r\n\r\nI wasn't paying attention to the link - just preserving what was there before. If the document structure groups the sections related to endorsement there is less of a need to cross-reference them. A one sentence explanation of conditional endorsement might follow in a straightforward way such as: \"Conditional Endorsements are added to the ACS if additional Claims match, in addition to environment Claims.\"",
+              "body": "> The 1111 is informative to refer the reader to the conditional endorsements. Your added text seems to refer to the semantics described above in the text \"These claims are added to the ACS when its environment matches.\"\r\n\r\nI wasn't paying attention to the link - just preserving what was there before. If the document structure groups the sections related to endorsement there is less of a need to cross-reference them. A one sentence explanation of conditional endorsement might follow in a straightforward way such as: \"Conditional Endorsements are added to the ACS if additional Claims match, in addition to environment Claims.\"\r\n\r\nLine 1111 can be removed if the headings are restructured to show a progression of endorsement behavior. No need to include forward references.",
               "createdAt": "2024-09-10T23:03:37Z",
-              "updatedAt": "2024-09-10T23:03:37Z"
+              "updatedAt": "2024-09-17T22:54:33Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J27iG",
+          "commit": {
+            "abbreviatedOid": "059c5ed"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "This removes misleading text, so is an improvement on the previous text.\r\n\r\nI think we need to open a new issue which addresses the question of why endorsed value triple might be used.",
+          "createdAt": "2024-09-18T14:26:40Z",
+          "updatedAt": "2024-09-18T14:26:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J28Q6",
+          "commit": {
+            "abbreviatedOid": "059c5ed"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-09-18T14:27:31Z",
+          "updatedAt": "2024-09-18T14:27:31Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J28dI",
+          "commit": {
+            "abbreviatedOid": "059c5ed"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:27:46Z",
+          "updatedAt": "2024-09-18T14:27:46Z",
+          "comments": []
         }
       ]
     },
@@ -34687,7 +34896,7 @@
       "labels": [],
       "body": "When you have requirements that fields 1-100 must be certain values, and field 0 may be one of many values when in the presence of those other field values, the representation of the matching condition repeats the same 100 certain values for each alternative for field 0. It's far simpler to allow for measurement values to have independently flexible measurement conditions when in that case.\r\n\r\nThis is still a weak pattern expression language, but the \"any-of\" use case is a particularly commonly needed one.\r\n\r\nThis PR seeks to solve one aspect of the multiplicity problem discussed in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256",
       "createdAt": "2024-08-21T05:13:03Z",
-      "updatedAt": "2024-09-04T18:27:26Z",
+      "updatedAt": "2024-09-17T22:35:36Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fd67b62321ec9b4259e436f06ea66db596b5f980",
@@ -34705,6 +34914,13 @@
           "body": "Do we want to merge this or wait for @nedmsmith ?",
           "createdAt": "2024-08-29T21:08:43Z",
           "updatedAt": "2024-08-29T21:08:43Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I recommend waiting until we have a WGLC candidate then deciding if it makes sense to wait on WGLC or proceed.",
+          "createdAt": "2024-09-17T22:35:35Z",
+          "updatedAt": "2024-09-17T22:35:35Z"
         }
       ],
       "reviews": [
@@ -35300,21 +35516,21 @@
       "id": "PR_kwDOH6-tI856a_Em",
       "title": "Proposal to add multiplicity of Measurement Maps",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/265",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Modern day attesters have Multiple Measured Elements, within a Target Environment. This PR intends to allow multiple measured elements to be expressed using a single Reference Value Triple.",
       "createdAt": "2024-09-04T16:33:59Z",
-      "updatedAt": "2024-09-10T22:57:18Z",
+      "updatedAt": "2024-09-18T09:23:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multiplicity",
       "headRefOid": "0ff26bef340181bf4ea3c2b6fa5ad759b7511021",
-      "closedAt": null,
+      "closedAt": "2024-09-18T09:23:27Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -35360,6 +35576,20 @@
           "body": "> Agreed it doesn't need the tag, but I do believe that conditional endorsements need to be updated to describe multiple mkeys at a time.\r\n\r\nConditional endorsements were an IETF invention. Hence, no backwards compatibility concerns. The conditional endorsement triple was already updated to add multiplicity. The conditional series triple has the needed multiplicity properties already (at least I haven't had any requests to change it from the people I work with).",
           "createdAt": "2024-09-10T22:57:17Z",
           "updatedAt": "2024-09-10T22:57:17Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Contrast with #268 \r\nMaybe we should close this PR?",
+          "createdAt": "2024-09-17T22:33:26Z",
+          "updatedAt": "2024-09-17T22:33:26Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The work proposed under this PR will be undertaken by PR: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268\r\n\r\nHence closing this PR",
+          "createdAt": "2024-09-18T09:23:27Z",
+          "updatedAt": "2024-09-18T09:23:27Z"
         }
       ],
       "reviews": [
@@ -35412,19 +35642,1228 @@
       "labels": [],
       "body": "This PR reverts `endorsement-triple-record` and `reference-triple-record` to original CDDL by adding array brackets around `measurement-map` to allow multiplicity of measurements for a given environment.\r\n\r\nThe Measurements and Measurement Keys sections are updated to better describe measurement multiplicity and disambiguation of measurement values.",
       "createdAt": "2024-09-11T21:16:30Z",
-      "updatedAt": "2024-09-11T21:16:31Z",
+      "updatedAt": "2024-09-18T22:57:09Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tcg-compatible",
-      "headRefOid": "36da9cf95b0e6ef1e6d9801660c8498c847dcab0",
+      "headRefOid": "b45e340c2af46e072577f0e640f10760051c5c04",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The matching semantics wording needs to be updated to say that all measurement-maps have to match the ACS for the triple to apply.\r\n\r\nEdit: The text in the corroboration section is not clear about this. It indeed seems like it could be an OR semantics given\r\n\r\n> Reference Values may describe multiple acceptable states for Attesters; hence \"matching\" determines that Evidence (contained in the ACS) satisfies an appropriate subset of the available Reference Values.\r\n\r\nThe text \"where the reference-triple-record takes the place of a stateful-environment-record.\" is no longer the case since you haven't changed stateful-environment-record to have measurement-map multiplicity.",
+          "createdAt": "2024-09-12T18:47:32Z",
+          "updatedAt": "2024-09-12T18:56:51Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I modified Section 8.1 which defines the ECT structure, to reflect that claims-map always has multiplicity and to tweak naming to better reflect the idea that measurements can have \"element IDs\".\r\n\r\nI also modified the corroboration section (sorry Thomas) to better reflect the matching logic in terms of the internal representation. The before text was blending internal and external representation naming.\r\n\r\n",
+          "createdAt": "2024-09-13T21:54:47Z",
+          "updatedAt": "2024-09-13T21:54:47Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "See issue #266 ",
+          "createdAt": "2024-09-17T21:39:18Z",
+          "updatedAt": "2024-09-17T21:39:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We still need to work on other triples involving `measurement-values-map`",
+          "createdAt": "2024-09-18T09:51:30Z",
+          "updatedAt": "2024-09-18T09:51:30Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86JEH4K",
+          "commit": {
+            "abbreviatedOid": "36da9cf"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-12T08:20:22Z",
+          "updatedAt": "2024-09-12T08:21:43Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "WFM, but another way to put this (which I find more intuitive) is to say that an environment can be composed of multiple individually measured \"elements.\"\r\n\r\nI think \"element\" is the piece of vocabulary we were missing before Dionna proposed it in #257, allowing speaking about multiplicity more naturally.\r\n\r\nQuoting from #257:\r\n```\r\nAn environment has one or more measured elements.\r\nMeasured elements are distinguished from each other by the `measurement-map` key.\r\nA measured element can have a dedicated measurement, such as a security version number.\r\nMultiple elements could be combined into a single measurement, such as a running hash of multiple files.\r\nA measured element can also have several measurement values, such as a name, version, and digest.\r\nMeasurements can have class, instance or group scope.\r\nA `measurement-map`'s scope is determined by the `environment-map` it is paired with.\r\n```\r\n\r\n",
+              "createdAt": "2024-09-12T08:20:22Z",
+              "updatedAt": "2024-09-12T08:21:43Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "It could be that, but it could also be they serve as \"element\" identifiers.",
+              "createdAt": "2024-09-12T08:21:37Z",
+              "updatedAt": "2024-09-12T08:21:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JV8kt",
+          "commit": {
+            "abbreviatedOid": "eb98163"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-13T22:11:35Z",
+          "updatedAt": "2024-09-13T22:11:48Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Note: element-id could go back to being bstr / tstr if the mapping from external to internal describes a mapping from uint, tagged-oid-type and tagged-uuid-type to bstr. ",
+              "createdAt": "2024-09-13T22:11:35Z",
+              "updatedAt": "2024-09-13T22:11:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JZ3zj",
+          "commit": {
+            "abbreviatedOid": "eb98163"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-15T01:06:29Z",
+          "updatedAt": "2024-09-15T01:06:30Z",
+          "comments": [
+            {
+              "originalPosition": 82,
+              "body": "```suggestion\r\nFor each entry in the `rv` list, if any part of an `rv` condition does not match an ACS entry, then the entire `rv` addition is not added to the ACS.\r\n```",
+              "createdAt": "2024-09-15T01:06:30Z",
+              "updatedAt": "2024-09-15T01:06:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JmasB",
+          "commit": {
+            "abbreviatedOid": "5956324"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-17T06:49:07Z",
+          "updatedAt": "2024-09-17T06:52:11Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "`mkey` is an extensible type.  This aspect should be highlighted.",
+              "createdAt": "2024-09-17T06:49:07Z",
+              "updatedAt": "2024-09-17T06:52:11Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "the typographical convention for closed type choices is `NAME-type-choice`, so this should look like:\r\n\r\n```\r\nelement-id-type-choice /= bstr\r\nelement-id-type-choice /= tstr\r\nelement-id-type-choice /= uint\r\nelement-id-type-choice /= tagged-oid-type\r\nelement-id-type-choice /= tagged-uuid-type\r\n```",
+              "createdAt": "2024-09-17T06:51:22Z",
+              "updatedAt": "2024-09-17T06:52:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Js2JX",
+          "commit": {
+            "abbreviatedOid": "5956324"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-17T16:21:06Z",
+          "updatedAt": "2024-09-17T16:21:07Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "The internal representation is trying to avoid unnecessary replication of external representation. If it's reasonable to translate the element-id-type-choice variety of representations to a simpler internal representation, then that might be preferable to replicating external representation as internal representation (which might change over time). Is a mapping function reasonable? For example, would a collision result from mapping uint to bstr that couldn't in some way be disambiguated?\r\n\r\nMaybe `local-environment` is better than `element-id-type-choice` as it is clearly different from the external representation?",
+              "createdAt": "2024-09-17T16:21:06Z",
+              "updatedAt": "2024-09-17T16:27:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J0JCG",
+          "commit": {
+            "abbreviatedOid": "5956324"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T09:34:52Z",
+          "updatedAt": "2024-09-18T09:34:52Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "Have added a line as suggested by Thomas!",
+              "createdAt": "2024-09-18T09:34:52Z",
+              "updatedAt": "2024-09-18T09:34:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J0Kcj",
+          "commit": {
+            "abbreviatedOid": "36da9cf"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T09:37:26Z",
+          "updatedAt": "2024-09-18T09:37:26Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "Agree with Thomas, in the latest commit, I have added this aspect, please have a look!",
+              "createdAt": "2024-09-18T09:37:26Z",
+              "updatedAt": "2024-09-18T09:37:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J1N6O",
+          "commit": {
+            "abbreviatedOid": "5956324"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T11:37:58Z",
+          "updatedAt": "2024-09-18T11:37:58Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Clarifying question: are you suggesting avoiding using the typographical conventions in S3 for CDDL related to internal representation?\r\nIf so, I think it'd be better to keep the conventions and use an ad hoc prefix/suffix/infix for internal, e.g.: `__`, like in good old C :-)",
+              "createdAt": "2024-09-18T11:37:58Z",
+              "updatedAt": "2024-09-18T11:37:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J2gbt",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T13:50:03Z",
+          "updatedAt": "2024-09-18T13:50:04Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Line 1583 which describes the claims needs to be:\r\n1. Reworded with a more appropriate name, like a set of claims \r\n2. Needs to explain better, regarding the claims pertaining to each of the measured elements belonging to a target environment",
+              "createdAt": "2024-09-18T13:50:03Z",
+              "updatedAt": "2024-09-18T13:50:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Js3Ua",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-17T16:23:26Z",
+          "updatedAt": "2024-09-18T14:30:27Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "```suggestion\r\n`Mkey` is an extensible identifier that initially defines OID, UUID, and uint.\r\n```",
+              "createdAt": "2024-09-17T16:23:26Z",
+              "updatedAt": "2024-09-18T14:30:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3A21",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:34:12Z",
+          "updatedAt": "2024-09-18T14:34:13Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "```suggestion\r\n`Mkey` is an extensible identifier. The initial types defined are OID, UUID, and uint.\r\n```",
+              "createdAt": "2024-09-18T14:34:12Z",
+              "updatedAt": "2024-09-18T14:34:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3Bff",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:35:10Z",
+          "updatedAt": "2024-09-18T14:35:10Z",
+          "comments": [
+            {
+              "originalPosition": 42,
+              "body": "```suggestion\r\n`mkey` may be necessary to disambiguate multiple measurements of the same type.\r\n```",
+              "createdAt": "2024-09-18T14:35:10Z",
+              "updatedAt": "2024-09-18T14:35:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3B2G",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:35:41Z",
+          "updatedAt": "2024-09-18T14:35:42Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "```suggestion\r\n`mkey` identifiers can be either OID, UUID or uint. `Mkey` is an extensible type.\r\n```",
+              "createdAt": "2024-09-18T14:35:41Z",
+              "updatedAt": "2024-09-18T14:35:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3Cpy",
+          "commit": {
+            "abbreviatedOid": "6c6567d"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:36:57Z",
+          "updatedAt": "2024-09-18T14:36:57Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "```suggestion\r\n`mkey` is an extensible identifier. The initial types defined are OID, UUID, and uint.\r\n```",
+              "createdAt": "2024-09-18T14:36:57Z",
+              "updatedAt": "2024-09-18T14:36:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3IsK",
+          "commit": {
+            "abbreviatedOid": "e4dc42b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:45:51Z",
+          "updatedAt": "2024-09-18T14:45:51Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "The referenced section is not properly named for what this is needed to match all mkey/mval pairs\r\n\r\n\"Processing a stateful environment against the Appraisal Claims Set {#sec-match-one-se}\"",
+              "createdAt": "2024-09-18T14:45:51Z",
+              "updatedAt": "2024-09-18T14:45:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3Zgg",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "This change is incomplete, it changes some external representation syntax, but not other representations.\r\nIn dicussions today we were unable to come to an agreement about whether the other triples should also be modified.\r\nI think this PR should change all triples at the same time so we can have one set of explanatory text.",
+          "createdAt": "2024-09-18T15:05:50Z",
+          "updatedAt": "2024-09-18T15:05:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3jw4",
+          "commit": {
+            "abbreviatedOid": "e4dc42b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Issue#279 opened to close the matching semantics gap.",
+          "createdAt": "2024-09-18T15:18:36Z",
+          "updatedAt": "2024-09-18T15:18:36Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J3mhU",
+          "commit": {
+            "abbreviatedOid": "e4dc42b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T15:23:09Z",
+          "updatedAt": "2024-09-18T15:23:17Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "We agreed to define the internal representation of element ID to match the external representation and to add wording to the effect that element IDs are compared in a byte for byte approach.",
+              "createdAt": "2024-09-18T15:23:09Z",
+              "updatedAt": "2024-09-18T15:23:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J7L9y",
+          "commit": {
+            "abbreviatedOid": "e4dc42b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T22:57:08Z",
+          "updatedAt": "2024-09-18T22:57:09Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "The corroboration section removed the reference to sec-match-one-se for now.\r\nThe wording now says \"... ECTs are identical...\". There should be a section that describes how two ECTs are compared. Once that section is complete, a reference to it can be added here.",
+              "createdAt": "2024-09-18T22:57:09Z",
+              "updatedAt": "2024-09-18T22:57:09Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 269,
+      "id": "PR_kwDOH6-tI857a3q5",
+      "title": "fix a few typos in Section 8",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/269",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-09-13T11:03:17Z",
+      "updatedAt": "2024-09-18T16:38:55Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "fa05b332ec78bdff6dc60fd4c1bfed536017a9a3",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "tho-review-sec-8",
+      "headRefOid": "01e91bc478476e8b0ac5801425964cd6875addcb",
+      "closedAt": "2024-09-18T16:38:51Z",
+      "mergedAt": "2024-09-18T16:38:51Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "ce24312110588ffbc4535000c28185232a6bf316"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86JRnoR",
+          "commit": {
+            "abbreviatedOid": "01e91bc"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-13T13:11:43Z",
+          "updatedAt": "2024-09-18T16:29:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JTGkB",
+          "commit": {
+            "abbreviatedOid": "01e91bc"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-09-13T15:51:48Z",
+          "updatedAt": "2024-09-18T16:29:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J2yS3",
+          "commit": {
+            "abbreviatedOid": "01e91bc"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:13:37Z",
+          "updatedAt": "2024-09-18T16:29:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J4PuO",
+          "commit": {
+            "abbreviatedOid": "01e91bc"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-09-18T16:31:11Z",
+          "updatedAt": "2024-09-18T16:31:11Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 270,
+      "id": "PR_kwDOH6-tI857eO5L",
+      "title": "Combined sections for phases-5-6-7 ",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/270",
+      "state": "MERGED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Combined sections 5, 6 and 7 and provided prose for the new section.",
+      "createdAt": "2024-09-13T19:31:42Z",
+      "updatedAt": "2024-09-18T14:11:58Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "phases-5-6-7",
+      "headRefOid": "d2d52d4d9c2ed71cb5200be109ec9deb10f7fc08",
+      "closedAt": "2024-09-18T14:11:44Z",
+      "mergedAt": "2024-09-18T14:11:44Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "209a55e71b12cdf1e7567756d8086fa282ecea7c"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86JZ3Q7",
+          "commit": {
+            "abbreviatedOid": "05fc5d1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-09-15T00:34:48Z",
+          "updatedAt": "2024-09-15T01:03:55Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "```suggestion\r\nThe Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.\r\n```",
+              "createdAt": "2024-09-15T00:34:48Z",
+              "updatedAt": "2024-09-15T01:03:55Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nFor example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.\r\n```\r\n\r\nWhat do we mean by subcomponent? The Target Environment of a sub-attester, or a measured element (mkey) in the Attested Environment as encapsulated by a single evidence message?",
+              "createdAt": "2024-09-15T00:39:18Z",
+              "updatedAt": "2024-09-15T01:03:55Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\nAn internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contain the environments affected by the policy with policy identifiers as Claims.\r\n```\r\nThis is hard for me to parse. I don't understand what this is saying to propose alternative text either. Elaborate?",
+              "createdAt": "2024-09-15T00:40:19Z",
+              "updatedAt": "2024-09-15T01:03:55Z"
+            },
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\n## Examples for optional phases 5, 6, and 7 {#sec-phases567}\r\n```\r\n\r\nI think since these phases depend on the implementation, they're purely here for inspiration. I don't think you need to preface each paragraph with the same boilerplate if you give this section a more direct heading.",
+              "createdAt": "2024-09-15T00:47:41Z",
+              "updatedAt": "2024-09-15T01:03:55Z"
+            },
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nAttestation Results rely on input from the ACS, but may not bear any similarity to its content.\r\n```",
+              "createdAt": "2024-09-15T00:50:15Z",
+              "updatedAt": "2024-09-15T01:03:55Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\nAn internal representation of Attestation Results as separate contexts (see {{sec-ir-ars}}) ensures Relying Party\u2013specific processing does not modify the ACS, which is common to all Relying Parties.\r\n```\r\nParentheticals aren't also appositives.\r\n\r\nI don't see how the sec-ir-ars reference elaborates the description of [ + ECT ] as \"separate contexts\". It's just another data definition that's equivalent to an ACS.\r\n\r\nI don't think we've specified that the ACS is common to all relying parties either. There's nothing about the data definition that \"ensures processing doesn't modify\" something else. It's an organization technique that may help with that, but I don't know what this text is trying to say.",
+              "createdAt": "2024-09-15T01:03:24Z",
+              "updatedAt": "2024-09-15T01:03:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JwqFX",
+          "commit": {
+            "abbreviatedOid": "c140544"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-17T22:53:25Z",
+          "updatedAt": "2024-09-17T22:53:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J1PCE",
+          "commit": {
+            "abbreviatedOid": "c140544"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM\r\n\r\n(A few typo fixes in-line.)",
+          "createdAt": "2024-09-18T11:40:13Z",
+          "updatedAt": "2024-09-18T11:45:11Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nClaims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.\r\n```",
+              "createdAt": "2024-09-18T11:40:14Z",
+              "updatedAt": "2024-09-18T11:45:11Z"
+            },
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nFor example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and validation.\r\n```",
+              "createdAt": "2024-09-18T11:42:12Z",
+              "updatedAt": "2024-09-18T11:45:11Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nValidation may reveal an expired certificate.\r\n```",
+              "createdAt": "2024-09-18T11:42:27Z",
+              "updatedAt": "2024-09-18T11:45:11Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nAn internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.\r\n```",
+              "createdAt": "2024-09-18T11:43:53Z",
+              "updatedAt": "2024-09-18T11:45:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J2v05",
+          "commit": {
+            "abbreviatedOid": "d2d52d4"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:10:50Z",
+          "updatedAt": "2024-09-18T14:10:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J2wXm",
+          "commit": {
+            "abbreviatedOid": "d2d52d4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-09-18T14:11:10Z",
+          "updatedAt": "2024-09-18T14:11:10Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J2xHd",
+          "commit": {
+            "abbreviatedOid": "d2d52d4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:11:58Z",
+          "updatedAt": "2024-09-18T14:11:58Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 272,
+      "id": "PR_kwDOH6-tI857h7py",
+      "title": "Fix-up minor editorial issues",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/272",
+      "state": "MERGED",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Minor edits I made while reading the specification.\r\n\r\nSigned-off-by: Steven Bellock <sbellock@nvidia.com>",
+      "createdAt": "2024-09-14T22:53:01Z",
+      "updatedAt": "2024-09-18T17:25:05Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ce24312110588ffbc4535000c28185232a6bf316",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "editorial",
+      "headRefOid": "623f74dd0f664c5f3db578e2f82a6abb4caf3abf",
+      "closedAt": "2024-09-18T16:43:43Z",
+      "mergedAt": "2024-09-18T16:43:43Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "5613fe1b08183d9a99aa0948d2d0545a4962eeba"
+      },
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The .ghpages workflow needs to be applied to get the build to succeed.",
+          "createdAt": "2024-09-17T16:12:49Z",
+          "updatedAt": "2024-09-17T16:12:49Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The .ghpages workflow needs to be applied to get the build to succeed.\r\n\r\nDone.",
+          "createdAt": "2024-09-17T21:09:45Z",
+          "updatedAt": "2024-09-17T21:09:45Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86JZ3KZ",
+          "commit": {
+            "abbreviatedOid": "7805d5d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-15T00:29:31Z",
+          "updatedAt": "2024-09-15T00:32:20Z",
+          "comments": [
+            {
+              "originalPosition": 42,
+              "body": "```suggestion\r\nRollback of a security relevant change is considered to be an attack vector; as such, security version numbers MUST NOT be decremented.\r\n```",
+              "createdAt": "2024-09-15T00:29:31Z",
+              "updatedAt": "2024-09-15T00:32:20Z"
+            },
+            {
+              "originalPosition": 43,
+              "body": "```suggestion\r\nIf a security relevant flaw is discovered in the Target Environment and is subsequently fixed, incrementing the `svn` value is RECOMMENDED.\r\n```",
+              "createdAt": "2024-09-15T00:31:23Z",
+              "updatedAt": "2024-09-15T00:32:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JbONj",
+          "commit": {
+            "abbreviatedOid": "7805d5d"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-15T21:07:24Z",
+          "updatedAt": "2024-09-15T21:07:24Z",
+          "comments": [
+            {
+              "originalPosition": 42,
+              "body": "I updated the editorial suggestions, but I do not want to add or remove normative wording in this pull request.",
+              "createdAt": "2024-09-15T21:07:24Z",
+              "updatedAt": "2024-09-15T21:07:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JbON1",
+          "commit": {
+            "abbreviatedOid": "7805d5d"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-15T21:07:32Z",
+          "updatedAt": "2024-09-15T21:07:32Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "I updated the editorial suggestions, but I do not want to add or remove normative wording in this pull request.",
+              "createdAt": "2024-09-15T21:07:32Z",
+              "updatedAt": "2024-09-15T21:07:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JgOzs",
+          "commit": {
+            "abbreviatedOid": "dae62e7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-16T14:57:25Z",
+          "updatedAt": "2024-09-16T14:57:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JgTuF",
+          "commit": {
+            "abbreviatedOid": "dae62e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-09-16T15:05:03Z",
+          "updatedAt": "2024-09-16T15:05:03Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Jmd6i",
+          "commit": {
+            "abbreviatedOid": "dae62e7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks @steven-bellock !",
+          "createdAt": "2024-09-17T06:57:11Z",
+          "updatedAt": "2024-09-17T06:57:11Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86JsxhR",
+          "commit": {
+            "abbreviatedOid": "dae62e7"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-09-17T16:12:05Z",
+          "updatedAt": "2024-09-17T16:12:05Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 273,
+      "id": "PR_kwDOH6-tI857rzQj",
+      "title": "Update ghpages.yml",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/273",
+      "state": "CLOSED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "changed from v2 to v4 of upload artifact",
+      "createdAt": "2024-09-16T23:18:47Z",
+      "updatedAt": "2024-09-17T16:05:05Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "nedmsmith-patch-1",
+      "headRefOid": "fa216b2a67a8be6025b410849fd46a1846fd7a53",
+      "closedAt": "2024-09-17T16:05:04Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This (and more CI-related updates) are taken care of in fc5b97d40fcdbd0db6448785345afbc39a5289c5 which is part of #269",
+          "createdAt": "2024-09-17T06:55:24Z",
+          "updatedAt": "2024-09-17T06:55:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK, I'll close this one.",
+          "createdAt": "2024-09-17T16:05:04Z",
+          "updatedAt": "2024-09-17T16:05:04Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 274,
+      "id": "PR_kwDOH6-tI8570Ycf",
+      "title": "Remove 'offline' key verification",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/274",
+      "state": "MERGED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "The 'offline' qualifier to key verification is removed.\r\n\r\nFix #271",
+      "createdAt": "2024-09-17T21:27:50Z",
+      "updatedAt": "2024-09-18T17:18:14Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "5613fe1b08183d9a99aa0948d2d0545a4962eeba",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "remove-offline",
+      "headRefOid": "3cd609a78eeaf3537fa3bd9da61d43b3e6a14100",
+      "closedAt": "2024-09-18T17:18:11Z",
+      "mergedAt": "2024-09-18T17:18:11Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "1d1af9459f2e0142743790892d4466e39bf86841"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86JwqLo",
+          "commit": {
+            "abbreviatedOid": "9768437"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-17T22:53:56Z",
+          "updatedAt": "2024-09-17T22:53:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J1JRZ",
+          "commit": {
+            "abbreviatedOid": "9768437"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T11:30:34Z",
+          "updatedAt": "2024-09-18T11:30:34Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "lossy compression :-)\r\n\r\n\r\n```suggestion\r\nVerification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.\r\n```\r\n\r\n",
+              "createdAt": "2024-09-18T11:30:34Z",
+              "updatedAt": "2024-09-18T11:30:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J1JZq",
+          "commit": {
+            "abbreviatedOid": "9768437"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T11:30:50Z",
+          "updatedAt": "2024-09-18T11:30:51Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "ditto",
+              "createdAt": "2024-09-18T11:30:50Z",
+              "updatedAt": "2024-09-18T11:30:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J21Xd",
+          "commit": {
+            "abbreviatedOid": "9768437"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:18:07Z",
+          "updatedAt": "2024-09-18T14:18:07Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J21X5",
+          "commit": {
+            "abbreviatedOid": "9768437"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:18:07Z",
+          "updatedAt": "2024-09-18T14:18:07Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J22Rf",
+          "commit": {
+            "abbreviatedOid": "9768437"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:19:25Z",
+          "updatedAt": "2024-09-18T14:19:26Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nVerification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.\r\n```",
+              "createdAt": "2024-09-18T14:19:26Z",
+              "updatedAt": "2024-09-18T14:19:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J22jV",
+          "commit": {
+            "abbreviatedOid": "9345bb0"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:19:51Z",
+          "updatedAt": "2024-09-18T14:20:19Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J228A",
+          "commit": {
+            "abbreviatedOid": "17a851e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:20:25Z",
+          "updatedAt": "2024-09-18T14:20:25Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 275,
+      "id": "PR_kwDOH6-tI8574OFu",
+      "title": "Minor edits",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/275",
+      "state": "MERGED",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Minor edits while reading the document",
+      "createdAt": "2024-09-18T10:10:45Z",
+      "updatedAt": "2024-09-18T15:35:27Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "67aa74ef02d9c7c067fbf815fee1f76f70bb2630",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "general-tidyup",
+      "headRefOid": "91faebb75bc10c5e54ea8468c603d5c004d929f8",
+      "closedAt": "2024-09-18T15:35:24Z",
+      "mergedAt": "2024-09-18T15:35:24Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "fa05b332ec78bdff6dc60fd4c1bfed536017a9a3"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86J2qOU",
+          "commit": {
+            "abbreviatedOid": "91faebb"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:03:33Z",
+          "updatedAt": "2024-09-18T15:30:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J2z_D",
+          "commit": {
+            "abbreviatedOid": "91faebb"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:16:03Z",
+          "updatedAt": "2024-09-18T15:30:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J20Oo",
+          "commit": {
+            "abbreviatedOid": "91faebb"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-18T14:16:25Z",
+          "updatedAt": "2024-09-18T15:30:13Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 276,
+      "id": "PR_kwDOH6-tI8575-8y",
+      "title": "Tcg comp to other triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/276",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Extending the Compatibility PR to other triples. Once we have a consensus, this PR will be deleted, it will be either merged into\r\n PR #268 ",
+      "createdAt": "2024-09-18T13:53:08Z",
+      "updatedAt": "2024-09-18T14:02:48Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "tcg-comp-to-other-triples",
+      "headRefOid": "f2be20ee40837b5aaf9c76cef6c90b03375a8310",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86J2ptS",
+          "commit": {
+            "abbreviatedOid": "f2be20e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T14:02:48Z",
+          "updatedAt": "2024-09-18T14:02:48Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "I'm a little surprised we're keeping integrity-registers when mkey can express the ir name.",
+              "createdAt": "2024-09-18T14:02:48Z",
+              "updatedAt": "2024-09-18T14:02:49Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 277,
+      "id": "PR_kwDOH6-tI8576Y2e",
+      "title": "Account for multiplicity in conditional endorsements",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/277",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A conditional endorsement series is about a target environment plus additional state expectations that lead to further endorsements.\r\n\r\nI removed the undefined CBOR tag around multiple measuremnt-maps since array and map have different CBOR major tags and a custom tag is not required.",
+      "createdAt": "2024-09-18T14:39:09Z",
+      "updatedAt": "2024-09-18T16:50:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "multiplicity",
+      "baseRefOid": "0ff26bef340181bf4ea3c2b6fa5ad759b7511021",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "multiplicity",
+      "headRefOid": "6c63e5d1c2b672109116ed46c77798bbc7f114a9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze Some more work needs to be done! Also, I already floated PR #276 , please have a look and comment. I am happy to fold this one on PR #276 and proceed with just one copy rather than multiple identical `intent`  PR's",
+          "createdAt": "2024-09-18T16:50:29Z",
+          "updatedAt": "2024-09-18T16:50:29Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86J4YuO",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T16:48:11Z",
+          "updatedAt": "2024-09-18T16:48:11Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\n  endv: [ + measurement-map]\r\n```",
+              "createdAt": "2024-09-18T16:48:11Z",
+              "updatedAt": "2024-09-18T16:48:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J4ZEc",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-18T16:48:56Z",
+          "updatedAt": "2024-09-18T16:48:56Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "We agreed with Ned's PR that is optionality is not required!",
+              "createdAt": "2024-09-18T16:48:56Z",
+              "updatedAt": "2024-09-18T16:48:57Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
