@@ -121,13 +121,14 @@ informative:
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
+  I-D.ietf-rats-ar4si: ar4si
 
 entity:
   SELF: "RFCthis"
 
 --- abstract
 
-Remote Attestation Procedures (RATS) enable Relying Parties to assess the trustworthiness of a remote Attester and therefore to decide whether to engage in secure interactions with it - or not.
+Remote Attestation Procedures (RATS) enable Relying Parties to assess the trustworthiness of a remote Attester and therefore to decide whether or not to engage in secure interactions with it.
 Evidence about trustworthiness can be rather complex and it is deemed unrealistic that every Relying Party is capable of the appraisal of Evidence.
 Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
@@ -228,7 +229,7 @@ The CDDL definitions in this document follows the naming conventions illustrated
 | tagged type | `#6.123(int)` | `tagged-`NAME`-type`|
 | map | `{ 1 => int, 2 => text }` | NAME-`map` |
 | flags | `&( a: 1, b: 2 )` | NAME-`flags` |
-{: #tbl-typography title="Type Traits & Typographical Conventions"}
+{: #tbl-typography title="Type Traits and Typographical Conventions"}
 
 # Concise Reference Integrity Manifest (CoRIM) {#sec-corim}
 
@@ -486,7 +487,7 @@ The following describes each child item of this group.
 
 A CoMID tag contains information about hardware, firmware, or module composition.
 
-Each CoMID has a unique ID that is used to unambigously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
+Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
 
 A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -677,7 +678,7 @@ The following describes each member of the `triples-map`:
   conditional Endorsements based on the acceptance of a stateful environment. Described
   in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 9) Triples describing a series of
+* `conditional-endorsement-triples` (index 10) Triples describing a series of
   Endorsement that are applicable based on the acceptance of a series of
   stateful environment records. Described in
   {{sec-comid-triple-cond-endors}}.
@@ -787,7 +788,7 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
-The supply chain entity that is responsible for providing the the measurements (i.e. Reference Values or Endorsed Values)
+The supply chain entity that is responsible for providing the measurements (i.e. Reference Values or Endorsed Values)
 is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
 the `authorized-by` statement can be supplied in the `measurement-map`.
 
@@ -920,8 +921,8 @@ $version-scheme /= int / text
 
 The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
 A security version number is used to track changes to an object (e.g., a secure enclave, a boot loader executable, a configuration file, etc.) that are security relevant.
-Rollback of a security relevant change is considered to be an attack vector, as such, security version numbers can't be decremented.
-If a security relevant flaw is discovered in the Target Environment and subsequently fiexed, the `svn` value is typically incremented.
+Rollback of a security relevant change is considered to be an attack vector; as such, security version numbers cannot be decremented.
+If a security relevant flaw is discovered in the Target Environment and is subsequently fixed, the `svn` value is typically incremented.
 
 There may be several revisions to a Target Environment that are in use at the same time.
 If there are multiple revisions with different `svn` values, the revision with a lower `svn` value may
@@ -1112,11 +1113,7 @@ Environment.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple declares additional measurements that are valid when
-a Target Environment has been verified against reference measurements. For
-Endorsed Value Claims, the subject is either a Target or Attesting Environment,
-the object contains measurements, and the predicate defines semantics for how
-the object relates to the subject.
+An Endorsed Values triple declares additional measurements to add to the ACS.
 
 ~~~ cddl
 {::include cddl/endorsed-triple-record.cddl}
@@ -1130,7 +1127,7 @@ The device identifier may be part of the Target Environment's `environment-map` 
 The cryptographic keys are expected to be used to authenticate the device.
 
 Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
-The Verifier SHOULD perform offline verification of keys contained in Device Identity triples.
+The Verifier SHOULD verify keys contained in Device Identity triples.
 
 A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -1139,7 +1136,7 @@ Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifi
 
 If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
 
-Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
@@ -1151,8 +1148,9 @@ Alternatively, Verifiers MAY report key verification results as part of an error
 An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
 The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
 The cryptographic keys sign Evidence.
+
 Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
-The Verifier SHOULD perform offline verification of keys contained in Attest Key triples.
+The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Attest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -1160,7 +1158,7 @@ Additional details about how a key was provisioned or is protected may be assert
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
 
-Offline verification of keys or verification of key use restrictions MAY produce Claims that are added to the ACS.
+Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
 Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
@@ -1465,7 +1463,7 @@ Inputs to a Verifier are mapped from their external representation to an interna
 CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
 CoRIM data structures may also be used by Evidence and Attestation Results that wish to describe overlapping structure.
 CoRIM-based data structures define an external representation of Conceptual Messages that are mapped to an internal representation.
-Appraisal processing describes both mapping transformations and Verifier reconciliation {{sec-verifier-rec}}.
+Appraisal processing describes both mapping transformations and Verifier reconciliation ({{sec-verifier-rec}}).
 Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.
 
 If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
@@ -1688,6 +1686,7 @@ ev = [
   condition: [ + ECT ]
   addition: [ + ECT ]
 ]
+
 evs = [
   condition: [ + ECT ]
   series: + {
@@ -1757,9 +1756,9 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 ARS = [ + ECT ]
 ~~~
 
-## Input Validation and Transformationn (Phase 1) {#sec-phase1}
+## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags {{sec-comid}}, CoSWID tags {{-coswid}}, CoBOM {{sec-cobom}} and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, {{-ta-store}})).
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM ({{sec-cobom}}) and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, {{-ta-store}}).
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
@@ -1858,20 +1857,19 @@ The selected tags are mapped to the internal representation, making them suitabl
 
 #### Reference and Endorsed Values Tranformation {#sec-ref-end-trans}
 
-The Reference Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-ref-val}.
+The Reference Values ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-ref-val}}.
 
-The Endorsement Values ECT fields are populated as described above {{sec-phase1-trans}} and {#sec-ir-end-val}.
+The Endorsement Values ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-end-val}}.
 
 #### Evidence Tranformation
 
 Evidence is divided up into one or more `ev` relations where the `condition` ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.
 
-Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence doesn't have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
+Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence does not have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
 
-The Evidence ECT fields are populated as described above {{sec-phase1-trans}} and {{sec-ir-evidence}}.
+The Evidence ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-evidence}}.
 
-Evidence transformation algorithms may be well-known;
-may be defined by a CoRIM profile ({{sec-corim-profile-types}}); or may be supplied dynamically.
+Evidence transformation algorithms may be well-known, may be defined by a CoRIM profile ({{sec-corim-profile-types}}), or may be supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
@@ -1926,7 +1924,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 #### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the AES entries to match or modify.
+Most triples use an `environment-map` field to select the ACS entries to match or modify.
 This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
 
 The order of triples processing is important.
@@ -2001,11 +1999,36 @@ If any codepoint present in the stateful environment `measurement-values-map` do
 If all checks above have been performed successfully then the stateful environment matches.
 If none of the candidate entries match the stateful environment entry then the stateful environment does not match.
 
-## Verifier Augmentation (Phase 5) {#sec-phase5}
+## Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
-## Policy Augmentation (Phase 6) {#sec-phase6}
+Phases 5, 6, and 7 are optional depending on implementation design.
+Verifier implementations that apply consistency, integrity, or validity checks could be represented as Claims that augment the ACS or could be handled by application specific interfaces.
+Processing appraisal policies may result in augmentation or modification of the ACS, but techniques for tracking the application of policies during appraisal need not result in ACS augmentation.
+Additionally, the creation of Attestation Results is out-of-scope for this document, nevertheless internal staging may facilitate processing of Attestation Results.
 
-## Attestation Results Production and Transformationn (Phase 7) {#sec-phase7}
+Phase 5: Verifier Augmentation
+
+Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
+For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and validation.
+Validation may reveal an expired certificate.
+The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.
+
+Phase 6: Policy Augmentation
+
+Appraisal policy inputs could result in Claims that augment the ACS.
+For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
+The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
+Details about the policy applied may also augment the ACS.
+An internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
+
+Phase 7: Attestation Results Production and Transformation
+
+Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
+For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
+Generated Attestation Results Claims may be specific to a particular Relying Party.
+Hence, the Verifier may need to maintain multiple Attestation Results contexts.
+An internal representation of Attestation Results as separate contexts (see {{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
+Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Adding to the Appraisal Claims Set {#sec-add-to-acs}
 
@@ -2434,7 +2457,7 @@ File extension(s):
 Macintosh file type code(s):
 : n/a
 
-Person & email address to contact for further information:
+Person and email address to contact for further information:
 : RATS WG mailing list (rats@ietf.org)
 
 Intended usage:
@@ -2494,7 +2517,7 @@ File extension(s):
 Macintosh file type code(s):
 : n/a
 
-Person & email address to contact for further information:
+Person and email address to contact for further information:
 : RATS WG mailing list (rats@ietf.org)
 
 Intended usage:
