@@ -90,5 +90,17 @@ INTREP_FRAGS += intrep-claims-map.cddl
 INTREP_FRAGS += non-empty.cddl
 INTREP_FRAGS += environment-map.cddl
 INTREP_FRAGS += class-map.cddl
+INTREP_FRAGS += measurement-values-map.cddl
+INTREP_FRAGS += version-map.cddl
+INTREP_FRAGS += svn-type-choice.cddl
+INTREP_FRAGS += digest.cddl
+INTREP_FRAGS += flags-map.cddl
+INTREP_FRAGS += raw-value.cddl
+INTREP_FRAGS += tagged-bytes.cddl
+INTREP_FRAGS += mac-addr-type-choice.cddl
+INTREP_FRAGS += ip-addr-type-choice.cddl
+INTREP_FRAGS += ueid.cddl
+INTREP_FRAGS += uuid.cddl
+INTREP_FRAGS += integrity-registers.cddl
 
 INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
