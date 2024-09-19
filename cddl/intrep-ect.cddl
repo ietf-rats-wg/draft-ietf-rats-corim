@@ -1,0 +1,24 @@
+ECT = {
+  ? e: environment-map
+  ? c: claims-map / [ + local-claim ]
+  ? a: [ + $crypto-key-type-choice ]
+  ? ns: text
+  ? cm: cm-type
+  ? p: $profile-type-choice
+}
+
+local-claim = {
+  le: local-environment
+  c: claims-map
+}
+
+local-environment =  bstr / tstr
+
+cm-type =  &(
+  reference-values: 0
+  endorsements: 1
+  evidence: 2
+  attestation-results: 3
+  verifier: 4
+  policy: 5
+)

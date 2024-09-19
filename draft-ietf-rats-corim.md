@@ -1591,27 +1591,7 @@ Profile (label 6):
 : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
 ~~~ cddl
-ECT = {
-  ? e: environment-map
-  ? c: claims-map / [ + local-claim ]
-  ? a: [ + $crypto-key-type-choice ]
-  ? ns: text
-  ? cm: cm-type
-  ? p: $profile-type-choice
-}
-local-claim = {
-  le: local-environment
-  c: claims-map
-}
-local-environment =  bstr / tstr
-cm-type =  &(
-  reference-values: 0
-  endorsements: 1
-  evidence: 2
-  attestation-results: 3
-  verifier: 4
-  policy: 5
-)
+{::include cddl/intrep-ect.cddl}
 ~~~
 
 Although all of the ECT attributes are optional, the Conceptual Message type implies certain attributes are mandatory.
@@ -1628,9 +1608,7 @@ Each Attester has a different ACS. The Verifier ensures the Evidence inputs are 
 The `addition` is added to the ACS for a specific Attester.
 
 ~~~ cddl
-ae = [
-  addition: [ + ECT ]
-]
+{::include cddl/intrep-ae.cddl}
 ~~~
 
 | Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
@@ -1651,10 +1629,7 @@ The reference ECTs define the matching conditions that are applied to Evidence E
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
 
 ~~~ cddl
-rv = + {
-  condition: ECT
-  addition: ECT
-}
+{::include cddl/intrep-rv.cddl}
 ~~~
 
 | Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
@@ -1674,18 +1649,7 @@ The `selection` ECTs are compared with the ACS and if the selection criteria is 
 If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
 
 ~~~ cddl
-ev = [
-  condition: [ + ECT ]
-  addition: [ + ECT ]
-]
-
-evs = [
-  condition: [ + ECT ]
-  series: + {
-    selection: [ + ECT ]
-    addition: [ + ECT ]
-  }
-]
+{::include cddl/intrep-ev.cddl}
 ~~~
 
 | Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
@@ -1701,10 +1665,7 @@ The `policy` relation compares the `condition` ECTs to the ACS.
 If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
 
 ~~~ cddl
-policy = [
-    condition: [ + ECT ]
-    addition: [ + ECT ]
-]
+{::include cddl/intrep-policy.cddl}
 ~~~
 
 | Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
@@ -1720,10 +1681,7 @@ If the condition is satisfied, the `ars-additions` are copied from the ACS to th
 If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
 
 ~~~ cddl
-ar = [
-    acs-condition: [ + ECT ]
-    ars-addition: [ + ECT ]
-]
+{::include cddl/intrep-ar.cddl}
 ~~~
 
 | Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
@@ -1737,7 +1695,7 @@ ar = [
 An ACS is a list of ECTs that describe an Attester's actual state.
 
 ~~~ cddl
-ACS = [ + ECT ]
+{::include cddl/intrep-acs.cddl}
 ~~~
 
 ### Internal Representation of Attestation Results Set (ARS) {#sec-ir-ars}
@@ -1745,7 +1703,7 @@ ACS = [ + ECT ]
 An ARS is a list of ECTs that describe ACS entries that are selected for use as Attestation Results.
 
 ~~~ cddl
-ARS = [ + ECT ]
+{::include cddl/intrep-ars.cddl}
 ~~~
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
