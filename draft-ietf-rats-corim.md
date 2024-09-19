@@ -1942,7 +1942,7 @@ Corroboration is the process of determining whether actual Attester state (as co
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT.
-If the ECTs are identical except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
+If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
