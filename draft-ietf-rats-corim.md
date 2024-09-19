@@ -1563,36 +1563,31 @@ Internal representations of Conceptual Messages are defined by {{sec-ir-evidence
 The internal representation of Conceptual Messages are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 Additionally, ECTs define an internal representation of the ACS and ARS. See {{sec-ir-acs}} and {{sec-ir-ars}}.
 
-ECTs have six attributes:
+ECTs have five attributes:
 
 1. The environment.
-2. The properties of the environment.
+2. The elements and their claims within the environment.
 3. The authority.
-4. The name space.
-5. The Conceptual Message type.
-6. The profile.
+4. The Conceptual Message type.
+5. The profile.
 
 Environment (label 1):
 
 : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
 
-Properties (label 2):
+Elements (label 2):
 
-: Trustworthiness properties associated with the Target Environment and its elements.
+: Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
 
 Authority (label 3):
 
 : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
 
-Name Space (label 4):
-
-: Identifies the name space from which the tuple was created.
-
-CM Type (label 5):
+CM Type (label 4):
 
 : Identifies the type of Conceptual Message that originated the tuple.
 
-Profile (label 6):
+Profile (label 5):
 
 : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
