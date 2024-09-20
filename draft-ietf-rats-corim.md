@@ -1558,55 +1558,38 @@ Attestation Results Set (ARS):
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
-Conceptual Messages are the inputs to a Verifier and may include Evidence, Reference Values, Endorsed Values, or Appraisal Policy.
-Internal representations of Conceptual Messages are defined by {{sec-ir-evidence}}, {{sec-ir-ref-val}}, and {{sec-ir-end-val}}.
-The internal representation of Conceptual Messages are constructed from a common building block structure called Environment-Claims Tuple (ECT).
-Additionally, ECTs define an internal representation of the ACS and ARS. See {{sec-ir-acs}} and {{sec-ir-ars}}.
+Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
+
+The internal representation of Conceptual Messages, as well as the ACS {{sec-ir-acs}} and ARS {{sec-ir-ars}}, are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
 ECTs have five attributes:
 
-1. The environment.
-2. The elements and their claims within the environment.
-3. The authority.
-4. The Conceptual Message type.
-5. The profile.
+1. Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
 
-Environment (label 1):
+2. Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
 
-: Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
+3. Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
 
-Elements (label 2):
+4. Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
 
-: Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
-
-Authority (label 3):
-
-: Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
-
-CM Type (label 4):
-
-: Identifies the type of Conceptual Message that originated the tuple.
-
-Profile (label 5):
-
-: The profile that defines this tuple. If no profile is used, this attribute is omitted.
+5. Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
 The following CDDL describes the ECT structure in more detail.
 
 ~~~ cddl
 ECT = {
   ? environment: environment-map
-  ? properties: [ + properties-map ]
+  ? elements: [ + element-map ]
   ? authority: [ + $crypto-key-type-choice ]
-  ? namespace: text
-  ? cmtype: cm-type
+  cmtype: cm-type
   ? profile: $profile-type-choice
 }
-properties-map = {
-  ? eid: element-id
-  claims: measurement-values-map
+
+element-map = {
+  ? element-id:  $measured-element-type-choice
+  element-claims: measurement-values-map
 }
-element-id =  $measured-element-type-choice
+
 cm-type =  &(
   reference-values: 0
   endorsements: 1
@@ -1617,8 +1600,7 @@ cm-type =  &(
 )
 ~~~
 
-Although all of the ECT attributes are optional, the Conceptual Message type implies certain attributes are mandatory.
-See {{sec-ir-evidence}}, {{sec-ir-ref-val}}, and {{sec-ir-end-val}}.
+The Conceptual Message type determines which attributes are mandatory.
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
@@ -1846,15 +1828,37 @@ The `cm` field is set based on the type of Conceptual Message inputted or to be 
 
 All of the extracted and validated tags are loaded into an *appraisal context*.
 The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
-The selected tags are mapped to the internal representation, making them suitable for appraisal processing.
+The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
-#### Reference and Endorsed Values Tranformation {#sec-ref-end-trans}
+#### Reference Triples Tranformation {#sec-ref-trans}
 
-The Reference Values ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-ref-val}}.
+An available `rv` list entry {{sec-ir-ref-val}} is allocated.
+The Reference Values Triple {{sec-comid-triple-refval}} `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
-The Endorsement Values ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-end-val}}.
+For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.
+
+The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+
+If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+
+#### Endorsement Triples Tranformations {#sec-end-trans}
+
+Endorsement Triple Transformation :
+
+: An available `ev` entry {{sec-ir-end-val}} is allocated.
+The Endorsement Triple {{sec-comid-triple-endval}} `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
+
+: For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `elements` list.
+
+: The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+
+: If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+
+Conditional Endorsement Triple Transformation :
+
+Conditional Endorsement Series Triple Transformation :
 
 #### Evidence Tranformation
 
@@ -1931,7 +1935,7 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 ## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
-Reference Value Providers (RVP) publish Reference Values that are transformed {{sec-ref-end-trans}} into an internal representation {{sec-ir-ref-val}}. Reference Values may describe multiple possible Attester states.
+Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple {{sec-comid-triple-refval}} which are transformed {{sec-ref-trans}} into an internal representation {{sec-ir-ref-val}}. Reference Values may describe multiple possible Attester states.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values. If satisfied, the RVP authority is added to the matching ACS entry.
 
@@ -1943,23 +1947,23 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
-> [Ned] *The following sections should describe augmentation in the context of the `ev` and `evs` relations containing ECTs staged for ACS augmentation*
+### Processing Endorsements
 
-### Processing triples representing Conditional Endorsements
+Endorsers publish Endorsements using the endorsed values triple {{sec-comid-triple-endval}} which are transformed {{sec-end-trans}} into an internal representation {{sec-ir-end-val}}.
+Endorsements describe actual Attester state.
+Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 
-An Endorser may use CoMID tags to publish Conditional Endorsements, which are added to the ACS only if specified conditions are satisfied.
-This section describes the process performed by the Verifier to determine which Conditional Endorsements from the candidate CoMIDs should be added to the ACS.
+Endorsed Values are matched with ACS entries by iterating through the `ev` list.
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT.
+If the ECTs match, the `ev` `addition` ECT is added to the ACS.
 
-The verifier checks whether Conditional Endorsements are applicable by comparing ACS entries against expected values provided in `stateful-environment-record` object which are part of the triple.
+### Processing Conditional Endorsements
 
-#### Processing Conditional Endorsement Triple
+> [Ned] *This section should be identical to the previous section since Endorsement triples and Conditional Endorsement triples are transformed into the same internal representation based on `ev`*
 
-For each Conditional Endorsement Triple the Verifier compares each of the `stateful-environment-record` fields from the `cond` field in the triple against the ACS (see {{sec-match-one-se}}).
+### Processing Conditional Endorsement Series
 
-If every stateful environment matches a corresponding ACS entry, then the Verifier MUST add an Endorsement entry to the ACS (see {{sec-add-to-acs}}) for each `endorsed-triple-record` in the `endorsements` field.
-Each Endorsement from the `endorsed-triple-record` includes the authority which signed the Conditional Endorsement Triple.
-
-#### Processing Conditional Endorsement Series Triple
+> [Ned] *This section should describe augmentation in the context of the `evs` internal representation*
 
 For each Conditional Endorsement Series Triple the Verifier iterates over the `conditional-series-record`s within the triple, stopping if it finds a match.
 
@@ -1968,7 +1972,9 @@ For each iteration, the Verifier creates a temporary `stateful-environment-recor
 If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
 This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
 
-#### Processing a stateful environment against the Appraisal Claims Set {#sec-match-one-se}
+### Processing a stateful environment against the Appraisal Claims Set {#sec-match-one-se}
+
+> [Ned] *This section should describe matching based on internal representations*
 
 This section describes how a stateful environment is matched against an ACS entry.
 If any part of the processing indicates that the stateful environment does not match then the remaining steps in this section are skipped for that stateful environment.
