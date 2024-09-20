@@ -1564,15 +1564,18 @@ The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir
 
 ECTs have five attributes:
 
-1. Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
+{:ect-enum: style="format %d."}
 
-2. Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
+{: ect-enum}
+* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
 
-3. Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
+* Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
 
-4. Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
+* Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
 
-5. Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.
+* Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
+
+* Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
 The following CDDL describes the ECT structure in more detail.
 
@@ -1834,31 +1837,41 @@ The selected tags are mapped to an internal representation, making them suitable
 
 #### Reference Triples Transformation {#sec-ref-trans}
 
-An available `rv` list entry {{sec-ir-ref-val}} is allocated.
-The Reference Values Triple {{sec-comid-triple-refval}} `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
+{:rtt-enum: counter="foo" style="format Step %d."}
 
-For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.
+{: rtt-enum}
+* An available `rv` list entry ({{sec-ir-ref-val}}) is allocated.
+The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
-The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.
 
-If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
 
 #### Endorsement Triples Tranformations {#sec-end-trans}
 
 Endorsement Triple Transformation :
 
-: An available `ev` entry {{sec-ir-end-val}} is allocated.
-The Endorsement Triple {{sec-comid-triple-endval}} `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
+{:ett-enum: counter="bar" style="format Step %d."}
 
-: For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `elements` list.
+{: ett-enum}
+* An available `ev` entry ({{sec-ir-end-val}}) is allocated.
+The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
 
-: The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `elements` list.
 
-: If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
 
 Conditional Endorsement Triple Transformation :
 
+> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+
 Conditional Endorsement Series Triple Transformation :
+
+> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
 
 #### Evidence Tranformation
 
@@ -1935,9 +1948,11 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 ## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
-Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple {{sec-comid-triple-refval}} which are transformed {{sec-ref-trans}} into an internal representation {{sec-ir-ref-val}}. Reference Values may describe multiple possible Attester states.
+Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
+Reference Values may describe multiple possible Attester states.
 
-Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values. If satisfied, the RVP authority is added to the matching ACS entry.
+Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
+If satisfied, the RVP authority is added to the matching ACS entry.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT.
@@ -1949,7 +1964,7 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 
 ### Processing Endorsements
 
-Endorsers publish Endorsements using the endorsed values triple {{sec-comid-triple-endval}} which are transformed {{sec-end-trans}} into an internal representation {{sec-ir-end-val}}.
+Endorsers publish Endorsements using the endorsed values triple ({{sec-comid-triple-endval}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 
