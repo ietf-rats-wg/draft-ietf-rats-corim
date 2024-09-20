@@ -1560,7 +1560,7 @@ Attestation Results Set (ARS):
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
-The internal representation of Conceptual Messages, as well as the ACS {{sec-ir-acs}} and ARS {{sec-ir-ars}}, are constructed from a common building block structure called Environment-Claims Tuple (ECT).
+The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
 ECTs have five attributes:
 
