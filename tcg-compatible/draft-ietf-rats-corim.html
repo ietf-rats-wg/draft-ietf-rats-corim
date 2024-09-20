@@ -3843,23 +3843,33 @@ The ACS contains Attester state that has been authorized by Verifier processing 
 <p id="section-8.2.1-1">Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.<a href="#section-8.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.2.1-2">The internal representation of Conceptual Messages, as well as the ACS (<a href="#sec-ir-acs" class="auto internal xref">Section 8.2.2</a>) and ARS (<a href="#sec-ir-ars" class="auto internal xref">Section 8.2.3</a>), are constructed from a common building block structure called Environment-Claims Tuple (ECT).<a href="#section-8.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.2.1-3">ECTs have five attributes:<a href="#section-8.2.1-3" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-8.2.1-4">
-<li id="section-8.2.1-4.1">
+<span class="break"></span><dl class="olPercent" id="section-8.2.1-4">
+<dt>1.</dt>
+<dd id="section-8.2.1-4.1">
               <p id="section-8.2.1-4.1.1">Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.<a href="#section-8.2.1-4.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-8.2.1-4.2">
+</dd>
+            <dd class="break"></dd>
+<dt>2.</dt>
+<dd id="section-8.2.1-4.2">
               <p id="section-8.2.1-4.2.1">Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.<a href="#section-8.2.1-4.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-8.2.1-4.3">
+</dd>
+            <dd class="break"></dd>
+<dt>3.</dt>
+<dd id="section-8.2.1-4.3">
               <p id="section-8.2.1-4.3.1">Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.<a href="#section-8.2.1-4.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-8.2.1-4.4">
+</dd>
+            <dd class="break"></dd>
+<dt>4.</dt>
+<dd id="section-8.2.1-4.4">
               <p id="section-8.2.1-4.4.1">Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.<a href="#section-8.2.1-4.4.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-8.2.1-4.5">
+</dd>
+            <dd class="break"></dd>
+<dt>5.</dt>
+<dd id="section-8.2.1-4.5">
               <p id="section-8.2.1-4.5.1">Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.<a href="#section-8.2.1-4.5.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
+</dd>
+          <dd class="break"></dd>
+</dl>
 <p id="section-8.2.1-5">The following CDDL describes the ECT structure in more detail.<a href="#section-8.2.1-5" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-8.2.1-6">
 <pre>
@@ -4328,11 +4338,29 @@ The selected tags are mapped to an internal representation, making them suitable
             <h5 id="name-reference-triples-transform">
 <a href="#section-8.3.3.2" class="section-number selfRef">8.3.3.2. </a><a href="#name-reference-triples-transform" class="section-name selfRef">Reference Triples Transformation</a>
             </h5>
-<p id="section-8.3.3.2-1">An available <code>rv</code> list entry <a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a> is allocated.
-The Reference Values Triple <a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a> <code>environment-map</code> is copied to the <code>environment-map</code> for both the <code>rv</code> <code>condition</code> and <code>rv</code> <code>addition</code> ECTs.<a href="#section-8.3.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.2-2">For each <code>measurement-map</code> entry in the measurements list, the i<sup>th</sup> <code>measurement-map</code> is copied to the i<sup>th</sup> <code>element-map</code> in the <code>elements</code> list of the <code>rv</code> <code>addition</code> ECT.<a href="#section-8.3.3.2-2" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.2-3">The issuer of the Endorsement conceptual message is copied to the <code>ev</code> <code>addition</code> ECT authority field.<a href="#section-8.3.3.2-3" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.2-4">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code> <code>addition</code> ECT profile field.<a href="#section-8.3.3.2-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.2-1">
+<dt>Step 1.</dt>
+<dd id="section-8.3.3.2-1.1">
+                <p id="section-8.3.3.2-1.1.1">An available <code>rv</code> list entry (<a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a>) is allocated.
+The Reference Values Triple (<a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>) <code>environment-map</code> is copied to the <code>environment-map</code> for both the <code>rv</code> <code>condition</code> and <code>rv</code> <code>addition</code> ECTs.<a href="#section-8.3.3.2-1.1.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 2.</dt>
+<dd id="section-8.3.3.2-1.2">
+                <p id="section-8.3.3.2-1.2.1">For each <code>measurement-map</code> entry in the measurements list, the i<sup>th</sup> <code>measurement-map</code> is copied to the i<sup>th</sup> <code>element-map</code> in the <code>elements</code> list of the <code>rv</code> <code>addition</code> ECT.<a href="#section-8.3.3.2-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 3.</dt>
+<dd id="section-8.3.3.2-1.3">
+                <p id="section-8.3.3.2-1.3.1">The issuer of the Endorsement conceptual message is copied to the <code>ev</code> <code>addition</code> ECT authority field.<a href="#section-8.3.3.2-1.3.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 4.</dt>
+<dd id="section-8.3.3.2-1.4">
+                <p id="section-8.3.3.2-1.4.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code> <code>addition</code> ECT profile field.<a href="#section-8.3.3.2-1.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
 </section>
 </div>
 <div id="sec-end-trans">
@@ -4340,31 +4368,42 @@ The Reference Values Triple <a href="#sec-comid-triple-refval" class="auto inter
             <h5 id="name-endorsement-triples-tranfor">
 <a href="#section-8.3.3.3" class="section-number selfRef">8.3.3.3. </a><a href="#name-endorsement-triples-tranfor" class="section-name selfRef">Endorsement Triples Tranformations</a>
             </h5>
-<span class="break"></span><dl class="dlParallel" id="section-8.3.3.3-1">
-              <dt id="section-8.3.3.3-1.1">Endorsement Triple Transformation :</dt>
-              <dd style="margin-left: 1.5em" id="section-8.3.3.3-1.2">
-                <p id="section-8.3.3.3-1.2.1">An available <code>ev</code> entry <a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a> is allocated.
-The Endorsement Triple <a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a> <code>environment-map</code> is copied to the <code>environment-map</code> for both the <code>ev</code> <code>condition</code> and <code>ev</code> <code>addition</code> ECTs.<a href="#section-8.3.3.3-1.2.1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.3-1">Endorsement Triple Transformation :<a href="#section-8.3.3.3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-2">
+<dt>Step 1.</dt>
+<dd id="section-8.3.3.3-2.1">
+                <p id="section-8.3.3.3-2.1.1">An available <code>ev</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.
+The Endorsement Triple (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>) <code>environment-map</code> is copied to the <code>environment-map</code> for both the <code>ev</code> <code>condition</code> and <code>ev</code> <code>addition</code> ECTs.<a href="#section-8.3.3.3-2.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt id="section-8.3.3.3-1.3"></dt>
-              <dd style="margin-left: 1.5em" id="section-8.3.3.3-1.4">
-                <p id="section-8.3.3.3-1.4.1">For each <code>measurement-map</code> entry in the measurements list, the i<sup>th</sup> <code>measurement-map</code> entry is copied to the i<sup>th</sup> entry in the <code>addition</code> ECT <code>elements</code> list.<a href="#section-8.3.3.3-1.4.1" class="pilcrow">¶</a></p>
+<dt>Step 2.</dt>
+<dd id="section-8.3.3.3-2.2">
+                <p id="section-8.3.3.3-2.2.1">For each <code>measurement-map</code> entry in the measurements list, the i<sup>th</sup> <code>measurement-map</code> entry is copied to the i<sup>th</sup> entry in the <code>addition</code> ECT <code>elements</code> list.<a href="#section-8.3.3.3-2.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt id="section-8.3.3.3-1.5"></dt>
-              <dd style="margin-left: 1.5em" id="section-8.3.3.3-1.6">
-                <p id="section-8.3.3.3-1.6.1">The issuer of the Endorsement conceptual message is copied to the <code>ev</code> <code>addition</code> ECT authority field.<a href="#section-8.3.3.3-1.6.1" class="pilcrow">¶</a></p>
+<dt>Step 3.</dt>
+<dd id="section-8.3.3.3-2.3">
+                <p id="section-8.3.3.3-2.3.1">The issuer of the Endorsement conceptual message is copied to the <code>ev</code> <code>addition</code> ECT authority field.<a href="#section-8.3.3.3-2.3.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt id="section-8.3.3.3-1.7"></dt>
-              <dd style="margin-left: 1.5em" id="section-8.3.3.3-1.8">
-                <p id="section-8.3.3.3-1.8.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code> <code>addition</code> ECT profile field.<a href="#section-8.3.3.3-1.8.1" class="pilcrow">¶</a></p>
+<dt>Step 4.</dt>
+<dd id="section-8.3.3.3-2.4">
+                <p id="section-8.3.3.3-2.4.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code> <code>addition</code> ECT profile field.<a href="#section-8.3.3.3-2.4.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 </dl>
-<p id="section-8.3.3.3-2">Conditional Endorsement Triple Transformation :<a href="#section-8.3.3.3-2" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.3-3">Conditional Endorsement Series Triple Transformation :<a href="#section-8.3.3.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.3-3">Conditional Endorsement Triple Transformation :<a href="#section-8.3.3.3-3" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3-4.1">
+                <p id="section-8.3.3.3-4.1.1"><span class="cref" id="issue_1">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285<a href="#section-8.3.3.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-8.3.3.3-5">Conditional Endorsement Series Triple Transformation :<a href="#section-8.3.3.3-5" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3-6.1">
+                <p id="section-8.3.3.3-6.1.1"><span class="cref" id="issue_2">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285<a href="#section-8.3.3.3-6.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
 </section>
 </div>
 <div id="evidence-tranformation">
@@ -4461,8 +4500,10 @@ Processing a triple may result in ACS modifications that affect matching behavio
         <h3 id="name-reference-values-corroborat">
 <a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-reference-values-corroborat" class="section-name selfRef">Reference Values Corroboration and Augmentation (Phase 3)</a>
         </h3>
-<p id="section-8.5-1">Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple <a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a> which are transformed <a href="#sec-ref-trans" class="auto internal xref">Section 8.3.3.2</a> into an internal representation <a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a>. Reference Values may describe multiple possible Attester states.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.5-2">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values. If satisfied, the RVP authority is added to the matching ACS entry.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.5-1">Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple (<a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>) which are transformed (<a href="#sec-ref-trans" class="auto internal xref">Section 8.3.3.2</a>) into an internal representation (<a href="#sec-ir-ref-val" class="auto internal xref">Section 8.2.1.2</a>).
+Reference Values may describe multiple possible Attester states.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.5-2">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
+If satisfied, the RVP authority is added to the matching ACS entry.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
 <p id="section-8.5-3">Reference Values are matched with ACS entries by iterating through the <code>rv</code> list.
 For each <code>rv</code> entry, the <code>condition</code> ECT is compared with an ACS ECT.
 If the ECTs match except for authority, the <code>rv</code> <code>addition</code> ECT authority is added to the ACS ECT authority.<a href="#section-8.5-3" class="pilcrow">¶</a></p>
@@ -4473,13 +4514,13 @@ If the ECTs match except for authority, the <code>rv</code> <code>addition</code
         <h3 id="name-endorsed-values-augmentatio">
 <a href="#section-8.6" class="section-number selfRef">8.6. </a><a href="#name-endorsed-values-augmentatio" class="section-name selfRef">Endorsed Values Augmentation (Phase 4)</a>
         </h3>
-<p id="section-8.6-1"><span class="cref" id="issue_1">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179<a href="#section-8.6-1" class="pilcrow">¶</a></p>
+<p id="section-8.6-1"><span class="cref" id="issue_3">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179<a href="#section-8.6-1" class="pilcrow">¶</a></p>
 <div id="processing-endorsements">
 <section id="section-8.6.1">
           <h4 id="name-processing-endorsements">
 <a href="#section-8.6.1" class="section-number selfRef">8.6.1. </a><a href="#name-processing-endorsements" class="section-name selfRef">Processing Endorsements</a>
           </h4>
-<p id="section-8.6.1-1">Endorsers publish Endorsements using the endorsed values triple <a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a> which are transformed <a href="#sec-end-trans" class="auto internal xref">Section 8.3.3.3</a> into an internal representation <a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>.
+<p id="section-8.6.1-1">Endorsers publish Endorsements using the endorsed values triple (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>) which are transformed (<a href="#sec-end-trans" class="auto internal xref">Section 8.3.3.3</a>) into an internal representation (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.<a href="#section-8.6.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.6.1-2">Endorsed Values are matched with ACS entries by iterating through the <code>ev</code> list.
@@ -4586,7 +4627,7 @@ Attestation Results contexts are the inputs to Attestation Results procedures th
 See <a href="#sec-ir-cm" class="auto internal xref">Section 8.2.1</a>.<a href="#section-8.8.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.8.1-2">Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.<a href="#section-8.8.1-2" class="pilcrow">¶</a></p>
-<p id="section-8.8.1-3"><span class="cref" id="issue_2">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232<a href="#section-8.8.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.8.1-3"><span class="cref" id="issue_4">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232<a href="#section-8.8.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.8.1-4">The ACS contains the actual state of Attester's Target Environments (TEs).
 The <code>state-triples</code> field contains Evidence (from Attesters) and Endorsements
 (e.g. from <code>endorsed-triple-record</code>).<a href="#section-8.8.1-4" class="pilcrow">¶</a></p>
@@ -4643,7 +4684,7 @@ Additions to the ACS MUST be atomic.<a href="#section-8.8.2-1" class="pilcrow">�
         <h3 id="name-ect-comparison">
 <a href="#section-8.9" class="section-number selfRef">8.9. </a><a href="#name-ect-comparison" class="section-name selfRef">ECT Comparison</a>
         </h3>
-<p id="section-8.9-1"><span class="cref" id="issue_3">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.9-1" class="pilcrow">¶</a></p>
+<p id="section-8.9-1"><span class="cref" id="issue_5">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.9-1" class="pilcrow">¶</a></p>
 <p id="section-8.9-2">This specification defines the comparison algorithm for the codepoints described in sub-sections below.
 A CoRIM profile may define additional negative codepoints and their matching algorithms.
 Specifications that extend CoMID MUST also define comparison algorithms for their added codepoints.
@@ -4667,7 +4708,7 @@ If a codepoint's comparison algorithm is not stated or does not default to the c
             </h5>
 <p id="section-8.9.2.1-1">This section describes the algorithm used to compare the <code>measurement-values-map</code> codepoints of an ECT with another ECT.
 The comparison algorithm performed depends on the value of the codepoint being compared.<a href="#section-8.9.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.9.2.1-2"><span class="cref" id="issue_4">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/203<a href="#section-8.9.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.9.2.1-2"><span class="cref" id="issue_6">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/203<a href="#section-8.9.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.9.2.1-3">If the <code>measurement-values-map</code> value has an associated CBOR tag, the comparison algorithm should comprehend the structure identified by the CBOR tag.<a href="#section-8.9.2.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.9.2.1-4">If the Verifier does not recognize a CBOR tag value then the value MUST NOT match.<a href="#section-8.9.2.1-4" class="pilcrow">¶</a></p>
 <p id="section-8.9.2.1-5">Note: CBOR tags are useful for discriminating values amongst alternates, but the comparison of tagged values is still determined by the codepoint they appear under. It is recommended but not required to compare values with a specific CBOR tag the same way across codepoints. For this reason, it is recommended to specify a default comparison algorithm with the CBOR tag's registration.<a href="#section-8.9.2.1-5" class="pilcrow">¶</a></p>
@@ -4733,7 +4774,7 @@ there needs to be a mask at key 5). Should we have a Reference Value of this
 which stores <code>[expect-raw-value raw-value-mask]</code> in an array?</em><a href="#section-8.9.2.1.3-1.1.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
-<p id="section-8.9.2.1.3-2"><span class="cref" id="issue_5">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.9.2.1.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.9.2.1.3-2"><span class="cref" id="issue_7">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.9.2.1.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-cryptokeys-matching">
@@ -4889,7 +4930,7 @@ extensions <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D
       <h2 id="name-security-and-privacy-consid">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-and-privacy-consid" class="section-name selfRef">Security and Privacy Considerations</a>
       </h2>
-<p id="section-10-1"><span class="cref" id="issue_6">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-1"><span class="cref" id="issue_8">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11<a href="#section-10-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-iana-cons">
@@ -4902,7 +4943,7 @@ extensions <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D
         <h3 id="name-new-cose-header-parameters">
 <a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-new-cose-header-parameters" class="section-name selfRef">New COSE Header Parameters</a>
         </h3>
-<p id="section-11.1-1"><span class="cref" id="issue_7">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-11.1-1"><span class="cref" id="issue_9">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12<a href="#section-11.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-iana-cbor-tags">
