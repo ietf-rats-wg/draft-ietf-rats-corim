@@ -1618,9 +1618,9 @@ ae = [
 ]
 ~~~
 
-| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+| Type | `en` | `el` | `a` | `cm` | `p` |
 |---
-| addition | T | T | T | F | T | F |
+| addition | T | T | T | T | F |
 {: #tbl-ae-ect-optionality title="Mandatory fields for Evidence tuples"}
 
 'T' means mandatory.
@@ -1642,10 +1642,10 @@ rv = + {
 }
 ~~~
 
-| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+| Type | `en` | `el` | `a` | `cm` | `p` |
 |---
-| condition | T | T | F | F | F | F |
-| addition | T | T | T | F | T | F |
+| condition | T | T | F | F | F |
+| addition  | T | T | T | T | F |
 {: #tbl-rv-ect-optionality title="Mandatory fields for Reference Values tuples"}
 
 #### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1673,11 +1673,11 @@ evs = [
 ]
 ~~~
 
-| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+| Type | `en` | `el` | `a` | `cm` | `p` |
 |---
-| condition | F | T | F | F | F | F |
-| selection | F | T | F | F | F | F |
-| addition | T | T | T | F | T | F |
+| condition | F | T | F | F | F |
+| selection | F | T | F | F | F |
+| addition  | T | T | T | T | F |
 {: #tbl-ev-ect-optionality title="Mandatory fields for Endorsed Values tuples"}
 
 #### Internal Representation of Policy Statements {#sec-ir-policy}
@@ -1692,10 +1692,10 @@ policy = [
 ]
 ~~~
 
-| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+| Type | `en` | `el` | `a` | `cm` | `p` |
 |---
-| condition | F | F | F | F | F | F |
-| addition | T | T | T | F | T | F |
+| condition | F | F | F | F | F |
+| addition  | T | T | T | T | F |
 {: #tbl-policy-ect-optionality title="Mandatory fields for policy tuples"}
 
 #### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -1711,10 +1711,10 @@ ar = [
 ]
 ~~~
 
-| Type | `e` | `c` | `a` | `ns` | `cm` | `p` |
+| Type | `en` | `el` | `a` | `cm` | `p` |
 |---
-| acs-condition | F | F | F | F | F | F |
-| ars-addition | T | T | T | F | F | F |
+| acs-condition | F | F | F | F | F |
+| ars-addition  | T | T | T | F | F |
 {: #tbl-ar-ect-optionality title="Mandatory fields for Attestation Results tuples"}
 
 ### Internal Representation of ACS {#sec-ir-acs}
