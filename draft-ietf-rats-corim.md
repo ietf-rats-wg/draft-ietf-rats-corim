@@ -1832,7 +1832,7 @@ The selected tags are mapped to an internal representation, making them suitable
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
-#### Reference Triples Tranformation {#sec-ref-trans}
+#### Reference Triples Transformation {#sec-ref-trans}
 
 An available `rv` list entry {{sec-ir-ref-val}} is allocated.
 The Reference Values Triple {{sec-comid-triple-refval}} `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
