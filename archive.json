@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-19T01:42:03.635565+00:00",
+  "timestamp": "2024-09-22T01:49:58.233968+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -6447,7 +6447,7 @@
       "labels": [],
       "body": "We have matching semantics sometimes in terms of external representation, and sometimes internal representation.\r\n\r\nThe translation from external triples to internal relations like `rv` is incomplete in the definition of the semantics. The crux of the representation is matching an ECT condition against an ECT in the ACS.",
       "createdAt": "2024-09-18T15:17:31Z",
-      "updatedAt": "2024-09-18T16:42:18Z",
+      "updatedAt": "2024-09-20T20:13:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -6491,6 +6491,13 @@
           "body": "To get roughly on the same page before writing the prose, here's my interpretation as a mathematical relation.\r\n\r\nI'll treat `? x : cddl` to mean `x: optional<encodeType(cddl)>`.\r\n\r\n```\r\np  \u22a2 ce <= ee : optional<environment-map>\r\np  \u22a2 cc <= ec : optional<[ + local-claim]>\r\np  \u22a2 ca <= ea: optional<[ + $crypto-key-type-choice ]>\r\n \u22a2 ccm <= ecm : optional<cm-type>\r\n-------------------------------------------------- [ ECT matching ]\r\n \u22a2 { ce cc ca ns ccm p } <= { ee ec ea ns ecm p }\r\n```\r\n\r\nNote `ns` and 'p' on both sides on the bottom to require exact equality for namespace and profile whether given or not.\r\n\r\nFor optional type ordering, we treat `none` as logical bottom:\r\n\r\n```\r\n-------------- [ optional<T> refl ]\r\n \u22a2 none <= none : optional<T>\r\n\r\n--------------- [ optional<T> bottom ]\r\n \u22a2 none <= some v : T\r\n\r\nP \u22a2 v0 <= v1 : T\r\n--------------------- [ optional<T> <= ]\r\nP \u22a2 some v0 <= some v1 : optional<T>\r\n```\r\nRelations can be refined by the profile or not. The P context can be empty or a profile identifier.\r\n\r\n\r\ncm-type, bstr, uint, and tstr have no extra structure to match.\r\n```\r\n----- [cm-type refl ]\r\nP \u22a2 x <= x : cm-type\r\n\r\n----- [tstr refl ]\r\nP \u22a2 x <= x : tstr\r\n\r\n----- [bstr refl ]\r\nP \u22a2 x <= x : bstr\r\n\r\n----- [uint refl ]\r\nP \u22a2 x <= x : uint\r\n```\r\nNote uint is treated as an identifier and not with numerical inequality.\r\n\r\nA list of local-claims all must match for the list to match.\r\n```\r\nAND_{ clc in clcs }{Exists ecl in elcs such that P \u22a2 clc <= elc : local-claim }\r\n--------------------------------- [ [ + local-claim ] <= ]\r\nP \u22a2 clcs <= elcs  : [ + local-claim ]\r\n```\r\n\r\nA local-claim can only match its _exact_ mkey and a subset of authorities.\r\n```\r\ncmv <= emv : measurement-values-map\r\nca <= ea : optional<[ + $crypto-key-type-choice]>\r\n--------------------------------------------------- [ local-claim/measurement-map <= ]\r\n[ mkey: mk, mval: cmv, authorities: ca ] <= [ mkey: mk, mval: emv, authorities: ea ] : local-claim\r\n```\r\n\r\nThe measurement-values-map subset relation is defined on a per-codepoint basis, and with the optional<T> semantics.\r\nI will not rehash the ordering of the right-hand-side codepoints here.\r\n```\r\nAND_{ cmvk => cmvv in cmvs } {\r\n  some emvv := emvs[cmvk]\r\n  P \u22a2 cmvv <= emvv : measurement-values-order(P, cmvk)\r\n}\r\n--------------------------------------------------- [ measurement-values-map <= ]\r\nP \u22a2 cmvs <= emvs : measurement-values-map\r\n```\r\nThe `measurement-values-order(none, uint)` definition is as defined for each of the measurement-values-map codepoints in the spec.\r\n\r\n```\r\nP \u22a2 cclass <= eclass : optional<class-map>\r\nP \u22a2 cgroup <= egroup : optional<$group-id-type-choice>\r\nP \u22a2 cinstance <= einstance : optional<$instance-id-type-choice>\r\n---------------------------------------------------------- [ environment-map <= ]\r\nP \u22a2 { cclass cgroup cinstance } <= { eclass egroup einstance } : environment-map\r\n```\r\n\r\n```\r\nP \u22a2 cclassid <= eclassid : optional<$class-id-type-choice>\r\n\u22a2 cvendor <= evendor : optional<tstr>\r\n\u22a2 cmodel <= emodel : optional<tstr>\r\n\u22a2 clayer <= elayer : optional<uint>\r\n\u22a2 cindex <= eindex : optional<uint>\r\n---------- [ class-map <= ]\r\nP \u22a2 { cclassid cvendor cmodel  clayer cindex } <= { eclassid evendor emodel elayer eindex } : class-map\r\n```\r\n\r\nAuthorities are matched with a subset relationship:\r\n\r\n```\r\nAND_{ ck in ca }{Exists ek in ea such that P \u22a2 ck <= ek }\r\n------------------------ [ authority <= ]\r\nP \u22a2 ca <= ea : [ + $crypto-key-type-choice ] \r\n```\r\n\r\nA profile MAY define an ordering relation on $crypto-key-type-choice extensions, $class-id-type-choice, $group-id-type-choice, and $instance-id-type-choice may be defined by a profile. For the base CDDL choices, only CBOR-encoding-equality is a match.\r\n\r\n```\r\ncrypto-key-ordering(p, ck, ek)\r\n------------------------------- [ profile-defined crypto key type choice ordering ]\r\np \u22a2 ck <= ek : $crypto-key-type-choice (not in base CDDL)\r\n```\r\n\r\nAll of this setup gives much more structure to how a profile may impose extra matching semantics.",
           "createdAt": "2024-09-18T16:39:27Z",
           "updatedAt": "2024-09-18T16:42:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> p  \u22a2 ce <= ee : optional<environment-map>\r\n\r\nI'm having difficulty understanding this because I'm not familiar with the notation and the variable names are terse.",
+          "createdAt": "2024-09-20T20:13:56Z",
+          "updatedAt": "2024-09-20T20:13:56Z"
         }
       ]
     },
@@ -6522,9 +6529,24 @@
       "labels": [],
       "body": "The 'namespace' member of ECT is not needed going forward, hence it can be removed.",
       "createdAt": "2024-09-18T20:53:40Z",
-      "updatedAt": "2024-09-18T20:53:40Z",
+      "updatedAt": "2024-09-20T16:36:03Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This includes removing 'ns' from truth tables.",
+          "createdAt": "2024-09-20T16:14:37Z",
+          "updatedAt": "2024-09-20T16:14:37Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is now addressed in PR #268 ",
+          "createdAt": "2024-09-20T16:36:01Z",
+          "updatedAt": "2024-09-20T16:36:01Z"
+        }
+      ]
     },
     {
       "number": 282,
@@ -6534,11 +6556,13 @@
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "thomas-fossati"
+      ],
       "labels": [],
       "body": "Since the internal representation should be valid CDDL, it needs CI integration and code snippets should be imported into the document.",
       "createdAt": "2024-09-18T20:55:07Z",
-      "updatedAt": "2024-09-18T20:55:07Z",
+      "updatedAt": "2024-09-19T06:43:46Z",
       "closedAt": null,
       "comments": []
     },
@@ -6552,11 +6576,112 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "The corroboration section, which is part of Phase 3, anticipates the need for a section that describes how to compare two ECTs \"identically\". Once this section is written, a reference to it from the section that describes Phase 3 can be added.",
+      "body": "Section 8.6.4 Processing a stateful environment against the Appraisal Claim Set should be moved / integrated into Section 8.9 ECT Comparison. \r\n\r\nSection 8.5 Reference Values Corroboration and Augmentation and section 8.6.1 language uses the word \"match\" to refer to condition ECT and ACS ECT matching semantics. When this issue is addressed, these sections should cross-reference section 8.9. \r\n\r\nSection 8.9 also describes ACS addition semantics.",
       "createdAt": "2024-09-18T23:00:41Z",
-      "updatedAt": "2024-09-18T23:00:41Z",
+      "updatedAt": "2024-09-20T18:35:51Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is a duplicate of https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/279 no?",
+          "createdAt": "2024-09-20T16:31:09Z",
+          "updatedAt": "2024-09-20T16:31:09Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This is a duplicate of #279 no?\r\n\r\nThey are certainly related. See updated description.",
+          "createdAt": "2024-09-20T18:35:49Z",
+          "updatedAt": "2024-09-20T18:35:49Z"
+        }
+      ]
+    },
+    {
+      "number": 285,
+      "id": "I_kwDOH6-tI86XV9i8",
+      "title": "Flesh out Endorsement Triples Transformation section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There are placeholders for conditional endorsement and conditional endorsement series transformations in the Endorsement Triples Transformation section. \r\n\r\nThere are notes in the documents pointing to this issue.",
+      "createdAt": "2024-09-20T15:38:34Z",
+      "updatedAt": "2024-09-20T15:38:34Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 286,
+      "id": "I_kwDOH6-tI86XWCon",
+      "title": "Use of parens surrounding cross-references",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/286",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I believe it is a document convention to surround cross-references with parens: e.g.:\r\n```\r\n({{my-cross-reference}})\r\n```\r\nA cleanup task is needed that fixes all the instances that don't conform to the convention.",
+      "createdAt": "2024-09-20T15:48:52Z",
+      "updatedAt": "2024-09-20T15:48:52Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 287,
+      "id": "I_kwDOH6-tI86XWC8E",
+      "title": "Truth tables should not use abbreviations",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/287",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The truth tables in section 8.2.1 Internal Representation of Conceptual Messages uses abbreviations for the various attributes of the ECT structure. These should be replaced with more readable values used in the ECT CDDL.",
+      "createdAt": "2024-09-20T15:49:37Z",
+      "updatedAt": "2024-09-20T15:49:37Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 288,
+      "id": "I_kwDOH6-tI86XWZKl",
+      "title": "Evaluate TCG Compatibility on Conditional Triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/288",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Once https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/266 is resolved, via via PR #268 which sorts the compatibility with the TCG, this has an impact on the Conditional Triples.\r\n\r\nThis issue tracks the impact of Introduction of measurements of `one or more` Measured Elements in an Environment  on the following:\r\n\r\n1. CDDL Schema of (a) conditional-endorsement-series-triple-record AND (b) conditional-endorsement-triple-record\r\n2. Impact on Matching Semantics and Introduction of Endorsements to ACS",
+      "createdAt": "2024-09-20T16:44:56Z",
+      "updatedAt": "2024-09-20T17:21:08Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "My Initial Analysis:\r\n\r\n* Stateful Environment MUST change to reflect that the entire Environment needs to be stateful, meaning all the Measured Elements state needs to be recorded, hence the multiplicity of `measurement-map` needs to be expressed in the stateful environment.\r\n\r\n; STATEFUL  environment with one or more measurements  that must match evidence\r\nstateful-environment-record = [\r\n  environment-map,\r\n  [ + measurement-map ]\r\n]\r\n\r\n* Conditional Endorsement Triple {#sec-comid-triple-cond-endors}\r\n\r\nconditional-endorsement-triple-record = [\r\n  conditions: [ + stateful-environment-record ]\r\n  endorsements: [ + endorsed-triple-record ]\r\n]\r\n\r\nThere is no ambiguity..\r\n\r\nWhen a Stateful Environment with multiple measured elements all match then only\r\nAn Endorsed Triple containing One Env, with Multiple Endorsements each pertaining to each measured Element within an Environment applies and added to ACS.\r\n\r\nThe Supply Chain Actor decides, how many of all measured-elements it wants an exact match in stateful environment, prior to one or more measurements each belonging to the SAME measured elements, it wishes to ADD via endorsed-triple-record.\r\n",
+          "createdAt": "2024-09-20T16:52:05Z",
+          "updatedAt": "2024-09-20T16:52:05Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What is the meaning of the authorities in the endorsed-triple-records? I would hope they're _either_ instructed to be ignored, OR they make the endorsement addition yet further conditional on all the endorsed measurements matching the ACS with the listed authorized-by keys\u2013the action is then only to add the CoRIM issuer to that authorized-by list.",
+          "createdAt": "2024-09-20T17:09:08Z",
+          "updatedAt": "2024-09-20T17:09:08Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I will reply to authority inside `endorsed-triple-records`\r\n\r\nThe example is : as I tried in the other issue, is say a Test House has run certain benchmark tests on a Stateful Environment, to keep it simple, an Env with one Measured Element (With an Mkey: Value 1, Meas-val: Digest, Revision 1.0.0. \r\n\r\nThe Test Results are the Endorsements.\r\n\r\nThe Test House lists the Authority in the meas-map of Endorsed triple. \r\n\r\nThe Integrator or some other authority signs the CoRIM : So now it has a Statefule Env: and an Endorsed Value with the Authority of the Test House completes the Endorsed value triple!",
+          "createdAt": "2024-09-20T17:21:07Z",
+          "updatedAt": "2024-09-20T17:21:07Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -35642,13 +35767,13 @@
       "labels": [],
       "body": "This PR reverts `endorsement-triple-record` and `reference-triple-record` to original CDDL by adding array brackets around `measurement-map` to allow multiplicity of measurements for a given environment.\r\n\r\nThe Measurements and Measurement Keys sections are updated to better describe measurement multiplicity and disambiguation of measurement values.",
       "createdAt": "2024-09-11T21:16:30Z",
-      "updatedAt": "2024-09-18T22:57:09Z",
+      "updatedAt": "2024-09-20T16:29:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "baseRefOid": "1d1af9459f2e0142743790892d4466e39bf86841",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tcg-compatible",
-      "headRefOid": "b45e340c2af46e072577f0e640f10760051c5c04",
+      "headRefOid": "7a01ca689f4013783ba5138c0d80232214e3976b",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -35681,6 +35806,13 @@
           "body": "We still need to work on other triples involving `measurement-values-map`",
           "createdAt": "2024-09-18T09:51:30Z",
           "updatedAt": "2024-09-18T09:51:30Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @thomas-fossati @deeglaze Thank you all for a great team effort, this PR is now in a pretty good shape, to be merged. We are happy and open to discuss the impact on Conditional Endorsed and Conditional Series triple. I have done some analysis which I will share in the github issue already created! \r\n\r\n@andrew-draper : Awaiting your analysis, as discussed earlier, however I understand, there are ways to improve conditional triples, orthogonal to this discussion hence we should merge this change, given all the collective hard work from CoRIM Team. \r\n\r\n@henkbirkholz : please review as well, your feedback is also super-important!",
+          "createdAt": "2024-09-20T16:29:23Z",
+          "updatedAt": "2024-09-20T16:29:23Z"
         }
       ],
       "reviews": [
@@ -36061,6 +36193,465 @@
               "updatedAt": "2024-09-18T22:57:09Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J_w91",
+          "commit": {
+            "abbreviatedOid": "d1045e9"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T11:01:55Z",
+          "updatedAt": "2024-09-19T11:01:55Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "Given that `ECT` is an acronym for `Environment Claims Tuple`: I would rename line 1604 on the right to \r\n\r\n? iclaims: [+internal-claims-map]\r\n\r\n&\r\n\r\nLine 1610 to be:\r\ninternal-claims-map = {\r\n? eid: element-id\r\nclaims: measurement-values-map\r\n}",
+              "createdAt": "2024-09-19T11:01:55Z",
+              "updatedAt": "2024-09-19T11:01:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J_xdO",
+          "commit": {
+            "abbreviatedOid": "d1045e9"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Some editorial comments but in general LGTM!",
+          "createdAt": "2024-09-19T11:02:39Z",
+          "updatedAt": "2024-09-19T11:02:39Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KELh2",
+          "commit": {
+            "abbreviatedOid": "d1045e9"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T17:52:59Z",
+          "updatedAt": "2024-09-19T17:52:59Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "I keyed off of the existing prose that describes it as properties. I don't think we need to bow to the consistency gods by changing ECT to EPT since the main focus is still on claims. In other words, the measurement-values-map contents are still the \"claims\". \r\n\r\nI find it easier to write the prose if the structures are all the same but with slight modification. \r\n\r\nGiven we now describe environments as consisting of zero or more elements. It may be appropriate to name `properties-map` to `element-map` then the contents of an element-map is the element-id and the claims `element-claims-map`. \r\n\r\n",
+              "createdAt": "2024-09-19T17:52:59Z",
+              "updatedAt": "2024-09-19T17:54:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KEMlj",
+          "commit": {
+            "abbreviatedOid": "d1045e9"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T17:55:18Z",
+          "updatedAt": "2024-09-19T17:55:18Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "Works for me and I admit a very sensible suggestion.",
+              "createdAt": "2024-09-19T17:55:18Z",
+              "updatedAt": "2024-09-19T17:55:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KGeMb",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T00:11:01Z",
+          "updatedAt": "2024-09-20T00:11:01Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "Fixed in commit: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268/commits/017ae53348b76040894606c28daf2d19700fece8",
+              "createdAt": "2024-09-20T00:11:01Z",
+              "updatedAt": "2024-09-20T00:11:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KGfNW",
+          "commit": {
+            "abbreviatedOid": "457bf6e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T00:12:18Z",
+          "updatedAt": "2024-09-20T00:12:18Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Fixed in commit: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268/commits/59fd80d9894bf52b9a6718d9339d6548c238ee9f",
+              "createdAt": "2024-09-20T00:12:18Z",
+              "updatedAt": "2024-09-20T00:12:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KGghZ",
+          "commit": {
+            "abbreviatedOid": "5956324"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T00:13:50Z",
+          "updatedAt": "2024-09-20T00:13:50Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Fixed in commit: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/0d82b15fffd8cef5d09f4747e5e45bed8dd1caf6",
+              "createdAt": "2024-09-20T00:13:50Z",
+              "updatedAt": "2024-09-20T00:13:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KJXvT",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-09-20T09:13:07Z",
+          "updatedAt": "2024-09-20T09:13:07Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMg-f",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T14:57:12Z",
+          "updatedAt": "2024-09-20T14:57:13Z",
+          "comments": [
+            {
+              "originalPosition": 73,
+              "body": "```suggestion\r\nThe internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).\r\n```",
+              "createdAt": "2024-09-20T14:57:13Z",
+              "updatedAt": "2024-09-20T14:57:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMqwr",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:11:05Z",
+          "updatedAt": "2024-09-20T15:11:05Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "Purely typographic comment: there are structural elements that can be used to assemble an enumeration/definition list, rather than doing it by hand.  E.g.:\r\n\r\n```\r\n{: vspace=\"0\"}\r\nEnvironment:\r\n: Identifies ...\r\n\r\nElements:\r\n: Identifies ...\r\n```\r\n\r\nor\r\n\r\n```\r\n{:my-enum: style=\"format %d.\"}\r\n\r\n{: my-enum}\r\n* Environment: Identifies ...\r\n* Elements: Identifies ...\r\n```\r\n\r\nThe advantage is that rendering in the supported output formats (TXT, HTML, PDF) is taken care of automatically - and, hopefully, also optimally.",
+              "createdAt": "2024-09-20T15:11:05Z",
+              "updatedAt": "2024-09-20T15:11:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMsOE",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:13:51Z",
+          "updatedAt": "2024-09-20T15:13:51Z",
+          "comments": [
+            {
+              "originalPosition": 140,
+              "body": "The shorthand convention doesn't seem to be defined anywhere.  OK, it's not completely unintuitive :-) but can't we use the unabbreviated labels?",
+              "createdAt": "2024-09-20T15:13:51Z",
+              "updatedAt": "2024-09-20T15:13:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMsek",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:14:21Z",
+          "updatedAt": "2024-09-20T15:14:21Z",
+          "comments": [
+            {
+              "originalPosition": 215,
+              "body": "```suggestion\r\n#### Reference Triples Transformation {#sec-ref-trans}\r\n```",
+              "createdAt": "2024-09-20T15:14:21Z",
+              "updatedAt": "2024-09-20T15:14:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMvzy",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:20:28Z",
+          "updatedAt": "2024-09-20T15:20:28Z",
+          "comments": [
+            {
+              "originalPosition": 217,
+              "body": "This (and similar instances below) will render as:\r\n```\r\nAn available rv list entry Section 8.2.1.2 is allocated.\r\n```\r\nwhich is not great.\r\n\r\nPlease wrap all the references to sections in parentheses so that it reads like:\r\n```\r\nAn available rv list entry (Section 8.2.1.2) is allocated.\r\n```",
+              "createdAt": "2024-09-20T15:20:28Z",
+              "updatedAt": "2024-09-20T15:20:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMxJK",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:23:11Z",
+          "updatedAt": "2024-09-20T15:23:11Z",
+          "comments": [
+            {
+              "originalPosition": 217,
+              "body": "I noticed about 50% of the time cross references are not bounded by parens. Should it be 100%?",
+              "createdAt": "2024-09-20T15:23:11Z",
+              "updatedAt": "2024-09-20T15:23:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMxqy",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:24:15Z",
+          "updatedAt": "2024-09-20T15:24:16Z",
+          "comments": [
+            {
+              "originalPosition": 239,
+              "body": "What is the typographical intent here?\r\n\r\nIf this is an algorithm, use enumerations (maybe custom ones, like I described in a comment above).\r\n\r\nAnonymous definition lists doesn't look like the right tool for the job.",
+              "createdAt": "2024-09-20T15:24:15Z",
+              "updatedAt": "2024-09-20T15:24:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMyL-",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:25:19Z",
+          "updatedAt": "2024-09-20T15:25:20Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "Are these TODOs (in which case, we should mark them explicitly and link to their associated issues)?  Or did you just forget to add the content?",
+              "createdAt": "2024-09-20T15:25:20Z",
+              "updatedAt": "2024-09-20T15:25:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMyq_",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:26:18Z",
+          "updatedAt": "2024-09-20T15:26:18Z",
+          "comments": [
+            {
+              "originalPosition": 254,
+              "body": "Here and below, parentheses deficiency syndrome :-)",
+              "createdAt": "2024-09-20T15:26:18Z",
+              "updatedAt": "2024-09-20T15:26:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KMzcV",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:27:46Z",
+          "updatedAt": "2024-09-20T15:27:46Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "It is a placeholder. There should be issues created and PRs that flesh them out. This PR is getting big enough already.",
+              "createdAt": "2024-09-20T15:27:46Z",
+              "updatedAt": "2024-09-20T15:27:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KM0Pi",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:29:24Z",
+          "updatedAt": "2024-09-20T15:29:25Z",
+          "comments": [
+            {
+              "originalPosition": 239,
+              "body": "custom enumerations are new to me. I have to play around with it.",
+              "createdAt": "2024-09-20T15:29:24Z",
+              "updatedAt": "2024-09-20T15:29:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KM1h7",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:32:04Z",
+          "updatedAt": "2024-09-20T15:32:04Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "OK; stick a `[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/XYZ` nearby then.",
+              "createdAt": "2024-09-20T15:32:04Z",
+              "updatedAt": "2024-09-20T15:32:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KM99w",
+          "commit": {
+            "abbreviatedOid": "59694ab"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T15:44:41Z",
+          "updatedAt": "2024-09-20T15:44:41Z",
+          "comments": [
+            {
+              "originalPosition": 239,
+              "body": "You could do:\r\n\r\n```\r\n{:algo-steps: counter=\"bar\" style=\"format Step %d.\"}\r\n\r\n{:algo-steps}\r\n* An available `rv` list entry {{sec-ir-ref-val}} is allocated.\r\nThe Reference Values Triple {{sec-comid-triple-refval}} `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.\r\n* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.\r\n* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.\r\n* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.\r\n```\r\n\r\nwhich is rendered as:\r\n```\r\n   Step 1.  An available rv list entry Section 8.2.1.2 is allocated.\r\n            The Reference Values Triple Section 5.1.4.2 environment-map\r\n            is copied to the environment-map for both the rv condition\r\n            and rv addition ECTs.\r\n\r\n   Step 2.  For each measurement-map entry in the measurements list, the\r\n            i^th measurement-map is copied to the i^th element-map in\r\n            the elements list of the rv addition ECT.\r\n\r\n   Step 3.  The issuer of the Endorsement conceptual message is copied\r\n            to the ev addition ECT authority field.\r\n\r\n   Step 4.  If the Endorsement conceptual message has a profile, the\r\n            profile is copied to the ev addition ECT profile field.\r\n```\r\n\r\n",
+              "createdAt": "2024-09-20T15:44:41Z",
+              "updatedAt": "2024-09-20T15:44:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNOa_",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T16:16:52Z",
+          "updatedAt": "2024-09-20T16:16:52Z",
+          "comments": [
+            {
+              "originalPosition": 140,
+              "body": "Issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/287 will address this.",
+              "createdAt": "2024-09-20T16:16:52Z",
+              "updatedAt": "2024-09-20T16:16:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNO6F",
+          "commit": {
+            "abbreviatedOid": "dc204a2"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T16:18:02Z",
+          "updatedAt": "2024-09-20T16:18:03Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "Fixed in commit https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268/commits/7a01ca689f4013783ba5138c0d80232214e3976b",
+              "createdAt": "2024-09-20T16:18:03Z",
+              "updatedAt": "2024-09-20T16:18:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNQt6",
+          "commit": {
+            "abbreviatedOid": "7a01ca6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-20T16:22:28Z",
+          "updatedAt": "2024-09-20T16:22:28Z",
+          "comments": []
         }
       ]
     },
@@ -36755,7 +37346,7 @@
       "labels": [],
       "body": "Extending the Compatibility PR to other triples. Once we have a consensus, this PR will be deleted, it will be either merged into\r\n PR #268 ",
       "createdAt": "2024-09-18T13:53:08Z",
-      "updatedAt": "2024-09-18T14:02:48Z",
+      "updatedAt": "2024-09-20T22:54:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
@@ -36766,7 +37357,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hey, I put together an experiment where I started with the ev and evs cddl and constructed records for conditional endorsed and conditional endorsed series. This CDDL compiles.\r\n```\r\nstart = conditional-endorsement-record / conditional-endorsement-series-record\r\n\r\nconditional-endorsement-record = [\r\n  conditions: [ + environment-element-map ]\r\n  additions: [ + environment-element-map ]\r\n]\r\n\r\nconditional-endorsement-series-record = [\r\n  conditions: [ + environment-element-map ]\r\n  series: [ + conditional-series-map ]\r\n]\r\n\r\nenvironment-element-map = {\r\n  &(environment: 0) => environment-map\r\n  &(elements: 1) => [ + measurement-map ]\r\n}\r\n\r\nconditional-series-map = {\r\n  ; first selections that match terminates search\r\n  &(selections: 0) => [ + environment-element-map ]\r\n  &(additions: 1) => [ + environment-element-map ]\r\n}\r\n```\r\nHere are a couple of examples. First for conditional endorsement:\r\n```\r\n/ conditional-endorsement-record / [\r\n    / conditions / [\r\n        / environment-element-map / {\r\n            / environment-map / 0 : {\r\n                / comid.class / 0 : {\r\n                    / comid.class-id / 0 :\r\n                        / tagged-uuid-type / 37(\r\n                        h'67b28b6c34cc40a19117ab5b05911e37'\r\n                        ),\r\n                    / comid.vendor / 1 : \"ACME Inc.\",\r\n                    / comid.model / 2 : \"ACME RoadRunner\",\r\n                    / comid.layer / 3 : 1\r\n                }\r\n            },\r\n            / elements / 1 : [\r\n                / measurement-map / {\r\n                    / comid.mval / 1 : {\r\n                        / comid.ver / 0 : {\r\n                            / comid.version / 0 : \"1.0.0\",\r\n                            / comid.version-scheme / 1 : 16384 / semver /\r\n                        },\r\n                        / comid.digests / 2 : [ [\r\n                            / hash-alg-id / 1, / sha256 /\r\n                            / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                        ] ]\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    / additions / [\r\n        / environment-element-map / {\r\n            / environment-map / 0 : {\r\n                / comid.class / 0 : {\r\n                    / comid.class-id / 0 :\r\n                        / tagged-uuid-type / 37(\r\n                        h'67b28b6c34cc40a19117ab5b05911e37'\r\n                        ),\r\n                    / comid.vendor / 1 : \"ACME Inc.\",\r\n                    / comid.model / 2 : \"ACME RoadRunner\",\r\n                    / comid.layer / 3 : 1\r\n                }\r\n            },\r\n            / elements / 1 : [\r\n                / measurement-map / {\r\n                    / comid.mval / 1 : {\r\n                        / comid.ver / 0 : {\r\n                            / comid.version / 0 : \"1.0.0\",\r\n                            / comid.version-scheme / 1 : 16384 / semver /\r\n                        },\r\n                        / comid.digests / 2 : [ [\r\n                            / hash-alg-id / 1, / sha256 /\r\n                            / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                        ] ]\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n]\r\n```\r\nThis is for conditional endorsement series:\r\n```\r\n/ conditional-endorsement-series-record / [\r\n    / conditions / [\r\n        / environment-element-map / {\r\n            / environment-map / 0 : {\r\n                / comid.class / 0 : {\r\n                    / comid.class-id / 0 :\r\n                        / tagged-uuid-type / 37(\r\n                        h'67b28b6c34cc40a19117ab5b05911e37'\r\n                        ),\r\n                    / comid.vendor / 1 : \"ACME Inc.\",\r\n                    / comid.model / 2 : \"ACME RoadRunner\",\r\n                    / comid.layer / 3 : 1\r\n                }\r\n            },\r\n            / elements / 1 : [\r\n                / measurement-map / {\r\n                    / comid.mval / 1 : {\r\n                        / comid.ver / 0 : {\r\n                            / comid.version / 0 : \"1.0.0\",\r\n                            / comid.version-scheme / 1 : 16384 / semver /\r\n                        },\r\n                        / comid.digests / 2 : [ [\r\n                            / hash-alg-id / 1, / sha256 /\r\n                            / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                        ] ]\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    / series / [\r\n        / conditional-series-map / {\r\n            / selections / 0 : [\r\n                / environment-element-map / {\r\n                    / environment-map / 0 : {\r\n                        / comid.class / 0 : {\r\n                            / comid.class-id / 0 :\r\n                                / tagged-uuid-type / 37(\r\n                                h'67b28b6c34cc40a19117ab5b05911e37'\r\n                                ),\r\n                            / comid.vendor / 1 : \"ACME Inc.\",\r\n                            / comid.model / 2 : \"ACME RoadRunner\",\r\n                            / comid.layer / 3 : 1\r\n                        }\r\n                    },\r\n                    / elements / 1 : [\r\n                        / measurement-map / {\r\n                            / comid.mval / 1 : {\r\n                                / comid.ver / 0 : {\r\n                                    / comid.version / 0 : \"1.0.0\",\r\n                                    / comid.version-scheme / 1 : 16384 / semver /\r\n                                },\r\n                                / comid.digests / 2 : [ [\r\n                                    / hash-alg-id / 1, / sha256 /\r\n                                    / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                                ] ]\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ],\r\n            / additions / 1 : [\r\n                / environment-element-map / {\r\n                    / environment-map / 0 : {\r\n                        / comid.class / 0 : {\r\n                            / comid.class-id / 0 :\r\n                                / tagged-uuid-type / 37(\r\n                                h'67b28b6c34cc40a19117ab5b05911e37'\r\n                                ),\r\n                            / comid.vendor / 1 : \"ACME Inc.\",\r\n                            / comid.model / 2 : \"ACME RoadRunner\",\r\n                            / comid.layer / 3 : 1\r\n                        }\r\n                    },\r\n                    / elements / 1 : [\r\n                        / measurement-map / {\r\n                            / comid.mval / 1 : {\r\n                                / comid.ver / 0 : {\r\n                                    / comid.version / 0 : \"1.0.0\",\r\n                                    / comid.version-scheme / 1 : 16384 / semver /\r\n                                },\r\n                                / comid.digests / 2 : [ [\r\n                                    / hash-alg-id / 1, / sha256 /\r\n                                    / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                                ] ]\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n]\r\n```\r\n",
+          "createdAt": "2024-09-20T22:50:26Z",
+          "updatedAt": "2024-09-20T22:50:26Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86J2ptS",
@@ -36787,6 +37386,26 @@
               "updatedAt": "2024-09-18T14:02:49Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KDGWT",
+          "commit": {
+            "abbreviatedOid": "f2be20e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T16:32:05Z",
+          "updatedAt": "2024-09-19T16:32:05Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "@deeglaze We can discuss Integrity registers removal in a separate issue and a follow up PR!\r\n\r\nI deliberately did not wanted to make things complicated all in one go!",
+              "createdAt": "2024-09-19T16:32:05Z",
+              "updatedAt": "2024-09-19T16:32:05Z"
+            }
+          ]
         }
       ]
     },
@@ -36802,7 +37421,7 @@
       "labels": [],
       "body": "A conditional endorsement series is about a target environment plus additional state expectations that lead to further endorsements.\r\n\r\nI removed the undefined CBOR tag around multiple measuremnt-maps since array and map have different CBOR major tags and a custom tag is not required.",
       "createdAt": "2024-09-18T14:39:09Z",
-      "updatedAt": "2024-09-18T16:50:31Z",
+      "updatedAt": "2024-09-20T16:30:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "multiplicity",
       "baseRefOid": "0ff26bef340181bf4ea3c2b6fa5ad759b7511021",
@@ -36820,6 +37439,13 @@
           "body": "@deeglaze Some more work needs to be done! Also, I already floated PR #276 , please have a look and comment. I am happy to fold this one on PR #276 and proceed with just one copy rather than multiple identical `intent`  PR's",
           "createdAt": "2024-09-18T16:50:29Z",
           "updatedAt": "2024-09-18T16:50:29Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is there an issue that this PR links to so that reviewers can know the problem statement that motivates this PR?\r\n\r\nIf we think there are use cases that can't be supported by the current triple it would be helpful to characterize them.\r\n\r\nIf the goal is to create a series triple that is more generalized, then we should start with the internal representation.\r\n```\r\nevs = [\r\n  condition: [ + ECT ]\r\n  series: + {\r\n    selection: [ + ECT ]\r\n    addition: [ + ECT ]\r\n  }\r\n]\r\n```\r\nSince the ECT can be mapped to the external representation readily, the CDDL for a revised series triple should be relatively straight forward.\r\n",
+          "createdAt": "2024-09-19T17:19:52Z",
+          "updatedAt": "2024-09-19T17:19:52Z"
         }
       ],
       "reviews": [
@@ -36860,6 +37486,388 @@
               "body": "We agreed with Ned's PR that is optionality is not required!",
               "createdAt": "2024-09-18T16:48:56Z",
               "updatedAt": "2024-09-18T16:48:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KDE6w",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T16:30:38Z",
+          "updatedAt": "2024-09-19T16:30:38Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "We don't want to have authorized-by in the endorsed values, since it is not meaningful here.",
+              "createdAt": "2024-09-19T16:30:38Z",
+              "updatedAt": "2024-09-19T16:30:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KDHke",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T16:33:15Z",
+          "updatedAt": "2024-09-19T16:33:15Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "It is not true, Endorsements or Reference Values, all should support Authority!",
+              "createdAt": "2024-09-19T16:33:15Z",
+              "updatedAt": "2024-09-19T16:33:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KDva7",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T17:09:43Z",
+          "updatedAt": "2024-09-19T17:09:43Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "No, authority in a measurement-map in a CoRIM represents a condition. Authority in a measurement-map in an ECT represents actual authorities that signed the information. For any _added_ measurement, the only authority is the CoRIM issuer. Given that the triple has already given two other positions for stating an authority condition, it doesn't make sense for the endv to have its own conditionality semantics.",
+              "createdAt": "2024-09-19T17:09:43Z",
+              "updatedAt": "2024-09-19T17:09:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KEFtX",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T17:42:18Z",
+          "updatedAt": "2024-09-19T17:42:18Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "I understand your point, however, this has a deeper implications.\r\n\r\nBy not providing a source of Authority for Added Endorsements in the triple, has implications.\r\n\r\nIt means the supplier of Endorsements has to have an implicit authority of CoRIM Signer.\r\n\r\nIt cannot inherit the Authority from RefValue provider Authority as they may not be the same!\r\n\r\nWhich implies, that for a Env with ClassID : X, with FW running from Authority coming from FW Supplier PQR (in RefVal), the Test House is vouching for its Endorsements.\r\n\r\nIt is fine to have CoRIM as a single source of Authority in this case, in most of the cases, so we can start with that.\r\n\r\nI was thinking as Authority is `optional` retaining it will provide, the flexibility to introduce endorsements coming from different authority, For an Environement, like for FW Element -1 : Authority X, FW Element 2: Authority Y",
+              "createdAt": "2024-09-19T17:42:18Z",
+              "updatedAt": "2024-09-19T17:43:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNUBQ",
+          "commit": {
+            "abbreviatedOid": "6c63e5d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T16:30:07Z",
+          "updatedAt": "2024-09-20T16:30:07Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "The only integrity protection you can ensure is who signed the information. https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/244 affirms that authorized-by is a condition, and not part of an addition. If it's not part of the condition and is actual addition, we need to have a triple signed by the delegate that the CoRIM issuer is authorized to sign on its behalf. I don't think we should do that though. You generally do that with PKI certificate paths.\r\n\r\nPlease express your example in terms of the conditional series triple so I may understand.",
+              "createdAt": "2024-09-20T16:30:07Z",
+              "updatedAt": "2024-09-20T16:30:07Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 284,
+      "id": "PR_kwDOH6-tI858Aw6I",
+      "title": "ensure internal representation is valid CDDL",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/284",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add automatic validation of internal representation CDDL\r\n\r\nFix #282",
+      "createdAt": "2024-09-19T10:04:10Z",
+      "updatedAt": "2024-09-20T18:20:04Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "1d1af9459f2e0142743790892d4466e39bf86841",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "intrep",
+      "headRefOid": "9578bfefc7d7d070ce43ddae69690f730bd3389d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Are you opposed to using the version that is in PR #268 which is better aligned to the existing wording (sans namespace)?\r\n~~~ cddl\r\nECT = {\r\n  ? environment: environment-map\r\n  ? elements: [ + element-map ]\r\n  ? authority: [ + $crypto-key-type-choice ]\r\n  ? cmtype: cm-type\r\n  ? profile: $profile-type-choice\r\n}\r\n\r\nelement-map = {\r\n  ? element-id: $measured-element-type-choice\r\n  element-claims: measurement-values-map\r\n}\r\n\r\ncm-type =  &(\r\n  reference-values: 0\r\n  endorsements: 1\r\n  evidence: 2\r\n  attestation-results: 3\r\n  verifier: 4\r\n  policy: 5\r\n)\r\n~~~",
+          "createdAt": "2024-09-19T17:06:08Z",
+          "updatedAt": "2024-09-19T20:35:35Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Are you opposed to using the version that is in PR #268 which is better aligned to the existing wording (sans namespace)?\r\n\r\nContent-wise, I am OK with anything.  The intent of this PR was purely mechanical, but if you want me to put in a more meaningful CDDL, I can certainly do that.  Or we can do it in #268 after rebase.  Let me know what's better from your perspective.",
+          "createdAt": "2024-09-19T20:22:30Z",
+          "updatedAt": "2024-09-19T20:22:30Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Are you opposed to using the version that is in PR #268 which is better aligned to the existing wording (sans namespace)?\r\n> \r\n> Content-wise, I am OK with anything. The intent of this PR was purely mechanical, but if you want me to put in a more meaningful CDDL, I can certainly do that. Or we can do it in #268 after rebase. Let me know what's better from your perspective.\r\n\r\nSince the CDDL blocks will all be replaced with imported CDDL, I'll focus on prose changes that reflect the environment:element construct. (see revised CDDL example in the previous comment).",
+          "createdAt": "2024-09-19T20:33:22Z",
+          "updatedAt": "2024-09-19T20:33:22Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Since the CDDL blocks will all be replaced with imported CDDL, I'll focus on prose changes that reflect the environment:element construct. (see revised CDDL example in the previous comment).\r\n\r\nOK, I'll use the new CDDL here then.\r\n",
+          "createdAt": "2024-09-19T20:34:38Z",
+          "updatedAt": "2024-09-19T20:34:38Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> OK, I'll use the new CDDL here then.\r\n\r\nDone in [0d82b15](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/284/commits/0d82b15fffd8cef5d09f4747e5e45bed8dd1caf6)",
+          "createdAt": "2024-09-19T21:03:20Z",
+          "updatedAt": "2024-09-19T21:03:20Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86J_m-v",
+          "commit": {
+            "abbreviatedOid": "5d273a7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T10:42:40Z",
+          "updatedAt": "2024-09-19T10:42:40Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Just a minor nit,\r\n\r\nThe CDDL names in our repo are long but quite expressive, for example:\r\n`measured-element-type-choice.cddl`\r\n\r\nI would request, we rename INTREP everywhere to \r\n\r\n`INTERNAL-REP`\r\n\r\nSo the CDDL becomes: internal-rep-claims-map.cddl\r\n\r\nThis avoids any confusion in the naming to mis-interpret it as Integer Representation!",
+              "createdAt": "2024-09-19T10:42:40Z",
+              "updatedAt": "2024-09-19T10:43:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86J_nSF",
+          "commit": {
+            "abbreviatedOid": "5d273a7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!, just left one minor Nit to look at!",
+          "createdAt": "2024-09-19T10:43:18Z",
+          "updatedAt": "2024-09-19T10:43:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KAA9r",
+          "commit": {
+            "abbreviatedOid": "5d273a7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T11:30:41Z",
+          "updatedAt": "2024-09-19T11:30:41Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "\r\n> This avoids any confusion in the naming to mis-interpret it as Integer Representation!\r\n\r\nNo way, that's a feature, not a bug :-) I made it expressly to sound like INTREPid!\r\n",
+              "createdAt": "2024-09-19T11:30:41Z",
+              "updatedAt": "2024-09-19T11:30:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KAFLg",
+          "commit": {
+            "abbreviatedOid": "5d273a7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-19T11:38:42Z",
+          "updatedAt": "2024-09-19T11:38:42Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "But it is not INTREPID after-all ??",
+              "createdAt": "2024-09-19T11:38:42Z",
+              "updatedAt": "2024-09-19T11:38:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KLxjt",
+          "commit": {
+            "abbreviatedOid": "0d82b15"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T13:45:18Z",
+          "updatedAt": "2024-09-20T13:45:19Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n  cmtype: cm-type\r\n```",
+              "createdAt": "2024-09-20T13:45:19Z",
+              "updatedAt": "2024-09-20T13:45:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNNpc",
+          "commit": {
+            "abbreviatedOid": "9578bfe"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T16:14:58Z",
+          "updatedAt": "2024-09-20T16:22:37Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "It seems endorsements, conditional endorsements, and conditional series endorsements are unrolling a recursive definition that would allow for simpler expression.\r\n\r\n```\r\nevs = [ + {\r\n? / condition: / 0 => [ + ECT ]\r\n/ addition: / 1 => evs / [ + ECT ]\r\n} ]\r\n```\r\nIf a condition applies and the addition isn't a map, add the ECTs. If the addition is a map, re-enter the top of the loop to further specialize the condition. If the condition doesn't apply, go to the next map in the series.\r\n\r\nThis allows for nested if/elseif.../else expressions. I don't think the nonempty selection requirement allows for a bare \"else\". \r\n",
+              "createdAt": "2024-09-20T16:14:58Z",
+              "updatedAt": "2024-09-20T16:22:37Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "This map syntax for the pair needs key definitions, no? `/ selection: / 0 => [ + ECT ]` for example. Same comment for rv below.",
+              "createdAt": "2024-09-20T16:15:44Z",
+              "updatedAt": "2024-09-20T16:22:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNR6f",
+          "commit": {
+            "abbreviatedOid": "9578bfe"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T16:25:25Z",
+          "updatedAt": "2024-09-20T16:25:25Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Wouldn't that result in infinite recursion?",
+              "createdAt": "2024-09-20T16:25:25Z",
+              "updatedAt": "2024-09-20T16:25:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KNlZf",
+          "commit": {
+            "abbreviatedOid": "9578bfe"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T17:10:37Z",
+          "updatedAt": "2024-09-20T17:10:37Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "No, [ + ECT ] is a base case. You can unfold as many nestings as you want, but you eventually bottom out in a flat list of additions.",
+              "createdAt": "2024-09-20T17:10:37Z",
+              "updatedAt": "2024-09-20T17:10:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KOGcW",
+          "commit": {
+            "abbreviatedOid": "9578bfe"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T18:05:49Z",
+          "updatedAt": "2024-09-20T18:05:49Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "It's good like that.  We decided to avoid codepoint aliases here and just use string labels because compression is not needed.",
+              "createdAt": "2024-09-20T18:05:49Z",
+              "updatedAt": "2024-09-20T18:05:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KOGvg",
+          "commit": {
+            "abbreviatedOid": "9578bfe"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T18:06:38Z",
+          "updatedAt": "2024-09-20T18:06:38Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "@deeglaze clarifying question: your `evs` definition above would also subsume `ev`?",
+              "createdAt": "2024-09-20T18:06:38Z",
+              "updatedAt": "2024-09-20T18:06:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KONXh",
+          "commit": {
+            "abbreviatedOid": "9578bfe"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-20T18:20:04Z",
+          "updatedAt": "2024-09-20T18:20:04Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "Keep in mind that a primary goal of defining an internal representation is to facilitate readability of document prose. It isn't to arrive at the most optimal CDDL. \r\n\r\nRecursive structures are harder to describe IMHO.  The purpose for the 'series: ' label is to make it easier to describe the processing differences (which uses OR semantics where the first match terminates processing) from the 'addition:' (which uses AND semantics.)\r\n\r\nCombining ev and evs with nesting seems like its going in the wrong direction.\r\n\r\nActual implementations can always apply these sorts of optimizations if they want to.\r\n",
+              "createdAt": "2024-09-20T18:20:04Z",
+              "updatedAt": "2024-09-20T18:20:04Z"
             }
           ]
         }
