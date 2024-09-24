@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-22T01:49:58.233968+00:00",
+  "timestamp": "2024-09-24T01:44:50.769642+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -6641,9 +6641,17 @@
       "labels": [],
       "body": "The truth tables in section 8.2.1 Internal Representation of Conceptual Messages uses abbreviations for the various attributes of the ECT structure. These should be replaced with more readable values used in the ECT CDDL.",
       "createdAt": "2024-09-20T15:49:37Z",
-      "updatedAt": "2024-09-20T15:49:37Z",
+      "updatedAt": "2024-09-24T00:18:32Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Additionally, actions should be mandatory, optional, or N/A",
+          "createdAt": "2024-09-24T00:18:31Z",
+          "updatedAt": "2024-09-24T00:18:31Z"
+        }
+      ]
     },
     {
       "number": 288,
@@ -6655,9 +6663,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Once https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/266 is resolved, via via PR #268 which sorts the compatibility with the TCG, this has an impact on the Conditional Triples.\r\n\r\nThis issue tracks the impact of Introduction of measurements of `one or more` Measured Elements in an Environment  on the following:\r\n\r\n1. CDDL Schema of (a) conditional-endorsement-series-triple-record AND (b) conditional-endorsement-triple-record\r\n2. Impact on Matching Semantics and Introduction of Endorsements to ACS",
+      "body": "Once https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/266 is resolved, via via PR #268 which sorts the compatibility with the TCG, this has an impact on the Conditional Triples.\r\n\r\nPR #277 points to this issue as it's motivation.\r\n\r\nThis issue tracks the impact of Introduction of measurements of `one or more` Measured Elements in an Environment  on the following:\r\n\r\n1. CDDL Schema of (a) conditional-endorsement-series-triple-record AND (b) conditional-endorsement-triple-record\r\n2. Impact on Matching Semantics and Introduction of Endorsements to ACS",
       "createdAt": "2024-09-20T16:44:56Z",
-      "updatedAt": "2024-09-20T17:21:08Z",
+      "updatedAt": "2024-09-24T00:56:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -6680,6 +6688,27 @@
           "body": "I will reply to authority inside `endorsed-triple-records`\r\n\r\nThe example is : as I tried in the other issue, is say a Test House has run certain benchmark tests on a Stateful Environment, to keep it simple, an Env with one Measured Element (With an Mkey: Value 1, Meas-val: Digest, Revision 1.0.0. \r\n\r\nThe Test Results are the Endorsements.\r\n\r\nThe Test House lists the Authority in the meas-map of Endorsed triple. \r\n\r\nThe Integrator or some other authority signs the CoRIM : So now it has a Statefule Env: and an Endorsed Value with the Authority of the Test House completes the Endorsed value triple!",
           "createdAt": "2024-09-20T17:21:07Z",
           "updatedAt": "2024-09-20T17:21:07Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Once #266 is resolved, via via PR #268 which sorts the compatibility with the TCG, this has an impact on the Conditional Triples.\r\n> \r\n> This issue tracks the impact of Introduction of measurements of `one or more` Measured Elements in an Environment on the following:\r\n> \r\n> 1. CDDL Schema of (a) conditional-endorsement-series-triple-record AND (b) conditional-endorsement-triple-record\r\n> 2. Impact on Matching Semantics and Introduction of Endorsements to ACS\r\n\r\nThe issue name is misleading since TCG specs didn't define conditional endorsement triples (assuming the simple endorsed-values-triple isn't lumped into this class).",
+          "createdAt": "2024-09-24T00:22:40Z",
+          "updatedAt": "2024-09-24T00:22:40Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The impact of making `element` multi-valued on `conditional-endorsed-series-triple-record` is as follows:\r\n- `stateful-environment-record` should also have element multiplicity\r\n-  mkey should be added to `conditional-series-record`\r\n\r\nThe following CDDL changes are implied:\r\n```\r\nconditional-endorsement-series-triple-record = [\r\n  stateful-environment-record\r\n  [ + conditional-series-record ]\r\n]\r\n\r\nstateful-environment-record = [\r\n  environment-map,\r\n  [ + measurement-map ]\r\n]\r\n\r\nconditional-series-record = [\r\n  refv: measurement-map\r\n  endv: measurement-map\r\n]\r\n```\r\nThese changes do not attempt to address other concerns such as:\r\n- Whether condition matching should span multiple stateful-environment-records\r\n- Whether the target of the series match (aka selection) should differ from the matched condition.",
+          "createdAt": "2024-09-24T00:37:38Z",
+          "updatedAt": "2024-09-24T00:37:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Conditions that span multiple ECTs (aka stateful-environment-record) introduces ambiguity for series `selection` in the current series triple because the selection target defaults to the matched `condition`. With multiple conditions, the default behavior is non-deterministic. \r\n\r\nThe `evs` relation addresses the non-determinism by requiring the selection to include the target explicitly. This can result in Awkward or bulky statements for the happy path use case where the condition and the selection environments are the same.\r\n\r\nAdditionally, the `addition` in `conditional-endorsed-series-triple-record` defaults to the current `selection` environment as the target for supplying the addition. However, if the addition is given more flexibility to target which environment to apply the addition, then the full ECT context must be supplied. This, however, results in yet another instance of the full ECT replicated in the RIM entry for the happy path use case. \r\n\r\nThe net result of a generalized `evs`-based conditional series triple is the common case will seem bloated with seemingly redundant information. (Actually, three copies of environment and measurement values will exist). If the `addition` is just a single or few claims, then it seems like it fails to realize the principle that \"simple things should be simple, but complex things possible\". Instead, it is an example of: \"simple and complex things are achievable\".\r\n\r\nA reasonable compromise is to have two forms of the series triple, one that is optimized for the common / simple case and one that is more powerful but also more complex.",
+          "createdAt": "2024-09-24T00:56:28Z",
+          "updatedAt": "2024-09-24T00:56:28Z"
         }
       ]
     }
@@ -37346,7 +37375,7 @@
       "labels": [],
       "body": "Extending the Compatibility PR to other triples. Once we have a consensus, this PR will be deleted, it will be either merged into\r\n PR #268 ",
       "createdAt": "2024-09-18T13:53:08Z",
-      "updatedAt": "2024-09-20T22:54:11Z",
+      "updatedAt": "2024-09-23T09:34:09Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
@@ -37364,6 +37393,13 @@
           "body": "Hey, I put together an experiment where I started with the ev and evs cddl and constructed records for conditional endorsed and conditional endorsed series. This CDDL compiles.\r\n```\r\nstart = conditional-endorsement-record / conditional-endorsement-series-record\r\n\r\nconditional-endorsement-record = [\r\n  conditions: [ + environment-element-map ]\r\n  additions: [ + environment-element-map ]\r\n]\r\n\r\nconditional-endorsement-series-record = [\r\n  conditions: [ + environment-element-map ]\r\n  series: [ + conditional-series-map ]\r\n]\r\n\r\nenvironment-element-map = {\r\n  &(environment: 0) => environment-map\r\n  &(elements: 1) => [ + measurement-map ]\r\n}\r\n\r\nconditional-series-map = {\r\n  ; first selections that match terminates search\r\n  &(selections: 0) => [ + environment-element-map ]\r\n  &(additions: 1) => [ + environment-element-map ]\r\n}\r\n```\r\nHere are a couple of examples. First for conditional endorsement:\r\n```\r\n/ conditional-endorsement-record / [\r\n    / conditions / [\r\n        / environment-element-map / {\r\n            / environment-map / 0 : {\r\n                / comid.class / 0 : {\r\n                    / comid.class-id / 0 :\r\n                        / tagged-uuid-type / 37(\r\n                        h'67b28b6c34cc40a19117ab5b05911e37'\r\n                        ),\r\n                    / comid.vendor / 1 : \"ACME Inc.\",\r\n                    / comid.model / 2 : \"ACME RoadRunner\",\r\n                    / comid.layer / 3 : 1\r\n                }\r\n            },\r\n            / elements / 1 : [\r\n                / measurement-map / {\r\n                    / comid.mval / 1 : {\r\n                        / comid.ver / 0 : {\r\n                            / comid.version / 0 : \"1.0.0\",\r\n                            / comid.version-scheme / 1 : 16384 / semver /\r\n                        },\r\n                        / comid.digests / 2 : [ [\r\n                            / hash-alg-id / 1, / sha256 /\r\n                            / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                        ] ]\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    / additions / [\r\n        / environment-element-map / {\r\n            / environment-map / 0 : {\r\n                / comid.class / 0 : {\r\n                    / comid.class-id / 0 :\r\n                        / tagged-uuid-type / 37(\r\n                        h'67b28b6c34cc40a19117ab5b05911e37'\r\n                        ),\r\n                    / comid.vendor / 1 : \"ACME Inc.\",\r\n                    / comid.model / 2 : \"ACME RoadRunner\",\r\n                    / comid.layer / 3 : 1\r\n                }\r\n            },\r\n            / elements / 1 : [\r\n                / measurement-map / {\r\n                    / comid.mval / 1 : {\r\n                        / comid.ver / 0 : {\r\n                            / comid.version / 0 : \"1.0.0\",\r\n                            / comid.version-scheme / 1 : 16384 / semver /\r\n                        },\r\n                        / comid.digests / 2 : [ [\r\n                            / hash-alg-id / 1, / sha256 /\r\n                            / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                        ] ]\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n]\r\n```\r\nThis is for conditional endorsement series:\r\n```\r\n/ conditional-endorsement-series-record / [\r\n    / conditions / [\r\n        / environment-element-map / {\r\n            / environment-map / 0 : {\r\n                / comid.class / 0 : {\r\n                    / comid.class-id / 0 :\r\n                        / tagged-uuid-type / 37(\r\n                        h'67b28b6c34cc40a19117ab5b05911e37'\r\n                        ),\r\n                    / comid.vendor / 1 : \"ACME Inc.\",\r\n                    / comid.model / 2 : \"ACME RoadRunner\",\r\n                    / comid.layer / 3 : 1\r\n                }\r\n            },\r\n            / elements / 1 : [\r\n                / measurement-map / {\r\n                    / comid.mval / 1 : {\r\n                        / comid.ver / 0 : {\r\n                            / comid.version / 0 : \"1.0.0\",\r\n                            / comid.version-scheme / 1 : 16384 / semver /\r\n                        },\r\n                        / comid.digests / 2 : [ [\r\n                            / hash-alg-id / 1, / sha256 /\r\n                            / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                        ] ]\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    / series / [\r\n        / conditional-series-map / {\r\n            / selections / 0 : [\r\n                / environment-element-map / {\r\n                    / environment-map / 0 : {\r\n                        / comid.class / 0 : {\r\n                            / comid.class-id / 0 :\r\n                                / tagged-uuid-type / 37(\r\n                                h'67b28b6c34cc40a19117ab5b05911e37'\r\n                                ),\r\n                            / comid.vendor / 1 : \"ACME Inc.\",\r\n                            / comid.model / 2 : \"ACME RoadRunner\",\r\n                            / comid.layer / 3 : 1\r\n                        }\r\n                    },\r\n                    / elements / 1 : [\r\n                        / measurement-map / {\r\n                            / comid.mval / 1 : {\r\n                                / comid.ver / 0 : {\r\n                                    / comid.version / 0 : \"1.0.0\",\r\n                                    / comid.version-scheme / 1 : 16384 / semver /\r\n                                },\r\n                                / comid.digests / 2 : [ [\r\n                                    / hash-alg-id / 1, / sha256 /\r\n                                    / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                                ] ]\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ],\r\n            / additions / 1 : [\r\n                / environment-element-map / {\r\n                    / environment-map / 0 : {\r\n                        / comid.class / 0 : {\r\n                            / comid.class-id / 0 :\r\n                                / tagged-uuid-type / 37(\r\n                                h'67b28b6c34cc40a19117ab5b05911e37'\r\n                                ),\r\n                            / comid.vendor / 1 : \"ACME Inc.\",\r\n                            / comid.model / 2 : \"ACME RoadRunner\",\r\n                            / comid.layer / 3 : 1\r\n                        }\r\n                    },\r\n                    / elements / 1 : [\r\n                        / measurement-map / {\r\n                            / comid.mval / 1 : {\r\n                                / comid.ver / 0 : {\r\n                                    / comid.version / 0 : \"1.0.0\",\r\n                                    / comid.version-scheme / 1 : 16384 / semver /\r\n                                },\r\n                                / comid.digests / 2 : [ [\r\n                                    / hash-alg-id / 1, / sha256 /\r\n                                    / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'\r\n                                ] ]\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n]\r\n```\r\n",
           "createdAt": "2024-09-20T22:50:26Z",
           "updatedAt": "2024-09-20T22:50:26Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Thanks. The point is : It is clear that the multiplicity of measurement-map, is required on the stateful-environment, as well as `conditionally-endorsed triples`. However,  I am not clear, how the multiplicity is relevant and justified for the conditional endorsement-series triple. Can you please add an explanation to issue #288. We can align the CDDL then...",
+          "createdAt": "2024-09-23T09:34:07Z",
+          "updatedAt": "2024-09-23T09:34:07Z"
         }
       ],
       "reviews": [
@@ -37421,7 +37457,7 @@
       "labels": [],
       "body": "A conditional endorsement series is about a target environment plus additional state expectations that lead to further endorsements.\r\n\r\nI removed the undefined CBOR tag around multiple measuremnt-maps since array and map have different CBOR major tags and a custom tag is not required.",
       "createdAt": "2024-09-18T14:39:09Z",
-      "updatedAt": "2024-09-20T16:30:07Z",
+      "updatedAt": "2024-09-23T10:58:12Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "multiplicity",
       "baseRefOid": "0ff26bef340181bf4ea3c2b6fa5ad759b7511021",
@@ -37446,6 +37482,13 @@
           "body": "Is there an issue that this PR links to so that reviewers can know the problem statement that motivates this PR?\r\n\r\nIf we think there are use cases that can't be supported by the current triple it would be helpful to characterize them.\r\n\r\nIf the goal is to create a series triple that is more generalized, then we should start with the internal representation.\r\n```\r\nevs = [\r\n  condition: [ + ECT ]\r\n  series: + {\r\n    selection: [ + ECT ]\r\n    addition: [ + ECT ]\r\n  }\r\n]\r\n```\r\nSince the ECT can be mapped to the external representation readily, the CDDL for a revised series triple should be relatively straight forward.\r\n",
           "createdAt": "2024-09-19T17:19:52Z",
           "updatedAt": "2024-09-19T17:19:52Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "issue #288 tracks the discussion!",
+          "createdAt": "2024-09-23T10:58:11Z",
+          "updatedAt": "2024-09-23T10:58:11Z"
         }
       ],
       "reviews": [
@@ -37868,6 +37911,181 @@
               "body": "Keep in mind that a primary goal of defining an internal representation is to facilitate readability of document prose. It isn't to arrive at the most optimal CDDL. \r\n\r\nRecursive structures are harder to describe IMHO.  The purpose for the 'series: ' label is to make it easier to describe the processing differences (which uses OR semantics where the first match terminates processing) from the 'addition:' (which uses AND semantics.)\r\n\r\nCombining ev and evs with nesting seems like its going in the wrong direction.\r\n\r\nActual implementations can always apply these sorts of optimizations if they want to.\r\n",
               "createdAt": "2024-09-20T18:20:04Z",
               "updatedAt": "2024-09-20T18:20:04Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 289,
+      "id": "PR_kwDOH6-tI858VY3u",
+      "title": "Rework ECT comparison section to match new internal representation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/289",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is the first edit to section 8.9 - it aligns the terminology with the change to ECT internal representation\r\n\r\nIt also defines the comparison rules for raw-value (codepoint 4 and 5).",
+      "createdAt": "2024-09-23T08:49:55Z",
+      "updatedAt": "2024-09-23T18:18:55Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "1d1af9459f2e0142743790892d4466e39bf86841",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "adraper-ect-comparison",
+      "headRefOid": "afa24e844598f22e38331b3140f179e55d1b936c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86KYNkj",
+          "commit": {
+            "abbreviatedOid": "afa24e8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-23T09:25:36Z",
+          "updatedAt": "2024-09-23T09:26:37Z",
+          "comments": [
+            {
+              "originalPosition": 87,
+              "body": "Line 2087, should make it very clear which are the list of  `mkey` from the triple and which are list of entries from the ECT.",
+              "createdAt": "2024-09-23T09:25:36Z",
+              "updatedAt": "2024-09-23T09:26:37Z"
+            },
+            {
+              "originalPosition": 97,
+              "body": "Same comment as 2087",
+              "createdAt": "2024-09-23T09:26:14Z",
+              "updatedAt": "2024-09-23T09:26:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KdUtm",
+          "commit": {
+            "abbreviatedOid": "afa24e8"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-09-23T17:48:30Z",
+          "updatedAt": "2024-09-23T18:18:55Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "```suggestion\r\nThe algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.\r\n```",
+              "createdAt": "2024-09-23T17:48:31Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\r\nThe Verifier uses a temporary \"candidate entries\" array as part of the comparison. Each element of the array is an ECT.\r\n```",
+              "createdAt": "2024-09-23T17:49:51Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 78,
+              "body": "```suggestion\r\nThe verifier SHALL iterate over all entries in the ACS and SHALL add each entry where the condition ECT's `environment-map` is a subset of the ACS entry `environment-map` to the candidate entries array.\r\n```\r\n",
+              "createdAt": "2024-09-23T17:52:58Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 80,
+              "body": "```suggestion\r\nThe condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.\r\n```\r\n\r\nThis does not work correctly for class-map, since `class: { class-id: blah }` ought to match `class: {class-id: blah, model: \"foo\" }`\r\n\r\nI disagree with binary identical when the type choices are extensible. I'd say, for `$instance-id-type-choice /= instance-id-base-type-choice`, we say `instance-id-base-type-choice` variants are compared with CBOR encoding equality, but any other variant defined by the profile has its own profile-defined comparison algorithm.",
+              "createdAt": "2024-09-23T17:54:23Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "I don't think so, assuming https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268.\r\n\r\nWe'd need to iterate over all elements of the ECT's elements and find in the candidate ECT's elements a CBOR encoding-binary-identical mkey before then trying to match the element's mval against the found element's mval. If the candidate ECT does not have such an element, then the candidate ECT does not match.",
+              "createdAt": "2024-09-23T18:01:44Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "Did we not also want to treat a condition key that farther up the certificate path to match?",
+              "createdAt": "2024-09-23T18:04:39Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 97,
+              "body": "Right, there is not a single condition authority, but an ANDed list. Each authority must have a matching key in the candidate ECT's authorities.",
+              "createdAt": "2024-09-23T18:05:34Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 109,
+              "body": "I don't think the verbiage that we're iterating over all candidate entries is helping. We're filtering out elements of the ACS that don't match. At any one time we're always comparing the condition ECT with a candidate ECT.\r\n\r\nWhen we get to measurement-values-map, we're in the context of an ECT's `elements` array with optional element-id codepoint.",
+              "createdAt": "2024-09-23T18:07:10Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 111,
+              "body": "```suggestion\r\nThe Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.\r\n```",
+              "createdAt": "2024-09-23T18:08:18Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 112,
+              "body": "```suggestion\r\nEach of the codepoints present in the condition ECT is compared against the same codepoint in the candidate entry for the corresponding `element-id`.\r\n```",
+              "createdAt": "2024-09-23T18:11:29Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 126,
+              "body": "```suggestion\r\nThe codepoint number associated with the condition ECT codepoint SHALL be used to select the algorithm.\r\n```\r\nThe algorithm associated with the codepoint already should have a description of how it compares tagged values.",
+              "createdAt": "2024-09-23T18:14:02Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 130,
+              "body": "```suggestion\r\nThe codepoint number and the profile associated with the condition ECT may be used to select the algorithm.\r\n```\r\nAgain the algorithm is specific to the codepoint and may choose to further dispatch based on value tags.",
+              "createdAt": "2024-09-23T18:14:59Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 206,
+              "body": "```suggestion\r\nThe value stored under `measurement-values-map` key 4 is a raw-value entry, which must have type `bstr`.\r\n```",
+              "createdAt": "2024-09-23T18:16:33Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 142,
+              "body": "```suggestion\r\nThe value stored under `measurement-values-map` key 1 is an SVN, which must have type `uint`.\r\n```",
+              "createdAt": "2024-09-23T18:16:48Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 148,
+              "body": "```suggestion\r\nIf the condition ECT value for `measurement-values-map` key 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed.\r\n```",
+              "createdAt": "2024-09-23T18:17:04Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 155,
+              "body": "```suggestion\r\nIf the condition ECT value for `measurement-values-map` key 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.\r\n```",
+              "createdAt": "2024-09-23T18:17:14Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 209,
+              "body": "```suggestion\r\nThe value stored under the condition ECT `measurement-values-map` key 5 is a `raw-value-mask` entry, which must have type `bstr`.\r\n```",
+              "createdAt": "2024-09-23T18:17:50Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
+            },
+            {
+              "originalPosition": 211,
+              "body": "```suggestion\r\nIf the condition ECT does not contain a `raw-values-mask` then the comparison MUST return true if the condition ECT `raw-value` is binary equal to the candidate entry `raw-value`.\r\n```",
+              "createdAt": "2024-09-23T18:18:04Z",
+              "updatedAt": "2024-09-23T18:18:55Z"
             }
           ]
         }
