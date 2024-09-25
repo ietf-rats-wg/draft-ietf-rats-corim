@@ -76,3 +76,31 @@ CORIM_FRAGS += validity-map.cddl
 CORIM_FRAGS += $(COMID_FRAGS)
 
 CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
+
+INTREP_FRAGS := intrep-acs.cddl
+INTREP_FRAGS += intrep-ae.cddl
+INTREP_FRAGS += intrep-ar.cddl
+INTREP_FRAGS += intrep-ars.cddl
+INTREP_FRAGS += intrep-ect.cddl
+INTREP_FRAGS += intrep-ev.cddl
+INTREP_FRAGS += intrep-policy.cddl
+INTREP_FRAGS += intrep-rv.cddl
+INTREP_FRAGS += intrep-claims-map.cddl
+# deps
+INTREP_FRAGS += non-empty.cddl
+INTREP_FRAGS += environment-map.cddl
+INTREP_FRAGS += class-map.cddl
+INTREP_FRAGS += measurement-values-map.cddl
+INTREP_FRAGS += version-map.cddl
+INTREP_FRAGS += svn-type-choice.cddl
+INTREP_FRAGS += digest.cddl
+INTREP_FRAGS += flags-map.cddl
+INTREP_FRAGS += raw-value.cddl
+INTREP_FRAGS += tagged-bytes.cddl
+INTREP_FRAGS += mac-addr-type-choice.cddl
+INTREP_FRAGS += ip-addr-type-choice.cddl
+INTREP_FRAGS += ueid.cddl
+INTREP_FRAGS += uuid.cddl
+INTREP_FRAGS += integrity-registers.cddl
+
+INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
