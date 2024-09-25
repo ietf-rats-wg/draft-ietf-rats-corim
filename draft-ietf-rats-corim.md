@@ -2107,7 +2107,7 @@ For example, the verifier may contain code to compare a key fingerprint against 
 
 The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT claims to the candidate entry authority claims.
 
-The Verifier SHALL iterate over the codepoints which are present in the `measurement-values-map` field within the condition ECT `measurement-map`.
+The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
 Each of the codepoints present in the condition ECT is compared against the same codepoint in the candidate entry.
 
 If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then verifier SHALL remove that candidate entry from the candidate entries array.
