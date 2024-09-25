@@ -8,6 +8,7 @@ include tools.mk
 	$(diag2cbor) $< > $@
 
 check:: cbor-tags-unique
+check:: check-intrep check-intrep-examples
 check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
 
@@ -45,6 +46,7 @@ include corim-frags.mk
 
 $(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES)))
+$(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES)))
 
 GITHUB := https://raw.githubusercontent.com/
 COSWID_REPO := sacmwg/draft-ietf-sacm-coswid/master
