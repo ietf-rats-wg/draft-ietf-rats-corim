@@ -2075,14 +2075,14 @@ After completing the steps described in this sub-section, the algorithm returns 
 
 ### Environment Comparison {#sec-compare-env}
 
-The verifier SHALL iterate over all entries in the ACS and SHALL add each entry where the condition ECT stateful enviromnment `environment-map` is a subset of the ACS entry `environment-map` to the candidate entries array.
+The verifier SHALL iterate over all entries in the ACS and SHALL add each entry where the condition ECT's `environment-map` is a subset of the ACS entry `environment-map` to the candidate entries array.
 
-The condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
+The condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance`, etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
 
 Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-### Mkey comparison {#sec-compare-mkey}
+### Element ID comparison {#sec-compare-mkey}
 
 The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT `measurement-map/mkey` value to the candidate entry `measurement-map/mkey` value.
 If the two `mkey` values are not binary equal then the candidate entry is removed from the candidate entries array.
