@@ -2067,7 +2067,7 @@ Additions to the ACS MUST be atomic.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-The algorithm used to compare a condition ECT against the ACS is stateless, it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison
+The algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.
 
 The Verifier uses a temporary "candidate entries" array as part of the comparision. Each element in the array is an ECT.
 
