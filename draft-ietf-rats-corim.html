@@ -3875,14 +3875,14 @@ The ACS contains Attester state that has been authorized by Verifier processing 
 <pre>
 ECT = {
   ? environment: environment-map
-  ? elements: [ + element-map ]
+  ? element-list: [ + element-map ]
   ? authority: [ + $crypto-key-type-choice ]
   cmtype: cm-type
   ? profile: $profile-type-choice
 }
 
 element-map = {
-  ? element-id:  $measured-element-type-choice
+  ? element-id: $measured-element-type-choice
   element-claims: measurement-values-map
 }
 
@@ -3957,10 +3957,10 @@ If the <code>condition</code> containing reference ECTs overlaps Evidence ECTs t
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.<a href="#section-8.2.1.2-3" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-8.2.1.2-4">
 <pre>
-rv = + {
+rv = [ + {
   condition: ECT
   addition: ECT
-}
+} ]
 </pre><a href="#section-8.2.1.2-4" class="pilcrow">¶</a>
 </div>
 <span id="name-mandatory-fields-for-refere"></span><div id="tbl-rv-ect-optionality">
@@ -4020,10 +4020,10 @@ ev = [
 
 evs = [
   condition: [ + ECT ]
-  series: + {
+  series: [ + {
     selection: [ + ECT ]
     addition: [ + ECT ]
-  }
+  } ]
 ]
 </pre><a href="#section-8.2.1.3-4" class="pilcrow">¶</a>
 </div>
@@ -4083,8 +4083,8 @@ If all of the ECTs are found in the ACS then the <code>addition</code> ECTs are 
 <div class="lang-cddl sourcecode" id="section-8.2.1.4-2">
 <pre>
 policy = [
-    condition: [ + ECT ]
-    addition: [ + ECT ]
+  condition: [ + ECT ]
+  addition: [ + ECT ]
 ]
 </pre><a href="#section-8.2.1.4-2" class="pilcrow">¶</a>
 </div>
@@ -4137,8 +4137,8 @@ If any of the <code>ars-additions</code> are not found in the ACS then these ACS
 <div class="lang-cddl sourcecode" id="section-8.2.1.5-2">
 <pre>
 ar = [
-    acs-condition: [ + ECT ]
-    ars-addition: [ + ECT ]
+  acs-condition: [ + ECT ]
+  ars-addition: [ + ECT ]
 ]
 </pre><a href="#section-8.2.1.5-2" class="pilcrow">¶</a>
 </div>

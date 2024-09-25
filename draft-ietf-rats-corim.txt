@@ -2114,14 +2114,14 @@ Table of Contents
 
    ECT = {
      ? environment: environment-map
-     ? elements: [ + element-map ]
+     ? element-list: [ + element-map ]
      ? authority: [ + $crypto-key-type-choice ]
      cmtype: cm-type
      ? profile: $profile-type-choice
    }
 
    element-map = {
-     ? element-id:  $measured-element-type-choice
+     ? element-id: $measured-element-type-choice
      element-claims: measurement-values-map
    }
 
@@ -2179,10 +2179,10 @@ Table of Contents
    Evidence ECTs.  If the matching condition is satisfied, then the re-
    asserted ECTs are added to the ACS.
 
-   rv = + {
+   rv = [ + {
      condition: ECT
      addition: ECT
-   }
+   } ]
 
                    +===========+====+====+===+====+===+
                    | Type      | en | el | a | cm | p |
@@ -2220,10 +2220,10 @@ Table of Contents
 
    evs = [
      condition: [ + ECT ]
-     series: + {
+     series: [ + {
        selection: [ + ECT ]
        addition: [ + ECT ]
-     }
+     } ]
    ]
 
                    +===========+====+====+===+====+===+
@@ -2246,8 +2246,8 @@ Table of Contents
    the ACS with the policy author's authority.
 
    policy = [
-       condition: [ + ECT ]
-       addition: [ + ECT ]
+     condition: [ + ECT ]
+     addition: [ + ECT ]
    ]
 
                    +===========+====+====+===+====+===+
@@ -2269,8 +2269,8 @@ Table of Contents
    these ACS entries are not copied to the ARS.
 
    ar = [
-       acs-condition: [ + ECT ]
-       ars-addition: [ + ECT ]
+     acs-condition: [ + ECT ]
+     ars-addition: [ + ECT ]
    ]
 
                  +===============+====+====+===+====+===+
