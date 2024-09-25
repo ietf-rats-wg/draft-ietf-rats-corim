@@ -2069,7 +2069,7 @@ Additions to the ACS MUST be atomic.
 
 The algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.
 
-The Verifier uses a temporary "candidate entries" array as part of the comparision. Each element in the array is an ECT.
+The Verifier uses a temporary "candidate entries" array as part of the comparison. Each element of the array is an ECT.
 
 After completing the steps described in this sub-section, the algorithm returns false if the candidate entries array is empty, true if it contains one or more elements.
 
