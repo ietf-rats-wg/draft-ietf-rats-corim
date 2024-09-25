@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 22 March 2025                                            Linaro
+Expires: 29 March 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       18 September 2024
+                                                       25 September 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 March 2025.
+   This Internet-Draft will expire on 29 March 2025.
 
 Copyright Notice
 
@@ -159,8 +159,9 @@ Table of Contents
          8.3.2.1.  Cryptographic Validation of Evidence
        8.3.3.  Input Transformation
          8.3.3.1.  Appraisal Context Construction
-         8.3.3.2.  Reference and Endorsed Values Tranformation
-         8.3.3.3.  Evidence Tranformation
+         8.3.3.2.  Reference Triples Transformation
+         8.3.3.3.  Endorsement Triples Tranformations
+         8.3.3.4.  Evidence Tranformation
      8.4.  Evidence Augmentation (Phase 2)
        8.4.1.  Appraisal Claims Set Initialization
          8.4.1.1.  The authorized-by field in Appraisal Claims Set
@@ -169,12 +170,11 @@ Table of Contents
          8.4.1.3.  Ordering of triple processing
      8.5.  Reference Values Corroboration and Augmentation (Phase 3)
      8.6.  Endorsed Values Augmentation (Phase 4)
-       8.6.1.  Processing triples representing Conditional
-               Endorsements
-         8.6.1.1.  Processing Conditional Endorsement Triple
-         8.6.1.2.  Processing Conditional Endorsement Series Triple
-         8.6.1.3.  Processing a stateful environment against the
-                 Appraisal Claims Set
+       8.6.1.  Processing Endorsements
+       8.6.2.  Processing Conditional Endorsements
+       8.6.3.  Processing Conditional Endorsement Series
+       8.6.4.  Processing a stateful environment against the Appraisal
+               Claims Set
      8.7.  Examples for optional phases 5, 6, and 7
      8.8.  Adding to the Appraisal Claims Set
        8.8.1.  Appraisal Claims Set Requirements
@@ -1089,8 +1089,10 @@ Table of Contents
    group scope.  This is typically determined by the triple's
    environment.
 
-   Class measurements apply generally to all the Attesters in the given
-   class.  Instance measurements apply to a specific Attester instance.
+   Class measurements apply generally to all the Attesters in a given
+   class.
+
+   Instance measurements apply to a specific Attester instance.
    Environments identified by a class identifier have measurements that
    are common to the class.  Environments identified by an instance
    identifier have measurements that are specific to that instance.
@@ -1101,6 +1103,11 @@ Table of Contents
    provide measurement values, the authorized-by statement can be
    supplied in the measurement-map.
 
+   An environment may have multiple measured elements.  Measured
+   elements are distinguished from each other by measurement keys.
+   Measurement keys may be used to disambiguate measurements of the same
+   type originating from different elements.
+
    measurement-map = {
      ? &(mkey: 0) => $measured-element-type-choice
      &(mval: 1) => measurement-values-map
@@ -1109,20 +1116,23 @@ Table of Contents
 
    The following describes each member of the measurement-map:
 
-   *  mkey (index 0): An optional unique identifier of the measured
-      (sub-)environment.  See Section 5.1.4.1.4.1.
+   *  mkey (index 0): An optional measurement key.  See
+      Section 5.1.4.1.4.1.
 
-   *  mval (index 1): The measurements associated with the
-      (sub-)environment.  Described in Section 5.1.4.1.4.2.
+   *  mval (index 1): The measurements associated with the environment.
+      Described in Section 5.1.4.1.4.2.
 
    *  authorized-by (index 2): The cryptographic identity of the
       individual or organization that is the designated authority for
-      this measurement.  For example, producer of the measurement or a
-      delegated supplier.
+      this measurement.  For example, the producer of the measurement or
+      a delegate.
 
 5.1.4.1.4.1.  Measurement Keys
 
-   The types defined for a measurement identifier are OID, UUID or uint.
+   Measurement keys are locally scoped extensible identifiers.  The
+   initial types defined are OID, UUID, and uint. mkey may be necessary
+   to disambiguate multiple measurements of the same type or to
+   distinguish multiple measured elements within the same environment.
 
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
@@ -1489,7 +1499,7 @@ Table of Contents
 
    reference-triple-record = [
      environment-map
-     measurement-map
+     [ + measurement-map ]
    ]
 
 5.1.4.3.  Endorsed Values Triple
@@ -1499,7 +1509,7 @@ Table of Contents
 
    endorsed-triple-record = [
      environment-map
-     measurement-map
+     [ + measurement-map ]
    ]
 
 5.1.4.4.  Device Identity Triple
@@ -2069,64 +2079,52 @@ Table of Contents
 
 8.2.1.  Internal Representation of Conceptual Messages
 
-   Conceptual Messages are the inputs to a Verifier and may include
-   Evidence, Reference Values, Endorsed Values, or Appraisal Policy.
-   Internal representations of Conceptual Messages are defined by
-   Section 8.2.1.1, Section 8.2.1.2, and Section 8.2.1.3.  The internal
-   representation of Conceptual Messages are constructed from a common
-   building block structure called Environment-Claims Tuple (ECT).
-   Additionally, ECTs define an internal representation of the ACS and
-   ARS.  See Section 8.2.2 and Section 8.2.3.
+   Conceptual Messages are Verifier input and output values such as
+   Evidence, Reference Values, Endorsed Values, Appraisal Policy, and
+   Attestation Results.
 
-   ECTs have six attributes:
+   The internal representation of Conceptual Messages, as well as the
+   ACS (Section 8.2.2) and ARS (Section 8.2.3), are constructed from a
+   common building block structure called Environment-Claims Tuple
+   (ECT).
 
-   1.  The environment.
+   ECTs have five attributes:
 
-   2.  The properties of the environment.
+   1.  Environment : Identifies the Target Environment.  Environments
+       are identified using instance, class, or group identifiers.
+       Environments may be composed of elements, each having an element
+       identifier.
 
-   3.  The authority.
+   2.  Elements : Identifies the set of elements contained within a
+       Target Environment and their trustworthiness Claims.
 
-   4.  The name space.
+   3.  Authority : Identifies the entity that issued the tuple.  A
+       certain type of key material by which the authority (and
+       corresponding provenance) of the tuple can be determined, such as
+       the public key of an asymmetric key pair that is associated with
+       an authority's PKIX certificate.
 
-   5.  The Conceptual Message type.
+   4.  Conceptual Message Type : Identifies the type of Conceptual
+       Message that originated the tuple.
 
-   6.  The profile.
+   5.  Profile : The profile that defines this tuple.  If no profile is
+       used, this attribute is omitted.
 
-   Environment (label 1):  Identifies the Target Environment.
-      Environments are identified using instance, class, or group
-      identifiers.  Typically, composite Attester's are composed of
-      components, each having an environment identifier.
-
-   Properties (label 2):  Properties of the Target Environment.
-
-   Authority (label 3):  Identifies the entity that issued the tuple.  A
-      certain type of key material by which the authority (and
-      corresponding provenance) of the tuple can be determined, such as
-      the public key of an asymmetric key pair that is associated with
-      an authority's PKIX certificate.
-
-   Name Space (label 4):  Identifies the name space from which the tuple
-      was created.
-
-   CM Type (label 5):  Identifies the type of Conceptual Message that
-      originated the tuple.
-
-   Profile (label 6):  The profile that defines this tuple.  If no
-      profile is used, this attribute is omitted.
+   The following CDDL describes the ECT structure in more detail.
 
    ECT = {
-     ? e: environment-map
-     ? c: claims-map / [ + local-claim ]
-     ? a: [ + $crypto-key-type-choice ]
-     ? ns: text
-     ? cm: cm-type
-     ? p: $profile-type-choice
+     ? environment: environment-map
+     ? elements: [ + element-map ]
+     ? authority: [ + $crypto-key-type-choice ]
+     cmtype: cm-type
+     ? profile: $profile-type-choice
    }
-   local-claim = {
-     le: local-environment
-     c: claims-map
+
+   element-map = {
+     ? element-id:  $measured-element-type-choice
+     element-claims: measurement-values-map
    }
-   local-environment =  bstr / tstr
+
    cm-type =  &(
      reference-values: 0
      endorsements: 1
@@ -2136,9 +2134,8 @@ Table of Contents
      policy: 5
    )
 
-   Although all of the ECT attributes are optional, the Conceptual
-   Message type implies certain attributes are mandatory.  See
-   Section 8.2.1.1, Section 8.2.1.2, and Section 8.2.1.3.
+   The Conceptual Message type determines which attributes are
+   mandatory.
 
 8.2.1.1.  Internal Representation of Evidence
 
@@ -2156,14 +2153,14 @@ Table of Contents
      addition: [ + ECT ]
    ]
 
-                  +==========+===+===+===+====+====+===+
-                  | Type     | e | c | a | ns | cm | p |
-                  +==========+===+===+===+====+====+===+
-                  | addition | T | T | T | F  | T  | F |
-                  +----------+---+---+---+----+----+---+
+                    +==========+====+====+===+====+===+
+                    | Type     | en | el | a | cm | p |
+                    +==========+====+====+===+====+===+
+                    | addition | T  | T  | T | T  | F |
+                    +----------+----+----+---+----+---+
 
-                      Table 3: Mandatory fields for
-                             Evidence tuples
+                       Table 3: Mandatory fields for
+                              Evidence tuples
 
    'T' means mandatory.
 
@@ -2187,16 +2184,16 @@ Table of Contents
      addition: ECT
    }
 
-                  +===========+===+===+===+====+====+===+
-                  | Type      | e | c | a | ns | cm | p |
-                  +===========+===+===+===+====+====+===+
-                  | condition | T | T | F | F  | F  | F |
-                  +-----------+---+---+---+----+----+---+
-                  | addition  | T | T | T | F  | T  | F |
-                  +-----------+---+---+---+----+----+---+
+                   +===========+====+====+===+====+===+
+                   | Type      | en | el | a | cm | p |
+                   +===========+====+====+===+====+===+
+                   | condition | T  | T  | F | F  | F |
+                   +-----------+----+----+---+----+---+
+                   | addition  | T  | T  | T | T  | F |
+                   +-----------+----+----+---+----+---+
 
-                       Table 4: Mandatory fields for
-                          Reference Values tuples
+                      Table 4: Mandatory fields for
+                         Reference Values tuples
 
 8.2.1.3.  Internal Representation of Endorsed Values
 
@@ -2229,18 +2226,18 @@ Table of Contents
      }
    ]
 
-                  +===========+===+===+===+====+====+===+
-                  | Type      | e | c | a | ns | cm | p |
-                  +===========+===+===+===+====+====+===+
-                  | condition | F | T | F | F  | F  | F |
-                  +-----------+---+---+---+----+----+---+
-                  | selection | F | T | F | F  | F  | F |
-                  +-----------+---+---+---+----+----+---+
-                  | addition  | T | T | T | F  | T  | F |
-                  +-----------+---+---+---+----+----+---+
+                   +===========+====+====+===+====+===+
+                   | Type      | en | el | a | cm | p |
+                   +===========+====+====+===+====+===+
+                   | condition | F  | T  | F | F  | F |
+                   +-----------+----+----+---+----+---+
+                   | selection | F  | T  | F | F  | F |
+                   +-----------+----+----+---+----+---+
+                   | addition  | T  | T  | T | T  | F |
+                   +-----------+----+----+---+----+---+
 
-                       Table 5: Mandatory fields for
-                           Endorsed Values tuples
+                      Table 5: Mandatory fields for
+                          Endorsed Values tuples
 
 8.2.1.4.  Internal Representation of Policy Statements
 
@@ -2253,16 +2250,16 @@ Table of Contents
        addition: [ + ECT ]
    ]
 
-                  +===========+===+===+===+====+====+===+
-                  | Type      | e | c | a | ns | cm | p |
-                  +===========+===+===+===+====+====+===+
-                  | condition | F | F | F | F  | F  | F |
-                  +-----------+---+---+---+----+----+---+
-                  | addition  | T | T | T | F  | T  | F |
-                  +-----------+---+---+---+----+----+---+
+                   +===========+====+====+===+====+===+
+                   | Type      | en | el | a | cm | p |
+                   +===========+====+====+===+====+===+
+                   | condition | F  | F  | F | F  | F |
+                   +-----------+----+----+---+----+---+
+                   | addition  | T  | T  | T | T  | F |
+                   +-----------+----+----+---+----+---+
 
-                       Table 6: Mandatory fields for
-                               policy tuples
+                      Table 6: Mandatory fields for
+                              policy tuples
 
 8.2.1.5.  Internal Representation of Attestation Results
 
@@ -2276,16 +2273,16 @@ Table of Contents
        ars-addition: [ + ECT ]
    ]
 
-                +===============+===+===+===+====+====+===+
-                | Type          | e | c | a | ns | cm | p |
-                +===============+===+===+===+====+====+===+
-                | acs-condition | F | F | F | F  | F  | F |
-                +---------------+---+---+---+----+----+---+
-                | ars-addition  | T | T | T | F  | F  | F |
-                +---------------+---+---+---+----+----+---+
+                 +===============+====+====+===+====+===+
+                 | Type          | en | el | a | cm | p |
+                 +===============+====+====+===+====+===+
+                 | acs-condition | F  | F  | F | F  | F |
+                 +---------------+----+----+---+----+---+
+                 | ars-addition  | T  | T  | T | F  | F |
+                 +---------------+----+----+---+----+---+
 
-                       Table 7: Mandatory fields for
-                         Attestation Results tuples
+                      Table 7: Mandatory fields for
+                        Attestation Results tuples
 
 8.2.2.  Internal Representation of ACS
 
@@ -2441,22 +2438,60 @@ Table of Contents
    All of the extracted and validated tags are loaded into an _appraisal
    context_. The Appraisal Context contains an internal representation
    of the inputted Conceptual Messages.  The selected tags are mapped to
-   the internal representation, making them suitable for appraisal
+   an internal representation, making them suitable for appraisal
    processing.
 
 
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/96
 
-8.3.3.2.  Reference and Endorsed Values Tranformation
+8.3.3.2.  Reference Triples Transformation
 
-   The Reference Values ECT fields are populated as described in
-   Section 8.3.3 and Section 8.2.1.2.
+   Step 1.  An available rv list entry (Section 8.2.1.2) is allocated.
+            The Reference Values Triple (Section 5.1.4.2) environment-
+            map is copied to the environment-map for both the rv
+            condition and rv addition ECTs.
 
-   The Endorsement Values ECT fields are populated as described in
-   Section 8.3.3 and Section 8.2.1.3.
+   Step 2.  For each measurement-map entry in the measurements list, the
+            i^th measurement-map is copied to the i^th element-map in
+            the elements list of the rv addition ECT.
 
-8.3.3.3.  Evidence Tranformation
+   Step 3.  The issuer of the Endorsement conceptual message is copied
+            to the ev addition ECT authority field.
+
+   Step 4.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev addition ECT profile field.
+
+8.3.3.3.  Endorsement Triples Tranformations
+
+   Endorsement Triple Transformation :
+
+   Step 1.  An available ev entry (Section 8.2.1.3) is allocated.  The
+            Endorsement Triple (Section 5.1.4.3) environment-map is
+            copied to the environment-map for both the ev condition and
+            ev addition ECTs.
+
+   Step 2.  For each measurement-map entry in the measurements list, the
+            i^th measurement-map entry is copied to the i^th entry in
+            the addition ECT elements list.
+
+   Step 3.  The issuer of the Endorsement conceptual message is copied
+            to the ev addition ECT authority field.
+
+   Step 4.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev addition ECT profile field.
+
+   Conditional Endorsement Triple Transformation :
+
+      // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+      draft-ietf-rats-corim/issues/285
+
+   Conditional Endorsement Series Triple Transformation :
+
+      // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+      draft-ietf-rats-corim/issues/285
+
+8.3.3.4.  Evidence Tranformation
 
    Evidence is divided up into one or more ev relations where the
    condition ECT identifies the Attester from which Evidence was
@@ -2553,22 +2588,19 @@ Table of Contents
 
 8.5.  Reference Values Corroboration and Augmentation (Phase 3)
 
-   Reference Value Providers (RVP) publish Reference Values triples that
-   are matched against ACS entries.  Reference Values may describe
-   multiple acceptable states for Attesters; hence "matching" determines
-   that Evidence (contained in the ACS) satisfies an appropriate subset
-   of the available Reference Values.  If the appropriate subset
-   matches, the authority of the RVP is added to the appropriate ACS
-   entries.
+   Reference Value Providers (RVP) publish Reference Values using the
+   Reference Values Triple (Section 5.1.4.2) which are transformed
+   (Section 8.3.3.2) into an internal representation (Section 8.2.1.2).
+   Reference Values may describe multiple possible Attester states.
 
-   The Verifier compares each reference-triple-record against ACS
-   entries as described in Section 8.6.1.3, where the reference-triple-
-   record takes the place of a stateful-environment-record.  If all
-   fields of the reference-triple-record match the ACS, then the
-   Verifier MUST add the RVP authority to each matching ACS field.
+   Corroboration is the process of determining whether actual Attester
+   state (as contained in the ACS) can be satisfied by Reference Values.
+   If satisfied, the RVP authority is added to the matching ACS entry.
 
-   If any reference-triple-record in the Reference Value triple does not
-   match the ACS then the entire triple is ignored.
+   Reference Values are matched with ACS entries by iterating through
+   the rv list.  For each rv entry, the condition ECT is compared with
+   an ACS ECT.  If the ECTs match except for authority, the rv addition
+   ECT authority is added to the ACS ECT authority.
 
 8.6.  Endorsed Values Augmentation (Phase 4)
 
@@ -2576,35 +2608,28 @@ Table of Contents
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/179
 
-      [Ned] _The following sections should describe augmentation in the
-      context of the ev and evs relations containing ECTs staged for ACS
-      augmentation_
+8.6.1.  Processing Endorsements
 
-8.6.1.  Processing triples representing Conditional Endorsements
+   Endorsers publish Endorsements using the endorsed values triple
+   (Section 5.1.4.3) which are transformed (Section 8.3.3.3) into an
+   internal representation (Section 8.2.1.3).  Endorsements describe
+   actual Attester state.  Endorsements are added to the ACS if the
+   Endorsement condition is satisifed by the ACS.
 
-   An Endorser may use CoMID tags to publish Conditional Endorsements,
-   which are added to the ACS only if specified conditions are
-   satisfied.  This section describes the process performed by the
-   Verifier to determine which Conditional Endorsements from the
-   candidate CoMIDs should be added to the ACS.
+   Endorsed Values are matched with ACS entries by iterating through the
+   ev list.  For each ev entry, the condition ECT is compared with an
+   ACS ECT.  If the ECTs match, the ev addition ECT is added to the ACS.
 
-   The verifier checks whether Conditional Endorsements are applicable
-   by comparing ACS entries against expected values provided in
-   stateful-environment-record object which are part of the triple.
+8.6.2.  Processing Conditional Endorsements
 
-8.6.1.1.  Processing Conditional Endorsement Triple
+      [Ned] _This section should be identical to the previous section
+      since Endorsement triples and Conditional Endorsement triples are
+      transformed into the same internal representation based on ev_
 
-   For each Conditional Endorsement Triple the Verifier compares each of
-   the stateful-environment-record fields from the cond field in the
-   triple against the ACS (see Section 8.6.1.3).
+8.6.3.  Processing Conditional Endorsement Series
 
-   If every stateful environment matches a corresponding ACS entry, then
-   the Verifier MUST add an Endorsement entry to the ACS (see
-   Section 8.8) for each endorsed-triple-record in the endorsements
-   field.  Each Endorsement from the endorsed-triple-record includes the
-   authority which signed the Conditional Endorsement Triple.
-
-8.6.1.2.  Processing Conditional Endorsement Series Triple
+      [Ned] _This section should describe augmentation in the context of
+      the evs internal representation_
 
    For each Conditional Endorsement Series Triple the Verifier iterates
    over the conditional-series-records within the triple, stopping if it
@@ -2613,14 +2638,17 @@ Table of Contents
    For each iteration, the Verifier creates a temporary stateful-
    environment-record by merging the stateful-environment-record in the
    triple with the refv field in the conditional-series-record.  It
-   compares this temporary record against the ACS (see Section 8.6.1.3).
+   compares this temporary record against the ACS (see Section 8.6.4).
 
    If one of the temporary records matches then the Verifier MUST add
    the endv Endorsement entry to the ACS.  This Endorsement includes the
    authority which signed the Conditional Endorsement Series Triple.
 
-8.6.1.3.  Processing a stateful environment against the Appraisal Claims
-          Set
+8.6.4.  Processing a stateful environment against the Appraisal Claims
+        Set
+
+      [Ned] _This section should describe matching based on internal
+      representations_
 
    This section describes how a stateful environment is matched against
    an ACS entry.  If any part of the processing indicates that the
@@ -3477,9 +3505,9 @@ Table of Contents
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
               T. Fossati, "Arm's Platform Security Architecture (PSA)
               Attestation Token", Work in Progress, Internet-Draft,
-              draft-tschofenig-rats-psa-token-23, 24 June 2024,
+              draft-tschofenig-rats-psa-token-24, 23 September 2024,
               <https://datatracker.ietf.org/doc/html/draft-tschofenig-
-              rats-psa-token-23>.
+              rats-psa-token-24>.
 
    [IANA.coswid]
               IANA, "Concise Software Identifier (CoSWID)",
@@ -3706,7 +3734,7 @@ Appendix A.  Base CoRIM CDDL
 
    endorsed-triple-record = [
      environment-map
-     measurement-map
+     [ + measurement-map ]
    ]
 
    entity-map<role-type-choice, extension-socket> = {
@@ -3805,7 +3833,7 @@ Appendix A.  Base CoRIM CDDL
 
    reference-triple-record = [
      environment-map
-     measurement-map
+     [ + measurement-map ]
    ]
 
    stateful-environment-record = [
