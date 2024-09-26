@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-24T01:44:50.769642+00:00",
+  "timestamp": "2024-09-26T01:43:42.673598+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -6440,15 +6440,15 @@
       "id": "I_kwDOH6-tI86XCkn_",
       "title": "Change sec-match-one-se to be matching one ECT to another.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/279",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "We have matching semantics sometimes in terms of external representation, and sometimes internal representation.\r\n\r\nThe translation from external triples to internal relations like `rv` is incomplete in the definition of the semantics. The crux of the representation is matching an ECT condition against an ECT in the ACS.",
       "createdAt": "2024-09-18T15:17:31Z",
-      "updatedAt": "2024-09-20T20:13:57Z",
-      "closedAt": null,
+      "updatedAt": "2024-09-25T15:28:52Z",
+      "closedAt": "2024-09-25T15:28:51Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -6498,6 +6498,20 @@
           "body": "> p  \u22a2 ce <= ee : optional<environment-map>\r\n\r\nI'm having difficulty understanding this because I'm not familiar with the notation and the variable names are terse.",
           "createdAt": "2024-09-20T20:13:56Z",
           "updatedAt": "2024-09-20T20:13:56Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The variables start with c or e for the condition ECT and entry ECT that are being compared, respectively. The rest of the variable comes from the fields of the ECT in the order specified in your revert PR.\r\n\r\nBelow the --- is the consequent. A goal you want to satisfy. Above the --- are the antecedents, the subgoals you need to discharge to satisfy the goal.\r\n\r\nA turnstile \u22a2 is notation from Frege. It roughly means \"Given Premises \u22a2 That which is proved\". With added types \": type\" you can further limit the deduction rules that apply to the goal. Our only premises are an optionally assumed profile.",
+          "createdAt": "2024-09-24T18:26:50Z",
+          "updatedAt": "2024-09-24T18:26:50Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Duplicate of #283 ",
+          "createdAt": "2024-09-25T15:28:52Z",
+          "updatedAt": "2024-09-25T15:28:52Z"
         }
       ]
     },
@@ -6553,7 +6567,7 @@
       "id": "I_kwDOH6-tI86XFKl6",
       "title": "Internal representation CDDL needs CI integration",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/282",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -6562,8 +6576,8 @@
       "labels": [],
       "body": "Since the internal representation should be valid CDDL, it needs CI integration and code snippets should be imported into the document.",
       "createdAt": "2024-09-18T20:55:07Z",
-      "updatedAt": "2024-09-19T06:43:46Z",
-      "closedAt": null,
+      "updatedAt": "2024-09-25T14:56:45Z",
+      "closedAt": "2024-09-25T14:56:45Z",
       "comments": []
     },
     {
@@ -6656,7 +6670,7 @@
     {
       "number": 288,
       "id": "I_kwDOH6-tI86XWZKl",
-      "title": "Evaluate TCG Compatibility on Conditional Triples",
+      "title": "Evaluate impact of Measured Element Multiplicity (in an Environment) to Conditional Triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/288",
       "state": "OPEN",
       "author": "yogeshbdeshpande",
@@ -6665,7 +6679,7 @@
       "labels": [],
       "body": "Once https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/266 is resolved, via via PR #268 which sorts the compatibility with the TCG, this has an impact on the Conditional Triples.\r\n\r\nPR #277 points to this issue as it's motivation.\r\n\r\nThis issue tracks the impact of Introduction of measurements of `one or more` Measured Elements in an Environment  on the following:\r\n\r\n1. CDDL Schema of (a) conditional-endorsement-series-triple-record AND (b) conditional-endorsement-triple-record\r\n2. Impact on Matching Semantics and Introduction of Endorsements to ACS",
       "createdAt": "2024-09-20T16:44:56Z",
-      "updatedAt": "2024-09-24T00:56:30Z",
+      "updatedAt": "2024-09-24T12:22:09Z",
       "closedAt": null,
       "comments": [
         {
@@ -35787,7 +35801,7 @@
       "id": "PR_kwDOH6-tI857N_cj",
       "title": "Revert endorsement and reference triple records to original",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -35796,17 +35810,19 @@
       "labels": [],
       "body": "This PR reverts `endorsement-triple-record` and `reference-triple-record` to original CDDL by adding array brackets around `measurement-map` to allow multiplicity of measurements for a given environment.\r\n\r\nThe Measurements and Measurement Keys sections are updated to better describe measurement multiplicity and disambiguation of measurement values.",
       "createdAt": "2024-09-11T21:16:30Z",
-      "updatedAt": "2024-09-20T16:29:24Z",
+      "updatedAt": "2024-09-25T14:33:40Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "1d1af9459f2e0142743790892d4466e39bf86841",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tcg-compatible",
       "headRefOid": "7a01ca689f4013783ba5138c0d80232214e3976b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-09-25T14:33:36Z",
+      "mergedAt": "2024-09-25T14:33:36Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "10dd89d95a9489563d1389e937478ecf8534de1f"
+      },
       "comments": [
         {
           "author": "deeglaze",
@@ -36681,6 +36697,19 @@
           "createdAt": "2024-09-20T16:22:28Z",
           "updatedAt": "2024-09-20T16:22:28Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KyMEL",
+          "commit": {
+            "abbreviatedOid": "7a01ca6"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I still think this is incomplete, but we have a direction for fixing the missing parts in future changes, so I think it is ok to check in this change.",
+          "createdAt": "2024-09-25T14:15:18Z",
+          "updatedAt": "2024-09-25T14:15:18Z",
+          "comments": []
         }
       ]
     },
@@ -37366,7 +37395,7 @@
     {
       "number": 276,
       "id": "PR_kwDOH6-tI8575-8y",
-      "title": "Tcg comp to other triples",
+      "title": "Impact of Multiple Measured Elements to Conditional Triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/276",
       "state": "OPEN",
       "author": "yogeshbdeshpande",
@@ -37375,7 +37404,7 @@
       "labels": [],
       "body": "Extending the Compatibility PR to other triples. Once we have a consensus, this PR will be deleted, it will be either merged into\r\n PR #268 ",
       "createdAt": "2024-09-18T13:53:08Z",
-      "updatedAt": "2024-09-23T09:34:09Z",
+      "updatedAt": "2024-09-25T14:38:31Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
@@ -37639,24 +37668,26 @@
       "id": "PR_kwDOH6-tI858Aw6I",
       "title": "ensure internal representation is valid CDDL",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/284",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Add automatic validation of internal representation CDDL\r\n\r\nFix #282",
       "createdAt": "2024-09-19T10:04:10Z",
-      "updatedAt": "2024-09-20T18:20:04Z",
+      "updatedAt": "2024-09-25T14:56:47Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "1d1af9459f2e0142743790892d4466e39bf86841",
+      "baseRefOid": "10dd89d95a9489563d1389e937478ecf8534de1f",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "intrep",
-      "headRefOid": "9578bfefc7d7d070ce43ddae69690f730bd3389d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "e4e6d521d6afd74d3ae18ef554d2b1c69b0cb95a",
+      "closedAt": "2024-09-25T14:56:44Z",
+      "mergedAt": "2024-09-25T14:56:44Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -37928,13 +37959,13 @@
       "labels": [],
       "body": "This is the first edit to section 8.9 - it aligns the terminology with the change to ECT internal representation\r\n\r\nIt also defines the comparison rules for raw-value (codepoint 4 and 5).",
       "createdAt": "2024-09-23T08:49:55Z",
-      "updatedAt": "2024-09-23T18:18:55Z",
+      "updatedAt": "2024-09-26T01:02:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "1d1af9459f2e0142743790892d4466e39bf86841",
+      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "adraper-ect-comparison",
-      "headRefOid": "afa24e844598f22e38331b3140f179e55d1b936c",
+      "headRefOid": "0f1abf49c0519f9da9a6536c26c31d4fedf9292f",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -37999,9 +38030,9 @@
             },
             {
               "originalPosition": 80,
-              "body": "```suggestion\r\nThe condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance` etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.\r\n```\r\n\r\nThis does not work correctly for class-map, since `class: { class-id: blah }` ought to match `class: {class-id: blah, model: \"foo\" }`\r\n\r\nI disagree with binary identical when the type choices are extensible. I'd say, for `$instance-id-type-choice /= instance-id-base-type-choice`, we say `instance-id-base-type-choice` variants are compared with CBOR encoding equality, but any other variant defined by the profile has its own profile-defined comparison algorithm.",
+              "body": "```suggestion\r\nThe condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance`, etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.\r\n```\r\n\r\nThis does not work correctly for class-map, since `class: { class-id: blah }` ought to match `class: {class-id: blah, model: \"foo\" }`\r\n\r\nI disagree with binary identical when the type choices are extensible. I'd say, for `$instance-id-type-choice /= instance-id-base-type-choice`, we say `instance-id-base-type-choice` variants are compared with CBOR encoding equality, but any other variant defined by the profile has its own profile-defined comparison algorithm.",
               "createdAt": "2024-09-23T17:54:23Z",
-              "updatedAt": "2024-09-23T18:18:55Z"
+              "updatedAt": "2024-09-25T14:18:41Z"
             },
             {
               "originalPosition": 88,
@@ -38086,6 +38117,225 @@
               "body": "```suggestion\r\nIf the condition ECT does not contain a `raw-values-mask` then the comparison MUST return true if the condition ECT `raw-value` is binary equal to the candidate entry `raw-value`.\r\n```",
               "createdAt": "2024-09-23T18:18:04Z",
               "updatedAt": "2024-09-23T18:18:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86KyTLi",
+          "commit": {
+            "abbreviatedOid": "a0c100c"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-25T14:25:12Z",
+          "updatedAt": "2024-09-25T14:25:12Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "```suggestion\r\n### Element ID comparison {#sec-compare-mkey}\r\n```",
+              "createdAt": "2024-09-25T14:25:12Z",
+              "updatedAt": "2024-09-25T14:25:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K3KoM",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See multiple comments",
+          "createdAt": "2024-09-25T23:54:05Z",
+          "updatedAt": "2024-09-26T01:02:39Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "```suggestion\r\nThe condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance`, etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the condition ECT and ACS entry are binary identical.\r\n```",
+              "createdAt": "2024-09-25T23:54:05Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 68,
+              "body": "```suggestion\r\nBefore performing the binary comparison, a Verifier SHOULD convert both ECT `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.\r\n\r\n```",
+              "createdAt": "2024-09-25T23:56:50Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 69,
+              "body": "```suggestion\r\n### Element ID comparison {#sec-compare-eid}\r\n```",
+              "createdAt": "2024-09-25T23:58:34Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 71,
+              "body": "```suggestion\r\nThe verifier SHALL iterate over all the entries in the `elements` array and compare the condition ECT `element-id` value to the candidate ACS entry `element-id` value.\r\n```",
+              "createdAt": "2024-09-26T00:02:20Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\r\nIf the two `element-id` values are not binary equal then the candidate entry is removed from the candidate entries array.\r\n```",
+              "createdAt": "2024-09-26T00:03:07Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 74,
+              "body": "```suggestion\r\nBefore performing the binary comparison, a Verifier SHOULD convert `element-id` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.\r\n```",
+              "createdAt": "2024-09-26T00:03:35Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "```suggestion\r\nIf the `element-id` field is not present in both the condition ECT and the candidate ACS entry, then the `element-id` values are equal and the candidate entry is not removed.\r\n```",
+              "createdAt": "2024-09-26T00:06:08Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 77,
+              "body": "```suggestion\r\nIf the `element-id` field is not present in either the condition ECT or the ACS ECT, the  `element-id` values are not equal and the candidate entry is removed.\r\n```",
+              "createdAt": "2024-09-26T00:08:17Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 81,
+              "body": "```suggestion\r\nThe verifier SHALL iterate over all entries in the candidate ACS entries array and compare the condition ECT expected `authority` value to the candidate ACS ECT `authority` value.\r\n```",
+              "createdAt": "2024-09-26T00:11:18Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "```suggestion\r\nIf the condition ECT contains an `authority` field, then the Verifier SHALL remove all candidate ACS ECT entries whose `authority` field does not contain one of the keys listed in the condition ECT `authority` field (see {{sec-authorized-by}} for more details).\r\n```",
+              "createdAt": "2024-09-26T00:13:20Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "Line 2078 says to remove values from the candidate ECT authority field. This seems wrong since this is describing a matching function. Matching / comparison functions should not result in a change to the ACS. ",
+              "createdAt": "2024-09-26T00:17:02Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 85,
+              "body": "We should revisit whether a binary match makes sense since the authority field is a set array not a positional array.",
+              "createdAt": "2024-09-26T00:19:16Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "The `$crypto-key-type-choice` allows a variety of authority representations (key, cert, cert chain). For equivalence checking purposes, it seems reasonable for the Verifier to compare the arrays as sets where the condition ECT authority must be a subset of the candidate ACS ECT. \r\nIf we say that the comparison should be on fully qualified certificate paths, then the Verifier must do path construction and potentially find multiple cert chains that belong to the same key. This seems like a lot of work. It seems to be unnecessary work if the goal is simply to match. The responsibility falls to the RIM author to know which variation of $crypto-key-type-choice was used when the ACS entry was initially populated. Is this  an unreasonable assumption?",
+              "createdAt": "2024-09-26T00:26:35Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 93,
+              "body": "```suggestion\r\nThe verifier SHALL iterate over all entries in the candidate ACS entries array and compare the condition ECT Claims to the candidate ACS ECT entry Claims.\r\n```",
+              "createdAt": "2024-09-26T00:29:49Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 95,
+              "body": "```suggestion\r\nThe Verifier SHALL iterate over the `element-list` entries of the condition ECT comparing the `element-list` entries of the candidate ACS ECT.\r\n```",
+              "createdAt": "2024-09-26T00:31:31Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 95,
+              "body": "There should be a section describing how to compare `element-list` entries. The section above {#sec-compare-mkey/eid} should be a subsection of this new section. It should be written using the  `element-id` and `element-claims` labeling.  The section \"Comparison of a single measurement-values-map\" should also be a subsection of this new section.",
+              "createdAt": "2024-09-26T00:44:51Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "```suggestion\r\nIf any codepoint present in the condition ECT `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then the Verifier SHALL remove that ECT from the candidate ACS entries array.\r\n```",
+              "createdAt": "2024-09-26T00:46:39Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 109,
+              "body": "I'm confused by this language. We haven't discussed \"standard comparison algorithms\" as a term. The reader is likely to be confused. Shouldn't this section describe that algorithm directly?",
+              "createdAt": "2024-09-26T00:48:56Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 126,
+              "body": "The other sections in the document describe the code point semantics, but not how to do equivalence comparisons. That is the purpose of these subsections IMO.",
+              "createdAt": "2024-09-26T00:50:31Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 114,
+              "body": "```suggestion\r\nThe codepoint number, the profile associated with the condition ECT, and the tag value (if present) shall be used to document the algorithm.\r\n```",
+              "createdAt": "2024-09-26T00:51:55Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 130,
+              "body": "The \"select\" wording does not resonate with me. We are documenting the algorithms here. Can't we just write a section for each code point and describe the comparison algorithm? ",
+              "createdAt": "2024-09-26T00:53:59Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 116,
+              "body": "```suggestion\r\nIf the Verifier does not recognize a codepoint in the `element-claims`, then the condition ECT does not match the candidate ACS ECT.\r\n```",
+              "createdAt": "2024-09-26T00:57:35Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            },
+            {
+              "originalPosition": 233,
+              "body": "```suggestion\r\nIf no entry is found, the condition ECT `integrity-registers` value does not match the candidate ACS ECT.\r\n```",
+              "createdAt": "2024-09-26T01:01:53Z",
+              "updatedAt": "2024-09-26T01:02:39Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 290,
+      "id": "PR_kwDOH6-tI858lGqu",
+      "title": "added element multiplicity for stateful-environment-record",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/290",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Added multiplicity of elements for conditional and conditional series triples via stateful environment record.\r\n\r\nAddresses part of the issues raised in #288 \r\n\r\nNote: Currently PR only touches CDDL and diag files. A cursory review of the prose sections doesn't appear to require updating except for sections that describe transformation of external to internal representation of the conditional series triple.",
+      "createdAt": "2024-09-24T22:33:36Z",
+      "updatedAt": "2024-09-25T22:18:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "series-triple-element-multiplicity",
+      "headRefOid": "f6817be8a899ebd6f00f15eb50393841c4e40cf0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86KyDL4",
+          "commit": {
+            "abbreviatedOid": "eee38ae"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-25T14:02:40Z",
+          "updatedAt": "2024-09-25T14:02:40Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Why is this not [ + measurement-map ] to allow a condition on more than one mkey? I would imagine there are endorsements that are conditional on multiple elements matching expectations and not just one element. Same for adding endorsements.",
+              "createdAt": "2024-09-25T14:02:40Z",
+              "updatedAt": "2024-09-25T14:02:40Z"
             }
           ]
         }
