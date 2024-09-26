@@ -2049,7 +2049,6 @@ Additions to the ACS MUST be atomic.
 The algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.
 
 A Verifier SHALL iterate over all ACS entries and SHALL attempte to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.
-
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
 
 If the matched entries array is not empty, then the condition ECT matches the ACS.
@@ -2093,7 +2092,7 @@ A Verifier MAY treat two keys as equal if they have different formats but repres
 For example, a Verifier may contain code to compare a key fingerprint against the key which, when hashed, creates that fingerprint.
 
 > I found this text later in the document. Is this what we want? Which ECTs are _first_ and _second_?
-> 
+>
 > The `a` field comparison tests for trust path termination.
 > If the authority of the first ECT is a trust anchor for the authority of the second ECT, the second ECT is valid.
 > If the authority values are identical, then the second ECT is valid.
