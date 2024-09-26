@@ -2058,7 +2058,7 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 ### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
-A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}) and  {{sec-compare-element-list}).
+A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}), {{sec-compare-cm}} and {{sec-compare-element-list}).
 Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
 If all three of the fields match then the condition ECT matches the ACS entry.
@@ -2091,6 +2091,22 @@ When comparing two `$crypto-key-type-choice` fields for equality, a Verifier SHA
 
 A Verifier MAY treat two keys as equal if they have different formats but represent the same key.
 For example, a Verifier may contain code to compare a key fingerprint against the key which, when hashed, creates that fingerprint.
+
+> I found this text later in the document. Is this what we want? Which ECTs are _first_ and _second_?
+> 
+> The `a` field comparison tests for trust path termination.
+> If the authority of the first ECT is a trust anchor for the authority of the second ECT, the second ECT is valid.
+> If the authority values are identical, then the second ECT is valid.
+
+### Conceptual Message Type Comparison  {#sec-compare-cm}
+
+A Verifier SHALL compare the condition ECT expected `cmtype` value to the candidate entry `cmtype` value.
+
+If the condition ECT contains a `cmtype` field, and that type has the same value as the ACS entry `cmtype` field then the types match.
+
+If the condition ECT contains a `cmtype` field, and that type has a different value from the ACS entry `cmtype` field then the types do not match.
+
+If the condition ECT contains a `cmtype` field, and the ACS entry does not contain a `cmtype` field then the types do not match.
 
 ### Element list comparison {#sec-compare-element-list}
 
@@ -2126,7 +2142,7 @@ If any codepoint present in the condition ECT `measurement-values-map` does not 
 
 If any codepoint present in the condition ECT `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
 
-#### Comparison of a single measurement-values-map codepoint{#sec-match-one-codepoint}
+#### Comparison of a single measurement-values-map codepoint {#sec-match-one-codepoint}
 
 A Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
 
@@ -2135,35 +2151,35 @@ The comparison algorithms for these are defined in this document (in the section
 For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
 
 Negative codepoints represent profile defined data representations.
-A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and the tag value (if present) to select the algorithm.
+A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and the tag value (if present) to select the comparison algorithm.
 
 If a Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
 
 Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
 
-The following subsections define the comparison algorithms for the `measurement-values-map` keys defined by this specification.
+The following subsections define the comparison algorithms for the `measurement-values-map` codepoints defined by this specification.
 
 ##### Comparison for svn entries
 
-The value stored under `measurement-values-map` key 1 is an SVN, which must have type UINT.
+The value stored under `measurement-values-map` key 1 is an SVN, which must have type `uint`.
 
-If the condition ECT value for `measurement-values-map` key 1 is an untagged UINT or a UINT tagged with #6.552 then an equality comparison is performed.
+If the condition ECT value for `measurement-values-map` key 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed.
 The comparison MUST return true if the value of the SVN in the candidate entry is equal to the value in the condition ECT.
 
-If the condition ECT value for `measurement-values-map` key 1 is a UINT tagged with #6.553 then a minimum comparison is performed.
+If the condition ECT value for `measurement-values-map` key 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
 The comparison MUST return true if the value of the SVN in the candidate entry is less than the value in the condition ECT.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
 The value stored under `measurement-values-map` key 2 is a digest entry.
 It contains one or more digests, each measuring the same object.
-A condition ECT may contain multiple digests, each with a different algorithm acceptable to the condition ECT author.
+When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
 
-To prevent downgrade attacks, if there are multiple algorithms which are in both the condition ECT and candidate entry then the digests calculated using all shared algorithms must match.
+To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry then the digests calculated using all common algorithms must match.
 
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same key is incorrect (for example if fields are missing or the wrong type) then the Reference Value does not match.
+The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same key is incorrect (for example if fields are missing or the wrong type).
 
 The comparison MUST return false if the condition ECT digests entry does not contain any digests.
 
@@ -2171,6 +2187,8 @@ The comparison MUST return false if either digests entry contains multiple value
 
 The Verifier MUST iterate over the condition ECT `digests` array, locating common hash algorithm identifiers (which are present in the condition ECT and in the candidate entry).
 If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
+
+The comparison MUST return false if there are no common hash algorithms.
 
 ##### Comparison for raw-value entries
 
@@ -2186,7 +2204,7 @@ If all the lengths are the same then a Verifier MUST iterate over the bits in th
 
 If, for every bit in the raw-values-mask which is 1, the corresponding bit is the same in both raw-values then the comparison MUST return true.
 
-If any masked in bit differebt between the raw values then the comparison MUST return false.
+If there is any bit which is 1 in raw-values-mask, but has a different value in the two raw values, then the comparison MUST return false.
 
 Note that if a candidate entry contains a value under key 5 then this does not affect the result of the comparison.
 
@@ -2195,13 +2213,9 @@ Note that if a candidate entry contains a value under key 5 then this does not a
 The value stored under `measurement-values-map` key 12 is an array of `$crypto-key-type-choice` entries. `$crypto-key-type-choice` entries are CBOR tagged values.
 The array contains one or more entries in sequence.
 
-The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with
-the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry
-are compared with the bytes following the CBOR tag from the candidate entry.
-If the byte strings match, and there is another array entry,
-then the next entry from the condition ECTs array is likewise
-compared with the next entry of the ACS array.
+The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
+If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
+If the byte strings match, and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
 If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the `cryptokeys` condition ECT matches.
 Otherwise, `cryptokeys` does not match.
 
@@ -2211,20 +2225,6 @@ For each Integrity Register entry in the condition ECT, the Verifier will use th
 If no entry is found, the condition MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
-
-### Authority Comparison  {#sec-compare-auth}
-
-The `a` field comparison tests for trust path termination.
-If the authority of the first ECT is a trust anchor for the authority of the second ECT, the second ECT is valid.
-If the authority values are identical, then the second ECT is valid.
-
-### Name Space Comparison  {#sec-compare-ns}
-
-The `ns` field comparison tests equality where the text values are identical.
-
-### Conceptual Message Type Comparison  {#sec-compare-cm}
-
-The `cm` field comparison tests equality of one or more bits.
 
 ### Profile-directed Comparison {#sec-compare-profile}
 
