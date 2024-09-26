@@ -2056,26 +2056,26 @@ After completing the steps described in this sub-section, the algorithm returns 
 
 The verifier SHALL iterate over all entries in the ACS and SHALL add each entry where the condition ECT's `environment-map` is a subset of the ACS entry `environment-map` to the candidate entries array.
 
-The condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance`, etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
+The condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance`, etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the condition ECT and ACS entry are binary identical.
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
 
 Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
 ### Element ID comparison {#sec-compare-mkey}
 
-The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT `measurement-map/mkey` value to the candidate entry `measurement-map/mkey` value.
-If the two `mkey` values are not binary equal then the candidate entry is removed from the candidate entries array.
+The verifier SHALL iterate over all the entries in the `elements` array and compare the condition ECT `element-id` value to the candidate ACS entry `element-id` value.
+If the two `element-id` values are not binary equal then the candidate entry is removed from the candidate entries array.
 
-Before performing the binary comparison, a Verifier SHOULD convert `mkey` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+Before performing the binary comparison, a Verifier SHOULD convert `element-id` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If the `mkey` field is not present in neither the condition ECT nor the candidate entry then the `mkey` are equal and the candidate entry is not removed.
-If the `mkey` field is not present in only one side of the comparison then the `mkey` are not equal and the candiate entry is removed.
+If the `element-id` field is not present in both the condition ECT and the candidate ACS entry, then the `element-id` values are equal and the candidate entry is not removed.
+If the `element-id` field is not present in either the condition ECT or the ACS ECT, the  `element-id` values are not equal and the candidate entry is removed.
 
 ### Authority comparison
 
 The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT expected authority (`a`) value to the candidate entry authority value.
 
-If the condition ECT contains an `a` field then the Verifier SHALL remove all candidate entries whose `authorized-by` field does not contain one of the keys listed in the condition ECT `authorized-by` field (see {{sec-authorized-by}} for more details).
+If the condition ECT contains an `authority` field, then the Verifier SHALL remove all candidate ACS ECT entries whose `authority` field does not contain one of the keys listed in the condition ECT `authority` field (see {{sec-authorized-by}} for more details).
 
 When comparing two `$crypto-key-type-choice` fields for equality, the verifier SHALL treat then as equal if their CBOR encoding is binary equal.
 
