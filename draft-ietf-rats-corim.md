@@ -1227,7 +1227,8 @@ If none of the series conditions match an ACS Entry, the triple is not matched,
 and no Endorsed values are accepted.
 
 The `authorized-by` value in `measurement-map` in the stateful environment, if present,
-applies to all measurements in the triple, including `conditional-series-record` records.
+applies to reference value measurements in the triple, for `conditional-series-record` records.
+If the `authorized-by` value is provided in the `measurement-map` for endorsed values, they get added to the ACS.
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-series-triple-record.cddl}
