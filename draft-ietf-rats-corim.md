@@ -2032,7 +2032,7 @@ measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are not equivalent then the verifier SHALL report
+measurement values are not equivalent then a Verifier SHALL report
 an error and stop validation processing.
 
 ### ACS Augmentation {#sec-acs-aug}
@@ -2048,60 +2048,96 @@ Additions to the ACS MUST be atomic.
 
 The algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.
 
-The Verifier uses a temporary "candidate entries" array as part of the comparison. Each element of the array is an ECT.
+A Verifier SHALL iterate over all ACS entries and SHALL attempte to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.
 
-After completing the steps described in this sub-section, the algorithm returns false if the candidate entries array is empty, true if it contains one or more elements.
+A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
 
-### Environment Comparison {#sec-compare-env}
+If the matched entries array is not empty, then the condition ECT matches the ACS.
 
-The verifier SHALL iterate over all entries in the ACS and SHALL add each entry where the condition ECT's `environment-map` is a subset of the ACS entry `environment-map` to the candidate entries array.
+If the matched entries array is empty, then the condition ECT does not match the ACS.
 
-The condition ECT `environment-map` is a subset of an ACS entry `environment-map` if each field (for example `class`, `instance`, etc.) which is present in the condition ECT `environment-map` is also present in the ACS entry, and the CBOR encoded field values in the condition ECT and ACS entry are binary identical.
-If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the `environment-map`s are subsets.
+### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
-Before performing the binary comparison, a Verifier SHOULD convert `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}) and  {{sec-compare-element-list}).
+Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
-### Element ID comparison {#sec-compare-mkey}
+If all three of the fields match then the condition ECT matches the ACS entry.
 
-The verifier SHALL iterate over all the entries in the `elements` array and compare the condition ECT `element-id` value to the candidate ACS entry `element-id` value.
-If the two `element-id` values are not binary equal then the candidate entry is removed from the candidate entries array.
+If any of the fields does not match, then the condition ECT does not match the ACS entry.
 
-Before performing the binary comparison, a Verifier SHOULD convert `element-id` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+### Environment Comparison {#sec-compare-environment}
 
-If the `element-id` field is not present in both the condition ECT and the candidate ACS entry, then the `element-id` values are equal and the candidate entry is not removed.
-If the `element-id` field is not present in either the condition ECT or the ACS ECT, the  `element-id` values are not equal and the candidate entry is removed.
+A Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
+Before performing the binary comparison, a Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-### Authority comparison
+If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical, then the environments match.
 
-The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT expected authority (`a`) value to the candidate entry authority value.
+If any field which is present in the condition ECT `environment-map` is not present in the ACS entry then the environments do not match.
 
-If the condition ECT contains an `authority` field, then the Verifier SHALL remove all candidate ACS ECT entries whose `authority` field does not contain one of the keys listed in the condition ECT `authority` field (see {{sec-authorized-by}} for more details).
+If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field then the environments do not match.
 
-When comparing two `$crypto-key-type-choice` fields for equality, the verifier SHALL treat then as equal if their CBOR encoding is binary equal.
+If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the environments match.
 
-The verifier MAY treat two keys as equal if they have different formats but represent the same key.
-For example, the verifier may contain code to compare a key fingerprint against the key which, when hashed, creates that fingerprint.
+### Authority comparison {#sec-compare-authority}
 
-### Claims Comparison  {#sec-compare-claims}
+A Verifier SHALL compare the condition ECT expected `authority` value to the candidate entry `authority` value.
 
-The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT claims to the candidate entry authority claims.
+If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field then the authorities match.
+The order of the fields in each `authority` field do not affect the result of the comparison.
 
-The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
+If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
+
+When comparing two `$crypto-key-type-choice` fields for equality, a Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
+
+A Verifier MAY treat two keys as equal if they have different formats but represent the same key.
+For example, a Verifier may contain code to compare a key fingerprint against the key which, when hashed, creates that fingerprint.
+
+### Element list comparison {#sec-compare-element-list}
+
+A Verifier SHALL iterate over all the entries in the condition ECT `element-list` and compare each one against the corresponding entry in the ACS entry `element-list`.
+
+If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field then the element lists match.
+
+The order of the fields in each `element-list` field do not affect the result of the comparison.
+
+If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the authorities do not match.
+
+### Element map comparison {#sec-compare-element-map}
+
+A Verifier shall compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
+
+First, a Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
+Two `element-id` fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.
+
+Before performing the binary comparison, a Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+
+If any ACS entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.
+
+If any ACS entry has multiple corresponding `element-id`s then the element map does not match.
+
+Second, a Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry (see {{sec-compare-mvm}}).
+
+### Measurement values map map Comparison {#sec-compare-mvm}
+
+A Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
 Each of the codepoints present in the condition ECT is compared against the same codepoint in the candidate entry.
 
-If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then verifier SHALL remove that candidate entry from the candidate entries array.
+If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
 
-If any codepoint present in the condition ECT `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then verifier SHALL remove that candidate entry from the candidate entries array.
+If any codepoint present in the condition ECT `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
 
 #### Comparison of a single measurement-values-map codepoint{#sec-match-one-codepoint}
 
-If the codepoint key is zero or positive then the Verifier SHALL use a standard comparison algorithm, defined in this document, to compare the claims.
-The codepoint number and, if present, the tag value associated with the condition ECT codepoint SHALL be used to select the algorithm.
+A Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
 
-If the codepoint key is negative then the Verifier MAY use a comparison algorithm defined by the appropriate CoRIM profile to compare the claims.
-The codepoint number, the profile associated with the condition ECT, and the tag value (if present) shall be used to select the algorithm.
+Non-negative codepoints represent standard data representations.
+The comparison algorithms for these are defined in this document (in the sections below) or in other standards.
+For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
 
-If the verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
+Negative codepoints represent profile defined data representations.
+A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and the tag value (if present) to select the algorithm.
+
+If a Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
 
 Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
 
@@ -2146,7 +2182,7 @@ If the condition ECT does not contain a raw-values-maek then the comparison MUST
 
 If the condition ECT raw-values-mask, condition ECT raw-value and candidate entry raw-value are not the same length then the comparison MUST return false.
 
-If all the lengths are the same then the verifier MUST iterate over the bits in the raw-values-mask which are 1, and compare the corresponding bits in the two raw-value fields.
+If all the lengths are the same then a Verifier MUST iterate over the bits in the raw-values-mask which are 1, and compare the corresponding bits in the two raw-value fields.
 
 If, for every bit in the raw-values-mask which is 1, the corresponding bit is the same in both raw-values then the comparison MUST return true.
 
@@ -2195,7 +2231,7 @@ The `cm` field comparison tests equality of one or more bits.
 A profile may specify handling for new CBOR tagged condition ECTs.
 The profile must specify how to compare the CBOR tagged Reference Value against the ACS.
 
-Note that the verifier may compare Reference Values in any order, so the comparison should not be stateful.
+Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
 
 # Implementation Status
 
