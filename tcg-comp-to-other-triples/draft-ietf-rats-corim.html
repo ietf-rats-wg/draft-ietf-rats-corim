@@ -3330,24 +3330,24 @@ stateful-environment-record = [
 ]
 </pre><a href="#section-5.1.4.9-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.9-4">The series object is an array of <code>conditional-series-record</code> that has both Reference and Endorsed Values.
-Each <code>conditional-series-record</code> is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a <code>conditional-series-record</code> matches the ACS.
-The first <code>conditional-series-record</code> that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match an ACS Entry, the triple is not matched,
-and no Endorsed values are accepted.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.9-5">The <code>authorized-by</code> value in <code>measurement-map</code> in the stateful environment, if present,
-applies to all measurements in the triple, including <code>conditional-series-record</code> records.<a href="#section-5.1.4.9-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.9-6">
+<p id="section-5.1.4.9-4">The series object is an array of <code>conditional-series-record</code> that has both Reference and Endorsed Values.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-5">Each <code>conditional-series-record</code> has measurements belonging to one or more measured elements, pertaining to the environment that appears in the stateful-environment record.<a href="#section-5.1.4.9-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-6">The Endorsed Values are accepted if the series condition in a <code>conditional-series-record</code> matches the ACS.
+The first <code>conditional-series-record</code> that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted. In order for a <code>conditional-series-record</code> to match, measurements pertaining to every measured element in the record MUST match.<a href="#section-5.1.4.9-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-7">If none of the series conditions match an ACS Entry, the triple is not matched,
+and no Endorsed values are accepted.<a href="#section-5.1.4.9-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-8">The <code>authorized-by</code> value in <code>measurement-map</code> in the stateful environment, if present,
+applies to all measurements in the triple, including <code>conditional-series-record</code> records.<a href="#section-5.1.4.9-8" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.9-9">
 <pre>
 conditional-endorsement-series-triple-record = [
   stateful-environment-record
   ; order matters: the first matching record wins and halts matching
   [ + conditional-series-record ]
 ]
-</pre><a href="#section-5.1.4.9-6" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.9-9" class="pilcrow">¶</a>
 </div>
-<div class="lang-cddl sourcecode" id="section-5.1.4.9-7">
+<div class="lang-cddl sourcecode" id="section-5.1.4.9-10">
 <pre>
 conditional-series-record = [
   ; reference values to be matched against evidence
@@ -3355,7 +3355,7 @@ conditional-series-record = [
   ; endorsed values that apply in case revf matches
   endv: [ +measurement-map]
 ]
-</pre><a href="#section-5.1.4.9-7" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.9-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
