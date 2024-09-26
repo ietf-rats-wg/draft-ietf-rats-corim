@@ -1036,7 +1036,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 29 March 2025</td>
+<td class="center">Expires 30 March 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1049,12 +1049,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-09-25" class="published">25 September 2024</time>
+<time datetime="2024-09-26" class="published">26 September 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-03-29">29 March 2025</time></dd>
+<dd class="expires"><time datetime="2025-03-30">30 March 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1116,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 29 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 30 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -4671,7 +4671,7 @@ Additions to the ACS MUST be atomic.<a href="#section-8.8.2-1" class="pilcrow">�
 <a href="#section-8.9.1" class="section-number selfRef">8.9.1. </a><a href="#name-environment-comparison" class="section-name selfRef">Environment Comparison</a>
           </h4>
 <p id="section-8.9.1-1">The verifier SHALL iterate over all entries in the ACS and SHALL add each entry where the condition ECT's <code>environment-map</code> is a subset of the ACS entry <code>environment-map</code> to the candidate entries array.<a href="#section-8.9.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.9.1-2">The condition ECT <code>environment-map</code> is a subset of an ACS entry <code>environment-map</code> if each field (for example <code>class</code>, <code>instance</code>, etc.) which is present in the condition ECT <code>environment-map</code> is also present in the ACS entry, and the CBOR encoded field values in the stateful environment and ACS entry are binary identical.
+<p id="section-8.9.1-2">The condition ECT <code>environment-map</code> is a subset of an ACS entry <code>environment-map</code> if each field (for example <code>class</code>, <code>instance</code>, etc.) which is present in the condition ECT <code>environment-map</code> is also present in the ACS entry, and the CBOR encoded field values in the condition ECT and ACS entry are binary identical.
 If a field is not present in the condition ECT <code>environment-map</code> then the presence of, and value of, the corresponding ACS entry field does not affect whether the <code>environment-map</code>s are subsets.<a href="#section-8.9.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.9.1-3">Before performing the binary comparison, a Verifier SHOULD convert <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.9.1-3" class="pilcrow">¶</a></p>
 </section>
@@ -4681,11 +4681,11 @@ If a field is not present in the condition ECT <code>environment-map</code> then
           <h4 id="name-element-id-comparison">
 <a href="#section-8.9.2" class="section-number selfRef">8.9.2. </a><a href="#name-element-id-comparison" class="section-name selfRef">Element ID comparison</a>
           </h4>
-<p id="section-8.9.2-1">The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT <code>measurement-map/mkey</code> value to the candidate entry <code>measurement-map/mkey</code> value.
-If the two <code>mkey</code> values are not binary equal then the candidate entry is removed from the candidate entries array.<a href="#section-8.9.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.9.2-2">Before performing the binary comparison, a Verifier SHOULD convert <code>mkey</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.9.2-2" class="pilcrow">¶</a></p>
-<p id="section-8.9.2-3">If the <code>mkey</code> field is not present in neither the condition ECT nor the candidate entry then the <code>mkey</code> are equal and the candidate entry is not removed.
-If the <code>mkey</code> field is not present in only one side of the comparison then the <code>mkey</code> are not equal and the candiate entry is removed.<a href="#section-8.9.2-3" class="pilcrow">¶</a></p>
+<p id="section-8.9.2-1">The verifier SHALL iterate over all the entries in the <code>elements</code> array and compare the condition ECT <code>element-id</code> value to the candidate ACS entry <code>element-id</code> value.
+If the two <code>element-id</code> values are not binary equal then the candidate entry is removed from the candidate entries array.<a href="#section-8.9.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.9.2-2">Before performing the binary comparison, a Verifier SHOULD convert <code>element-id</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.9.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.9.2-3">If the <code>element-id</code> field is not present in both the condition ECT and the candidate ACS entry, then the <code>element-id</code> values are equal and the candidate entry is not removed.
+If the <code>element-id</code> field is not present in either the condition ECT or the ACS ECT, the  <code>element-id</code> values are not equal and the candidate entry is removed.<a href="#section-8.9.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authority-comparison">
@@ -4694,7 +4694,7 @@ If the <code>mkey</code> field is not present in only one side of the comparison
 <a href="#section-8.9.3" class="section-number selfRef">8.9.3. </a><a href="#name-authority-comparison" class="section-name selfRef">Authority comparison</a>
           </h4>
 <p id="section-8.9.3-1">The verifier SHALL iterate over all entries in the candidate entries array and compare the condition ECT expected authority (<code>a</code>) value to the candidate entry authority value.<a href="#section-8.9.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.9.3-2">If the condition ECT contains an <code>a</code> field then the Verifier SHALL remove all candidate entries whose <code>authorized-by</code> field does not contain one of the keys listed in the condition ECT <code>authorized-by</code> field (see <a href="#sec-authorized-by" class="auto internal xref">Section 8.4.1.1</a> for more details).<a href="#section-8.9.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.9.3-2">If the condition ECT contains an <code>authority</code> field, then the Verifier SHALL remove all candidate ACS ECT entries whose <code>authority</code> field does not contain one of the keys listed in the condition ECT <code>authority</code> field (see <a href="#sec-authorized-by" class="auto internal xref">Section 8.4.1.1</a> for more details).<a href="#section-8.9.3-2" class="pilcrow">¶</a></p>
 <p id="section-8.9.3-3">When comparing two <code>$crypto-key-type-choice</code> fields for equality, the verifier SHALL treat then as equal if their CBOR encoding is binary equal.<a href="#section-8.9.3-3" class="pilcrow">¶</a></p>
 <p id="section-8.9.3-4">The verifier MAY treat two keys as equal if they have different formats but represent the same key.
 For example, the verifier may contain code to compare a key fingerprint against the key which, when hashed, creates that fingerprint.<a href="#section-8.9.3-4" class="pilcrow">¶</a></p>
