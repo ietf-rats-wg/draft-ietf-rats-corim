@@ -1219,7 +1219,7 @@ matched.
 The series is an array of `conditional-series-record` that has a `selection`, and an `addition`, both expressed as a list of `measurement-map`.
 The `selection` and `addition` operate within the scope of the conditional endorsement series triple record's matching `condition`.
 
-Each `conditional-series-record` has measurements belonging to one or more measured elements, pertaining to the environment that appears in the stateful-environment record.
+For each `conditional-series-record` entry, if the `selection` matches the chosen ACS entry, the `addition` is added to the ACS.
 
 The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
 The first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series.
@@ -1228,7 +1228,8 @@ For a `conditional-series-record` to match, every measurement in the `measuremen
 If none of the `selection` values match in the chosen ACS entry, the triple is not matched,
 and no `addition` values are accepted.
 
-The `authorized-by` value in `measurement-map` in the stateful environment, if present,
+If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`),
+all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
 applies to reference value measurements in the triple, for `conditional-series-record` records.
 If the series `addition` entry contains `authorized-by` values, they are ignored.
 
