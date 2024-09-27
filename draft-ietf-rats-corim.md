@@ -1216,19 +1216,21 @@ matched.
 {::include cddl/stateful-environment-record.cddl}
 ~~~
 
-The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
+The series is an array of `conditional-series-record` that has a `selection`, and an `addition`, both expressed as a list of `measurement-map`.
+The `selection` and `addition` operate within the scope of the conditional endorsement series triple record's matching `condition`.
 
 Each `conditional-series-record` has measurements belonging to one or more measured elements, pertaining to the environment that appears in the stateful-environment record.
 
 The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
-The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted. In order for a `conditional-series-record` to match, measurements pertaining to every measured element in the record MUST match.
+The first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series. 
+For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the chosen ACS entry.
 
-If none of the series conditions match an ACS Entry, the triple is not matched,
-and no Endorsed values are accepted.
+If none of the `selection` values match in the chosen ACS entry, the triple is not matched,
+and no `addition` values are accepted.
 
 The `authorized-by` value in `measurement-map` in the stateful environment, if present,
 applies to reference value measurements in the triple, for `conditional-series-record` records.
-If the `authorized-by` value is provided in the `measurement-map` for endorsed values, they get added to the ACS.
+If the series `addition` entry contains `authorized-by` values, they are ignored.
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-series-triple-record.cddl}
