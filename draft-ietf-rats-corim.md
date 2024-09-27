@@ -1222,7 +1222,7 @@ The `selection` and `addition` operate within the scope of the conditional endor
 Each `conditional-series-record` has measurements belonging to one or more measured elements, pertaining to the environment that appears in the stateful-environment record.
 
 The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
-The first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series. 
+The first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series.
 For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the chosen ACS entry.
 
 If none of the `selection` values match in the chosen ACS entry, the triple is not matched,
