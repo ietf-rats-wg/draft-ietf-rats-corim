@@ -1221,7 +1221,6 @@ The `selection` and `addition` operate within the scope of the conditional endor
 
 For each `conditional-series-record` entry, if the `selection` matches the chosen ACS entry, the `addition` is added to the ACS.
 
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
 The first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series.
 For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the chosen ACS entry.
 
@@ -1230,7 +1229,7 @@ and no `addition` values are accepted.
 
 If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`),
 all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
-applies to reference value measurements in the triple, for `conditional-series-record` records.
+If the series `selection` populates `authorized-by`, the chosen ACS MUST contain the same measurements and authority as contained in the `selection` entry.
 If the series `addition` entry contains `authorized-by` values, they are ignored.
 
 ~~~ cddl
