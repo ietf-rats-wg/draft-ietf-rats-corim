@@ -3333,14 +3333,13 @@ stateful-environment-record = [
 <p id="section-5.1.4.9-4">The series is an array of <code>conditional-series-record</code> that has a <code>selection</code>, and an <code>addition</code>, both expressed as a list of <code>measurement-map</code>.
 The <code>selection</code> and <code>addition</code> operate within the scope of the conditional endorsement series triple record's matching <code>condition</code>.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.9-5">For each <code>conditional-series-record</code> entry, if the <code>selection</code> matches the chosen ACS entry, the <code>addition</code> is added to the ACS.<a href="#section-5.1.4.9-5" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.9-6">The Endorsed Values are accepted if the series condition in a <code>conditional-series-record</code> matches the ACS.
-The first <code>conditional-series-record</code> entry that successfully matches the chosen ACS entry terminates the series.
+<p id="section-5.1.4.9-6">The first <code>conditional-series-record</code> entry that successfully matches the chosen ACS entry terminates the series.
 For a <code>conditional-series-record</code> to match, every measurement in the <code>measurement-map</code> list MUST match a measurement in the chosen ACS entry.<a href="#section-5.1.4.9-6" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.9-7">If none of the <code>selection</code> values match in the chosen ACS entry, the triple is not matched,
 and no <code>addition</code> values are accepted.<a href="#section-5.1.4.9-7" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.9-8">If the <code>authorized-by</code> value is present in the triple <code>condition</code> (i.e., in the <code>measurement-map</code> of the <code>stateful-environment-record</code>),
 all authority entries of the <code>condition</code> MUST be present in the ACS entry, otherwise the ACS entry does not match.
-applies to reference value measurements in the triple, for <code>conditional-series-record</code> records.
+If the series <code>selection</code> populates <code>authorized-by</code>, the chosen ACS MUST contain the same measurements and authority as contained in the <code>selection</code> entry.
 If the series <code>addition</code> entry contains <code>authorized-by</code> values, they are ignored.<a href="#section-5.1.4.9-8" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.9-9">
 <pre>
