@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-26T01:43:42.673598+00:00",
+  "timestamp": "2024-09-29T01:51:41.329697+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2903,7 +2903,7 @@
       ],
       "body": "The `domain-dependency-triple-record` lists target environments and the other environments, usually attesting environments, the target depends on for trust establishment. \r\n\r\nIt may be unclear what behavior the Verifier should take if a target environment appears in Evidence, but does not have a corresponding dependency triple. \r\n\r\nA concern is that if an env is compromised (after its measurement / evidence is collected), the compromised env could measure an additional (attack) env, with evidence, that the Verifier will accept. \r\n\r\nNote: There may be other ways to detect this attack. The compromised env could have been issued a DICE certificate that excludes the `ECA` key purpose OID. The compromised env could have been issued an X.509 certificate with a pathlen value=0.\r\nGiven there may be multiple evidence formats that don't have these mitigations, the dependency triple may be an additional form of mitigation.\r\n\r\nHowever, to mitigate this attack, there needs to be conventions for its use. If the dependency triples are a closed set. Then only attack environments will not show up in dependency triples. Can CoRIM assert this requirement?\r\n\r\nVerifier behavior should be clear whether it detects this attack. \r\n\r\nIf the verifier should detect the attack using RIMs, then RIM authors MUST specify dependency triples. \r\n\r\nDetection requires an all-or-nothing approach. All the target envs MUST be included in RIMs, or the verifier is not expected to detect the attack. Otherwise, the possibility of unnamed, but trusted environments could exist. The Verifier is undecided as to which is legitimate. \r\n\r\nDo we think CoBOM plays a role toward identifying tags that contain dependency triples?\r\n\r\n",
       "createdAt": "2023-07-14T21:57:40Z",
-      "updatedAt": "2024-05-07T08:59:46Z",
+      "updatedAt": "2024-09-27T04:58:23Z",
       "closedAt": null,
       "comments": [
         {
@@ -2919,6 +2919,13 @@
           "body": "Edited description to make the attack scenario more clear and included alternative ways to  detect the attack. ",
           "createdAt": "2023-08-10T17:39:45Z",
           "updatedAt": "2023-08-10T17:39:45Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think that dependency triples being a closed set is a SHOULD situation to avoid a downgrade attack, but real deployments may have to fudge things and it'll be down to verifier policy which to trust. You could improve the situation with CoBOM maybe, but those are optional.\r\n\r\nI'm still unclear what the verifier's expected processing of these triples is supposed to be. Is it that if you find that for an appraisal session that when you convert evidence into ACS entries, you create subgoals that must be discharged to first establish trust in the domains it depends on? When that's the case, I would think that an appraisal session would need all the evidence for the environments of the sum total of dependent domains that are active among the domain membership triples.\r\n\r\nWhen the domains are not cryptographically bound together in a chain of measurements, I don't know what the hope is for these triples. When the binding is there, the attestation scheme requires verifying the whole chain. Taking a step back, what is the use case scenario for this DAG structure (is it required to be a DAG? I really hope it's required to be a DAG. It's not spec'd to be a DAG)?\r\n\r\n---\r\nSpeculation:\r\n\r\nI can see maybe implicit in certain layers of access to a system, you might not get to see the whole measurement history. For example, a container's attestation shouldn't get to know about the attestation of other containers that have run on that pod: only the policy of the launcher that launched the container. The launcher signs its own attestations for workloads launched, and the certificate for that launcher is known to be issue by a CA that only issues certificates to launchers that prove they're in an approved environment themself. The kernel may even protect the key to do the signing only for a process that had a specific measurement that the CA knew...\r\n\r\nSo for that system, you say the container is in the domain of the launcher, and the launcher is in the domain of the node, and the node is in the domain of both the measurement technology and the CSP that signs certificates that the chip id in the measurement corresponds to their property that's running in a certain locality. These are all aspects I would think to understand as part of an appraisal policy of what in a complete measurement to see as salient. I understand domains more as the certificates for keys that sign the claims that I depend on, and that I have policy that certain claims should only be signed by certain authorities. Yeah, still missing the point :(",
+          "createdAt": "2024-09-27T04:58:22Z",
+          "updatedAt": "2024-09-27T04:58:22Z"
         }
       ]
     },
@@ -6723,6 +6730,60 @@
           "body": "Conditions that span multiple ECTs (aka stateful-environment-record) introduces ambiguity for series `selection` in the current series triple because the selection target defaults to the matched `condition`. With multiple conditions, the default behavior is non-deterministic. \r\n\r\nThe `evs` relation addresses the non-determinism by requiring the selection to include the target explicitly. This can result in Awkward or bulky statements for the happy path use case where the condition and the selection environments are the same.\r\n\r\nAdditionally, the `addition` in `conditional-endorsed-series-triple-record` defaults to the current `selection` environment as the target for supplying the addition. However, if the addition is given more flexibility to target which environment to apply the addition, then the full ECT context must be supplied. This, however, results in yet another instance of the full ECT replicated in the RIM entry for the happy path use case. \r\n\r\nThe net result of a generalized `evs`-based conditional series triple is the common case will seem bloated with seemingly redundant information. (Actually, three copies of environment and measurement values will exist). If the `addition` is just a single or few claims, then it seems like it fails to realize the principle that \"simple things should be simple, but complex things possible\". Instead, it is an example of: \"simple and complex things are achievable\".\r\n\r\nA reasonable compromise is to have two forms of the series triple, one that is optimized for the common / simple case and one that is more powerful but also more complex.",
           "createdAt": "2024-09-24T00:56:28Z",
           "updatedAt": "2024-09-24T00:56:28Z"
+        }
+      ]
+    },
+    {
+      "number": 291,
+      "id": "I_kwDOH6-tI86YLlqm",
+      "title": "cryptokeys comparison is unclear. Why the ordering?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/291",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> The value stored under measurement-values-map key 12 is an array of $crypto-key-type-choice entries. $crypto-key-type-choice entries are CBOR tagged values. The array contains one or more entries in sequence.\r\n>\r\n> The CBOR tag of the first entry of the Reference Value cryptokeys array is compared with the CBOR tag of the first entry of the ACS cryptokeys value. If the CBOR tags match, then the bytes following the CBOR tag from the Reference Value entry are compared with the bytes following the CBOR tag from the ACS entry. If the byte strings match, and there is another array entry, then the next entry from the Reference Values array is likewise compared with the next entry of the ACS array. If all entries of the Reference Values array match a corresponding entry in the ACS array, then the cryptokeys Reference Value matches. Otherwise, cryptokeys does not match.\r\n\r\n\r\n\r\nThis confuses me. I can't conceptualize the procedure this is describing, and I don't know why it only cares about tagged values. The $crypto-key-type-choice choice can be extended with non-tagged values. I don't know why it describes the tagged value comparison in two steps when it seems equivalent to just compare binary encodings.\r\n\r\nIt seems like it requires the size of the condition's key array to be less than or equal to the candidate's key array size, and that all elements of the condition's key array must be binary equal to the corresponding position in the candidate's key array. Seems strange to not allow some permutation in the comparison. Why is this not a subset semantics? Does this really need to impose an ordering?\r\n\r\nThe intended meaning of the triple is lost on me. It would help to have some supporting prose. Is it that the environment could be reasonably expected to give a proof of possession for these keys? I could see the ordering mattering if you're expecting the format of a CA bundle, but whether you're iterating from the left or right can cause problems due to bundle inconsistencies across server implementations as root..leaf or leaf..root\r\n\r\n",
+      "createdAt": "2024-09-27T15:10:40Z",
+      "updatedAt": "2024-09-27T15:10:40Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 293,
+      "id": "I_kwDOH6-tI86YMbgg",
+      "title": "Use cases for authorized-by",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/293",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This issue is related to: Issues #244, #202, #160, and #159\r\n\r\nThis issue aims to document expected usages of authorized-by and to identify gaps in the internal representation (ECT) if any.\r\n\r\nACS `authority` field is populated when the signature over a Verifier input is valid and triples processing results in an addition to the ACS. The signer authority (typically a signing key) is added to ACS ECT entries.\r\n\r\nThe following triples have been annotated to indicate which parts specify `condition` and which specify `addition`. `condition-addition` means the statement is overloaded to be both a matching condition and an addition if the matching condition is satisfied. `selection` is a context sensitive condition where the `selection` is applied to the result of the `condition`.\r\n```\r\nevidence-triple-record = [\r\n  addition: environment-map\r\n  addition: [ + measurement-map ]\r\n]\r\n\r\nreference-triple-record = [\r\n  condition-addition: environment-map\r\n  condition-addition: [ + measurement-map ]\r\n]\r\n\r\nendorsed-triple-record = [\r\n  condition-addition: environment-map\r\n  addition: [ + measurement-map ]\r\n]\r\n\r\nconditional-endorsed-triple-record = [\r\n  conditions: [ + stateful-environment-record ]\r\n  additions: [ + stateful-environment-record ]\r\n]\r\n\r\nconditional-endorsement-series-triple-record = [\r\n  condition: stateful-environment-record\r\n  selective-addition: [ + conditional-series-record ]\r\n]\r\n\r\nconditional-series-record = [\r\n  selection: [ + measurement-map]\r\n  addition: [ + measurement-map]\r\n]\r\n```\r\n\u00a0\r\nUse Cases:\r\n\r\n1. `authorized-by` as a condition for querying ACS state. If `authorized-by` is included in `addition` statements it is ignored. Semantics: If `authorized-by` is in a condition / condition-addition / selection statement, then it is compared with the ECT `authority` field. If `authorized-by` is a subset of the authorities listed in `authority` then the condition is met.\r\n\r\n2. `authorized-by` is included in an Evidence addition. Semantics: `authorized-by` identifies trust dependencies where the current TE measurements are expected to be collected by a particular AE. `authorized-by` contains the AE signing key. The key is saved in a new field in the ACS `expected-authority` that the Verifier checks to verify the actual authority is the same as the expected authority. Notes: If the AE is compromised such that `authority` differs from `expected-authority`, then it seems reasonable that the compromised AE would supply an attack TE who changes `authorized-by` value to be the attack AE making the consistency check meaningless.\r\n\r\n3. `authorized-by` is included in an Evidence addition. Semantics: `authorized-by` identifies the RVP that is supposed to supply the reference values. The `authorized-by` value is saved to a new field in the ACS ECT (`expected-rvp`). The Verifier processes RVP `condition-addition` statements and adds the ECT with an additional check that the `expected-rvp` field in the evidence ECT matches the `authority` field of the to-be-added RV ECT. Notes: If the `expected-rvp` is not in the Verifier's TA list, this could be a risk of privilege escalation. If a second RVP adds the same ECT under the second RVP authority, but it is not named by `expected-rvp`, then Verifier will not match on the second RVP. I assume the Verifier will ignore the second RVPs addition. However, this seems controversial since the Attester is masking off Verifier TA policy.\r\n\r\n4. `authorized-by` is included in Reference Values. Semantics: As a condition, `authorized-by` is matching criteria that applies to Evidence. `authorized-by` matches an evidence ECT `authority` if `authorized-by` is a subset of `authority` field. The RV ECT is added with `authority` being set to the RVP key. Note: There is no way to query / match on `expected-rvp` or `expected-authority` if use cases (2) or (3) are valid.\r\n\r\n5. `authorized-by` is included in simple Endorsements. Semantics: As a condition, `authorized-by` is matching criteria applies to Evidence / RV / Endorsement(?) ECTs in the ACS. `authorized-by` is compared to the `authority` field in the ECT. If it is a subset of `authority` then it matches. The Endorsement `environment-map` and `[ + measurement-map ] contents are added to an ACS ECT where `authority` is the Endorser signing key. Notes: There is no way to describe an addition that incorporates authority without overloading `authorized-by` to mean both condition and addition. But if overloaded, the `addition` needs to be added to the ACS ECT. Maybe it has use case (6) semantics, in which case `authorized-by` as a delegation updates `ce-delegates`. This would be strange since the named delegate is already trusted by the verifier or `authorized-by` use as a `condition` would have failed.\r\n\r\n6. `authorized-by` is included in conditional endorsements in the `additions`. To indicated that another Endorser or RVP is authorized (delegated) to supply values for the `addition` claims. Semantics: The set of additions includes `authorized-by` values. These are added to the ECT using a new field `ce-delegates`. Notes: Since any entity can assert RV / Endorsement claims, the Verifier will add them to the ACS without delegation. This assumes the Verifier TA policy trusts the delegate entity. If the Verifier doesn't already trust the delegate, then this use case is a form of TA management where supplier A introduces supplier B to the Verifier. Upon seeing `ce-delegates` in an ECT, the Verifier updates its TA policy to include the delegate (but with restrictions described by the `addition` statement.) One of the challenges with delegation is rescinding delegations. It isn't clear from the triple, for how long the delegation is valid.\r\n\r\n7. `authorized-by` is included in a conditional series endorsement in the `condition` and in the `selection`. Since the series scope is tied to the `condition`, the `authorized-by` in `selection` appears to be redundant. If `authorized-by` appears in the `addition`, it could have the semantics of use case (6).  Notes: since this triple didn't have `authorized-by` semantics prior to #276 the existence of `authorized-by` in the `addition` is unexpectedly inherited. Hence, the Verifier should ignore `authorized-by` if it appears in `addition`.",
+      "createdAt": "2024-09-27T17:18:42Z",
+      "updatedAt": "2024-09-27T20:17:30Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think when we translate evidence triples to evs, the condition ects are\r\none per different collection of authorities across the measurement-maps and\r\nthe addition is the environment and measurement-maps with authorized-by\r\nreplaced by the corim authority across the board.\r\n\r\nOn Fri, Sep 27, 2024 at 10:19 Ned Smith ***@***.***> wrote:\r\n\r\n> This issue is related to: Issues #244\r\n> <https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/244>, #202\r\n> <https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/202>, #160\r\n> <https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/160>, and #159\r\n> <https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/159>\r\n>\r\n> This issue aims to document expected usages of authorized-by and to\r\n> identify gaps in the internal representation (ECT) if any.\r\n>\r\n> ACS authority field is populated when the signature over a Verifier input\r\n> is valid and triples processing results in an addition to the ACS. The\r\n> signer authority (typically a signing key) is added to ACS ECT entries.\r\n>\r\n> The following triples have been annotated to indicate which parts specify\r\n> condition and which specify addition:\r\n>\r\n> evidence-triple-record = [\r\n>   addition: environment-map\r\n>   addition: [ + measurement-map ]\r\n> ]\r\n>\r\n> reference-triple-record = [\r\n>   condition_addition: environment-map\r\n>   condition_addition: [ + measurement-map ]\r\n> ]\r\n>\r\n> endorsed-triple-record = [\r\n>   condition: environment-map\r\n>   addition: [ + measurement-map ]\r\n> ]\r\n>\r\n> conditional-endorsed-triple-record = [\r\n>   conditions: [ + stateful-environment-record ]\r\n>   additions: [ + stateful-environment-record ]\r\n> ]\r\n>\r\n> conditional-endorsement-series-triple-record = [\r\n>   condition: stateful-environment-record\r\n>   series: [ + conditional-series-record ]\r\n> ]\r\n>\r\n> conditional-series-record = [\r\n>   sub-condition: [ + measurement-map]\r\n>   addition: [ + measurement-map]\r\n> ]\r\n>\r\n>\r\n> Use Cases:\r\n> (1) authorized-by as a condition for querying ACS state. If authorized-by\r\n> is included in addition statements it is ignored.\r\n>\r\n> (2)\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/293>, or\r\n> unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/AAFL4HFNDD7JGHKYBJBR64TZYWHQPAVCNFSM6AAAAABO7SHR62VHI2DSMVQWIX3LMV43ASLTON2WKOZSGU2TGMZZGUZDGMQ>\r\n> .\r\n> You are receiving this because you are subscribed to this thread.Message\r\n> ID: ***@***.***>\r\n>\r\n",
+          "createdAt": "2024-09-27T17:36:02Z",
+          "updatedAt": "2024-09-27T17:36:02Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think when we translate evidence triples to evs, the condition ects are one per different collection of authorities across the measurement-maps and the addition is the environment and measurement-maps with authorized-by replaced by the corim authority across the board.\r\n> \r\nThe evs is populated with the `environment-map` and `[ + measurement-map]` from the series triple condition. Maybe this should be stereotyped as a condition-addition? But I wasn't expecting the `authorized-by` in the evs `condition` ECT would be copied into the evs `addition` ECT. \r\n\r\nAt the conclusion of constructing the evs, there will be an addition ECT that contains the candidate to be added to the ACS. If it isn't NULL then it is added. The ACS candidate `authority` is populated with the signer of the RIM. If the `conditional-series-record` `addition` contained `authorized-by` there is no place to put it in the ACS ECT. If we create a place for it. It would need to be done based on some other use case context such as (6). Since the original design of the triple didn't anticipate a use case other than for querying the ACS it is unclear what authorized-by appearing in the `conditional-series-record` `addition` means.\r\n",
+          "createdAt": "2024-09-27T19:05:48Z",
+          "updatedAt": "2024-09-27T19:15:21Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think I disagree with use case (3) since the attester shouldn't declare who the only permitted RVPs are. That mixes attestation with authorization, which I don't think is what attesting technologies do.\r\n\r\nI don't quite understand (2) either, unless you're not requiring that evidence signature authorities are trusted by policy (configured trust anchors), and that the signatures of the evidence are valid before adding their measurements to the ACS.\r\n\r\nFor (5), I'm less inclined to support authorized-by for simple endorsements. If you really want to match just an environment and mkey without any measured values, then we should allow empty measurement-values-maps in the conditions of a confidential endorsement triple. If you want to say you cosign someone else's endorsements, that can be expressed as a reference-value-triple, since the measurements will be included in the condition.\r\n\r\n(6) I'm skeptical since it's too syntactically bound, when delegation can be much more policy-based. I would like to punt on this mechanic to a later version and disallow additions to have authorized-by until we see a compelling RFC.\r\n\r\n(7) authorized-by in both condition and selection is as redundant as having both a condition and a selection. There's reason to narrow authorities after a baseline condition is established. I don't think addition should have (6) semantics since I don't agree with (6).\r\n\r\nSo I would vote to keep use cases (1) and (4) and determine if we need to allow empty measurements in conditions. I'd need more discussion about (2).",
+          "createdAt": "2024-09-27T20:17:29Z",
+          "updatedAt": "2024-09-27T20:17:29Z"
         }
       ]
     }
@@ -37404,13 +37465,13 @@
       "labels": [],
       "body": "Extending the Compatibility PR to other triples. Once we have a consensus, this PR will be deleted, it will be either merged into\r\n PR #268 ",
       "createdAt": "2024-09-18T13:53:08Z",
-      "updatedAt": "2024-09-25T14:38:31Z",
+      "updatedAt": "2024-09-27T19:50:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "eb42ce982e4851de9c790ef1bfe017b16a3f4abe",
+      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tcg-comp-to-other-triples",
-      "headRefOid": "f2be20ee40837b5aaf9c76cef6c90b03375a8310",
+      "headRefOid": "8ccf3803c252dd9463d40f7118c5a4a4e104372c",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -37429,6 +37490,13 @@
           "body": "@nedmsmith Thanks. The point is : It is clear that the multiplicity of measurement-map, is required on the stateful-environment, as well as `conditionally-endorsed triples`. However,  I am not clear, how the multiplicity is relevant and justified for the conditional endorsement-series triple. Can you please add an explanation to issue #288. We can align the CDDL then...",
           "createdAt": "2024-09-23T09:34:07Z",
           "updatedAt": "2024-09-23T09:34:07Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze & @nedmsmith Thanks for the comments, I will review and work on them!",
+          "createdAt": "2024-09-27T16:57:36Z",
+          "updatedAt": "2024-09-27T16:57:36Z"
         }
       ],
       "reviews": [
@@ -37471,6 +37539,284 @@
               "updatedAt": "2024-09-19T16:32:05Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LBXsk",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Several suggested changes.",
+          "createdAt": "2024-09-26T21:41:31Z",
+          "updatedAt": "2024-09-26T22:34:31Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\nThe series is an array of `conditional-series-record` that has a `selection`, and an `addition`, both expressed as a list of `measurement-map`.\r\nThe `selection` and `addition` operate within the scope of the conditional endorsement series triple record's matching `condition`.\r\n```",
+              "createdAt": "2024-09-26T21:41:31Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n  selection: [ + measurement-map]\r\n```",
+              "createdAt": "2024-09-26T21:44:28Z",
+              "updatedAt": "2024-09-27T16:52:14Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\n  addition: [ + measurement-map]\r\n```",
+              "createdAt": "2024-09-26T21:44:47Z",
+              "updatedAt": "2024-09-27T16:52:30Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nFor each `conditional-series-record` entry, if the `selection` matches the chosen ACS entry, the `addition` is added to the ACS.\r\n```",
+              "createdAt": "2024-09-26T22:07:56Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-09-26T22:08:38Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\nThe first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series. \r\nFor a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the chosen ACS entry.\r\n```",
+              "createdAt": "2024-09-26T22:13:00Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 22,
+              "body": "```suggestion\r\nand no `addition` values are accepted.\r\n```",
+              "createdAt": "2024-09-26T22:13:38Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\nIf none of the `selection` values match in the chosen ACS entry, the triple is not matched,\r\n```",
+              "createdAt": "2024-09-26T22:15:15Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nIf the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`),\r\nall authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.\r\n```",
+              "createdAt": "2024-09-26T22:21:21Z",
+              "updatedAt": "2024-09-26T22:35:59Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nIf the series `selection` populates `authorized-by`, the chosen ACS MUST contain the same measurements and authority as contained in the `selection` entry.\r\n```",
+              "createdAt": "2024-09-26T22:28:08Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\nIf the series `addition` entry contains `authorized-by` values, they are ignored.\r\n```",
+              "createdAt": "2024-09-26T22:32:03Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "Note: authority semantics are still being discussed. It is safer for this triple to ignore them in the addition until the semantics for series authority is determined.",
+              "createdAt": "2024-09-26T22:34:08Z",
+              "updatedAt": "2024-09-26T22:34:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LBnTn",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple",
+          "createdAt": "2024-09-26T22:38:22Z",
+          "updatedAt": "2024-09-26T22:39:04Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-09-26T22:38:22Z",
+              "updatedAt": "2024-09-26T22:39:04Z"
+            },
+            {
+              "originalPosition": 2,
+              "body": "The prose of the document describes the semantics",
+              "createdAt": "2024-09-26T22:38:44Z",
+              "updatedAt": "2024-09-26T22:39:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LCYBB",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T02:48:09Z",
+          "updatedAt": "2024-09-27T02:48:10Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "I think we want to say matching authority so we can punt on the matching semantics. Sounds like you want subset ([\u2286](https://www.compart.com/en/unicode/U+2286)) and Andy wants nonempty intersection (often notated with [\u22c8](https://www.compart.com/en/unicode/U+22C8)). This is a good place to use tagging for pattern operators so both forms can be expressible.",
+              "createdAt": "2024-09-27T02:48:10Z",
+              "updatedAt": "2024-09-27T02:48:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LCYhy",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T02:51:09Z",
+          "updatedAt": "2024-09-27T02:51:09Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I think since it's a non-extensible type, you can use a type like element-map (but a copy to not confuse internal and external representations) to drop the authorities. You can add them back with a spec update.",
+              "createdAt": "2024-09-27T02:51:09Z",
+              "updatedAt": "2024-09-27T02:51:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LCaQb",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T03:02:14Z",
+          "updatedAt": "2024-09-27T03:02:14Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "nit: the spacing for other one-or-more lists has a space on both sides of the + as well.",
+              "createdAt": "2024-09-27T03:02:14Z",
+              "updatedAt": "2024-09-27T03:02:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LCaSx",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T03:02:28Z",
+          "updatedAt": "2024-09-27T03:02:28Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "nit: same as above \" + \"",
+              "createdAt": "2024-09-27T03:02:28Z",
+              "updatedAt": "2024-09-27T03:02:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LIU08",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested changes",
+          "createdAt": "2024-09-27T16:54:33Z",
+          "updatedAt": "2024-09-27T16:54:33Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LIXuT",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T17:01:35Z",
+          "updatedAt": "2024-09-27T17:01:35Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "ok, for now I will accept this suggestion , but really feel this is required. We will discuss the same in a separate PR",
+              "createdAt": "2024-09-27T17:01:35Z",
+              "updatedAt": "2024-09-27T17:01:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LIffr",
+          "commit": {
+            "abbreviatedOid": "1637591"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T17:20:07Z",
+          "updatedAt": "2024-09-27T17:20:07Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Why have you deleted this?",
+              "createdAt": "2024-09-27T17:20:07Z",
+              "updatedAt": "2024-09-27T17:20:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LIrkL",
+          "commit": {
+            "abbreviatedOid": "bada574"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T17:50:51Z",
+          "updatedAt": "2024-09-27T17:50:51Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "ok, understood the concept that in series, the first condition match terminates the series, to line 1224 is not really applicable!",
+              "createdAt": "2024-09-27T17:50:51Z",
+              "updatedAt": "2024-09-27T17:50:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LJgVH",
+          "commit": {
+            "abbreviatedOid": "8ccf380"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-27T19:50:15Z",
+          "updatedAt": "2024-09-27T19:50:15Z",
+          "comments": []
         }
       ]
     },
@@ -37479,21 +37825,21 @@
       "id": "PR_kwDOH6-tI8576Y2e",
       "title": "Account for multiplicity in conditional endorsements",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/277",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "A conditional endorsement series is about a target environment plus additional state expectations that lead to further endorsements.\r\n\r\nI removed the undefined CBOR tag around multiple measuremnt-maps since array and map have different CBOR major tags and a custom tag is not required.",
       "createdAt": "2024-09-18T14:39:09Z",
-      "updatedAt": "2024-09-23T10:58:12Z",
+      "updatedAt": "2024-09-27T02:43:29Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "multiplicity",
       "baseRefOid": "0ff26bef340181bf4ea3c2b6fa5ad759b7511021",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "multiplicity",
       "headRefOid": "6c63e5d1c2b672109116ed46c77798bbc7f114a9",
-      "closedAt": null,
+      "closedAt": "2024-09-27T02:43:29Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -37518,6 +37864,13 @@
           "body": "issue #288 tracks the discussion!",
           "createdAt": "2024-09-23T10:58:11Z",
           "updatedAt": "2024-09-23T10:58:11Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing since there are other PRs covering this.",
+          "createdAt": "2024-09-27T02:43:29Z",
+          "updatedAt": "2024-09-27T02:43:29Z"
         }
       ],
       "reviews": [
@@ -37959,18 +38312,26 @@
       "labels": [],
       "body": "This is the first edit to section 8.9 - it aligns the terminology with the change to ECT internal representation\r\n\r\nIt also defines the comparison rules for raw-value (codepoint 4 and 5).",
       "createdAt": "2024-09-23T08:49:55Z",
-      "updatedAt": "2024-09-26T01:02:39Z",
+      "updatedAt": "2024-09-27T15:35:14Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "adraper-ect-comparison",
-      "headRefOid": "0f1abf49c0519f9da9a6536c26c31d4fedf9292f",
+      "headRefOid": "85c0c3f2a552c41e76fb9fc963d661a7e68e690f",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Remove Raw Value comparison from the PR for a separate PR ",
+          "createdAt": "2024-09-27T15:17:29Z",
+          "updatedAt": "2024-09-27T15:17:29Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86KYNkj",
@@ -38083,12 +38444,6 @@
               "updatedAt": "2024-09-23T18:18:55Z"
             },
             {
-              "originalPosition": 206,
-              "body": "```suggestion\r\nThe value stored under `measurement-values-map` key 4 is a raw-value entry, which must have type `bstr`.\r\n```",
-              "createdAt": "2024-09-23T18:16:33Z",
-              "updatedAt": "2024-09-23T18:18:55Z"
-            },
-            {
               "originalPosition": 142,
               "body": "```suggestion\r\nThe value stored under `measurement-values-map` key 1 is an SVN, which must have type `uint`.\r\n```",
               "createdAt": "2024-09-23T18:16:48Z",
@@ -38107,16 +38462,10 @@
               "updatedAt": "2024-09-23T18:18:55Z"
             },
             {
-              "originalPosition": 209,
-              "body": "```suggestion\r\nThe value stored under the condition ECT `measurement-values-map` key 5 is a `raw-value-mask` entry, which must have type `bstr`.\r\n```",
-              "createdAt": "2024-09-23T18:17:50Z",
-              "updatedAt": "2024-09-23T18:18:55Z"
-            },
-            {
               "originalPosition": 211,
-              "body": "```suggestion\r\nIf the condition ECT does not contain a `raw-values-mask` then the comparison MUST return true if the condition ECT `raw-value` is binary equal to the candidate entry `raw-value`.\r\n```",
+              "body": "```suggestion\r\nIf the condition ECT does not contain a `raw-values-mask`, then the comparison MUST return true if and only if the condition ECT `raw-value` is binary equal to the candidate entry `raw-value`.\r\n```",
               "createdAt": "2024-09-23T18:18:04Z",
-              "updatedAt": "2024-09-23T18:18:55Z"
+              "updatedAt": "2024-09-27T03:35:35Z"
             }
           ]
         },
@@ -38291,6 +38640,582 @@
               "updatedAt": "2024-09-26T01:02:39Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K66Sx",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:47:22Z",
+          "updatedAt": "2024-09-26T09:47:22Z",
+          "comments": [
+            {
+              "originalPosition": 97,
+              "body": "In the internal representation, each ECT has its own authority",
+              "createdAt": "2024-09-26T09:47:22Z",
+              "updatedAt": "2024-09-26T09:47:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K665x",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:48:31Z",
+          "updatedAt": "2024-09-26T09:48:31Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "That was not the intention. I am rewriting to remove the candidate entries array from the description, which will hopefully clear this up.",
+              "createdAt": "2024-09-26T09:48:31Z",
+              "updatedAt": "2024-09-26T09:48:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K67SI",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:49:15Z",
+          "updatedAt": "2024-09-26T09:49:15Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "I will rewrite this to make it clear that it's a set intersection test",
+              "createdAt": "2024-09-26T09:49:15Z",
+              "updatedAt": "2024-09-26T09:49:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K682C",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:52:01Z",
+          "updatedAt": "2024-09-26T09:52:02Z",
+          "comments": [
+            {
+              "originalPosition": 103,
+              "body": "I added the \"may\" paragraph to make it clear what the intention of the comid author is. They are asking for authority from an entity, and that entity is currently represented by a key. In future we might develop more flexible ways to represent an identity, in which case I'd expect extension RFCs to describe the details of how they work.",
+              "createdAt": "2024-09-26T09:52:01Z",
+              "updatedAt": "2024-09-26T09:52:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K69Aj",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:52:18Z",
+          "updatedAt": "2024-09-26T09:52:19Z",
+          "comments": [
+            {
+              "originalPosition": 109,
+              "body": "I will rewrite.",
+              "createdAt": "2024-09-26T09:52:18Z",
+              "updatedAt": "2024-09-26T09:52:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K69Z3",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:52:59Z",
+          "updatedAt": "2024-09-26T09:52:59Z",
+          "comments": [
+            {
+              "originalPosition": 93,
+              "body": "I think the current text is better, but I will remove candidate entry array",
+              "createdAt": "2024-09-26T09:52:59Z",
+              "updatedAt": "2024-09-26T09:52:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K69ws",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:53:32Z",
+          "updatedAt": "2024-09-26T09:53:32Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "ok",
+              "createdAt": "2024-09-26T09:53:32Z",
+              "updatedAt": "2024-09-26T09:53:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K6-0Z",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T09:55:25Z",
+          "updatedAt": "2024-09-26T09:55:25Z",
+          "comments": [
+            {
+              "originalPosition": 126,
+              "body": "This text exists because some standard codepoints use tags to select options",
+              "createdAt": "2024-09-26T09:55:25Z",
+              "updatedAt": "2024-09-26T09:55:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K_OAp",
+          "commit": {
+            "abbreviatedOid": "afa24e8"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T16:31:33Z",
+          "updatedAt": "2024-09-26T16:31:33Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "I have rewritten the text to try to make it clearer, hopefully without changing its meaning.",
+              "createdAt": "2024-09-26T16:31:33Z",
+              "updatedAt": "2024-09-26T16:31:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86K_O54",
+          "commit": {
+            "abbreviatedOid": "0f1abf4"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T16:33:19Z",
+          "updatedAt": "2024-09-26T16:33:19Z",
+          "comments": [
+            {
+              "originalPosition": 114,
+              "body": "Text rewritten",
+              "createdAt": "2024-09-26T16:33:19Z",
+              "updatedAt": "2024-09-26T16:33:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LBUhz",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-26T21:30:45Z",
+          "updatedAt": "2024-09-26T21:31:12Z",
+          "comments": [
+            {
+              "originalPosition": 106,
+              "body": "```suggestion\r\n\r\n```\r\nThis kind of optional behavior could result in different verifiers arriving at a different result given the same inputs.\r\nIt is safer if the Verifier simply compared the \"keys\" (aka authority values) as opaque values rather than try to do format translation to a universal form. ",
+              "createdAt": "2024-09-26T21:30:45Z",
+              "updatedAt": "2024-09-26T21:31:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LCacQ",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-09-27T03:03:25Z",
+          "updatedAt": "2024-09-27T04:18:23Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "```suggestion\r\nA Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.\r\n```",
+              "createdAt": "2024-09-27T03:03:25Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 77,
+              "body": "```suggestion\r\nIf all of the fields match, then the condition ECT matches the ACS entry.\r\n```",
+              "createdAt": "2024-09-27T03:04:42Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "```suggestion\r\nIf any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.\r\n```",
+              "createdAt": "2024-09-27T03:07:47Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 90,
+              "body": "```suggestion\r\nIf any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.\r\n```",
+              "createdAt": "2024-09-27T03:08:18Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 92,
+              "body": "```suggestion\r\nIf a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL not affect whether the environments match.\r\n```",
+              "createdAt": "2024-09-27T03:08:49Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 96,
+              "body": "```suggestion\r\nA Verifier SHALL compare the condition ECT-expected `authority` value to the candidate entry `authority` value.\r\n```",
+              "createdAt": "2024-09-27T03:09:26Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 288,
+              "body": "```suggestion\r\nNote that if a candidate entry contains a value for `raw-values-mask`, then this does not affect the result of the comparison; only the condition ECT's `raw-values-mask` is used in the comparison.\r\n```",
+              "createdAt": "2024-09-27T03:10:45Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 285,
+              "body": "```suggestion\r\nIf there is any bit position in `raw-values-mask` whose value is 1, but the two `raw-value`s differ at the same bit position, then the comparison MUST return false.\r\n```",
+              "createdAt": "2024-09-27T03:14:35Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 279,
+              "body": "```suggestion\r\nIf all bit positions in the `raw-values-mask` with value 1 imply the corresponding bit position in both `raw-value`s are equal, then the comparison MUST return true.\r\n```",
+              "createdAt": "2024-09-27T03:20:14Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 255,
+              "body": "$raw-value-type-choice is not always `bstr`. It is only a `tagged-bytes` right now, but profiles may extend it. There is a comment later about profiles allowing a different raw-value-mask-type, but that is /not/ true because it's not a $-prefixed type choice codepoint.\r\n\r\nHigh level, I think if the raw-value-mask is not present, then raw-value always compares by binary comparison. That makes sense to me for \"raw\", otherwise this is the free-for-all codepoint.\r\n\r\nIf raw-value-mask is present, raw-value must be a tagged-bytes otherwise the the measurement-values-map is illformed. If you make the type choice extensible, then you can prescribe the semantics for when raw-value-mask happens to be a bstr (or tagged-bytes).",
+              "createdAt": "2024-09-27T03:27:54Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 258,
+              "body": "```suggestion\r\n```\r\nThis is in the CDDL.",
+              "createdAt": "2024-09-27T03:31:09Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 265,
+              "body": "```suggestion\r\nIf lengths differ amongst the condition ECT `raw-values-mask`, condition ECT `raw-value`, or candidate entry `raw-value`, then the comparison MUST return false.\r\n```",
+              "createdAt": "2024-09-27T03:33:05Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 276,
+              "body": "```suggestion\r\nIf all the lengths are the same, then a Verifier MUST iterate over the bits in the `raw-values-mask` which are 1 and compare the values for corresponding bit position in the compared `raw-value` fields.\r\n```",
+              "createdAt": "2024-09-27T03:37:41Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 297,
+              "body": "```suggestion\r\n```\r\nThis is in the CDDL.",
+              "createdAt": "2024-09-27T03:39:46Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 304,
+              "body": "This confuses me. I can't conceptualize the procedure you're describing, and I don't know why you care about only tagged values. The $crypto-key-type-choice choice can be extended with non-tagged values. I don't know why you describe the tagged value comparison in two steps when it seems equivalent to just compare binary encodings.\r\n\r\nIt seems like you require the condition's key array to be less than or equal to the candidate's key array, and that all elements of the condition's key array must be binary equal to the corresponding position in the candidate's key array. Seems strange to not allow some permutation in the comparison. Why is this not a subset semantics? Do you really need to impose an ordering?\r\n\r\nThe intended meaning of the triple is lost on me. It would help to have some supporting prose. Is it that the environment could be reasonably expected to give a proof of possession for these keys? I could see the ordering mattering if you're expecting the format of a CA bundle, but whether you're iterating from the left or right can cause problems due to bundle inconsistencies across server implementations as root..leaf or leaf..root\r\n",
+              "createdAt": "2024-09-27T03:58:09Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 311,
+              "body": "```suggestion\r\nIf no entry is found, the comparison MUST return false.\r\n```",
+              "createdAt": "2024-09-27T03:58:42Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 46,
+              "body": "```suggestion\r\nmeasurement values are not equivalent, then a Verifier SHALL report\r\n```",
+              "createdAt": "2024-09-27T03:59:52Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 312,
+              "body": "Where is this equivalence defined? I don't see any \"equivalence\" wording in the referenced section. What does it mean for equivalence \"to be found\"?\r\n\r\nI thought we'd describe the comparison the way we do with measurement-values-map, where if the key is in the condition, then the candidate must have a value for that key as well, and they compare thus.",
+              "createdAt": "2024-09-27T04:05:18Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 216,
+              "body": "```suggestion\r\n```\r\nIn the CDDL.",
+              "createdAt": "2024-09-27T04:06:20Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 222,
+              "body": "```suggestion\r\nTo prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms must be equal.\r\nAn `alg` matches another if they correspond to the same hash algorithm in the [IANA.named-information] registry.\r\nA Verifier SHOULD fail the comparison if a condition `alg` does not have a corresponding entry in the IANA registry.\r\n```",
+              "createdAt": "2024-09-27T04:10:04Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            },
+            {
+              "originalPosition": 313,
+              "body": "```suggestion\r\n```\r\nI think this can be left unsaid, but I don't mind it.",
+              "createdAt": "2024-09-27T04:18:10Z",
+              "updatedAt": "2024-09-27T04:18:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LF48M",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T12:16:45Z",
+          "updatedAt": "2024-09-27T12:16:45Z",
+          "comments": [
+            {
+              "originalPosition": 106,
+              "body": "This decision could cause problems though. Since we\u2019re requiring reference values to always include the expected root/intermediate/leaf expected signer from the attester (such as the sev-snp vcek, ask, or ark), then the reference value provider would want to avoid the bloat of copying the same full cert everywhere and just use a thumbprint. Is the expectation that the evidence translation will populate authorized-by with every format imaginable for describing the key in order to match? Or is the expectation for the profile to dictate a small number of supported formats that it will enumerate in the translation?",
+              "createdAt": "2024-09-27T12:16:45Z",
+              "updatedAt": "2024-09-27T12:16:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHTN8",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-09-27T14:47:42Z",
+          "updatedAt": "2024-09-27T15:03:40Z",
+          "comments": [
+            {
+              "originalPosition": 122,
+              "body": "```suggestion\r\nIf the condition ECT contains a `cmtype` field, and the ACS entry does not contain a `cmtype` field, then the types do not match.\r\n```",
+              "createdAt": "2024-09-27T14:47:42Z",
+              "updatedAt": "2024-09-27T15:03:40Z"
+            },
+            {
+              "originalPosition": 120,
+              "body": "```suggestion\r\nIf the condition ECT contains a `cmtype` field, and that type has a different value from the ACS entry `cmtype` field, then the types do not match.\r\n```",
+              "createdAt": "2024-09-27T14:47:59Z",
+              "updatedAt": "2024-09-27T15:03:40Z"
+            },
+            {
+              "originalPosition": 118,
+              "body": "```suggestion\r\nIf the condition ECT contains a `cmtype` field, and that type has the same value as the ACS entry `cmtype` field, then the types match.\r\n```",
+              "createdAt": "2024-09-27T14:48:08Z",
+              "updatedAt": "2024-09-27T15:03:40Z"
+            },
+            {
+              "originalPosition": 74,
+              "body": "```suggestion\r\nA Verifier SHALL perform all of the comparisons in sections {{sec-compare-profile}}, {{sec-compare-environment}), {{sec-compare-authority}), {{sec-compare-cm}} and {{sec-compare-element-list}).\r\n```\r\nWe need a profile comparison first because all the later comparison algorithms can have a dependency on the interpretation dictated by the profile. The profile I think also should be an iff comparison, such that a condition ECT that does not have a profile should _not_ match a candidate ECT that has a profile.",
+              "createdAt": "2024-09-27T14:53:23Z",
+              "updatedAt": "2024-09-27T15:03:40Z"
+            },
+            {
+              "originalPosition": 98,
+              "body": "```suggestion\r\nIf every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field, then the authorities match.\r\n```",
+              "createdAt": "2024-09-27T14:53:48Z",
+              "updatedAt": "2024-09-27T15:03:40Z"
+            },
+            {
+              "originalPosition": 112,
+              "body": "I've interpreted first as condition and second as candidate. I don't know where we're declaring trust anchors for evidence that is added to the ACS. Say an attestation key has multiple certificate paths. The verifier would know which are valid due to some configuration of trust anchor (I don't know where if anywhere we've specified what are the chosen trust anchors for a Verifier). For the purposes of explaining the abstract semantics in this document though, we can dictate that the whole trusted path is concretized in the ECT's authorities when added to the ACS as evidence. The concretization in this exposition can be abstract in a Verifier implementation.\r\n\r\nIf there is some connection to CoTS that I'm missing since I haven't been involved in that, I hope we can leave that abstraction to a mental exercise.",
+              "createdAt": "2024-09-27T15:00:58Z",
+              "updatedAt": "2024-09-27T15:03:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHhwt",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T15:11:46Z",
+          "updatedAt": "2024-09-27T15:11:46Z",
+          "comments": [
+            {
+              "originalPosition": 105,
+              "body": "Remove the usage of MAY to remove line 2091 -2092. The Verifier should have the same format for comparision",
+              "createdAt": "2024-09-27T15:11:46Z",
+              "updatedAt": "2024-09-27T15:11:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHlBy",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T15:15:29Z",
+          "updatedAt": "2024-09-27T15:15:30Z",
+          "comments": [
+            {
+              "originalPosition": 108,
+              "body": "Remove the text on 2094 and retain text above!",
+              "createdAt": "2024-09-27T15:15:29Z",
+              "updatedAt": "2024-09-27T15:15:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHlrt",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T15:16:01Z",
+          "updatedAt": "2024-09-27T15:16:01Z",
+          "comments": [
+            {
+              "originalPosition": 112,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-09-27T15:16:01Z",
+              "updatedAt": "2024-09-27T15:16:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHlzl",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Please work on comments",
+          "createdAt": "2024-09-27T15:16:13Z",
+          "updatedAt": "2024-09-27T15:16:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHtSN",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T15:29:12Z",
+          "updatedAt": "2024-09-27T15:29:13Z",
+          "comments": [
+            {
+              "originalPosition": 222,
+              "body": "@andrew-draper to correct digest comparison to match support both of text and integer for hash alg",
+              "createdAt": "2024-09-27T15:29:12Z",
+              "updatedAt": "2024-09-27T15:29:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHt31",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "correct hash text and alg-id correction",
+          "createdAt": "2024-09-27T15:30:23Z",
+          "updatedAt": "2024-09-27T15:30:23Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHvHo",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T15:32:24Z",
+          "updatedAt": "2024-09-27T15:32:24Z",
+          "comments": [
+            {
+              "originalPosition": 304,
+              "body": "This is existing text, so I've moved this objection to a separate issue.",
+              "createdAt": "2024-09-27T15:32:24Z",
+              "updatedAt": "2024-09-27T15:32:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LHweV",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-27T15:35:14Z",
+          "updatedAt": "2024-09-27T15:35:14Z",
+          "comments": [
+            {
+              "originalPosition": 150,
+              "body": "map map\r\n```suggestion\r\n### Measurement values map Comparison {#sec-compare-mvm}\r\n```",
+              "createdAt": "2024-09-27T15:35:14Z",
+              "updatedAt": "2024-09-27T15:35:15Z"
+            }
+          ]
         }
       ]
     },
@@ -38299,25 +39224,54 @@
       "id": "PR_kwDOH6-tI858lGqu",
       "title": "added element multiplicity for stateful-environment-record",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/290",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Added multiplicity of elements for conditional and conditional series triples via stateful environment record.\r\n\r\nAddresses part of the issues raised in #288 \r\n\r\nNote: Currently PR only touches CDDL and diag files. A cursory review of the prose sections doesn't appear to require updating except for sections that describe transformation of external to internal representation of the conditional series triple.",
       "createdAt": "2024-09-24T22:33:36Z",
-      "updatedAt": "2024-09-25T22:18:31Z",
+      "updatedAt": "2024-09-26T15:22:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "series-triple-element-multiplicity",
       "headRefOid": "f6817be8a899ebd6f00f15eb50393841c4e40cf0",
-      "closedAt": null,
+      "closedAt": "2024-09-26T15:22:04Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This requirement folded into PR #276 ",
+          "createdAt": "2024-09-26T14:49:45Z",
+          "updatedAt": "2024-09-26T14:49:45Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith we can close this PR, if you think it is appropriate!",
+          "createdAt": "2024-09-26T14:50:02Z",
+          "updatedAt": "2024-09-26T14:50:02Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ok to close if superseded by your pr",
+          "createdAt": "2024-09-26T14:59:16Z",
+          "updatedAt": "2024-09-26T14:59:16Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Multiplicity of stateful environments  and modelling conditional endorsement series triple already folded into PR #276\r\n\r\n",
+          "createdAt": "2024-09-26T15:22:02Z",
+          "updatedAt": "2024-09-26T15:22:02Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86KyDL4",
@@ -38340,6 +39294,40 @@
           ]
         }
       ]
+    },
+    {
+      "number": 292,
+      "id": "PR_kwDOH6-tI8588eU_",
+      "title": "Account for \"activating\" tags from CoBOM in theory of operation.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/292",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The CoBOM tag can help narrow a search space and make an attestation result self-explanatory, such as \"unsupported CoBOM\" or \"missing tags x,y,z from CoBOM\".\r\nWithout a CoBOM, we wanted to still ensure that the appraisal process was repeatable. Add a SHOULD for tracking the head state of the knowledge base of all input CoRIMs to an appraisal session.",
+      "createdAt": "2024-09-27T16:50:25Z",
+      "updatedAt": "2024-09-28T19:21:21Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "cobomactivate",
+      "headRefOid": "bfac87e55030e3e52e2c01763b5380414a1c1fad",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Given that an appraisal session is meant to consider the knowledge base at a single auditable point of reference, I'm not sure if we need to keep the \"must be activated atomically\" wording. ",
+          "createdAt": "2024-09-28T19:21:19Z",
+          "updatedAt": "2024-09-28T19:21:19Z"
+        }
+      ],
+      "reviews": []
     }
   ]
 }
