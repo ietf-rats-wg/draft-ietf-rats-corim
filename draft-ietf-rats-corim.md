@@ -2149,11 +2149,21 @@ Reference Value does not match.
 
 ##### Comparison for raw-value entries
 
-> [Andy] *I think this comparison method only works if the entry is at key 4 (because
-there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores `[expect-raw-value raw-value-mask]` in an array?*
+The value stored under `measurement-values-map` key 4 is a `raw-value` entry, which must have type BSTR.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+The value stored under the condition ECT `measurement-values-map` key 5 is a `raw-value-mask` entry, which must have type BSTR.
+
+If the condition ECT does not contain a `raw-values-mask` then the comparison MUST return true if the condition ECT `raw-value` is binary equal to the candidate entry `raw-value`.
+
+If the lengths differ amongst the condition ECT `raw-values-mask`, condition ECT `raw-value` and candidate entry `raw-value`, then the comparison MUST return false.
+
+If all three lengths are the same, then a Verifier MUST iterate over the bits in the `raw-values-mask` which are 1, and compare the values for corresponding bit position in the two `raw-value` fields.
+
+If, for every bit position in `raw-values-mask` whose value is 1, the corresponding bits in both `raw-value`s are equal then the comparison MUST return true.
+
+If there is any bit position in `raw-values-mask` whose value is 1, but the two `raw-value`s differ at the same bit position, then the comparison MUST return false.
+
+Note that if a candidate entry contains a value for `raw-values-mask`, then this does not affect the result of the comparison.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
