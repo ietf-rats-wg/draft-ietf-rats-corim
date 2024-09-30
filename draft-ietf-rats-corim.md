@@ -2187,21 +2187,11 @@ The comparison MUST return false if there are no common hash algorithms.
 
 ##### Comparison for raw-value entries
 
+> [Andy] *I think this comparison method only works if the entry is at key 4 (because
+there needs to be a mask at key 5). Should we have a Reference Value of this
+which stores `[expect-raw-value raw-value-mask]` in an array?*
+
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
-
-The value stored under the condition ECT `measurement-values-map` key 5 is a raw-value-mask entry, which must have type BSTR.
-
-If the condition ECT does not contain a raw-values-maek then the comparison MUST return true if the condition ECT raw-value is binary equal to the candidate entry raw-value.
-
-If the condition ECT raw-values-mask, condition ECT raw-value and candidate entry raw-value are not the same length then the comparison MUST return false.
-
-If all the lengths are the same then a Verifier MUST iterate over the bits in the raw-values-mask which are 1, and compare the corresponding bits in the two raw-value fields.
-
-If, for every bit in the raw-values-mask which is 1, the corresponding bit is the same in both raw-values then the comparison MUST return true.
-
-If there is any bit which is 1 in raw-values-mask, but has a different value in the two raw values, then the comparison MUST return false.
-
-Note that if a candidate entry contains a value under key 5 then this does not affect the result of the comparison.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
