@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 30 March 2025                                            Linaro
+Expires: 3 April 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       26 September 2024
+                                                       30 September 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 March 2025.
+   This Internet-Draft will expire on 3 April 2025.
 
 Copyright Notice
 
@@ -2759,7 +2759,7 @@ Table of Contents
    identical.
 
    If the merged measurement-values-map contains duplicate codepoints
-   and the measurement values are not equivalent then a Verifier SHALL
+   and the measurement values are not equivalent, then a Verifier SHALL
    report an error and stop validation processing.
 
 8.8.2.  ACS Augmentation
@@ -2779,7 +2779,7 @@ Table of Contents
    stateless; it depends only on the condition ECT being compared and
    the contents of the ACS at the time of the comparison.
 
-   A Verifier SHALL iterate over all ACS entries and SHALL attempte to
+   A Verifier SHALL iterate over all ACS entries and SHALL attempt to
    match the condition ECT against each ACS entry using the algorithm
    described in Section 8.9.1.  A Verifier SHALL create a "matched
    entries" set, and SHALL populate it with all ACS entries which
@@ -2798,8 +2798,8 @@ Table of Contents
    Each of these comparisons compares one field in the condition ECT
    against the same field in the ACS entry.
 
-   If all three of the fields match then the condition ECT matches the
-   ACS entry.
+   If all of the fields match, then the condition ECT matches the ACS
+   entry.
 
    If any of the fields does not match, then the condition ECT does not
    match the ACS entry.
@@ -2818,15 +2818,15 @@ Table of Contents
    environments match.
 
    If any field which is present in the condition ECT environment-map is
-   not present in the ACS entry then the environments do not match.
+   not present in the ACS entry, then the environments do not match.
 
    If any field which is present in the condition ECT environment-map is
-   not binary identical to the corresponding ACS entry field then the
+   not binary identical to the corresponding ACS entry field, then the
    environments do not match.
 
    If a field is not present in the condition ECT environment-map then
-   the presence of, and value of, the corresponding ACS entry field does
-   not affect whether the environments match.
+   the presence of, and value of, the corresponding ACS entry field
+   SHALL NOT affect whether the environments match.
 
 8.9.3.  Authority comparison
 
@@ -2834,7 +2834,7 @@ Table of Contents
    to the candidate entry authority value.
 
    If every entry in the condition ECT authority has a matching entry in
-   the ACS entry authority field then the authorities match.  The order
+   the ACS entry authority field, then the authorities match.  The order
    of the fields in each authority field do not affect the result of the
    comparison.
 
@@ -2846,33 +2846,20 @@ Table of Contents
    Verifier SHALL treat them as equal if their deterministic CBOR
    encoding is binary equal.
 
-   A Verifier MAY treat two keys as equal if they have different formats
-   but represent the same key.  For example, a Verifier may contain code
-   to compare a key fingerprint against the key which, when hashed,
-   creates that fingerprint.
-
-      I found this text later in the document.  Is this what we want?
-      Which ECTs are _first_ and _second_?
-
-      The a field comparison tests for trust path termination.  If the
-      authority of the first ECT is a trust anchor for the authority of
-      the second ECT, the second ECT is valid.  If the authority values
-      are identical, then the second ECT is valid.
-
 8.9.4.  Conceptual Message Type Comparison
 
    A Verifier SHALL compare the condition ECT expected cmtype value to
    the candidate entry cmtype value.
 
    If the condition ECT contains a cmtype field, and that type has the
-   same value as the ACS entry cmtype field then the types match.
+   same value as the ACS entry cmtype field, then the types match.
 
    If the condition ECT contains a cmtype field, and that type has a
-   different value from the ACS entry cmtype field then the types do not
-   match.
+   different value from the ACS entry cmtype field, then the types do
+   not match.
 
    If the condition ECT contains a cmtype field, and the ACS entry does
-   not contain a cmtype field then the types do not match.
+   not contain a cmtype field, then the types do not match.
 
 8.9.5.  Element list comparison
 
@@ -2905,11 +2892,11 @@ Table of Contents
    both fields into a form which meets CBOR Core Deterministic Encoding
    Requirements [STD94].
 
-   If any ACS entry element-id does not have a corresponding element-id
-   in the ACS entry then the element map does not match.
+   If any condition ECT entry element-id does not have a corresponding
+   element-id in the ACS entry then the element map does not match.
 
-   If any ACS entry has multiple corresponding element-ids then the
-   element map does not match.
+   If any condition ECT entry has multiple corresponding element-ids
+   then the element map does not match.
 
    Second, a Verifier SHALL compare the element-claims field within the
    condition ECT element-list and the corresponding field from the ACS
@@ -2919,8 +2906,9 @@ Table of Contents
 
    A Verifier SHALL iterate over the codepoints which are present in the
    condition ECT element's measurement-values-map.  Each of the
-   codepoints present in the condition ECT is compared against the same
-   codepoint in the candidate entry.
+   codepoints present in the condition ECT measurement-values-map is
+   compared against the same codepoint in the candidate entry
+   measurement-values-map.
 
    If any codepoint present in the condition ECT measurement-values-map
    does not have a corresponding codepoint within the candidate entry
@@ -2987,8 +2975,15 @@ Table of Contents
    with the same algorithm and value.
 
    To prevent downgrade attacks, if there are multiple algorithms in
-   common between the condition ECT and candidate entry then the digests
-   calculated using all common algorithms must match.
+   common between the condition ECT and candidate entry, then the bytes
+   paired with common algorithms must be equal.  A Verifier SHALL treat
+   two algorithm identifiers as equal if they have the same
+   deterministic binary encoding.  If both an integer and a string
+   representation are defined for an algorithm then entities creating
+   ECTs SHOULD use the integer representation.  If condition ECT and ACS
+   entry use different names for the same algorithm, and the Verifier
+   does not recognize that they are the same, then a downgrade attack is
+   possible.
 
    The comparison MUST return false if the CBOR encoding of the digests
    entry in the condition ECT or the ACS value with the same key is
@@ -3012,8 +3007,9 @@ Table of Contents
 
 8.9.7.1.3.  Comparison for raw-value entries
 
-   The value stored under measurement-values-map key 4 is a raw-value
-   entry, which must have type BSTR.
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/71
 
    The value stored under the condition ECT measurement-values-map key 5
    is a raw-value-mask entry, which must have type BSTR.
@@ -3043,11 +3039,6 @@ Table of Contents
 
 8.9.7.1.4.  Comparison for cryptokeys entries
 
-   The value stored under measurement-values-map key 12 is an array of
-   $crypto-key-type-choice entries. $crypto-key-type-choice entries are
-   CBOR tagged values.  The array contains one or more entries in
-   sequence.
-
    The CBOR tag of the first entry of the condition ECT cryptokeys array
    is compared with the CBOR tag of the first entry of the candidate
    entry cryptokeys value.  If the CBOR tags match, then the bytes
@@ -3065,7 +3056,7 @@ Table of Contents
    For each Integrity Register entry in the condition ECT, the Verifier
    will use the associated identifier (i.e., integrity-register-id-type-
    choice) to look up the matching Integrity Register entry in the
-   candidate entry.  If no entry is found, the condition MUST return
+   candidate entry.  If no entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
    as defined in Section 8.9.7.1.2 after equivalence has been found
    according to Section 5.1.4.1.6.  Note that it is not required for all
