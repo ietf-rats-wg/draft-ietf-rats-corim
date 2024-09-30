@@ -1216,20 +1216,18 @@ matched.
 {::include cddl/stateful-environment-record.cddl}
 ~~~
 
-The series is an array of `conditional-series-record` that has a `selection`, and an `addition`, both expressed as a list of `measurement-map`.
-The `selection` and `addition` operate within the scope of the conditional endorsement series triple record's matching `condition`.
+The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
+The `selection` and `addition` operate within the scope of the `conditional-endorsement-series-triple-record`'s matching `condition`.
 
-For each `conditional-series-record` entry, if the `selection` matches the chosen ACS entry, the `addition` is added to the ACS.
+For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
 
-The first `conditional-series-record` entry that successfully matches the chosen ACS entry terminates the series.
-For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the chosen ACS entry.
+The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
+For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
 
-If none of the `selection` values match in the chosen ACS entry, the triple is not matched,
-and no `addition` values are accepted.
+If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
 
-If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`),
-all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
-If the series `selection` populates `authorized-by`, the chosen ACS MUST contain the same measurements and authority as contained in the `selection` entry.
+If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
+If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
 If the series `addition` entry contains `authorized-by` values, they are ignored.
 
 ~~~ cddl
