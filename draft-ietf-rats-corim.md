@@ -2032,7 +2032,7 @@ measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are not equivalent then a Verifier SHALL report
+measurement values are not equivalent, then a Verifier SHALL report
 an error and stop validation processing.
 
 ### ACS Augmentation {#sec-acs-aug}
@@ -2048,7 +2048,7 @@ Additions to the ACS MUST be atomic.
 
 The algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.
 
-A Verifier SHALL iterate over all ACS entries and SHALL attempte to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.
+A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
 
 If the matched entries array is not empty, then the condition ECT matches the ACS.
@@ -2060,7 +2060,7 @@ If the matched entries array is empty, then the condition ECT does not match the
 A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}), {{sec-compare-cm}} and {{sec-compare-element-list}).
 Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
-If all three of the fields match then the condition ECT matches the ACS entry.
+If all of the fields match, then the condition ECT matches the ACS entry.
 
 If any of the fields does not match, then the condition ECT does not match the ACS entry.
 
@@ -2071,41 +2071,34 @@ Before performing the binary comparison, a Verifier SHOULD convert both `environ
 
 If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical, then the environments match.
 
-If any field which is present in the condition ECT `environment-map` is not present in the ACS entry then the environments do not match.
+If any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.
 
-If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field then the environments do not match.
+If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
 
-If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field does not affect whether the environments match.
+If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
 
 ### Authority comparison {#sec-compare-authority}
 
 A Verifier SHALL compare the condition ECT expected `authority` value to the candidate entry `authority` value.
 
-If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field then the authorities match.
+If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field, then the authorities match.
 The order of the fields in each `authority` field do not affect the result of the comparison.
 
 If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
 
 When comparing two `$crypto-key-type-choice` fields for equality, a Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
 
-A Verifier MAY treat two keys as equal if they have different formats but represent the same key.
-For example, a Verifier may contain code to compare a key fingerprint against the key which, when hashed, creates that fingerprint.
 
-> I found this text later in the document. Is this what we want? Which ECTs are _first_ and _second_?
->
-> The `a` field comparison tests for trust path termination.
-> If the authority of the first ECT is a trust anchor for the authority of the second ECT, the second ECT is valid.
-> If the authority values are identical, then the second ECT is valid.
 
 ### Conceptual Message Type Comparison  {#sec-compare-cm}
 
 A Verifier SHALL compare the condition ECT expected `cmtype` value to the candidate entry `cmtype` value.
 
-If the condition ECT contains a `cmtype` field, and that type has the same value as the ACS entry `cmtype` field then the types match.
+If the condition ECT contains a `cmtype` field, and that type has the same value as the ACS entry `cmtype` field, then the types match.
 
-If the condition ECT contains a `cmtype` field, and that type has a different value from the ACS entry `cmtype` field then the types do not match.
+If the condition ECT contains a `cmtype` field, and that type has a different value from the ACS entry `cmtype` field, then the types do not match.
 
-If the condition ECT contains a `cmtype` field, and the ACS entry does not contain a `cmtype` field then the types do not match.
+If the condition ECT contains a `cmtype` field, and the ACS entry does not contain a `cmtype` field, then the types do not match.
 
 ### Element list comparison {#sec-compare-element-list}
 
@@ -2126,16 +2119,16 @@ Two `element-id` fields are the same if they are either both omitted, or both pr
 
 Before performing the binary comparison, a Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If any ACS entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.
+If any condition ECT entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.
 
-If any ACS entry has multiple corresponding `element-id`s then the element map does not match.
+If any condition ECT entry has multiple corresponding `element-id`s then the element map does not match.
 
 Second, a Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry (see {{sec-compare-mvm}}).
 
 ### Measurement values map map Comparison {#sec-compare-mvm}
 
 A Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
-Each of the codepoints present in the condition ECT is compared against the same codepoint in the candidate entry.
+Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
 
 If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
 
@@ -2176,7 +2169,10 @@ When multiple digests are provided, each represents a different algorithm accept
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
 
-To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry then the digests calculated using all common algorithms must match.
+To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms must be equal.
+A Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
+If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
+If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
 The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same key is incorrect (for example if fields are missing or the wrong type).
 
@@ -2191,7 +2187,7 @@ The comparison MUST return false if there are no common hash algorithms.
 
 ##### Comparison for raw-value entries
 
-The value stored under `measurement-values-map` key 4 is a raw-value entry, which must have type BSTR.
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 The value stored under the condition ECT `measurement-values-map` key 5 is a raw-value-mask entry, which must have type BSTR.
 
@@ -2209,8 +2205,6 @@ Note that if a candidate entry contains a value under key 5 then this does not a
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
-The value stored under `measurement-values-map` key 12 is an array of `$crypto-key-type-choice` entries. `$crypto-key-type-choice` entries are CBOR tagged values.
-The array contains one or more entries in sequence.
 
 The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
 If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
@@ -2221,7 +2215,7 @@ Otherwise, `cryptokeys` does not match.
 ##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
 
 For each Integrity Register entry in the condition ECT, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in the candidate entry.
-If no entry is found, the condition MUST return false.
+If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
 
