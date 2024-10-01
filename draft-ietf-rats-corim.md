@@ -2057,7 +2057,11 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 ### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
-A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}), {{sec-compare-cm}} and {{sec-compare-element-list}).
+If the condition ECT contains a profile then the documentation for that profile describes the matching algorithm.
+Profile authors SHOULD make their matching algorithms similar to the algorithm described in this document where appropriate.
+	
+A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}) and {{sec-compare-element-list}).
+	
 Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
 If all of the fields match, then the condition ECT matches the ACS entry.
@@ -2087,18 +2091,6 @@ The order of the fields in each `authority` field do not affect the result of th
 If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
 
 When comparing two `$crypto-key-type-choice` fields for equality, a Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
-
-
-
-### Conceptual Message Type Comparison  {#sec-compare-cm}
-
-A Verifier SHALL compare the condition ECT expected `cmtype` value to the candidate entry `cmtype` value.
-
-If the condition ECT contains a `cmtype` field, and that type has the same value as the ACS entry `cmtype` field, then the types match.
-
-If the condition ECT contains a `cmtype` field, and that type has a different value from the ACS entry `cmtype` field, then the types do not match.
-
-If the condition ECT contains a `cmtype` field, and the ACS entry does not contain a `cmtype` field, then the types do not match.
 
 ### Element list comparison {#sec-compare-element-list}
 
