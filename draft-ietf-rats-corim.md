@@ -1811,7 +1811,7 @@ The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is c
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
 
-#### Endorsement Triples Tranformations {#sec-end-trans}
+#### Endorsement Triples Transformations {#sec-end-trans}
 
 Endorsement Triple Transformation :
 
