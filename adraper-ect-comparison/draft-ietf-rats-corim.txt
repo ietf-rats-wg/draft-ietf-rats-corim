@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 3 April 2025                                             Linaro
+Expires: 4 April 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       30 September 2024
+                                                          1 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 April 2025.
+   This Internet-Draft will expire on 4 April 2025.
 
 Copyright Notice
 
@@ -2830,8 +2830,8 @@ Table of Contents
 
 8.9.3.  Authority comparison
 
-   A Verifier SHALL compare the condition ECT expected authority value
-   to the candidate entry authority value.
+   A Verifier SHALL compare the condition ECT's authority value to the
+   candidate entry's authority value.
 
    If every entry in the condition ECT authority has a matching entry in
    the ACS entry authority field, then the authorities match.  The order
@@ -2949,25 +2949,25 @@ Table of Contents
 
 8.9.7.1.1.  Comparison for svn entries
 
-   The value stored under measurement-values-map key 1 is an SVN, which
-   must have type uint.
+   The value stored under measurement-values-map codepoint 1 is an SVN,
+   which must have type uint.
 
-   If the condition ECT value for measurement-values-map key 1 is an
-   untagged uint or a uint tagged with #6.552 then an equality
+   If the condition ECT value for measurement-values-map codepoint 1 is
+   an untagged uint or a uint tagged with #6.552 then an equality
    comparison is performed.  The comparison MUST return true if the
    value of the SVN in the candidate entry is equal to the value in the
    condition ECT.
 
-   If the condition ECT value for measurement-values-map key 1 is a uint
-   tagged with #6.553 then a minimum comparison is performed.  The
-   comparison MUST return true if the value of the SVN in the candidate
-   entry is less than the value in the condition ECT.
+   If the condition ECT value for measurement-values-map codepoint 1 is
+   a uint tagged with #6.553 then a minimum comparison is performed.
+   The comparison MUST return true if the value of the SVN in the
+   candidate entry is less than the value in the condition ECT.
 
 8.9.7.1.2.  Comparison for digests entries
 
-   It contains one or more digests, each measuring the same object.
-   When multiple digests are provided, each represents a different
-   algorithm acceptable to the condition ECT author.
+   A digests entry contains one or more digests, each measuring the same
+   object.  When multiple digests are provided, each represents a
+   different algorithm acceptable to the condition ECT author.
 
    In the simple case, a condition ECT digests entry containing one
    digest matches matches a candidate entry containing a single entry
@@ -2985,8 +2985,8 @@ Table of Contents
    possible.
 
    The comparison MUST return false if the CBOR encoding of the digests
-   entry in the condition ECT or the ACS value with the same key is
-   incorrect (for example if fields are missing or the wrong type).
+   entry in the condition ECT or the ACS value with the same codepoint
+   is incorrect (for example if fields are missing or the wrong type).
 
    The comparison MUST return false if the condition ECT digests entry
    does not contain any digests.
@@ -3045,9 +3045,10 @@ Table of Contents
 
 8.9.8.  Profile-directed Comparison
 
-   A profile may specify handling for new CBOR tagged condition ECTs.
-   The profile must specify how to compare the CBOR tagged Reference
-   Value against the ACS.
+   A profile MUST specify comparison algorithms for its additions to
+   $-prefixed CoRIM CDDL codepoints when this specification does not
+   prescribe binary comparison.  The profile must specify how to compare
+   the CBOR tagged Reference Value against the ACS.
 
    Note that a Verifier may compare Reference Values in any order, so
    the comparison should not be stateful.
