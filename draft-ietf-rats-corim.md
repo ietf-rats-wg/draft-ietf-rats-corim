@@ -2079,7 +2079,7 @@ If a field is not present in the condition ECT `environment-map` then the presen
 
 ### Authority comparison {#sec-compare-authority}
 
-A Verifier SHALL compare the condition ECT expected `authority` value to the candidate entry `authority` value.
+A Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.
 
 If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field, then the authorities match.
 The order of the fields in each `authority` field do not affect the result of the comparison.
@@ -2153,17 +2153,17 @@ The following subsections define the comparison algorithms for the `measurement-
 
 ##### Comparison for svn entries
 
-The value stored under `measurement-values-map` key 1 is an SVN, which must have type `uint`.
+The value stored under `measurement-values-map` codepoint 1 is an SVN, which must have type `uint`.
 
-If the condition ECT value for `measurement-values-map` key 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed.
+If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed.
 The comparison MUST return true if the value of the SVN in the candidate entry is equal to the value in the condition ECT.
 
-If the condition ECT value for `measurement-values-map` key 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
+If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
 The comparison MUST return true if the value of the SVN in the candidate entry is less than the value in the condition ECT.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
-It contains one or more digests, each measuring the same object.
+A digests entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
@@ -2173,7 +2173,7 @@ A Verifier SHALL treat two algorithm identifiers as equal if they have the same 
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same key is incorrect (for example if fields are missing or the wrong type).
+The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).
 
 The comparison MUST return false if the condition ECT digests entry does not contain any digests.
 
@@ -2210,7 +2210,7 @@ Note that it is not required for all the entries in the candidate entry to be us
 
 ### Profile-directed Comparison {#sec-compare-profile}
 
-A profile may specify handling for new CBOR tagged condition ECTs.
+A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
 The profile must specify how to compare the CBOR tagged Reference Value against the ACS.
 
 Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
