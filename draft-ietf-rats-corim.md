@@ -1616,7 +1616,7 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 | condition | `environment`   | Mandatory   |
 |           | `elements`      | Mandatory   |
 |           | `authority`     | Optional    |
-|           | `message type`  | n/a         |
+|           | `cm type`       | n/a         |
 |           | `profile`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `elements`      | Mandatory   |
@@ -1644,12 +1644,12 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 | condition | `environment`   | Mandatory   |
 |           | `elements`      | Mandatory   |
 |           | `authority`     | Optional    |
-|           | `message type`  | n/a         |
+|           | `cm type`       | n/a         |
 |           | `profile`       | n/a         |
 | selection | `environment`   | Optional    |
 |           | `elements`      | Mandatory   |
 |           | `authority`     | n/a         |
-|           | `message type`  | n/a         |
+|           | `cm type`       | n/a         |
 |           | `profile`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `elements`      | Mandatory   |
@@ -1672,7 +1672,7 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 | condition | `environment`   | Optional    |
 |           | `elements`      | Optional    |
 |           | `authority`     | Optional    |
-|           | `message type`  | n/a         |
+|           | `cm type`       | n/a         |
 |           | `profile`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `elements`      | Mandatory   |
@@ -1696,7 +1696,7 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 | acs-condition | `environment`   | Optional    |
 |               | `elements`      | Optional    |
 |               | `authority`     | Optional    |
-|               | `message type`  | n/a         |
+|               | `cm type`  | n/a         |
 |               | `profile`       | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `elements`      | Mandatory   |
