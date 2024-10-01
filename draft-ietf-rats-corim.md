@@ -2182,7 +2182,7 @@ The comparison MUST return false if either digests entry contains multiple value
 The Verifier MUST iterate over the condition ECT `digests` array, locating common hash algorithm identifiers (which are present in the condition ECT and in the candidate entry).
 If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
 
-The comparison MUST return false if there are no common hash algorithms.
+The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.
 
 ##### Comparison for raw-value entries
 
