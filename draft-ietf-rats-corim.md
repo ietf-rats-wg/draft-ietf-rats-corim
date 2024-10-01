@@ -2059,9 +2059,7 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 If the condition ECT contains a profile then the documentation for that profile describes the matching algorithm.
 Profile authors SHOULD make their matching algorithms similar to the algorithm described in this document where appropriate.
-	
 A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}), {{sec-compare-authority}) and {{sec-compare-element-list}).
-	
 Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
 If all of the fields match, then the condition ECT matches the ACS entry.
