@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-29T01:51:41.329697+00:00",
+  "timestamp": "2024-10-01T01:53:46.695287+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -37465,13 +37465,13 @@
       "labels": [],
       "body": "Extending the Compatibility PR to other triples. Once we have a consensus, this PR will be deleted, it will be either merged into\r\n PR #268 ",
       "createdAt": "2024-09-18T13:53:08Z",
-      "updatedAt": "2024-09-27T19:50:15Z",
+      "updatedAt": "2024-09-30T22:50:46Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tcg-comp-to-other-triples",
-      "headRefOid": "8ccf3803c252dd9463d40f7118c5a4a4e104372c",
+      "headRefOid": "e66f05a3a0d46f6e6c393cb27ca8c86a478cd48c",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -37497,6 +37497,41 @@
           "body": "@deeglaze & @nedmsmith Thanks for the comments, I will review and work on them!",
           "createdAt": "2024-09-27T16:57:36Z",
           "updatedAt": "2024-09-27T16:57:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@henkbirkholz @thomas-fossati & @andrew-draper : kindly review this.\r\n\r\n@deeglaze Thanks for your review. I have incorporated all the comments which you had. Kindly check once and let me know, if anything is outstanding!",
+          "createdAt": "2024-09-30T12:05:25Z",
+          "updatedAt": "2024-09-30T12:05:25Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> LGTM, thanks.\r\n> \r\n> I am unsure about the use of the qualifier \"chosen\" when talking about the ACS entry that is being compared against. There is no selection criterion apart from picking one after the other from the set, no?\r\n> \r\n> Inlined a few tiny editorial change requests.\r\n\r\nI think, you are correct, the term `chosen` is a bit mis-leading.\r\n\r\nThe matching condition from this Triple to Evidence entry is the only criterion to get access to the correct entry in the ACS.\r\nI will remove the word chosen and still it would make sense I suppose!",
+          "createdAt": "2024-09-30T12:48:06Z",
+          "updatedAt": "2024-09-30T12:48:06Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "With these changes, `stateful-environment-map` is identical to `endorsed-triple-record`. Should they be merged?",
+          "createdAt": "2024-09-30T20:04:59Z",
+          "updatedAt": "2024-09-30T20:04:59Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> With these changes, `stateful-environment-map` is identical to `endorsed-triple-record`. Should they be merged?\r\n\r\nNot really, the construct looks identical, but internally they have a very different meaning and hence interpretation.\r\n\r\nIts just so happens that we have an identical map for `reference-values` and `endorsed-values`, which creates this ambiguity.\r\n\r\nBut I would keep them separate.",
+          "createdAt": "2024-09-30T21:41:41Z",
+          "updatedAt": "2024-09-30T21:41:41Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Its just so happens that we have an identical map for reference-values and endorsed-values\r\n\r\nActually, there's no such thing as `reference-values` or `endorsed-values`. We have triples for `reference-triple-record` and `endorsed-triple-record`, but these are the structures that define the triple (i.e., subject, object, predicate). Since the predicate is implied, the name of the structure serves as a pneumonic for the triple's predicate. \r\n\r\nThe statement `endorsed-triple-record` is being repurposed from a stand-alone triple to something that has different meaning when inside of a `conditional-endorsed-triple-record`. Specifically, the condition in a `endorsed-triple-record` triple is not applied when it appears as the addition part of a `conditional-endorsed-triple-record`.  (i.e., it isn't actually a triple inside of a triple).\r\n\r\nThe prose (and CBOR encoding) that describes:\r\n```\r\nconditional-endorsement-triple-record = [\r\n  conditions: [ + stateful-environment-record ]\r\n  additions: [ + endorsed-triple-record ]\r\n]\r\n```\r\nwill be identical to the prose (CBOR) that describes the following (sans cddl names):\r\n```\r\nconditional-endorsement-triple-record = [\r\n  conditions: [ + stateful-environment-record ]\r\n  additions: [ + stateful-environment-record ]\r\n]\r\n```\r\nSince `stateful-environment-record` doesn't double as a triple, it has no implied semantics on its own. It is only meaningful in the context of a triple description. \r\n\r\nInterestingly, it will be identical to the prose (CBOR) that describes this statement too (sans cddl names):\r\n```\r\nconditional-endorsement-triple-record = [\r\n  conditions: [ + endorsed-triple-record ]\r\n  additions: [ + endorsed-triple-record ]\r\n]\r\n```\r\nHowever, the reader is assumed to understand that we don't actually mean apply the semantics of the endorsed-triple-record triple, but apply the semantics that the prose for the conditional-endorsed-triple defines instead.\r\n\r\nMy point is we're mixing and matching reader expectations given the new definition of stateful-environment-map but offer no intuition as to why. With the addition of the label, the semantics are more easily communicated via the label, rather than the structure name and since stateful-environment-map is just building block CDDL, the second option seems to be the most intuitive of the three.\r\n\r\n",
+          "createdAt": "2024-09-30T22:48:23Z",
+          "updatedAt": "2024-09-30T22:50:46Z"
         }
       ],
       "reviews": [
@@ -37817,6 +37852,203 @@
           "createdAt": "2024-09-27T19:50:15Z",
           "updatedAt": "2024-09-27T19:50:15Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LUKly",
+          "commit": {
+            "abbreviatedOid": "8ccf380"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "LGTM, thanks.\r\n\r\nI am unsure about the use of the qualifier \"chosen\" when talking about the ACS entry that is being compared against.  There is no selection criterion apart from picking one after the other from the set, no?\r\n\r\nInlined a few tiny editorial change requests.\r\n\r\n",
+          "createdAt": "2024-09-30T12:10:16Z",
+          "updatedAt": "2024-09-30T12:20:52Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "spurious comma\r\n```suggestion\r\nThe series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.\r\n```",
+              "createdAt": "2024-09-30T12:10:16Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "streamline\r\n```suggestion\r\nThe `selection` and `addition` operate within the scope of the conditional endorsement series's matching `condition`.\r\n```",
+              "createdAt": "2024-09-30T12:11:01Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "I am unsure about using \"_chosen_ ACS entry\"?  Is this the right qualifier?  Chosen based on what criterion?\r\n\r\n",
+              "createdAt": "2024-09-30T12:13:48Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "ditto",
+              "createdAt": "2024-09-30T12:14:07Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "ditto",
+              "createdAt": "2024-09-30T12:14:18Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "ditto\r\n\r\n(Also, please merge L1227 and L1228 as per editorial convention.)",
+              "createdAt": "2024-09-30T12:14:27Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "merge sentence (also, missing comma)\r\n\r\n```suggestion\r\nIf the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise, the ACS entry does not match.\r\n```",
+              "createdAt": "2024-09-30T12:16:54Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            },
+            {
+              "originalPosition": 34,
+              "body": "ditto _chosen_",
+              "createdAt": "2024-09-30T12:17:20Z",
+              "updatedAt": "2024-09-30T12:20:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LUz67",
+          "commit": {
+            "abbreviatedOid": "8ccf380"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T13:05:18Z",
+          "updatedAt": "2024-09-30T13:05:19Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I have made it more explicit and crisp, which is I suppose you wanted. Please check!",
+              "createdAt": "2024-09-30T13:05:19Z",
+              "updatedAt": "2024-09-30T13:05:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LU0JS",
+          "commit": {
+            "abbreviatedOid": "8ccf380"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T13:05:41Z",
+          "updatedAt": "2024-09-30T13:05:41Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "Addressed: Remove the chosen term!",
+              "createdAt": "2024-09-30T13:05:41Z",
+              "updatedAt": "2024-09-30T13:05:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LU4yH",
+          "commit": {
+            "abbreviatedOid": "8ccf380"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T13:12:50Z",
+          "updatedAt": "2024-09-30T13:12:50Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I thought of removing \"triple record\" because it seemed redundant / unnecessarily heavyweight.  Although it's not what I suggested, I am OK with your change as well.",
+              "createdAt": "2024-09-30T13:12:50Z",
+              "updatedAt": "2024-09-30T13:12:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LU5MC",
+          "commit": {
+            "abbreviatedOid": "8bee5d0"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-09-30T13:13:27Z",
+          "updatedAt": "2024-09-30T13:13:27Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LV1rG",
+          "commit": {
+            "abbreviatedOid": "8bee5d0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM aside from nits",
+          "createdAt": "2024-09-30T14:30:22Z",
+          "updatedAt": "2024-09-30T14:34:24Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\n  addition: [ + measurement-map ]\r\n```\r\nnit",
+              "createdAt": "2024-09-30T14:30:22Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\n            [\r\n```",
+              "createdAt": "2024-09-30T14:31:06Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 49,
+              "body": "```suggestion\r\n            ],\r\n```",
+              "createdAt": "2024-09-30T14:31:21Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 50,
+              "body": "```suggestion\r\n            [\r\n```",
+              "createdAt": "2024-09-30T14:31:48Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 67,
+              "body": "```suggestion\r\n            [\r\n```",
+              "createdAt": "2024-09-30T14:32:03Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "```suggestion\r\n            ],\r\n```",
+              "createdAt": "2024-09-30T14:32:18Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 77,
+              "body": "```suggestion\r\n            [\r\n```",
+              "createdAt": "2024-09-30T14:32:32Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "```suggestion\r\n            ]\r\n```",
+              "createdAt": "2024-09-30T14:32:40Z",
+              "updatedAt": "2024-09-30T14:34:24Z"
+            }
+          ]
         }
       ]
     },
@@ -38312,13 +38544,13 @@
       "labels": [],
       "body": "This is the first edit to section 8.9 - it aligns the terminology with the change to ECT internal representation\r\n\r\nIt also defines the comparison rules for raw-value (codepoint 4 and 5).",
       "createdAt": "2024-09-23T08:49:55Z",
-      "updatedAt": "2024-09-27T15:35:14Z",
+      "updatedAt": "2024-10-01T00:11:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "adraper-ect-comparison",
-      "headRefOid": "85c0c3f2a552c41e76fb9fc963d661a7e68e690f",
+      "headRefOid": "3ae5537eb4ee768a218464e2e7e93051c4f8d6f5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -39216,6 +39448,630 @@
               "updatedAt": "2024-09-27T15:35:15Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSKN",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:28:46Z",
+          "updatedAt": "2024-09-29T23:28:46Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "I am not expecting evidence to always be marked with a profile, so doing a profile comparison first will sometimes fail.\r\nIf we have a profile comparison then should it be the other way round - a candidate ECT without a profile will match a condition ECT with a profile?",
+              "createdAt": "2024-09-29T23:28:46Z",
+              "updatedAt": "2024-09-29T23:28:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSOE",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:29:53Z",
+          "updatedAt": "2024-09-29T23:29:54Z",
+          "comments": [
+            {
+              "originalPosition": 92,
+              "body": "```suggestion\r\nIf a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.\r\n```",
+              "createdAt": "2024-09-29T23:29:53Z",
+              "updatedAt": "2024-09-29T23:29:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSPv",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:30:26Z",
+          "updatedAt": "2024-09-29T23:30:26Z",
+          "comments": [
+            {
+              "originalPosition": 92,
+              "body": "Good suggestion, but I think the NOT in SHALL NOT is supposed to be in upper case.",
+              "createdAt": "2024-09-29T23:30:26Z",
+              "updatedAt": "2024-09-29T23:30:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSTA",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:31:31Z",
+          "updatedAt": "2024-09-29T23:31:31Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "Does adding a hyphen here make the text clearer?",
+              "createdAt": "2024-09-29T23:31:31Z",
+              "updatedAt": "2024-09-29T23:31:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSWC",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:32:30Z",
+          "updatedAt": "2024-09-29T23:32:30Z",
+          "comments": [
+            {
+              "originalPosition": 105,
+              "body": "Removing using Ned's suggestion below.",
+              "createdAt": "2024-09-29T23:32:30Z",
+              "updatedAt": "2024-09-29T23:32:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSck",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:34:42Z",
+          "updatedAt": "2024-09-29T23:34:42Z",
+          "comments": [
+            {
+              "originalPosition": 106,
+              "body": "I think we need a further change later to tidy up the processing of authority, I will remove this text now and we can add something like it later if that is the direction we want to follow.\r\nI would like to see richer semantics available in the final draft.",
+              "createdAt": "2024-09-29T23:34:42Z",
+              "updatedAt": "2024-09-29T23:34:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSfH",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:35:42Z",
+          "updatedAt": "2024-09-29T23:35:42Z",
+          "comments": [
+            {
+              "originalPosition": 108,
+              "body": "Removed using suggested change below.",
+              "createdAt": "2024-09-29T23:35:42Z",
+              "updatedAt": "2024-09-29T23:35:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSgj",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:36:19Z",
+          "updatedAt": "2024-09-29T23:36:20Z",
+          "comments": [
+            {
+              "originalPosition": 112,
+              "body": "See comment about richer semantics. For now, I am removing it so we can make progress.",
+              "createdAt": "2024-09-29T23:36:19Z",
+              "updatedAt": "2024-09-29T23:36:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPSnq",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:38:10Z",
+          "updatedAt": "2024-09-29T23:38:10Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "I believe so. Also, it's an endash, and it's the grammatical thing to use to say that the expectation comes from the condition ECT (more than one word).",
+              "createdAt": "2024-09-29T23:38:10Z",
+              "updatedAt": "2024-09-29T23:38:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPStc",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:39:49Z",
+          "updatedAt": "2024-09-29T23:39:49Z",
+          "comments": [
+            {
+              "originalPosition": 154,
+              "body": "```suggestion\r\nEach of the codepoints present in the condition ECT is compared against the same codepoint in the candidate entry with the same `element-id`.\r\n```",
+              "createdAt": "2024-09-29T23:39:49Z",
+              "updatedAt": "2024-09-29T23:40:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPTCP",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:45:26Z",
+          "updatedAt": "2024-09-29T23:45:26Z",
+          "comments": [
+            {
+              "originalPosition": 145,
+              "body": "```suggestion\r\nIf any condition ECT entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.\r\n\r\nIf any condition ECT entry has multiple corresponding `element-id`s then the element map does not match.\r\n```",
+              "createdAt": "2024-09-29T23:45:26Z",
+              "updatedAt": "2024-09-29T23:45:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPTFh",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:46:21Z",
+          "updatedAt": "2024-09-29T23:46:21Z",
+          "comments": [
+            {
+              "originalPosition": 154,
+              "body": "```suggestion\r\nEach of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.\r\n```",
+              "createdAt": "2024-09-29T23:46:21Z",
+              "updatedAt": "2024-09-29T23:46:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPTGi",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:46:36Z",
+          "updatedAt": "2024-09-29T23:46:36Z",
+          "comments": [
+            {
+              "originalPosition": 154,
+              "body": "I used slightly different text",
+              "createdAt": "2024-09-29T23:46:36Z",
+              "updatedAt": "2024-09-29T23:46:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPTZW",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:51:29Z",
+          "updatedAt": "2024-09-29T23:51:30Z",
+          "comments": [
+            {
+              "originalPosition": 222,
+              "body": "```suggestion\r\nTo prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms must be equal.\r\nA Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.\r\nIf both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.\r\nIf condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.\r\n```",
+              "createdAt": "2024-09-29T23:51:30Z",
+              "updatedAt": "2024-09-29T23:58:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPToO",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-29T23:55:39Z",
+          "updatedAt": "2024-09-29T23:55:39Z",
+          "comments": [
+            {
+              "originalPosition": 222,
+              "body": "I have been thinking about what we discussed in the call and I think there may be a security issue with it. As I remember, the decision in the call was that a verifier should treat the string and integer names for an algorithm as identical.\r\nThis leads to an issue if the registry is every extended, as some verifiers will not understand the new algorithms. If a condition ECT uses the numeric version and an ACS entry uses the string version then a downgrade attack is possible.\r\nI am proposing text below which recommends that the integer version be used when it is available, and does not mandate comparing strings and integers.",
+              "createdAt": "2024-09-29T23:55:39Z",
+              "updatedAt": "2024-09-29T23:55:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPT6N",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T00:00:22Z",
+          "updatedAt": "2024-09-30T00:00:22Z",
+          "comments": [
+            {
+              "originalPosition": 255,
+              "body": "I have removed the raw-value changes from this PR and resubmitted them in PR #294. Let's discuss them there.",
+              "createdAt": "2024-09-30T00:00:22Z",
+              "updatedAt": "2024-09-30T00:01:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPUGI",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T00:02:53Z",
+          "updatedAt": "2024-09-30T00:02:53Z",
+          "comments": [
+            {
+              "originalPosition": 255,
+              "body": "```suggestion\r\n[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71\r\n```",
+              "createdAt": "2024-09-30T00:02:53Z",
+              "updatedAt": "2024-09-30T00:02:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPUWc",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T00:06:16Z",
+          "updatedAt": "2024-09-30T00:06:16Z",
+          "comments": [
+            {
+              "originalPosition": 312,
+              "body": "This is the same text as before the change.\r\nAre we expecting to remove integrity registers? We discussed that in one call.\r\nIf we are then I think editorial improvements like the one above may be moot.",
+              "createdAt": "2024-09-30T00:06:16Z",
+              "updatedAt": "2024-09-30T00:06:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPYEj",
+          "commit": {
+            "abbreviatedOid": "a8adff1"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T00:15:51Z",
+          "updatedAt": "2024-09-30T00:15:52Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "In this case, expected is a modifier of authority. If the \"expected\" there is causing confusion then I think it is probably best to just remove it.",
+              "createdAt": "2024-09-30T00:15:52Z",
+              "updatedAt": "2024-09-30T00:15:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LPfPY",
+          "commit": {
+            "abbreviatedOid": "a8adff1"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T00:26:09Z",
+          "updatedAt": "2024-09-30T00:26:10Z",
+          "comments": [
+            {
+              "originalPosition": 171,
+              "body": "Is this the right thing to do if there is no defined comparison algorithm?\r\nFor most of the standard (non-negative) codepoints in the document today, a binary compare is what would be expected.\r\nAs that is a non-editorial change I propose making it in a different PR.",
+              "createdAt": "2024-09-30T00:26:09Z",
+              "updatedAt": "2024-09-30T00:26:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LQMNx",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T03:47:28Z",
+          "updatedAt": "2024-09-30T03:47:28Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "Hmmmmmmmm that is very tricky indeed. That would mean that we have to be very careful that any CBOR that matches the base CDDL has a solid semantics that cannot be extended by a profile, such as with additional value encodings that allow for weaker pattern matching (e.g., adding any-of to standard codepoints if it weren't already there).\r\n\r\nSay we have a condition ECT that has conditional endorsement series triple that on condition 3 includes nonstandard values, and condition 4 has standard values again and is the one we expect to match.\r\nDo we permit the condition with a profile to be evaluated against the candidate without a profile until we get to the conditional series additions?\r\n\r\nI understand -1 would never compare true to the nonnegative standard codepoints, but if there are extensible type choices in standard codepoints, we have to ensure that they are compared with encoding equality only to avoid overriding the base CoRIM semantics. `$version-scheme` for example permits any `int`, so how do we allow a profile to define a new one without messing with the base CoRIM semantics? I don't know. We haven't defined the semantics of version matching.",
+              "createdAt": "2024-09-30T03:47:28Z",
+              "updatedAt": "2024-09-30T03:47:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LQMZd",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T03:48:47Z",
+          "updatedAt": "2024-09-30T03:48:47Z",
+          "comments": [
+            {
+              "originalPosition": 96,
+              "body": "Agreed. The condition's authority is already a condition you may be expecting.",
+              "createdAt": "2024-09-30T03:48:47Z",
+              "updatedAt": "2024-09-30T03:48:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LQMfJ",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T03:49:24Z",
+          "updatedAt": "2024-09-30T03:49:24Z",
+          "comments": [
+            {
+              "originalPosition": 99,
+              "body": "```suggestion\r\nA Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.\r\n```",
+              "createdAt": "2024-09-30T03:49:24Z",
+              "updatedAt": "2024-09-30T03:49:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LQNkm",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T03:56:24Z",
+          "updatedAt": "2024-09-30T03:56:24Z",
+          "comments": [
+            {
+              "originalPosition": 171,
+              "body": "A profile may define only codepoints -1 to -15. If there's an update and -16 creeps in without the profile also getting a version update, do we want to say that additions are non-breaking, or that all changes require version updates and therefore new profile ids? I'd like that to be up to the profile designer, honestly, which would be within its rights to say that all code points below -15 or between -15 and -1000 are compared with binary equality to allow for opaque expansion but still allowing for a minor version advancement to add non-opaque comparisons to new code points.\r\n\r\nI'd say no match. Keep this text.",
+              "createdAt": "2024-09-30T03:56:24Z",
+              "updatedAt": "2024-09-30T03:56:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LQOU4",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T04:00:56Z",
+          "updatedAt": "2024-09-30T04:00:57Z",
+          "comments": [
+            {
+              "originalPosition": 230,
+              "body": "```suggestion\r\nThe comparison MUST return false if the condition ECT digests entry does not contain any digests with an algorithm in common with the candidate entry.\r\n```\r\nThe `digests-type` is already non-empty, so I assume you mean that there has to be at least 1 matching algorithm to compare digests of.",
+              "createdAt": "2024-09-30T04:00:57Z",
+              "updatedAt": "2024-09-30T04:00:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LQOfs",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T04:01:56Z",
+          "updatedAt": "2024-09-30T04:01:56Z",
+          "comments": [
+            {
+              "originalPosition": 230,
+              "body": "You say this below, so given that non-emptiness is required, I'd say delete the line.",
+              "createdAt": "2024-09-30T04:01:56Z",
+              "updatedAt": "2024-09-30T04:01:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LV7Tw",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T14:38:49Z",
+          "updatedAt": "2024-09-30T14:38:49Z",
+          "comments": [
+            {
+              "originalPosition": 296,
+              "body": "```suggestion\r\nA profile MUST specify comparison methods for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.\r\n```\r\nTagging is not required for extensions.",
+              "createdAt": "2024-09-30T14:38:49Z",
+              "updatedAt": "2024-09-30T14:38:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LXgQB",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-09-30T17:26:22Z",
+          "updatedAt": "2024-09-30T17:26:38Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "My expectation is if a profile defines an alternative matching algorithm from one defined in the \"base\" corim spec, the profile algorithm takes precedence.  A simple example might be svn comparisons (not min-svn) where current algorithm is equivalence, a RV profile might apply range semantics such that an actual svn=2 might be accepted by an algorithm that said (svn >= 1). Nevertheless, the ACS still contains svn=2 and any condition endorsement statement that compares for equality still uses the base spec's equality check algorithm. It suggests a constraint on profiles that the syntax for describing alternative matching should have a well-defined format. For example, the Intel profile defines a CBOR tag that prefaces the matching condition statement. Hence, the Verifier is not undecided about which algorithm to apply even if processing order varies, so long as the profile is parsed before processing begins. ",
+              "createdAt": "2024-09-30T17:26:22Z",
+              "updatedAt": "2024-09-30T17:26:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LXlBI",
+          "commit": {
+            "abbreviatedOid": "3ae5537"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested text",
+          "createdAt": "2024-09-30T17:36:17Z",
+          "updatedAt": "2024-09-30T17:46:53Z",
+          "comments": [
+            {
+              "originalPosition": 110,
+              "body": "There isn't an external representation for cm-type in comid. Hence, there isn't a way to include it in a `condition` statement. The semantics for cm-type are intrinsic to processing semantics of CMs. For example, processing a RV message means the Evidence ECTs are the target ACS entries. For endorsements, Evidence and RV ECTs are the targets. Note: There is an unresolved issue as to whether Endorsement conditions can target other Endorsement ECTs.\r\n\r\nConsequently, this section is not needed. The semantics of cm-type will be handled in the sections that describe processing phases.",
+              "createdAt": "2024-09-30T17:36:17Z",
+              "updatedAt": "2024-09-30T17:48:40Z"
+            },
+            {
+              "originalPosition": 171,
+              "body": "I'm OK with the current text.",
+              "createdAt": "2024-09-30T17:38:55Z",
+              "updatedAt": "2024-09-30T17:46:53Z"
+            },
+            {
+              "originalPosition": 176,
+              "body": "We should use \"key\" or \"code point\" consistently. Line 2156 goes back to using \"key\".",
+              "createdAt": "2024-09-30T17:40:13Z",
+              "updatedAt": "2024-09-30T17:46:53Z"
+            },
+            {
+              "originalPosition": 230,
+              "body": "The original text seems best IMO.",
+              "createdAt": "2024-09-30T17:44:07Z",
+              "updatedAt": "2024-09-30T17:46:53Z"
+            },
+            {
+              "originalPosition": 243,
+              "body": "```suggestion\r\nThe comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.\r\n```",
+              "createdAt": "2024-09-30T17:46:09Z",
+              "updatedAt": "2024-09-30T17:46:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LaNzS",
+          "commit": {
+            "abbreviatedOid": "85c0c3f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-01T00:11:54Z",
+          "updatedAt": "2024-10-01T00:11:54Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "svn-type-choice is not extensible, so your example doesn't track for me.\r\n\r\nWe shouldn't ever have certain condition tags in the ACS as actual state, such as `tagged-min-svn`.\r\nAre we going to allow profiles to extend measurement-values-map values with their own pattern languages for more complex comparisons against the ACS? It becomes a kind of stored-procedure input at that point. It could be useful, but we can't permit for conditions to leak into actual state.",
+              "createdAt": "2024-10-01T00:11:54Z",
+              "updatedAt": "2024-10-01T00:11:54Z"
+            }
+          ]
         }
       ]
     },
@@ -39328,6 +40184,65 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 294,
+      "id": "PR_kwDOH6-tI859Cqxv",
+      "title": "Move raw-value comparison algorithm to its own PR",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/294",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-09-30T00:00:07Z",
+      "updatedAt": "2024-09-30T03:23:33Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "compare-raw-value",
+      "headRefOid": "73d0726899ef20bc7f7ef907e89bba625aecf3b7",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86LPUGq",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-09-30T00:03:00Z",
+          "updatedAt": "2024-09-30T03:23:33Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "This is not what the CDDL says. A raw value is a $raw-value-type-choice. We just have to compare them opaquely with their CBOR binary encoding. I'd rather have a profile stick an uninterpreted int in a raw-value rather than dictate that the int has little endian encoding in a bstr.",
+              "createdAt": "2024-09-30T00:03:01Z",
+              "updatedAt": "2024-09-30T03:23:33Z"
+            },
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\nThe value stored under the condition ECT `measurement-values-map` key 5 is a `raw-value-mask` entry, which must have type `bstr`.\r\n```",
+              "createdAt": "2024-09-30T00:03:20Z",
+              "updatedAt": "2024-09-30T03:23:33Z"
+            },
+            {
+              "originalPosition": 22,
+              "body": "```suggestion\r\nIf the condition ECT has a `raw-value-mask` and no `raw-value`, it is ignored.\r\nIf the condition ECT has both a `raw-value-mask`, `raw-value`, then the following conditions must be true for a match:\r\n\r\n*  `raw-value` MUST be either a `bstr` or `tagged-bytes`. The compared value of `raw-value` is the `bstr` itself or the tagged `bstr` respectively.\r\n*  the lengths of the condition `raw-value` `bstr`, condition `raw-value-mask`, and the candidate `raw-value` `bstr` are equal.\r\n*  All bit positions in `raw-value-mask` whose value is 1 must imply that the bit values at the same position in both the condition `raw-value` `bstr` and the candidate `raw-value` `bstr` are equal.\r\n\r\nNote that the candidate's `raw-value-mask` is ignored if it exists.\r\n```\r\nWe can simplify if we want to treat `bstr` and `tagged-bytes` as different since they have different CBOR encodings, and since `bstr` isn't in the base CDDL's `$raw-value-type-choice`, but I figured there would likely be confusion about tagged-bytes vs non-tagged.\r\n\r\nThe \"mask implies raw-value is a bstr\" condition is to restrict the behavior of the mask to when the raw-value is truly just bytes that can be masked. Otherwise the type choice's alternatives wouldn't have a clear meaning with the mask's presence.\r\n\r\nThe quoted text is in 5.1.4.1.4.6 seems to contradict my proposal of limiting the scope to only `bstr`:\r\n> When a new raw value type is defined, the convention for applying the mask is also defined. Typically, a CoRIM profile is used to define new raw values and mask semantics.\r\n\r\nI disagree with this. The semantics of a standard codepoint should not be open to interpretation. A profile that wants nonstandard semantics needs to use a nonstandard codepoint.",
+              "createdAt": "2024-09-30T03:14:22Z",
+              "updatedAt": "2024-09-30T03:23:33Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
