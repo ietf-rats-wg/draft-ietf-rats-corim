@@ -1588,12 +1588,14 @@ The `addition` is added to the ACS for a specific Attester.
 {::include cddl/intrep-ae.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| addition | T | T | T | T | F |
-{: #tbl-ae-ect-optionality title="Mandatory fields for Evidence tuples"}
-
-'T' means mandatory.
+| addition  | `environment`   | Mandatory   |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cm type`       | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 #### Internal Representation of Reference Values {#sec-ir-ref-val}
 
@@ -1609,11 +1611,19 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 {::include cddl/intrep-rv.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| condition | T | T | F | F | F |
-| addition  | T | T | T | T | F |
-{: #tbl-rv-ect-optionality title="Mandatory fields for Reference Values tuples"}
+| condition | `environment`   | Mandatory   |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `message type`  | n/a         |
+|           | `profile`       | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cm type`       | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 #### Internal Representation of Endorsed Values {#sec-ir-end-val}
 
@@ -1629,12 +1639,24 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 {::include cddl/intrep-ev.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| condition | F | T | F | F | F |
-| selection | F | T | F | F | F |
-| addition  | T | T | T | T | F |
-{: #tbl-ev-ect-optionality title="Mandatory fields for Endorsed Values tuples"}
+| condition | `environment`   | Mandatory   |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `message type`  | n/a         |
+|           | `profile`       | n/a         |
+| selection | `environment`   | Optional    |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | n/a         |
+|           | `message type`  | n/a         |
+|           | `profile`       | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cm type`       | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 #### Internal Representation of Policy Statements {#sec-ir-policy}
 
@@ -1645,11 +1667,19 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 {::include cddl/intrep-policy.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| condition | F | F | F | F | F |
-| addition  | T | T | T | T | F |
-{: #tbl-policy-ect-optionality title="Mandatory fields for policy tuples"}
+| condition | `environment`   | Optional    |
+|           | `elements`      | Optional    |
+|           | `authority`     | Optional    |
+|           | `message type`  | n/a         |
+|           | `profile`       | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `elements`      | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cm type`       | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 #### Internal Representation of Attestation Results {#sec-ir-ar}
 
@@ -1661,11 +1691,19 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 {::include cddl/intrep-ar.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type      | ECT Field       | Requirement |
 |---
-| acs-condition | F | F | F | F | F |
-| ars-addition  | T | T | T | F | F |
-{: #tbl-ar-ect-optionality title="Mandatory fields for Attestation Results tuples"}
+| acs-condition | `environment`   | Optional    |
+|               | `elements`      | Optional    |
+|               | `authority`     | Optional    |
+|               | `message type`  | n/a         |
+|               | `profile`       | n/a         |
+| ars-addition  | `environment`   | Mandatory   |
+|               | `elements`      | Mandatory   |
+|               | `authority`     | Mandatory   |
+|               | `cm type`       | Mandatory   |
+|               | `profile`       | Optional    |
+{: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of ACS {#sec-ir-acs}
 
