@@ -2154,7 +2154,7 @@ The comparison MUST return true if the value of the SVN in the candidate entry i
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
-A digests entry contains one or more digests, each measuring the same object.
+A `digests` entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
