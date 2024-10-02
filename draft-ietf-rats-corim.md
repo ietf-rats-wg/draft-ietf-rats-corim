@@ -1621,7 +1621,7 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
-|           | `cm type`       | Mandatory   |
+|           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
