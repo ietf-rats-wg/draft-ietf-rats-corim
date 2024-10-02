@@ -1593,7 +1593,7 @@ The `addition` is added to the ACS for a specific Attester.
 | addition  | `environment`   | Mandatory   |
 |           | `element-list` | Mandatory   |
 |           | `authority`     | Mandatory   |
-|           | `cm type`       | Mandatory   |
+|           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
