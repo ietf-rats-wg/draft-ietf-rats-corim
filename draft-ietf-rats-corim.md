@@ -1642,7 +1642,7 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 | ECT type  | ECT Field       | Requirement |
 |---
 | condition | `environment`   | Mandatory   |
-|           | `elements`      | Mandatory   |
+|           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cm type`       | n/a         |
 |           | `profile`       | n/a         |
