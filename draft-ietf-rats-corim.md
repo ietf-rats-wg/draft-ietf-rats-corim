@@ -1591,7 +1591,7 @@ The `addition` is added to the ACS for a specific Attester.
 | ECT type  | ECT Field       | Requirement |
 |---
 | addition  | `environment`   | Mandatory   |
-|           | `elements`      | Mandatory   |
+|           | `element-list` | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cm type`       | Mandatory   |
 |           | `profile`       | Optional    |
