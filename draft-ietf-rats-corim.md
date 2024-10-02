@@ -2058,7 +2058,6 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
-Profile authors SHOULD make their matching algorithms similar to the algorithm described in this document where appropriate.
 
 A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}}, {{sec-compare-authority}} and {{sec-compare-element-list}}.
 
