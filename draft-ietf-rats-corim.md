@@ -1654,7 +1654,7 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
-|           | `cm type`       | Mandatory   |
+|           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
