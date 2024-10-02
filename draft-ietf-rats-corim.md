@@ -2099,7 +2099,7 @@ If every entry in the condition ECT `element-list` has a matching entry in the A
 
 The order of the fields in each `element-list` field do not affect the result of the comparison.
 
-If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the authorities do not match.
+If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the `element-list` do not match.
 
 ### Element map comparison {#sec-compare-element-map}
 
