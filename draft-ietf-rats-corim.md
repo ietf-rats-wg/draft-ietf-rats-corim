@@ -1670,14 +1670,14 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 | ECT type  | ECT Field       | Requirement |
 |---
 | condition | `environment`   | Optional    |
-|           | `elements`      | Optional    |
+|           | `element-list`  | Optional    |
 |           | `authority`     | Optional    |
-|           | `cm type`       | n/a         |
+|           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 | addition  | `environment`   | Mandatory   |
-|           | `elements`      | Mandatory   |
+|           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
-|           | `cm type`       | Mandatory   |
+|           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
