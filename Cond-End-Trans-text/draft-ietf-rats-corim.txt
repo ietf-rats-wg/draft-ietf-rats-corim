@@ -2425,20 +2425,26 @@ Table of Contents
 
 8.3.3.  Input Transformation
 
-   Inputs, whether Endorsements, Reference Values, Evidence, or
-   Policies, are transformed to an internal representation that is based
-   on ECTs.
+   Input Conceptual Messages, whether Endorsements, Reference Values,
+   Evidence, or Policies, are transformed to an internal representation
+   that is based on ECTs (Section 8.2.1).
 
    The following mapping conventions apply to all forms of input
-   transformation: The e field is populated with a Target Environment
-   identifier.  The c field is populated with the measurements collected
-   by an Attesting Environment.  The a field is populated with the
-   identity of the entity that asserted (e.g., signed) the Evidence.
-   The ns field is populated with the namespace context if supplied.
-   For example, the Attester's manufacturer may have a URI that
-   identifies the manufacturing series, family or architecture.  The cm
-   field is set based on the type of Conceptual Message inputted or to
-   be outputed.
+   transformation:
+
+      -  The environment field is populated with a Target Environment
+         identifier.
+
+      -  The element-list field is populated with the measurements
+         collected by an Attesting Environment.
+
+      -  The authority field is populated with the identity of the
+         entity that asserted (e.g., signed) the Conceptual Message.
+
+      -  The cmtype field is set based on the type of Conceptual Message
+         inputted or to be outputed.
+
+      -  The profile field is set based on the corim-map profile value.
 
 8.3.3.1.  Appraisal Context Construction
 
@@ -2447,10 +2453,6 @@ Table of Contents
    of the inputted Conceptual Messages.  The selected tags are mapped to
    an internal representation, making them suitable for appraisal
    processing.
-
-
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/96
 
 8.3.3.2.  Reference Triples Transformation
 
@@ -2571,22 +2573,16 @@ Table of Contents
 
 8.3.3.4.  Evidence Tranformation
 
-   Evidence is divided up into one or more ev relations where the
-   condition ECT identifies the Attester from which Evidence was
-   collected.  If the Verifier maintains multiple Attester sessions, the
-   Verifier session may be identified using an ECT.
+   Evidence is transformed from an external representation to an
+   internal representation based on the ae relation (Section 8.2.1.1).
+   The Evidence is mapped into one or more addition ECTs.  If the
+   Evidence does not have a value for the mandatory ae fields, the
+   Verifier MUST NOT process the Evidence.
 
-   Evidence information is mapped to an addition ECT that populates each
-   of the ECT fields.  If the Evidence does not have a value for the
-   mandatory fields, the Verifier MUST NOT process the Evidence.
-
-   The Evidence ECT fields are populated as described in Section 8.3.3
-   and Section 8.2.1.1.
-
-   Evidence transformation algorithms may be well-known, may be defined
-   by a CoRIM profile (Section 4.1.4), or may be supplied dynamically.
-   The handling of dynamic Evidence transformation algorithms is out of
-   scope for this document.
+   Evidence transformation algorithms may be well-known, defined by a
+   CoRIM profile (Section 4.1.4), or supplied dynamically.  The handling
+   of dynamic Evidence transformation algorithms is out of scope for
+   this document.
 
 8.4.  Evidence Augmentation (Phase 2)
 
@@ -2677,8 +2673,9 @@ Table of Contents
 
    Reference Values are matched with ACS entries by iterating through
    the rv list.  For each rv entry, the condition ECT is compared with
-   an ACS ECT.  If the ECTs match except for authority, the rv addition
-   ECT authority is added to the ACS ECT authority.
+   an ACS ECT, where the ACS ECT cmtype contains evidence.  If the ECTs
+   match except for authority, the rv addition ECT authority is added to
+   the ACS ECT authority.
 
 8.6.  Endorsed Values Augmentation (Phase 4)
 
@@ -2686,41 +2683,38 @@ Table of Contents
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/179
 
+   Endorsers publish Endorsements using endorsement triples (see
+   Section 5.1.4.3, Section 5.1.4.4, and Section 5.1.4.5) which are
+   transformed (Section 8.3.3.3) into an internal representation
+   (Section 8.2.1.3).  Endorsements describe actual Attester state.
+   Endorsements are added to the ACS if the Endorsement condition is
+   satisifed by the ACS.
+
 8.6.1.  Processing Endorsements
 
-   Endorsers publish Endorsements using the endorsed values triple
-   (Section 5.1.4.3) which are transformed (Section 8.3.3.3) into an
-   internal representation (Section 8.2.1.3).  Endorsements describe
-   actual Attester state.  Endorsements are added to the ACS if the
-   Endorsement condition is satisifed by the ACS.
-
-   Endorsed Values are matched with ACS entries by iterating through the
-   ev list.  For each ev entry, the condition ECT is compared with an
-   ACS ECT.  If the ECTs match, the ev addition ECT is added to the ACS.
+   Endorsements are matched with ACS entries by iterating through the ev
+   list.  For each ev entry, the condition ECT is compared with an ACS
+   ECT, where the ACS ECT cmtype contains either evidence or
+   endorsements.  If the ECTs match (Section 8.9), the ev addition ECT
+   is added to the ACS.
 
 8.6.2.  Processing Conditional Endorsements
 
-      [Ned] _This section should be identical to the previous section
-      since Endorsement triples and Conditional Endorsement triples are
-      transformed into the same internal representation based on ev_
+   Conditional Endorsement Triples are transformed into an internal
+   representation based on ev.  Conditional endorsements have the same
+   processing steps as shown in (Section 8.6.1).
 
 8.6.3.  Processing Conditional Endorsement Series
 
-      [Ned] _This section should describe augmentation in the context of
-      the evs internal representation_
-
-   For each Conditional Endorsement Series Triple the Verifier iterates
-   over the conditional-series-records within the triple, stopping if it
-   finds a match.
-
-   For each iteration, the Verifier creates a temporary stateful-
-   environment-record by merging the stateful-environment-record in the
-   triple with the refv field in the conditional-series-record.  It
-   compares this temporary record against the ACS (see Section 8.9).
-
-   If one of the temporary records matches then the Verifier MUST add
-   the endv Endorsement entry to the ACS.  This Endorsement includes the
-   authority which signed the Conditional Endorsement Series Triple.
+   Conditional Endorsement Series Triples are transformed into an
+   internal representation based on evs.  Conditional series
+   endorsements are matched with ACS entries first by iterating through
+   the evs list, where for each ev entry, the condition ECT is compared
+   with an ACS ECT, where the ACS ECT cmtype contains either evidence or
+   endorsements.  If the ECTs match (Section 8.9), the evs series array
+   is iterated, where for each series entry, if the selection ECT
+   matches an ACS ECT, the addition ECT is added to the ACS.  Series
+   processing terminates when the first series entry matches.
 
 8.7.  Examples for optional phases 5, 6, and 7
 
