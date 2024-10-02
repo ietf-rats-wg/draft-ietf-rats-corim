@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 29 March 2025                                            Linaro
+Expires: 5 April 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       25 September 2024
+                                                          2 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 March 2025.
+   This Internet-Draft will expire on 5 April 2025.
 
 Copyright Notice
 
@@ -160,7 +160,7 @@ Table of Contents
        8.3.3.  Input Transformation
          8.3.3.1.  Appraisal Context Construction
          8.3.3.2.  Reference Triples Transformation
-         8.3.3.3.  Endorsement Triples Tranformations
+         8.3.3.3.  Endorsement Triples Transformations
          8.3.3.4.  Evidence Tranformation
      8.4.  Evidence Augmentation (Phase 2)
        8.4.1.  Appraisal Claims Set Initialization
@@ -1630,8 +1630,8 @@ Table of Contents
 
    A Conditional Endorsement Series triple uses a stateful environment,
    (i.e., stateful-environment-record), that identifies a Target
-   Environment based on an environment-map plus the measurement-map
-   measurements that have matching Evidence.
+   Environment based on an environment-map plus one or more measurement-
+   map measurements that have matching Evidence.
 
    The stateful Target Environment is a triple subject that MUST be
    satisfied before the series triple object is matched.
@@ -1639,34 +1639,43 @@ Table of Contents
    ; an environment with a set of measurements that must match evidence
    stateful-environment-record = [
      environment-map,
-     measurement-map
+     [ + measurement-map ]
    ]
 
-   The series object is an array of conditional-series-record that has
-   both Reference and Endorsed Values.  Each conditional-series-record
-   record is evaluated in the order it appears in the series array.  The
-   Endorsed Values are accepted if the series condition in a
-   conditional-series-record matches the ACS.  The first conditional-
-   series-record that successfully matches an ACS Entry terminates the
-   matching and the corresponding Endorsed Values are accepted.  If none
-   of the series conditions match an ACS Entry, the triple is not
-   matched, and no Endorsed values are accepted.
+   The series is an array of conditional-series-record that has a
+   selection and an addition, both expressed as a list of measurement-
+   map.  The selection and addition operate within the scope of the
+   environment-map found in the conditional-endorsement-series-triple-
+   record's condition.
 
-   The authorized-by value in measurement-map in the stateful
-   environment, if present, applies to all measurements in the triple,
-   including conditional-series-record records.
+   For each conditional-series-record entry, if the selection matches
+   the ACS entry, the addition is added to the ACS.
+
+   The first conditional-series-record entry that successfully matches
+   the ACS entry terminates the series.  For a conditional-series-record
+   to match, every measurement in the measurement-map list MUST match a
+   measurement in the ACS entry.
+
+   If none of the selection values match in the ACS entry, the triple is
+   not matched, and no addition values are accepted.
+
+   If the authorized-by value is present in the triple condition (i.e.,
+   in the measurement-map of the stateful-environment-record), all
+   authority entries of the condition MUST be present in the ACS entry,
+   otherwise the ACS entry does not match.  If the series selection
+   populates authorized-by, the ACS MUST contain the same measurements
+   and authority as contained in the selection entry.  If the series
+   addition entry contains authorized-by values, they are ignored.
 
    conditional-endorsement-series-triple-record = [
-     stateful-environment-record
-     ; order matters: the first matching record wins and halts matching
-     [ + conditional-series-record ]
+     condition: stateful-environment-record
+     series: [ + conditional-series-record ]
    ]
 
    conditional-series-record = [
-     ; reference values to be matched against evidence
-     refv: measurement-values-map
+     selection: [ + measurement-map]
      ; endorsed values that apply in case revf matches
-     endv: measurement-values-map
+     addition: [ + measurement-map ]
    ]
 
 5.1.4.10.  Conditional Endorsement Triple
@@ -2462,7 +2471,7 @@ Table of Contents
    Step 4.  If the Endorsement conceptual message has a profile, the
             profile is copied to the ev addition ECT profile field.
 
-8.3.3.3.  Endorsement Triples Tranformations
+8.3.3.3.  Endorsement Triples Transformations
 
    Endorsement Triple Transformation :
 
@@ -3663,16 +3672,14 @@ Appendix A.  Base CoRIM CDDL
    $comid-role-type-choice /= &(maintainer: 2)
 
    conditional-endorsement-series-triple-record = [
-     stateful-environment-record
-     ; order matters: the first matching record wins and halts matching
-     [ + conditional-series-record ]
+     condition: stateful-environment-record
+     series: [ + conditional-series-record ]
    ]
 
    conditional-series-record = [
-     ; reference values to be matched against evidence
-     refv: measurement-values-map
+     selection: [ + measurement-map]
      ; endorsed values that apply in case revf matches
-     endv: measurement-values-map
+     addition: [ + measurement-map ]
    ]
 
    COSE_KeySet = [ + COSE_Key ]
@@ -3838,7 +3845,7 @@ Appendix A.  Base CoRIM CDDL
 
    stateful-environment-record = [
      environment-map,
-     measurement-map
+     [ + measurement-map ]
    ]
 
    svn-type = uint
