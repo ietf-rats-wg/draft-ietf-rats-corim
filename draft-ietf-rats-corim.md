@@ -1119,6 +1119,67 @@ An Endorsed Values triple declares additional measurements to add to the ACS.
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
 
+#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
+
+The semantics of the Conditional Endorsement Triple is as follows:
+
+> "IF accepted state matches all `conds` values, THEN every entry in the `endorsements` is added to the accepted state"
+
+~~~ cddl
+{::include cddl/conditional-endorsement-triple-record.cddl}
+~~~
+
+A `conditional-endorsement-triple-record` has the following parameters:
+
+* `conditions`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
+* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
+
+The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
+
+Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.
+
+Notes:
+
+* In order to give the expected result, the condition must describe the expected context completely.
+* The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.
+
+There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
+
+#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
+
+A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
+that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
+that have matching Evidence.
+
+The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
+matched.
+
+~~~ cddl
+{::include cddl/stateful-environment-record.cddl}
+~~~
+
+The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
+The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
+
+For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
+
+The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
+For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
+
+If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
+
+If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
+If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
+If the series `addition` entry contains `authorized-by` values, they are ignored.
+
+~~~ cddl
+{::include cddl/conditional-endorsement-series-triple-record.cddl}
+~~~
+
+~~~ cddl
+{::include cddl/conditional-series-record.cddl}
+~~~
+
 #### Device Identity Triple {#sec-comid-triple-identity}
 
 A Device Identity triple record relates one or more cryptographic keys to a device identity.
@@ -1202,67 +1263,6 @@ measurements for the Target Environment.
 ~~~ cddl
 {::include cddl/coswid-triple-record.cddl}
 ~~~
-
-#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
-
-A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
-that have matching Evidence.
-
-The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
-matched.
-
-~~~ cddl
-{::include cddl/stateful-environment-record.cddl}
-~~~
-
-The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
-The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
-
-For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
-
-The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
-For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
-
-If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
-
-If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
-If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
-If the series `addition` entry contains `authorized-by` values, they are ignored.
-
-~~~ cddl
-{::include cddl/conditional-endorsement-series-triple-record.cddl}
-~~~
-
-~~~ cddl
-{::include cddl/conditional-series-record.cddl}
-~~~
-
-#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
-
-The semantics of the Conditional Endorsement Triple is as follows:
-
-> "IF accepted state matches all `conds` values, THEN every entry in the `endorsements` is added to the accepted state"
-
-~~~ cddl
-{::include cddl/conditional-endorsement-triple-record.cddl}
-~~~
-
-A `conditional-endorsement-triple-record` has the following parameters:
-
-* `conditions`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
-* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
-
-The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
-
-Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.
-
-Notes:
-
-* In order to give the expected result, the condition must describe the expected context completely.
-* The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.
-
-There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
 
 ## Extensibility {#sec-extensibility}
 
@@ -1803,37 +1803,88 @@ The selected tags are mapped to an internal representation, making them suitable
 
 {: rtt-enum}
 * An available `rv` list entry ({{sec-ir-ref-val}}) is allocated.
-The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.
+* The ECT `cmtype` of the `ev` entry is set to `reference-values`.
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `element-list` of the `rv` `addition` ECT.
+
+* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
 Endorsement Triple Transformation :
 
-{:ett-enum: counter="bar" style="format Step %d."}
+{:ett-enum: counter="ett" style="format Step %d."}
 
 {: ett-enum}
 * An available `ev` entry ({{sec-ir-end-val}}) is allocated.
-The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `elements` list.
+* The ECT `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
+
+* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
 
 Conditional Endorsement Triple Transformation :
 
-> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+{:cett-enum: counter="cett" style="format Step %d."}
+
+{: cett-enum}
+* An available `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The ECT `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+
+* For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` array, the `stateful-environment-record` is copied to a `condition` ECT in the `ev` entry.
+The `environment-map` of the `stateful-environment-record` is copied to the ECT `environment` field.
+
+* For each `measurement-map` entry in the measurements list of the `stateful-environment-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `condition` ECT `element-map` of the `element-list`.
+
+* For each entry in the Conditional Endorsement Triple `endorsements` array, the `endorsed-triple-record` is copied to an `addition` ECT in the `ev` entry.
+The `environment-map` of the `endorsed-triple-record` is copied to the ECT `environment` field.
+
+* For each `measurement-map` entry in the measurements list of the `endorsed-triple-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
+
+* The issuer of the Conditional Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
 
 Conditional Endorsement Series Triple Transformation :
 
-> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+{:cestt-enum: counter="cestt" style="format Step %d."}
+
+{: cestt-enum}
+* An available `evs` entry ({{sec-ir-end-val}}) is allocated.
+
+* The ECT `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
+
+* From the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition`, the `stateful-environment-record` is copied to the `condition` ECT in the `evs` entry.
+The `environment-map` of the `stateful-environment-record` is copied to the ECT `environment` field.
+
+* For each `conditional-series-record` in the `series` array, and each `evs` `series` entry, the following steps are performed:
+
+{:cestt2-enum: counter="cestt2" style="format Sub-step %d."}
+
+{: cestt2-enum}
+* The i<sup>th</sup> `measurement-map` in the `selection` is copied to the i<sup>th</sup> `measurement-map` in the `evs` `selection` ECT `element-map`.
+
+* The `environment-map` of the `condition` ECT is copied to the i<sup>th</sup> `environment-map` in the `evs` `selection` ECT `environment-map`.
+
+* The i<sup>th</sup> `measurement-map` in the `addition` is copied to the i<sup>th</sup> `measurement-map` in the `evs` `addition` ECT `element-map`.
+
+* The `environment-map` of the `condition` ECT is copied to the i<sup>th</sup> `environment-map` in the `evs` `addition` ECT `environment-map`.
+
+{: cestt-enum}
+* The issuer of the Conditional Endorsement conceptual message is copied to the `evs` `series` `addition` ECT `authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `evs` `series` `addition` ECT `profile` field.
 
 #### Evidence Tranformation
 
