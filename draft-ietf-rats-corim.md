@@ -1466,7 +1466,7 @@ CoRIM-based data structures define an external representation of Conceptual Mess
 Appraisal processing describes both mapping transformations and Verifier reconciliation ({{sec-verifier-rec}}).
 Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.
 
-If the Verifier requires CoBOMs, then the only CoRIM inputs are those activated by the CoBOM.
+If a Verifier requires CoBOMs, then the CoRIM inputs indicated explicitly by the CoBOM are the only appropriate and required CoRIMs.
 If the Verifier does not require CoBOMs, then the CoRIM inputs consist of the knowledge base of CoRIMs available to the Verifier at the beginning of appraisal.
 The knowledge base state SHOULD have an immutable label for attestation results to have auditable provenance.
 
