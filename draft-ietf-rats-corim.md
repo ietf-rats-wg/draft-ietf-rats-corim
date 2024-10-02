@@ -2046,7 +2046,6 @@ Additions to the ACS MUST be atomic.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
-The algorithm used to compare a condition ECT against the ACS is stateless; it depends only on the condition ECT being compared and the contents of the ACS at the time of the comparison.
 
 A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
@@ -2057,7 +2056,8 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 ### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
-If the condition ECT contains a profile then the documentation for that profile describes the matching algorithm.
+If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
+If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
 Profile authors SHOULD make their matching algorithms similar to the algorithm described in this document where appropriate.
 
 A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}}, {{sec-compare-authority}} and {{sec-compare-element-list}}.
