@@ -1619,7 +1619,7 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 | addition  | `environment`   | Mandatory   |
-|           | `elements`      | Mandatory   |
+|           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cm type`       | Mandatory   |
 |           | `profile`       | Optional    |
