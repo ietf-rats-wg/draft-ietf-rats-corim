@@ -1217,7 +1217,7 @@ matched.
 ~~~
 
 The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
-The `selection` and `addition` operate within the scope of the `conditional-endorsement-series-triple-record`'s matching `condition`.
+The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
 
 For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
 
