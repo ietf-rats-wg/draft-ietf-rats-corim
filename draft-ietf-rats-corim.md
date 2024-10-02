@@ -2130,7 +2130,7 @@ If any codepoint present in the condition ECT `measurement-values-map` does not 
 A Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
 
 Non-negative codepoints represent standard data representations.
-The comparison algorithms for these are defined in this document (in the sections below) or in other standards.
+The comparison algorithms for these are defined in this document (in the sections below) or in other specifications.
 For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
 
 Negative codepoints represent profile defined data representations.
