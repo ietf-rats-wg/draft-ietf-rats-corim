@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 4 April 2025                                             Linaro
+Expires: 5 April 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          1 October 2024
+                                                          2 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 April 2025.
+   This Internet-Draft will expire on 5 April 2025.
 
 Copyright Notice
 
@@ -2774,10 +2774,6 @@ Table of Contents
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/71
 
-   The algorithm used to compare a condition ECT against the ACS is
-   stateless; it depends only on the condition ECT being compared and
-   the contents of the ACS at the time of the comparison.
-
    A Verifier SHALL iterate over all ACS entries and SHALL attempt to
    match the condition ECT against each ACS entry using the algorithm
    described in Section 8.9.1.  A Verifier SHALL create a "matched
@@ -2792,10 +2788,16 @@ Table of Contents
 
 8.9.1.  Comparing a condition ECT against a single ACS entry
 
-   If the condition ECT contains a profile then the documentation for
-   that profile describes the matching algorithm.  Profile authors
-   SHOULD make their matching algorithms similar to the algorithm
-   described in this document where appropriate.
+   If the condition ECT contains a profile and the profile defines an
+   algorithm for a codepoint and environment-map then a Verifier MUST
+   use the algorithm defined by the profile (or a standard algorithm if
+   the profile defines that).  If the condition ECT contains a profile,
+   but the profile does not define an algorithm for a particular
+   codepoint and environment-map then the verifier MUST use the standard
+   algorithm described in this document to compare the data at that
+   codepoint.  Profile authors SHOULD make their matching algorithms
+   similar to the algorithm described in this document where
+   appropriate.
 
    A Verifier SHALL perform all of the comparisons in sections
    Section 8.9.2, Section 8.9.3 and Section 8.9.4.
