@@ -1694,14 +1694,14 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 | ECT type      | ECT Field       | Requirement |
 |---
 | acs-condition | `environment`   | Optional    |
-|               | `elements`      | Optional    |
+|               | `element-list`  | Optional    |
 |               | `authority`     | Optional    |
-|               | `cm type`  | n/a         |
+|               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
-|               | `elements`      | Mandatory   |
+|               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
-|               | `cm type`       | Mandatory   |
+|               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
