@@ -1206,7 +1206,7 @@ measurements for the Target Environment.
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements
+that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
 that have matching Evidence.
 
 The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
@@ -1216,15 +1216,19 @@ matched.
 {::include cddl/stateful-environment-record.cddl}
 ~~~
 
-The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
-Each `conditional-series-record` record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
-The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match an ACS Entry, the triple is not matched,
-and no Endorsed values are accepted.
+The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
+The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
 
-The `authorized-by` value in `measurement-map` in the stateful environment, if present,
-applies to all measurements in the triple, including `conditional-series-record` records.
+For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
+
+The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
+For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
+
+If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
+
+If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
+If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
+If the series `addition` entry contains `authorized-by` values, they are ignored.
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-series-triple-record.cddl}
@@ -1807,7 +1811,7 @@ The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is c
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
 
-#### Endorsement Triples Tranformations {#sec-end-trans}
+#### Endorsement Triples Transformations {#sec-end-trans}
 
 Endorsement Triple Transformation :
 
