@@ -1036,7 +1036,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 5 April 2025</td>
+<td class="center">Expires 6 April 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1049,12 +1049,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-10-02" class="published">2 October 2024</time>
+<time datetime="2024-10-03" class="published">3 October 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-04-05">5 April 2025</time></dd>
+<dd class="expires"><time datetime="2025-04-06">6 April 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1116,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 5 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 6 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3163,19 +3163,27 @@ $domain-type-choice /= tagged-oid-type
             <h5 id="name-reference-values-triple">
 <a href="#section-5.1.4.2" class="section-number selfRef">5.1.4.2. </a><a href="#name-reference-values-triple" class="section-name selfRef">Reference Values Triple</a>
             </h5>
-<p id="section-5.1.4.2-1">A Reference Values triple relates reference measurements to a Target
-Environment. For Reference Value Claims, the subject identifies a Target
-Environment, the object contains measurements, and the predicate asserts that
-these are the expected (i.e., reference) measurements for the Target
-Environment.<a href="#section-5.1.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.2-1">The Reference Values Triple has the following structure:<a href="#section-5.1.4.2-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.2-2">
 <pre>
 reference-triple-record = [
-  environment-map
-  [ + measurement-map ]
+  ref-env: environment-map
+  ref-claims: [ + measurement-map ]
 ]
 </pre><a href="#section-5.1.4.2-2" class="pilcrow">¶</a>
 </div>
+<p id="section-5.1.4.2-3">The <code>reference-triple-record</code> has the following parameters:<a href="#section-5.1.4.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.2-4.1">
+                <p id="section-5.1.4.2-4.1.1"><code>ref-env</code>: Search criteria that targets Evidence environments in the ACS.<a href="#section-5.1.4.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.2-4.2">
+                <p id="section-5.1.4.2-4.2.1"><code>ref-claims</code>: Search criteria that targets Evidence Claims in the ACS.<a href="#section-5.1.4.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-5.1.4.2-5">To process <code>reference-triple-record</code> both the <code>ref-env</code> and <code>ref-claims</code> are compared with entries from the ACS.
+If these conditions are met, the matching ACS entry is copied into a new ACS entry that is added to the ACS,
+but with the Reference Value Provider's authority.<a href="#section-5.1.4.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-endval">
@@ -3183,15 +3191,27 @@ reference-triple-record = [
             <h5 id="name-endorsed-values-triple">
 <a href="#section-5.1.4.3" class="section-number selfRef">5.1.4.3. </a><a href="#name-endorsed-values-triple" class="section-name selfRef">Endorsed Values Triple</a>
             </h5>
-<p id="section-5.1.4.3-1">An Endorsed Values triple declares additional measurements to add to the ACS.<a href="#section-5.1.4.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.3-1">The Endorsed Values Triple has the following structure:<a href="#section-5.1.4.3-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.3-2">
 <pre>
 endorsed-triple-record = [
-  environment-map
-  [ + measurement-map ]
+  condition: environment-map
+  endorsement: [ + measurement-map ]
 ]
 </pre><a href="#section-5.1.4.3-2" class="pilcrow">¶</a>
 </div>
+<p id="section-5.1.4.3-3">The <code>endorsed-triple-record</code> has the following parameters:<a href="#section-5.1.4.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.3-4.1">
+                <p id="section-5.1.4.3-4.1.1"><code>condition</code>: Search criteria applied to the ACS that dermines if the <code>endorsement</code> applies.<a href="#section-5.1.4.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.3-4.2">
+                <p id="section-5.1.4.3-4.2.1"><code>endorsement</code>: Claims to be added to the ACS.<a href="#section-5.1.4.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-5.1.4.3-5">To proess a <code>endorsed-triple-record</code> the <code>condition</code> is compared with entries from the ACS.
+If the condition is met, the <code>endorsement</code> is combined with the <code>environment-map</code> of the matched <code>condition</code> to form a new ACS entry.
+The new ACS entry is added to the ACS with the Endorser's authority.<a href="#section-5.1.4.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-cond-endors">
@@ -3199,41 +3219,34 @@ endorsed-triple-record = [
             <h5 id="name-conditional-endorsement-tri">
 <a href="#section-5.1.4.4" class="section-number selfRef">5.1.4.4. </a><a href="#name-conditional-endorsement-tri" class="section-name selfRef">Conditional Endorsement Triple</a>
             </h5>
-<p id="section-5.1.4.4-1">The semantics of the Conditional Endorsement Triple is as follows:<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-5.1.4.4-2.1">
-                <p id="section-5.1.4.4-2.1.1">"IF accepted state matches all <code>conds</code> values, THEN every entry in the <code>endorsements</code> is added to the accepted state"<a href="#section-5.1.4.4-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<div class="lang-cddl sourcecode" id="section-5.1.4.4-3">
+<p id="section-5.1.4.4-1">The Conditional Endorsement Triple has the following structure:<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.4-2">
 <pre>
 conditional-endorsement-triple-record = [
   conditions: [ + stateful-environment-record ]
   endorsements: [ + endorsed-triple-record ]
 ]
+</pre><a href="#section-5.1.4.4-2" class="pilcrow">¶</a>
+</div>
+<div class="lang-cddl sourcecode" id="section-5.1.4.4-3">
+<pre>
+stateful-environment-record = [
+  environment-map,
+  [ + measurement-map ]
+]
 </pre><a href="#section-5.1.4.4-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.4-4">A <code>conditional-endorsement-triple-record</code> has the following parameters:<a href="#section-5.1.4.4-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-4">The <code>conditional-endorsement-triple-record</code> has the following parameters:<a href="#section-5.1.4.4-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.4-5.1">
-                <p id="section-5.1.4.4-5.1.1"><code>conditions</code>: all target environments, along with a specific state, that need to match <code>state-triples</code> entries in the ACS for the endorsement(s) to apply<a href="#section-5.1.4.4-5.1.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.4-5.1.1"><code>conditions</code>: Search criteria applied to the ACS that dermines if the <code>endorsements</code> apply.<a href="#section-5.1.4.4-5.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.4-5.2">
-                <p id="section-5.1.4.4-5.2.1"><code>endorsements</code>: endorsements that are added to the ACS <code>state-triples</code> if all <code>conds</code> match.<a href="#section-5.1.4.4-5.2.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.4-5.2.1"><code>endorsements</code>: Sets of Claims to be added to the ACS.<a href="#section-5.1.4.4-5.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.4-6">The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.<a href="#section-5.1.4.4-6" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.4-7">Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.<a href="#section-5.1.4.4-7" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.4-8">Notes:<a href="#section-5.1.4.4-8" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.1.4.4-9.1">
-                <p id="section-5.1.4.4-9.1.1">In order to give the expected result, the condition must describe the expected context completely.<a href="#section-5.1.4.4-9.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-5.1.4.4-9.2">
-                <p id="section-5.1.4.4-9.2.1">The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.<a href="#section-5.1.4.4-9.2.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<p id="section-5.1.4.4-10">There are scope-related questions that need to be answered.  (<span class="cref" id="tracked-at_2">Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)<a href="#section-5.1.4.4-10" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-6">To process a <code>conditional-endorsement-triple-record</code> the <code>conditions</code> are compared with entries from the ACS.
+If all the conditions are met, the <code>endorsements</code> are added to the ACS with the Endorser's authority.<a href="#section-5.1.4.4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-cond-series">
@@ -3241,44 +3254,49 @@ conditional-endorsement-triple-record = [
             <h5 id="name-conditional-endorsement-ser">
 <a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
             </h5>
-<p id="section-5.1.4.5-1">A Conditional Endorsement Series triple uses a stateful environment, (i.e., <code>stateful-environment-record</code>),
-that identifies a Target Environment based on an <code>environment-map</code> plus one or more <code>measurement-map</code> measurements
-that have matching Evidence.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-2">The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
-matched.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-3">
-<pre>
-stateful-environment-record = [
-  environment-map,
-  [ + measurement-map ]
-]
-</pre><a href="#section-5.1.4.5-3" class="pilcrow">¶</a>
-</div>
-<p id="section-5.1.4.5-4">The series is an array of <code>conditional-series-record</code> that has a <code>selection</code> and an <code>addition</code>, both expressed as a list of <code>measurement-map</code>.
-The <code>selection</code> and <code>addition</code> operate within the scope of the <code>environment-map</code> found in the <code>conditional-endorsement-series-triple-record</code>'s <code>condition</code>.<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-5">For each <code>conditional-series-record</code> entry, if the <code>selection</code> matches the ACS entry, the <code>addition</code> is added to the ACS.<a href="#section-5.1.4.5-5" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-6">The first <code>conditional-series-record</code> entry that successfully matches the ACS entry terminates the series.
-For a <code>conditional-series-record</code> to match, every measurement in the <code>measurement-map</code> list MUST match a measurement in the ACS entry.<a href="#section-5.1.4.5-6" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-7">If none of the <code>selection</code> values match in the ACS entry, the triple is not matched, and no <code>addition</code> values are accepted.<a href="#section-5.1.4.5-7" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-8">If the <code>authorized-by</code> value is present in the triple <code>condition</code> (i.e., in the <code>measurement-map</code> of the <code>stateful-environment-record</code>), all authority entries of the <code>condition</code> MUST be present in the ACS entry, otherwise the ACS entry does not match.
-If the series <code>selection</code> populates <code>authorized-by</code>, the ACS MUST contain the same measurements and authority as contained in the <code>selection</code> entry.
-If the series <code>addition</code> entry contains <code>authorized-by</code> values, they are ignored.<a href="#section-5.1.4.5-8" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-9">
+<p id="section-5.1.4.5-1">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-2">
 <pre>
 conditional-endorsement-series-triple-record = [
   condition: stateful-environment-record
   series: [ + conditional-series-record ]
 ]
-</pre><a href="#section-5.1.4.5-9" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-2" class="pilcrow">¶</a>
 </div>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-10">
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-3">
 <pre>
 conditional-series-record = [
   selection: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
-</pre><a href="#section-5.1.4.5-10" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-3" class="pilcrow">¶</a>
 </div>
+<p id="section-5.1.4.5-4">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.5-5.1">
+                <p id="section-5.1.4.5-5.1.1"><code>condition</code>: Search criteria applied to the ACS that dermines if the <code>series</code> applies.<a href="#section-5.1.4.5-5.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.5-5.2">
+                <p id="section-5.1.4.5-5.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-5.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-5.1.4.5-6">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.5-7.1">
+                <p id="section-5.1.4.5-7.1.1"><code>selection</code>: Search criteria applied to the ACS entries resulting from the matched <code>conditions</code><a href="#section-5.1.4.5-7.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.5-7.2">
+                <p id="section-5.1.4.5-7.2.1"><code>addition</code>: Claims to be added to the ACS is the <code>selection</code> is satisfied.<a href="#section-5.1.4.5-7.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-5.1.4.5-8">To process a<code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with entries from the ACS.
+If the condition is met, the <code>series</code> records are processed.<a href="#section-5.1.4.5-8" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-9">The <code>series</code> array contains a set of <code>conditional-series-record</code> entries.<a href="#section-5.1.4.5-9" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-10">For each <code>series</code> entry,
+if the <code>selection</code> matches an entry found in the <code>condition</code> result,
+the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new ACS entry.
+The new ACS entry is added to the ACS with the Endorser's authority.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-11">The first <code>series</code> entry that successfully matches a <code>selection</code> terminates <code>series</code> processing.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-identity">
@@ -6137,8 +6155,8 @@ $domain-type-choice /= tagged-uuid-type
 $domain-type-choice /= tagged-oid-type
 
 endorsed-triple-record = [
-  environment-map
-  [ + measurement-map ]
+  condition: environment-map
+  endorsement: [ + measurement-map ]
 ]
 
 entity-map&lt;role-type-choice, extension-socket&gt; = {
@@ -6236,8 +6254,8 @@ $raw-value-type-choice /= tagged-bytes
 raw-value-mask-type = bytes
 
 reference-triple-record = [
-  environment-map
-  [ + measurement-map ]
+  ref-env: environment-map
+  ref-claims: [ + measurement-map ]
 ]
 
 stateful-environment-record = [
