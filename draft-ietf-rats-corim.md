@@ -1129,7 +1129,7 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: Search criteria applied to the ACS that determines if the `endorsement` applies.
 * `endorsement`: Claims to be added to the ACS.
 
-To proess a `endorsed-triple-record` the `condition` is compared with entries from the ACS.
+To process a `endorsed-triple-record` the `condition` is compared with entries from the ACS.
 If the condition is met, the `endorsement` is combined with the `environment-map` of the matched `condition` to form a new ACS entry.
 The new ACS entry is added to the ACS with the Endorser's authority.
 
