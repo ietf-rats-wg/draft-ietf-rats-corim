@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 5 April 2025                                             Linaro
+Expires: 6 April 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          2 October 2024
+                                                          3 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 April 2025.
+   This Internet-Draft will expire on 6 April 2025.
 
 Copyright Notice
 
@@ -238,12 +238,12 @@ Table of Contents
    using an extensible format common to all supply chain actors and
    Verifiers.  CoRIM enables Verifiers to reconcile a complex
    distributed supply chain into a single homogeneous view.  See
-   (Section 2).
+   Section 2.
 
 1.1.  Terminology and Requirements Language
 
    This document uses terms and concepts defined by the RATS
-   architecture.  For a complete glossary, see (Section 4 of [RFC9334]).
+   architecture.  For a complete glossary, see Section 4 of [RFC9334].
 
    In this document, the term CoRIM message and CoRIM documents are used
    as synonyms.  A CoRIM data structure can be at rest (e.g., residing
@@ -312,7 +312,7 @@ Table of Contents
    Conceptual Message types, "Reference Values" and "Endorsements".
    Reference values and Endorsements are required for Verifier
    reconciliation, and Evidence is required for corresponding internal
-   ACS creation as illustrated in (Section 2.2).
+   ACS creation as illustrated in Section 2.2.
 
 2.1.  Internal Representation
 
@@ -321,9 +321,9 @@ Table of Contents
    procedure.  The actual internal representation of a Verifier is
    implementation-specific and out-of-scope of this document.
    Requirements for an internal representation of Conceptual Messages
-   are defined in (Table 1), where each Conceptual Message type has a
+   are defined in Table 1, where each Conceptual Message type has a
    structure as depicted by the _Structure_ column.  The internal
-   representations used by this document are defined in (Section 8.2.1).
+   representations used by this document are defined in Section 8.2.1.
 
 2.2.  Interacting with an ACS
 
@@ -360,7 +360,7 @@ Table of Contents
    |              | series of          | is satisfied, then add the   |
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
-   |              |                    | See (Section 8.2.1.3)        |
+   |              |                    | See Section 8.2.1.3          |
    +--------------+--------------------+------------------------------+
    | Verifier     | List of expected   | If the list of expected      |
    |              | actual state       | claims are in the ACS, then  |
@@ -378,7 +378,7 @@ Table of Contents
    | Results      | actual state       | claims are in the ACS, then  |
    |              | claims, List of    | copy the list of Attestation |
    |              | expected           | Results claims into the ARS. |
-   |              | Attestation        | See (Section 8.2.3)          |
+   |              | Attestation        | See Section 8.2.3            |
    |              | Results claims     |                              |
    +--------------+--------------------+------------------------------+
 
@@ -393,7 +393,7 @@ Table of Contents
 3.  Typographical Conventions for CDDL
 
    The CDDL definitions in this document follows the naming conventions
-   illustrated in (Table 2).
+   illustrated in Table 2.
 
    +========================+===============+==========================+
    | Type trait             | Example       | Typographical convention |
@@ -435,7 +435,7 @@ Table of Contents
    *  Concise Module ID (CoMID) tags (Section 5) contain metadata and
       claims about the hardware and firmware modules.
 
-   *  Concise Software ID (CoSWID) tags [RFC9393] describe software
+   *  Concise Software ID (CoSWID) tags ([RFC9393]) describe software
       components.
 
    *  Concise Bill of Material (CoBOM) tags (Section 6) contain the list
@@ -444,7 +444,7 @@ Table of Contents
 
    The set of tags is extensible so that future specifications can add
    new kinds of information.  For example, Concise Trust Anchor Stores
-   (CoTS) [I-D.ietf-rats-concise-ta-stores] is currently being defined
+   (CoTS) ([I-D.ietf-rats-concise-ta-stores]) is currently being defined
    as a standard CoRIM extension.
 
    Each CoRIM contains a unique identifier to distinguish a CoRIM from
@@ -464,7 +464,7 @@ Table of Contents
       NOT change the base CoRIM CDDL definition's semantics, which
       includes not changing or overloading names and numbers registered
       at IANA registries used by this document.  For more detail, see
-      (Section 4.1.4).
+      Section 4.1.4.
 
    *  A validity period, which indicates the time period for which the
       CoRIM contents are valid.
@@ -504,29 +504,30 @@ Table of Contents
    The following describes each child item of this map.
 
    *  id (index 0): A globally unique identifier to identify a CoRIM.
-      Described in (Section 4.1.1)
+      Described in Section 4.1.1.
 
    *  tags (index 1): An array of one or more CoMID or CoSWID tags.
-      Described in (Section 4.1.2)
+      Described in Section 4.1.2.
 
    *  dependent-rims (index 2): One or more services supplying
       additional, possibly dependent, manifests or related files.
-      Described in (Section 4.1.3)
+      Described in Section 4.1.3.
 
    *  profile (index 3): An optional profile identifier for the tags
       contained in this CoRIM.  The profile MUST be understood by the
       CoRIM processor.  Failure to recognize the profile identifier MUST
       result in the rejection of the entire CoRIM.  If missing, the
-      profile defaults to DICE.  Described in (Section 4.1.4)
+      profile defaults to DICE.  Described in Section 4.1.4.
 
    *  rim-validity (index 4): Specifies the validity period of the
-      CoRIM.  Described in (Section 7.3)
+      CoRIM.  Described in Section 7.3.
 
    *  entities (index 5): A list of entities involved in a CoRIM life-
-      cycle.  Described in (Section 4.1.5)
+      cycle.  Described in Section 4.1.5.
 
    *  $$corim-map-extension: This CDDL socket is used to add new
-      information structures to the corim-map.  See (Section 11.3).
+      information structures to the corim-map.  Described in
+      Section 11.3.
 
    tagged-corim-map = #6.501(corim-map)
 
@@ -542,7 +543,7 @@ Table of Contents
 4.1.2.  Tags
 
    A $concise-tag-type-choice is a tagged CBOR payload that carries
-   either a CoMID (Section 5), a CoSWID [RFC9393], or a CoBOM
+   either a CoMID (Section 5), a CoSWID ([RFC9393]), or a CoBOM
    (Section 6).
 
    $concise-tag-type-choice /= tagged-concise-swid-tag
@@ -566,7 +567,7 @@ Table of Contents
       be fetched
 
    *  thumbprint (index 1): expected digest of the resource referenced
-      by href.  See (Section 7.7).
+      by href.  See sec-common-hash-entry}}.
 
 4.1.4.  Profile Types
 
@@ -587,9 +588,9 @@ Table of Contents
    CoRIM profiles SHOULD be specified in a publicly available document.
 
    A CoRIM profile can use one of the base CoRIM media types defined in
-   (Section 11.6.1) and (Section 11.6.2) with the profile parameter set
-   to the appropriate value.  Alternatively, it MAY define and register
-   its own media type.
+   Section 11.6.1 and Section 11.6.2 with the profile parameter set to
+   the appropriate value.  Alternatively, it MAY define and register its
+   own media type.
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
 
@@ -676,7 +677,7 @@ Table of Contents
       the CoRIM Issuer.
 
    *  corim-meta (index 8): A map that contains metadata associated with
-      a signed CoRIM.  Described in (Section 4.2.2).
+      a signed CoRIM.  Described in Section 4.2.2.
 
    Additional data can be included in the COSE header map as per
    (Section 3 of [STD96]).
@@ -695,10 +696,10 @@ Table of Contents
    The following describes each child item of this group.
 
    *  signer (index 0): Information about the entity that signs the
-      CoRIM.  Described in (Section 4.2.2.1)
+      CoRIM.  Described in Section 4.2.2.1.
 
    *  signature-validity (index 1): Validity period for the CoRIM.
-      Described in (Section 7.3)
+      Described in Section 7.3.
 
 4.2.2.1.  Signer Map
 
@@ -800,21 +801,21 @@ Table of Contents
 
    *  tag-identity (index 1): A tag-identity-map containing unique
       identification information for the CoMID.  Described in
-      (Section 5.1.1).
+      Section 5.1.1.
 
    *  entities (index 2): Provides information about one or more
       organizations responsible for producing the CoMID tag.  Described
-      in (Section 5.1.2).
+      in Section 5.1.2.
 
-   *  linked-tags (index 3): A list of one or more linked-tag-map.
-      Described in (Section 5.1.3), providing typed relationships
-      between this and other CoMIDs.
+   *  linked-tags (index 3): A list of one or more linked-tag-map
+      providing typed relationships between this and other CoMIDs.
+      Described in Section 5.1.3).
 
    *  triples (index 4): One or more triples providing information
       specific to the described module, e.g.: reference or endorsed
       values, cryptographic material, or structural relationship between
       the described module and other modules.  Described in
-      (Section 5.1.4).
+      Section 5.1.4.
 
 5.1.1.  Tag Identity
 
@@ -826,10 +827,10 @@ Table of Contents
    The following describes each member of the tag-identity-map.
 
    *  tag-id (index 0): A universally unique identifier for the CoMID.
-      Described in (Section 5.1.1.1).
+      Described in Section 5.1.1.1.
 
    *  tag-version (index 1): Optional versioning information for the
-      tag-id . Described in (Section 5.1.1.2).
+      tag-id.  Described in Section 5.1.1.2.
 
 5.1.1.1.  Tag ID
 
@@ -866,8 +867,8 @@ Table of Contents
    comid-entity-map =
      entity-map<$comid-role-type-choice, $$comid-entity-map-extension>
 
-   The CoMID Entity is an instantiation of the Entity generic
-   (Section 7.2) using a $comid-role-type-choice.
+   The CoMID Entity is an instantiation of entity-map (Section 7.2)
+   using a $comid-role-type-choice.
 
    The $$comid-entity-map-extension extension socket is empty in this
    specification.
@@ -899,7 +900,7 @@ Table of Contents
    The following describes each member of the tag-identity-map.
 
    *  linked-tag-id (index 0): Unique identifier for the target tag.
-      For the definition see (Section 5.1.1.1).
+      See Section 5.1.1.1.
 
    *  tag-rel (index 1): the kind of relation linking the source tag to
       the target identified by linked-tag-id.
@@ -947,37 +948,37 @@ Table of Contents
    The following describes each member of the triples-map:
 
    *  reference-triples (index 0): Triples containing reference values.
-      Described in (Section 5.1.4.2).
+      Described in Section 5.1.4.2.
 
    *  endorsed-triples (index 1): Triples containing endorsed values.
-      Described in (Section 5.1.4.3).
+      Described in Section 5.1.4.3.
 
    *  identity-triples (index 2): Triples containing identity
-      credentials.  Described in (Section 5.1.4.4).
+      credentials.  Described in Section 5.1.4.4.
 
    *  attest-key-triples (index 3): Triples containing verification keys
       associated with attesting environments.  Described in
-      (Section 5.1.4.5).
+      Section 5.1.4.5.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in (Section 5.1.4.6).
+      relationships between domains.  Described in Section 5.1.4.6.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      (Section 5.1.4.7).
+      Section 5.1.4.7.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in (Section 5.1.4.8).
+      existing CoSWID tags.  Described in Section 5.1.4.8.
 
-   *  conditional-endorsement-series-triples (index 8) Triples
+   *  conditional-endorsement-series-triples (index 8): Triples
       describing a series of conditional Endorsements based on the
       acceptance of a stateful environment.  Described in
-      (Section 5.1.4.9).
+      Section 5.1.4.9.
 
-   *  conditional-endorsement-triples (index 10) Triples describing a
+   *  conditional-endorsement-triples (index 10): Triples describing a
       series of Endorsement that are applicable based on the acceptance
       of a series of stateful environment records.  Described in
-      (Section 5.1.4.10).
+      Section 5.1.4.10.
 
 5.1.4.1.  Environments
 
@@ -1000,13 +1001,13 @@ Table of Contents
    The following describes each member of the environment-map:
 
    *  class (index 0): Contains "class" attributes associated with the
-      module.  Described in (Section 5.1.4.1.1).
+      module.  Described in Section 5.1.4.1.1.
 
    *  instance (index 1): Contains a unique identifier of a module's
-      instance.  See (Section 5.1.4.1.2).
+      instance.  Described in Section 5.1.4.1.2.
 
    *  group (index 2): identifier for a group of instances, e.g., if an
-      anonymization scheme is used.
+      anonymization scheme is used.  Described in Section 5.1.4.1.3.
 
 5.1.4.1.1.  Environment Class
 
@@ -1117,16 +1118,16 @@ Table of Contents
 
    The following describes each member of the measurement-map:
 
-   *  mkey (index 0): An optional measurement key.  See
-      (Section 5.1.4.1.4.1).
+   *  mkey (index 0): An optional measurement key.  Described in
+      Section 5.1.4.1.4.1.
 
    *  mval (index 1): The measurements associated with the environment.
-      Described in (Section 5.1.4.1.4.2).
+      Described in Section 5.1.4.1.4.2.
 
    *  authorized-by (index 2): The cryptographic identity of the
       individual or organization that is the designated authority for
-      this measurement.  For example, the producer of the measurement or
-      a delegate.
+      this measurement.  For example, the producer of the measurement.
+      See Section 5.1.4.1.5.
 
 5.1.4.1.4.1.  Measurement Keys
 
@@ -1175,22 +1176,22 @@ Table of Contents
    The following describes each member of the measurement-values-map.
 
    *  version (index 0): Typically changes whenever the measured
-      environment is updated.  Described in (Section 5.1.4.1.4.3).
+      environment is updated.  Described in Section 5.1.4.1.4.3.
 
    *  svn (index 1): The security version number typically changes only
       when a security relevant change is made to the measured
-      environment.  Described in (Section 5.1.4.1.4.4).
+      environment.  Described in Section 5.1.4.1.4.4.
 
    *  digests (index 2): Contains the digest(s) of the measured
       environment together with the respective hash algorithm used in
-      the process.  It uses the digests-type described in (Section 7.7).
+      the process.  It uses the digests-type.  Described in Section 7.7.
 
    *  flags (index 3): Describes security relevant operational modes.
       For example, whether the environment is in a debug mode, recovery
       mode, not fully configured, not secure, not replay protected or
       not integrity protected.  The flags field indicates which
       operational modes are currently associated with measured
-      environment.  Described in (Section 5.1.4.1.4.5).
+      environment.  Described in Section 5.1.4.1.4.5.
 
    *  raw-value (index 4): Contains the actual (not hashed) value of the
       element.  An optional raw-value-mask (index 5) indicates which
@@ -1204,33 +1205,32 @@ Table of Contents
       the encoding of raw-value and the corresponding raw-value-mask.
 
    *  mac-addr (index 6): A EUI-48 or EUI-64 MAC address associated with
-      the measured environment.  Described in (Section 5.1.4.1.4.7).
+      the measured environment.  Described in Section 5.1.4.1.4.7.
 
    *  ip-addr (index 7): An IPv4 or IPv6 address associated with the
-      measured environment.  Described in (Section 5.1.4.1.4.7).
+      measured environment.  Described in Section 5.1.4.1.4.7.
 
    *  serial-number (index 8): A text string representing the product
       serial number.
 
    *  ueid (index 9): UEID associated with the measured environment.
-      See (Section 7.5).
+      Described in Section 7.5.
 
    *  uuid (index 10): UUID associated with the measured environment.
-      See (Section 7.4).
+      Described in Section 7.4.
 
    *  name (index 11): a name associated with the measured environment.
 
    *  cryptokeys (index 13): identifies cryptographic keys that are
-      protected by the Target Environment See (Section 5.1.4.1.5) for
-      the supported formats.  An Attesting Environment determines that
-      keys are protected as part of Claims collection.  Appraisal
-      verifies that, for each value in cryptokeys, there is a matching
-      Reference Value entry.  Matching is described in
-      (Section 8.9.6.1.4).
+      protected by the Target Environment See Section 5.1.4.1.5 for the
+      supported formats.  An Attesting Environment determines that keys
+      are protected as part of Claims collection.  Appraisal verifies
+      that, for each value in cryptokeys, there is a matching Reference
+      Value entry.  Matching is described in Section 8.9.6.1.4.
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
-      (Section 5.1.4.1.6).
+      Section 5.1.4.1.6.
 
 5.1.4.1.4.3.  Version
 
@@ -1247,8 +1247,8 @@ Table of Contents
    *  version (index 0): the version string
 
    *  version-scheme (index 1): an optional indicator of the versioning
-      convention used in the version attribute.  Defined in (Section 4.1
-      of [RFC9393]).  The CDDL is copied below for convenience.
+      convention used in the version attribute.  Defined in Section 4.1
+      of [RFC9393].  The CDDL is copied below for convenience.
 
    $version-scheme /= &(multipartnumeric: 1)
    $version-scheme /= &(multipartnumeric-suffix: 2)
@@ -1387,10 +1387,10 @@ Table of Contents
    A cryptographic key can be one of the following formats:
 
    *  tagged-pkix-base64-key-type: PEM encoded SubjectPublicKeyInfo.
-      Defined in (Section 13 of [RFC7468]).
+      Defined in Section 13 of [RFC7468].
 
    *  tagged-pkix-base64-cert-type: PEM encoded X.509 public key
-      certificate.  Defined in (Section 5 of [RFC7468]).
+      certificate.  Defined in Section 5 of [RFC7468].
 
    *  tagged-pkix-base64-cert-path-type: X.509 certificate chain created
       by the concatenation of as many PEM encoded X.509 certificates as
@@ -1398,7 +1398,7 @@ Table of Contents
       each directly certifies the one preceding.
 
    *  tagged-cose-key-type: CBOR encoded COSE_Key or COSE_KeySet.
-      Defined in (Section 7 of [STD96]).
+      Defined in Section 7 of [STD96].
 
    A cryptographic key digest can be one of the following formats:
 
@@ -1801,7 +1801,7 @@ Table of Contents
 
    *  tag-identity (index 0): A tag-identity-map containing unique
       identification information for the CoBOM.  Described in
-      (Section 5.1.1).
+      Section 5.1.1.
 
    *  tags-list (index 1): A list of one or more tag-identity-maps
       identifying the CoMID and CoSWID tags that constitute the "bill of
@@ -1813,12 +1813,12 @@ Table of Contents
       MUST be activated or no tags are activated.
 
    *  bom-validity (index 2): Specifies the validity period of the
-      CoBOM.  Described in (Section 7.3)
+      CoBOM.  Described in Section 7.3.
 
    *  $$concise-bom-tag-extension: This CDDL socket is used to add new
-      information structures to the concise-bom-tag.  See
-      (Section 11.5).  The $$concise-bom-tag-extension extension socket
-      is empty in this specification.
+      information structures to the concise-bom-tag.  See Section 11.5.
+      The $$concise-bom-tag-extension extension socket is empty in this
+      specification.
 
 7.  Common Types
 
@@ -1858,10 +1858,10 @@ Table of Contents
    *  entity-name (index 0): The name of entity which is responsible for
       the action(s) as defined by the role. $entity-name-type-choice can
       only be text.  Other specifications can extend the $entity-name-
-      type-choice.  See (Section 11.4).
+      type-choice.  See Section 11.4.
 
    *  reg-id (index 1): A URI associated with the organization that owns
-      the entity name
+      the entity name.
 
    *  role (index 2): A type choice defining the roles that the entity
       is claiming.  The role is supplied as a parameter at the time the
@@ -1880,7 +1880,7 @@ Table of Contents
    signed object (e.g., a manifest).
 
    In a validity-map, both ends of the interval are encoded as epoch-
-   based date/time as per (Section 3.4.2 of [STD94]).
+   based date/time as per Section 3.4.2 of [STD94].
 
    validity-map = {
      ? &(not-before: 0) => time
@@ -1895,16 +1895,16 @@ Table of Contents
 
 7.4.  UUID
 
-   Used to tag a byte string as a binary UUID defined in (Section 4.1.2.
-   of [RFC4122]).
+   Used to tag a byte string as a binary UUID.  Defined in
+   Section 4.1.2. of [RFC4122].
 
    uuid-type = bytes .size 16
    tagged-uuid-type = #6.37(uuid-type)
 
 7.5.  UEID
 
-   Used to tag a byte string as Universal Entity ID Claim (UUID) defined
-   in (Section 4.2.1 of [I-D.ietf-rats-eat]).
+   Used to tag a byte string as Universal Entity ID Claim (UUID).
+   Defined in Section 4.2.1 of [I-D.ietf-rats-eat].
 
    ueid-type = bytes .size 33
    tagged-ueid-type = #6.550(ueid-type)
@@ -2060,8 +2060,8 @@ Table of Contents
    reference state:  Claims that describe various alternative states of
       a Target Environment.  Reference Values Claims typically describe
       various possible states due to versioning, manufactruing
-      practices, or supplier configuration options.  See also (Section 2
-      of [I-D.ietf-rats-endorsements]).
+      practices, or supplier configuration options.  See also Section 2
+      of [I-D.ietf-rats-endorsements].
 
    actual state:  Claims that describe a Target Environment instance at
       a given point in time.  Endorsed Values and Evidence typically are
@@ -2312,10 +2312,10 @@ Table of Contents
 
    During the initialization phase, the CoRIM Appraisal Context is
    loaded with various conceptual message inputs such as CoMID tags
-   (Section 5), CoSWID tags [RFC9393], CoBOM (Section 6) and
-   cryptographic validation key material (including raw public keys,
-   root certificates, intermediate CA certificate chains, and Concise
-   Trust Anchor Stores (CoTS, [I-D.ietf-rats-concise-ta-stores]).  These
+   (Section 5), CoSWID tags [RFC9393], CoBOM tags [I-D.ietf-rats-cobom],
+   and cryptographic validation key material (including raw public keys,
+   root certificates, intermediate CA certificate chains), and Concise
+   Trust Anchor Stores (CoTS) [I-D.ietf-rats-concise-ta-stores].  These
    objects will be utilized in the Evidence Appraisal phase that
    follows.  The primary goal of this phase is to ensure that all
    necessary information is available for subsequent processing.
@@ -2402,13 +2402,13 @@ Table of Contents
    cryptographically validate Evidence.
 
    The way cryptographic signature validation works depends on the
-   specific Evidence collection method used.  For instance, in DICE, a
+   specific Evidence collection method used.  For example, in DICE, a
    proof of liveness is carried out on the final key in the certificate
    chain (a.k.a., the alias certificate).  If this is successful, a
    suitable certification path is looked up in the Appraisal Context,
    based on linking information obtained from the DeviceID certificate.
-   See (Section 9.2.1 of [DICE.Layer]).  If a trusted root certificate
-   is found, the usual X.509 certificate validation is performed.
+   See Section 9.2.1 of [DICE.Layer].  If a trusted root certificate is
+   found, the usual X.509 certificate validation is performed.
 
    As a second example, in PSA [I-D.tschofenig-rats-psa-token] the
    verification public key is looked up in the appraisal context using
@@ -2526,7 +2526,7 @@ Table of Contents
 8.4.1.  Appraisal Claims Set Initialization
 
    The ACS is initialized by copying the internal representation of
-   Evidence claims to the ACS.  See (Section 8.8).
+   Evidence claims to the ACS.  See Section 8.8.
 
 8.4.1.1.  The authorized-by field in Appraisal Claims Set
 
@@ -2542,7 +2542,7 @@ Table of Contents
    authorized-by field in that Claim to the trusted authority keys at
    the head of each key chain which signed that Evidence.  This key is
    often the subject of a self-signed certificate.  The Verifier has
-   already verified the certificate chain.  See (Section 8.3.2.1).
+   already verified the certificate chain.  See Section 8.3.2.1.
 
    If multiple authorities approve the same Claim, for example if
    multiple key chains are available, then the authorized-by field SHALL
@@ -2649,7 +2649,7 @@ Table of Contents
    For each iteration, the Verifier creates a temporary stateful-
    environment-record by merging the stateful-environment-record in the
    triple with the refv field in the conditional-series-record.  It
-   compares this temporary record against the ACS (see Section 8.9).
+   compares this temporary record against the ACS.  See Section 8.9.
 
    If one of the temporary records matches then the Verifier MUST add
    the endv Endorsement entry to the ACS.  This Endorsement includes the
@@ -2688,8 +2688,8 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the policy
    applied may also augment the ACS.  An internal representation of
-   policy details, based on the policy ECT as described in
-   (Section 8.2.1.4), contains the environments affected by the policy
+   policy details, based on the policy ECT, as described in
+   Section 8.2.1.4, contains the environments affected by the policy
    with policy identifiers as Claims.
 
    Phase 7: Attestation Results Production and Transformation
@@ -2712,7 +2712,7 @@ Table of Contents
 
    At the end of the Evidence collection process Evidence has been
    converted into an internal represenetation suitable for appraisal.
-   See (Section 8.2.1).
+   See Section 8.2.1.
 
    Verifiers are not required to use this as their internal
    representation.  For the purposes of this document, appraisal is
@@ -2761,7 +2761,7 @@ Table of Contents
 
    The ACS must maintain the authority information for each ECT.  There
    can be multiple entries in state-triples which have the same
-   environment-map and a different authority.  See (Section 8.4.1.1).
+   environment-map and a different authority.  See Section 8.4.1.1.
 
    If the merged measurement-values-map contains duplicate codepoints
    and the measurement values are equivalent, then duplicate claims
@@ -2786,10 +2786,9 @@ Table of Contents
    draft-ietf-rats-corim/issues/71
 
    A Verifier SHALL iterate over all ACS entries and SHALL attempt to
-   match the condition ECT against each ACS entry using the algorithm
-   described in (Section 8.9.1).  A Verifier SHALL create a "matched
-   entries" set, and SHALL populate it with all ACS entries which
-   matched the condition ECT.
+   match the condition ECT against each ACS entry.  See Section 8.9.1.
+   A Verifier SHALL create a "matched entries" set, and SHALL populate
+   it with all ACS entries which matched the condition ECT.
 
    If the matched entries array is not empty, then the condition ECT
    matches the ACS.
@@ -2808,8 +2807,8 @@ Table of Contents
    algorithm described in this document to compare the data at that
    codepoint.
 
-   A Verifier SHALL perform all of the comparisons in sections
-   (Section 8.9.2), (Section 8.9.3) and (Section 8.9.4).
+   A Verifier SHALL perform all of the comparisons defined in
+   Section 8.9.2, Section 8.9.3, and Section 8.9.4.
 
    Each of these comparisons compares one field in the condition ECT
    against the same field in the ACS entry.
@@ -2901,7 +2900,7 @@ Table of Contents
 
    Second, a Verifier SHALL compare the element-claims field within the
    condition ECT element-list and the corresponding field from the ACS
-   entry.  See (Section 8.9.6).
+   entry.  See Section 8.9.6.
 
 8.9.6.  Measurement values map map Comparison
 
@@ -3038,10 +3037,10 @@ Table of Contents
    choice) to look up the matching Integrity Register entry in the
    candidate entry.  If no entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
-   as defined in (Section 8.9.6.1.2) after equivalence has been found
-   according to (Section 5.1.4.1.6).  Note that it is not required for
-   all the entries in the candidate entry to be used during matching:
-   the condition ECT could consist of a subset of the device's register
+   as defined in Section 8.9.6.1.2 after equivalence has been found
+   according to Section 5.1.4.1.6.  Note that it is not required for all
+   the entries in the candidate entry to be used during matching: the
+   condition ECT could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a condition ECT could describe a subset of PCRs.
 
@@ -3139,60 +3138,60 @@ Table of Contents
    |Tag    |Data Item  | Semantics                          |Reference|
    +=======+===========+====================================+=========+
    |500    |tag        | A tagged-concise-rim-type-choice,  |RFCthis  |
-   |       |           | see (Section 4.1.2)                |         |
+   |       |           | see Section 4.1.2                  |         |
    +-------+-----------+------------------------------------+---------+
    |501    |map        | A tagged-corim-map, see            |RFCthis  |
-   |       |           | (Section 4.1)                      |         |
+   |       |           | Section 4.1                        |         |
    +-------+-----------+------------------------------------+---------+
    |502    |tag        | A tagged-signed-corim, see         |RFCthis  |
-   |       |           | (Section 4.2)                      |         |
+   |       |           | Section 4.2                        |         |
    +-------+-----------+------------------------------------+---------+
    |503-504|any        | Earmarked for CoRIM                |RFCthis  |
    +-------+-----------+------------------------------------+---------+
    |505    |bytes      | A tagged-concise-swid-tag, see     |RFCthis  |
-   |       |           | (Section 4.1.2)                    |         |
+   |       |           | Section 4.1.2                      |         |
    +-------+-----------+------------------------------------+---------+
    |506    |bytes      | A tagged-concise-mid-tag, see      |RFCthis  |
-   |       |           | (Section 4.1.2)                    |         |
+   |       |           | Section 4.1.2                      |         |
    +-------+-----------+------------------------------------+---------+
    |507    |any        | Earmarked for CoRIM                |RFCthis  |
    +-------+-----------+------------------------------------+---------+
    |508    |bytes      | A tagged-concise-bom-tag, see      |RFCthis  |
-   |       |           | (Section 4.1.2)                    |         |
+   |       |           | Section 4.1.2                      |         |
    +-------+-----------+------------------------------------+---------+
    |509-549|any        | Earmarked for CoRIM                |RFCthis  |
    +-------+-----------+------------------------------------+---------+
-   |550    |bytes .size| tagged-ueid-type, see              |RFCthis  |
-   |       |33         | (Section 7.5)                      |         |
+   |550    |bytes .size| tagged-ueid-type, see Section 7.5  |RFCthis  |
+   |       |33         |                                    |         |
    +-------+-----------+------------------------------------+---------+
    |552    |uint       | tagged-svn, see                    |RFCthis  |
-   |       |           | (Section 5.1.4.1.4.4)              |         |
+   |       |           | Section 5.1.4.1.4.4                |         |
    +-------+-----------+------------------------------------+---------+
    |553    |uint       | tagged-min-svn, see                |RFCthis  |
-   |       |           | (Section 5.1.4.1.4.4)              |         |
+   |       |           | Section 5.1.4.1.4.4                |         |
    +-------+-----------+------------------------------------+---------+
    |554    |text       | tagged-pkix-base64-key-type, see   |RFCthis  |
-   |       |           | (Section 5.1.4.1.5)                |         |
+   |       |           | Section 5.1.4.1.5                  |         |
    +-------+-----------+------------------------------------+---------+
    |555    |text       | tagged-pkix-base64-cert-type, see  |RFCthis  |
-   |       |           | (Section 5.1.4.1.5)                |         |
+   |       |           | Section 5.1.4.1.5                  |         |
    +-------+-----------+------------------------------------+---------+
    |556    |text       | tagged-pkix-base64-cert-path-type, |RFCthis  |
-   |       |           | see (Section 5.1.4.1.5)            |         |
+   |       |           | see Section 5.1.4.1.5              |         |
    +-------+-----------+------------------------------------+---------+
    |557    |[int/text, | tagged-thumbprint-type, see        |RFCthis  |
-   |       |bytes]     | (Section 7.7)                      |         |
+   |       |bytes]     | Section 7.7                        |         |
    +-------+-----------+------------------------------------+---------+
    |558    |COSE_Key/  | tagged-cose-key-type, see          |RFCthis  |
-   |       |COSE_KeySet| (Section 5.1.4.1.5)                |         |
+   |       |COSE_KeySet| Section 5.1.4.1.5                  |         |
    +-------+-----------+------------------------------------+---------+
    |559    |digest     | tagged-cert-thumbprint-type, see   |RFCthis  |
-   |       |           | (Section 5.1.4.1.5)                |         |
+   |       |           | Section 5.1.4.1.5                  |         |
    +-------+-----------+------------------------------------+---------+
-   |560    |bytes      | tagged-bytes, see (Section 7.8)    |RFCthis  |
+   |560    |bytes      | tagged-bytes, see Section 7.8      |RFCthis  |
    +-------+-----------+------------------------------------+---------+
    |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
-   |       |           | see (Section 5.1.4.1.5)            |         |
+   |       |           | see Section 5.1.4.1.5              |         |
    +-------+-----------+------------------------------------+---------+
    |562-599|any        | Earmarked for CoRIM                |RFCthis  |
    +-------+-----------+------------------------------------+---------+
@@ -3545,6 +3544,9 @@ Table of Contents
               07, 2 September 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
               ar4si-07>.
+
+   [I-D.ietf-rats-cobom]
+              "*** BROKEN REFERENCE ***".
 
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
