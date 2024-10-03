@@ -1646,9 +1646,9 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
-| selection | `environment`   | Optional    |
+| selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
-|           | `authority`     | n/a         |
+|           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 | addition  | `environment`   | Mandatory   |
