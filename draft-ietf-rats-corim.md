@@ -1973,6 +1973,9 @@ If satisfied, the RVP authority is added to the matching ACS entry.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302
+
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
