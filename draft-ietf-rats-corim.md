@@ -1126,7 +1126,7 @@ The Endorsed Values Triple has the following structure:
 
 The `endorsed-triple-record` has the following parameters:
 
-* `condition`: Search criteria applied to the ACS that dermines if the `endorsement` applies.
+* `condition`: Search criteria applied to the ACS that determines if the `endorsement` applies.
 * `endorsement`: Claims to be added to the ACS.
 
 To proess a `endorsed-triple-record` the `condition` is compared with entries from the ACS.
