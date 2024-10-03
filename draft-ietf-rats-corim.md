@@ -1175,8 +1175,8 @@ The `conditional-series-record` has the following parameters:
 * `selection`: Search criteria applied to the ACS entries resulting from the matched `conditions`
 * `addition`: Claims to be added to the ACS is the `selection` is satisfied.
 
-To process a`conditional-endorsement-series-record` the `conditions` are compared with entries from the ACS.
-If the condition is met, the `series` records are processed.
+To process a `conditional-endorsement-series-record` the `conditions` are compared with entries from the ACS.
+If the condition is satisfied, the `series` records are processed.
 
 The `series` array contains a set of `conditional-series-record` entries.
 
@@ -1808,9 +1808,9 @@ The selected tags are mapped to an internal representation, making them suitable
 {:rtt-enum: counter="foo" style="format Step %d."}
 
 {: rtt-enum}
-* An available `rv` list entry ({{sec-ir-ref-val}}) is allocated.
+* An `rv` list entry ({{sec-ir-ref-val}}) is allocated.
 
-* The ECT `cmtype` of the `ev` entry is set to `reference-values`.
+* The `cmtype` of the `addition` ECT in the `rv` entry is set to `reference-values`.
 
 * The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
@@ -1827,9 +1827,9 @@ Endorsement Triple Transformation :
 {:ett-enum: counter="ett" style="format Step %d."}
 
 {: ett-enum}
-* An available `ev` entry ({{sec-ir-end-val}}) is allocated.
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
 
-* The ECT `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
 * The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
 
@@ -1844,9 +1844,9 @@ Conditional Endorsement Triple Transformation :
 {:cett-enum: counter="cett" style="format Step %d."}
 
 {: cett-enum}
-* An available `ev` entry ({{sec-ir-end-val}}) is allocated.
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
 
-* The ECT `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
 * For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` array, the `stateful-environment-record` is copied to a `condition` ECT in the `ev` entry.
 The `environment-map` of the `stateful-environment-record` is copied to the ECT `environment` field.
@@ -1867,9 +1867,9 @@ Conditional Endorsement Series Triple Transformation :
 {:cestt-enum: counter="cestt" style="format Step %d."}
 
 {: cestt-enum}
-* An available `evs` entry ({{sec-ir-end-val}}) is allocated.
+* An `evs` entry ({{sec-ir-end-val}}) is allocated.
 
-* The ECT `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
+* The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
 
 * From the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition`, the `stateful-environment-record` is copied to the `condition` ECT in the `evs` entry.
 The `environment-map` of the `stateful-environment-record` is copied to the ECT `environment` field.
@@ -1998,7 +1998,7 @@ Conditional endorsements have the same processing steps as shown in ({{sec-proce
 
 Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
 Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
-where for each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
