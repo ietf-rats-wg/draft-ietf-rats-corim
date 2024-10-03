@@ -1147,7 +1147,7 @@ The Conditional Endorsement Triple has the following structure:
 
 The `conditional-endorsement-triple-record` has the following parameters:
 
-* `conditions`: Search criteria applied to the ACS that dermines if the `endorsements` apply.
+* `conditions`: Search criteria applied to the ACS that determines if the `endorsements` apply.
 * `endorsements`: Sets of Claims to be added to the ACS.
 
 To process a `conditional-endorsement-triple-record` the `conditions` are compared with entries from the ACS.
