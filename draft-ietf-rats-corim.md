@@ -1816,6 +1816,8 @@ The selected tags are mapped to an internal representation, making them suitable
 
 * For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `element-list` of the `rv` `addition` ECT.
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
 * The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
@@ -2160,6 +2162,8 @@ A Verifier SHALL iterate over all the entries in the condition ECT `element-list
 If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field then the element lists match.
 
 The order of the fields in each `element-list` field do not affect the result of the comparison.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
 
 If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the `element-list` do not match.
 
