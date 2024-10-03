@@ -1101,76 +1101,61 @@ The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
-A Reference Values triple relates reference measurements to a Target
-Environment. For Reference Value Claims, the subject identifies a Target
-Environment, the object contains measurements, and the predicate asserts that
-these are the expected (i.e., reference) measurements for the Target
-Environment.
+The Reference Values Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/reference-triple-record.cddl}
 ~~~
 
+The `reference-triple-record` has the following parameters:
+
+* `ref-env`: Search criteria that targets Evidence environments in the ACS.
+* `ref-claims`: Search criteria that targets Evidence Claims in the ACS.
+
+To process `reference-triple-record` both the `ref-env` and `ref-claims` are compared with entries from the ACS.
+If these conditions are met, the matching ACS entry is copied into a new ACS entry that is added to the ACS,
+but with the Reference Value Provider's authority.
+
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple declares additional measurements to add to the ACS.
+The Endorsed Values Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
 
+The `endorsed-triple-record` has the following parameters:
+
+* `condition`: Search criteria applied to the ACS that dermines if the `endorsement` applies.
+* `endorsement`: Claims to be added to the ACS.
+
+To proess a `endorsed-triple-record` the `condition` is compared with entries from the ACS.
+If the condition is met, the `endorsement` is combined with the `environment-map` of the matched `condition` to form a new ACS entry.
+The new ACS entry is added to the ACS with the Endorser's authority.
+
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-The semantics of the Conditional Endorsement Triple is as follows:
-
-> "IF accepted state matches all `conds` values, THEN every entry in the `endorsements` is added to the accepted state"
+The Conditional Endorsement Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-triple-record.cddl}
 ~~~
 
-A `conditional-endorsement-triple-record` has the following parameters:
-
-* `conditions`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
-* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
-
-The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
-
-Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.
-
-Notes:
-
-* In order to give the expected result, the condition must describe the expected context completely.
-* The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.
-
-There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
-
-#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
-
-A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
-that have matching Evidence.
-
-The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
-matched.
-
 ~~~ cddl
 {::include cddl/stateful-environment-record.cddl}
 ~~~
 
-The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
-The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
+The `conditional-endorsement-triple-record` has the following parameters:
 
-For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
+* `conditions`: Search criteria applied to the ACS that dermines if the `endorsements` apply.
+* `endorsements`: Sets of Claims to be added to the ACS.
 
-The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
-For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
+To process a `conditional-endorsement-triple-record` the `conditions` are compared with entries from the ACS.
+If all the conditions are met, the `endorsements` are added to the ACS with the Endorser's authority.
 
-If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
+#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
-If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
-If the series `addition` entry contains `authorized-by` values, they are ignored.
+The Conditional Endorsement Series Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-series-triple-record.cddl}
@@ -1179,6 +1164,28 @@ If the series `addition` entry contains `authorized-by` values, they are ignored
 ~~~ cddl
 {::include cddl/conditional-series-record.cddl}
 ~~~
+
+The `conditional-endorsement-series-triple-record` has the following parameters:
+
+* `condition`: Search criteria applied to the ACS that dermines if the `series` applies.
+* `series`: A set of selection-addition tuples.
+
+The `conditional-series-record` has the following parameters:
+
+* `selection`: Search criteria applied to the ACS entries resulting from the matched `conditions`
+* `addition`: Claims to be added to the ACS is the `selection` is satisfied.
+
+To process a`conditional-endorsement-series-record` the `conditions` are compared with entries from the ACS.
+If the condition is met, the `series` records are processed.
+
+The `series` array contains a set of `conditional-series-record` entries.
+
+For each `series` entry,
+if the `selection` matches an entry found in the `condition` result,
+the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new ACS entry.
+The new ACS entry is added to the ACS with the Endorser's authority.
+
+The first `series` entry that successfully matches a `selection` terminates `series` processing.
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
