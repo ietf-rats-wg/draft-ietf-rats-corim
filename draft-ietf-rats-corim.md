@@ -1167,7 +1167,7 @@ The Conditional Endorsement Series Triple has the following structure:
 
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
-* `condition`: Search criteria applied to the ACS that dermines if the `series` applies.
+* `condition`: Search criteria applied to the ACS that determines if the `series` applies.
 * `series`: A set of selection-addition tuples.
 
 The `conditional-series-record` has the following parameters:
