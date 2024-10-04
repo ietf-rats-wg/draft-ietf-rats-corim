@@ -1578,7 +1578,8 @@ Attestation Results Set (ARS):
 : A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
 
 Appraisal Session:
-: A structure that tracks all state that corresponds to a single request for attestation appraisal. This includes the Appraisal Claims Set and Appraisal Context.
+: A structure that tracks all state that corresponds to a single request for attestation appraisal.
+This includes the Appraisal Claims Set and Appraisal Context.
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
