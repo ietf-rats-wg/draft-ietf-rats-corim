@@ -57,6 +57,7 @@ contributor:
 
 normative:
   RFC4122: uuid
+  RFC5280: pkix-cert
   RFC7468: pkix-text
   RFC8610: cddl
   RFC9090: cbor-oids
@@ -1019,6 +1020,9 @@ A cryptographic key digest can be one of the following formats:
 
 * `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
+
+* `tagged-pkix-asn1der-key-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
+  Defined in {{Section 4 of -pkix-cert}}.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
@@ -2287,7 +2291,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
-| 562-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
+| 563-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
