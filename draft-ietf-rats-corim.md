@@ -91,6 +91,7 @@ informative:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
+  I-D.ietf-scitt-architecture: scitt-arch
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -193,9 +194,6 @@ Internal representations of Conceptual Messages, ACS, and Attestation Results Se
 | Policy | List of expected actual state claims, List of Policy-generated claims | If the list of expected claims are in the ACS, then add the list of Policy-generated claims to the ACS with Policy Owner authority |
 | Attestation Results | List of expected actual state claims, List of expected Attestation Results claims | If the list of expected claims are in the ACS, then copy the list of Attestation Results claims into the ARS. See {{sec-ir-ars}} |
 {: #tbl-cmrr title="Conceptual Message Representation Requirements"}
-
-## Quantizing Inputs {#sec-quantize}
-[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/242
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
@@ -1464,6 +1462,10 @@ They are not required to use the same internal representation or evaluation orde
 
 The appraisal procedure is divided into several logical phases for clarity.
 
++ **Phase 0**: Session setup
+
+During Phase 0, the Verifier collects its set of inputs from external sources that will be used for the remainder of the Appraisal Procedure to ensure the Procedure is deterministic.
+
 + **Phase 1**: Input Validation and Transformation
 
 During Phase 1, Conceptual Message inputs are cryptographically validated, such as checking digital signatures.
@@ -1539,11 +1541,17 @@ Appraisal Claims Set (ACS):
 : A structure that holds ECTs that have been appraised.
 The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
 
+Appraisal Context:
+: A structure that contains all state needed for performing the Appraisal Procedure.
+
 Appraisal Policy:
 : A description of the conditions that, if met, allow acceptance of Claims. Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion. Appraisal Policy resolves which entities are credible and under what conditions.  See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
 Attestation Results Set (ARS):
 : A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
+
+Appraisal Session:
+: A structure that tracks all state that corresponds to a single request for attestation appraisal. This includes the Appraisal Claims Set and Appraisal Context.
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
@@ -1733,19 +1741,35 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 {::include cddl/intrep-ars.cddl}
 ~~~
 
+## Session setup (Phase 0) {#sec-phase0}
+
+The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
+
+During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
+Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
+Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), and static cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+It is left to Verifier Policy to determine if input sources must use supply chain transparency constructs (see {{-scitt-arch}}) to track input provenance.
+
+The time at which the Verifier evaluates certificate- and tag-validity is an input.
+Once the Appraisal Session inputs are collected, no more may be added to the Appraisal Session apart from one exception.
+Certificate revocation status results may be collected during Phase 1, since there is no collective simultaneity of all responses.
+
+It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
+
+Note: Verifiers may rely on conveyance protocol–specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
+
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags {{-cobom}}, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
-These objects will be utilized in the Evidence Appraisal phase that follows.
-The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
+In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
+The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
 
-After context initialization, additional inputs are held back until appraisal processing has completed.
+No inputs other than dynamically-fetched information about certificate revocation status (see [RFC6960]) may be collected in Phase 1.
 
 ### Input Validation {#sec-phase1-valid}
 
 #### CoRIM Selection
 
-All available CoRIMs are collected.
+All available CoRIMs in the Appraisal Session's inputs are checked for validity.
 
 CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
 
@@ -1756,42 +1780,37 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 
 The selection process MUST yield at least one usable tag.
 
+Selected CoRIMs are transformed into an internal representation (see {{sec-phase1-trans}}).
+If CoBOMs are required by policy, the selected tags are considered *inactive*.
+An *inactive* tag MUST NOT be used during the Appraisal Procedure.
+If CoBOMs are not required by policy, the selected tags are considered *active* and thus MUST be used during the Appraisal Procedure.
+
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### Tags Extraction and Validation
 
-The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
+The Verifier chooses tags from the selected CoRIMs—including CoMID, CoSWID, CoBOM, and CoTS.
 
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples and CoBOM-listed tags) MUST be successfully resolved.
 
-#### CoBOM Extraction
+#### Tag activation by CoBOM
 
-This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
+This step can be skipped of all tags are implicitly active.
 
 CoBOMs which are not within their validity period are discarded.
-
-The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
+The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal.
 
 A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
 (Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.)
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
 In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
-After the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
-
-### Evidence Collection {#sec-ev-coll}
-
-During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
-The first part of this phase does not require any cryptographic validation.
-This means that Verifiers can use untrusted code to discover Evidence sources.
-Attesters are Evidence sources.
-
-Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
-
-The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
+If the Verifier Policy requires CoBOMs, then after the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
+
+The collected Evidence is transformed to an internal representation, making it suitable for appraisal processing.
 
 If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
 
@@ -1824,14 +1843,6 @@ The `c` field is populated with the measurements collected by an Attesting Envir
 The `a` field is populated with the identity of the entity that asserted (e.g., signed) the Evidence.
 The `ns` field is populated with the namespace context if supplied. For example, the Attester's manufacturer may have a URI that identifies the manufacturing series, family or architecture.
 The `cm` field is set based on the type of Conceptual Message inputted or to be outputed.
-
-#### Appraisal Context Construction
-
-All of the extracted and validated tags are loaded into an *appraisal context*.
-The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
-The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
 
 #### Reference Triples Transformation {#sec-ref-trans}
 
