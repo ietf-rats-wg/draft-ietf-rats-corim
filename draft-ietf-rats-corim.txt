@@ -2157,6 +2157,10 @@ Table of Contents
    An internal representation of attestation Evidence uses the ae
    relation.
 
+   ae = [
+     addition: [ + ECT ]
+   ]
+
    The addition is a list of ECTs with Evidence to be appraised.
 
    A Verifier may maintain multiple simultaneous sessions to different
@@ -2164,26 +2168,35 @@ Table of Contents
    the Evidence inputs are associated with the correct ACS.  The
    addition is added to the ACS for a specific Attester.
 
-   ae = [
-     addition: [ + ECT ]
-   ]
+   Table 3 contains the requirements for the ECT fields of the Evidence
+   tuple:
 
-                    +==========+====+====+===+====+===+
-                    | Type     | en | el | a | cm | p |
-                    +==========+====+====+===+====+===+
-                    | addition | T  | T  | T | T  | F |
-                    +----------+----+----+---+----+---+
+                 +==========+==============+=============+
+                 | ECT type | ECT Field    | Requirement |
+                 +==========+==============+=============+
+                 | addition | environment  | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | element-list | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | authority    | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | cmtype       | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | profile      | Optional    |
+                 +----------+--------------+-------------+
 
-                       Table 3: Mandatory fields for
-                              Evidence tuples
-
-   'T' means mandatory.
+                    Table 3: Evidence tuple requirements
 
 8.2.1.2.  Internal Representation of Reference Values
 
    An internal representation of Reference Values uses the rv relation,
    which is a list of ECTs that contains possible states and a list of
    ECTs that contain actual states asserted with RVP authority.
+
+   rv = [ + {
+     condition: ECT
+     addition: ECT
+   } ]
 
    The rv relation is a list of condition-addition pairings where each
    pairing is evaluated together.  If the condition containing reference
@@ -2194,39 +2207,41 @@ Table of Contents
    Evidence ECTs.  If the matching condition is satisfied, then the re-
    asserted ECTs are added to the ACS.
 
-   rv = [ + {
-     condition: ECT
-     addition: ECT
-   } ]
+   Table 4 contains the requirements for the ECT fields of the Reference
+   Values tuple:
 
-                   +===========+====+====+===+====+===+
-                   | Type      | en | el | a | cm | p |
-                   +===========+====+====+===+====+===+
-                   | condition | T  | T  | F | F  | F |
-                   +-----------+----+----+---+----+---+
-                   | addition  | T  | T  | T | T  | F |
-                   +-----------+----+----+---+----+---+
+                +===========+==============+=============+
+                | ECT type  | ECT Field    | Requirement |
+                +===========+==============+=============+
+                | condition | environment  | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | element-list | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | authority    | Optional    |
+                +-----------+--------------+-------------+
+                |           | cmtype       | n/a         |
+                +-----------+--------------+-------------+
+                |           | profile      | n/a         |
+                +-----------+--------------+-------------+
+                | addition  | environment  | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | element-list | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | authority    | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | cmtype       | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | profile      | Optional    |
+                +-----------+--------------+-------------+
 
-                      Table 4: Mandatory fields for
-                         Reference Values tuples
+                     Table 4: Reference Values tuple
+                               requirements
 
 8.2.1.3.  Internal Representation of Endorsed Values
 
    An internal representation of Endorsed Values uses the ev and evs
    relations, which are lists of ECTs that describe matching conditions
    and the additions that are added if the conditions are satisfied.
-
-   The ev relation compares the condition ECTs to the ACS and if all of
-   the ECTs are found in the ACS then the addition ECTs are added to the
-   ACS.
-
-   The evs relation compares the condition ECTs to the ACS and if all of
-   the ECTs are found in the ACS then each entry in the series list is
-   evaluated.  The selection ECTs are compared with the ACS and if the
-   selection criteria is satisfied, then the addition ECTs are added to
-   the ACS and evaluation of the series ends.  If the selection criteria
-   is not satisfied, then evaluation procedes to the next series list
-   entry.
 
    ev = [
      condition: [ + ECT ]
@@ -2241,63 +2256,141 @@ Table of Contents
      } ]
    ]
 
-                   +===========+====+====+===+====+===+
-                   | Type      | en | el | a | cm | p |
-                   +===========+====+====+===+====+===+
-                   | condition | F  | T  | F | F  | F |
-                   +-----------+----+----+---+----+---+
-                   | selection | F  | T  | F | F  | F |
-                   +-----------+----+----+---+----+---+
-                   | addition  | T  | T  | T | T  | F |
-                   +-----------+----+----+---+----+---+
+   The ev relation compares the condition ECTs to the ACS and if all of
+   the ECTs are found in the ACS then the addition ECTs are added to the
+   ACS.
 
-                      Table 5: Mandatory fields for
-                          Endorsed Values tuples
+   The evs relation compares the condition ECTs to the ACS and if all of
+   the ECTs are found in the ACS then each entry in the series list is
+   evaluated.  The selection ECTs are compared with the ACS and if the
+   selection criteria is satisfied, then the addition ECTs are added to
+   the ACS and evaluation of the series ends.  If the selection criteria
+   is not satisfied, then evaluation procedes to the next series list
+   entry.
+
+   Table 5 contains the requirements for the ECT fields of the Endorsed
+   Values and Endorsed Values Series tuples:
+
+                +===========+==============+=============+
+                | ECT type  | ECT Field    | Requirement |
+                +===========+==============+=============+
+                | condition | environment  | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | element-list | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | authority    | Optional    |
+                +-----------+--------------+-------------+
+                |           | cmtype       | n/a         |
+                +-----------+--------------+-------------+
+                |           | profile      | n/a         |
+                +-----------+--------------+-------------+
+                | selection | environment  | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | element-list | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | authority    | Optional    |
+                +-----------+--------------+-------------+
+                |           | cmtype       | n/a         |
+                +-----------+--------------+-------------+
+                |           | profile      | n/a         |
+                +-----------+--------------+-------------+
+                | addition  | environment  | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | element-list | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | authority    | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | cmtype       | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | profile      | Optional    |
+                +-----------+--------------+-------------+
+
+                  Table 5: Endorsed Values and Endorsed
+                    Values Series tuples requirements
 
 8.2.1.4.  Internal Representation of Policy Statements
 
-   The policy relation compares the condition ECTs to the ACS.  If all
-   of the ECTs are found in the ACS then the addition ECTs are added to
-   the ACS with the policy author's authority.
+   The policy relation compares the condition ECTs to the ACS.
 
    policy = [
      condition: [ + ECT ]
      addition: [ + ECT ]
    ]
 
-                   +===========+====+====+===+====+===+
-                   | Type      | en | el | a | cm | p |
-                   +===========+====+====+===+====+===+
-                   | condition | F  | F  | F | F  | F |
-                   +-----------+----+----+---+----+---+
-                   | addition  | T  | T  | T | T  | F |
-                   +-----------+----+----+---+----+---+
+   If all of the ECTs are found in the ACS then the addition ECTs are
+   added to the ACS with the policy author's authority.
 
-                      Table 6: Mandatory fields for
-                              policy tuples
+   Table 6 contains the requirements for the ECT fields of the Policy
+   tuple:
+
+                +===========+==============+=============+
+                | ECT type  | ECT Field    | Requirement |
+                +===========+==============+=============+
+                | condition | environment  | Optional    |
+                +-----------+--------------+-------------+
+                |           | element-list | Optional    |
+                +-----------+--------------+-------------+
+                |           | authority    | Optional    |
+                +-----------+--------------+-------------+
+                |           | cmtype       | n/a         |
+                +-----------+--------------+-------------+
+                |           | profile      | n/a         |
+                +-----------+--------------+-------------+
+                | addition  | environment  | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | element-list | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | authority    | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | cmtype       | Mandatory   |
+                +-----------+--------------+-------------+
+                |           | profile      | Optional    |
+                +-----------+--------------+-------------+
+
+                    Table 6: Policy tuple requirements
 
 8.2.1.5.  Internal Representation of Attestation Results
 
-   The ar relation compares the acs-condition to the ACS.  If the
-   condition is satisfied, the ars-additions are copied from the ACS to
-   the ARS.  If any of the ars-additions are not found in the ACS then
-   these ACS entries are not copied to the ARS.
+   The ar relation compares the acs-condition to the ACS.
 
    ar = [
      acs-condition: [ + ECT ]
      ars-addition: [ + ECT ]
    ]
 
-                 +===============+====+====+===+====+===+
-                 | Type          | en | el | a | cm | p |
-                 +===============+====+====+===+====+===+
-                 | acs-condition | F  | F  | F | F  | F |
-                 +---------------+----+----+---+----+---+
-                 | ars-addition  | T  | T  | T | F  | F |
-                 +---------------+----+----+---+----+---+
+   If the condition is satisfied, the ars-additions are copied from the
+   ACS to the ARS.  If any of the ars-additions are not found in the ACS
+   then these ACS entries are not copied to the ARS.
 
-                      Table 7: Mandatory fields for
-                        Attestation Results tuples
+   Table 7 contains the requirements for the ECT fields of the
+   Attestation Results tuple:
+
+              +===============+==============+=============+
+              | ECT type      | ECT Field    | Requirement |
+              +===============+==============+=============+
+              | acs-condition | environment  | Optional    |
+              +---------------+--------------+-------------+
+              |               | element-list | Optional    |
+              +---------------+--------------+-------------+
+              |               | authority    | Optional    |
+              +---------------+--------------+-------------+
+              |               | cmtype       | n/a         |
+              +---------------+--------------+-------------+
+              |               | profile      | n/a         |
+              +---------------+--------------+-------------+
+              | ars-addition  | environment  | Mandatory   |
+              +---------------+--------------+-------------+
+              |               | element-list | Mandatory   |
+              +---------------+--------------+-------------+
+              |               | authority    | Mandatory   |
+              +---------------+--------------+-------------+
+              |               | cmtype       | Mandatory   |
+              +---------------+--------------+-------------+
+              |               | profile      | Optional    |
+              +---------------+--------------+-------------+
+
+                    Table 7: Attestation Results tuple
+                               requirements
 
 8.2.2.  Internal Representation of ACS
 
