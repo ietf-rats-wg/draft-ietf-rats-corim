@@ -99,27 +99,6 @@ informative:
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.coswid: coswid-reg
-  SPDM:
-    title: Security Protocol and Data Model (SPDM)
-    author:
-      org: Distributed Management Task Force
-    seriesinfo: Version 1.3.0
-    date: May 2023
-    target: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pdf
-  CE.SPDM:
-    title: TCG DICE Concise Evidence Binding for SPDM
-    author:
-      org: Trusted Computing Group
-    seriesinfo: Version 1.00, Revision 0.54
-    date: January 2024
-    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf
-  DICE.AA:
-    title: DICE Attestation Architecture
-    author:
-      org: Trusted Computing Group
-    seriesinfo: Version 1.1, Revision 0.17, public review
-    date: May 2023
-    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
@@ -299,8 +278,8 @@ The following describes each child item of this map.
 * `profile` (index 3): An optional profile identifier for the tags contained in
   this CoRIM.  The profile MUST be understood by the CoRIM processor.  Failure
   to recognize the profile identifier MUST result in the rejection of the
-  entire CoRIM.  If missing, the profile defaults to DICE.
-  Described in {{sec-corim-profile-types}}
+  entire CoRIM.
+  See {{sec-corim-profile-types}}
 
 * `rim-validity` (index 4): Specifies the validity period of the CoRIM.
   Described in {{sec-common-validity}}
