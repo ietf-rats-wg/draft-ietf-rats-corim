@@ -1036,7 +1036,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 6 April 2025</td>
+<td class="center">Expires 7 April 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1049,12 +1049,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-10-03" class="published">3 October 2024</time>
+<time datetime="2024-10-04" class="published">4 October 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-04-06">6 April 2025</time></dd>
+<dd class="expires"><time datetime="2025-04-07">7 April 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1116,7 +1116,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 6 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 7 April 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3903,17 +3903,18 @@ cm-type =  &amp;(
 <a href="#section-8.2.1.1" class="section-number selfRef">8.2.1.1. </a><a href="#name-internal-representation-of-e" class="section-name selfRef">Internal Representation of Evidence</a>
             </h5>
 <p id="section-8.2.1.1-1">An internal representation of attestation Evidence uses the <code>ae</code> relation.<a href="#section-8.2.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.1.1-2">The <code>addition</code> is a list of ECTs with Evidence to be appraised.<a href="#section-8.2.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.1.1-3">A Verifier may maintain multiple simultaneous sessions to different Attesters.
-Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
-The <code>addition</code> is added to the ACS for a specific Attester.<a href="#section-8.2.1.1-3" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-8.2.1.1-4">
+<div class="lang-cddl sourcecode" id="section-8.2.1.1-2">
 <pre>
 ae = [
   addition: [ + ECT ]
 ]
-</pre><a href="#section-8.2.1.1-4" class="pilcrow">¶</a>
+</pre><a href="#section-8.2.1.1-2" class="pilcrow">¶</a>
 </div>
+<p id="section-8.2.1.1-3">The <code>addition</code> is a list of ECTs with Evidence to be appraised.<a href="#section-8.2.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.1-4">A Verifier may maintain multiple simultaneous sessions to different Attesters.
+Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
+The <code>addition</code> is added to the ACS for a specific Attester.<a href="#section-8.2.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.1-5"><a href="#tbl-ae-ect-optionality" class="auto internal xref">Table 3</a> contains the requirements for the ECT fields of the Evidence tuple:<a href="#section-8.2.1.1-5" class="pilcrow">¶</a></p>
 <span id="name-evidence-tuple-requirements"></span><div id="tbl-ae-ect-optionality">
 <table class="center" id="table-3">
               <caption>
@@ -3974,18 +3975,19 @@ ae = [
 <a href="#section-8.2.1.2" class="section-number selfRef">8.2.1.2. </a><a href="#name-internal-representation-of-r" class="section-name selfRef">Internal Representation of Reference Values</a>
             </h5>
 <p id="section-8.2.1.2-1">An internal representation of Reference Values uses the <code>rv</code> relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.<a href="#section-8.2.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.1.2-2">The <code>rv</code> relation is a list of condition-addition pairings where each pairing is evaluated together.
-If the <code>condition</code> containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the <code>addition</code>.<a href="#section-8.2.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.1.2-3">The reference ECTs define the matching conditions that are applied to Evidence ECTs.
-If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.<a href="#section-8.2.1.2-3" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-8.2.1.2-4">
+<div class="lang-cddl sourcecode" id="section-8.2.1.2-2">
 <pre>
 rv = [ + {
   condition: ECT
   addition: ECT
 } ]
-</pre><a href="#section-8.2.1.2-4" class="pilcrow">¶</a>
+</pre><a href="#section-8.2.1.2-2" class="pilcrow">¶</a>
 </div>
+<p id="section-8.2.1.2-3">The <code>rv</code> relation is a list of condition-addition pairings where each pairing is evaluated together.
+If the <code>condition</code> containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the <code>addition</code>.<a href="#section-8.2.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.2-4">The reference ECTs define the matching conditions that are applied to Evidence ECTs.
+If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.<a href="#section-8.2.1.2-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.2-5"><a href="#tbl-rv-ect-optionality" class="auto internal xref">Table 4</a> contains the requirements for the ECT fields of the Reference Values tuple:<a href="#section-8.2.1.2-5" class="pilcrow">¶</a></p>
 <span id="name-reference-values-tuple-requ"></span><div id="tbl-rv-ect-optionality">
 <table class="center" id="table-4">
               <caption>
@@ -4081,11 +4083,7 @@ rv = [ + {
 <a href="#section-8.2.1.3" class="section-number selfRef">8.2.1.3. </a><a href="#name-internal-representation-of-en" class="section-name selfRef">Internal Representation of Endorsed Values</a>
             </h5>
 <p id="section-8.2.1.3-1">An internal representation of Endorsed Values uses the <code>ev</code> and <code>evs</code> relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.<a href="#section-8.2.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.1.3-2">The <code>ev</code> relation compares the <code>condition</code> ECTs to the ACS and if all of the ECTs are found in the ACS then the <code>addition</code> ECTs are added to the ACS.<a href="#section-8.2.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.1.3-3">The <code>evs</code> relation compares the <code>condition</code> ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
-The <code>selection</code> ECTs are compared with the ACS and if the selection criteria is satisfied, then the <code>addition</code> ECTs are added to the ACS and evaluation of the series ends.
-If the <code>selection</code> criteria is not satisfied, then evaluation procedes to the next series list entry.<a href="#section-8.2.1.3-3" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-8.2.1.3-4">
+<div class="lang-cddl sourcecode" id="section-8.2.1.3-2">
 <pre>
 ev = [
   condition: [ + ECT ]
@@ -4099,8 +4097,13 @@ evs = [
     addition: [ + ECT ]
   } ]
 ]
-</pre><a href="#section-8.2.1.3-4" class="pilcrow">¶</a>
+</pre><a href="#section-8.2.1.3-2" class="pilcrow">¶</a>
 </div>
+<p id="section-8.2.1.3-3">The <code>ev</code> relation compares the <code>condition</code> ECTs to the ACS and if all of the ECTs are found in the ACS then the <code>addition</code> ECTs are added to the ACS.<a href="#section-8.2.1.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.3-4">The <code>evs</code> relation compares the <code>condition</code> ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
+The <code>selection</code> ECTs are compared with the ACS and if the selection criteria is satisfied, then the <code>addition</code> ECTs are added to the ACS and evaluation of the series ends.
+If the <code>selection</code> criteria is not satisfied, then evaluation procedes to the next series list entry.<a href="#section-8.2.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.3-5"><a href="#tbl-ev-ect-optionality" class="auto internal xref">Table 5</a> contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:<a href="#section-8.2.1.3-5" class="pilcrow">¶</a></p>
 <span id="name-endorsed-values-and-endorse"></span><div id="tbl-ev-ect-optionality">
 <table class="center" id="table-5">
               <caption>
@@ -4230,8 +4233,7 @@ evs = [
             <h5 id="name-internal-representation-of-p">
 <a href="#section-8.2.1.4" class="section-number selfRef">8.2.1.4. </a><a href="#name-internal-representation-of-p" class="section-name selfRef">Internal Representation of Policy Statements</a>
             </h5>
-<p id="section-8.2.1.4-1">The <code>policy</code> relation compares the <code>condition</code> ECTs to the ACS.
-If all of the ECTs are found in the ACS then the <code>addition</code> ECTs are added to the ACS with the policy author's authority.<a href="#section-8.2.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.4-1">The <code>policy</code> relation compares the <code>condition</code> ECTs to the ACS.<a href="#section-8.2.1.4-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-8.2.1.4-2">
 <pre>
 policy = [
@@ -4240,6 +4242,8 @@ policy = [
 ]
 </pre><a href="#section-8.2.1.4-2" class="pilcrow">¶</a>
 </div>
+<p id="section-8.2.1.4-3">If all of the ECTs are found in the ACS then the <code>addition</code> ECTs are added to the ACS with the policy author's authority.<a href="#section-8.2.1.4-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.4-4"><a href="#tbl-policy-ect-optionality" class="auto internal xref">Table 6</a> contains the requirements for the ECT fields of the Policy tuple:<a href="#section-8.2.1.4-4" class="pilcrow">¶</a></p>
 <span id="name-policy-tuple-requirements"></span><div id="tbl-policy-ect-optionality">
 <table class="center" id="table-6">
               <caption>
@@ -4334,9 +4338,7 @@ policy = [
             <h5 id="name-internal-representation-of-a">
 <a href="#section-8.2.1.5" class="section-number selfRef">8.2.1.5. </a><a href="#name-internal-representation-of-a" class="section-name selfRef">Internal Representation of Attestation Results</a>
             </h5>
-<p id="section-8.2.1.5-1">The <code>ar</code> relation compares the <code>acs-condition</code> to the ACS.
-If the condition is satisfied, the <code>ars-additions</code> are copied from the ACS to the ARS.
-If any of the <code>ars-additions</code> are not found in the ACS then these ACS entries are not copied to the ARS.<a href="#section-8.2.1.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.5-1">The <code>ar</code> relation compares the <code>acs-condition</code> to the ACS.<a href="#section-8.2.1.5-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-8.2.1.5-2">
 <pre>
 ar = [
@@ -4345,6 +4347,9 @@ ar = [
 ]
 </pre><a href="#section-8.2.1.5-2" class="pilcrow">¶</a>
 </div>
+<p id="section-8.2.1.5-3">If the condition is satisfied, the <code>ars-additions</code> are copied from the ACS to the ARS.
+If any of the <code>ars-additions</code> are not found in the ACS then these ACS entries are not copied to the ARS.<a href="#section-8.2.1.5-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.1.5-4"><a href="#tbl-ar-ect-optionality" class="auto internal xref">Table 7</a> contains the requirements for the ECT fields of the Attestation Results tuple:<a href="#section-8.2.1.5-4" class="pilcrow">¶</a></p>
 <span id="name-attestation-results-tuple-r"></span><div id="tbl-ar-ect-optionality">
 <table class="center" id="table-7">
               <caption>

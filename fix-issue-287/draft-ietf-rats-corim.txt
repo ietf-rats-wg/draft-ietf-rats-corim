@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 6 April 2025                                             Linaro
+Expires: 7 April 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          3 October 2024
+                                                          4 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 April 2025.
+   This Internet-Draft will expire on 7 April 2025.
 
 Copyright Notice
 
@@ -2142,6 +2142,10 @@ Table of Contents
    An internal representation of attestation Evidence uses the ae
    relation.
 
+   ae = [
+     addition: [ + ECT ]
+   ]
+
    The addition is a list of ECTs with Evidence to be appraised.
 
    A Verifier may maintain multiple simultaneous sessions to different
@@ -2149,9 +2153,8 @@ Table of Contents
    the Evidence inputs are associated with the correct ACS.  The
    addition is added to the ACS for a specific Attester.
 
-   ae = [
-     addition: [ + ECT ]
-   ]
+   Table 3 contains the requirements for the ECT fields of the Evidence
+   tuple:
 
                  +==========+==============+=============+
                  | ECT type | ECT Field    | Requirement |
@@ -2175,6 +2178,11 @@ Table of Contents
    which is a list of ECTs that contains possible states and a list of
    ECTs that contain actual states asserted with RVP authority.
 
+   rv = [ + {
+     condition: ECT
+     addition: ECT
+   } ]
+
    The rv relation is a list of condition-addition pairings where each
    pairing is evaluated together.  If the condition containing reference
    ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted,
@@ -2184,10 +2192,8 @@ Table of Contents
    Evidence ECTs.  If the matching condition is satisfied, then the re-
    asserted ECTs are added to the ACS.
 
-   rv = [ + {
-     condition: ECT
-     addition: ECT
-   } ]
+   Table 4 contains the requirements for the ECT fields of the Reference
+   Values tuple:
 
                 +===========+==============+=============+
                 | ECT type  | ECT Field    | Requirement |
@@ -2222,18 +2228,6 @@ Table of Contents
    relations, which are lists of ECTs that describe matching conditions
    and the additions that are added if the conditions are satisfied.
 
-   The ev relation compares the condition ECTs to the ACS and if all of
-   the ECTs are found in the ACS then the addition ECTs are added to the
-   ACS.
-
-   The evs relation compares the condition ECTs to the ACS and if all of
-   the ECTs are found in the ACS then each entry in the series list is
-   evaluated.  The selection ECTs are compared with the ACS and if the
-   selection criteria is satisfied, then the addition ECTs are added to
-   the ACS and evaluation of the series ends.  If the selection criteria
-   is not satisfied, then evaluation procedes to the next series list
-   entry.
-
    ev = [
      condition: [ + ECT ]
      addition: [ + ECT ]
@@ -2246,6 +2240,21 @@ Table of Contents
        addition: [ + ECT ]
      } ]
    ]
+
+   The ev relation compares the condition ECTs to the ACS and if all of
+   the ECTs are found in the ACS then the addition ECTs are added to the
+   ACS.
+
+   The evs relation compares the condition ECTs to the ACS and if all of
+   the ECTs are found in the ACS then each entry in the series list is
+   evaluated.  The selection ECTs are compared with the ACS and if the
+   selection criteria is satisfied, then the addition ECTs are added to
+   the ACS and evaluation of the series ends.  If the selection criteria
+   is not satisfied, then evaluation procedes to the next series list
+   entry.
+
+   Table 5 contains the requirements for the ECT fields of the Endorsed
+   Values and Endorsed Values Series tuples:
 
                 +===========+==============+=============+
                 | ECT type  | ECT Field    | Requirement |
@@ -2286,14 +2295,18 @@ Table of Contents
 
 8.2.1.4.  Internal Representation of Policy Statements
 
-   The policy relation compares the condition ECTs to the ACS.  If all
-   of the ECTs are found in the ACS then the addition ECTs are added to
-   the ACS with the policy author's authority.
+   The policy relation compares the condition ECTs to the ACS.
 
    policy = [
      condition: [ + ECT ]
      addition: [ + ECT ]
    ]
+
+   If all of the ECTs are found in the ACS then the addition ECTs are
+   added to the ACS with the policy author's authority.
+
+   Table 6 contains the requirements for the ECT fields of the Policy
+   tuple:
 
                 +===========+==============+=============+
                 | ECT type  | ECT Field    | Requirement |
@@ -2323,15 +2336,19 @@ Table of Contents
 
 8.2.1.5.  Internal Representation of Attestation Results
 
-   The ar relation compares the acs-condition to the ACS.  If the
-   condition is satisfied, the ars-additions are copied from the ACS to
-   the ARS.  If any of the ars-additions are not found in the ACS then
-   these ACS entries are not copied to the ARS.
+   The ar relation compares the acs-condition to the ACS.
 
    ar = [
      acs-condition: [ + ECT ]
      ars-addition: [ + ECT ]
    ]
+
+   If the condition is satisfied, the ars-additions are copied from the
+   ACS to the ARS.  If any of the ars-additions are not found in the ACS
+   then these ACS entries are not copied to the ARS.
+
+   Table 7 contains the requirements for the ECT fields of the
+   Attestation Results tuple:
 
               +===============+==============+=============+
               | ECT type      | ECT Field    | Requirement |
