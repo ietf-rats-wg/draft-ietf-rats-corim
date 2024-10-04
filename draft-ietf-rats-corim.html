@@ -1635,14 +1635,15 @@ As such, one supply chain actor will only provide the subset of characteristics 
 Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">This document specifies Concise Reference Integrity Manifests (CoRIM) - a CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span> based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
-CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view. See <a href="#sec-verifier-rec" class="auto internal xref">Section 2</a>.<a href="#section-1-2" class="pilcrow">¶</a></p>
+CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view.
+See <a href="#sec-verifier-rec" class="auto internal xref">Section 2</a>.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <div id="terminology-and-requirements-language">
 <section id="section-1.1">
         <h3 id="name-terminology-and-requirement">
 <a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-terminology-and-requirement" class="section-name selfRef">Terminology and Requirements Language</a>
         </h3>
 <p id="section-1.1-1">This document uses terms and concepts defined by the RATS architecture.
-For a complete glossary see <span><a href="https://rfc-editor.org/rfc/rfc9334#section-4" class="relref">Section 4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+For a complete glossary, see <span><a href="https://rfc-editor.org/rfc/rfc9334#section-4" class="relref">Section 4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
 <p id="section-1.1-2">In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 <p id="section-1.1-3">The terminology from CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>, CDDL <span>[<a href="#RFC8610" class="cite xref">RFC8610</a>]</span> and COSE <span>[<a href="#STD96" class="cite xref">STD96</a>]</span> applies;
 in particular, CBOR diagnostic notation is defined in <span><a href="https://rfc-editor.org/rfc/rfc8949#section-8" class="relref">Section 8</a> of [<a href="#STD94" class="cite xref">STD94</a>]</span>
@@ -1872,26 +1873,26 @@ A tag identifies and describes properties of modules or components of a system.<
           <p id="section-4-3.1.1">Concise Module ID (CoMID) tags (<a href="#sec-comid" class="auto internal xref">Section 5</a>) contain metadata and claims about the hardware and firmware modules.<a href="#section-4-3.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-3.2">
-          <p id="section-4-3.2.1">Concise Software ID (CoSWID) tags <span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span> describe software components.<a href="#section-4-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-4-3.2.1">Concise Software ID (CoSWID) tags (<span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>) describe software components.<a href="#section-4-3.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-3.3">
           <p id="section-4-3.3.1">Concise Bill of Material (CoBOM) tags (<a href="#sec-cobom" class="auto internal xref">Section 6</a>) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.<a href="#section-4-3.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-4-4">The set of tags is extensible so that future specifications can add new kinds of information.
-For example, Concise Trust Anchor Stores (CoTS) <span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span> is currently being defined as a standard CoRIM extension.<a href="#section-4-4" class="pilcrow">¶</a></p>
+For example, Concise Trust Anchor Stores (CoTS) (<span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span>) is currently being defined as a standard CoRIM extension.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <p id="section-4-5">Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
 <span class="cref" id="tracked-at_1">Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73<a href="#section-4-5" class="pilcrow">¶</a></p>
 <p id="section-4-6">CoRIM can also carry the following optional metadata:<a href="#section-4-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-7.1">
-          <p id="section-4-7.1.1">A locator, which allows discovery of possibly related RIMs<a href="#section-4-7.1.1" class="pilcrow">¶</a></p>
+          <p id="section-4-7.1.1">A locator, which allows discovery of possibly related RIMs.<a href="#section-4-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-7.2">
           <p id="section-4-7.2.1">A profile identifier, which is used to interpret the information contained in the enclosed tags.
 A profile allows the base CoRIM CDDL definition to be customized to fit a specific Attester by augmenting the base CDDL data definition via the specified extension points or by constraining types defined.
 A profile MUST NOT change the base CoRIM CDDL definition's semantics, which includes not changing or overloading names and numbers registered at IANA registries used by this document.
-For more detail, see <a href="#sec-corim-profile-types" class="auto internal xref">Section 4.1.4</a>,<a href="#section-4-7.2.1" class="pilcrow">¶</a></p>
+For more detail, see <a href="#sec-corim-profile-types" class="auto internal xref">Section 4.1.4</a>.<a href="#section-4-7.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-4-7.3">
           <p id="section-4-7.3.1">A validity period, which indicates the time period for which the CoRIM contents are valid.<a href="#section-4-7.3.1" class="pilcrow">¶</a></p>
@@ -1936,16 +1937,16 @@ corim-map = {
 <ul class="normal">
 <li class="normal" id="section-4.1-4.1">
             <p id="section-4.1-4.1.1"><code>id</code> (index 0): A globally unique identifier to identify a CoRIM. Described
-in <a href="#sec-corim-id" class="auto internal xref">Section 4.1.1</a><a href="#section-4.1-4.1.1" class="pilcrow">¶</a></p>
+in <a href="#sec-corim-id" class="auto internal xref">Section 4.1.1</a>.<a href="#section-4.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-4.2">
             <p id="section-4.1-4.2.1"><code>tags</code> (index 1):  An array of one or more CoMID or CoSWID tags.  Described
-in <a href="#sec-corim-tags" class="auto internal xref">Section 4.1.2</a><a href="#section-4.1-4.2.1" class="pilcrow">¶</a></p>
+in <a href="#sec-corim-tags" class="auto internal xref">Section 4.1.2</a>.<a href="#section-4.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-4.3">
             <p id="section-4.1-4.3.1"><code>dependent-rims</code> (index 2): One or more services supplying additional,
-possibly dependent, manifests or related files. Described in
-<a href="#sec-corim-locator-map" class="auto internal xref">Section 4.1.3</a><a href="#section-4.1-4.3.1" class="pilcrow">¶</a></p>
+possibly dependent, manifests or related files.
+Described in <a href="#sec-corim-locator-map" class="auto internal xref">Section 4.1.3</a>.<a href="#section-4.1-4.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-4.4">
             <p id="section-4.1-4.4.1"><code>profile</code> (index 3): An optional profile identifier for the tags contained in
@@ -1956,15 +1957,16 @@ See <a href="#sec-corim-profile-types" class="auto internal xref">Section 4.1.4<
 </li>
           <li class="normal" id="section-4.1-4.5">
             <p id="section-4.1-4.5.1"><code>rim-validity</code> (index 4): Specifies the validity period of the CoRIM.
-Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a><a href="#section-4.1-4.5.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.1-4.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-4.6">
             <p id="section-4.1-4.6.1"><code>entities</code> (index 5): A list of entities involved in a CoRIM life-cycle.
-Described in <a href="#sec-corim-entity" class="auto internal xref">Section 4.1.5</a><a href="#section-4.1-4.6.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-corim-entity" class="auto internal xref">Section 4.1.5</a>.<a href="#section-4.1-4.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-4.7">
             <p id="section-4.1-4.7.1"><code>$$corim-map-extension</code>: This CDDL socket is used to add new information
-structures to the <code>corim-map</code>.  See <a href="#sec-iana-corim" class="auto internal xref">Section 11.3</a>.<a href="#section-4.1-4.7.1" class="pilcrow">¶</a></p>
+structures to the <code>corim-map</code>.
+Described in <a href="#sec-iana-corim" class="auto internal xref">Section 11.3</a>.<a href="#section-4.1-4.7.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div class="lang-cddl sourcecode" id="section-4.1-5">
@@ -1994,7 +1996,7 @@ $corim-id-type-choice /= uuid-type
 <a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-tags" class="section-name selfRef">Tags</a>
           </h4>
 <p id="section-4.1.2-1">A <code>$concise-tag-type-choice</code> is a tagged CBOR payload that carries either a
-CoMID (<a href="#sec-comid" class="auto internal xref">Section 5</a>), a CoSWID <span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>, or a CoBOM <a href="#sec-cobom" class="auto internal xref">Section 6</a>.<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
+CoMID (<a href="#sec-comid" class="auto internal xref">Section 5</a>), a CoSWID (<span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>), or a CoBOM (<a href="#sec-cobom" class="auto internal xref">Section 6</a>).<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.1.2-2">
 <pre>
 $concise-tag-type-choice /= tagged-concise-swid-tag
@@ -2026,7 +2028,7 @@ corim-locator-map = {
 </li>
             <li class="normal" id="section-4.1.3-4.2">
               <p id="section-4.1.3-4.2.1"><code>thumbprint</code> (index 1): expected digest of the resource referenced by <code>href</code>.
-See <a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>.<a href="#section-4.1.3-4.2.1" class="pilcrow">¶</a></p>
+See sec-common-hash-entry}}.<a href="#section-4.1.3-4.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -2040,7 +2042,7 @@ See <a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>.
 <p id="section-4.1.4-2">A profile defines which of the optional parts of a CoRIM are required, which are prohibited and which extension points are exercised and how.
 A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this document.<a href="#section-4.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-3">A profile MAY constrain the values of a given CoRIM type to a subset of the values.
-A profile MAY extend the set of a given CoRIM type using the defined extension points (see <a href="#sec-extensibility" class="auto internal xref">Section 5.2</a>).
+A profile MAY extend the set of a given CoRIM type using the defined extension points (<a href="#sec-extensibility" class="auto internal xref">Section 5.2</a>).
 Exercised extension points should preserve the intent of the original semantics.<a href="#section-4.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-4">CoRIM profiles SHOULD be specified in a publicly available document.<a href="#section-4.1.4-4" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media types defined in <a href="#sec-mt-corim-signed" class="auto internal xref">Section 11.6.1</a> and
@@ -2064,8 +2066,7 @@ $profile-type-choice /= tagged-oid-type
           <h4 id="name-entities">
 <a href="#section-4.1.5" class="section-number selfRef">4.1.5. </a><a href="#name-entities" class="section-name selfRef">Entities</a>
           </h4>
-<p id="section-4.1.5-1">The CoRIM Entity is an instantiation of the Entity generic
-(<a href="#sec-common-entity" class="auto internal xref">Section 7.2</a>) using a <code>$corim-role-type-choice</code>.<a href="#section-4.1.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.1.5-1">The CoRIM Entity is an instantiation of the Entity generic (<a href="#sec-common-entity" class="auto internal xref">Section 7.2</a>) using a <code>$corim-role-type-choice</code>.<a href="#section-4.1.5-1" class="pilcrow">¶</a></p>
 <p id="section-4.1.5-2">The only role defined in this specification for a CoRIM Entity is
 <code>manifest-creator</code>.<a href="#section-4.1.5-2" class="pilcrow">¶</a></p>
 <p id="section-4.1.5-3">The <code>$$corim-entity-map-extension</code> extension socket is empty in this
@@ -2158,7 +2159,7 @@ The following describes each child item of this map.<a href="#section-4.2.1-2" c
 Described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.2</a>.<a href="#section-4.2.1-3.4.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-4.2.1-4">Additional data can be included in the COSE header map as per <span><a href="https://rfc-editor.org/rfc/rfc9052#section-3" class="relref">Section 3</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>.<a href="#section-4.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-4">Additional data can be included in the COSE header map as per (<span><a href="https://rfc-editor.org/rfc/rfc9052#section-3" class="relref">Section 3</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>).<a href="#section-4.2.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-corim-meta">
@@ -2180,11 +2181,11 @@ corim-meta-map = {
 <ul class="normal">
 <li class="normal" id="section-4.2.2-4.1">
               <p id="section-4.2.2-4.1.1"><code>signer</code> (index 0): Information about the entity that signs the CoRIM.
-Described in <a href="#sec-corim-signer" class="auto internal xref">Section 4.2.2.1</a><a href="#section-4.2.2-4.1.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-corim-signer" class="auto internal xref">Section 4.2.2.1</a>.<a href="#section-4.2.2-4.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.2.2-4.2">
-              <p id="section-4.2.2-4.2.1"><code>signature-validity</code> (index 1): Validity period for the CoRIM. Described in
-<a href="#sec-common-validity" class="auto internal xref">Section 7.3</a><a href="#section-4.2.2-4.2.1" class="pilcrow">¶</a></p>
+              <p id="section-4.2.2-4.2.1"><code>signature-validity</code> (index 1): Validity period for the CoRIM.
+Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.2-4.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <div id="sec-corim-signer">
@@ -2304,22 +2305,25 @@ specified language.<a href="#section-5.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-4.2">
             <p id="section-5.1-4.2.1"><code>tag-identity</code> (index 1): A <code>tag-identity-map</code> containing unique
-identification information for the CoMID. Described in <a href="#sec-comid-tag-id" class="auto internal xref">Section 5.1.1</a>.<a href="#section-5.1-4.2.1" class="pilcrow">¶</a></p>
+identification information for the CoMID.
+Described in <a href="#sec-comid-tag-id" class="auto internal xref">Section 5.1.1</a>.<a href="#section-5.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-4.3">
             <p id="section-5.1-4.3.1"><code>entities</code> (index 2): Provides information about one or more organizations
-responsible for producing the CoMID tag. Described in <a href="#sec-comid-entity" class="auto internal xref">Section 5.1.2</a>.<a href="#section-5.1-4.3.1" class="pilcrow">¶</a></p>
+responsible for producing the CoMID tag.
+Described in <a href="#sec-comid-entity" class="auto internal xref">Section 5.1.2</a>.<a href="#section-5.1-4.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-4.4">
-            <p id="section-5.1-4.4.1"><code>linked-tags</code> (index 3): A list of one or more <code>linked-tag-map</code> (described in
-<a href="#sec-comid-linked-tag" class="auto internal xref">Section 5.1.3</a>), providing typed relationships between this and
-other CoMIDs.<a href="#section-5.1-4.4.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-4.4.1"><code>linked-tags</code> (index 3): A list of one or more <code>linked-tag-map</code> providing typed relationships between this and
+other CoMIDs.
+Described in <a href="#sec-comid-linked-tag" class="auto internal xref">Section 5.1.3</a>).<a href="#section-5.1-4.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-4.5">
             <p id="section-5.1-4.5.1"><code>triples</code> (index 4): One or more triples providing information specific to
 the described module, e.g.: reference or endorsed values, cryptographic
 material, or structural relationship between the described module and other
-modules.  Described in (<a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>).<a href="#section-5.1-4.5.1" class="pilcrow">¶</a></p>
+modules.
+Described in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>.<a href="#section-5.1-4.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div id="sec-comid-tag-id">
@@ -2338,11 +2342,11 @@ tag-identity-map = {
 <p id="section-5.1.1-2">The following describes each member of the <code>tag-identity-map</code>.<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.1-3.1">
-              <p id="section-5.1.1-3.1.1"><code>tag-id</code> (index 0): A universally unique identifier for the CoMID. Described
-in <a href="#sec-tag-id" class="auto internal xref">Section 5.1.1.1</a>.<a href="#section-5.1.1-3.1.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.1-3.1.1"><code>tag-id</code> (index 0): A universally unique identifier for the CoMID.
+Described in <a href="#sec-tag-id" class="auto internal xref">Section 5.1.1.1</a>.<a href="#section-5.1.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.1-3.2">
-              <p id="section-5.1.1-3.2.1"><code>tag-version</code> (index 1): Optional versioning information for the <code>tag-id</code> .
+              <p id="section-5.1.1-3.2.1"><code>tag-version</code> (index 1): Optional versioning information for the <code>tag-id</code>.
 Described in <a href="#sec-tag-version" class="auto internal xref">Section 5.1.1.2</a>.<a href="#section-5.1.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
@@ -2401,8 +2405,7 @@ comid-entity-map =
   entity-map&lt;$comid-role-type-choice, $$comid-entity-map-extension&gt;
 </pre><a href="#section-5.1.2-1" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.2-2">The CoMID Entity is an instantiation of the Entity generic
-(<a href="#sec-common-entity" class="auto internal xref">Section 7.2</a>) using a <code>$comid-role-type-choice</code>.<a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-2">The CoMID Entity is an instantiation of <code>entity-map</code> (<a href="#sec-common-entity" class="auto internal xref">Section 7.2</a>) using a <code>$comid-role-type-choice</code>.<a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
 <p id="section-5.1.2-3">The <code>$$comid-entity-map-extension</code> extension socket is empty in this
 specification.<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.2-4">
@@ -2421,8 +2424,7 @@ $comid-role-type-choice /= &amp;(maintainer: 2)
               <p id="section-5.1.2-6.2.1"><code>creator</code> (value 1): original maker of the module described by the CoMID tag.<a href="#section-5.1.2-6.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.2-6.3">
-              <p id="section-5.1.2-6.3.1"><code>maintainer</code> (value 2): an entity making changes to the module described by
-the CoMID tag.<a href="#section-5.1.2-6.3.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.2-6.3.1"><code>maintainer</code> (value 2): an entity making changes to the module described by the CoMID tag.<a href="#section-5.1.2-6.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -2445,8 +2447,8 @@ linked-tag-map = {
 <p id="section-5.1.3-3">The following describes each member of the <code>tag-identity-map</code>.<a href="#section-5.1.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.3-4.1">
-              <p id="section-5.1.3-4.1.1"><code>linked-tag-id</code> (index 0): Unique identifier for the target tag.  For the
-definition see <a href="#sec-tag-id" class="auto internal xref">Section 5.1.1.1</a>.<a href="#section-5.1.3-4.1.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.3-4.1.1"><code>linked-tag-id</code> (index 0): Unique identifier for the target tag.
+See <a href="#sec-tag-id" class="auto internal xref">Section 5.1.1.1</a>.<a href="#section-5.1.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.3-4.2">
               <p id="section-5.1.3-4.2.1"><code>tag-rel</code> (index 1): the kind of relation linking the source tag to the
@@ -2509,44 +2511,43 @@ triples-map = non-empty&lt;{
 <p id="section-5.1.4-3">The following describes each member of the <code>triples-map</code>:<a href="#section-5.1.4-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4-4.1">
-              <p id="section-5.1.4-4.1.1"><code>reference-triples</code> (index 0): Triples containing reference values. Described
-in <a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>.<a href="#section-5.1.4-4.1.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.1.1"><code>reference-triples</code> (index 0): Triples containing reference values.
+Described in <a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>.<a href="#section-5.1.4-4.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.2">
-              <p id="section-5.1.4-4.2.1"><code>endorsed-triples</code> (index 1): Triples containing endorsed values. Described
-in <a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>.<a href="#section-5.1.4-4.2.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.2.1"><code>endorsed-triples</code> (index 1): Triples containing endorsed values.
+Described in <a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>.<a href="#section-5.1.4-4.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.3">
               <p id="section-5.1.4-4.3.1"><code>identity-triples</code> (index 2): Triples containing identity credentials.
 Described in <a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.4.4</a>.<a href="#section-5.1.4-4.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.4">
-              <p id="section-5.1.4-4.4.1"><code>attest-key-triples</code> (index 3): Triples containing verification keys
-associated with attesting environments. Described in
-<a href="#sec-comid-triple-attest-key" class="auto internal xref">Section 5.1.4.5</a>.<a href="#section-5.1.4-4.4.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.4.1"><code>attest-key-triples</code> (index 3): Triples containing verification keys associated with attesting environments.
+Described in <a href="#sec-comid-triple-attest-key" class="auto internal xref">Section 5.1.4.5</a>.<a href="#section-5.1.4-4.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.5">
-              <p id="section-5.1.4-4.5.1"><code>dependency-triples</code> (index 4): Triples describing trust relationships
-between domains.  Described in <a href="#sec-comid-triple-domain-dependency" class="auto internal xref">Section 5.1.4.6</a>.<a href="#section-5.1.4-4.5.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.5.1"><code>dependency-triples</code> (index 4): Triples describing trust relationships between domains.
+Described in <a href="#sec-comid-triple-domain-dependency" class="auto internal xref">Section 5.1.4.6</a>.<a href="#section-5.1.4-4.5.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.6">
-              <p id="section-5.1.4-4.6.1"><code>membership-triples</code> (index 5): Triples describing topological relationships
-between (sub-)modules.  Described in <a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.4.7</a>.<a href="#section-5.1.4-4.6.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.6.1"><code>membership-triples</code> (index 5): Triples describing topological relationships between (sub-)modules.
+Described in <a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.4.7</a>.<a href="#section-5.1.4-4.6.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.7">
-              <p id="section-5.1.4-4.7.1"><code>coswid-triples</code> (index 6): Triples associating modules with existing CoSWID
-tags. Described in <a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.4.8</a>.<a href="#section-5.1.4-4.7.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.7.1"><code>coswid-triples</code> (index 6): Triples associating modules with existing CoSWID tags.
+Described in <a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.4.8</a>.<a href="#section-5.1.4-4.7.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.8">
-              <p id="section-5.1.4-4.8.1"><code>conditional-endorsement-series-triples</code> (index 8) Triples describing a series of
-conditional Endorsements based on the acceptance of a stateful environment. Described
-in <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.9</a>.<a href="#section-5.1.4-4.8.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-4.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of
+conditional Endorsements based on the acceptance of a stateful environment.
+Described in <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.9</a>.<a href="#section-5.1.4-4.8.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-4.9">
-              <p id="section-5.1.4-4.9.1"><code>conditional-endorsement-triples</code> (index 10) Triples describing a series of
+              <p id="section-5.1.4-4.9.1"><code>conditional-endorsement-triples</code> (index 10): Triples describing a series of
 Endorsement that are applicable based on the acceptance of a series of
-stateful environment records. Described in
-<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.10</a>.<a href="#section-5.1.4-4.9.1" class="pilcrow">¶</a></p>
+stateful environment records.
+Described in <a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.10</a>.<a href="#section-5.1.4-4.9.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <div id="environments">
@@ -2578,11 +2579,12 @@ Described in <a href="#sec-comid-class" class="auto internal xref">Section 5.1.4
 </li>
               <li class="normal" id="section-5.1.4.1-6.2">
                 <p id="section-5.1.4.1-6.2.1"><code>instance</code> (index 1): Contains a unique identifier of a module's instance.
-See <a href="#sec-comid-instance" class="auto internal xref">Section 5.1.4.1.2</a>.<a href="#section-5.1.4.1-6.2.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-comid-instance" class="auto internal xref">Section 5.1.4.1.2</a>.<a href="#section-5.1.4.1-6.2.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.1-6.3">
                 <p id="section-5.1.4.1-6.3.1"><code>group</code> (index 2): identifier for a group of instances, e.g., if an
-anonymization scheme is used.<a href="#section-5.1.4.1-6.3.1" class="pilcrow">¶</a></p>
+anonymization scheme is used.
+Described in <a href="#sec-comid-group" class="auto internal xref">Section 5.1.4.1.3</a>.<a href="#section-5.1.4.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <div id="sec-comid-class">
@@ -2613,8 +2615,8 @@ $class-id-type-choice /= tagged-bytes
 <ul class="normal">
 <li class="normal" id="section-5.1.4.1.1-4.1">
                   <p id="section-5.1.4.1.1-4.1.1"><code>class-id</code> (index 0): Identifies the environment via a well-known identifier.
-Typically, <code>class-id</code> is an object identifier (OID) variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>) or universally unique
-identifier (UUID). Use of this attribute is preferred.<a href="#section-5.1.4.1.1-4.1.1" class="pilcrow">¶</a></p>
+Typically, <code>class-id</code> is an object identifier (OID) variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>) or universally unique identifier (UUID).
+Use of this attribute is preferred.<a href="#section-5.1.4.1.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.1-4.2">
                   <p id="section-5.1.4.1.1-4.2.1"><code>vendor</code> (index 1): Identifies the entity responsible for choosing values for
@@ -2658,7 +2660,7 @@ $instance-id-type-choice /= tagged-bytes
 </div>
 </section>
 </div>
-<div id="environment-group">
+<div id="sec-comid-group">
 <section id="section-5.1.4.1.3">
               <h6 id="name-environment-group">
 <a href="#section-5.1.4.1.3" class="section-number selfRef">5.1.4.1.3. </a><a href="#name-environment-group" class="section-name selfRef">Environment Group</a>
@@ -2712,7 +2714,7 @@ measurement-map = {
 <ul class="normal">
 <li class="normal" id="section-5.1.4.1.4-9.1">
                   <p id="section-5.1.4.1.4-9.1.1"><code>mkey</code> (index 0): An optional measurement key.
- See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>.<a href="#section-5.1.4.1.4-9.1.1" class="pilcrow">¶</a></p>
+ Described in <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>.<a href="#section-5.1.4.1.4-9.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.4-9.2">
                   <p id="section-5.1.4.1.4-9.2.1"><code>mval</code> (index 1): The measurements associated with the environment.
@@ -2720,7 +2722,9 @@ measurement-map = {
 </li>
                 <li class="normal" id="section-5.1.4.1.4-9.3">
                   <p id="section-5.1.4.1.4-9.3.1"><code>authorized-by</code> (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, the producer of the measurement or a delegate.<a href="#section-5.1.4.1.4-9.3.1" class="pilcrow">¶</a></p>
+ the designated authority for this measurement.
+ For example, the producer of the measurement.
+ See <a href="#sec-crypto-keys" class="auto internal xref">Section 5.1.4.1.5</a>.<a href="#section-5.1.4.1.4-9.3.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 <div id="sec-comid-mkey">
@@ -2778,25 +2782,25 @@ measurement-values-map = non-empty&lt;{
 <p id="section-5.1.4.1.4.2-4">The following describes each member of the <code>measurement-values-map</code>.<a href="#section-5.1.4.1.4.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.1.4.2-5.1">
-                    <p id="section-5.1.4.1.4.2-5.1.1"><code>version</code> (index 0): Typically changes whenever the measured environment is
-updated. Described in <a href="#sec-comid-version" class="auto internal xref">Section 5.1.4.1.4.3</a>.<a href="#section-5.1.4.1.4.2-5.1.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.1.1"><code>version</code> (index 0): Typically changes whenever the measured environment is updated.
+Described in <a href="#sec-comid-version" class="auto internal xref">Section 5.1.4.1.4.3</a>.<a href="#section-5.1.4.1.4.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.2">
-                    <p id="section-5.1.4.1.4.2-5.2.1"><code>svn</code> (index 1): The security version number typically changes only when a
-security relevant change is made to the measured environment.  Described in
-<a href="#sec-comid-svn" class="auto internal xref">Section 5.1.4.1.4.4</a>.<a href="#section-5.1.4.1.4.2-5.2.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.2.1"><code>svn</code> (index 1): The security version number typically changes only when a security relevant change is made to the measured environment.
+Described in <a href="#sec-comid-svn" class="auto internal xref">Section 5.1.4.1.4.4</a>.<a href="#section-5.1.4.1.4.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.3">
                     <p id="section-5.1.4.1.4.2-5.3.1"><code>digests</code> (index 2): Contains the digest(s) of the measured environment
 together with the respective hash algorithm used in the process.
-It uses the <code>digests-type</code> described in <a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>.<a href="#section-5.1.4.1.4.2-5.3.1" class="pilcrow">¶</a></p>
+It uses the <code>digests-type</code>.
+Described in <a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>.<a href="#section-5.1.4.1.4.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.4">
-                    <p id="section-5.1.4.1.4.2-5.4.1"><code>flags</code> (index 3): Describes security relevant operational modes. For
-example, whether the environment is in a debug mode, recovery mode, not fully
-configured, not secure, not replay protected or not integrity protected. The
-<code>flags</code> field indicates which operational modes are currently associated with
-measured environment.  Described in <a href="#sec-comid-flags" class="auto internal xref">Section 5.1.4.1.4.5</a>.<a href="#section-5.1.4.1.4.2-5.4.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.4.1"><code>flags</code> (index 3): Describes security relevant operational modes.
+For example, whether the environment is in a debug mode, recovery mode, not fully
+configured, not secure, not replay protected or not integrity protected.
+The <code>flags</code> field indicates which operational modes are currently associated with measured environment.
+Described in <a href="#sec-comid-flags" class="auto internal xref">Section 5.1.4.1.4.5</a>.<a href="#section-5.1.4.1.4.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.5">
                     <p id="section-5.1.4.1.4.2-5.5.1"><code>raw-value</code> (index 4): Contains the actual (not hashed) value of the element.
@@ -2810,24 +2814,23 @@ collected values are bit-wise comparable. The vendor determines the encoding
 of <code>raw-value</code> and the corresponding <code>raw-value-mask</code>.<a href="#section-5.1.4.1.4.2-5.5.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.6">
-                    <p id="section-5.1.4.1.4.2-5.6.1"><code>mac-addr</code> (index 6): A EUI-48 or EUI-64 MAC address associated with the
-measured environment.  Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.6.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.6.1"><code>mac-addr</code> (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
+Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.6.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.7">
-                    <p id="section-5.1.4.1.4.2-5.7.1"><code>ip-addr</code> (index 7): An IPv4 or IPv6 address associated with the measured
-environment.  Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.7.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.7.1"><code>ip-addr</code> (index 7): An IPv4 or IPv6 address associated with the measured environment.
+Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.7.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.8">
-                    <p id="section-5.1.4.1.4.2-5.8.1"><code>serial-number</code> (index 8): A text string representing the product serial
-number.<a href="#section-5.1.4.1.4.2-5.8.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.8.1"><code>serial-number</code> (index 8): A text string representing the product serial number.<a href="#section-5.1.4.1.4.2-5.8.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.9">
-                    <p id="section-5.1.4.1.4.2-5.9.1"><code>ueid</code> (index 9): UEID associated with the measured environment.  See
-<a href="#sec-common-ueid" class="auto internal xref">Section 7.5</a>.<a href="#section-5.1.4.1.4.2-5.9.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.9.1"><code>ueid</code> (index 9): UEID associated with the measured environment.
+Described in <a href="#sec-common-ueid" class="auto internal xref">Section 7.5</a>.<a href="#section-5.1.4.1.4.2-5.9.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.10">
-                    <p id="section-5.1.4.1.4.2-5.10.1"><code>uuid</code> (index 10): UUID associated with the measured environment.  See
-<a href="#sec-common-uuid" class="auto internal xref">Section 7.4</a>.<a href="#section-5.1.4.1.4.2-5.10.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.10.1"><code>uuid</code> (index 10): UUID associated with the measured environment.
+Described in <a href="#sec-common-uuid" class="auto internal xref">Section 7.4</a>.<a href="#section-5.1.4.1.4.2-5.10.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.11">
                     <p id="section-5.1.4.1.4.2-5.11.1"><code>name</code> (index 11): a name associated with the measured environment.<a href="#section-5.1.4.1.4.2-5.11.1" class="pilcrow">¶</a></p>
@@ -2867,7 +2870,9 @@ version-map = {
 </li>
                   <li class="normal" id="section-5.1.4.1.4.3-4.2">
                     <p id="section-5.1.4.1.4.3-4.2.1"><code>version-scheme</code> (index 1): an optional indicator of the versioning
-convention used in the <code>version</code> attribute.  Defined in <span><a href="https://rfc-editor.org/rfc/rfc9393#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>.  The CDDL is copied below for convenience.<a href="#section-5.1.4.1.4.3-4.2.1" class="pilcrow">¶</a></p>
+convention used in the <code>version</code> attribute.
+Defined in <span><a href="https://rfc-editor.org/rfc/rfc9393#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>.
+The CDDL is copied below for convenience.<a href="#section-5.1.4.1.4.3-4.2.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.4.3-5">
@@ -3047,7 +3052,7 @@ the one preceding.<a href="#section-5.1.4.1.5-2.3.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.5-2.4">
                   <p id="section-5.1.4.1.5-2.4.1"><code>tagged-cose-key-type</code>: CBOR encoded COSE_Key or COSE_KeySet.
-Defined in <span><a href="https://rfc-editor.org/rfc/rfc9052#section-7" class="relref">Section 7</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span><a href="#section-5.1.4.1.5-2.4.1" class="pilcrow">¶</a></p>
+Defined in <span><a href="https://rfc-editor.org/rfc/rfc9052#section-7" class="relref">Section 7</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>.<a href="#section-5.1.4.1.5-2.4.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 <p id="section-5.1.4.1.5-3">A cryptographic key digest can be one of the following formats:<a href="#section-5.1.4.1.5-3" class="pilcrow">¶</a></p>
@@ -3485,7 +3490,8 @@ concise-bom-tag = {
 <ul class="normal">
 <li class="normal" id="section-6.1-4.1">
             <p id="section-6.1-4.1.1"><code>tag-identity</code> (index 0): A <code>tag-identity-map</code> containing unique
-identification information for the CoBOM. Described in <a href="#sec-comid-tag-id" class="auto internal xref">Section 5.1.1</a>.<a href="#section-6.1-4.1.1" class="pilcrow">¶</a></p>
+identification information for the CoBOM.
+Described in <a href="#sec-comid-tag-id" class="auto internal xref">Section 5.1.1</a>.<a href="#section-6.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-4.2">
             <p id="section-6.1-4.2.1"><code>tags-list</code> (index 1): A list of one or more <code>tag-identity-maps</code> identifying
@@ -3498,13 +3504,12 @@ MUST be activated or no tags are activated.<a href="#section-6.1-4.2.1" class="p
 </li>
           <li class="normal" id="section-6.1-4.3">
             <p id="section-6.1-4.3.1"><code>bom-validity</code> (index 2): Specifies the validity period of the CoBOM.
-Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a><a href="#section-6.1-4.3.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-6.1-4.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-4.4">
-            <p id="section-6.1-4.4.1"><code>$$concise-bom-tag-extension</code>: This CDDL socket is used to add new
-information structures to the <code>concise-bom-tag</code>.  See <a href="#sec-iana-cobom" class="auto internal xref">Section 11.5</a>.
-The <code>$$concise-bom-tag-extension</code> extension socket is empty in this
-specification.<a href="#section-6.1-4.4.1" class="pilcrow">¶</a></p>
+            <p id="section-6.1-4.4.1"><code>$$concise-bom-tag-extension</code>: This CDDL socket is used to add new information structures to the <code>concise-bom-tag</code>.
+See <a href="#sec-iana-cobom" class="auto internal xref">Section 11.5</a>.
+The <code>$$concise-bom-tag-extension</code> extension socket is empty in this specification.<a href="#section-6.1-4.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -3563,27 +3568,24 @@ $entity-name-type-choice /= text
 <p id="section-7.2-4">The following describes each member of the <code>entity-map</code>.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7.2-5.1">
-            <p id="section-7.2-5.1.1"><code>entity-name</code> (index 0): The name of entity which is responsible for the
-action(s) as defined by the role. <code>$entity-name-type-choice</code> can only be
-text.  Other specifications can extend the <code>$entity-name-type-choice</code> (see
-<a href="#sec-iana-comid" class="auto internal xref">Section 11.4</a>).<a href="#section-7.2-5.1.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-5.1.1"><code>entity-name</code> (index 0): The name of entity which is responsible for the action(s) as defined by the role.
+<code>$entity-name-type-choice</code> can only be text.
+Other specifications can extend the <code>$entity-name-type-choice</code>.
+See <a href="#sec-iana-comid" class="auto internal xref">Section 11.4</a>.<a href="#section-7.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-5.2">
-            <p id="section-7.2-5.2.1"><code>reg-id</code> (index 1): A URI associated with the organization that owns the
-entity name<a href="#section-7.2-5.2.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-5.2.1"><code>reg-id</code> (index 1): A URI associated with the organization that owns the entity name.<a href="#section-7.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-5.3">
-            <p id="section-7.2-5.3.1"><code>role</code> (index 2): A type choice defining the roles that the entity is
-claiming.  The role is supplied as a parameter at the time the <code>entity-map</code>
-generic is instantiated.<a href="#section-7.2-5.3.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-5.3.1"><code>role</code> (index 2): A type choice defining the roles that the entity is claiming.
+The role is supplied as a parameter at the time the <code>entity-map</code> generic is instantiated.<a href="#section-7.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-5.4">
-            <p id="section-7.2-5.4.1"><code>extension-socket</code>: A CDDL socket used to add new information structures to
-the <code>entity-map</code>.<a href="#section-7.2-5.4.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-5.4.1"><code>extension-socket</code>: A CDDL socket used to add new information structures to the <code>entity-map</code>.<a href="#section-7.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.2-6">Examples of how the <code>entity-map</code> generic is instantiated can be found in
-<a href="#sec-corim-entity" class="auto internal xref">Section 4.1.5</a> and <a href="#sec-comid-entity" class="auto internal xref">Section 5.1.2</a>.<a href="#section-7.2-6" class="pilcrow">¶</a></p>
+(<a href="#sec-corim-entity" class="auto internal xref">Section 4.1.5</a>) and (<a href="#sec-comid-entity" class="auto internal xref">Section 5.1.2</a>).<a href="#section-7.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-common-validity">
@@ -3621,7 +3623,8 @@ ends<a href="#section-7.3-4.2.1" class="pilcrow">¶</a></p>
         <h3 id="name-uuid">
 <a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-uuid" class="section-name selfRef">UUID</a>
         </h3>
-<p id="section-7.4-1">Used to tag a byte string as a binary UUID defined in <span><a href="https://rfc-editor.org/rfc/rfc4122#section-4.1.2." class="relref">Section 4.1.2.</a> of [<a href="#RFC4122" class="cite xref">RFC4122</a>]</span>.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.4-1">Used to tag a byte string as a binary UUID.
+Defined in <span><a href="https://rfc-editor.org/rfc/rfc4122#section-4.1.2." class="relref">Section 4.1.2.</a> of [<a href="#RFC4122" class="cite xref">RFC4122</a>]</span>.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-7.4-2">
 <pre>
 uuid-type = bytes .size 16
@@ -3635,8 +3638,8 @@ tagged-uuid-type = #6.37(uuid-type)
         <h3 id="name-ueid">
 <a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-ueid" class="section-name selfRef">UEID</a>
         </h3>
-<p id="section-7.5-1">Used to tag a byte string as Universal Entity ID Claim (UUID) defined in
-<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-31#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#I-D.ietf-rats-eat" class="cite xref">I-D.ietf-rats-eat</a>]</span>.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
+<p id="section-7.5-1">Used to tag a byte string as Universal Entity ID Claim (UUID).
+Defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-eat-31#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#I-D.ietf-rats-eat" class="cite xref">I-D.ietf-rats-eat</a>]</span>.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-7.5-2">
 <pre>
 ueid-type = bytes .size 33
@@ -3814,7 +3817,8 @@ The ECT also contains authority which identifies the entity that authored the EC
           <dd class="break"></dd>
 <dt id="section-8.2-5.3">actual state:</dt>
           <dd style="margin-left: 1.5em" id="section-8.2-5.4">
-            <p id="section-8.2-5.4.1">Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.  See also <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-endorsements-03#section-2" class="relref">Section 2</a> of [<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.<a href="#section-8.2-5.4.1" class="pilcrow">¶</a></p>
+            <p id="section-8.2-5.4.1">Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.
+See also (<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-endorsements-03#section-2" class="relref">Section 2</a> of [<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>).<a href="#section-8.2-5.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-8.2-5.5">Authority:</dt>
@@ -4220,7 +4224,7 @@ ARS = [ + ECT ]
         <h3 id="name-input-validation-and-transf">
 <a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-input-validation-and-transf" class="section-name selfRef">Input Validation and Transformation (Phase 1)</a>
         </h3>
-<p id="section-8.3-1">During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags (<a href="#sec-comid" class="auto internal xref">Section 5</a>), CoSWID tags <span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>, CoBOM (<a href="#sec-cobom" class="auto internal xref">Section 6</a>) and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, <span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span>).
+<p id="section-8.3-1">During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags (<a href="#sec-comid" class="auto internal xref">Section 5</a>), CoSWID tags <span>[<a href="#RFC9393" class="cite xref">RFC9393</a>]</span>, CoBOM tags <span>[<a href="#I-D.ietf-rats-cobom" class="cite xref">I-D.ietf-rats-cobom</a>]</span>, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) <span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span>.
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 <p id="section-8.3-2">After context initialization, additional inputs are held back until appraisal processing has completed.<a href="#section-8.3-2" class="pilcrow">¶</a></p>
@@ -4289,8 +4293,9 @@ Attesters are Evidence sources.<a href="#section-8.3.2-1" class="pilcrow">¶</a>
 <p id="section-8.3.2.1-1">If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.<a href="#section-8.3.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1-2">If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.<a href="#section-8.3.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1-3">The way cryptographic signature validation works depends on the specific Evidence collection method used.
-For instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
-If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of <span>[<a href="#DICE.Layer" class="cite xref">DICE.Layer</a>]</span>).
+For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
+If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
+See Section 9.2.1 of <span>[<a href="#DICE.Layer" class="cite xref">DICE.Layer</a>]</span>.
 If a trusted root certificate is found, the usual X.509 certificate validation is performed.<a href="#section-8.3.2.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1-4">As a second example, in PSA <span>[<a href="#I-D.tschofenig-rats-psa-token" class="cite xref">I-D.tschofenig-rats-psa-token</a>]</span> the verification public key is looked up in the appraisal context using the <code>ueid</code> claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.<a href="#section-8.3.2.1-4" class="pilcrow">¶</a></p>
@@ -4453,12 +4458,13 @@ policies.<a href="#section-8.4.1.1-2" class="pilcrow">¶</a></p>
 Verifier SHALL set the <code>authorized-by</code> field in that Claim to the trusted
 authority keys at the head of each key chain which signed that Evidence. This
 key is often the subject of a self-signed certificate.
-The Verifier has already verified the certificate chain (see <a href="#sec-crypto-validate-evidence" class="auto internal xref">Section 8.3.2.1</a>).<a href="#section-8.4.1.1-3" class="pilcrow">¶</a></p>
+The Verifier has already verified the certificate chain.
+See <a href="#sec-crypto-validate-evidence" class="auto internal xref">Section 8.3.2.1</a>.<a href="#section-8.4.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.4.1.1-4">If multiple authorities approve the same Claim, for example if multiple key chains
 are available, then the <code>authorized-by</code> field SHALL be set to include the trusted
 authority keys used by each of those authorities.<a href="#section-8.4.1.1-4" class="pilcrow">¶</a></p>
 <p id="section-8.4.1.1-5">When adding Endorsement Claims to the ACS that resulted
-from CoRIM processing (see <a href="#sec-add-to-acs" class="auto internal xref">Section 8.8</a>) the Verifier SHALL set the
+from CoRIM processing (<a href="#sec-add-to-acs" class="auto internal xref">Section 8.8</a>) the Verifier SHALL set the
 <code>authorized-by</code> field in that Evidence to the trusted authority key that is
 at the head of the key chain that signed the CoRIM.<a href="#section-8.4.1.1-5" class="pilcrow">¶</a></p>
 <p id="section-8.4.1.1-6">When searching the ACS for an entry which matches a Reference
@@ -4556,7 +4562,8 @@ If the ECTs match, the <code>ev</code> <code>addition</code> ECT is added to the
 </li>
           </ul>
 <p id="section-8.6.3-2">For each Conditional Endorsement Series Triple the Verifier iterates over the <code>conditional-series-record</code>s within the triple, stopping if it finds a match.<a href="#section-8.6.3-2" class="pilcrow">¶</a></p>
-<p id="section-8.6.3-3">For each iteration, the Verifier creates a temporary <code>stateful-environment-record</code> by merging the <code>stateful-environment-record</code> in the triple with the <code>refv</code> field in the <code>conditional-series-record</code>. It compares this temporary record against the ACS (see <a href="#sec-match-condition-ect" class="auto internal xref">Section 8.9</a>).<a href="#section-8.6.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.6.3-3">For each iteration, the Verifier creates a temporary <code>stateful-environment-record</code> by merging the <code>stateful-environment-record</code> in the triple with the <code>refv</code> field in the <code>conditional-series-record</code>. It compares this temporary record against the ACS.
+See <a href="#sec-match-condition-ect" class="auto internal xref">Section 8.9</a>.<a href="#section-8.6.3-3" class="pilcrow">¶</a></p>
 <p id="section-8.6.3-4">If one of the temporary records matches then the Verifier MUST add the <code>endv</code> Endorsement entry to the ACS.
 This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.<a href="#section-8.6.3-4" class="pilcrow">¶</a></p>
 </section>
@@ -4582,13 +4589,13 @@ The Verifier implementation might generate a certificate path validation excepti
 For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
 The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
 Details about the policy applied may also augment the ACS.
-An internal representation of policy details, based on the policy ECT as described in <a href="#sec-ir-policy" class="auto internal xref">Section 8.2.1.4</a>, contains the environments affected by the policy with policy identifiers as Claims.<a href="#section-8.7-5" class="pilcrow">¶</a></p>
+An internal representation of policy details, based on the policy ECT, as described in <a href="#sec-ir-policy" class="auto internal xref">Section 8.2.1.4</a>, contains the environments affected by the policy with policy identifiers as Claims.<a href="#section-8.7-5" class="pilcrow">¶</a></p>
 <p id="section-8.7-6">Phase 7: Attestation Results Production and Transformation<a href="#section-8.7-6" class="pilcrow">¶</a></p>
 <p id="section-8.7-7">Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
 For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as <span>[<a href="#I-D.ietf-rats-ar4si" class="cite xref">I-D.ietf-rats-ar4si</a>]</span>.
 Generated Attestation Results Claims may be specific to a particular Relying Party.
 Hence, the Verifier may need to maintain multiple Attestation Results contexts.
-An internal representation of Attestation Results as separate contexts (see <a href="#sec-ir-ars" class="auto internal xref">Section 8.2.3</a>) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
+An internal representation of Attestation Results as separate contexts (<a href="#sec-ir-ars" class="auto internal xref">Section 8.2.3</a>) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.<a href="#section-8.7-7" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -4636,7 +4643,8 @@ in the CoRIM file which tell it how claims are related.<a href="#section-8.8.1-1
 and <code>authorized-by</code> then the <code>measurement-values-map</code>s are merged.<a href="#section-8.8.1-11" class="pilcrow">¶</a></p>
 <p id="section-8.8.1-12">The ACS must maintain the authority information for each ECT. There can be
 multiple entries in <code>state-triples</code> which have the same <code>environment-map</code>
-and a different authority (see <a href="#sec-authorized-by" class="auto internal xref">Section 8.4.1.1</a>).<a href="#section-8.8.1-12" class="pilcrow">¶</a></p>
+and a different authority.
+See <a href="#sec-authorized-by" class="auto internal xref">Section 8.4.1.1</a>.<a href="#section-8.8.1-12" class="pilcrow">¶</a></p>
 <p id="section-8.8.1-13">If the merged <code>measurement-values-map</code> contains duplicate codepoints and the
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.<a href="#section-8.8.1-13" class="pilcrow">¶</a></p>
@@ -4664,7 +4672,7 @@ Additions to the ACS MUST be atomic.<a href="#section-8.8.2-1" class="pilcrow">�
 <a href="#section-8.9" class="section-number selfRef">8.9. </a><a href="#name-comparing-a-condition-ect-a" class="section-name selfRef">Comparing a condition ECT against the ACS</a>
         </h3>
 <p id="section-8.9-1"><span class="cref" id="issue_5">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.9-1" class="pilcrow">¶</a></p>
-<p id="section-8.9-2">A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry using the algorithm described in <a href="#sec-match-one-condition-ect" class="auto internal xref">Section 8.9.1</a>.
+<p id="section-8.9-2">A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See <a href="#sec-match-one-condition-ect" class="auto internal xref">Section 8.9.1</a>.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.<a href="#section-8.9-2" class="pilcrow">¶</a></p>
 <p id="section-8.9-3">If the matched entries array is not empty, then the condition ECT matches the ACS.<a href="#section-8.9-3" class="pilcrow">¶</a></p>
 <p id="section-8.9-4">If the matched entries array is empty, then the condition ECT does not match the ACS.<a href="#section-8.9-4" class="pilcrow">¶</a></p>
@@ -4675,7 +4683,7 @@ A Verifier SHALL create a "matched entries" set, and SHALL populate it with all 
           </h4>
 <p id="section-8.9.1-1">If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and <code>environment-map</code> then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and <code>environment-map</code> then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.<a href="#section-8.9.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.9.1-2">A Verifier SHALL perform all of the comparisons in sections <a href="#sec-compare-environment" class="auto internal xref">Section 8.9.2</a>, <a href="#sec-compare-authority" class="auto internal xref">Section 8.9.3</a> and <a href="#sec-compare-element-list" class="auto internal xref">Section 8.9.4</a>.<a href="#section-8.9.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.9.1-2">A Verifier SHALL perform all of the comparisons defined in <a href="#sec-compare-environment" class="auto internal xref">Section 8.9.2</a>, <a href="#sec-compare-authority" class="auto internal xref">Section 8.9.3</a>, and <a href="#sec-compare-element-list" class="auto internal xref">Section 8.9.4</a>.<a href="#section-8.9.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.9.1-3">Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.<a href="#section-8.9.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.9.1-4">If all of the fields match, then the condition ECT matches the ACS entry.<a href="#section-8.9.1-4" class="pilcrow">¶</a></p>
 <p id="section-8.9.1-5">If any of the fields does not match, then the condition ECT does not match the ACS entry.<a href="#section-8.9.1-5" class="pilcrow">¶</a></p>
@@ -4728,7 +4736,8 @@ Two <code>element-id</code> fields are the same if they are either both omitted,
 <p id="section-8.9.5-3">Before performing the binary comparison, a Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.9.5-3" class="pilcrow">¶</a></p>
 <p id="section-8.9.5-4">If any condition ECT entry <code>element-id</code> does not have a corresponding <code>element-id</code> in the ACS entry then the element map does not match.<a href="#section-8.9.5-4" class="pilcrow">¶</a></p>
 <p id="section-8.9.5-5">If any condition ECT entry has multiple corresponding <code>element-id</code>s then the element map does not match.<a href="#section-8.9.5-5" class="pilcrow">¶</a></p>
-<p id="section-8.9.5-6">Second, a Verifier SHALL compare the <code>element-claims</code> field within the condition ECT <code>element-list</code> and the corresponding field from the ACS entry (see <a href="#sec-compare-mvm" class="auto internal xref">Section 8.9.6</a>).<a href="#section-8.9.5-6" class="pilcrow">¶</a></p>
+<p id="section-8.9.5-6">Second, a Verifier SHALL compare the <code>element-claims</code> field within the condition ECT <code>element-list</code> and the corresponding field from the ACS entry.
+See <a href="#sec-compare-mvm" class="auto internal xref">Section 8.9.6</a>.<a href="#section-8.9.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-compare-mvm">
@@ -5128,7 +5137,7 @@ extensions <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D
               <td class="text-left" rowspan="1" colspan="1">
                 <code>digest</code>
 </td>
-              <td class="text-left" rowspan="1" colspan="1">tagged-cert-path-thumbprint-type, see  <a href="#sec-crypto-keys" class="auto internal xref">Section 5.1.4.1.5</a>
+              <td class="text-left" rowspan="1" colspan="1">tagged-cert-path-thumbprint-type, see <a href="#sec-crypto-keys" class="auto internal xref">Section 5.1.4.1.5</a>
 </td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
@@ -5425,14 +5434,12 @@ registry <span>[<a href="#IANA.media-types" class="cite xref">IANA.media-types</
             <tr>
               <td class="text-left" rowspan="1" colspan="1">corim-signed+cbor</td>
               <td class="text-left" rowspan="1" colspan="1">application/corim-signed+cbor</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCthis, <a href="#sec-mt-corim-signed" class="auto internal xref">Section 11.6.1</a>
-</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis, (<a href="#sec-mt-corim-signed" class="auto internal xref">Section 11.6.1</a>)</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">corim-unsigned+cbor</td>
               <td class="text-left" rowspan="1" colspan="1">application/corim-unsigned+cbor</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCthis, <a href="#sec-mt-corim-unsigned" class="auto internal xref">Section 11.6.2</a>
-</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis, (<a href="#sec-mt-corim-unsigned" class="auto internal xref">Section 11.6.2</a>)</td>
             </tr>
           </tbody>
         </table>
@@ -5471,7 +5478,7 @@ notation.)<a href="#section-11.6.1-1.8.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.11">Security considerations:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.1-1.12">
-              <p id="section-11.6.1-1.12.1"><a href="#sec-sec" class="auto internal xref">Section 10</a> of RFCthis<a href="#section-11.6.1-1.12.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.1-1.12.1">(<a href="#sec-sec" class="auto internal xref">Section 10</a>) of RFCthis<a href="#section-11.6.1-1.12.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.13">Interoperability considerations:</dt>
@@ -5573,7 +5580,7 @@ notation.)<a href="#section-11.6.2-1.8.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.11">Security considerations:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.2-1.12">
-              <p id="section-11.6.2-1.12.1"><a href="#sec-sec" class="auto internal xref">Section 10</a> of RFCthis<a href="#section-11.6.2-1.12.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.2-1.12.1"><span class="contact-name">sec-sec</span>) of RFCthis<a href="#section-11.6.2-1.12.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.13">Interoperability considerations:</dt>
@@ -5786,6 +5793,10 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dt id="I-D.ietf-rats-ar4si">[I-D.ietf-rats-ar4si]</dt>
         <dd>
 <span class="refAuthor">Voit, E.</span>, <span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Hardjono, T.</span>, <span class="refAuthor">Fossati, T.</span>, and <span class="refAuthor">V. Scarlata</span>, <span class="refTitle">"Attestation Results for Secure Interactions"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-ar4si-07</span>, <time datetime="2024-09-02" class="refDate">2 September 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-ar4si-07">https://datatracker.ietf.org/doc/html/draft-ietf-rats-ar4si-07</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-rats-cobom">[I-D.ietf-rats-cobom]</dt>
+        <dd>
+<span class="refTitle">"*** BROKEN REFERENCE ***"</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-concise-ta-stores">[I-D.ietf-rats-concise-ta-stores]</dt>
         <dd>
