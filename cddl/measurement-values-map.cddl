@@ -1,19 +1,19 @@
 measurement-values-map = non-empty<{
-  ? &(version: 0) => version-map
-  ? &(svn: 1) => svn-type-choice
-  ? &(digests: 2) => digests-type
-  ? &(flags: 3) => flags-map
+  ? &(version: 0) => any-of<version-map>
+  ? &(svn: 1) => any-of<svn-type-choice>
+  ? &(digests: 2) => any-of<digests-type>
+  ? &(flags: 3) => any-of<flags-map>
   ? (
-      &(raw-value: 4) => $raw-value-type-choice,
-      ? &(raw-value-mask: 5) => raw-value-mask-type
+      &(raw-value: 4) => any-of<$raw-value-type-choice>,
+      ? &(raw-value-mask: 5) => any-of<raw-value-mask-type>
     )
-  ? &(mac-addr: 6) => mac-addr-type-choice
-  ? &(ip-addr: 7) =>  ip-addr-type-choice
-  ? &(serial-number: 8) => text
-  ? &(ueid: 9) => ueid-type
-  ? &(uuid: 10) => uuid-type
-  ? &(name: 11) => text
-  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
-  ? &(integrity-registers: 14) => integrity-registers
+  ? &(mac-addr: 6) => any-of<mac-addr-type-choice>
+  ? &(ip-addr: 7) =>  any-of<ip-addr-type-choice>
+  ? &(serial-number: 8) => any-of<text>
+  ? &(ueid: 9) => any-of<ueid-type>
+  ? &(uuid: 10) => any-of<uuid-type>
+  ? &(name: 11) => any-of<text>
+  ? &(cryptokeys: 13) => any-of<[ + $crypto-key-type-choice ]>
+  ? &(integrity-registers: 14) => any-of<integrity-registers>
   * $$measurement-values-map-extension
 }>

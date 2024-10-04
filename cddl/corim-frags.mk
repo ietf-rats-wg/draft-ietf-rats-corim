@@ -1,4 +1,5 @@
 COMID_FRAGS := concise-mid-tag.cddl
+COMID_FRAGS += any-of.cddl
 COMID_FRAGS += accepted-claims-set.cddl
 COMID_FRAGS += attest-key-triple-record.cddl
 COMID_FRAGS += class-id-type-choice.cddl
