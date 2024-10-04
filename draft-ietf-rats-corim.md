@@ -1844,12 +1844,10 @@ Conditional Endorsement Triple Transformation :
 * The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
 * For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` array, the `stateful-environment-record` is copied to a `condition` ECT in the `ev` entry.
-The `environment-map` of the `stateful-environment-record` is copied to the ECT `environment` field.
 
 * For each `measurement-map` entry in the measurements list of the `stateful-environment-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `condition` ECT `element-map` of the `element-list`.
 
 * For each entry in the Conditional Endorsement Triple `endorsements` array, the `endorsed-triple-record` is copied to an `addition` ECT in the `ev` entry.
-The `environment-map` of the `endorsed-triple-record` is copied to the ECT `environment` field.
 
 * For each `measurement-map` entry in the measurements list of the `endorsed-triple-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
 
@@ -1866,8 +1864,7 @@ Conditional Endorsement Series Triple Transformation :
 
 * The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
 
-* From the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition`, the `stateful-environment-record` is copied to the `condition` ECT in the `evs` entry.
-The `environment-map` of the `stateful-environment-record` is copied to the ECT `environment` field.
+* The `stateful-environment-record` from the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition` is copied to the `condition` ECT in the `evs` entry.
 
 * For each `conditional-series-record` in the `series` array, and each `evs` `series` entry, the following steps are performed:
 
