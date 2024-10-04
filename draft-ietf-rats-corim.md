@@ -1179,9 +1179,7 @@ If the condition is satisfied, the `series` records are processed.
 
 The `series` array contains a set of `conditional-series-record` entries.
 
-For each `series` entry,
-if the `selection` matches an entry found in the `condition` result,
-the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new ACS entry.
+For each `series` entry, if the `selection` matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new ACS entry.
 The new ACS entry is added to the ACS with the Endorser's authority.
 
 The first `series` entry that successfully matches a `selection` terminates `series` processing.
