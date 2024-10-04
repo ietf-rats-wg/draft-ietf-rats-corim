@@ -1225,12 +1225,17 @@ The semantics of the Conditional Endorsement Triple is as follows:
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-triple-record.cddl}
+
+{::include cddl/endorsement-addition-map.cddl}
 ~~~
 
 A `conditional-endorsement-triple-record` has the following parameters:
 
 * `conditions`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
 * `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
+
+If `conditions` contains a single `stateful-environment-map`, then the environment of the endorsements MAY be omitted to be inferred as the same environment of the condition.
+If `conditions` contains more than one `stateful-environment-map`, then the `dest-env` codepoint of each addition in `endorsements` MUST be specified.
 
 The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
 
