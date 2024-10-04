@@ -1830,6 +1830,8 @@ Endorsement Triple Transformation :
 
 * For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
 * The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
@@ -1847,9 +1849,13 @@ Conditional Endorsement Triple Transformation :
 
 * For each `measurement-map` entry in the measurements list of the `stateful-environment-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `condition` ECT `element-map` of the `element-list`.
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
 * For each entry in the Conditional Endorsement Triple `endorsements` array, the `endorsed-triple-record` is copied to an `addition` ECT in the `ev` entry.
 
 * For each `measurement-map` entry in the measurements list of the `endorsed-triple-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
 
 * The issuer of the Conditional Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
 
