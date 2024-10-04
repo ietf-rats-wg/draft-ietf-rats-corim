@@ -1578,20 +1578,22 @@ The Conceptual Message type determines which attributes are mandatory.
 
 An internal representation of attestation Evidence uses the `ae` relation.
 
+~~~ cddl
+{::include cddl/intrep-ae.cddl}
+~~~
+
 The `addition` is a list of ECTs with Evidence to be appraised.
 
 A Verifier may maintain multiple simultaneous sessions to different Attesters.
 Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
 The `addition` is added to the ACS for a specific Attester.
 
-~~~ cddl
-{::include cddl/intrep-ae.cddl}
-~~~
+{{tbl-ae-ect-optionality}} contains the requirements for the ECT fields of the Evidence tuple:
 
 | ECT type  | ECT Field       | Requirement |
 |---
 | addition  | `environment`   | Mandatory   |
-|           | `element-list` | Mandatory   |
+|           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
@@ -1601,20 +1603,22 @@ The `addition` is added to the ACS for a specific Attester.
 
 An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
 
+~~~ cddl
+{::include cddl/intrep-rv.cddl}
+~~~
+
 The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
 If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.
 
 The reference ECTs define the matching conditions that are applied to Evidence ECTs.
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
 
-~~~ cddl
-{::include cddl/intrep-rv.cddl}
-~~~
+{{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
 
 | ECT type  | ECT Field       | Requirement |
 |---
 | condition | `environment`   | Mandatory   |
-|           | `element-list` | Mandatory   |
+|           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
@@ -1629,15 +1633,17 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 
 An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
 
+~~~ cddl
+{::include cddl/intrep-ev.cddl}
+~~~
+
 The `ev` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS.
 
 The `evs` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
 The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
 If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
 
-~~~ cddl
-{::include cddl/intrep-ev.cddl}
-~~~
+{{tbl-ev-ect-optionality}} contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:
 
 | ECT type  | ECT Field       | Requirement |
 |---
@@ -1661,11 +1667,14 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 #### Internal Representation of Policy Statements {#sec-ir-policy}
 
 The `policy` relation compares the `condition` ECTs to the ACS.
-If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
 
 ~~~ cddl
 {::include cddl/intrep-policy.cddl}
 ~~~
+
+If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
+
+{{tbl-policy-ect-optionality}} contains the requirements for the ECT fields of the Policy tuple:
 
 | ECT type  | ECT Field       | Requirement |
 |---
@@ -1684,12 +1693,15 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 #### Internal Representation of Attestation Results {#sec-ir-ar}
 
 The `ar` relation compares the `acs-condition` to the ACS.
-If the condition is satisfied, the `ars-additions` are copied from the ACS to the ARS.
-If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
 
 ~~~ cddl
 {::include cddl/intrep-ar.cddl}
 ~~~
+
+If the condition is satisfied, the `ars-additions` are copied from the ACS to the ARS.
+If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
+
+{{tbl-ar-ect-optionality}} contains the requirements for the ECT fields of the Attestation Results tuple:
 
 | ECT type      | ECT Field       | Requirement |
 |---
