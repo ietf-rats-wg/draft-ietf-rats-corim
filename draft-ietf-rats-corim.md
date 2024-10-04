@@ -1156,9 +1156,7 @@ The Conditional Endorsement Series Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-series-triple-record.cddl}
-~~~
 
-~~~ cddl
 {::include cddl/conditional-series-record.cddl}
 ~~~
 
