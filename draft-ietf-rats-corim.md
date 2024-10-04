@@ -1109,12 +1109,11 @@ The Reference Values Triple has the following structure:
 
 The `reference-triple-record` has the following parameters:
 
-* `ref-env`: Search criteria that targets Evidence environments in the ACS.
-* `ref-claims`: Search criteria that targets Evidence Claims in the ACS.
+* `ref-env`: Search criteria that target Evidence environments in the ACS.
+* `ref-claims`: Search criteria that target Evidence Claims in the ACS.
 
-To process `reference-triple-record` both the `ref-env` and `ref-claims` are compared with entries from the ACS.
-If these conditions are met, the matching ACS entry is copied into a new ACS entry that is added to the ACS,
-but with the Reference Value Provider's authority.
+To process `reference-triple-record` both the `ref-env` and `ref-claims` are compared with evidence entries from the ACS.
+If these conditions are met, the matching ACS entry is copied into a new ACS entry that is added to the ACS, but with the Reference Value Provider's authority.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
@@ -1126,7 +1125,7 @@ The Endorsed Values Triple has the following structure:
 
 The `endorsed-triple-record` has the following parameters:
 
-* `condition`: Search criteria applied to the ACS that determines if the `endorsement` applies.
+* `condition`: Search criteria applied to the ACS that determine if the `endorsement` applies.
 * `endorsement`: Claims to be added to the ACS.
 
 To process a `endorsed-triple-record` the `condition` is compared with entries from the ACS.
@@ -1172,7 +1171,7 @@ The `conditional-endorsement-series-triple-record` has the following parameters:
 
 The `conditional-series-record` has the following parameters:
 
-* `selection`: Search criteria applied to the ACS entries resulting from the matched `conditions`
+* `selection`: Search criteria applied to the ACS entries resulting from the matched `conditions`.
 * `addition`: Claims to be added to the ACS is the `selection` is satisfied.
 
 To process a `conditional-endorsement-series-record` the `conditions` are compared with entries from the ACS.
@@ -1794,7 +1793,7 @@ The following mapping conventions apply to all forms of input transformation:
 > * The `environment` field is populated with a Target Environment identifier.
 > * The `element-list` field is populated with the measurements collected by an Attesting Environment.
 > * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
-> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be outputed.
+> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
 > * The `profile` field is set based on the `corim-map` `profile` value.
 
 #### Appraisal Context Construction
