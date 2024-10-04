@@ -1138,9 +1138,7 @@ The Conditional Endorsement Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/conditional-endorsement-triple-record.cddl}
-~~~
 
-~~~ cddl
 {::include cddl/stateful-environment-record.cddl}
 ~~~
 
