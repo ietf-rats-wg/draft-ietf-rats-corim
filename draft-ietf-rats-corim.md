@@ -2264,15 +2264,32 @@ Profile writers SHOULD use CBOR tags for widely applicable comparison methods to
 
 The following subsections define the comparison algorithms for the `measurement-values-map` codepoints defined by this specification.
 
+##### Comparison for version entries
+
+The value stored under `measurement-values-map` codepoint 0 is an version label, which must have type `version-map`.
+Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
+
 ##### Comparison for svn entries
 
-The value stored under `measurement-values-map` codepoint 1 is an SVN, which must have type `uint`.
+The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which must have type `svn-type`.
 
-If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed.
-The comparison MUST return true if the value of the SVN in the candidate entry is equal to the value in the condition ECT.
+If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
 
-If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
-The comparison MUST return true if the value of the SVN in the candidate entry is less than the value in the condition ECT.
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed on the `uint` components.
+The comparison MUST return true if the value of SVN is equal to the `uint` value in the condition ECT.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
+The comparison MUST return true if the value of SVN is less or equal to than the `uint` value in the condition ECT.
+
+If the entry `svn-type` is a `uint` tagged with #6.553, then comparison with the `uint` named as MINSVN is as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then the comparison MUST return false.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then an equality comparison is performed.
+The comparison MUST return true if the value of MINSVN is equal to the `uint` value in the condition ECT.
+
+The meaning of a minimum SVN as an entry value is only meaningful as an endorsed value that has been added to the ACS.
+The condition therefore treats the minimum SVN as an exact state and not one to compare with inequality.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
