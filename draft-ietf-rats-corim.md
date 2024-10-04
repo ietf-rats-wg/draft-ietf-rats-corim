@@ -87,6 +87,7 @@ normative:
   IANA.named-information: named-info
 
 informative:
+  RFC6960:
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
@@ -1763,7 +1764,7 @@ Note: Verifiers may rely on conveyance protocol–specific context to identify a
 In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
 The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
 
-No inputs other than dynamically-fetched information about certificate revocation status (see [RFC6960]) may be collected in Phase 1.
+No inputs other than dynamically-fetched information about certificate revocation status (see {{RFC6960}}, and {{Section 4.2.1.13 of -pkix-cert}}) may be collected in Phase 1.
 
 ### Input Validation {#sec-phase1-valid}
 
