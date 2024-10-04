@@ -1413,6 +1413,9 @@ Table of Contents
       path.  The digest value may be used to find the certificate path
       if contained in a lookup table.
 
+   *  tagged-pkix-asn1der-key-type: a bstr of ASN.1 DER encoded X.509
+      public key certificate.  Defined in Section 4 of [RFC5280].
+
    $crypto-key-type-choice /= tagged-pkix-base64-key-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
@@ -1420,6 +1423,7 @@ Table of Contents
    $crypto-key-type-choice /= tagged-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
+   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
 
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
@@ -1428,6 +1432,7 @@ Table of Contents
    tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
    tagged-cert-thumbprint-type = #6.559(digest)
    tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
 5.1.4.1.6.  Integrity Registers
 
@@ -3192,7 +3197,10 @@ Table of Contents
    |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
    |       |           | see Section 5.1.4.1.5              |         |
    +-------+-----------+------------------------------------+---------+
-   |562-599|any        | Earmarked for CoRIM                |RFCthis  |
+   |562    |bytes      | tagged-pkix-asn1der-cert-type, see |RFCthis  |
+   |       |           | Section 5.1.4.1.5                  |         |
+   +-------+-----------+------------------------------------+---------+
+   |563-599|any        | Earmarked for CoRIM                |RFCthis  |
    +-------+-----------+------------------------------------+---------+
 
                                  Table 8
@@ -3457,6 +3465,12 @@ Table of Contents
               Unique IDentifier (UUID) URN Namespace", RFC 4122,
               DOI 10.17487/RFC4122, July 2005,
               <https://www.rfc-editor.org/rfc/rfc4122>.
+
+   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
+              <https://www.rfc-editor.org/rfc/rfc5280>.
 
    [RFC7468]  Josefsson, S. and S. Leonard, "Textual Encodings of PKIX,
               PKCS, and CMS Structures", RFC 7468, DOI 10.17487/RFC7468,
@@ -3751,6 +3765,7 @@ Appendix A.  Base CoRIM CDDL
    $crypto-key-type-choice /= tagged-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
+   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
 
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
@@ -3759,6 +3774,7 @@ Appendix A.  Base CoRIM CDDL
    tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
    tagged-cert-thumbprint-type = #6.559(digest)
    tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
    domain-dependency-triple-record = [
      $domain-type-choice

@@ -3069,6 +3069,10 @@ The digest value may be used to find the certificate if contained in a lookup ta
                   <p id="section-5.1.4.1.5-4.3.1"><code>tagged-cert-path-thumbprint-type</code>: a <code>digest</code> of a certification path.
 The digest value may be used to find the certificate path if contained in a lookup table.<a href="#section-5.1.4.1.5-4.3.1" class="pilcrow">¶</a></p>
 </li>
+                <li class="normal" id="section-5.1.4.1.5-4.4">
+                  <p id="section-5.1.4.1.5-4.4.1"><code>tagged-pkix-asn1der-key-type</code>: a <code>bstr</code> of ASN.1 DER encoded X.509 public key certificate.
+Defined in <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4" class="relref">Section 4</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-5.1.4.1.5-4.4.1" class="pilcrow">¶</a></p>
+</li>
               </ul>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.5-5">
 <pre>
@@ -3079,6 +3083,7 @@ $crypto-key-type-choice /= tagged-cose-key-type
 $crypto-key-type-choice /= tagged-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
+$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
 
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
@@ -3087,6 +3092,7 @@ tagged-thumbprint-type = #6.557(digest)
 tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
 tagged-cert-thumbprint-type = #6.559(digest)
 tagged-cert-path-thumbprint-type = #6.561(digest)
+tagged-pkix-asn1der-cert-type = #6.562(bstr)
 </pre><a href="#section-5.1.4.1.5-5" class="pilcrow">¶</a>
 </div>
 </section>
@@ -5136,7 +5142,16 @@ extensions <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">562-599</td>
+              <td class="text-left" rowspan="1" colspan="1">562</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>bytes</code>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">tagged-pkix-asn1der-cert-type, see <a href="#sec-crypto-keys" class="auto internal xref">Section 5.1.4.1.5</a>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">563-599</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <code>any</code>
 </td>
@@ -5714,6 +5729,10 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
         <dd>
 <span class="refAuthor">Leach, P.</span>, <span class="refAuthor">Mealling, M.</span>, and <span class="refAuthor">R. Salz</span>, <span class="refTitle">"A Universally Unique IDentifier (UUID) URN Namespace"</span>, <span class="seriesInfo">RFC 4122</span>, <span class="seriesInfo">DOI 10.17487/RFC4122</span>, <time datetime="2005-07" class="refDate">July 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4122">https://www.rfc-editor.org/rfc/rfc4122</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC5280">[RFC5280]</dt>
+        <dd>
+<span class="refAuthor">Cooper, D.</span>, <span class="refAuthor">Santesson, S.</span>, <span class="refAuthor">Farrell, S.</span>, <span class="refAuthor">Boeyen, S.</span>, <span class="refAuthor">Housley, R.</span>, and <span class="refAuthor">W. Polk</span>, <span class="refTitle">"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"</span>, <span class="seriesInfo">RFC 5280</span>, <span class="seriesInfo">DOI 10.17487/RFC5280</span>, <time datetime="2008-05" class="refDate">May 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5280">https://www.rfc-editor.org/rfc/rfc5280</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC7468">[RFC7468]</dt>
         <dd>
 <span class="refAuthor">Josefsson, S.</span> and <span class="refAuthor">S. Leonard</span>, <span class="refTitle">"Textual Encodings of PKIX, PKCS, and CMS Structures"</span>, <span class="seriesInfo">RFC 7468</span>, <span class="seriesInfo">DOI 10.17487/RFC7468</span>, <time datetime="2015-04" class="refDate">April 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7468">https://www.rfc-editor.org/rfc/rfc7468</a>&gt;</span>. </dd>
@@ -5990,6 +6009,7 @@ $crypto-key-type-choice /= tagged-cose-key-type
 $crypto-key-type-choice /= tagged-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
+$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
 
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
@@ -5998,6 +6018,7 @@ tagged-thumbprint-type = #6.557(digest)
 tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
 tagged-cert-thumbprint-type = #6.559(digest)
 tagged-cert-path-thumbprint-type = #6.561(digest)
+tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
 domain-dependency-triple-record = [
   $domain-type-choice
