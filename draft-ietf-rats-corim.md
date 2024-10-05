@@ -1812,8 +1812,6 @@ If the Verifier Policy requires CoBOMs, then after the Verifier has processed al
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 
-The collected Evidence is transformed to an internal representation, making it suitable for appraisal processing.
-
 If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
 
 If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.
