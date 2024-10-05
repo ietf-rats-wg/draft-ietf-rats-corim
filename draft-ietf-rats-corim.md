@@ -99,7 +99,7 @@ normative:
   IANA.named-information: named-info
 
 informative:
-  RFC6960:
+  RFC6960: ocsp
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
@@ -1775,23 +1775,18 @@ The exchange of a request for attestation appraisal for a response of Attestatio
 
 During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
 Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
-Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), and static cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), Policy, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, certificate revocation data (see {{-ocsp}} or {{Section 4.2.1.13 of -pkix-cert}}), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+The clock time used for validity judgments and policy evaluation is an input.
+
 It is left to Verifier Policy to determine if input sources must use supply chain transparency constructs (see {{-scitt-arch}}) to track input provenance.
-
-The time at which the Verifier evaluates certificate- and tag-validity is an input.
-Once the Appraisal Session inputs are collected, no more may be added to the Appraisal Session apart from one exception.
-Certificate revocation status results may be collected during Phase 1, since there is no collective simultaneity of all responses.
-
 It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
 
-Note: Verifiers may rely on conveyance protocol–specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
+Note: Verifier Policy may be subject to external requirements by organizational or regulatory policy.
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
 In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
 The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
-
-No inputs other than dynamically-fetched information about certificate revocation status (see {{RFC6960}}, and {{Section 4.2.1.13 of -pkix-cert}}) may be collected in Phase 1.
 
 ### Input Validation {#sec-phase1-valid}
 
@@ -1835,6 +1830,18 @@ For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be 
 In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
 If the Verifier Policy requires CoBOMs, then after the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
+
+#### Evidence Selection
+
+All available Evidence in the Appraisal Session's inputs are checked for validity.
+
+Evidence that is not within it's validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
+
+Evidence that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
+
+Evidence selection MUST yield at least one usable entry.
+
+Selected Evidence is transformed into an internal representation (see {{sec-phase1-trans}}).
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 
@@ -2016,6 +2023,13 @@ If the Evidence does not have a value for the mandatory `ae` fields, the Verifie
 
 Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
+
+### Appraisal hermeticity
+
+The Appraisal Context at the and of Phase 1 constitutes all inputs to the Appraisal Procedure.
+The same Appraisal Context processed at any time MUST produce the same Attestation Results.
+
+The reason to lock the inputs before Attestation Appraisal is to ensure consistent ACS construction when accounting for any profile-driven semantics.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
