@@ -57,6 +57,7 @@ contributor:
 
 normative:
   RFC4122: uuid
+  RFC5280: pkix-cert
   RFC7468: pkix-text
   RFC8610: cddl
   RFC9090: cbor-oids
@@ -98,30 +99,10 @@ informative:
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.coswid: coswid-reg
-  SPDM:
-    title: Security Protocol and Data Model (SPDM)
-    author:
-      org: Distributed Management Task Force
-    seriesinfo: Version 1.3.0
-    date: May 2023
-    target: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pdf
-  CE.SPDM:
-    title: TCG DICE Concise Evidence Binding for SPDM
-    author:
-      org: Trusted Computing Group
-    seriesinfo: Version 1.00, Revision 0.54
-    date: January 2024
-    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf
-  DICE.AA:
-    title: DICE Attestation Architecture
-    author:
-      org: Trusted Computing Group
-    seriesinfo: Version 1.1, Revision 0.17, public review
-    date: May 2023
-    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Attestation-Architecture-Version-1.1-Revision-17_1August2023.pdf
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
+  I-D.ietf-rats-cobom: cobom
 
 entity:
   SELF: "RFCthis"
@@ -146,12 +127,13 @@ Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
 This document specifies Concise Reference Integrity Manifests (CoRIM) - a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
-CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view. See {{sec-verifier-rec}}.
+CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view.
+See {{sec-verifier-rec}}.
 
 ## Terminology and Requirements Language
 
 This document uses terms and concepts defined by the RATS architecture.
-For a complete glossary see {{Section 4 of -rats-arch}}.
+For a complete glossary, see {{Section 4 of -rats-arch}}.
 
 In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.
 
@@ -241,24 +223,24 @@ Tags can be of different types:
 
 * Concise Module ID (CoMID) tags ({{sec-comid}}) contain metadata and claims about the hardware and firmware modules.
 
-* Concise Software ID (CoSWID) tags {{-coswid}} describe software components.
+* Concise Software ID (CoSWID) tags ({{-coswid}}) describe software components.
 
 * Concise Bill of Material (CoBOM) tags ({{sec-cobom}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
 
 The set of tags is extensible so that future specifications can add new kinds of information.
-For example, Concise Trust Anchor Stores (CoTS) {{-ta-store}} is currently being defined as a standard CoRIM extension.
+For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
 
 Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
 [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73
 
 CoRIM can also carry the following optional metadata:
 
-* A locator, which allows discovery of possibly related RIMs
+* A locator, which allows discovery of possibly related RIMs.
 
 * A profile identifier, which is used to interpret the information contained in the enclosed tags.
 A profile allows the base CoRIM CDDL definition to be customized to fit a specific Attester by augmenting the base CDDL data definition via the specified extension points or by constraining types defined.
 A profile MUST NOT change the base CoRIM CDDL definition's semantics, which includes not changing or overloading names and numbers registered at IANA registries used by this document.
-For more detail, see {{sec-corim-profile-types}},
+For more detail, see {{sec-corim-profile-types}}.
 
 * A validity period, which indicates the time period for which the CoRIM contents are valid.
 
@@ -286,29 +268,30 @@ constraints must be followed when creating or validating a CoRIM map.
 The following describes each child item of this map.
 
 * `id` (index 0): A globally unique identifier to identify a CoRIM. Described
-  in {{sec-corim-id}}
+  in {{sec-corim-id}}.
 
 * `tags` (index 1):  An array of one or more CoMID or CoSWID tags.  Described
-  in {{sec-corim-tags}}
+  in {{sec-corim-tags}}.
 
 * `dependent-rims` (index 2): One or more services supplying additional,
-  possibly dependent, manifests or related files. Described in
-  {{sec-corim-locator-map}}
+  possibly dependent, manifests or related files.
+  Described in {{sec-corim-locator-map}}.
 
 * `profile` (index 3): An optional profile identifier for the tags contained in
   this CoRIM.  The profile MUST be understood by the CoRIM processor.  Failure
   to recognize the profile identifier MUST result in the rejection of the
-  entire CoRIM.  If missing, the profile defaults to DICE.
-  Described in {{sec-corim-profile-types}}
+  entire CoRIM.
+  See {{sec-corim-profile-types}}
 
 * `rim-validity` (index 4): Specifies the validity period of the CoRIM.
-  Described in {{sec-common-validity}}
+  Described in {{sec-common-validity}}.
 
 * `entities` (index 5): A list of entities involved in a CoRIM life-cycle.
-  Described in {{sec-corim-entity}}
+  Described in {{sec-corim-entity}}.
 
 * `$$corim-map-extension`: This CDDL socket is used to add new information
-  structures to the `corim-map`.  See {{sec-iana-corim}}.
+  structures to the `corim-map`.
+  Described in {{sec-iana-corim}}.
 
 ~~~ cddl
 {::include cddl/tagged-corim-map.cddl}
@@ -327,7 +310,7 @@ Other types of identifiers could be defined as needed.
 ### Tags {#sec-corim-tags}
 
 A `$concise-tag-type-choice` is a tagged CBOR payload that carries either a
-CoMID ({{sec-comid}}), a CoSWID {{-coswid}}, or a CoBOM {{sec-cobom}}.
+CoMID ({{sec-comid}}), a CoSWID ({{-coswid}}), or a CoBOM ({{sec-cobom}}).
 
 ~~~ cddl
 {::include cddl/concise-tag-type-choice.cddl}
@@ -347,7 +330,7 @@ The following describes each child element of this type.
 * `href` (index 0): URI identifying the additional resource that can be fetched
 
 * `thumbprint` (index 1): expected digest of the resource referenced by `href`.
-  See {{sec-common-hash-entry}}.
+  See sec-common-hash-entry}}.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -357,7 +340,7 @@ A profile defines which of the optional parts of a CoRIM are required, which are
 A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this document.
 
 A profile MAY constrain the values of a given CoRIM type to a subset of the values.
-A profile MAY extend the set of a given CoRIM type using the defined extension points (see {{sec-extensibility}}).
+A profile MAY extend the set of a given CoRIM type using the defined extension points ({{sec-extensibility}}).
 Exercised extension points should preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
@@ -380,8 +363,7 @@ For an example profile definition, see {{-psa-endorsements}}.
 
 ### Entities {#sec-corim-entity}
 
-The CoRIM Entity is an instantiation of the Entity generic
-({{sec-common-entity}}) using a `$corim-role-type-choice`.
+The CoRIM Entity is an instantiation of the Entity generic ({{sec-common-entity}}) using a `$corim-role-type-choice`.
 
 The only role defined in this specification for a CoRIM Entity is
 `manifest-creator`.
@@ -443,7 +425,7 @@ The following describes each child item of this map.
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
 
-Additional data can be included in the COSE header map as per {{Section 3 of -cose}}.
+Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
 ### Meta Map {#sec-corim-meta}
 
@@ -457,10 +439,10 @@ This ensures the consumer is able to identify credentials used to authenticate i
 The following describes each child item of this group.
 
 * `signer` (index 0): Information about the entity that signs the CoRIM.
-  Described in {{sec-corim-signer}}
+  Described in {{sec-corim-signer}}.
 
-* `signature-validity` (index 1): Validity period for the CoRIM. Described in
-  {{sec-common-validity}}
+* `signature-validity` (index 1): Validity period for the CoRIM.
+Described in {{sec-common-validity}}.
 
 #### Signer Map {#sec-corim-signer}
 
@@ -526,19 +508,22 @@ The following describes each member of the `concise-mid-tag` map.
   specified language.
 
 * `tag-identity` (index 1): A `tag-identity-map` containing unique
-  identification information for the CoMID. Described in {{sec-comid-tag-id}}.
+  identification information for the CoMID.
+  Described in {{sec-comid-tag-id}}.
 
 * `entities` (index 2): Provides information about one or more organizations
-  responsible for producing the CoMID tag. Described in {{sec-comid-entity}}.
+  responsible for producing the CoMID tag.
+  Described in {{sec-comid-entity}}.
 
-* `linked-tags` (index 3): A list of one or more `linked-tag-map` (described in
-  {{sec-comid-linked-tag}}), providing typed relationships between this and
+* `linked-tags` (index 3): A list of one or more `linked-tag-map` providing typed relationships between this and
   other CoMIDs.
+  Described in {{sec-comid-linked-tag}}).
 
 * `triples` (index 4): One or more triples providing information specific to
   the described module, e.g.: reference or endorsed values, cryptographic
   material, or structural relationship between the described module and other
-  modules.  Described in ({{sec-comid-triples}}).
+  modules.
+  Described in {{sec-comid-triples}}.
 
 ### Tag Identity {#sec-comid-tag-id}
 
@@ -548,10 +533,10 @@ The following describes each member of the `concise-mid-tag` map.
 
 The following describes each member of the `tag-identity-map`.
 
-* `tag-id` (index 0): A universally unique identifier for the CoMID. Described
-  in {{sec-tag-id}}.
+* `tag-id` (index 0): A universally unique identifier for the CoMID.
+  Described in {{sec-tag-id}}.
 
-* `tag-version` (index 1): Optional versioning information for the `tag-id` .
+* `tag-version` (index 1): Optional versioning information for the `tag-id`.
   Described in {{sec-tag-version}}.
 
 #### Tag ID {#sec-tag-id}
@@ -591,8 +576,7 @@ tag-version value.
 {::include cddl/comid-entity-map.cddl}
 ~~~
 
-The CoMID Entity is an instantiation of the Entity generic
-({{sec-common-entity}}) using a `$comid-role-type-choice`.
+The CoMID Entity is an instantiation of `entity-map` ({{sec-common-entity}}) using a `$comid-role-type-choice`.
 
 The `$$comid-entity-map-extension` extension socket is empty in this
 specification.
@@ -607,8 +591,7 @@ The roles defined for a CoMID entity are:
 
 * `creator` (value 1): original maker of the module described by the CoMID tag.
 
-* `maintainer` (value 2): an entity making changes to the module described by
-  the CoMID tag.
+* `maintainer` (value 2): an entity making changes to the module described by the CoMID tag.
 
 ### Linked Tag {#sec-comid-linked-tag}
 
@@ -621,8 +604,8 @@ tag (the source) and another CoMID tag (the target).
 
 The following describes each member of the `tag-identity-map`.
 
-* `linked-tag-id` (index 0): Unique identifier for the target tag.  For the
-  definition see {{sec-tag-id}}.
+* `linked-tag-id` (index 0): Unique identifier for the target tag.
+  See {{sec-tag-id}}.
 
 * `tag-rel` (index 1): the kind of relation linking the source tag to the
   target identified by `linked-tag-id`.
@@ -652,36 +635,35 @@ contain at least one entry.
 
 The following describes each member of the `triples-map`:
 
-* `reference-triples` (index 0): Triples containing reference values. Described
-  in {{sec-comid-triple-refval}}.
+* `reference-triples` (index 0): Triples containing reference values.
+  Described in {{sec-comid-triple-refval}}.
 
-* `endorsed-triples` (index 1): Triples containing endorsed values. Described
-  in {{sec-comid-triple-endval}}.
+* `endorsed-triples` (index 1): Triples containing endorsed values.
+  Described in {{sec-comid-triple-endval}}.
 
 * `identity-triples` (index 2): Triples containing identity credentials.
   Described in {{sec-comid-triple-identity}}.
 
-* `attest-key-triples` (index 3): Triples containing verification keys
-  associated with attesting environments. Described in
-  {{sec-comid-triple-attest-key}}.
+* `attest-key-triples` (index 3): Triples containing verification keys associated with attesting environments.
+  Described in {{sec-comid-triple-attest-key}}.
 
-* `dependency-triples` (index 4): Triples describing trust relationships
-  between domains.  Described in {{sec-comid-triple-domain-dependency}}.
+* `dependency-triples` (index 4): Triples describing trust relationships between domains.
+  Described in {{sec-comid-triple-domain-dependency}}.
 
-* `membership-triples` (index 5): Triples describing topological relationships
-  between (sub-)modules.  Described in {{sec-comid-triple-domain-membership}}.
+* `membership-triples` (index 5): Triples describing topological relationships between (sub-)modules.
+  Described in {{sec-comid-triple-domain-membership}}.
 
-* `coswid-triples` (index 6): Triples associating modules with existing CoSWID
-  tags. Described in {{sec-comid-triple-coswid}}.
+* `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
+  Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8) Triples describing a series of
-  conditional Endorsements based on the acceptance of a stateful environment. Described
-  in {{sec-comid-triple-cond-series}}.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of
+  conditional Endorsements based on the acceptance of a stateful environment.
+  Described in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 10) Triples describing a series of
+* `conditional-endorsement-triples` (index 10): Triples describing a series of
   Endorsement that are applicable based on the acceptance of a series of
-  stateful environment records. Described in
-  {{sec-comid-triple-cond-endors}}.
+  stateful environment records.
+  Described in {{sec-comid-triple-cond-endors}}.
 
 ##### Environments
 
@@ -705,10 +687,11 @@ The following describes each member of the `environment-map`:
   Described in {{sec-comid-class}}.
 
 * `instance` (index 1): Contains a unique identifier of a module's instance.
-  See {{sec-comid-instance}}.
+  Described in {{sec-comid-instance}}.
 
 * `group` (index 2): identifier for a group of instances, e.g., if an
   anonymization scheme is used.
+  Described in {{sec-comid-group}}.
 
 ##### Environment Class {#sec-comid-class}
 
@@ -726,8 +709,8 @@ needed.
 The following describes each member of the `class-map`:
 
 * `class-id` (index 0): Identifies the environment via a well-known identifier.
-  Typically, `class-id` is an object identifier (OID) variable-length opaque byte string ({{sec-common-tagged-bytes}}) or universally unique
-  identifier (UUID). Use of this attribute is preferred.
+  Typically, `class-id` is an object identifier (OID) variable-length opaque byte string ({{sec-common-tagged-bytes}}) or universally unique identifier (UUID).
+  Use of this attribute is preferred.
 
 * `vendor` (index 1): Identifies the entity responsible for choosing values for
   the other class attributes that do not already have naming authority.
@@ -757,7 +740,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Environment Group
+##### Environment Group {#sec-comid-group}
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -803,13 +786,15 @@ Measurement keys may be used to disambiguate measurements of the same type origi
 The following describes each member of the `measurement-map`:
 
 * `mkey` (index 0): An optional measurement key.
- See {{sec-comid-mkey}}.
+ Described in {{sec-comid-mkey}}.
 
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
 
 * `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement. For example, the producer of the measurement or a delegate.
+ the designated authority for this measurement.
+ For example, the producer of the measurement.
+ See {{sec-crypto-keys}}.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
@@ -838,22 +823,22 @@ and whether the processing is applied by the Verifier or the Relying Party.
 
 The following describes each member of the `measurement-values-map`.
 
-* `version` (index 0): Typically changes whenever the measured environment is
-  updated. Described in {{sec-comid-version}}.
+* `version` (index 0): Typically changes whenever the measured environment is updated.
+  Described in {{sec-comid-version}}.
 
-* `svn` (index 1): The security version number typically changes only when a
-  security relevant change is made to the measured environment.  Described in
-  {{sec-comid-svn}}.
+* `svn` (index 1): The security version number typically changes only when a security relevant change is made to the measured environment.
+  Described in {{sec-comid-svn}}.
 
 * `digests` (index 2): Contains the digest(s) of the measured environment
   together with the respective hash algorithm used in the process.
-  It uses the `digests-type` described in {{sec-common-hash-entry}}.
+  It uses the `digests-type`.
+  Described in {{sec-common-hash-entry}}.
 
-* `flags` (index 3): Describes security relevant operational modes. For
-  example, whether the environment is in a debug mode, recovery mode, not fully
-  configured, not secure, not replay protected or not integrity protected. The
-  `flags` field indicates which operational modes are currently associated with
-  measured environment.  Described in {{sec-comid-flags}}.
+* `flags` (index 3): Describes security relevant operational modes.
+  For example, whether the environment is in a debug mode, recovery mode, not fully
+  configured, not secure, not replay protected or not integrity protected.
+  The `flags` field indicates which operational modes are currently associated with measured environment.
+  Described in {{sec-comid-flags}}.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   An optional `raw-value-mask` (index 5) indicates which bits in the
@@ -865,20 +850,19 @@ The following describes each member of the `measurement-values-map`.
   collected values are bit-wise comparable. The vendor determines the encoding
   of `raw-value` and the corresponding `raw-value-mask`.
 
-* `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the
-  measured environment.  Described in {{sec-comid-address-types}}.
+* `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
+  Described in {{sec-comid-address-types}}.
 
-* `ip-addr` (index 7): An IPv4 or IPv6 address associated with the measured
-  environment.  Described in {{sec-comid-address-types}}.
+* `ip-addr` (index 7): An IPv4 or IPv6 address associated with the measured environment.
+  Described in {{sec-comid-address-types}}.
 
-* `serial-number` (index 8): A text string representing the product serial
-  number.
+* `serial-number` (index 8): A text string representing the product serial number.
 
-* `ueid` (index 9): UEID associated with the measured environment.  See
-  {{sec-common-ueid}}.
+* `ueid` (index 9): UEID associated with the measured environment.
+  Described in {{sec-common-ueid}}.
 
-* `uuid` (index 10): UUID associated with the measured environment.  See
-  {{sec-common-uuid}}.
+* `uuid` (index 10): UUID associated with the measured environment.
+  Described in {{sec-common-uuid}}.
 
 * `name` (index 11): a name associated with the measured environment.
 
@@ -886,10 +870,9 @@ The following describes each member of the `measurement-values-map`.
   See {{sec-crypto-keys}} for the supported formats.
   An Attesting Environment determines that keys are protected as part of Claims collection.
   Appraisal verifies that, for each value in `cryptokeys`, there is a matching Reference Value entry.
-Matching is described in {{sec-cryptokeys-matching}}.
+  Matching is described in {{sec-cryptokeys-matching}}.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
-
 
 ###### Version {#sec-comid-version}
 
@@ -905,8 +888,9 @@ The following describes each member of the `version-map`:
 * `version` (index 0): the version string
 
 * `version-scheme` (index 1): an optional indicator of the versioning
-  convention used in the `version` attribute.  Defined in {{Section 4.1 of
-  -coswid}}.  The CDDL is copied below for convenience.
+  convention used in the `version` attribute.
+  Defined in {{Section 4.1 of -coswid}}.
+  The CDDL is copied below for convenience.
 
 ~~~ cddl
 $version-scheme /= &(multipartnumeric: 1)
@@ -1024,7 +1008,7 @@ A cryptographic key can be one of the following formats:
   the one preceding.
 
 * `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
-  Defined in {{Section 7 of -cose}}
+  Defined in {{Section 7 of -cose}}.
 
 A cryptographic key digest can be one of the following formats:
 
@@ -1036,6 +1020,9 @@ A cryptographic key digest can be one of the following formats:
 
 * `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
+
+* `tagged-pkix-asn1der-key-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
+  Defined in {{Section 4 of -pkix-cert}}.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
@@ -1321,7 +1308,8 @@ tag:
 The following describes each member of the `concise-bom-tag` map.
 
 * `tag-identity` (index 0): A `tag-identity-map` containing unique
-  identification information for the CoBOM. Described in {{sec-comid-tag-id}}.
+  identification information for the CoBOM.
+  Described in {{sec-comid-tag-id}}.
 
 * `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
   the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
@@ -1332,12 +1320,11 @@ The following describes each member of the `concise-bom-tag` map.
   MUST be activated or no tags are activated.
 
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
-  Described in {{sec-common-validity}}
+  Described in {{sec-common-validity}}.
 
-* `$$concise-bom-tag-extension`: This CDDL socket is used to add new
-  information structures to the `concise-bom-tag`.  See {{sec-iana-cobom}}.
-  The `$$concise-bom-tag-extension` extension socket is empty in this
-  specification.
+* `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
+  See {{sec-iana-cobom}}.
+  The `$$concise-bom-tag-extension` extension socket is empty in this specification.
 
 # Common Types {#sec-common-types}
 
@@ -1371,23 +1358,20 @@ the contents of a manifest. It is instantiated by supplying two parameters:
 
 The following describes each member of the `entity-map`.
 
-* `entity-name` (index 0): The name of entity which is responsible for the
-  action(s) as defined by the role. `$entity-name-type-choice` can only be
-  text.  Other specifications can extend the `$entity-name-type-choice` (see
-  {{sec-iana-comid}}).
+* `entity-name` (index 0): The name of entity which is responsible for the action(s) as defined by the role.
+  `$entity-name-type-choice` can only be text.
+  Other specifications can extend the `$entity-name-type-choice`.
+  See {{sec-iana-comid}}.
 
-* `reg-id` (index 1): A URI associated with the organization that owns the
-  entity name
+* `reg-id` (index 1): A URI associated with the organization that owns the entity name.
 
-* `role` (index 2): A type choice defining the roles that the entity is
-  claiming.  The role is supplied as a parameter at the time the `entity-map`
-  generic is instantiated.
+* `role` (index 2): A type choice defining the roles that the entity is claiming.
+  The role is supplied as a parameter at the time the `entity-map` generic is instantiated.
 
-* `extension-socket`: A CDDL socket used to add new information structures to
-  the `entity-map`.
+* `extension-socket`: A CDDL socket used to add new information structures to the `entity-map`.
 
 Examples of how the `entity-map` generic is instantiated can be found in
-{{sec-corim-entity}} and {{sec-comid-entity}}.
+({{sec-corim-entity}}) and ({{sec-comid-entity}}).
 
 ## Validity {#sec-common-validity}
 
@@ -1410,8 +1394,8 @@ date/time as per {{Section 3.4.2 of -cbor}}.
 
 ## UUID {#sec-common-uuid}
 
-Used to tag a byte string as a binary UUID defined in {{Section 4.1.2. of
--uuid}}.
+Used to tag a byte string as a binary UUID.
+Defined in {{Section 4.1.2. of -uuid}}.
 
 ~~~ cddl
 {::include cddl/uuid.cddl}
@@ -1419,8 +1403,8 @@ Used to tag a byte string as a binary UUID defined in {{Section 4.1.2. of
 
 ## UEID {#sec-common-ueid}
 
-Used to tag a byte string as Universal Entity ID Claim (UUID) defined in
-{{Section 4.2.1 of -eat}}.
+Used to tag a byte string as Universal Entity ID Claim (UUID).
+Defined in {{Section 4.2.1 of -eat}}.
 
 ~~~ cddl
 {::include cddl/ueid.cddl}
@@ -1544,7 +1528,8 @@ reference state:
 : Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
 
 actual state:
-: Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.  See also {{Section 2 of -rats-endorsements}}.
+: Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.
+See also ({{Section 2 of -rats-endorsements}}).
 
 Authority:
 : The entity asserting that a claim is true.
@@ -1593,26 +1578,34 @@ The Conceptual Message type determines which attributes are mandatory.
 
 An internal representation of attestation Evidence uses the `ae` relation.
 
+~~~ cddl
+{::include cddl/intrep-ae.cddl}
+~~~
+
 The `addition` is a list of ECTs with Evidence to be appraised.
 
 A Verifier may maintain multiple simultaneous sessions to different Attesters.
 Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
 The `addition` is added to the ACS for a specific Attester.
 
-~~~ cddl
-{::include cddl/intrep-ae.cddl}
-~~~
+{{tbl-ae-ect-optionality}} contains the requirements for the ECT fields of the Evidence tuple:
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| addition | T | T | T | T | F |
-{: #tbl-ae-ect-optionality title="Mandatory fields for Evidence tuples"}
-
-'T' means mandatory.
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 #### Internal Representation of Reference Values {#sec-ir-ref-val}
 
 An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
+
+~~~ cddl
+{::include cddl/intrep-rv.cddl}
+~~~
 
 The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
 If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.
@@ -1620,19 +1613,29 @@ If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evi
 The reference ECTs define the matching conditions that are applied to Evidence ECTs.
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
 
-~~~ cddl
-{::include cddl/intrep-rv.cddl}
-~~~
+{{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| condition | T | T | F | F | F |
-| addition  | T | T | T | T | F |
-{: #tbl-rv-ect-optionality title="Mandatory fields for Reference Values tuples"}
+| condition | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 #### Internal Representation of Endorsed Values {#sec-ir-end-val}
 
 An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
+
+~~~ cddl
+{::include cddl/intrep-ev.cddl}
+~~~
 
 The `ev` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS.
 
@@ -1640,47 +1643,79 @@ The `evs` relation compares the `condition` ECTs to the ACS and if all of the EC
 The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
 If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
 
-~~~ cddl
-{::include cddl/intrep-ev.cddl}
-~~~
+{{tbl-ev-ect-optionality}} contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+| ECT type  | ECT Field       | Requirement |
 |---
-| condition | F | T | F | F | F |
-| selection | F | T | F | F | F |
-| addition  | T | T | T | T | F |
-{: #tbl-ev-ect-optionality title="Mandatory fields for Endorsed Values tuples"}
+| condition | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+| selection | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 #### Internal Representation of Policy Statements {#sec-ir-policy}
 
 The `policy` relation compares the `condition` ECTs to the ACS.
-If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
 
 ~~~ cddl
 {::include cddl/intrep-policy.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
+
+{{tbl-policy-ect-optionality}} contains the requirements for the ECT fields of the Policy tuple:
+
+| ECT type  | ECT Field       | Requirement |
 |---
-| condition | F | F | F | F | F |
-| addition  | T | T | T | T | F |
-{: #tbl-policy-ect-optionality title="Mandatory fields for policy tuples"}
+| condition | `environment`   | Optional    |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+{: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 #### Internal Representation of Attestation Results {#sec-ir-ar}
 
 The `ar` relation compares the `acs-condition` to the ACS.
-If the condition is satisfied, the `ars-additions` are copied from the ACS to the ARS.
-If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
 
 ~~~ cddl
 {::include cddl/intrep-ar.cddl}
 ~~~
 
-| Type | `en` | `el` | `a` | `cm` | `p` |
+If the condition is satisfied, the `ars-additions` are copied from the ACS to the ARS.
+If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
+
+{{tbl-ar-ect-optionality}} contains the requirements for the ECT fields of the Attestation Results tuple:
+
+| ECT type      | ECT Field       | Requirement |
 |---
-| acs-condition | F | F | F | F | F |
-| ars-addition  | T | T | T | F | F |
-{: #tbl-ar-ect-optionality title="Mandatory fields for Attestation Results tuples"}
+| acs-condition | `environment`   | Optional    |
+|               | `element-list`  | Optional    |
+|               | `authority`     | Optional    |
+|               | `cmtype`        | n/a         |
+|               | `profile`       | n/a         |
+| ars-addition  | `environment`   | Mandatory   |
+|               | `element-list`  | Mandatory   |
+|               | `authority`     | Mandatory   |
+|               | `cmtype`        | Mandatory   |
+|               | `profile`       | Optional    |
+{: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of ACS {#sec-ir-acs}
 
@@ -1700,7 +1735,7 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM ({{sec-cobom}}) and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS, {{-ta-store}}).
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags {{-cobom}}, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
@@ -1763,8 +1798,9 @@ If Evidence is cryptographically signed, its validation is applied before transf
 If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.
 
 The way cryptographic signature validation works depends on the specific Evidence collection method used.
-For instance, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
-If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate (see Section 9.2.1 of {{DICE.Layer}}).
+For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
+If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
+See Section 9.2.1 of {{DICE.Layer}}.
 If a trusted root certificate is found, the usual X.509 certificate validation is performed.
 
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
@@ -1919,14 +1955,15 @@ When adding an Evidence Claim to the ACS, the
 Verifier SHALL set the `authorized-by` field in that Claim to the trusted
 authority keys at the head of each key chain which signed that Evidence. This
 key is often the subject of a self-signed certificate.
-The Verifier has already verified the certificate chain (see {{sec-crypto-validate-evidence}}).
+The Verifier has already verified the certificate chain.
+See {{sec-crypto-validate-evidence}}.
 
 If multiple authorities approve the same Claim, for example if multiple key chains
 are available, then the `authorized-by` field SHALL be set to include the trusted
 authority keys used by each of those authorities.
 
 When adding Endorsement Claims to the ACS that resulted
-from CoRIM processing (see {{sec-add-to-acs}}) the Verifier SHALL set the
+from CoRIM processing ({{sec-add-to-acs}}) the Verifier SHALL set the
 `authorized-by` field in that Evidence to the trusted authority key that is
 at the head of the key chain that signed the CoRIM.
 
@@ -2025,7 +2062,7 @@ Appraisal policy inputs could result in Claims that augment the ACS.
 For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
 The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
 Details about the policy applied may also augment the ACS.
-An internal representation of policy details, based on the policy ECT as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
+An internal representation of policy details, based on the policy ECT, as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
 
 Phase 7: Attestation Results Production and Transformation
 
@@ -2033,7 +2070,7 @@ Attestation Results rely on input from the ACS, but may not bear any similarity 
 For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
 Generated Attestation Results Claims may be specific to a particular Relying Party.
 Hence, the Verifier may need to maintain multiple Attestation Results contexts.
-An internal representation of Attestation Results as separate contexts (see {{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
+An internal representation of Attestation Results as separate contexts ({{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Adding to the Appraisal Claims Set {#sec-add-to-acs}
@@ -2085,7 +2122,8 @@ and `authorized-by` then the `measurement-values-map`s are merged.
 
 The ACS must maintain the authority information for each ECT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
-and a different authority (see {{sec-authorized-by}}).
+and a different authority.
+See {{sec-authorized-by}}.
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
@@ -2107,7 +2145,7 @@ Additions to the ACS MUST be atomic.
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 
-A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry using the algorithm described in {{sec-match-one-condition-ect}}.
+A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
 
 If the matched entries array is not empty, then the condition ECT matches the ACS.
@@ -2119,7 +2157,7 @@ If the matched entries array is empty, then the condition ECT does not match the
 If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
 
-A Verifier SHALL perform all of the comparisons in sections {{sec-compare-environment}}, {{sec-compare-authority}} and {{sec-compare-element-list}}.
+A Verifier SHALL perform all of the comparisons defined in {{sec-compare-environment}}, {{sec-compare-authority}}, and {{sec-compare-element-list}}.
 
 Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
@@ -2176,7 +2214,8 @@ If any condition ECT entry `element-id` does not have a corresponding `element-i
 
 If any condition ECT entry has multiple corresponding `element-id`s then the element map does not match.
 
-Second, a Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry (see {{sec-compare-mvm}}).
+Second, a Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
+See {{sec-compare-mvm}}.
 
 ### Measurement values map map Comparison {#sec-compare-mvm}
 
@@ -2337,29 +2376,30 @@ groups to use this information as they see fit".
 
 IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!IANA.cbor-tags}}, preferably with the specific CBOR tag value requested:
 
-|     Tag | Data Item           | Semantics                                                            | Reference |
-|     --- | ---------           | ---------                                                            | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}             | {{&SELF}} |
-|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                            | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}                      | {{&SELF}} |
-| 503-504 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}                    | {{&SELF}} |
-|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
-|     507 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}                     | {{&SELF}} |
-| 509-549 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
-|     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                            | {{&SELF}} |
-|     552 | `uint`              | tagged-svn, see {{sec-comid-svn}}                                    | {{&SELF}} |
-|     553 | `uint`              | tagged-min-svn, see {{sec-comid-svn}}                                | {{&SELF}} |
-|     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
-|     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}                | {{&SELF}} |
-|     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}           | {{&SELF}} |
-|     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}                | {{&SELF}} |
-|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}                  | {{&SELF}} |
-|     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
-|     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                        | {{&SELF}} |
-|     561 | `digest`            | tagged-cert-path-thumbprint-type, see  {{sec-crypto-keys}}           | {{&SELF}} |
-| 562-599 | `any`               | Earmarked for CoRIM                                                  | {{&SELF}} |
+|     Tag | Data Item           | Semantics                                                     | Reference |
+|     --- | ---------           | ---------                                                     | --------- |
+|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}      | {{&SELF}} |
+|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
+|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}               | {{&SELF}} |
+| 503-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
+|     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
+|     507 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}              | {{&SELF}} |
+| 509-549 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                     | {{&SELF}} |
+|     552 | `uint`              | tagged-svn, see {{sec-comid-svn}}                             | {{&SELF}} |
+|     553 | `uint`              | tagged-min-svn, see {{sec-comid-svn}}                         | {{&SELF}} |
+|     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}          | {{&SELF}} |
+|     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}         | {{&SELF}} |
+|     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}    | {{&SELF}} |
+|     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}         | {{&SELF}} |
+|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}           | {{&SELF}} |
+|     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}          | {{&SELF}} |
+|     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
+|     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
+|     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
+| 563-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
@@ -2452,8 +2492,8 @@ IANA is requested to add the following media types to the "Media Types"
 registry {{!IANA.media-types}}.
 
 | Name | Template | Reference |
-| corim-signed+cbor | application/corim-signed+cbor | {{&SELF}}, {{sec-mt-corim-signed}} |
-| corim-unsigned+cbor | application/corim-unsigned+cbor | {{&SELF}}, {{sec-mt-corim-unsigned}} |
+| corim-signed+cbor | application/corim-signed+cbor | {{&SELF}}, ({{sec-mt-corim-signed}}) |
+| corim-unsigned+cbor | application/corim-unsigned+cbor | {{&SELF}}, ({{sec-mt-corim-unsigned}}) |
 {: #tbl-media-type align="left" title="New Media Types"}
 
 ### corim-signed+cbor {#sec-mt-corim-signed}
@@ -2476,7 +2516,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{sec-sec}} of {{&SELF}}
+: ({{sec-sec}}) of {{&SELF}}
 
 Interoperability considerations:
 : n/a
@@ -2536,7 +2576,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{sec-sec}} of {{&SELF}}
+: {{{sec-sec}}) of {{&SELF}}
 
 Interoperability considerations:
 : n/a
