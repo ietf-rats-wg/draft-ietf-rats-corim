@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-03T01:44:42.040541+00:00",
+  "timestamp": "2024-10-06T01:51:03.576791+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -5947,7 +5947,7 @@
       "labels": [],
       "body": "Need to complete the section - that deals with \r\nQuantizing Inputs {#sec-quantize}",
       "createdAt": "2024-06-05T15:41:31Z",
-      "updatedAt": "2024-06-07T23:23:43Z",
+      "updatedAt": "2024-10-04T15:33:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -6026,6 +6026,13 @@
           "body": "Okay, we're in violent agreement.",
           "createdAt": "2024-06-07T23:23:42Z",
           "updatedAt": "2024-06-07T23:23:42Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Forgot about this issue and added more thoughts in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/298 which I closed as a dupe of this.",
+          "createdAt": "2024-10-04T15:33:38Z",
+          "updatedAt": "2024-10-04T15:33:38Z"
         }
       ]
     },
@@ -6848,7 +6855,7 @@
       "labels": [],
       "body": "In the space of candidate and condition having a profile id, we've discussed\r\n\r\nboth without: use base semantics\r\ncondition with, candidate without: use the profile matching algorithm for any extensions, but I think we're missing wording in the spec that if there are any non-base CDDL bits of a CoRIM that it MUST have a profile-id to give them meaning. The text in the current draft just falls back to binary equality,\r\n\r\n> If a codepoint's comparison algorithm is not stated or does not default to the comparison algorithms described in this specification, then the Verifier MUST compare the binary equality of the CBOR encodings of the values.\r\n\r\nBut I worry that a -1: 1 in one profile may have completely different meaning from -1: 1 in another, and the lack of a profile can mean that two completely different measurements are getting viewed as the same.\r\n\r\nWe haven't discussed\r\ncondition without, candidate with: I'm guessing we use the base semantics' matching algorithm applies and rejects to match any nonstandard values.\r\ncondition with, candidate with: This one really does require mentioning in the document. I think that we need to require equality or at least condition profile-specified matching condition to allow for subsumption judgments.\r\n\r\nIn an email thread I discussed the merits and dangers of allowing a profile in a condition to override the profile in the ACS. Recap here\r\n\r\n>> is there any downside to giving that flexibility to the profile?\r\n>\r\n> There is, but we probably shouldn't rule it out entirely.\r\n>\r\n>Evidence can be translated to an ECT with some specific profile that assigns meaning to nonstandard codepoints, and another profile comes along and says, \"ya ya ya, whatever\" and adds its CoRIM issuer authority to the ACS entry that still has the evidence's profile identifier associated and not the CoRIM's. I mean I guess if you trust both the CoRIM issuer and the semantics of the profile, then you could trust this behavior, but it seems like it would be cause for confusion and inadvertent privilege escalation. You shift more burden into the policy side of the Verifier to accept a profile's overreach to subsume ACS entries' profiles.\r\nGiven that the base CDDL says that a profile MUST NOT override its specified semantics for its codepoints, I would think that you might want the option for an ACS entry's profile to also have non-expansive matching semantics.\r\n>\r\n>If we do allow for the profile to do whatever, we ought to add a note that profile identifier comparisons that are not binary equality are NOT RECOMMENDED due to the additional burden of ensuring the interactions are acceptable by policy.\r\n",
       "createdAt": "2024-10-01T17:47:44Z",
-      "updatedAt": "2024-10-01T18:44:20Z",
+      "updatedAt": "2024-10-04T04:04:19Z",
       "closedAt": null,
       "comments": [
         {
@@ -6878,6 +6885,13 @@
           "body": "> Do we clone measurement-map into actual-measurement-map and condition-measurement-map to allow profiles to enhance all code points of any measurement-values-map to allow for more expressive match conditions?\r\n\r\nThe Intel Profile for Corim (different from the Intel profile for TDX EAT claims) contains definitions for both possible state and actual state. The profile expects `condition` statements will include `measurement-values-map` extensions for negative code points. However, it doesn't expect condition statements will express \"possible state\" as the ACS only expresses actual state. This implies the richness of the `condition` need only cover expressions of actual state.\r\n\r\n",
           "createdAt": "2024-10-01T18:33:21Z",
           "updatedAt": "2024-10-01T18:33:21Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Maybe \"possible state\" is where we're missing each other. I'm simply talking about a condition that matches more than one actual state. The space of all actual states that it matches is what I call possible state.\r\n\r\n\"Expressions of actual state\" refers to your expression language, does it not?\r\n\r\n> Expressions are used to specify richer Reference Values measurements that expect non-exact matching semantics\r\n\r\nBy having non-exact matching, you are expressing a space of measurements that is not a singleton set.",
+          "createdAt": "2024-10-04T04:04:18Z",
+          "updatedAt": "2024-10-04T04:04:18Z"
         }
       ]
     },
@@ -6886,15 +6900,15 @@
       "id": "I_kwDOH6-tI86YoHoc",
       "title": "cmtype is never used",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/297",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The cm-type is an enum in an ECT that has no functional purpose. I understand that it's an optional field of CMWs and it can be helpful for hinting, but there's internal representation stating that cm-type is a mandatory field despite never having a prescribed meaning outside of the enum. An `ae` definition doesn't say the ECTs will all have `cmtype: /evidence/ 2` for example. There's no mention of its use in result construction and how it is meant to feed into the CMW format.\r\n\r\nIs this planned?",
       "createdAt": "2024-10-02T04:32:24Z",
-      "updatedAt": "2024-10-02T14:54:37Z",
-      "closedAt": null,
+      "updatedAt": "2024-10-05T00:08:29Z",
+      "closedAt": "2024-10-05T00:08:29Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -6923,6 +6937,34 @@
           "body": "Like profile, cm-type doesn't have a way for a condition to match on these values, but like profile, the internal processing logic does need it.",
           "createdAt": "2024-10-02T14:54:36Z",
           "updatedAt": "2024-10-02T14:54:36Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "evidence, reference values, and endorsements all talk about the same kinds of measurements. The role is really in who's doing the signing. I don't see why you would have to separate RVs from never applying to measurements added by an endorser. You end up needing to express the same thing just more verbosely by using a conditional endorsement that the measurements you want to see are the measurements you want to add your authority to.",
+          "createdAt": "2024-10-03T02:16:15Z",
+          "updatedAt": "2024-10-03T02:16:15Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #299 more clearly articulates how cmtype plays a role in verifier processing. Is this incorrect?",
+          "createdAt": "2024-10-03T16:20:42Z",
+          "updatedAt": "2024-10-03T16:20:42Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "That PR should satisfy this, yes.",
+          "createdAt": "2024-10-04T03:58:48Z",
+          "updatedAt": "2024-10-04T03:58:48Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed in #299",
+          "createdAt": "2024-10-05T00:08:29Z",
+          "updatedAt": "2024-10-05T00:08:29Z"
         }
       ]
     },
@@ -6935,10 +6977,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "> After context initialization, additional inputs are held back until appraisal processing has completed.\r\n> [...]\r\n> 8.3.1.1 CoRIM Selection\r\n> All available CoRIMs are collected.\r\n\r\nand\r\n\r\n> 6. CoBOM\r\n> If a Verifier Owner has a policy that does not require CoBOM, tags within a CoRIM received by a Verifier are activated immediately and treated valid for appraisal.\r\n\r\nThese two pieces are at odds with one another I think. At the very least this should be \"valid for future appraisal sessions\".\r\nI don't know what it means for the Verifier Owner policy to `require CoBOM`. Does it need appraisal requests to provide CoBOM tags to guide tag selection? Is this only for ingesting tags prior to an appraisal? Why is that an interaction we are specifying?\r\n\r\n> After context initialization, additional inputs are held back until appraisal processing has completed.\r\n\r\nI think this text still leaves a window for state mutation to muddle things. We ought to say that the input state to context construction is also fixed at the start of an appraisal session.\r\n\r\n> The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.\r\n\r\nGiven that there are apparently different Verifier interactions that change the available information to construct the input context, we have a few entry points to the imagined Verifier. Perhaps we can simplify this to just the theory of appraisal of evidence and say the goal of context construction is to have a well-defined set of inputs for describing attestation appraisal as determined entirely by its inputs.\r\n\r\nWonk follows\r\n---\r\nImmediacy is not meaningful in distributed systems and leads to problems with tracking provenance. We haven't really described the difference between a Verifier receiving a CoRIM and performing an attestation appraisal. I don't think we want to draw the distinction and instead treat the initial state as an immutable input.\r\n\r\nRight now we have the ECT and ACS internal representations, but not an abstract machine. Since `evs` can fail to match the ACS at one point in time and then succeed after a different triple has been processed, we ought to describe the semantics as a fixed-point computation.\r\n\r\nI think we're not meant to be talking about interactions between services in this specification. Instead we are describing a document format and its meaning for attestation appraisal. Perhaps we can say there are internal representations of inputs,\r\n\r\n* initial state available to construct an appraisal context [e.g., a versioned database]\r\n* time used for validity-checking\r\n* evidence submitted for appraisal\r\n\r\nand an internal representation of an appraisal state that _includes_ the ACS,\r\n\r\n* appraisal context as constructed for a session\r\n\r\nEach of the triple's internal representations correspond to a `cm-type`, so let's make a tagged union.\r\n\r\n```\r\nctx-triple = {\r\n  val: rv / es / evs / policy\r\n  cmtype: cm-type\r\n]\r\ncontext = {\r\n  todo: [ ctx-triple ]\r\n  acs: ACS\r\n  session: any\r\n}\r\n```\r\n\r\nA `context` transition is therefore a selection of a triple to process, where a selection strategy already determined the order of processing, an ACS addition (if any), and a session state update (if any).\r\n\r\n```\r\nstep({todo: [ triple, todo ... ], acs: ACS, session: session}) = {\r\n  todo: [ todo ... ]\r\n  acs: ACS-next\r\n  session: session-next\r\n}\r\nwhere\r\nACS-next, session-next = process-triple(triple, session)\r\n}\r\n\r\nstep({todo: [], acs: ACS, session: session}) = final-phases(ACS, session)\r\n```\r\n\r\nWe've defined `process-triple` for all the internal triple types and described `final-phases` as optional.\r\n\r\nFinally,\r\n```\r\nappraise(initial-state, evidence, time) = appraise-internal(ctx)\r\n  where ctx = construct-context(initial-state, evidence, time)\r\n\r\nconstruct-context(initial-state, evidence, time) = {\r\n  todo: tag-selection(initial-state, evidence),\r\n  acs: valid-evidence(initial-state, evidence, time)\r\n  session: verifier-session-new()\r\n} \r\nappraise-internal(context) = leastfixedpoint(step)(context)\r\n```\r\n\r\nThe `tag-selection` MAY take evidence into account to narrow the active tags further from its initial state to tags hinted at from evidence.\r\nThe `valid-evidence` function is effectively phase 2.",
       "createdAt": "2024-10-02T17:20:06Z",
-      "updatedAt": "2024-10-02T17:21:12Z",
+      "updatedAt": "2024-10-04T18:22:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -6947,6 +6991,117 @@
           "body": "I'd generally like for `appraise` to be able to provide a summary of its inputs in its results for provenance's sake, but we can leave that out of this spec.",
           "createdAt": "2024-10-02T17:21:11Z",
           "updatedAt": "2024-10-02T17:21:11Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Attempted to handle this a bit in PR#307.",
+          "createdAt": "2024-10-04T18:22:56Z",
+          "updatedAt": "2024-10-04T18:22:56Z"
+        }
+      ]
+    },
+    {
+      "number": 302,
+      "id": "I_kwDOH6-tI86Y3F9a",
+      "title": "Should RVPs be able to set RVs for Endorsements",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Normally, an RVP mints RVs that are applied to Evidence (only). The question is raised whether it is meaningful if an RVP could also mint RVs for Endorsements.\r\n\r\nNote: It is possible for an Endorser to endorse another Endorser's Claims using conditional endorsements so long as the `condition` expressions are permitted to use possible state expressions. \r\n\r\nThe current spec is silent. That is to say, the cmtype of the `condition` ECT is not specified.",
+      "createdAt": "2024-10-03T17:20:50Z",
+      "updatedAt": "2024-10-04T01:39:02Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If cosigning endorsements is always an endorsement, can we say that a conditional endorsement can have optional additions, such that the meaning is just to add the CoRIM issuer's authority to the condition environment/measurement as an endorsement cmtype, or is that too punny?",
+          "createdAt": "2024-10-04T01:39:00Z",
+          "updatedAt": "2024-10-04T01:39:00Z"
+        }
+      ]
+    },
+    {
+      "number": 303,
+      "id": "I_kwDOH6-tI86Y3MPf",
+      "title": "Should `element-list` processing allow positional comparison",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The triple cddl allows mkey to be optional and multiple measurement-map entries to exist simultaneously. What should be Verifier behavior? There are two possibilities:\r\n\r\nOption (1) fall back to positional comparison where the record at position i of the `condition` relation is compared with the record at position i of the ACS ECT.\r\n\r\nOption (2) write normative text that bans multiplicity of measurement-map without mkey.\r\n\r\nI'm leaning toward option 1.",
+      "createdAt": "2024-10-03T17:30:26Z",
+      "updatedAt": "2024-10-05T09:28:49Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hmm, I have a personal distaste for positional semantics.\r\n\r\nBesides, if one wants positional semantics for \"anonymous\" elements, they can use a `mkey` of type `uint` and define their matching algorithm, no?\r\n\r\nSo, leaning toward option 2, i.e.: _\"if multiple elements exist they **`MUST NOT`** be anonymous_\".",
+          "createdAt": "2024-10-03T18:55:54Z",
+          "updatedAt": "2024-10-03T18:56:36Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I vote option 2 because the authorized-by can be different for the same mkey and different values. I'm not strongly opposed to a missing mkey to implicitly be interpreted as its position in the array, but that makes 0 and missing mkey synonymous, which can cause interpretation problems.\r\n\r\nIf you have a mix of numbered 0..9 mkeys and a missing mkey for the \"most basic\" values, then implicit numbering confuses things.",
+          "createdAt": "2024-10-03T19:11:18Z",
+          "updatedAt": "2024-10-03T19:14:28Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@henkbirkholz @andrew-draper Your comments are requested.",
+          "createdAt": "2024-10-04T16:04:12Z",
+          "updatedAt": "2024-10-04T16:04:12Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think there was a hint at an option 3.\r\n\r\nOption (3) write normative text that if any `measurement-map` contains an `mkey`, then all `measurement-map` array elements must contain an `mkey`. If no `measurement-map` of the array contains an `mkey`, each element has an implicit `mkey` of its index in the array.\r\n\r\nThis feels too punny to me, but we're already in a situation where the list of key/value pairs does not have association-list semantics (the first matching mkey in a linear search is what it means) to make a simple finite function data type. We have to allow multiple entries of the array to have the same mkey to account for different `authority` conditions.\r\n\r\nI wouldn't protest if we allowed for this option.",
+          "createdAt": "2024-10-04T16:08:26Z",
+          "updatedAt": "2024-10-05T00:10:07Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Slight twist,\r\n\r\nOption (4) write normative text that if no measurement-map of the array contains an mkey, then each element has an implicit mkey of its index in the array.\r\n\r\nThis allows a missing mkey amongst many mkeys to be its own unit-type key that refers to the same element. I dislike this choice because it changes the meaning of other elements as soon as you add another that happens to have an mkey.\r\n\r\nThis differs from (1) in that the mkey refers to the same element rather than the ith element based on the position in the array amongst other measurements with mkeys.",
+          "createdAt": "2024-10-04T16:11:06Z",
+          "updatedAt": "2024-10-05T00:11:22Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Depending on the option selected, the language in Endorsement Triples Transformation {#sec-end-trans} can be softened.",
+          "createdAt": "2024-10-04T23:12:14Z",
+          "updatedAt": "2024-10-04T23:12:14Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This differs from (1) in that the mkey refers to the same element rather than the ith element based on the position in the array amongst other measurements with mkeys.\r\n\r\nWouldn't the ith element be the same as its index in the array?",
+          "createdAt": "2024-10-05T00:15:45Z",
+          "updatedAt": "2024-10-05T00:15:45Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> write normative text that if any `measurement-map` contains an `mkey`, then all `measurement-map` array elements must contain an `mkey`\r\n\r\nI expect the dominant use case for measurement-map will involve a singleton. Singletons don't need additional disambiguation. If an implementation begins with a singleton, but later adds a second, the onus is on the second to disambiguate it from the first. If the implementation of the second didn't touch the implementation of the first, it doesn't make sense that the first implementation should have to change. \r\n\r\nLanguage that mandated use of mkey for subsequent entries means there would only ever be one anonymous entry.\r\n\r\nOne of the profiles (psa/cca?) was overloading mkey to do more than simple disambiguation. I think this should be discouraged IMO. Other than that, the purpose for defining the namespace scope of mkey as \"local\" is primarily to disambiguate measurement-map multiples. It seems reasonable to mandate use of mkey when there are 2 or more entries but allow a single anonymous entry.\r\n\r\nIf that were the case, then it wouldn't matter where in the array the anonymous entry fell.",
+          "createdAt": "2024-10-05T00:39:48Z",
+          "updatedAt": "2024-10-05T00:45:19Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> One of the profiles (psa/cca?) was overloading mkey to do more than simple disambiguation. I think this should be discouraged IMO.\r\n\r\nWe use `mkey`s in both CCA and PSA to disambiguate different firmware elements within the same TCB.  There is no more semantic than that.  I am unsure what you are referring to, but I would like to know a bit more because I don't want our design to diverge from \"the CoRIM's way\".\r\n",
+          "createdAt": "2024-10-05T09:28:19Z",
+          "updatedAt": "2024-10-05T09:28:49Z"
         }
       ]
     }
@@ -35285,10 +35440,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "When you have requirements that fields 1-100 must be certain values, and field 0 may be one of many values when in the presence of those other field values, the representation of the matching condition repeats the same 100 certain values for each alternative for field 0. It's far simpler to allow for measurement values to have independently flexible measurement conditions when in that case.\r\n\r\nThis is still a weak pattern expression language, but the \"any-of\" use case is a particularly commonly needed one.\r\n\r\nThis PR seeks to solve one aspect of the multiplicity problem discussed in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/256",
       "createdAt": "2024-08-21T05:13:03Z",
-      "updatedAt": "2024-09-17T22:35:36Z",
+      "updatedAt": "2024-10-04T23:21:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fd67b62321ec9b4259e436f06ea66db596b5f980",
@@ -41114,21 +41271,21 @@
       "id": "PR_kwDOH6-tI8588eU_",
       "title": "Account for \"activating\" tags from CoBOM in theory of operation.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/292",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The CoBOM tag can help narrow a search space and make an attestation result self-explanatory, such as \"unsupported CoBOM\" or \"missing tags x,y,z from CoBOM\".\r\nWithout a CoBOM, we wanted to still ensure that the appraisal process was repeatable. Add a SHOULD for tracking the head state of the knowledge base of all input CoRIMs to an appraisal session.",
       "createdAt": "2024-09-27T16:50:25Z",
-      "updatedAt": "2024-10-02T15:40:48Z",
+      "updatedAt": "2024-10-04T15:31:20Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "cobomactivate",
       "headRefOid": "f724f819163ceb4e2646bd43079c8880050c921c",
-      "closedAt": null,
+      "closedAt": "2024-10-04T15:31:19Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -41153,6 +41310,13 @@
           "body": "Note: The CoBOM section states: \"Verifier policy determines whether CoBOMs are required\".  The last time this was discussed, there wasn't clarity AFAIK regarding what happens if a RIM supplier asserts a CoBOM but the Verifier doesn't require a CoBOM. Are all Verifiers required to support CoBOMs even if they don't \"require\" CoBOMs?\r\n\r\nIn the case where a Verifier requires a CoBOM but a supplier doesn't supply a CoBOM. What is the expected Verifier behavior? Should a Verifier create a logical CoBOM or should the Verifier refuse to process the RIM? \r\n\r\nThe CoBOM section also says \"If a Verifier Owner has a policy that does not require CoBOM, tags within a CoRIM received by a Verifier are activated immediately and treated valid for appraisal.\" It isn't clear whether a policy to \"not require\" means that the Verifier SHALL NOT process CoBOMs or that a Verifier will still process CoBOMs if they are supplied.\r\n\r\nIt seems reasonable for this spec to expect all Verifiers will process CoBOMs if they are supplied. If that is what we expect, then it makes sense to reword sections that suggest support is conditional on Verifier policy or implementation decisions. ",
           "createdAt": "2024-10-02T15:34:53Z",
           "updatedAt": "2024-10-02T15:40:48Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'll defer this to resolving \"quantizing inputs\"",
+          "createdAt": "2024-10-04T15:31:19Z",
+          "updatedAt": "2024-10-04T15:31:19Z"
         }
       ],
       "reviews": [
@@ -41208,6 +41372,166 @@
           "createdAt": "2024-10-02T15:12:40Z",
           "updatedAt": "2024-10-02T15:12:40Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7onD",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T10:03:38Z",
+          "updatedAt": "2024-10-04T10:03:38Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "@yogeshbdeshpande I don't understand this comment.  Could you please clarify?",
+              "createdAt": "2024-10-04T10:03:38Z",
+              "updatedAt": "2024-10-04T10:03:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7uk6",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T10:16:51Z",
+          "updatedAt": "2024-10-04T10:16:51Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I like framing this in terms of \"CoRIM knowledge base\".\r\n\r\nHowever, I'd scale this one up to also cover the \"Verifier requires CoBOMs\" case, e.g.:\r\n\r\n> The CoRIMs available to the Verifier at the beginning of appraisal constitute the Verifier\u2019s \"knowledge base state.\"\r\n> If a Verifier requires CoBOMs, its knowledge base state is made of the CoRIM inputs indicated explicitly by the CoBOMs.\r\n> If the Verifier does not require CoBOMs, the knowledge base state consists of all the CoRIMs available to the Verifier at the beginning of appraisal.\r\n> The knowledge base state SHOULD have an immutable label for attestation results to have auditable provenance.\r\n\r\n\r\n",
+              "createdAt": "2024-10-04T10:16:51Z",
+              "updatedAt": "2024-10-04T11:31:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7wCj",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T10:20:09Z",
+          "updatedAt": "2024-10-04T10:20:09Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "The comment is about Line 1469, as to who decides whether CoBOM is supplied, is it the Supply Chain or is it the Verifier with its Appraisal Policy for Evidence.\r\n\r\nSo this PR will be re-worked, once Issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/298 is worked upon!",
+              "createdAt": "2024-10-04T10:20:09Z",
+              "updatedAt": "2024-10-04T10:20:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L8PVT",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T11:29:45Z",
+          "updatedAt": "2024-10-04T11:29:45Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Thank you, but I still don't understand your point. L1469 takes no stance on who decides whether CoBOMs are used or not; it purely describes the mechanism. Who sets the boolean `use_cobom` on which the behaviour switches is out of scope for this paragraph.",
+              "createdAt": "2024-10-04T11:29:45Z",
+              "updatedAt": "2024-10-04T11:29:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L8RGA",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T11:34:01Z",
+          "updatedAt": "2024-10-04T11:34:01Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I like this a lot. However, it's a requirement that affects the tracking done by the ACS to record the tag-id of the processed triples.",
+              "createdAt": "2024-10-04T11:34:01Z",
+              "updatedAt": "2024-10-04T11:34:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L8Yzq",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T11:47:18Z",
+          "updatedAt": "2024-10-04T11:47:18Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "The confusion stems from the fact that:\r\n`If a Verifier requires CoBOM`\r\nthis terminology is ambigous! as it dictates Verifier is the authority for deciding the need for CoBoM\r\n",
+              "createdAt": "2024-10-04T11:47:18Z",
+              "updatedAt": "2024-10-04T11:47:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L8j4g",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T12:12:53Z",
+          "updatedAt": "2024-10-04T12:12:53Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "To me \"requiring\" can be self-imposed or not, therefore I (personally) see no ambiguity here.\r\n\r\nIn any case, although the supply chain may provide strong hints, the decision whether to use CoBOMs is ultimately the Verifier's.\r\n\r\n",
+              "createdAt": "2024-10-04T12:12:53Z",
+              "updatedAt": "2024-10-04T12:12:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L-KFy",
+          "commit": {
+            "abbreviatedOid": "f724f81"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T15:15:56Z",
+          "updatedAt": "2024-10-04T15:15:56Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "The entire attestation appraisal is frozen to the input state. The construction of the attestation context should be deterministic. The appraisal of the context should be deterministic. The result construction should be free to reference the label for the input state. I don't think we need to change ECT or ACS data types.",
+              "createdAt": "2024-10-04T15:15:56Z",
+              "updatedAt": "2024-10-04T15:15:56Z"
+            }
+          ]
         }
       ]
     },
@@ -41375,7 +41699,7 @@
       "id": "PR_kwDOH6-tI859UPS7",
       "title": "ECT table readability improvements - Fixes issue #287",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/296",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -41384,17 +41708,19 @@
       "labels": [],
       "body": "Updated ECT requirements tables for internal representations of conceptual messages to use human readable table elements.\r\n\r\nNote: the new table format allows for n/a in addition to Mandatory and Optional. \r\n\r\nFixes issue #287 ",
       "createdAt": "2024-10-01T23:41:09Z",
-      "updatedAt": "2024-10-02T23:09:20Z",
+      "updatedAt": "2024-10-04T15:38:10Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
+      "baseRefOid": "73520350a6f9e8e5647370ca07ad14d1e71fc223",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fix-issue-287",
-      "headRefOid": "3601c06aa40ac1dfaf223e8c80b5d73e72688978",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0e1a6db0901310abf0e448dcc95d3a85ea7ed186",
+      "closedAt": "2024-10-04T15:38:06Z",
+      "mergedAt": "2024-10-04T15:38:06Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "a4baa72f54be439ded2f4e9e7492cbde027a697c"
+      },
       "comments": [],
       "reviews": [
         {
@@ -41593,6 +41919,105 @@
           "createdAt": "2024-10-02T23:09:20Z",
           "updatedAt": "2024-10-02T23:09:20Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Lvk7M",
+          "commit": {
+            "abbreviatedOid": "046838d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T02:07:29Z",
+          "updatedAt": "2024-10-03T02:07:30Z",
+          "comments": [
+            {
+              "originalPosition": 62,
+              "body": "I don't believe it will be idempotent if you have a common condition that mkey 0 has measurements signed by X, but you have mkey 1 signed by Y, Z, or W leading to different outcomes.",
+              "createdAt": "2024-10-03T02:07:29Z",
+              "updatedAt": "2024-10-03T02:07:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L2mCn",
+          "commit": {
+            "abbreviatedOid": "046838d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T17:53:49Z",
+          "updatedAt": "2024-10-03T17:53:49Z",
+          "comments": [
+            {
+              "originalPosition": 62,
+              "body": "commit https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/296/commits/4ab1661542186dde9ffe322d5b4a21e7089221fd changed selection environment to mandatory and selection authority to optional.\r\n\r\nThe current transformation text for series triple already populates environment but ignores authority since a use case for it is not known to exist.",
+              "createdAt": "2024-10-03T17:53:49Z",
+              "updatedAt": "2024-10-03T17:53:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L42dQ",
+          "commit": {
+            "abbreviatedOid": "046838d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T01:35:08Z",
+          "updatedAt": "2024-10-04T01:35:08Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "I think your transformation PR accounts for the values to populate cmtype with.",
+              "createdAt": "2024-10-04T01:35:08Z",
+              "updatedAt": "2024-10-04T01:35:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L42hf",
+          "commit": {
+            "abbreviatedOid": "4ab1661"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-04T01:35:31Z",
+          "updatedAt": "2024-10-04T01:35:31Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L5IZW",
+          "commit": {
+            "abbreviatedOid": "4ab1661"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGMT, thanks.\r\n\r\nI have an idea for improving the presentation in each subsection.  No change content-wise, just a slight rearrangement of the typographic elements. I will push a change on top of this.",
+          "createdAt": "2024-10-04T03:04:30Z",
+          "updatedAt": "2024-10-04T03:04:30Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7gw0",
+          "commit": {
+            "abbreviatedOid": "0e1a6db"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Good improvement, I think, we should merge the PR now!",
+          "createdAt": "2024-10-04T09:47:53Z",
+          "updatedAt": "2024-10-04T15:19:21Z",
+          "comments": []
         }
       ]
     },
@@ -41608,20 +42033,28 @@
         "nedmsmith"
       ],
       "labels": [],
-      "body": "Addresses issue #285 ",
+      "body": "Addresses issues #285 and #297.\r\nResolution of issue #303 may impact sections touched by this PR.",
       "createdAt": "2024-10-02T18:42:27Z",
-      "updatedAt": "2024-10-03T01:39:37Z",
+      "updatedAt": "2024-10-05T01:00:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "152b4d574a99d9512ee30d2a64258aee8ac04bdc",
+      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "Cond-End-Trans-text",
-      "headRefOid": "e8ff50e6180cbe54e00ff5804c2b99722eed8865",
+      "headRefOid": "41c3213cdcf01b804fc175e850537c7552c013e4",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I believe all the open issues have been addressed or dispositioned to an issue (and tracked using issue tracker annotations). \r\n\r\nOK to merge?",
+          "createdAt": "2024-10-04T23:20:11Z",
+          "updatedAt": "2024-10-04T23:20:11Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86LuzB1",
@@ -41715,6 +42148,481 @@
               "updatedAt": "2024-10-03T00:35:58Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Lvfom",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T01:33:58Z",
+          "updatedAt": "2024-10-03T01:59:47Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "```suggestion\r\nTo process a `endorsed-triple-record` the `condition` is compared with entries from the ACS.\r\n```",
+              "createdAt": "2024-10-03T01:33:58Z",
+              "updatedAt": "2024-10-03T01:59:47Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n* `condition`: Search criteria applied to the ACS that determines if the `endorsement` applies.\r\n```",
+              "createdAt": "2024-10-03T01:34:15Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "```suggestion\r\n* `conditions`: Search criteria applied to the ACS that determines if the `endorsements` apply.\r\n```",
+              "createdAt": "2024-10-03T01:34:47Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "```suggestion\r\n* `condition`: Search criteria applied to the ACS that determines if the `series` applies.\r\n```",
+              "createdAt": "2024-10-03T01:35:13Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 84,
+              "body": "```suggestion\r\nTo process a `conditional-endorsement-series-record`, first the `condition` is compared with entries from the ACS.\r\n```",
+              "createdAt": "2024-10-03T01:35:51Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 210,
+              "body": "I didn't think order would matter, given that mkey is the distinguishing feature, and not the position in the element-list.",
+              "createdAt": "2024-10-03T01:42:20Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 246,
+              "body": "I know the words aren't new in this PR, but what does it mean for the `ev` entry to be \"available\"? I don't think we need to talk about allocation behavior. Are we not simply populating the appraisal context with this triple as one to be processed against the ACS?",
+              "createdAt": "2024-10-03T01:46:17Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 357,
+              "body": "Iterating through the entries with `cmtype` is `endorsement`? There's no relation entries of the ACS, and there's no ev in an evs. This sentence confuses me.",
+              "createdAt": "2024-10-03T01:56:32Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 315,
+              "body": "Can one party's reference values not be for another party's endorsements?",
+              "createdAt": "2024-10-03T01:56:49Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            },
+            {
+              "originalPosition": 339,
+              "body": "The \"`ev` list\" I think needs to be more explicitly understood as the collection in the appraisal context I think. Same for `evs` below?",
+              "createdAt": "2024-10-03T01:59:43Z",
+              "updatedAt": "2024-10-03T01:59:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L1rRG",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T16:33:41Z",
+          "updatedAt": "2024-10-03T16:35:51Z",
+          "comments": [
+            {
+              "originalPosition": 315,
+              "body": "> Can one party's reference values not be for another party's endorsements?\r\n\r\nStructurally, that would be reasonable since both Evidence and Endorsements are expressions of actual state. However, I don't know why it is necessary to model a condition on endorsements using RVs since a conditional endorsement condition could be expressed using possible-state expressions. I'll review the current wording, but I believe the cmtype usage is specific to the addition ECTs and silent on the condition ECTs. ",
+              "createdAt": "2024-10-03T16:33:41Z",
+              "updatedAt": "2024-10-03T16:35:51Z"
+            },
+            {
+              "originalPosition": 357,
+              "body": "It looks like a typo.",
+              "createdAt": "2024-10-03T16:35:41Z",
+              "updatedAt": "2024-10-03T16:35:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L1tsg",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T16:38:43Z",
+          "updatedAt": "2024-10-03T16:38:44Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "All of the conditions could be compared unless one of them matches.",
+              "createdAt": "2024-10-03T16:38:43Z",
+              "updatedAt": "2024-10-03T16:38:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L1z_Z",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T16:52:04Z",
+          "updatedAt": "2024-10-03T16:52:04Z",
+          "comments": [
+            {
+              "originalPosition": 210,
+              "body": "> I didn't think order would matter, given that mkey is the distinguishing feature, and not the position in the element-list.\r\n\r\nThe processing sections pay attention to mkey semantics. This is saying that the transformation isn't expected to change position semantics. It may be harmless but it's not my intention to do that here.\r\n\r\nThere is a yet-to-be-discussed issue regarding what the processing requirements are if mkey is omitted and multiples of measurement-map exist. The CDDL permits this. I think it's reasonable for the verifier use array position to disambiguate. The RIM author decides which approach is better. Otherwise, we have to put normative next banning this condition.",
+              "createdAt": "2024-10-03T16:52:04Z",
+              "updatedAt": "2024-10-03T16:52:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L10S-",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T16:52:44Z",
+          "updatedAt": "2024-10-03T16:52:44Z",
+          "comments": [
+            {
+              "originalPosition": 246,
+              "body": "Maybe it's ok to remove it?",
+              "createdAt": "2024-10-03T16:52:44Z",
+              "updatedAt": "2024-10-03T16:52:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L2MSu",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T17:22:54Z",
+          "updatedAt": "2024-10-03T17:22:54Z",
+          "comments": [
+            {
+              "originalPosition": 315,
+              "body": "Added an issue and tracking annotation.",
+              "createdAt": "2024-10-03T17:22:54Z",
+              "updatedAt": "2024-10-03T17:22:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L2XTC",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T17:33:43Z",
+          "updatedAt": "2024-10-03T17:33:43Z",
+          "comments": [
+            {
+              "originalPosition": 210,
+              "body": "Issue #303 created and tracking annotations added.",
+              "createdAt": "2024-10-03T17:33:43Z",
+              "updatedAt": "2024-10-03T17:33:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L2Yoc",
+          "commit": {
+            "abbreviatedOid": "e8ff50e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T17:35:00Z",
+          "updatedAt": "2024-10-03T17:35:00Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "whitespace fix applied",
+              "createdAt": "2024-10-03T17:35:00Z",
+              "updatedAt": "2024-10-03T17:35:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L3LgD",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T19:09:05Z",
+          "updatedAt": "2024-10-03T19:09:05Z",
+          "comments": [
+            {
+              "originalPosition": 185,
+              "body": "Why put in a quote block when that's not what we do elsewhere?",
+              "createdAt": "2024-10-03T19:09:05Z",
+              "updatedAt": "2024-10-03T19:09:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L3OH5",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T19:15:32Z",
+          "updatedAt": "2024-10-03T19:15:33Z",
+          "comments": [
+            {
+              "originalPosition": 202,
+              "body": "If we allow reference value triples to apply to endorsed measurements, then the `rv` relation is the same as the `ev` relation. I would say we don't need it.",
+              "createdAt": "2024-10-03T19:15:32Z",
+              "updatedAt": "2024-10-03T19:15:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L3eXz",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T19:50:59Z",
+          "updatedAt": "2024-10-03T19:50:59Z",
+          "comments": [
+            {
+              "originalPosition": 185,
+              "body": "> Why put in a quote block when that's not what we do elsewhere?\r\n\r\nThat is what was there already. The previous section also uses similar formatting. BTW It isn't a quote block it is markdown for indentation.",
+              "createdAt": "2024-10-03T19:50:59Z",
+              "updatedAt": "2024-10-03T19:50:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L3k1A",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T20:07:04Z",
+          "updatedAt": "2024-10-03T20:07:04Z",
+          "comments": [
+            {
+              "originalPosition": 202,
+              "body": "CoRIM is written from the perspective that is laid out by RFC9334 where the roles of Reference Value Provider and Endorser differ. The interaction between RVPs, Attesters and RPs is meaningful because of the conceptual messages they exchange. There isn't the notion of a role credential. The result of an RVP-Attester interaction is \"corroborated\" Ref Values that have cmtype=`reference` but is an \"actual state\" representation in the ACS. If an Endorser constructed an endorsement rule that produced a record with the same claims as a corroborated RV contains, it would still be an Endorsement. RFC9334 expects RPs will differentiate between the roles and will be looking for statements from RVPs regarding acceptability of Evidence vs. a similar construction from Endorsers.",
+              "createdAt": "2024-10-03T20:07:04Z",
+              "updatedAt": "2024-10-03T20:07:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L4lRo",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T00:10:42Z",
+          "updatedAt": "2024-10-04T00:10:42Z",
+          "comments": [
+            {
+              "originalPosition": 202,
+              "body": "I understand that the roles are different, but the behavior of `rv` as an internal representation can easily be expressed as `ev` since you're already populating the additions with the appropriate `cmtype`. That's all I was saying.",
+              "createdAt": "2024-10-04T00:10:42Z",
+              "updatedAt": "2024-10-04T00:10:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7y0I",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "What a tour de force!  Excellent stuff.\r\n\r\nShip it! mod(tiny editorial comments inlined)",
+          "createdAt": "2024-10-04T10:26:17Z",
+          "updatedAt": "2024-10-04T12:06:19Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\n* `ref-env`: Search criteria that target Evidence environments in the ACS.\r\n* `ref-claims`: Search criteria that target Evidence Claims in the ACS.\r\n```",
+              "createdAt": "2024-10-04T10:26:17Z",
+              "updatedAt": "2024-10-04T12:06:19Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\n* `condition`: Search criteria applied to the ACS that determine if the `endorsement` applies.\r\n* `endorsement`: Claims to be added to the ACS.\r\n```",
+              "createdAt": "2024-10-04T10:30:05Z",
+              "updatedAt": "2024-10-04T12:06:19Z"
+            },
+            {
+              "originalPosition": 52,
+              "body": "Merge the two, unless we want to also introduce the \"Stateful Environment\" in prose.\r\n\r\n```suggestion\r\n~~~ cddl\r\n{::include cddl/conditional-endorsement-triple-record.cddl}\r\n\r\n{::include cddl/stateful-environment-record.cddl}\r\n~~~\r\n```",
+              "createdAt": "2024-10-04T11:51:35Z",
+              "updatedAt": "2024-10-04T12:06:19Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "ditto; no reason to keep the two separate.\r\n\r\n```suggestion\r\n~~~ cddl\r\n{::include cddl/conditional-endorsement-series-triple-record.cddl}\r\n\r\n{::include cddl/conditional-series-record.cddl}\r\n~~~\r\n```",
+              "createdAt": "2024-10-04T11:55:04Z",
+              "updatedAt": "2024-10-04T12:06:19Z"
+            },
+            {
+              "originalPosition": 81,
+              "body": "missing full stop\r\n\r\n```suggestion\r\n* `selection`: Search criteria applied to the ACS entries resulting from the matched `conditions`.\r\n```",
+              "createdAt": "2024-10-04T11:55:59Z",
+              "updatedAt": "2024-10-04T12:06:19Z"
+            },
+            {
+              "originalPosition": 22,
+              "body": "spurious NL\r\n\r\n```suggestion\r\nIf these conditions are met, the matching ACS entry is copied into a new ACS entry that is added to the ACS, but with the Reference Value Provider's authority.\r\n```",
+              "createdAt": "2024-10-04T11:56:47Z",
+              "updatedAt": "2024-10-04T12:06:19Z"
+            },
+            {
+              "originalPosition": 91,
+              "body": "spurious NLs\r\n\r\n```suggestion\r\nFor each `series` entry, if the `selection` matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new ACS entry.\r\n```",
+              "createdAt": "2024-10-04T11:57:41Z",
+              "updatedAt": "2024-10-04T12:06:20Z"
+            },
+            {
+              "originalPosition": 184,
+              "body": "```suggestion\r\n> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.\r\n```",
+              "createdAt": "2024-10-04T12:00:35Z",
+              "updatedAt": "2024-10-04T12:06:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L9t3C",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see comment on 1851",
+          "createdAt": "2024-10-04T14:24:11Z",
+          "updatedAt": "2024-10-04T14:24:22Z",
+          "comments": [
+            {
+              "originalPosition": 195,
+              "body": "i think the environment map of the `endorsed-triple-record` is the environment to which the Endorsement applies.\r\n\r\nIt should reside, where the addition ECT, i.e. place where the stuff gets added as Endorsement exist",
+              "createdAt": "2024-10-04T14:24:12Z",
+              "updatedAt": "2024-10-04T14:24:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L9vU2",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T14:26:46Z",
+          "updatedAt": "2024-10-04T14:26:47Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\nTo process `reference-triple-record` both the `ref-env` and `ref-claims` are compared with evidence entries from the ACS.\r\n```",
+              "createdAt": "2024-10-04T14:26:47Z",
+              "updatedAt": "2024-10-04T14:26:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L-g2A",
+          "commit": {
+            "abbreviatedOid": "200a962"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T16:03:38Z",
+          "updatedAt": "2024-10-04T16:03:38Z",
+          "comments": [
+            {
+              "originalPosition": 195,
+              "body": "I'm not seeing where the issue is. The text seems fine to me since \"the ECT\" refers to the addition ECT that corresponds to an entry in the conditional endorsement triple's `endorsements` array.",
+              "createdAt": "2024-10-04T16:03:38Z",
+              "updatedAt": "2024-10-04T16:03:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MCG7m",
+          "commit": {
+            "abbreviatedOid": "0f4e73b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T23:18:33Z",
+          "updatedAt": "2024-10-04T23:18:33Z",
+          "comments": [
+            {
+              "originalPosition": 202,
+              "body": "> I understand that the roles are different, but the behavior of `rv` as an internal representation can easily be expressed as `ev` since you're already populating the additions with the appropriate `cmtype`. That's all I was saying.\r\n\r\nThe internal representation is primarily there to facilitate readability. Having distinct representations for the various conceptual message types keeps the text inside the conceptual message swim lanes. It's a style thing more than an optimization thing.",
+              "createdAt": "2024-10-04T23:18:33Z",
+              "updatedAt": "2024-10-04T23:18:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MCHye",
+          "commit": {
+            "abbreviatedOid": "0200d77"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-04T23:26:29Z",
+          "updatedAt": "2024-10-04T23:26:29Z",
+          "comments": []
         }
       ]
     },
@@ -41723,25 +42631,44 @@
       "id": "PR_kwDOH6-tI859bpvs",
       "title": "Add parentheses surrounding cross-references",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/300",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith"
+      ],
       "labels": [],
       "body": "Updates section and table references that don't have surrounding parens.\r\n\r\nSee issue #286",
       "createdAt": "2024-10-02T22:36:02Z",
-      "updatedAt": "2024-10-02T23:46:24Z",
+      "updatedAt": "2024-10-04T15:17:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "152b4d574a99d9512ee30d2a64258aee8ac04bdc",
+      "baseRefOid": "fca60ed0e3f4cca2c7e3a790dfe2847f0cc58dd8",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "parens-in-cross-references",
-      "headRefOid": "e8889d071a46601f931b2b49be5755973a31b2e1",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "headRefOid": "49b32a08563bf900eeb482336daf44afe600293d",
+      "closedAt": "2024-10-04T15:17:45Z",
+      "mergedAt": "2024-10-04T15:17:45Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "73520350a6f9e8e5647370ca07ad14d1e71fc223"
+      },
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "See if commit https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/300/commits/1372934797b8e6ca7018730564e1a430a74fe8f4 addresses your concerns.",
+          "createdAt": "2024-10-03T21:54:15Z",
+          "updatedAt": "2024-10-03T21:54:15Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> See if commit [1372934](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/1372934797b8e6ca7018730564e1a430a74fe8f4) addresses your concerns.\r\n\r\nThanks for the changes!",
+          "createdAt": "2024-10-04T09:55:01Z",
+          "updatedAt": "2024-10-04T09:55:01Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86Lu_w7",
@@ -41755,6 +42682,70 @@
           "createdAt": "2024-10-02T23:46:24Z",
           "updatedAt": "2024-10-02T23:46:24Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86LyZxd",
+          "commit": {
+            "abbreviatedOid": "e8889d0"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-10-03T10:37:06Z",
+          "updatedAt": "2024-10-03T10:37:06Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ly_K9",
+          "commit": {
+            "abbreviatedOid": "e8889d0"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T11:53:54Z",
+          "updatedAt": "2024-10-03T11:55:55Z",
+          "comments": [
+            {
+              "originalPosition": 103,
+              "body": "These look spurious.  They'd render as:\r\n\r\n> Described in (Section 1.2.3)\r\n\r\nwhich is not what we want.  Instead, they should read as:\r\n\r\n> Described in Section 1.2.3.\r\n",
+              "createdAt": "2024-10-03T11:53:54Z",
+              "updatedAt": "2024-10-03T11:55:55Z"
+            },
+            {
+              "originalPosition": 121,
+              "body": "ditto",
+              "createdAt": "2024-10-03T11:54:12Z",
+              "updatedAt": "2024-10-03T11:55:55Z"
+            },
+            {
+              "originalPosition": 163,
+              "body": "ditto",
+              "createdAt": "2024-10-03T11:55:07Z",
+              "updatedAt": "2024-10-03T11:55:55Z"
+            },
+            {
+              "originalPosition": 181,
+              "body": "ditto, and below too.",
+              "createdAt": "2024-10-03T11:55:19Z",
+              "updatedAt": "2024-10-03T11:55:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7kRl",
+          "commit": {
+            "abbreviatedOid": "1372934"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-04T09:55:16Z",
+          "updatedAt": "2024-10-04T09:55:16Z",
+          "comments": []
         }
       ]
     },
@@ -41763,24 +42754,26 @@
       "id": "PR_kwDOH6-tI859byKe",
       "title": "Remove unused references",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/301",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Three references were triggering \"unused ref\" warnings. Removed references and one sentence in a profile section that no longer applies.",
       "createdAt": "2024-10-02T22:59:50Z",
-      "updatedAt": "2024-10-02T23:07:08Z",
+      "updatedAt": "2024-10-04T09:46:56Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "152b4d574a99d9512ee30d2a64258aee8ac04bdc",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "remove-unused-refs",
       "headRefOid": "ae2c11180d13008c27b1474f6573568133c1751d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-10-04T09:46:53Z",
+      "mergedAt": "2024-10-04T09:46:53Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "4049856b114bb08febdb689895435ec4bb101fe5"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -41803,8 +42796,827 @@
           "createdAt": "2024-10-02T23:07:08Z",
           "updatedAt": "2024-10-02T23:07:08Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7e6p",
+          "commit": {
+            "abbreviatedOid": "ae2c111"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-10-04T09:44:00Z",
+          "updatedAt": "2024-10-04T09:44:00Z",
+          "comments": []
         }
       ]
+    },
+    {
+      "number": 304,
+      "id": "PR_kwDOH6-tI859iQWv",
+      "title": "Add DER certificate tag type",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/304",
+      "state": "MERGED",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "CBOR is binary, so we shouldn't have to bloat up to base64 PEM encodings.",
+      "createdAt": "2024-10-03T18:10:26Z",
+      "updatedAt": "2024-10-04T15:09:45Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4049856b114bb08febdb689895435ec4bb101fe5",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "asn1der",
+      "headRefOid": "caf1ee982b2ba4fd344c060759c01884b5b4ac3d",
+      "closedAt": "2024-10-04T15:09:45Z",
+      "mergedAt": "2024-10-04T15:09:45Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "fca60ed0e3f4cca2c7e3a790dfe2847f0cc58dd8"
+      },
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks!\r\n\r\nI forgot one more thing.  Each time we add a new tag request, we should also:\r\n```sh\r\nmake -C cddl cbor-tags.txt\r\n```\r\nto update the CBOR tags inventory (`cddl/cbor-tags.txt`).",
+          "createdAt": "2024-10-04T01:22:26Z",
+          "updatedAt": "2024-10-04T01:22:26Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for this change @deeglaze \r\n\r\n@henk, please review, we should make every effort to speed up reviews so that we do not only do that during the meeting.\r\n",
+          "createdAt": "2024-10-04T09:04:19Z",
+          "updatedAt": "2024-10-04T09:04:19Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86L27PB",
+          "commit": {
+            "abbreviatedOid": "e815eba"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T18:36:47Z",
+          "updatedAt": "2024-10-03T18:36:47Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "We want to say this DER-encoded cert is `bstr`-wrapped.\r\n\r\nAlso, it looks like `cddl/crypto-key-type-choice.cddl` needs to be informed about this new type.",
+              "createdAt": "2024-10-03T18:36:47Z",
+              "updatedAt": "2024-10-03T18:36:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L4Ty2",
+          "commit": {
+            "abbreviatedOid": "e815eba"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-03T22:30:36Z",
+          "updatedAt": "2024-10-03T22:30:37Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Done.",
+              "createdAt": "2024-10-03T22:30:37Z",
+              "updatedAt": "2024-10-03T22:30:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L4YCI",
+          "commit": {
+            "abbreviatedOid": "73d5c38"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-10-03T22:52:39Z",
+          "updatedAt": "2024-10-03T22:52:39Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L4-wn",
+          "commit": {
+            "abbreviatedOid": "caf1ee9"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM, thanks!",
+          "createdAt": "2024-10-04T02:24:18Z",
+          "updatedAt": "2024-10-04T15:07:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L7Ham",
+          "commit": {
+            "abbreviatedOid": "caf1ee9"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-10-04T09:03:36Z",
+          "updatedAt": "2024-10-04T15:07:23Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 305,
+      "id": "PR_kwDOH6-tI859olUW",
+      "title": "Move contributors to front matter",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/305",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There is an extraneous Contributors section that went unnoticed since there was also a typographical mistake that demoted the section heading to normal text.",
+      "createdAt": "2024-10-04T15:07:26Z",
+      "updatedAt": "2024-10-04T16:06:03Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4049856b114bb08febdb689895435ec4bb101fe5",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "contrib",
+      "headRefOid": "d55a5e55696f8c9ffae5ab408d12f0f72b5b63ee",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86L-IBt",
+          "commit": {
+            "abbreviatedOid": "d55a5e5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I disagree with this PR.  Given the substantial and continuous contributions to the spec, both Dionna and Andy should be listed as co-authors rather than contributors.",
+          "createdAt": "2024-10-04T15:11:47Z",
+          "updatedAt": "2024-10-04T15:11:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L-dyb",
+          "commit": {
+            "abbreviatedOid": "d55a5e5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-10-04T15:56:47Z",
+          "updatedAt": "2024-10-04T15:56:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86L-h3x",
+          "commit": {
+            "abbreviatedOid": "d55a5e5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I am OK with contributors (for now).\r\n\r\nI want to have the discussion with the RATS chairs in Dublin to allow >5 editors.",
+          "createdAt": "2024-10-04T16:06:03Z",
+          "updatedAt": "2024-10-04T16:06:03Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 306,
+      "id": "PR_kwDOH6-tI859o5g2",
+      "title": "Allow implicit environment for simple conditions",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/306",
+      "state": "CLOSED",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "wontfix"
+      ],
+      "body": "Suggested by Yogesh\r\n\r\nWill need to be accounted for after PR#299.",
+      "createdAt": "2024-10-04T15:58:57Z",
+      "updatedAt": "2024-10-04T16:01:24Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "simplecond",
+      "headRefOid": "6039d9d1134b636a702466414b593445caa132ad",
+      "closedAt": "2024-10-04T16:01:11Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Meeting suggested this was too casey.",
+          "createdAt": "2024-10-04T16:01:11Z",
+          "updatedAt": "2024-10-04T16:01:11Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 307,
+      "id": "PR_kwDOH6-tI859p2Su",
+      "title": "Quantize inputs with a session initialization phase.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/307",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes Issue#242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
+      "createdAt": "2024-10-04T18:15:56Z",
+      "updatedAt": "2024-10-05T21:21:44Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "quant",
+      "headRefOid": "bc4209a8d6ac9a3863963cf057f7f9bc871e6af5",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86MANmy",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Nice.",
+          "createdAt": "2024-10-04T18:38:22Z",
+          "updatedAt": "2024-10-04T18:56:42Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "```suggestion\r\nConceptual messages may include Attestation Evidence, CoMID tags {{sec-comid}}, CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), and static cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.\r\n```",
+              "createdAt": "2024-10-04T18:38:22Z",
+              "updatedAt": "2024-10-04T18:56:42Z"
+            },
+            {
+              "originalPosition": 59,
+              "body": "I expect the Policy to be under the complete control of the Verifier Owner.\r\nHowever, auditability and traceability requirements may also be imposed by the external regulatory context.",
+              "createdAt": "2024-10-04T18:44:12Z",
+              "updatedAt": "2024-10-04T18:56:42Z"
+            },
+            {
+              "originalPosition": 63,
+              "body": "OK, but this may or may not be an issue in practice.  \"Some\" clock skew is typically taken into account when comparing time bounds during validation.  I am not expecting Phase 0 and Phase 1 to be far apart enough to dwarf normal tolerances.",
+              "createdAt": "2024-10-04T18:48:43Z",
+              "updatedAt": "2024-10-04T18:56:42Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "Again, this determination may be by verifier policy of other externally imposed regulations.",
+              "createdAt": "2024-10-04T18:50:14Z",
+              "updatedAt": "2024-10-04T18:56:42Z"
+            },
+            {
+              "originalPosition": 78,
+              "body": "```suggestion\r\nNo inputs other than dynamically-fetched information about certificate revocation status (see {{?RFC6960}}) may be collected in Phase 1.\r\n```",
+              "createdAt": "2024-10-04T18:51:33Z",
+              "updatedAt": "2024-10-04T18:56:42Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "```suggestion\r\nThe Verifier chooses tags from the selected CoRIMs, including CoMID, CoSWID, CoBOM, and CoTS.\r\n```",
+              "createdAt": "2024-10-04T18:55:30Z",
+              "updatedAt": "2024-10-04T18:56:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MBERd",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T20:33:42Z",
+          "updatedAt": "2024-10-04T20:33:42Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Yeah.. Ned's change to add parentheses didn't treat this one line consistently, and adding parens only for CoBOM seems weird, no?",
+              "createdAt": "2024-10-04T20:33:42Z",
+              "updatedAt": "2024-10-04T20:33:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MBErP",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T20:34:49Z",
+          "updatedAt": "2024-10-04T20:34:50Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "Verifier Policy can be to follow regulations or not. I didn't want to add speculation about this spec going to regulators as a framework.",
+              "createdAt": "2024-10-04T20:34:49Z",
+              "updatedAt": "2024-10-04T20:34:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MBFsi",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T20:37:41Z",
+          "updatedAt": "2024-10-04T20:37:41Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "Sounds like you're saying I should allow for the wall clock input to also be collected multiple times during Phase 1? I'm just trying to temper all sources of external influence on the hermeticity of an appraisal.",
+              "createdAt": "2024-10-04T20:37:41Z",
+              "updatedAt": "2024-10-04T20:37:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MBFyy",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T20:38:02Z",
+          "updatedAt": "2024-10-04T20:38:02Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Do you want different text?",
+              "createdAt": "2024-10-04T20:38:02Z",
+              "updatedAt": "2024-10-04T20:38:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MBGBV",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T20:38:48Z",
+          "updatedAt": "2024-10-04T20:38:48Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "Should I add RFC6960 to the normative frontmatter instead? I don't know this {{?ref}} syntax.",
+              "createdAt": "2024-10-04T20:38:48Z",
+              "updatedAt": "2024-10-04T20:38:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB55r",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T21:51:37Z",
+          "updatedAt": "2024-10-04T21:51:37Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "> [...] adding parens only for CoBOM seems weird, no?\r\n\r\nIt makes sense to add parentheses because external refs are rendered differently from internal refs:\r\n\r\n* `{{EXT}}` becomes `[EXT]`\r\n* `{{INT}}` becomes `INT`",
+              "createdAt": "2024-10-04T21:51:37Z",
+              "updatedAt": "2024-10-04T21:51:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB6gZ",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T21:54:50Z",
+          "updatedAt": "2024-10-04T21:54:50Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "Understood. The thing is 9334's definition of policy is:\r\n\r\n> _\"A set of rules that a Verifier uses to evaluate the validity of information about an Attester.\"_\r\n\r\nwhich would make any regulatory aspects out of scope.",
+              "createdAt": "2024-10-04T21:54:50Z",
+              "updatedAt": "2024-10-04T21:54:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB62Q",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T21:56:35Z",
+          "updatedAt": "2024-10-04T21:56:35Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Added to both cobom and comid references then.",
+              "createdAt": "2024-10-04T21:56:35Z",
+              "updatedAt": "2024-10-04T21:56:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB9GM",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T22:09:06Z",
+          "updatedAt": "2024-10-04T22:09:06Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "I am just pointing out that creating an exception just for revocation checks to the general rule that _\"Phase 0 locks all inputs\"_ is probably unnecessary.  If we go without, the loss of functionality doesn't seem too big, given:\r\n1. Temporal distance between Phases 0 and 1 is likely to be (very) short, and\r\n2. Some clock skew tolerance will be in place anyway, making the boundaries between 0 and 1 even fuzzier.",
+              "createdAt": "2024-10-04T22:09:06Z",
+              "updatedAt": "2024-10-04T22:09:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB9en",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T22:11:25Z",
+          "updatedAt": "2024-10-04T22:11:26Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Yes, just a small tweak to acknowledge that external factors, other than the Verifier Owner's will, may be at play.",
+              "createdAt": "2024-10-04T22:11:26Z",
+              "updatedAt": "2024-10-04T22:37:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB-Xf",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T22:16:50Z",
+          "updatedAt": "2024-10-04T22:16:51Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "`{{?ref}}` automatically creates an informational reference entry for `ref`.\r\n`{{!ref}}` automatically creates a normative reference entry for `ref`.\r\n\r\nIt's handy for GitHub's \"suggested changes\" because you don't have to fiddle with the front matter when you are miles deep in the scroll.",
+              "createdAt": "2024-10-04T22:16:51Z",
+              "updatedAt": "2024-10-04T22:16:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MB-4v",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T22:19:58Z",
+          "updatedAt": "2024-10-04T22:19:59Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "> Should I add RFC6960 to the normative frontmatter instead? \r\n\r\nI would make OCSP informative.  Using CRL distribution points is also an option.",
+              "createdAt": "2024-10-04T22:19:59Z",
+              "updatedAt": "2024-10-04T22:19:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MCIUD",
+          "commit": {
+            "abbreviatedOid": "1006450"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T23:31:39Z",
+          "updatedAt": "2024-10-04T23:31:39Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "Done.",
+              "createdAt": "2024-10-04T23:31:39Z",
+              "updatedAt": "2024-10-04T23:31:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MCIhh",
+          "commit": {
+            "abbreviatedOid": "66822b8"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T23:33:45Z",
+          "updatedAt": "2024-10-04T23:34:41Z",
+          "comments": [
+            {
+              "originalPosition": 48,
+              "body": "```suggestion\r\n: A structure that tracks all state that corresponds to a single request for attestation appraisal.\r\nThis includes the Appraisal Claims Set and Appraisal Context.\r\n```\r\nWe're breaking lines on sentences right?",
+              "createdAt": "2024-10-04T23:33:46Z",
+              "updatedAt": "2024-10-04T23:34:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MCJ9w",
+          "commit": {
+            "abbreviatedOid": "8aa35d5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-04T23:48:40Z",
+          "updatedAt": "2024-10-04T23:49:13Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "I thought the previous text was better / orthogonal to the suggested text.\r\n```suggestion\r\nAfter the Appraisal Context is initialized, appraisal processing is allowed to complete before new inputs are considered.\r\n```\r\nI thought the previous text was better / orthogonal to the suggested text.",
+              "createdAt": "2024-10-04T23:48:40Z",
+              "updatedAt": "2024-10-04T23:49:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MCLTn",
+          "commit": {
+            "abbreviatedOid": "8aa35d5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-10-05T00:05:26Z",
+          "updatedAt": "2024-10-05T00:07:12Z",
+          "comments": [
+            {
+              "originalPosition": 143,
+              "body": "Removal of sec-ev-coll goes too far. This section corresponds to the CoRIM Selection, only for Evidence. I suggest:\r\n```\r\n#### Evidence Selection\r\n\r\nAll available Evidence in the Appraisal Session's inputs are checked for validity.\r\n\r\nEvidence that is not within it's validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.\r\n\r\nEvidence that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.\r\n\r\nEvidence selection MUST yield at least one usable entry.\r\n\r\nSelected Evidence is transformed into an internal representation (see {{sec-phase1-trans}}).\r\n```\r\nThe new text doesn't seem to belong in this section.",
+              "createdAt": "2024-10-05T00:05:26Z",
+              "updatedAt": "2024-10-05T00:07:12Z"
+            },
+            {
+              "originalPosition": 148,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-10-05T00:06:35Z",
+              "updatedAt": "2024-10-05T00:07:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MDYb8",
+          "commit": {
+            "abbreviatedOid": "8aa35d5"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T15:55:04Z",
+          "updatedAt": "2024-10-05T15:55:04Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "The \u201callowed\u201d worries me, since we don\u2019t require monotonic matching conditions for profiles and mid-appraisal additions of tags can lead to inconsistent ACS results.",
+              "createdAt": "2024-10-05T15:55:04Z",
+              "updatedAt": "2024-10-05T15:55:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MEVsE",
+          "commit": {
+            "abbreviatedOid": "8aa35d5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T18:15:55Z",
+          "updatedAt": "2024-10-05T18:20:39Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n  RFC6960: ocsp\r\n```",
+              "createdAt": "2024-10-05T18:15:56Z",
+              "updatedAt": "2024-10-05T18:20:39Z"
+            },
+            {
+              "originalPosition": 84,
+              "body": "```suggestion\r\nNo inputs other than dynamically-fetched information about certificate revocation status (see {{-ocsp}}, and {{Section 4.2.1.13 of -pkix-cert}}) may be collected in Phase 1.\r\n```",
+              "createdAt": "2024-10-05T18:17:00Z",
+              "updatedAt": "2024-10-05T18:20:39Z"
+            },
+            {
+              "originalPosition": 84,
+              "body": "Party pooper mode on. (For different reasons) I don't like either \ud83e\udd23 ",
+              "createdAt": "2024-10-05T18:20:32Z",
+              "updatedAt": "2024-10-05T18:20:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MFmeo",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T20:58:30Z",
+          "updatedAt": "2024-10-05T20:58:30Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Added.",
+              "createdAt": "2024-10-05T20:58:30Z",
+              "updatedAt": "2024-10-05T20:58:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MFmhx",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T20:58:37Z",
+          "updatedAt": "2024-10-05T20:58:38Z",
+          "comments": [
+            {
+              "originalPosition": 143,
+              "body": "Added.",
+              "createdAt": "2024-10-05T20:58:38Z",
+              "updatedAt": "2024-10-05T20:58:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MFnC3",
+          "commit": {
+            "abbreviatedOid": "31e0804"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T20:59:53Z",
+          "updatedAt": "2024-10-05T20:59:53Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "Moved the lock to be back at the end of Appraisal Context construction then.",
+              "createdAt": "2024-10-05T20:59:53Z",
+              "updatedAt": "2024-10-05T20:59:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MFnvr",
+          "commit": {
+            "abbreviatedOid": "8aa35d5"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T21:01:35Z",
+          "updatedAt": "2024-10-05T21:01:36Z",
+          "comments": [
+            {
+              "originalPosition": 84,
+              "body": "I've added a hermeticity subsection to describe this without any need for operational suggestions like having inputs be \"held back\".",
+              "createdAt": "2024-10-05T21:01:35Z",
+              "updatedAt": "2024-10-05T21:01:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MFv_H",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-05T21:21:43Z",
+          "updatedAt": "2024-10-05T21:21:44Z",
+          "comments": [
+            {
+              "originalPosition": 175,
+              "body": "Please help wordsmith this. There are obviously different levels of hermeticity and auditability that Verifier policy will impose. I don't want to require absolute determinism since that imposes a requirement on policy evaluation.\r\nI don't like \"same\" since we're not prescribing any Attestation Result construction or representation, so there is no strong notion of sameness.\r\n\r\nIf we go with \r\n```suggestion\r\nThe reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.                                                                                            \r\nFully determined inputs SHOULD ensure consistent ACS construction when accounting for any profile-driven semantics.                                                                                                                             \r\n```",
+              "createdAt": "2024-10-05T21:21:43Z",
+              "updatedAt": "2024-10-05T21:21:44Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 308,
+      "id": "PR_kwDOH6-tI859qhSC",
+      "title": "Add version-map comparison and fix svn comparison",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/308",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The svn comparison text states that an svn must be a uint, which it isn't. It also accounts for untagged uint as a possible value, which it isn't.\r\n\r\nAdd a section about version-map comparison requiring equality comparison only. We aren't expanding the notion of version-map to have $version-scheme-specific comparison algorithms.",
+      "createdAt": "2024-10-04T20:26:20Z",
+      "updatedAt": "2024-10-04T20:26:21Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "version",
+      "headRefOid": "02f363a4ef2bd10c351c818c917fd90982f93cce",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
