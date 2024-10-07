@@ -1849,7 +1849,7 @@ The selected tags are mapped to an internal representation, making them suitable
 
 * The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
+* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `ev` `addition` ECT `profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
