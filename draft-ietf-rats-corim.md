@@ -54,6 +54,18 @@ contributor:
     email: cabo@tzi.org
     contribution: >
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
+  - ins: A. Draper
+    name: Andrew Draper
+    org: Intel Corporation
+    email: andrew.draper@intel.com
+    contribution: >
+      Andrew contributed the concept, description, and semantics of conditional endorsements as well as consistent contribution to weekly reviews of others' edits.
+  - ins: D. Glaze
+    name: Dionna Glaze
+    org: Google LLC
+    email: dionnaglaze@google.com
+    contribution: >
+      Dionna contributed many clarifying questions and disambiguations to the semantics of attestation appraisal as well as consistent contribution to weekly reviews of others' edits.
 
 normative:
   RFC4122: uuid
@@ -2578,16 +2590,6 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
 ~~~
-# Contributors
-The authors would like to thank the following members for their valuable contributions to the specification.
-
-Andrew Draper
-
-Email: andrew.draper@intel.com
-
-Dionna Glaze
-
-Email: dionnaglaze@google.com
 
 # Acknowledgments
 {:unnumbered}
