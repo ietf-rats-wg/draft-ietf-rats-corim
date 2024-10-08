@@ -2399,7 +2399,7 @@ This includes the following aspects:
 - Applying the principle of least privilege to the system's users;
 - Minimizing the potential impact of security breaches by implementing separation of duties in both the software and operational architecture;
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
-- Failing safely in the event of errors to avoid compromising the security of the system.
+- Failing securely in the event of errors to avoid compromising the security of the system.
 
 The appraisal process should be auditable, reproducible, and transparent.
 The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).
