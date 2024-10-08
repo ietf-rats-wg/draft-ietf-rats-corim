@@ -2589,7 +2589,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{sec-sec}}) of {{&SELF}}
+: {{sec-sec}} of {{&SELF}}
 
 Interoperability considerations:
 : n/a
