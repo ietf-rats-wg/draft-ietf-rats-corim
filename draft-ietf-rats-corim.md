@@ -2385,7 +2385,7 @@ groups to use this information as they see fit".
 Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
 The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
 Any mistake in the appraisal process could have security implications.
-For instance, it could lead to the subversion of an access control function, creating a chance for privilege escalation.
+For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
 
 Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
 
