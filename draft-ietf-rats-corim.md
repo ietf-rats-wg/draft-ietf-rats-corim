@@ -2382,7 +2382,8 @@ groups to use this information as they see fit".
 
 # Security and Privacy Considerations {#sec-sec}
 
-Evidence appraisal is at the core of the RATS architecture, mediating all interactions between attesters and their relying parties.
+Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
+The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
 Any mistake in the appraisal process could have security implications.
 For instance, it could lead to the subversion of an access control function, creating a chance for privilege escalation.
 
@@ -2407,9 +2408,9 @@ Ensure the integrity of public key material and the secrecy of private key mater
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
 For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
 
-Use cryptographically protected, mutually authenticated secure channels with trusted input sources (Endorsers, RVPs, Verifier Owners).
-These links must be as deep as possible - possibly terminated in the appraisal session - to avoid man-in-the-middle attacks.
-Minimize the use of intermediaries: each intermediary becomes another party that needs to be trusted and needs to be factored in the relying parties' TCBs.
+Use cryptographically protected, mutually authenticated secure channels with all the trusted input sources (Endorsers, RVPs, Verifier Owners).
+These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
+Minimize the use of intermediaries: each intermediary becomes another party that needs to be trusted and needs to be factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Message Protection.
 
 # IANA Considerations {#sec-iana-cons}
