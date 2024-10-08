@@ -1100,6 +1100,8 @@ The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
 The Reference Values Triple has the following structure:
 
 ~~~ cddl
@@ -1119,6 +1121,8 @@ Re-asserted Evidence using RVP authority is said to be "corroborated".
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
 The Endorsed Values Triple has the following structure:
 
 ~~~ cddl
@@ -1135,6 +1139,8 @@ If the search criterion is satisfied, the `endorsement` Claims are combined with
 The new entry is added to the existing set of entries using the Endorser's authority.
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
 
 The Conditional Endorsement Triple has the following structure:
 
@@ -1153,6 +1159,8 @@ To process a `conditional-endorsement-triple-record` the `conditions` are compar
 If the search criteria are satisfied, the `endorsements` entries are asserted with the Endorser's authority as new Endorsements.
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
 
 The Conditional Endorsement Series Triple has the following structure:
 
