@@ -2401,7 +2401,7 @@ This includes the following aspects:
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
 - Failing securely in the event of errors to avoid compromising the security of the system.
 
-The appraisal process should be auditable, reproducible, and transparent.
+The appraisal process should be auditable and reproducible.
 The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).
 
 The integrity of public key material and the secrecy of private key material must be ensured at all times.
