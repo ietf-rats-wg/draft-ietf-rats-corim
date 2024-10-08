@@ -1506,17 +1506,20 @@ Table of Contents
 
    The reference-triple-record has the following parameters:
 
-   *  ref-env: Search criteria that select certain Evidence Claims in
-      the ACS.
+   *  ref-env: Search criterion that locates an Evidence environment
+      that matches the reference environment.
 
-   *  ref-claims: Search criteria that target Evidence Claims in the
-      ACS.
+   *  ref-claims: Search criteria that locates the Evidence measurements
+      that match the reference Claims.
 
    To process reference-triple-record both the ref-env and ref-claims
-   are compared with evidence entries from the ACS.  If these conditions
-   are met, the matching ACS entry is copied into a new ACS entry that
-   is added to the ACS, but with the Reference Value Provider's
-   authority.
+   criteria are compared with Evidence entries.  If the search criteria
+   are satisfied, the matching entry is re-asserted, except with the
+   Reference Value Provider's authority.  By re-asserting Evidence using
+   the RVP's authority, the Verifier can avoid mixing Reference Values
+   (reference state) with Evidence (actual state).  See
+   [I-D.ietf-rats-endorsements].  Re-asserted Evidence using RVP
+   authority is said to be "corroborated".
 
 5.1.4.3.  Endorsed Values Triple
 
@@ -1529,16 +1532,17 @@ Table of Contents
 
    The endorsed-triple-record has the following parameters:
 
-   *  condition: Search criteria applied to the ACS that determine if
-      the endorsement applies.
+   *  condition: Search criterion that locates Evidence, corroborated
+      Evidence, or Endorsements.
 
-   *  endorsement: Claims to be added to the ACS.
+   *  endorsement: Additional Endorsements.
 
    To process a endorsed-triple-record the condition is compared with
-   entries from the ACS.  If the condition is met, the endorsement is
-   combined with the environment-map of the matched condition to form a
-   new ACS entry.  The new ACS entry is added to the ACS with the
-   Endorser's authority.
+   existing Evidence, corroborated Evidence, and Endorsements.  If the
+   search criterion is satisfied, the endorsement Claims are combined
+   with the condition environment-map to form a new (actual state)
+   entry.  The new entry is added to the existing set of entries using
+   the Endorser's authority.
 
 5.1.4.4.  Conditional Endorsement Triple
 
@@ -1557,14 +1561,16 @@ Table of Contents
    The conditional-endorsement-triple-record has the following
    parameters:
 
-   *  conditions: Search criteria applied to the ACS that determines if
-      the endorsements apply.
+   *  conditions: Search criteria that locates Evidence, corroborated
+      Evidence, or Endorsements.
 
-   *  endorsements: Sets of Claims to be added to the ACS.
+   *  endorsements: Additional Endorsements.
 
    To process a conditional-endorsement-triple-record the conditions are
-   compared with entries from the ACS.  If all the conditions are met,
-   the endorsements are added to the ACS with the Endorser's authority.
+   compared with existing Evidence, corroborated Evidence, and
+   Endorsements.  If the search criteria are satisfied, the endorsements
+   entries are asserted with the Endorser's authority as new
+   Endorsements.
 
 5.1.4.5.  Conditional Endorsement Series Triple
 
@@ -1584,32 +1590,35 @@ Table of Contents
    The conditional-endorsement-series-triple-record has the following
    parameters:
 
-   *  condition: Search criteria applied to the ACS that determines if
-      the series applies.
+   *  condition: Search criteria that locates Evidence, corroborated
+      Evidence, or Endorsements.
 
    *  series: A set of selection-addition tuples.
 
    The conditional-series-record has the following parameters:
 
-   *  selection: Search criteria applied to the ACS entries resulting
-      from the matched conditions.
+   *  selection: Search criteria that locates Evidence, corroborated
+      Evidence, or Endorsements from the condition result.
 
-   *  addition: Claims to be added to the ACS is the selection is
+   *  addition: Additional Endorsements if the selection criteria are
       satisfied.
 
    To process a conditional-endorsement-series-record the conditions are
-   compared with entries from the ACS.  If the condition is satisfied,
-   the series records are processed.
+   compared with existing Evidence, corroborated Evidence, and
+   Endorsements.  If the search criteria are satisfied, the series
+   tuples are processed.
 
-   The series array contains a set of conditional-series-record entries.
+   The series array contains a list of conditional-series-record
+   entries.
 
-   For each series entry, if the selection matches an entry found in the
-   condition result, the series addition is combined with the
-   environment-map from the condition result to form a new ACS entry.
-   The new ACS entry is added to the ACS with the Endorser's authority.
+   For each series entry, if the selection criteria matches an entry
+   found in the condition result, the series addition is combined with
+   the environment-map from the condition result to form a new
+   Endorsement entry.  The new entry is added to the existing set of
+   Endorsements.
 
-   The first series entry that successfully matches a selection
-   terminates series processing.
+   The first series entry that successfully matches the selection
+   criteria terminates series processing.
 
 5.1.4.6.  Device Identity Triple
 
@@ -2054,40 +2063,42 @@ Table of Contents
       properties of the Target Environment.  The ECT also contains
       authority which identifies the entity that authored the ECT.
 
-      _[Ned] Suggest we use Environment-Properties Tuple (EPT) since the
-      use of claim here is more focused than what is possible given the
-      definition above._
+   reference state:
+      Claims that describe various alternative states of a Target
+      Environment.  Reference Values Claims typically describe various
+      possible states due to versioning, manufactruing practices, or
+      supplier configuration options.  See also Section 2 of
+      [I-D.ietf-rats-endorsements].
 
-   reference state:  Claims that describe various alternative states of
-      a Target Environment.  Reference Values Claims typically describe
-      various possible states due to versioning, manufactruing
-      practices, or supplier configuration options.  See also Section 2
-      of [I-D.ietf-rats-endorsements].
-
-   actual state:  Claims that describe a Target Environment instance at
-      a given point in time.  Endorsed Values and Evidence typically are
-      Claims about actual state.  An Attester may be composed of
-      multiple components, where each component may represent a scope of
+   actual state:
+      Claims that describe a Target Environment instance at a given
+      point in time.  Endorsed Values and Evidence typically are Claims
+      about actual state.  An Attester may be composed of multiple
+      components, where each component may represent a scope of
       appraisal.  See also (Section 2 of [I-D.ietf-rats-endorsements]).
 
-   Authority:  The entity asserting that a claim is true.  Typically, a
-      Claim is asserted using a cryptographic key to digitally sign the
-      Claim.  A cryptographic key can be a proxy for a human or
-      organizational entity.
+   Authority:
+      The entity asserting that a claim is true.  Typically, a Claim is
+      asserted using a cryptographic key to digitally sign the Claim.  A
+      cryptographic key can be a proxy for a human or organizational
+      entity.
 
-   Appraisal Claims Set (ACS):  A structure that holds ECTs that have
-      been appraised.  The ACS contains Attester state that has been
-      authorized by Verifier processing and Appraisal Policy.
+   Appraisal Claims Set (ACS):
+      A structure that holds ECTs that have been appraised.  The ACS
+      contains Attester state that has been authorized by Verifier
+      processing and Appraisal Policy.
 
-   Appraisal Policy:  A description of the conditions that, if met,
-      allow acceptance of Claims.  Typically, the entity asserting a
-      Claim should have knowledge, expertise, or context that gives
-      credibility to the assertion.  Appraisal Policy resolves which
-      entities are credible and under what conditions.  See also
-      "Appraisal Policy for Evidence" in [RFC9334].
+   Appraisal Policy:
+      A description of the conditions that, if met, allow acceptance of
+      Claims.  Typically, the entity asserting a Claim should have
+      knowledge, expertise, or context that gives credibility to the
+      assertion.  Appraisal Policy resolves which entities are credible
+      and under what conditions.  See also "Appraisal Policy for
+      Evidence" in [RFC9334].
 
-   Attestation Results Set (ARS):  A structure that holds results of
-      Appraisal and ECTs that are to be conveyed to a Relying Party.
+   Attestation Results Set (ARS):
+      A structure that holds results of Appraisal and ECTs that are to
+      be conveyed to a Relying Party.
 
 8.2.1.  Internal Representation of Conceptual Messages
 
@@ -2799,7 +2810,7 @@ Table of Contents
    draft-ietf-rats-corim/issues/179
 
    Endorsers publish Endorsements using endorsement triples (see
-   Section 5.1.4.3, Section 5.1.4.4, and Section 5.1.4.5) which are
+   Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
    transformed (Section 8.3.3.3) into an internal representation
    (Section 8.2.1.3).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
@@ -3187,10 +3198,10 @@ Table of Contents
 
 8.9.6.1.3.  Comparison for raw-value entries
 
-      [Andy] _I think this comparison method only works if the entry is
-      at key 4 (because there needs to be a mask at key 5).  Should we
-      have a Reference Value of this which stores [expect-raw-value raw-
-      value-mask] in an array?_
+      // Content missing.  Tracked at: _I think this comparison method
+      only works if the entry is at key 4 (because there needs to be a
+      mask at key 5).  Should we have a Reference Value of this which
+      stores [expect-raw-value raw-value-mask] in an array?_
 
 
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
@@ -3569,7 +3580,7 @@ Table of Contents
    Optional parameters:  "profile" (CoRIM profile in string format.
       OIDs MUST use the dotted-decimal notation.)
    Encoding considerations:  binary
-   Security considerations:  sec-sec) of RFCthis
+   Security considerations:  Section 10) of RFCthis
    Interoperability considerations:  n/a
    Published specification:  RFCthis
    Applications that use this media type:  Attestation Verifiers,
