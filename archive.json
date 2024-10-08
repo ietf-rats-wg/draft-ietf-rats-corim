@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-06T01:51:03.576791+00:00",
+  "timestamp": "2024-10-08T01:44:56.238367+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7037,7 +7037,7 @@
       "labels": [],
       "body": "The triple cddl allows mkey to be optional and multiple measurement-map entries to exist simultaneously. What should be Verifier behavior? There are two possibilities:\r\n\r\nOption (1) fall back to positional comparison where the record at position i of the `condition` relation is compared with the record at position i of the ACS ECT.\r\n\r\nOption (2) write normative text that bans multiplicity of measurement-map without mkey.\r\n\r\nI'm leaning toward option 1.",
       "createdAt": "2024-10-03T17:30:26Z",
-      "updatedAt": "2024-10-05T09:28:49Z",
+      "updatedAt": "2024-10-07T16:27:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -7102,6 +7102,20 @@
           "body": "> One of the profiles (psa/cca?) was overloading mkey to do more than simple disambiguation. I think this should be discouraged IMO.\r\n\r\nWe use `mkey`s in both CCA and PSA to disambiguate different firmware elements within the same TCB.  There is no more semantic than that.  I am unsure what you are referring to, but I would like to know a bit more because I don't want our design to diverge from \"the CoRIM's way\".\r\n",
           "createdAt": "2024-10-05T09:28:19Z",
           "updatedAt": "2024-10-05T09:28:49Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > One of the profiles (psa/cca?) was overloading mkey to do more than simple disambiguation. I think this should be discouraged IMO.\r\n> \r\n> We use `mkey`s in both CCA and PSA to disambiguate different firmware elements within the same TCB. There is no more semantic than that. I am unsure what you are referring to, but I would like to know a bit more because I don't want our design to diverge from \"the CoRIM's way\".\r\n\r\nI'm not an expert in ARM's use of mkey. Based on how it has been described to me the extension point is more complex than a simple identifier / label. I don't know how \"TCB\" differs from \"environment\" or \"element\". ",
+          "createdAt": "2024-10-07T15:36:19Z",
+          "updatedAt": "2024-10-07T15:36:19Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I'm not an expert in ARM's use of mkey. Based on how it has been described to me the extension point is more complex than a simple identifier / label. I don't know how \"TCB\" differs from \"environment\" or \"element\".\r\n\r\nIt is a _composite_ identifier - mirroring the mandatory information in the [`psa-software-component`](https://www.ietf.org/archive/id/draft-tschofenig-rats-psa-token-24.html#section-4.4.1) - but an identifier nonetheless.\r\n",
+          "createdAt": "2024-10-07T16:27:11Z",
+          "updatedAt": "2024-10-07T16:27:11Z"
         }
       ]
     }
@@ -41547,7 +41561,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2024-10-01T22:49:09Z",
+      "updatedAt": "2024-10-07T15:48:55Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
@@ -41689,6 +41703,46 @@
               "body": "> > `raw-value` MUST be either a `bstr` or `tagged-bytes`.\r\n> \r\n> The CDDL says the only `$raw-value-type-choice` defined is `tagged-bytes`. `bstr` only isn't defined.\r\n\r\nYes, I included `bstr` to allow for a profile to specify it as an extension and to avoid footguns if a CoRIM issuer forgets the 560 tag on something that is reasonably expected to always be bytes. There are enough instances of x509 extensions that don't add the ASN.1 bytes tag byte in front of a byte string despite not strictly following the x509 spec for extensions that the value also needs to be an ASN.1 object that I accounted for that here. Might be overly cautious.\r\n\r\n> Is the \"candidate\" the same as the ACS entry? If so, it would be more intuitive to say ACS entry.\r\n\r\nThe \"candidate\" word is to reference the induction variable for the iteration over all possible ACS entries. It helps disambiguate which entry we're talking about.",
               "createdAt": "2024-10-01T22:49:09Z",
               "updatedAt": "2024-10-01T22:49:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MGvAo",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-06T17:49:56Z",
+          "updatedAt": "2024-10-06T17:49:56Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "@andrew-draper how disruptive is it to drop raw-value-mask in favor of a tagged-masked-bytes choice in raw-value-type-choice?\r\n\r\n```\r\ntagged-masked-bytes = 563([data: bstr, mask: bstr])\r\n```\r\n\r\nI do wonder if that's a little cheaty, since $raw-value-type-choice extended by a profile is not permitted to define its own comparison method.",
+              "createdAt": "2024-10-06T17:49:56Z",
+              "updatedAt": "2024-10-07T02:12:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MNeed",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T15:48:55Z",
+          "updatedAt": "2024-10-07T15:48:55Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "> tagged-masked-bytes = 563([data: bstr, mask: bstr])\r\n\r\nFrom the perspective of moving the Intel profile to a standard representation. This approach would be easier as the Intel profile already defines something similar:\r\n```\r\nmask-eq = 1\r\nmask-operator = mask-eq\r\nmask-type = bstr\r\nmask-expression = [ mask-operator, value: mask-type, mask: mask-type ]\r\ntagged-mask-expression = #6.60010( mask-expression )\r\n```\r\nI could see the following being easier to migrate to than the current raw-value:\r\n```\r\nmask-expression = [ mask-operator, 563([ data: bstr, mask: bstr]) ]\r\ntagged-mask-expression = #6.60010( mask-expression )\r\n```\r\nIn terms of disruptiveness, we should deprecate before deleting. Maybe the corim spec could add a second masked value type while discouraging use of raw-value?",
+              "createdAt": "2024-10-07T15:48:55Z",
+              "updatedAt": "2024-10-07T15:48:55Z"
             }
           ]
         }
@@ -42035,13 +42089,13 @@
       "labels": [],
       "body": "Addresses issues #285 and #297.\r\nResolution of issue #303 may impact sections touched by this PR.",
       "createdAt": "2024-10-02T18:42:27Z",
-      "updatedAt": "2024-10-05T01:00:01Z",
+      "updatedAt": "2024-10-07T19:27:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
+      "baseRefOid": "d9eb620c2eb5522d28a674cf4e7b53edea5e23ae",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "Cond-End-Trans-text",
-      "headRefOid": "41c3213cdcf01b804fc175e850537c7552c013e4",
+      "headRefOid": "9f92c0928786f950163aadab05378e3e3f175a90",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -42623,6 +42677,126 @@
           "createdAt": "2024-10-04T23:26:29Z",
           "updatedAt": "2024-10-04T23:26:29Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MOmr0",
+          "commit": {
+            "abbreviatedOid": "41c3213"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T18:16:59Z",
+          "updatedAt": "2024-10-07T18:17:13Z",
+          "comments": [
+            {
+              "originalPosition": 210,
+              "body": "```suggestion\r\n* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `ev` `addition` ECT `profile` field.\r\n```",
+              "createdAt": "2024-10-07T18:16:59Z",
+              "updatedAt": "2024-10-07T18:17:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MO5Op",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Please review this aspect, I am not sure why this section on Ref - Triples needs a re-jig",
+          "createdAt": "2024-10-07T18:58:58Z",
+          "updatedAt": "2024-10-07T18:59:35Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "This seems to be a significant shift in the earlier description of the triple! The triple semantics should not require us to describe where the triple is targeted to internally, in the description of the triple.\r\n\r\nIt should simply say:\r\n\r\nWhat this triple is about :\r\nWhat does it convey\r\ni.e it conveys for a target Env identified by the Env: The Reference measurements identified by ref-claims\r\n\r\nit should not expain anything about the ACS here",
+              "createdAt": "2024-10-07T18:58:58Z",
+              "updatedAt": "2024-10-07T18:59:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MO_n9",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T19:13:23Z",
+          "updatedAt": "2024-10-07T19:13:23Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "This section should say:\r\n--> What triple is intended to convey\r\n\r\nVersus, \r\n\r\nWhat CoRIM spec is guiding users to use a possible internal representation in terms of ACS.\r\n\r\nThis document should be very much applicable and usable to some Supply Chain Consumers, who want to use the Triple based on their semantics but do NOT use Verifier logic which uses ACS but have another means to process the Triple and Implement a Verifier.\r\n\r\nI am little concerned that we have moved ACS and internal representation far too much into the base triple description.",
+              "createdAt": "2024-10-07T19:13:23Z",
+              "updatedAt": "2024-10-07T19:13:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MPD1Y",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T19:23:17Z",
+          "updatedAt": "2024-10-07T19:23:17Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Separate comment: I am not sure I know how to parse that sentence. Quick help: what's an \"Evidence environment\"? I assume I am missing something obvious here.",
+              "createdAt": "2024-10-07T19:23:17Z",
+              "updatedAt": "2024-10-07T19:23:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MPE1J",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T19:25:17Z",
+          "updatedAt": "2024-10-07T19:25:18Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "> Separate comment: I am not sure I know how to parse that sentence. Quick help: what's an \"Evidence environment\"? I assume I am missing something obvious here.\r\n\r\nIs it more clear to just say: \"Search criteria that targets Evidence.\"",
+              "createdAt": "2024-10-07T19:25:17Z",
+              "updatedAt": "2024-10-07T19:25:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MPF49",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T19:27:24Z",
+          "updatedAt": "2024-10-07T19:27:24Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "Is it more clear to say: \"Search criteria that targets Attester state.\"",
+              "createdAt": "2024-10-07T19:27:24Z",
+              "updatedAt": "2024-10-07T19:27:24Z"
+            }
+          ]
         }
       ]
     },
@@ -42940,24 +43114,26 @@
       "id": "PR_kwDOH6-tI859olUW",
       "title": "Move contributors to front matter",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/305",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "There is an extraneous Contributors section that went unnoticed since there was also a typographical mistake that demoted the section heading to normal text.",
       "createdAt": "2024-10-04T15:07:26Z",
-      "updatedAt": "2024-10-04T16:06:03Z",
+      "updatedAt": "2024-10-07T16:50:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "4049856b114bb08febdb689895435ec4bb101fe5",
+      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "contrib",
-      "headRefOid": "d55a5e55696f8c9ffae5ab408d12f0f72b5b63ee",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "b85645bb5fa331620e82f0c2374096913c4527e6",
+      "closedAt": "2024-10-07T16:50:03Z",
+      "mergedAt": "2024-10-07T16:50:02Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "d9eb620c2eb5522d28a674cf4e7b53edea5e23ae"
+      },
       "comments": [],
       "reviews": [
         {
@@ -42976,27 +43152,40 @@
         {
           "id": "PRR_kwDOH6-tI86L-dyb",
           "commit": {
-            "abbreviatedOid": "d55a5e5"
+            "abbreviatedOid": "b85645b"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2024-10-04T15:56:47Z",
-          "updatedAt": "2024-10-04T15:56:47Z",
+          "updatedAt": "2024-10-07T16:48:34Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI86L-h3x",
           "commit": {
-            "abbreviatedOid": "d55a5e5"
+            "abbreviatedOid": "b85645b"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "I am OK with contributors (for now).\r\n\r\nI want to have the discussion with the RATS chairs in Dublin to allow >5 editors.",
           "createdAt": "2024-10-04T16:06:03Z",
-          "updatedAt": "2024-10-04T16:06:03Z",
+          "updatedAt": "2024-10-07T16:48:35Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MN-kw",
+          "commit": {
+            "abbreviatedOid": "b85645b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks Dionna for the tidy up!",
+          "createdAt": "2024-10-07T16:48:01Z",
+          "updatedAt": "2024-10-07T16:48:35Z",
           "comments": []
         }
       ]
@@ -43049,7 +43238,7 @@
       "labels": [],
       "body": "Closes Issue#242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2024-10-05T21:21:44Z",
+      "updatedAt": "2024-10-08T01:01:16Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
@@ -43589,6 +43778,170 @@
               "updatedAt": "2024-10-05T21:21:44Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MGmvX",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-06T14:12:07Z",
+          "updatedAt": "2024-10-06T14:34:34Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "The deterministic nature is ensured by the consistency of the appraisal algorithm.\r\n```suggestion\r\nDuring Phase 0, the Verifier collects its set of inputs from external sources that will be used for the remainder of the Appraisal Procedure.\r\n```",
+              "createdAt": "2024-10-06T14:12:07Z",
+              "updatedAt": "2024-10-06T14:34:34Z"
+            },
+            {
+              "originalPosition": 103,
+              "body": "ah, got it.  I thought it was a typo; my bad.",
+              "createdAt": "2024-10-06T14:16:13Z",
+              "updatedAt": "2024-10-06T14:34:34Z"
+            },
+            {
+              "originalPosition": 97,
+              "body": "I find this way of presenting activation/disactivation a bit puzzling.\r\n\r\nI see the flow from undecided/unknown to either active or inactive.\r\nIt'd be probably easier to grok if we introduced an initial \"unknown\" state and describe the decision tree as:\r\n\r\n```mermaid\r\nflowchart TD\r\n    A[unknown] --> C{use_cobom}\r\n    C -->|true| D{is_listed}\r\n    C -->|false| E[active]\r\n    D -->|true| F[active]\r\n    D -->|false| G[inactive]\r\n```",
+              "createdAt": "2024-10-06T14:25:00Z",
+              "updatedAt": "2024-10-06T14:34:34Z"
+            },
+            {
+              "originalPosition": 115,
+              "body": "Doesn't read right to this non-native speeker. Did you mean s/of/if/? Or something else?\r\n\r\nRegardless, I prefer it stupid and explicit, as it was before :-)\r\nUnless you see a case that would not be covered using the old phrasing.",
+              "createdAt": "2024-10-06T14:26:37Z",
+              "updatedAt": "2024-10-06T14:34:34Z"
+            },
+            {
+              "originalPosition": 175,
+              "body": "I agree that the old L1906 is not 100% correct: it should probably have said instead:\r\n\r\n> The same Appraisal Context processed at any time MUST produce the same ACS.\r\n\r\nI like the text you suggest.  The only thing is we should state more strongly that what we are trying to achieve is _deterministic ACS construction._",
+              "createdAt": "2024-10-06T14:34:27Z",
+              "updatedAt": "2024-10-06T14:34:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MGs1h",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-06T16:47:14Z",
+          "updatedAt": "2024-10-06T16:47:14Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "The appraisal algorithm is deterministic for the base CDDL, but profiles can define their own comparison algorithms that can be complex and have computational timeouts that lead to nondeterministic results (for example). Considering the SLSA level 4 language about hermeticity and reproducibility, we should have wording about best-effort reproducibility https://slsa.dev/spec/v0.1/requirements\r\n\r\nIf we consider a Verifier to be a \"builder\" of attestation results, then we can apply the same requirements whole sale.",
+              "createdAt": "2024-10-06T16:47:14Z",
+              "updatedAt": "2024-10-06T16:47:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MGs6Y",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-06T16:49:05Z",
+          "updatedAt": "2024-10-06T16:49:05Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "Yes s/of/if/, typo. ",
+              "createdAt": "2024-10-06T16:49:05Z",
+              "updatedAt": "2024-10-06T16:49:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MGtgZ",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-06T17:06:00Z",
+          "updatedAt": "2024-10-06T17:06:00Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Hmm, even with profile-specific comparison algorithms (or other kinds of custom behaviour), _successful_ ACS computation should be deterministic.\r\n\r\nIf computational timeouts, or other conditions that make the ACS \"incomplete\", happen, they must be made fully visible to the downstream appraisal policy.",
+              "createdAt": "2024-10-06T17:06:00Z",
+              "updatedAt": "2024-10-06T17:06:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MGy-M",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-06T19:49:11Z",
+          "updatedAt": "2024-10-06T19:49:11Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Suppose we have a profile that has unification variables that are allowed in conditions and in additions. The logic it employs for unification does not have principal types, so there are multiple incomparable correct solutions to a system of constraints. Which substitution it resolves on can be dependent on something nondeterministic like hash map iteration order. The resulting ACS is not consistently reproducible in this case, the way a compiler can choose which way it allocates registers or orders if/then/else basic blocks.\r\n\r\nI'm not saying it's sensible, I'm saying it's not ruled out and it is very difficult to rule out. Thus a SHOULD be reproducible.",
+              "createdAt": "2024-10-06T19:49:11Z",
+              "updatedAt": "2024-10-06T19:49:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MI19q",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T07:28:25Z",
+          "updatedAt": "2024-10-07T07:28:25Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "> Suppose we have a profile that has unification variables that are allowed in conditions and in additions. The logic it employs for unification does not have principal types, so there are multiple incomparable correct solutions to a system of constraints. Which substitution it resolves on can be dependent on something nondeterministic like hash map iteration order. The resulting ACS is not consistently reproducible in this case, the way a compiler can choose which way it allocates registers or orders if/then/else basic blocks.\r\n\r\nThis is an interesting observation.  However, ...\r\n\r\n> I'm not saying it's sensible, I'm saying it's not ruled out and it is very difficult to rule out. Thus a SHOULD be reproducible.\r\n\r\n... the conclusion I draw from this is that we should clearly say: _\"profiles MUST NOT introduce randomized behaviour.\"_\r\n\r\nIMO one core promise we make to downstream ACS consumers is that given the same input, a CoRIM appraiser always computes the same predictable output.\r\n\r\nAny non-deterministic behaviour creates confusion at best, whilst in the worst case it can be used by an attacker to subvert the overall appraisal outcome.\r\n\r\n\r\n",
+              "createdAt": "2024-10-07T07:28:25Z",
+              "updatedAt": "2024-10-07T07:28:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MQqBn",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T01:01:05Z",
+          "updatedAt": "2024-10-08T01:01:16Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "We've already said that certain decisions can be make by policy. Are those decisions made strictly after phase 4? If we can say phases 2, 3, and 4 must be deterministic without imposing policy burden by the way we define semantics, then I'd certainly like to make that declaration.\r\n\r\nI don't think profiles would be introducing randomized behavior. Non-deterministic isn't necessarily random. You can have \"the same\" outcome by means of equivalence but not syntactic equality. When we're talking about ACS construction we're making representation choices that may be more conducive to equal outputs than something that uses, say, hash maps or algebraic constructions that represent \"the same object\" in multiple ways.",
+              "createdAt": "2024-10-08T01:01:05Z",
+              "updatedAt": "2024-10-08T01:01:16Z"
+            }
+          ]
         }
       ]
     },
@@ -43611,6 +43964,32 @@
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "version",
       "headRefOid": "02f363a4ef2bd10c351c818c917fd90982f93cce",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 309,
+      "id": "PR_kwDOH6-tI8593m3P",
+      "title": "first stab at a security considerations section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/309",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Privacy considerations are still TODO\r\n\r\nPartially address #11",
+      "createdAt": "2024-10-07T21:18:05Z",
+      "updatedAt": "2024-10-07T21:18:32Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d9eb620c2eb5522d28a674cf4e7b53edea5e23ae",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "sec-cons",
+      "headRefOid": "b59520af3040992452809db25b95f32c04788aa6",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
