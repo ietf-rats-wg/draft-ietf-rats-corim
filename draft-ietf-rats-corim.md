@@ -2395,7 +2395,7 @@ This includes the following aspects:
 - Minimizing implementation complexity (see also {{Section 6.1 of -rats-endorsements}});
 - Using memory-safe programming languages;
 - Using secure defaults;
-- Minimizing the attack surface by removing unnecessary features that could be exploited by attackers;
+- Minimizing the attack surface by avoiding unnecessary features that could be exploited by attackers;
 - Applying the principle of least privilege to the system's users;
 - Minimizing the potential impact of security breaches by implementing separation of duties in both the software and operational architecture;
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
