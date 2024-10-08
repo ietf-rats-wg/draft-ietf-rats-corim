@@ -1127,8 +1127,8 @@ The Endorsed Values Triple has the following structure:
 
 The `endorsed-triple-record` has the following parameters:
 
-* `condition`: Search criterion that locates Evidence, corroborated Evidence, or Endorsements.
-* `endorsement`: Additional Endorsements.
+* `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
+* `endorsement`: Additional Endorsement Claims.
 
 To process a `endorsed-triple-record` the `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
