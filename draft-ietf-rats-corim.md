@@ -1108,7 +1108,7 @@ The Reference Values Triple has the following structure:
 
 The `reference-triple-record` has the following parameters:
 
-* `ref-env`: Search criteria that target Evidence environments in the ACS.
+* `ref-env`: Search criteria that select certain Evidence Claims in the ACS.
 * `ref-claims`: Search criteria that target Evidence Claims in the ACS.
 
 To process `reference-triple-record` both the `ref-env` and `ref-claims` are compared with evidence entries from the ACS.
