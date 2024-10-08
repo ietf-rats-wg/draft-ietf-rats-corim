@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 10 April 2025                                            Linaro
+Expires: 11 April 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          7 October 2024
+                                                          8 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 April 2025.
+   This Internet-Draft will expire on 11 April 2025.
 
 Copyright Notice
 
@@ -3213,11 +3213,13 @@ Table of Contents
 
 10.  Security and Privacy Considerations
 
-   Evidence appraisal is at the core of the RATS architecture, mediating
-   all interactions between attesters and their relying parties.  Any
-   mistake in the appraisal process could have security implications.
-   For instance, it could lead to the subversion of an access control
-   function, creating a chance for privilege escalation.
+   Evidence appraisal is at the core of any RATS protocol flow,
+   mediating all interactions between Attesters and their Relying
+   Parties.  The Verifier is effectively part of the Attesters' and
+   Relying Parties' trusted computing base (TCB).  Any mistake in the
+   appraisal process could have security implications.  For instance, it
+   could lead to the subversion of an access control function, creating
+   a chance for privilege escalation.
 
    Therefore, the Verifier’s code and configuration, especially those of
    the CoRIM processor, are primary security assets that must be built
@@ -3263,13 +3265,14 @@ Table of Contents
    refer to Section 12.4 of [RFC9334].
 
    Use cryptographically protected, mutually authenticated secure
-   channels with trusted input sources (Endorsers, RVPs, Verifier
-   Owners).  These links must be as deep as possible - possibly
-   terminated in the appraisal session - to avoid man-in-the-middle
-   attacks.  Minimize the use of intermediaries: each intermediary
-   becomes another party that needs to be trusted and needs to be
-   factored in the relying parties' TCBs.  Refer to Section 12.2 of
-   [RFC9334] for information on Conceptual Message Protection.
+   channels with all the trusted input sources (Endorsers, RVPs,
+   Verifier Owners).  These links must reach as deep as possible -
+   possibly terminating within the appraisal session context - to avoid
+   man-in-the-middle attacks.  Minimize the use of intermediaries: each
+   intermediary becomes another party that needs to be trusted and needs
+   to be factored in the Attesters and Relying Parties' TCBs.  Refer to
+   Section 12.2 of [RFC9334] for information on Conceptual Message
+   Protection.
 
 11.  IANA Considerations
 
