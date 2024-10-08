@@ -2291,9 +2291,6 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
-> [^issue] *I think this comparison method only works if the entry is at key 4 (because
-there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores `[expect-raw-value raw-value-mask]` in an array?*
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
@@ -2589,7 +2586,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{sec-sec}}) of {{&SELF}}
+: {{sec-sec}} of {{&SELF}}
 
 Interoperability considerations:
 : n/a
