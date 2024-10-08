@@ -1108,11 +1108,14 @@ The Reference Values Triple has the following structure:
 
 The `reference-triple-record` has the following parameters:
 
-* `ref-env`: Search criteria that select certain Evidence Claims in the ACS.
-* `ref-claims`: Search criteria that target Evidence Claims in the ACS.
+* `ref-env`: Search criterion that locates an Evidence environment that matches the reference environment.
+* `ref-claims`: Search criteria that locates the Evidence measurements that match the reference Claims.
 
-To process `reference-triple-record` both the `ref-env` and `ref-claims` are compared with evidence entries from the ACS.
-If these conditions are met, the matching ACS entry is copied into a new ACS entry that is added to the ACS, but with the Reference Value Provider's authority.
+To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
+By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
+See {{-rats-endorsements}}.
+Re-asserted Evidence using RVP authority is said to be "corroborated".
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
@@ -1124,12 +1127,12 @@ The Endorsed Values Triple has the following structure:
 
 The `endorsed-triple-record` has the following parameters:
 
-* `condition`: Search criteria applied to the ACS that determine if the `endorsement` applies.
-* `endorsement`: Claims to be added to the ACS.
+* `condition`: Search criterion that locates Evidence, corroborated Evidence, or Endorsements.
+* `endorsement`: Additional Endorsements.
 
-To process a `endorsed-triple-record` the `condition` is compared with entries from the ACS.
-If the condition is met, the `endorsement` is combined with the `environment-map` of the matched `condition` to form a new ACS entry.
-The new ACS entry is added to the ACS with the Endorser's authority.
+To process a `endorsed-triple-record` the `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
+The new entry is added to the existing set of entries using the Endorser's authority.
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
@@ -1143,11 +1146,11 @@ The Conditional Endorsement Triple has the following structure:
 
 The `conditional-endorsement-triple-record` has the following parameters:
 
-* `conditions`: Search criteria applied to the ACS that determines if the `endorsements` apply.
-* `endorsements`: Sets of Claims to be added to the ACS.
+* `conditions`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
+* `endorsements`: Additional Endorsements.
 
-To process a `conditional-endorsement-triple-record` the `conditions` are compared with entries from the ACS.
-If all the conditions are met, the `endorsements` are added to the ACS with the Endorser's authority.
+To process a `conditional-endorsement-triple-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the `endorsements` entries are asserted with the Endorser's authority as new Endorsements.
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
@@ -1161,23 +1164,23 @@ The Conditional Endorsement Series Triple has the following structure:
 
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
-* `condition`: Search criteria applied to the ACS that determines if the `series` applies.
+* `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
 * `series`: A set of selection-addition tuples.
 
 The `conditional-series-record` has the following parameters:
 
-* `selection`: Search criteria applied to the ACS entries resulting from the matched `conditions`.
-* `addition`: Claims to be added to the ACS is the `selection` is satisfied.
+* `selection`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the `condition` result.
+* `addition`: Additional Endorsements if the `selection` criteria are satisfied.
 
-To process a `conditional-endorsement-series-record` the `conditions` are compared with entries from the ACS.
-If the condition is satisfied, the `series` records are processed.
+To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the `series` tuples are processed.
 
-The `series` array contains a set of `conditional-series-record` entries.
+The `series` array contains a list of `conditional-series-record` entries.
 
-For each `series` entry, if the `selection` matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new ACS entry.
-The new ACS entry is added to the ACS with the Endorser's authority.
+For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.
 
-The first `series` entry that successfully matches a `selection` terminates `series` processing.
+The first `series` entry that successfully matches the `selection` criteria terminates `series` processing.
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
@@ -1533,8 +1536,6 @@ Environment-Claim Tuple (ECT):
 
 : A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
 The ECT also contains authority which identifies the entity that authored the ECT.
-
-> *[Ned] Suggest we use Environment-Properties Tuple (EPT) since the use of claim here is more focused than what is possible given the definition above.*
 
 reference state:
 : Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
@@ -2029,7 +2030,7 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
-Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}, {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
+Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 
@@ -2290,7 +2291,7 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
-> [Andy] *I think this comparison method only works if the entry is at key 4 (because
+> [^issue] *I think this comparison method only works if the entry is at key 4 (because
 there needs to be a mask at key 5). Should we have a Reference Value of this
 which stores `[expect-raw-value raw-value-mask]` in an array?*
 
@@ -2588,7 +2589,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{{sec-sec}}) of {{&SELF}}
+: {{sec-sec}}) of {{&SELF}}
 
 Interoperability considerations:
 : n/a
