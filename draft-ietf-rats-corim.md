@@ -2411,7 +2411,7 @@ For more detailed information on protecting Trust Anchors, refer to {{Section 12
 The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
 Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
-Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Message Protection.
+Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
 # IANA Considerations {#sec-iana-cons}
 
