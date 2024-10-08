@@ -2401,16 +2401,16 @@ This includes the following aspects:
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
 - Failing safely in the event of errors to avoid compromising the security of the system.
 
-Allow the appraisal process to be auditable, reproducible, and transparent.
-Ensure the integrity of the code and data during execution, with appraisal functions ideally TEE-protected.
+The appraisal process should be auditable, reproducible, and transparent.
+The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in a trusted execution environment (TEE).
 
-Ensure the integrity of public key material and the secrecy of private key material.
+The integrity of public key material and the secrecy of private key material must be ensured at all times.
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
 For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
 
-Use cryptographically protected, mutually authenticated secure channels with all the trusted input sources (Endorsers, RVPs, Verifier Owners).
+The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
-Minimize the use of intermediaries: each intermediary becomes another party that needs to be trusted and needs to be factored in the Attesters and Relying Parties' TCBs.
+Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Message Protection.
 
 # IANA Considerations {#sec-iana-cons}
