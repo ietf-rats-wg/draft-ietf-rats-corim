@@ -2413,6 +2413,8 @@ These links must reach as deep as possible - possibly terminating within the app
 Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
+
 # IANA Considerations {#sec-iana-cons}
 
 ## New COSE Header Parameters
