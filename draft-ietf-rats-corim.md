@@ -1466,13 +1466,9 @@ They are not required to use the same internal representation or evaluation orde
 
 The appraisal procedure is divided into several logical phases for clarity.
 
-+ **Phase 0**: Session setup
++ **Phase 1**: Appraisal Context construction
 
-During Phase 0, the Verifier collects its set of inputs from external sources that will be used for the remainder of the Appraisal Procedure to ensure the Procedure is deterministic.
-
-+ **Phase 1**: Input Validation and Transformation
-
-During Phase 1, Conceptual Message inputs are cryptographically validated, such as checking digital signatures.
+During Phase 1, Conceptual Message inputs are collected and cryptographically validated, such as checking digital signatures.
 Inputs are transformed from their external representations to an internal representation.
 Internal representations are staged for appraisal processing, such as populating an input queue.
 
@@ -1757,7 +1753,12 @@ Conceptual Messages are given explicit representation in the session.
 
 The session state is implementation-specific, but conceptual messages defined in this specification are specially represented.
 
-## Session setup (Phase 0) {#sec-phase0}
+## Appraisal Context Construction (Phase 1) {#sec-phase1}
+
+In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
+The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
+
+### Input Collection {#sec-phase1-collect}
 
 The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
 
@@ -1779,11 +1780,6 @@ It is left to Verifier Policy to determine if input sources must use supply chai
 It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
 
 Note: Verifier Policy may be subject to external requirements by organizational or regulatory policy.
-
-## Input Validation and Transformation (Phase 1) {#sec-phase1}
-
-In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
-The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
 
 ### Input Validation {#sec-phase1-valid}
 
@@ -1922,8 +1918,13 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 
 The Appraisal Context at the and of Phase 1 constitutes all inputs to the Appraisal Procedure.
 
+Given the same Appraisol Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
+
+Note: the deterministic constraint applies to profile-defined comparison semantics.
+
+A Verifier SHOULD produce deterministic results for phases 5, 6, and 7.
+
 The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
-Fully determined inputs SHOULD ensure consistent ACS construction when accounting for any profile-driven semantics.
 For a comparable notion of process fidelity and provenance tracking, see the different {{-slsa}} specification for build security.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
