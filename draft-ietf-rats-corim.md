@@ -105,6 +105,9 @@ informative:
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
   I-D.ietf-rats-cobom: cobom
+  SLSA: slsa
+    title: Supply-chain Levels for Software Artifacts
+    target: https://slsa.dev
 
 entity:
   SELF: "RFCthis"
@@ -1743,6 +1746,17 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 {::include cddl/intrep-ars.cddl}
 ~~~
 
+### Internal Representation of Appraisal Session {#sec-ir-asession}
+
+An Appraisal Session includes Verifier-specific session state as well as a collection of inputs to process.
+Conceptual Messages are given explicit representation in the session.
+
+~~~ cddl
+{::include cddl/intrep-asession.cddl}
+~~~
+
+The session state is implementation-specific, but conceptual messages defined in this specification are specially represented.
+
 ## Session setup (Phase 0) {#sec-phase0}
 
 The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
@@ -1751,6 +1765,15 @@ During this setup phase, the Verifier populates its Appraisal Session with a con
 Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
 Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), Policy, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, certificate revocation data (see {{-ocsp}} or {{Section 4.2.1.13 of -pkix-cert}}), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
 The clock time used for validity judgments and policy evaluation is an input.
+
+How the Verifier collects its inputs is out of scope of this document.
+There will be some amount of CoRIMs and standalone tags available as inputs that make an `asession`:
+
+~~~ cddl
+{::include cddl/asession.cddl}`
+
+{::include cddl/tag-state.cddl}
+~~~
 
 It is left to Verifier Policy to determine if input sources must use supply chain transparency constructs (see {{-scitt-arch}}) to track input provenance.
 It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
@@ -1764,46 +1787,41 @@ The primary goal of this phase is to ensure that all necessary information is va
 
 ### Input Validation {#sec-phase1-valid}
 
-#### CoRIM Selection
+#### CoRIM and tag Selection
 
-All available CoRIMs in the Appraisal Session's inputs are checked for validity.
+All available CoRIMs and tags in the Appraisal Session's inputs are checked for validity.
 
-CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
+Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded from the session.
 
-Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
+Any input that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded from the session.
 
 Other selection criteria MAY be applied.
-For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
+For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier for that Evidence format MAY be discarded.
 
-The selection process MUST yield at least one usable tag.
+> The selection process MUST yield at least one usable conceptual message.
+> Dionna: I don't think this should be a requirement since the evidence combined with Verifier policy should be enough.
 
-Selected CoRIMs are transformed into an internal representation (see {{sec-phase1-trans}}).
-If CoBOMs are required by policy, the selected tags are considered *inactive*.
-An *inactive* tag MUST NOT be used during the Appraisal Procedure.
-If CoBOMs are not required by policy, the selected tags are considered *active* and thus MUST be used during the Appraisal Procedure.
+Remaining CoRIMs and tags are transformed into an internal representation (see {{sec-phase1-trans}}) and added to the array in the session's `/ select / tag-unknown /`.
 
-Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
-
-#### Tags Extraction and Validation
+#### Tag Extraction and Validation
 
 The Verifier chooses tags from the selected CoRIMs—including CoMID, CoSWID, CoBOM, and CoTS.
 
-The Verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples and CoBOM-listed tags) MUST be successfully resolved.
+The Verifier MUST discard or set `tag-invalid` all tags which are not syntactically and semantically valid.
+In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples and CoBOM-listed tags) MUST reference valid entries of the Appraisal Context.
 
 #### Tag activation by CoBOM
 
-This step can be skipped of all tags are implicitly active.
+If the Verifier does not use CoBOM, then all `tag-unknown` entries of the Appraisal Context are set to `tag-active` and rest of this section does not apply.
 
-CoBOMs which are not within their validity period are discarded.
-The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal.
+If the Verifier does use CoBOM, then only tags listed by valid CoBOM tags in the Appraisal Context are set to `tag-active`, and all others are set to `tag-inactive`.
+
+CoBOMs which are not within their validity period are invalid.
 
 A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
 (Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.)
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
 In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
-
-If the Verifier Policy requires CoBOMs, then after the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
 #### Evidence Selection
 
@@ -1903,9 +1921,10 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 ### Appraisal hermeticity
 
 The Appraisal Context at the and of Phase 1 constitutes all inputs to the Appraisal Procedure.
-The same Appraisal Context processed at any time MUST produce the same Attestation Results.
 
-The reason to lock the inputs before Attestation Appraisal is to ensure consistent ACS construction when accounting for any profile-driven semantics.
+The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
+Fully determined inputs SHOULD ensure consistent ACS construction when accounting for any profile-driven semantics.
+For a comparable notion of process fidelity and provenance tracking, see the different {{-slsa}} specification for build security.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
