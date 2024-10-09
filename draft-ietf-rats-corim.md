@@ -1100,23 +1100,95 @@ The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
-A Reference Values triple relates reference measurements to a Target
-Environment. For Reference Value Claims, the subject identifies a Target
-Environment, the object contains measurements, and the predicate asserts that
-these are the expected (i.e., reference) measurements for the Target
-Environment.
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Reference Values Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/reference-triple-record.cddl}
 ~~~
 
+The `reference-triple-record` has the following parameters:
+
+* `ref-env`: Search criterion that locates an Evidence environment that matches the reference environment.
+* `ref-claims`: Search criteria that locates the Evidence measurements that match the reference Claims.
+
+To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
+By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
+See {{-rats-endorsements}}.
+Re-asserted Evidence using RVP authority is said to be "corroborated".
+
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple declares additional measurements to add to the ACS.
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Endorsed Values Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
+
+The `endorsed-triple-record` has the following parameters:
+
+* `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
+* `endorsement`: Additional Endorsement Claims.
+
+To process a `endorsed-triple-record` the `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
+The new entry is added to the existing set of entries using the Endorser's authority.
+
+#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Conditional Endorsement Triple has the following structure:
+
+~~~ cddl
+{::include cddl/conditional-endorsement-triple-record.cddl}
+
+{::include cddl/stateful-environment-record.cddl}
+~~~
+
+The `conditional-endorsement-triple-record` has the following parameters:
+
+* `conditions`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
+* `endorsements`: Additional Endorsements.
+
+To process a `conditional-endorsement-triple-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the `endorsements` entries are asserted with the Endorser's authority as new Endorsements.
+
+#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Conditional Endorsement Series Triple has the following structure:
+
+~~~ cddl
+{::include cddl/conditional-endorsement-series-triple-record.cddl}
+
+{::include cddl/conditional-series-record.cddl}
+~~~
+
+The `conditional-endorsement-series-triple-record` has the following parameters:
+
+* `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
+* `series`: A set of selection-addition tuples.
+
+The `conditional-series-record` has the following parameters:
+
+* `selection`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the `condition` result.
+* `addition`: Additional Endorsements if the `selection` criteria are satisfied.
+
+To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the `series` tuples are processed.
+
+The `series` array contains a list of `conditional-series-record` entries.
+
+For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.
+
+The first `series` entry that successfully matches the `selection` criteria terminates `series` processing.
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
@@ -1201,67 +1273,6 @@ measurements for the Target Environment.
 ~~~ cddl
 {::include cddl/coswid-triple-record.cddl}
 ~~~
-
-#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
-
-A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
-that have matching Evidence.
-
-The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
-matched.
-
-~~~ cddl
-{::include cddl/stateful-environment-record.cddl}
-~~~
-
-The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
-The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
-
-For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
-
-The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
-For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
-
-If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
-
-If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
-If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
-If the series `addition` entry contains `authorized-by` values, they are ignored.
-
-~~~ cddl
-{::include cddl/conditional-endorsement-series-triple-record.cddl}
-~~~
-
-~~~ cddl
-{::include cddl/conditional-series-record.cddl}
-~~~
-
-#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
-
-The semantics of the Conditional Endorsement Triple is as follows:
-
-> "IF accepted state matches all `conds` values, THEN every entry in the `endorsements` is added to the accepted state"
-
-~~~ cddl
-{::include cddl/conditional-endorsement-triple-record.cddl}
-~~~
-
-A `conditional-endorsement-triple-record` has the following parameters:
-
-* `conditions`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
-* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
-
-The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
-
-Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.
-
-Notes:
-
-* In order to give the expected result, the condition must describe the expected context completely.
-* The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.
-
-There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
 
 ## Extensibility {#sec-extensibility}
 
@@ -1533,8 +1544,6 @@ Environment-Claim Tuple (ECT):
 
 : A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
 The ECT also contains authority which identifies the entity that authored the ECT.
-
-> *[Ned] Suggest we use Environment-Properties Tuple (EPT) since the use of claim here is more focused than what is possible given the definition above.*
 
 reference state:
 : Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
@@ -1828,14 +1837,15 @@ Regardless of the specific integrity protection method used, the Evidence's inte
 
 ### Input Transformation {#sec-phase1-trans}
 
-Inputs, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs.
+Input Conceptual Messages, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
 
 The following mapping conventions apply to all forms of input transformation:
-The `e` field is populated with a Target Environment identifier.
-The `c` field is populated with the measurements collected by an Attesting Environment.
-The `a` field is populated with the identity of the entity that asserted (e.g., signed) the Evidence.
-The `ns` field is populated with the namespace context if supplied. For example, the Attester's manufacturer may have a URI that identifies the manufacturing series, family or architecture.
-The `cm` field is set based on the type of Conceptual Message inputted or to be outputed.
+
+> * The `environment` field is populated with a Target Environment identifier.
+> * The `element-list` field is populated with the measurements collected by an Attesting Environment.
+> * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
+> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
+> * The `profile` field is set based on the `corim-map` `profile` value.
 
 #### Appraisal Context Construction
 
@@ -1843,55 +1853,107 @@ All of the extracted and validated tags are loaded into an *appraisal context*.
 The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
 The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/96
-
 #### Reference Triples Transformation {#sec-ref-trans}
 
 {:rtt-enum: counter="foo" style="format Step %d."}
 
 {: rtt-enum}
-* An available `rv` list entry ({{sec-ir-ref-val}}) is allocated.
-The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
+* An `rv` list entry ({{sec-ir-ref-val}}) is allocated.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.
+* The `cmtype` of the `addition` ECT in the `rv` entry is set to `reference-values`.
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `element-list` of the `rv` `addition` ECT.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
+* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `ev` `addition` ECT `profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
 Endorsement Triple Transformation :
 
-{:ett-enum: counter="bar" style="format Step %d."}
+{:ett-enum: counter="ett" style="format Step %d."}
 
 {: ett-enum}
-* An available `ev` entry ({{sec-ir-end-val}}) is allocated.
-The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `elements` list.
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
+* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
 
 Conditional Endorsement Triple Transformation :
 
-> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+{:cett-enum: counter="cett" style="format Step %d."}
+
+{: cett-enum}
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+
+* For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` array, the `stateful-environment-record` is copied to a `condition` ECT in the `ev` entry.
+
+* For each `measurement-map` entry in the measurements list of the `stateful-environment-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `condition` ECT `element-map` of the `element-list`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
+* For each entry in the Conditional Endorsement Triple `endorsements` array, the `endorsed-triple-record` is copied to an `addition` ECT in the `ev` entry.
+
+* For each `measurement-map` entry in the measurements list of the `endorsed-triple-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
+* The issuer of the Conditional Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
 
 Conditional Endorsement Series Triple Transformation :
 
-> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+{:cestt-enum: counter="cestt" style="format Step %d."}
+
+{: cestt-enum}
+* An `evs` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
+
+* The `stateful-environment-record` from the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition` is copied to the `condition` ECT in the `evs` entry.
+
+* For each `conditional-series-record` in the `series` array, and each `evs` `series` entry, the following steps are performed:
+
+{:cestt2-enum: counter="cestt2" style="format Sub-step %d."}
+
+{: cestt2-enum}
+* The i<sup>th</sup> `measurement-map` in the `selection` is copied to the i<sup>th</sup> `measurement-map` in the `evs` `selection` ECT `element-map`.
+
+* The `environment-map` of the `condition` ECT is copied to the i<sup>th</sup> `environment-map` in the `evs` `selection` ECT `environment-map`.
+
+* The i<sup>th</sup> `measurement-map` in the `addition` is copied to the i<sup>th</sup> `measurement-map` in the `evs` `addition` ECT `element-map`.
+
+* The `environment-map` of the `condition` ECT is copied to the i<sup>th</sup> `environment-map` in the `evs` `addition` ECT `environment-map`.
+
+{: cestt-enum}
+* The issuer of the Conditional Endorsement conceptual message is copied to the `evs` `series` `addition` ECT `authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `evs` `series` `addition` ECT `profile` field.
 
 #### Evidence Tranformation
 
-Evidence is divided up into one or more `ev` relations where the `condition` ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.
+Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
+The Evidence is mapped into one or more `addition` ECTs.
+If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
 
-Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence does not have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
-
-The Evidence ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-evidence}}.
-
-Evidence transformation algorithms may be well-known, may be defined by a CoRIM profile ({{sec-corim-profile-types}}), or may be supplied dynamically.
+Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
@@ -1966,38 +2028,40 @@ Corroboration is the process of determining whether actual Attester state (as co
 If satisfied, the RVP authority is added to the matching ACS entry.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
-For each `rv` entry, the `condition` ECT is compared with an ACS ECT.
+For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302
+
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
-### Processing Endorsements
-
-Endorsers publish Endorsements using the endorsed values triple ({{sec-comid-triple-endval}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
+Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 
-Endorsed Values are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT.
-If the ECTs match, the `ev` `addition` ECT is added to the ACS.
+### Processing Endorsements {#sec-process-end}
 
-### Processing Conditional Endorsements
+Endorsements are matched with ACS entries by iterating through the `ev` list.
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
 
-> [Ned] *This section should be identical to the previous section since Endorsement triples and Conditional Endorsement triples are transformed into the same internal representation based on `ev`*
+### Processing Conditional Endorsements {#sec-process-cond-end}
 
-### Processing Conditional Endorsement Series
+Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
+Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
 
-> [Ned] *This section should describe augmentation in the context of the `evs` internal representation*
+### Processing Conditional Endorsement Series {#sec-process-series}
 
-For each Conditional Endorsement Series Triple the Verifier iterates over the `conditional-series-record`s within the triple, stopping if it finds a match.
-
-For each iteration, the Verifier creates a temporary `stateful-environment-record` by merging the `stateful-environment-record` in the triple with the `refv` field in the `conditional-series-record`. It compares this temporary record against the ACS.
-See {{sec-match-condition-ect}}.
-
-If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
-This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
+Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
+Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
+where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
+where for each `series` entry, if the `selection` ECT matches an ACS ECT,
+the `addition` ECT is added to the ACS.
+Series processing terminates when the first series entry matches.
 
 ## Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
@@ -2154,6 +2218,8 @@ If every entry in the condition ECT `element-list` has a matching entry in the A
 
 The order of the fields in each `element-list` field do not affect the result of the comparison.
 
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+
 If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the `element-list` do not match.
 
 ### Element map comparison {#sec-compare-element-map}
@@ -2233,9 +2299,6 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
-> [Andy] *I think this comparison method only works if the entry is at key 4 (because
-there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores `[expect-raw-value raw-value-mask]` in an array?*
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
@@ -2531,7 +2594,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{{sec-sec}}) of {{&SELF}}
+: {{sec-sec}} of {{&SELF}}
 
 Interoperability considerations:
 : n/a
