@@ -5303,7 +5303,49 @@ extensions <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D
       <h2 id="name-security-and-privacy-consid">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-and-privacy-consid" class="section-name selfRef">Security and Privacy Considerations</a>
       </h2>
-<p id="section-10-1"><span class="cref" id="issue_14">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-1">Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
+The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
+Any mistake in the appraisal process could have security implications.
+For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.<a href="#section-10-2" class="pilcrow">¶</a></p>
+<p id="section-10-3">The protection of the Verifier system should be considered throughout its entire lifecycle, from design to operation.
+This includes the following aspects:<a href="#section-10-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10-4.1">
+          <p id="section-10-4.1.1">Minimizing implementation complexity (see also <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-endorsements-03#section-6.1" class="relref">Section 6.1</a> of [<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>);<a href="#section-10-4.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.2">
+          <p id="section-10-4.2.1">Using memory-safe programming languages;<a href="#section-10-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.3">
+          <p id="section-10-4.3.1">Using secure defaults;<a href="#section-10-4.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.4">
+          <p id="section-10-4.4.1">Minimizing the attack surface by avoiding unnecessary features that could be exploited by attackers;<a href="#section-10-4.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.5">
+          <p id="section-10-4.5.1">Applying the principle of least privilege to the system's users;<a href="#section-10-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.6">
+          <p id="section-10-4.6.1">Minimizing the potential impact of security breaches by implementing separation of duties in both the software and operational architecture;<a href="#section-10-4.6.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.7">
+          <p id="section-10-4.7.1">Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;<a href="#section-10-4.7.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-10-4.8">
+          <p id="section-10-4.8.1">Failing securely in the event of errors to avoid compromising the security of the system.<a href="#section-10-4.8.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-10-5">The appraisal process should be auditable and reproducible.
+The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).<a href="#section-10-5" class="pilcrow">¶</a></p>
+<p id="section-10-6">The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
+This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
+For more detailed information on protecting Trust Anchors, refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.4" class="relref">Section 12.4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-10-6" class="pilcrow">¶</a></p>
+<p id="section-10-7">The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
+These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
+Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
+Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="relref">Section 12.2</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span> for information on Conceptual Messages protection.<a href="#section-10-7" class="pilcrow">¶</a></p>
+<p id="section-10-8"><span class="cref" id="issue_14">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11<a href="#section-10-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-iana-cons">
