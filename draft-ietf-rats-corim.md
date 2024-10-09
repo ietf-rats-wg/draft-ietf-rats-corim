@@ -70,6 +70,7 @@ contributor:
 normative:
   RFC4122: uuid
   RFC5280: pkix-cert
+  RFC7250: raw-pk
   RFC7468: pkix-text
   RFC8610: cddl
   RFC9090: cbor-oids
@@ -1027,7 +1028,7 @@ A cryptographic key can be one of the following formats:
 
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-thumbprint-type`: a `digest` of a raw public key. The digest value may
+* `tagged-thumbprint-type`: a `digest` of a raw public key as defined in {{-raw-pk}}. The digest value may
   be used to find the public key if contained in a lookup table.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
