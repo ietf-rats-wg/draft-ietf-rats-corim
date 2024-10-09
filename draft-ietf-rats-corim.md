@@ -1922,8 +1922,6 @@ Given the same Appraisol Context, different Verifier appraisals MUST produce det
 
 Note: the deterministic constraint applies to profile-defined comparison semantics.
 
-A Verifier SHOULD produce deterministic results for phases 5, 6, and 7.
-
 The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
 For a comparable notion of process fidelity and provenance tracking, see the different {{-slsa}} specification for build security.
 
