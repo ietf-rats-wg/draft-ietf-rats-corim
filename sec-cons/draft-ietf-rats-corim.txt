@@ -117,13 +117,13 @@ Table of Contents
            5.1.4.1.7.  Domain Types
          5.1.4.2.  Reference Values Triple
          5.1.4.3.  Endorsed Values Triple
-         5.1.4.4.  Device Identity Triple
-         5.1.4.5.  Attest Key Triple
-         5.1.4.6.  Domain Dependency Triple
-         5.1.4.7.  Domain Membership Triple
-         5.1.4.8.  CoMID-CoSWID Linking Triple
-         5.1.4.9.  Conditional Endorsement Series Triple
-         5.1.4.10. Conditional Endorsement Triple
+         5.1.4.4.  Conditional Endorsement Triple
+         5.1.4.5.  Conditional Endorsement Series Triple
+         5.1.4.6.  Device Identity Triple
+         5.1.4.7.  Attest Key Triple
+         5.1.4.8.  Domain Dependency Triple
+         5.1.4.9.  Domain Membership Triple
+         5.1.4.10. CoMID-CoSWID Linking Triple
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
@@ -753,24 +753,24 @@ Table of Contents
 
    *  Device Identity triples: containing cryptographic credentials -
       for example, an IDevID - uniquely identifying a device
-      (Section 5.1.4.4).
+      (Section 5.1.4.6).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
-      from the Attester (Section 5.1.4.5).
+      from the Attester (Section 5.1.4.7).
 
    *  Domain dependency triples: describing trust relationships between
       domains, i.e., collection of related environments and their
-      measurements (Section 5.1.4.6).
+      measurements (Section 5.1.4.8).
 
    *  Domain membership triples: describing topological relationships
       between (sub-)modules.  For example, in a composite Attester
       comprising multiple sub-Attesters (sub-modules), this triple can
       be used to define the topological relationship between lead- and
-      sub- Attester environments (Section 5.1.4.7).
+      sub- Attester environments (Section 5.1.4.9).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID tags (Section 5.1.4.8).
+      with existing CoSWID tags (Section 5.1.4.10).
 
 5.1.  Structure
 
@@ -953,31 +953,31 @@ Table of Contents
       Described in Section 5.1.4.3.
 
    *  identity-triples (index 2): Triples containing identity
-      credentials.  Described in Section 5.1.4.4.
+      credentials.  Described in Section 5.1.4.6.
 
    *  attest-key-triples (index 3): Triples containing verification keys
       associated with attesting environments.  Described in
-      Section 5.1.4.5.
+      Section 5.1.4.7.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in Section 5.1.4.6.
+      relationships between domains.  Described in Section 5.1.4.8.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      Section 5.1.4.7.
+      Section 5.1.4.9.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in Section 5.1.4.8.
+      existing CoSWID tags.  Described in Section 5.1.4.10.
 
    *  conditional-endorsement-series-triples (index 8): Triples
       describing a series of conditional Endorsements based on the
       acceptance of a stateful environment.  Described in
-      Section 5.1.4.9.
+      Section 5.1.4.5.
 
    *  conditional-endorsement-triples (index 10): Triples describing a
       series of Endorsement that are applicable based on the acceptance
       of a series of stateful environment records.  Described in
-      Section 5.1.4.10.
+      Section 5.1.4.4.
 
 5.1.4.1.  Environments
 
@@ -1497,28 +1497,146 @@ Table of Contents
 
 5.1.4.2.  Reference Values Triple
 
-   A Reference Values triple relates reference measurements to a Target
-   Environment.  For Reference Value Claims, the subject identifies a
-   Target Environment, the object contains measurements, and the
-   predicate asserts that these are the expected (i.e., reference)
-   measurements for the Target Environment.
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/310
+
+   The Reference Values Triple has the following structure:
 
    reference-triple-record = [
-     environment-map
-     [ + measurement-map ]
+     ref-env: environment-map
+     ref-claims: [ + measurement-map ]
    ]
+
+   The reference-triple-record has the following parameters:
+
+   *  ref-env: Search criterion that locates an Evidence environment
+      that matches the reference environment.
+
+   *  ref-claims: Search criteria that locates the Evidence measurements
+      that match the reference Claims.
+
+   To process reference-triple-record both the ref-env and ref-claims
+   criteria are compared with Evidence entries.  If the search criteria
+   are satisfied, the matching entry is re-asserted, except with the
+   Reference Value Provider's authority.  By re-asserting Evidence using
+   the RVP's authority, the Verifier can avoid mixing Reference Values
+   (reference state) with Evidence (actual state).  See
+   [I-D.ietf-rats-endorsements].  Re-asserted Evidence using RVP
+   authority is said to be "corroborated".
 
 5.1.4.3.  Endorsed Values Triple
 
-   An Endorsed Values triple declares additional measurements to add to
-   the ACS.
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/310
+
+   The Endorsed Values Triple has the following structure:
 
    endorsed-triple-record = [
-     environment-map
+     condition: environment-map
+     endorsement: [ + measurement-map ]
+   ]
+
+   The endorsed-triple-record has the following parameters:
+
+   *  condition: Search criterion that locates an Evidence, corroborated
+      Evidence, or Endorsements environment.
+
+   *  endorsement: Additional Endorsement Claims.
+
+   To process a endorsed-triple-record the condition is compared with
+   existing Evidence, corroborated Evidence, and Endorsements.  If the
+   search criterion is satisfied, the endorsement Claims are combined
+   with the condition environment-map to form a new (actual state)
+   entry.  The new entry is added to the existing set of entries using
+   the Endorser's authority.
+
+5.1.4.4.  Conditional Endorsement Triple
+
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/310
+
+   The Conditional Endorsement Triple has the following structure:
+
+   conditional-endorsement-triple-record = [
+     conditions: [ + stateful-environment-record ]
+     endorsements: [ + endorsed-triple-record ]
+   ]
+
+   stateful-environment-record = [
+     environment-map,
      [ + measurement-map ]
    ]
 
-5.1.4.4.  Device Identity Triple
+   The conditional-endorsement-triple-record has the following
+   parameters:
+
+   *  conditions: Search criteria that locates Evidence, corroborated
+      Evidence, or Endorsements.
+
+   *  endorsements: Additional Endorsements.
+
+   To process a conditional-endorsement-triple-record the conditions are
+   compared with existing Evidence, corroborated Evidence, and
+   Endorsements.  If the search criteria are satisfied, the endorsements
+   entries are asserted with the Endorser's authority as new
+   Endorsements.
+
+5.1.4.5.  Conditional Endorsement Series Triple
+
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/310
+
+   The Conditional Endorsement Series Triple has the following
+   structure:
+
+   conditional-endorsement-series-triple-record = [
+     condition: stateful-environment-record
+     series: [ + conditional-series-record ]
+   ]
+
+   conditional-series-record = [
+     selection: [ + measurement-map]
+     addition: [ + measurement-map ]
+   ]
+
+   The conditional-endorsement-series-triple-record has the following
+   parameters:
+
+   *  condition: Search criteria that locates Evidence, corroborated
+      Evidence, or Endorsements.
+
+   *  series: A set of selection-addition tuples.
+
+   The conditional-series-record has the following parameters:
+
+   *  selection: Search criteria that locates Evidence, corroborated
+      Evidence, or Endorsements from the condition result.
+
+   *  addition: Additional Endorsements if the selection criteria are
+      satisfied.
+
+   To process a conditional-endorsement-series-record the conditions are
+   compared with existing Evidence, corroborated Evidence, and
+   Endorsements.  If the search criteria are satisfied, the series
+   tuples are processed.
+
+   The series array contains a list of conditional-series-record
+   entries.
+
+   For each series entry, if the selection criteria matches an entry
+   found in the condition result, the series addition is combined with
+   the environment-map from the condition result to form a new
+   Endorsement entry.  The new entry is added to the existing set of
+   Endorsements.
+
+   The first series entry that successfully matches the selection
+   criteria terminates series processing.
+
+5.1.4.6.  Device Identity Triple
 
    A Device Identity triple record relates one or more cryptographic
    keys to a device identity.  The cryptographic keys are bound to or
@@ -1555,7 +1673,7 @@ Table of Contents
      [ + $crypto-key-type-choice ]
    ]
 
-5.1.4.5.  Attest Key Triple
+5.1.4.7.  Attest Key Triple
 
    An Attest Key triple record relates one or more cryptographic keys to
    an Attesting Environment.  The cryptographic keys are wielded by an
@@ -1588,7 +1706,7 @@ Table of Contents
      [ + $crypto-key-type-choice ]
    ]
 
-5.1.4.6.  Domain Dependency Triple
+5.1.4.8.  Domain Dependency Triple
 
    A Domain Dependency triple defines trust dependencies between
    measurement sources.  The subject identifies a domain
@@ -1603,7 +1721,7 @@ Table of Contents
      [ + $domain-type-choice ]
    ]
 
-5.1.4.7.  Domain Membership Triple
+5.1.4.9.  Domain Membership Triple
 
    A Domain Membership triple assigns domain membership to environments.
    The subject identifies a domain (Section 5.1.4.1.7) that has a
@@ -1617,7 +1735,7 @@ Table of Contents
      [ + environment-map ]
    ]
 
-5.1.4.8.  CoMID-CoSWID Linking Triple
+5.1.4.10.  CoMID-CoSWID Linking Triple
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
@@ -1631,102 +1749,6 @@ Table of Contents
    ]
 
    concise-swid-tag-id = text / bstr .size 16
-
-5.1.4.9.  Conditional Endorsement Series Triple
-
-   A Conditional Endorsement Series triple uses a stateful environment,
-   (i.e., stateful-environment-record), that identifies a Target
-   Environment based on an environment-map plus one or more measurement-
-   map measurements that have matching Evidence.
-
-   The stateful Target Environment is a triple subject that MUST be
-   satisfied before the series triple object is matched.
-
-   ; an environment with a set of measurements that must match evidence
-   stateful-environment-record = [
-     environment-map,
-     [ + measurement-map ]
-   ]
-
-   The series is an array of conditional-series-record that has a
-   selection and an addition, both expressed as a list of measurement-
-   map.  The selection and addition operate within the scope of the
-   environment-map found in the conditional-endorsement-series-triple-
-   record's condition.
-
-   For each conditional-series-record entry, if the selection matches
-   the ACS entry, the addition is added to the ACS.
-
-   The first conditional-series-record entry that successfully matches
-   the ACS entry terminates the series.  For a conditional-series-record
-   to match, every measurement in the measurement-map list MUST match a
-   measurement in the ACS entry.
-
-   If none of the selection values match in the ACS entry, the triple is
-   not matched, and no addition values are accepted.
-
-   If the authorized-by value is present in the triple condition (i.e.,
-   in the measurement-map of the stateful-environment-record), all
-   authority entries of the condition MUST be present in the ACS entry,
-   otherwise the ACS entry does not match.  If the series selection
-   populates authorized-by, the ACS MUST contain the same measurements
-   and authority as contained in the selection entry.  If the series
-   addition entry contains authorized-by values, they are ignored.
-
-   conditional-endorsement-series-triple-record = [
-     condition: stateful-environment-record
-     series: [ + conditional-series-record ]
-   ]
-
-   conditional-series-record = [
-     selection: [ + measurement-map]
-     ; endorsed values that apply in case revf matches
-     addition: [ + measurement-map ]
-   ]
-
-5.1.4.10.  Conditional Endorsement Triple
-
-   The semantics of the Conditional Endorsement Triple is as follows:
-
-      "IF accepted state matches all conds values, THEN every entry in
-      the endorsements is added to the accepted state"
-
-   conditional-endorsement-triple-record = [
-     conditions: [ + stateful-environment-record ]
-     endorsements: [ + endorsed-triple-record ]
-   ]
-
-   A conditional-endorsement-triple-record has the following parameters:
-
-   *  conditions: all target environments, along with a specific state,
-      that need to match state-triples entries in the ACS for the
-      endorsement(s) to apply
-
-   *  endorsements: endorsements that are added to the ACS state-triples
-      if all conds match.
-
-   The order in which Conditional Endorsement triples are evaluated is
-   important: different sorting may produce different end-results in the
-   computed ACS.
-
-   Therefore, the set of applicable Conditional Endorsement triples MUST
-   be topologically sorted based on the criterion that a Conditional
-   Endorsement triple is evaluated before another if its Target
-   Environment and Endorsement pair is found in any of the stateful
-   environments of the subsequent triple.
-
-   Notes:
-
-   *  In order to give the expected result, the condition must describe
-      the expected context completely.
-
-   *  The scope of a single Conditional Endorsement triple encompasses
-      an arbitrary amount of environments across all layers in an
-      Attester.
-
-   There are scope-related questions that need to be answered.  (
-   // Tracked at: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/
-   issues/176)
 
 5.2.  Extensibility
 
@@ -2057,40 +2079,42 @@ Table of Contents
       properties of the Target Environment.  The ECT also contains
       authority which identifies the entity that authored the ECT.
 
-      _[Ned] Suggest we use Environment-Properties Tuple (EPT) since the
-      use of claim here is more focused than what is possible given the
-      definition above._
+   reference state:
+      Claims that describe various alternative states of a Target
+      Environment.  Reference Values Claims typically describe various
+      possible states due to versioning, manufactruing practices, or
+      supplier configuration options.  See also Section 2 of
+      [I-D.ietf-rats-endorsements].
 
-   reference state:  Claims that describe various alternative states of
-      a Target Environment.  Reference Values Claims typically describe
-      various possible states due to versioning, manufactruing
-      practices, or supplier configuration options.  See also Section 2
-      of [I-D.ietf-rats-endorsements].
-
-   actual state:  Claims that describe a Target Environment instance at
-      a given point in time.  Endorsed Values and Evidence typically are
-      Claims about actual state.  An Attester may be composed of
-      multiple components, where each component may represent a scope of
+   actual state:
+      Claims that describe a Target Environment instance at a given
+      point in time.  Endorsed Values and Evidence typically are Claims
+      about actual state.  An Attester may be composed of multiple
+      components, where each component may represent a scope of
       appraisal.  See also (Section 2 of [I-D.ietf-rats-endorsements]).
 
-   Authority:  The entity asserting that a claim is true.  Typically, a
-      Claim is asserted using a cryptographic key to digitally sign the
-      Claim.  A cryptographic key can be a proxy for a human or
-      organizational entity.
+   Authority:
+      The entity asserting that a claim is true.  Typically, a Claim is
+      asserted using a cryptographic key to digitally sign the Claim.  A
+      cryptographic key can be a proxy for a human or organizational
+      entity.
 
-   Appraisal Claims Set (ACS):  A structure that holds ECTs that have
-      been appraised.  The ACS contains Attester state that has been
-      authorized by Verifier processing and Appraisal Policy.
+   Appraisal Claims Set (ACS):
+      A structure that holds ECTs that have been appraised.  The ACS
+      contains Attester state that has been authorized by Verifier
+      processing and Appraisal Policy.
 
-   Appraisal Policy:  A description of the conditions that, if met,
-      allow acceptance of Claims.  Typically, the entity asserting a
-      Claim should have knowledge, expertise, or context that gives
-      credibility to the assertion.  Appraisal Policy resolves which
-      entities are credible and under what conditions.  See also
-      "Appraisal Policy for Evidence" in [RFC9334].
+   Appraisal Policy:
+      A description of the conditions that, if met, allow acceptance of
+      Claims.  Typically, the entity asserting a Claim should have
+      knowledge, expertise, or context that gives credibility to the
+      assertion.  Appraisal Policy resolves which entities are credible
+      and under what conditions.  See also "Appraisal Policy for
+      Evidence" in [RFC9334].
 
-   Attestation Results Set (ARS):  A structure that holds results of
-      Appraisal and ECTs that are to be conveyed to a Relying Party.
+   Attestation Results Set (ARS):
+      A structure that holds results of Appraisal and ECTs that are to
+      be conveyed to a Relying Party.
 
 8.2.1.  Internal Representation of Conceptual Messages
 
@@ -2526,20 +2550,26 @@ Table of Contents
 
 8.3.3.  Input Transformation
 
-   Inputs, whether Endorsements, Reference Values, Evidence, or
-   Policies, are transformed to an internal representation that is based
-   on ECTs.
+   Input Conceptual Messages, whether Endorsements, Reference Values,
+   Evidence, or Policies, are transformed to an internal representation
+   that is based on ECTs (Section 8.2.1).
 
    The following mapping conventions apply to all forms of input
-   transformation: The e field is populated with a Target Environment
-   identifier.  The c field is populated with the measurements collected
-   by an Attesting Environment.  The a field is populated with the
-   identity of the entity that asserted (e.g., signed) the Evidence.
-   The ns field is populated with the namespace context if supplied.
-   For example, the Attester's manufacturer may have a URI that
-   identifies the manufacturing series, family or architecture.  The cm
-   field is set based on the type of Conceptual Message inputted or to
-   be outputed.
+   transformation:
+
+      -  The environment field is populated with a Target Environment
+         identifier.
+
+      -  The element-list field is populated with the measurements
+         collected by an Attesting Environment.
+
+      -  The authority field is populated with the identity of the
+         entity that asserted (e.g., signed) the Conceptual Message.
+
+      -  The cmtype field is set based on the type of Conceptual Message
+         inputted or to be output.
+
+      -  The profile field is set based on the corim-map profile value.
 
 8.3.3.1.  Appraisal Context Construction
 
@@ -2549,74 +2579,147 @@ Table of Contents
    an internal representation, making them suitable for appraisal
    processing.
 
-
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/96
-
 8.3.3.2.  Reference Triples Transformation
 
-   Step 1.  An available rv list entry (Section 8.2.1.2) is allocated.
-            The Reference Values Triple (Section 5.1.4.2) environment-
+   Step 1.  An rv list entry (Section 8.2.1.2) is allocated.
+
+   Step 2.  The cmtype of the addition ECT in the rv entry is set to
+            reference-values.
+
+   Step 3.  The Reference Values Triple (Section 5.1.4.2) environment-
             map is copied to the environment-map for both the rv
             condition and rv addition ECTs.
 
-   Step 2.  For each measurement-map entry in the measurements list, the
+   Step 4.  For each measurement-map entry in the measurements list, the
             i^th measurement-map is copied to the i^th element-map in
-            the elements list of the rv addition ECT.
+            the element-list of the rv addition ECT.
 
-   Step 3.  The issuer of the Endorsement conceptual message is copied
-            to the ev addition ECT authority field.
 
-   Step 4.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev addition ECT profile field.
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/303
+
+   *  The issuer of the Endorsement conceptual message is copied to the
+      ev addition ECT authority field.
+
+   *  If the Endorsement conceptual message has a profile, the profile
+      identifier is copied to the ev addition ECT profile field.
 
 8.3.3.3.  Endorsement Triples Transformations
 
    Endorsement Triple Transformation :
 
-   Step 1.  An available ev entry (Section 8.2.1.3) is allocated.  The
-            Endorsement Triple (Section 5.1.4.3) environment-map is
+   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  The Endorsement Triple (Section 5.1.4.3) environment-map is
             copied to the environment-map for both the ev condition and
             ev addition ECTs.
 
-   Step 2.  For each measurement-map entry in the measurements list, the
+   Step 4.  For each measurement-map entry in the measurements list, the
             i^th measurement-map entry is copied to the i^th entry in
-            the addition ECT elements list.
+            the addition ECT element-map of the element-list.
 
-   Step 3.  The issuer of the Endorsement conceptual message is copied
-            to the ev addition ECT authority field.
 
-   Step 4.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev addition ECT profile field.
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/303
+
+   *  The issuer of the Endorsement conceptual message is copied to the
+      ev addition ECT authority field.
+
+   *  If the Endorsement conceptual message has a profile, the profile
+      is copied to the ev addition ECT profile field.
 
    Conditional Endorsement Triple Transformation :
 
-      // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-      draft-ietf-rats-corim/issues/285
+   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  For each entry in the Conditional Endorsement Triple
+            (Section 5.1.4.4) conditions array, the stateful-
+            environment-record is copied to a condition ECT in the ev
+            entry.
+
+   Step 4.  For each measurement-map entry in the measurements list of
+            the stateful-environment-record, the i^th measurement-map
+            entry is copied to the i^th entry in the condition ECT
+            element-map of the element-list.
+
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/303
+
+   *  For each entry in the Conditional Endorsement Triple endorsements
+      array, the endorsed-triple-record is copied to an addition ECT in
+      the ev entry.
+
+   *  For each measurement-map entry in the measurements list of the
+      endorsed-triple-record, the i^th measurement-map entry is copied
+      to the i^th entry in the addition ECT element-map of the element-
+      list.
+
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/303
+
+   *  The issuer of the Conditional Endorsement conceptual message is
+      copied to the ev addition ECT authority field.
+
+   *  If the Endorsement conceptual message has a profile, the profile
+      is copied to the ev addition ECT profile field.
 
    Conditional Endorsement Series Triple Transformation :
 
-      // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-      draft-ietf-rats-corim/issues/285
+   Step 1.  An evs entry (Section 8.2.1.3) is allocated.
+
+   Step 2.  The cmtype of the evs entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  The stateful-environment-record from the Conditional
+            Endorsement Series Triple (Section 5.1.4.5) condition is
+            copied to the condition ECT in the evs entry.
+
+   Step 4.  For each conditional-series-record in the series array, and
+            each evs series entry, the following steps are performed:
+
+   Sub-step 1.  The i^th measurement-map in the selection is copied to
+                the i^th measurement-map in the evs selection ECT
+                element-map.
+
+   Sub-step 2.  The environment-map of the condition ECT is copied to
+                the i^th environment-map in the evs selection ECT
+                environment-map.
+
+   Sub-step 3.  The i^th measurement-map in the addition is copied to
+                the i^th measurement-map in the evs addition ECT
+                element-map.
+
+   Sub-step 4.  The environment-map of the condition ECT is copied to
+                the i^th environment-map in the evs addition ECT
+                environment-map.
+
+   Step 5.  The issuer of the Conditional Endorsement conceptual message
+            is copied to the evs series addition ECT authority field.
+
+   Step 6.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the evs series addition ECT profile
+            field.
 
 8.3.3.4.  Evidence Tranformation
 
-   Evidence is divided up into one or more ev relations where the
-   condition ECT identifies the Attester from which Evidence was
-   collected.  If the Verifier maintains multiple Attester sessions, the
-   Verifier session may be identified using an ECT.
+   Evidence is transformed from an external representation to an
+   internal representation based on the ae relation (Section 8.2.1.1).
+   The Evidence is mapped into one or more addition ECTs.  If the
+   Evidence does not have a value for the mandatory ae fields, the
+   Verifier MUST NOT process the Evidence.
 
-   Evidence information is mapped to an addition ECT that populates each
-   of the ECT fields.  If the Evidence does not have a value for the
-   mandatory fields, the Verifier MUST NOT process the Evidence.
-
-   The Evidence ECT fields are populated as described in Section 8.3.3
-   and Section 8.2.1.1.
-
-   Evidence transformation algorithms may be well-known, may be defined
-   by a CoRIM profile (Section 4.1.4), or may be supplied dynamically.
-   The handling of dynamic Evidence transformation algorithms is out of
-   scope for this document.
+   Evidence transformation algorithms may be well-known, defined by a
+   CoRIM profile (Section 4.1.4), or supplied dynamically.  The handling
+   of dynamic Evidence transformation algorithms is out of scope for
+   this document.
 
 8.4.  Evidence Augmentation (Phase 2)
 
@@ -2707,8 +2810,14 @@ Table of Contents
 
    Reference Values are matched with ACS entries by iterating through
    the rv list.  For each rv entry, the condition ECT is compared with
-   an ACS ECT.  If the ECTs match except for authority, the rv addition
-   ECT authority is added to the ACS ECT authority.
+   an ACS ECT, where the ACS ECT cmtype contains evidence.
+
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/302
+
+   If the ECTs match except for authority, the rv addition ECT authority
+   is added to the ACS ECT authority.
 
 8.6.  Endorsed Values Augmentation (Phase 4)
 
@@ -2716,41 +2825,38 @@ Table of Contents
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
    draft-ietf-rats-corim/issues/179
 
+   Endorsers publish Endorsements using endorsement triples (see
+   Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
+   transformed (Section 8.3.3.3) into an internal representation
+   (Section 8.2.1.3).  Endorsements describe actual Attester state.
+   Endorsements are added to the ACS if the Endorsement condition is
+   satisifed by the ACS.
+
 8.6.1.  Processing Endorsements
 
-   Endorsers publish Endorsements using the endorsed values triple
-   (Section 5.1.4.3) which are transformed (Section 8.3.3.3) into an
-   internal representation (Section 8.2.1.3).  Endorsements describe
-   actual Attester state.  Endorsements are added to the ACS if the
-   Endorsement condition is satisifed by the ACS.
-
-   Endorsed Values are matched with ACS entries by iterating through the
-   ev list.  For each ev entry, the condition ECT is compared with an
-   ACS ECT.  If the ECTs match, the ev addition ECT is added to the ACS.
+   Endorsements are matched with ACS entries by iterating through the ev
+   list.  For each ev entry, the condition ECT is compared with an ACS
+   ECT, where the ACS ECT cmtype contains either evidence or
+   endorsements.  If the ECTs match (Section 8.9), the ev addition ECT
+   is added to the ACS.
 
 8.6.2.  Processing Conditional Endorsements
 
-      [Ned] _This section should be identical to the previous section
-      since Endorsement triples and Conditional Endorsement triples are
-      transformed into the same internal representation based on ev_
+   Conditional Endorsement Triples are transformed into an internal
+   representation based on ev.  Conditional endorsements have the same
+   processing steps as shown in (Section 8.6.1).
 
 8.6.3.  Processing Conditional Endorsement Series
 
-      [Ned] _This section should describe augmentation in the context of
-      the evs internal representation_
-
-   For each Conditional Endorsement Series Triple the Verifier iterates
-   over the conditional-series-records within the triple, stopping if it
-   finds a match.
-
-   For each iteration, the Verifier creates a temporary stateful-
-   environment-record by merging the stateful-environment-record in the
-   triple with the refv field in the conditional-series-record.  It
-   compares this temporary record against the ACS.  See Section 8.9.
-
-   If one of the temporary records matches then the Verifier MUST add
-   the endv Endorsement entry to the ACS.  This Endorsement includes the
-   authority which signed the Conditional Endorsement Series Triple.
+   Conditional Endorsement Series Triples are transformed into an
+   internal representation based on evs.  Conditional series
+   endorsements are matched with ACS entries first by iterating through
+   the evs list, where for each evs entry, the condition ECT is compared
+   with an ACS ECT, where the ACS ECT cmtype contains either evidence or
+   endorsements.  If the ECTs match (Section 8.9), the evs series array
+   is iterated, where for each series entry, if the selection ECT
+   matches an ACS ECT, the addition ECT is added to the ACS.  Series
+   processing terminates when the first series entry matches.
 
 8.7.  Examples for optional phases 5, 6, and 7
 
@@ -2970,6 +3076,10 @@ Table of Contents
    The order of the fields in each element-list field do not affect the
    result of the comparison.
 
+
+   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
+   draft-ietf-rats-corim/issues/303
+
    If any entry in the condition ECT element-list does not have a
    matching entry in the ACS entry element-list field then the element-
    list do not match.
@@ -3103,11 +3213,6 @@ Table of Contents
    candidate entry ECT.
 
 8.9.6.1.3.  Comparison for raw-value entries
-
-      [Andy] _I think this comparison method only works if the entry is
-      at key 4 (because there needs to be a mask at key 5).  Should we
-      have a Reference Value of this which stores [expect-raw-value raw-
-      value-mask] in an array?_
 
 
    // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
@@ -3548,7 +3653,7 @@ Table of Contents
    Optional parameters:  "profile" (CoRIM profile in string format.
       OIDs MUST use the dotted-decimal notation.)
    Encoding considerations:  binary
-   Security considerations:  sec-sec) of RFCthis
+   Security considerations:  Section 10 of RFCthis
    Interoperability considerations:  n/a
    Published specification:  RFCthis
    Applications that use this media type:  Attestation Verifiers,
@@ -3888,7 +3993,6 @@ Appendix A.  Base CoRIM CDDL
 
    conditional-series-record = [
      selection: [ + measurement-map]
-     ; endorsed values that apply in case revf matches
      addition: [ + measurement-map ]
    ]
 
@@ -3952,8 +4056,8 @@ Appendix A.  Base CoRIM CDDL
    $domain-type-choice /= tagged-oid-type
 
    endorsed-triple-record = [
-     environment-map
-     [ + measurement-map ]
+     condition: environment-map
+     endorsement: [ + measurement-map ]
    ]
 
    entity-map<role-type-choice, extension-socket> = {
@@ -4051,8 +4155,8 @@ Appendix A.  Base CoRIM CDDL
    raw-value-mask-type = bytes
 
    reference-triple-record = [
-     environment-map
-     [ + measurement-map ]
+     ref-env: environment-map
+     ref-claims: [ + measurement-map ]
    ]
 
    stateful-environment-record = [
