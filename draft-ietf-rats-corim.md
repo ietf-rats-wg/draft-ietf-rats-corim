@@ -2404,7 +2404,7 @@ This includes the following aspects:
 The appraisal process should be auditable and reproducible.
 The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).
 
-The integrity of public key material and the secrecy of private key material must be ensured at all times.
+The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
 For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
 
