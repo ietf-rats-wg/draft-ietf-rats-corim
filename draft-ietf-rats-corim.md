@@ -799,6 +799,7 @@ The following describes each member of the `measurement-map`:
 
 * `mkey` (index 0): An optional measurement key.
  Described in {{sec-comid-mkey}}.
+ A `measurement-map` without an `mkey` is said to be anonymous.
 
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
@@ -813,6 +814,8 @@ The following describes each member of the `measurement-map`:
 Measurement keys are locally scoped extensible identifiers.
 The initial types defined are OID, UUID, and uint.
 `mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
+A single anonymous `measurement-map` is allowed within the same environment.
+Two or more measurement-map entries within the same environment MUST populate `mkey`.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
@@ -1864,7 +1867,7 @@ The selected tags are mapped to an internal representation, making them suitable
 
 * The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `element-list` of the `rv` `addition` ECT.
+* For each entry in the `ref-claims` list, the `measurement-map` is copied to the `element-list` `element-map` of the `rv` `addition` ECT.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
 
@@ -1885,9 +1888,7 @@ Endorsement Triple Transformation :
 
 * The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+* For each entry in the `endorsement` list, the `measurement-map` is copied to an `element-list` `element-map` of the `ev` `addition` ECTs.
 
 * The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
 
@@ -1902,17 +1903,9 @@ Conditional Endorsement Triple Transformation :
 
 * The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
-* For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` array, the `stateful-environment-record` is copied to a `condition` ECT in the `ev` entry.
+* For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` list, the `stateful-environment-record` `environment` is copied to the `environment` of the `ev` `condition` ECT and the `stateful-environment-record` `claims-list` entries are copied to the `element-list` of the `ev` `condition` ECT.
 
-* For each `measurement-map` entry in the measurements list of the `stateful-environment-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `condition` ECT `element-map` of the `element-list`.
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
-
-* For each entry in the Conditional Endorsement Triple `endorsements` array, the `endorsed-triple-record` is copied to an `addition` ECT in the `ev` entry.
-
-* For each `measurement-map` entry in the measurements list of the `endorsed-triple-record`, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `element-map` of the `element-list`.
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+* For each entry in the Conditional Endorsement Triple `endorsements` list, the `endorsed-triple-record` `condition` `environment-map` is copied to the `environment` of the `ev` `addition` ECT and the `endorsed-triple-record` `endorsement` list entries are copied to the `element-list` entries of the `ev` `addition` ECT.
 
 * The issuer of the Conditional Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
 
@@ -1927,20 +1920,20 @@ Conditional Endorsement Series Triple Transformation :
 
 * The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
 
-* The `stateful-environment-record` from the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition` is copied to the `condition` ECT in the `evs` entry.
+* The `stateful-environment-record` from the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition` is copied to the `condition` of an `evs` ECT.
 
 * For each `conditional-series-record` in the `series` array, and each `evs` `series` entry, the following steps are performed:
 
 {:cestt2-enum: counter="cestt2" style="format Sub-step %d."}
 
 {: cestt2-enum}
-* The i<sup>th</sup> `measurement-map` in the `selection` is copied to the i<sup>th</sup> `measurement-map` in the `evs` `selection` ECT `element-map`.
+* The `conditional-series-record` `selection` list is copied to the `element-list` of the `evs` `selection` ECT `.
 
-* The `environment-map` of the `condition` ECT is copied to the i<sup>th</sup> `environment-map` in the `evs` `selection` ECT `environment-map`.
+* The `environment-map` of the `evs` `condition` ECT is copied to the `environment-map` of the `evs` `selection` ECT.
 
-* The i<sup>th</sup> `measurement-map` in the `addition` is copied to the i<sup>th</sup> `measurement-map` in the `evs` `addition` ECT `element-map`.
+* The `conditional-series-record` `addition` list is copied to the `element-list` of the `evs` `addition` ECT.
 
-* The `environment-map` of the `condition` ECT is copied to the i<sup>th</sup> `environment-map` in the `evs` `addition` ECT `environment-map`.
+* The `environment-map` of the `evs` `condition` ECT is copied to the `environment-map` of the `evs` `addition` ECT.
 
 {: cestt-enum}
 * The issuer of the Conditional Endorsement conceptual message is copied to the `evs` `series` `addition` ECT `authority` field.
@@ -2217,8 +2210,6 @@ A Verifier SHALL iterate over all the entries in the condition ECT `element-list
 If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field then the element lists match.
 
 The order of the fields in each `element-list` field do not affect the result of the comparison.
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
 
 If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the `element-list` do not match.
 
