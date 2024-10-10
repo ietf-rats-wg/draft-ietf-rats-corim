@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-08T01:44:56.238367+00:00",
+  "timestamp": "2024-10-10T01:44:27.021107+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -77,6 +77,11 @@
       "name": "for-guidance",
       "description": "An issue for describing \"best use\" of the format, and is not a strict disambiguation.",
       "color": "FEBA66"
+    },
+    {
+      "name": "not yet ready for review",
+      "description": "",
+      "color": "0e8a16"
     }
   ],
   "issues": [
@@ -401,9 +406,17 @@
       ],
       "body": "Add security and privacy considerations.",
       "createdAt": "2022-09-23T16:40:06Z",
-      "updatedAt": "2024-05-07T09:07:23Z",
+      "updatedAt": "2024-10-09T14:57:46Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Add system security reference to replace the mega bullet list.",
+          "createdAt": "2024-10-09T14:57:44Z",
+          "updatedAt": "2024-10-09T14:57:44Z"
+        }
+      ]
     },
     {
       "number": 12,
@@ -6674,16 +6687,24 @@
       "id": "I_kwDOH6-tI86XWCon",
       "title": "Use of parens surrounding cross-references",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/286",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "I believe it is a document convention to surround cross-references with parens: e.g.:\r\n```\r\n({{my-cross-reference}})\r\n```\r\nA cleanup task is needed that fixes all the instances that don't conform to the convention.",
       "createdAt": "2024-09-20T15:48:52Z",
-      "updatedAt": "2024-09-20T15:48:52Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-10-09T15:17:33Z",
+      "closedAt": "2024-10-09T15:17:33Z",
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "it's done!",
+          "createdAt": "2024-10-09T15:17:33Z",
+          "updatedAt": "2024-10-09T15:17:33Z"
+        }
+      ]
     },
     {
       "number": 287,
@@ -6817,7 +6838,7 @@
       "labels": [],
       "body": "This issue is related to: Issues #244, #202, #160, and #159\r\n\r\nThis issue aims to document expected usages of authorized-by and to identify gaps in the internal representation (ECT) if any.\r\n\r\nACS `authority` field is populated when the signature over a Verifier input is valid and triples processing results in an addition to the ACS. The signer authority (typically a signing key) is added to ACS ECT entries.\r\n\r\nThe following triples have been annotated to indicate which parts specify `condition` and which specify `addition`. `condition-addition` means the statement is overloaded to be both a matching condition and an addition if the matching condition is satisfied. `selection` is a context sensitive condition where the `selection` is applied to the result of the `condition`.\r\n```\r\nevidence-triple-record = [\r\n  addition: environment-map\r\n  addition: [ + measurement-map ]\r\n]\r\n\r\nreference-triple-record = [\r\n  condition-addition: environment-map\r\n  condition-addition: [ + measurement-map ]\r\n]\r\n\r\nendorsed-triple-record = [\r\n  condition-addition: environment-map\r\n  addition: [ + measurement-map ]\r\n]\r\n\r\nconditional-endorsed-triple-record = [\r\n  conditions: [ + stateful-environment-record ]\r\n  additions: [ + stateful-environment-record ]\r\n]\r\n\r\nconditional-endorsement-series-triple-record = [\r\n  condition: stateful-environment-record\r\n  selective-addition: [ + conditional-series-record ]\r\n]\r\n\r\nconditional-series-record = [\r\n  selection: [ + measurement-map]\r\n  addition: [ + measurement-map]\r\n]\r\n```\r\n\u00a0\r\nUse Cases:\r\n\r\n1. `authorized-by` as a condition for querying ACS state. If `authorized-by` is included in `addition` statements it is ignored. Semantics: If `authorized-by` is in a condition / condition-addition / selection statement, then it is compared with the ECT `authority` field. If `authorized-by` is a subset of the authorities listed in `authority` then the condition is met.\r\n\r\n2. `authorized-by` is included in an Evidence addition. Semantics: `authorized-by` identifies trust dependencies where the current TE measurements are expected to be collected by a particular AE. `authorized-by` contains the AE signing key. The key is saved in a new field in the ACS `expected-authority` that the Verifier checks to verify the actual authority is the same as the expected authority. Notes: If the AE is compromised such that `authority` differs from `expected-authority`, then it seems reasonable that the compromised AE would supply an attack TE who changes `authorized-by` value to be the attack AE making the consistency check meaningless.\r\n\r\n3. `authorized-by` is included in an Evidence addition. Semantics: `authorized-by` identifies the RVP that is supposed to supply the reference values. The `authorized-by` value is saved to a new field in the ACS ECT (`expected-rvp`). The Verifier processes RVP `condition-addition` statements and adds the ECT with an additional check that the `expected-rvp` field in the evidence ECT matches the `authority` field of the to-be-added RV ECT. Notes: If the `expected-rvp` is not in the Verifier's TA list, this could be a risk of privilege escalation. If a second RVP adds the same ECT under the second RVP authority, but it is not named by `expected-rvp`, then Verifier will not match on the second RVP. I assume the Verifier will ignore the second RVPs addition. However, this seems controversial since the Attester is masking off Verifier TA policy.\r\n\r\n4. `authorized-by` is included in Reference Values. Semantics: As a condition, `authorized-by` is matching criteria that applies to Evidence. `authorized-by` matches an evidence ECT `authority` if `authorized-by` is a subset of `authority` field. The RV ECT is added with `authority` being set to the RVP key. Note: There is no way to query / match on `expected-rvp` or `expected-authority` if use cases (2) or (3) are valid.\r\n\r\n5. `authorized-by` is included in simple Endorsements. Semantics: As a condition, `authorized-by` is matching criteria applies to Evidence / RV / Endorsement(?) ECTs in the ACS. `authorized-by` is compared to the `authority` field in the ECT. If it is a subset of `authority` then it matches. The Endorsement `environment-map` and `[ + measurement-map ] contents are added to an ACS ECT where `authority` is the Endorser signing key. Notes: There is no way to describe an addition that incorporates authority without overloading `authorized-by` to mean both condition and addition. But if overloaded, the `addition` needs to be added to the ACS ECT. Maybe it has use case (6) semantics, in which case `authorized-by` as a delegation updates `ce-delegates`. This would be strange since the named delegate is already trusted by the verifier or `authorized-by` use as a `condition` would have failed.\r\n\r\n6. `authorized-by` is included in conditional endorsements in the `additions`. To indicated that another Endorser or RVP is authorized (delegated) to supply values for the `addition` claims. Semantics: The set of additions includes `authorized-by` values. These are added to the ECT using a new field `ce-delegates`. Notes: Since any entity can assert RV / Endorsement claims, the Verifier will add them to the ACS without delegation. This assumes the Verifier TA policy trusts the delegate entity. If the Verifier doesn't already trust the delegate, then this use case is a form of TA management where supplier A introduces supplier B to the Verifier. Upon seeing `ce-delegates` in an ECT, the Verifier updates its TA policy to include the delegate (but with restrictions described by the `addition` statement.) One of the challenges with delegation is rescinding delegations. It isn't clear from the triple, for how long the delegation is valid.\r\n\r\n7. `authorized-by` is included in a conditional series endorsement in the `condition` and in the `selection`. Since the series scope is tied to the `condition`, the `authorized-by` in `selection` appears to be redundant. If `authorized-by` appears in the `addition`, it could have the semantics of use case (6).  Notes: since this triple didn't have `authorized-by` semantics prior to #276 the existence of `authorized-by` in the `addition` is unexpectedly inherited. Hence, the Verifier should ignore `authorized-by` if it appears in `addition`.",
       "createdAt": "2024-09-27T17:18:42Z",
-      "updatedAt": "2024-09-27T20:17:30Z",
+      "updatedAt": "2024-10-09T15:55:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -6840,6 +6861,20 @@
           "body": "I think I disagree with use case (3) since the attester shouldn't declare who the only permitted RVPs are. That mixes attestation with authorization, which I don't think is what attesting technologies do.\r\n\r\nI don't quite understand (2) either, unless you're not requiring that evidence signature authorities are trusted by policy (configured trust anchors), and that the signatures of the evidence are valid before adding their measurements to the ACS.\r\n\r\nFor (5), I'm less inclined to support authorized-by for simple endorsements. If you really want to match just an environment and mkey without any measured values, then we should allow empty measurement-values-maps in the conditions of a confidential endorsement triple. If you want to say you cosign someone else's endorsements, that can be expressed as a reference-value-triple, since the measurements will be included in the condition.\r\n\r\n(6) I'm skeptical since it's too syntactically bound, when delegation can be much more policy-based. I would like to punt on this mechanic to a later version and disallow additions to have authorized-by until we see a compelling RFC.\r\n\r\n(7) authorized-by in both condition and selection is as redundant as having both a condition and a selection. There's reason to narrow authorities after a baseline condition is established. I don't think addition should have (6) semantics since I don't agree with (6).\r\n\r\nSo I would vote to keep use cases (1) and (4) and determine if we need to allow empty measurements in conditions. I'd need more discussion about (2).",
           "createdAt": "2024-09-27T20:17:29Z",
           "updatedAt": "2024-09-27T20:17:29Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Anybody else see value in use case (3)?",
+          "createdAt": "2024-10-09T00:38:29Z",
+          "updatedAt": "2024-10-09T00:38:29Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Consensus to work on use case 1.\r\n\r\nIf there is interest in working on other use cases (for example, use case 3) they will be dealt with in separate issues.\r\n\r\nwe need to determine if case 4 is already covered (and how).\r\n",
+          "createdAt": "2024-10-09T15:55:56Z",
+          "updatedAt": "2024-10-09T15:55:56Z"
         }
       ]
     },
@@ -7013,7 +7048,7 @@
       "labels": [],
       "body": "Normally, an RVP mints RVs that are applied to Evidence (only). The question is raised whether it is meaningful if an RVP could also mint RVs for Endorsements.\r\n\r\nNote: It is possible for an Endorser to endorse another Endorser's Claims using conditional endorsements so long as the `condition` expressions are permitted to use possible state expressions. \r\n\r\nThe current spec is silent. That is to say, the cmtype of the `condition` ECT is not specified.",
       "createdAt": "2024-10-03T17:20:50Z",
-      "updatedAt": "2024-10-04T01:39:02Z",
+      "updatedAt": "2024-10-09T00:35:23Z",
       "closedAt": null,
       "comments": [
         {
@@ -7022,6 +7057,20 @@
           "body": "If cosigning endorsements is always an endorsement, can we say that a conditional endorsement can have optional additions, such that the meaning is just to add the CoRIM issuer's authority to the condition environment/measurement as an endorsement cmtype, or is that too punny?",
           "createdAt": "2024-10-04T01:39:00Z",
           "updatedAt": "2024-10-04T01:39:00Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> can we say that a conditional endorsement can have optional additions, such that the meaning is just to add the CoRIM issuer's authority\r\n\r\nI believe all forms of endorsement triples allow this already. Even if the condition included `authorized-by` (used for matching). The addition wouldn't include the matched authority. Even if the addition included `authorized-by`, that would represent something else in the internal representation than `authority`. ",
+          "createdAt": "2024-10-09T00:06:47Z",
+          "updatedAt": "2024-10-09T00:06:47Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> environment/measurement as an endorsement cmtype\r\n\r\nMaybe I'm not following? The triple's predicate determines its cmtype. Otherwise, the cmtype is known to the Verifier as the various inputs are accepted and validated (phase 0 / 1), even if the inputs aren't expressed as CoMID triples. The output from processing an Endorsement triple is still an endorsement. This is true even when an endorsement condition searches over Evidence, corroborated RVs, or other Endorsements. \r\n\r\nThe question can be recast in terms for whether there is something like \"corroboration\" for Endorsements. Given the purpose of corroboration is to convert reference state into actual state, applying this to endorsements seems unnecessary since endorsements are defined to be actual state already. \r\n\r\nThe subtlety may be that for RVs, the totality of the inputs represents more Evidence states than are present in an ACS. While for Endorsement, the conditions describe a search space that is restricted to an Attester's actual states (even though the search may include corroborated RVs and other Endorsements).\r\n\r\nI think this means that for RV processing, there's an outer loop of RVs (reference states) that is applied to an inner loop that iterates over the ACS entries. ",
+          "createdAt": "2024-10-09T00:35:22Z",
+          "updatedAt": "2024-10-09T00:35:22Z"
         }
       ]
     },
@@ -7033,11 +7082,13 @@
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith"
+      ],
       "labels": [],
       "body": "The triple cddl allows mkey to be optional and multiple measurement-map entries to exist simultaneously. What should be Verifier behavior? There are two possibilities:\r\n\r\nOption (1) fall back to positional comparison where the record at position i of the `condition` relation is compared with the record at position i of the ACS ECT.\r\n\r\nOption (2) write normative text that bans multiplicity of measurement-map without mkey.\r\n\r\nI'm leaning toward option 1.",
       "createdAt": "2024-10-03T17:30:26Z",
-      "updatedAt": "2024-10-07T16:27:13Z",
+      "updatedAt": "2024-10-09T15:39:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -7116,6 +7167,135 @@
           "body": "> I'm not an expert in ARM's use of mkey. Based on how it has been described to me the extension point is more complex than a simple identifier / label. I don't know how \"TCB\" differs from \"environment\" or \"element\".\r\n\r\nIt is a _composite_ identifier - mirroring the mandatory information in the [`psa-software-component`](https://www.ietf.org/archive/id/draft-tschofenig-rats-psa-token-24.html#section-4.4.1) - but an identifier nonetheless.\r\n",
           "createdAt": "2024-10-07T16:27:11Z",
           "updatedAt": "2024-10-07T16:27:11Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Option 5 - Allow a single anonymous entry. Additional entries MUST supply mkey. The location in the various measurement-map entries in the array is not significant.",
+          "createdAt": "2024-10-08T23:56:44Z",
+          "updatedAt": "2024-10-08T23:57:27Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is there consensus for option 5?",
+          "createdAt": "2024-10-08T23:58:46Z",
+          "updatedAt": "2024-10-08T23:58:46Z"
+        },
+        {
+          "author": "jraman567",
+          "authorAssociation": "NONE",
+          "body": "Option 6 - Allow a single anonymous entry (for backward compatibility), which MUST be the first element. Additional entries MUST supply mkey. The location in the various measurement-map entries in the array is not significant, but the evidence MUST contain ALL the elements in the endorsement.",
+          "createdAt": "2024-10-09T15:27:29Z",
+          "updatedAt": "2024-10-09T15:30:07Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "recording rough consensus on option 5.",
+          "createdAt": "2024-10-09T15:38:59Z",
+          "updatedAt": "2024-10-09T15:38:59Z"
+        }
+      ]
+    },
+    {
+      "number": 310,
+      "id": "I_kwDOH6-tI86Zb5F_",
+      "title": "Better Initial description for the Triples Description",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "            PR #299 attempts to make the Triple Definition and explination tied highly to Internal Verifier Actions which are strictly not required.\r\n\r\nA Triple should explain:\r\n\r\n1. What it is used for, i.e purpose?\r\n2. What the elements in the triple imply\r\n3.  Finally optional text to indicate, how internally it can be internally used for.\r\nThe new text seems to do 3. right at the start, which can be daunting for a new reader.\r\n\r\nThe risk is that New comers will STOP using CoRIM on a first read and will not be inclined to read the specification fully!       ",
+      "createdAt": "2024-10-08T21:15:27Z",
+      "updatedAt": "2024-10-08T21:15:27Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 311,
+      "id": "I_kwDOH6-tI86Zjxj_",
+      "title": "Evidence internal representation is not the target of Evidence tranformation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/311",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We describe the internal representation of evidence as an `ae` relation, but the transformation in phase 1 uses the `ev` relation.",
+      "createdAt": "2024-10-09T15:39:37Z",
+      "updatedAt": "2024-10-09T15:46:09Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To be clear, I think we don't need `ae`, but stylistically I think Ned preferred to separate them. This is just a gap in the explanation.",
+          "createdAt": "2024-10-09T15:46:07Z",
+          "updatedAt": "2024-10-09T15:46:07Z"
+        }
+      ]
+    },
+    {
+      "number": 312,
+      "id": "I_kwDOH6-tI86ZkGfr",
+      "title": "Allow `mkey`s to be `tstr`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/312",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "@jraman567 has a use case that needs this.\r\n\r\nAn alternative would be for Jag's profile to extend `$measured-element-type-choice`, but it seems that `tstr` would be common enough to deserve being brought into the base schema.",
+      "createdAt": "2024-10-09T16:15:02Z",
+      "updatedAt": "2024-10-09T16:15:02Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 314,
+      "id": "I_kwDOH6-tI86Zkv0l",
+      "title": "Attest-key-triple validation needed for ae construction?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/314",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "If we're dropping the need for RVPs to specify the attester authority, we ought to mention in Phase 1 that Evidence can only be transformed an ECT about environment E only if the evidence was signed by a key bound to E with an attest-key-triple, no? It probably works differently for SPDM since the measurement is over an authenticated channel rather than signed, but unfortunately that detail is missing from the TCG document https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf",
+      "createdAt": "2024-10-09T17:42:10Z",
+      "updatedAt": "2024-10-10T00:43:11Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> we ought to mention in Phase 1 that Evidence can only be transformed an ECT about environment E only if the evidence was signed by a key bound to E with an attest-key-triple, no?\r\n\r\nThis might be too constraining since it is reasonable for an Attester to disclose the existence of a key without it being used. For example, an HSM could have several keys that are protected by the HSM but doesn't use all of them when producing Evidence.\r\nThe RIM author can decide when it is appropriate to supply attest key triples. That decision likely make sense for attestation keys that are used to sign evidence, but if a key isn't used, the spec should not compel them to supply an attest key triple (nor should it compel them to use it even if a key is used). The spec expects the verifier will verify keys that are used in the generation of evidence already, so it's the cases when a key isn't used to sign a Verifier input / Evidence, but may be used some other time, that attest key triple and identity key triple comes into play.",
+          "createdAt": "2024-10-09T18:05:21Z",
+          "updatedAt": "2024-10-09T18:05:21Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It probably works differently for SPDM since the measurement is over an authenticated channel rather than signed\r\n\r\nSPDM defines something called a \"transcript\" which is something like a signed block that can be taken out of the channel context to be used to verify the integrity of offline measurements. They could be forwarded to a proxy to verify etc. This seems a bit like an IETF \"token\" but the spec isn't written that way.",
+          "createdAt": "2024-10-09T18:09:23Z",
+          "updatedAt": "2024-10-09T18:09:23Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> but unfortunately, that detail is missing from the TCG document \r\n\r\nThe TCG binding spec anticipates that a transcript can be used.\r\nThe spec doesn't preclude use of a token or a detached signature (e.g., EAT) as the `spdm-toc-map` is extensible.",
+          "createdAt": "2024-10-09T18:16:31Z",
+          "updatedAt": "2024-10-09T18:16:31Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do we have any plan for normative language about attest-key-triple and how its use is meant to bind an evidence-signing key to an environment?",
+          "createdAt": "2024-10-10T00:42:45Z",
+          "updatedAt": "2024-10-10T00:43:11Z"
         }
       ]
     }
@@ -42080,7 +42260,7 @@
       "id": "PR_kwDOH6-tI859ahuB",
       "title": "Conditional endorsement transformations",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/299",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -42089,17 +42269,19 @@
       "labels": [],
       "body": "Addresses issues #285 and #297.\r\nResolution of issue #303 may impact sections touched by this PR.",
       "createdAt": "2024-10-02T18:42:27Z",
-      "updatedAt": "2024-10-07T19:27:24Z",
+      "updatedAt": "2024-10-09T14:10:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d9eb620c2eb5522d28a674cf4e7b53edea5e23ae",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "Cond-End-Trans-text",
-      "headRefOid": "9f92c0928786f950163aadab05378e3e3f175a90",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "38d27775e00b8736f2aa66cc5aa30589d4ab5601",
+      "closedAt": "2024-10-09T14:09:58Z",
+      "mergedAt": "2024-10-09T14:09:58Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "3c9f80e8246af5661981e1b8e1a511403cbd7585"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -42107,6 +42289,13 @@
           "body": "I believe all the open issues have been addressed or dispositioned to an issue (and tracked using issue tracker annotations). \r\n\r\nOK to merge?",
           "createdAt": "2024-10-04T23:20:11Z",
           "updatedAt": "2024-10-04T23:20:11Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Commit https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/299/commits/50b232a281e865fa0c0e7949175c3e1dab28a28e aims to address blocking issues.",
+          "createdAt": "2024-10-08T19:24:25Z",
+          "updatedAt": "2024-10-08T19:24:25Z"
         }
       ],
       "reviews": [
@@ -42797,6 +42986,331 @@
               "updatedAt": "2024-10-07T19:27:24Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MTCoq",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T08:36:03Z",
+          "updatedAt": "2024-10-08T08:36:03Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "I think we should not shy away from the mechanics here, i.e., linking triples and ACS, because it is necessary for the reader to understand the connection between the two. However, it makes sense to transition from abstract to practical in a smoother way.",
+              "createdAt": "2024-10-08T08:36:03Z",
+              "updatedAt": "2024-10-08T08:36:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MTPAO",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T08:52:56Z",
+          "updatedAt": "2024-10-08T08:52:57Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "@thomas-fossati : I tend to dis-agree: I see the clear distinction as below:\r\n\r\nTriple should describe what it is meant for : For Ref Triple, used to convey Ref values\r\nfor the Env in subject with Reference Measurements/claims in the object. These measurements are used by Verifier to match against the same measurements as received from Attester in Evidence. One possible way of converting these measurements internally and matching logics are described in section : XYZ:\r\n\r\n_In another section (XYZ outside this section)_ \r\nHow a potential one use of the triple by converting into a representation best use for matching is where ACS comes into picture!",
+              "createdAt": "2024-10-08T08:52:57Z",
+              "updatedAt": "2024-10-08T08:52:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MTQjZ",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T08:55:31Z",
+          "updatedAt": "2024-10-08T08:55:31Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "> Is it more clear to say: \"Search criteria that targets Attester state.\"\r\n\r\nYes, at high level, it is fine to say something about matching with Attester Evidence claims ",
+              "createdAt": "2024-10-08T08:55:31Z",
+              "updatedAt": "2024-10-08T08:55:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXogc",
+          "commit": {
+            "abbreviatedOid": "9f92c09"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T16:31:04Z",
+          "updatedAt": "2024-10-08T16:31:04Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Would this be still correct?\r\n```suggestion\r\n* `ref-env`: Search criteria that select certain Evidence Claims in the ACS.\r\n```",
+              "createdAt": "2024-10-08T16:31:04Z",
+              "updatedAt": "2024-10-08T16:31:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZGbu",
+          "commit": {
+            "abbreviatedOid": "50b232a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T19:46:27Z",
+          "updatedAt": "2024-10-08T19:46:28Z",
+          "comments": [
+            {
+              "originalPosition": 404,
+              "body": "```suggestion\r\n: {{sec-sec}} of {{&SELF}}\r\n```",
+              "createdAt": "2024-10-08T19:46:28Z",
+              "updatedAt": "2024-10-08T19:46:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZKUv",
+          "commit": {
+            "abbreviatedOid": "50b232a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T19:55:53Z",
+          "updatedAt": "2024-10-08T19:55:53Z",
+          "comments": [
+            {
+              "originalPosition": 397,
+              "body": "This line can be removed.  The section is still empty, it's unclear what this text refers to.\r\n\r\n```suggestion\r\n```",
+              "createdAt": "2024-10-08T19:55:53Z",
+              "updatedAt": "2024-10-08T19:55:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZNE8",
+          "commit": {
+            "abbreviatedOid": "06b4b39"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T20:02:18Z",
+          "updatedAt": "2024-10-08T20:02:18Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "envidence [etc] _environment_, if we want to keep this consistent with RVT above",
+              "createdAt": "2024-10-08T20:02:18Z",
+              "updatedAt": "2024-10-08T20:02:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZgzl",
+          "commit": {
+            "abbreviatedOid": "06b4b39"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T20:44:08Z",
+          "updatedAt": "2024-10-08T20:44:08Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "> envidence [etc] _environment_, if we want to keep this consistent with RVT above\r\n\r\nAddressed by commit https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/299/commits/31bc933253de02567f3c9dc184771be189436f6e",
+              "createdAt": "2024-10-08T20:44:08Z",
+              "updatedAt": "2024-10-08T20:44:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZpnw",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:04:25Z",
+          "updatedAt": "2024-10-08T21:04:25Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Much better text than earlier, however I would add your text on top of the old text purely for simplicity and logical enhancement. I suggest please re-consider this way.",
+              "createdAt": "2024-10-08T21:04:25Z",
+              "updatedAt": "2024-10-08T21:04:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZqi1",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:06:46Z",
+          "updatedAt": "2024-10-08T21:06:46Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nA Reference Values triple relates reference measurements to a Target\r\nEnvironment. For Reference Value Claims, the subject identifies a Target\r\nEnvironment, i.e ref-env, the object contains measurements, i.e. ref-claims, and the predicate asserts that\r\nthese are the expected (i.e., reference) measurements for the Target Environment.\r\n\r\nWithin a Verifier, they are used as under:\r\n\r\n`ref-env`: Search criterion to locate an Evidence environment that matches the reference environment.\r\n* `ref-claims`: Search criteria to locate the Evidence measurements that match the reference Claims.\r\n\r\nTo process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.\r\nIf the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.\r\nBy re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).\r\nSee {{-rats-endorsements}}.\r\nRe-asserted Evidence using RVP authority is said to be \"corroborated\".\r\n\r\n```",
+              "createdAt": "2024-10-08T21:06:46Z",
+              "updatedAt": "2024-10-08T21:06:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZq1O",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See my slightly simple expression of logical connectivity.!",
+          "createdAt": "2024-10-08T21:07:33Z",
+          "updatedAt": "2024-10-08T21:07:33Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZrs3",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:10:01Z",
+          "updatedAt": "2024-10-08T21:10:01Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n\r\nThe `endorsed-triple-record` conveys additional Endorsements claims for a Target Environment   to a Verifier.\r\n\r\nThe `endorsed-triple-record` has the following parameters:\r\n```",
+              "createdAt": "2024-10-08T21:10:01Z",
+              "updatedAt": "2024-10-08T21:10:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZsYH",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! Still a lot of work needs to be done to explain the Triples in a\r\n\r\n1. Simple and Logical Language.\r\n2. Do not want to block the pull request hence approving it for a possible merge tomorrow!\r\n",
+          "createdAt": "2024-10-08T21:11:55Z",
+          "updatedAt": "2024-10-08T21:11:55Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZt9x",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:16:25Z",
+          "updatedAt": "2024-10-08T21:16:25Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "Raised issue #310 to address the issue and concerns I have!",
+              "createdAt": "2024-10-08T21:16:25Z",
+              "updatedAt": "2024-10-08T21:16:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZuD4",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:16:42Z",
+          "updatedAt": "2024-10-08T21:16:42Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Raised issue #310 to address the concern I have!",
+              "createdAt": "2024-10-08T21:16:42Z",
+              "updatedAt": "2024-10-08T21:16:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZuQH",
+          "commit": {
+            "abbreviatedOid": "872c2c6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Issue #310 raised to address my concerns, hence now un-blocking the PR",
+          "createdAt": "2024-10-08T21:17:18Z",
+          "updatedAt": "2024-10-08T21:17:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MgUty",
+          "commit": {
+            "abbreviatedOid": "38d2777"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-09T14:09:19Z",
+          "updatedAt": "2024-10-09T14:09:19Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MgU2G",
+          "commit": {
+            "abbreviatedOid": "38d2777"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-09T14:09:30Z",
+          "updatedAt": "2024-10-09T14:09:30Z",
+          "comments": []
         }
       ]
     },
@@ -43238,13 +43752,13 @@
       "labels": [],
       "body": "Closes Issue#242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2024-10-08T01:01:16Z",
+      "updatedAt": "2024-10-09T15:12:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "quant",
-      "headRefOid": "bc4209a8d6ac9a3863963cf057f7f9bc871e6af5",
+      "headRefOid": "b4c03dc3d031f2f42f150e6b2ceb10983fade624",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -43942,6 +44456,84 @@
               "updatedAt": "2024-10-08T01:01:16Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MS3dY",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T08:19:50Z",
+          "updatedAt": "2024-10-08T08:19:51Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "> We've already said that certain decisions can be make by policy. Are those decisions made strictly after phase 4?\r\n\r\nyes\r\n\r\n> If we can say phases 2, 3, and 4 must be deterministic without imposing policy burden by the way we define semantics, then I'd certainly like to make that declaration.\r\n\r\n\ud83d\udc4d \r\n\r\n> I don't think profiles would be introducing randomized behavior. Non-deterministic isn't necessarily random. You can have \"the same\" outcome by means of equivalence but not syntactic equality. When we're talking about ACS construction we're making representation choices that may be more conducive to equal outputs than something that uses, say, hash maps or algebraic constructions that represent \"the same object\" in multiple ways.\r\n\r\nGot it.  Then:\r\n\r\n> _\"profiles MUST NOT introduce non-deterministic behaviour.\"_\r\n",
+              "createdAt": "2024-10-08T08:19:50Z",
+              "updatedAt": "2024-10-08T08:19:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZr-O",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:10:47Z",
+          "updatedAt": "2024-10-08T22:14:12Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "> > We've already said that certain decisions can be make by policy. Are those decisions made strictly after phase 4?\r\n> \r\n> yes\r\n\r\nRegardless of which phase is active, phase 0 is described as collecting all the inputs. This includes policies IMO. That is how we assert consistent behavior resulting in an ACS that is the same for different Verifiers.",
+              "createdAt": "2024-10-08T21:10:47Z",
+              "updatedAt": "2024-10-08T22:14:12Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "> ... the conclusion I draw from this is that we should clearly say: _\"profiles MUST NOT introduce randomized behaviour.\"_\r\n\r\nI agree. It also extends to policies. They can't introduce randomized behavior either. Otherwise, different Verifiers will get different ACS results.",
+              "createdAt": "2024-10-08T21:12:34Z",
+              "updatedAt": "2024-10-08T22:14:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MaCAL",
+          "commit": {
+            "abbreviatedOid": "bc4209a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T22:15:04Z",
+          "updatedAt": "2024-10-08T23:18:31Z",
+          "comments": [
+            {
+              "originalPosition": 97,
+              "body": "A diagram like this would be helpful IMO.",
+              "createdAt": "2024-10-08T22:15:04Z",
+              "updatedAt": "2024-10-08T23:18:31Z"
+            },
+            {
+              "originalPosition": 120,
+              "body": "Shouldn't this reflect the previous text for phase 1 where all inputs are resolved including coboms? This should be when activation happens so that the set of inputs is deterministically known before progressing to phase 2.",
+              "createdAt": "2024-10-08T22:35:22Z",
+              "updatedAt": "2024-10-08T23:18:31Z"
+            },
+            {
+              "originalPosition": 175,
+              "body": "> Fully determined inputs SHOULD ensure consistent ACS construction when accounting for any profile-driven semantics.\r\n\r\n```suggestion\r\nGiven the same Appraisal Context, different Verifier appraisals MUST produce deterministic results.\r\n\r\nVerifier inputs are locked (see Phase 0) before Attestation Appraisal to ensure ACS construction is deterministic.\r\n```\r\nText above addresses the question of profile or policy inputs rendering non-deterministic ACS results.",
+              "createdAt": "2024-10-08T23:18:26Z",
+              "updatedAt": "2024-10-08T23:20:29Z"
+            }
+          ]
         }
       ]
     },
@@ -43954,21 +44546,45 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "not yet ready for review"
+      ],
       "body": "The svn comparison text states that an svn must be a uint, which it isn't. It also accounts for untagged uint as a possible value, which it isn't.\r\n\r\nAdd a section about version-map comparison requiring equality comparison only. We aren't expanding the notion of version-map to have $version-scheme-specific comparison algorithms.",
       "createdAt": "2024-10-04T20:26:20Z",
-      "updatedAt": "2024-10-04T20:26:21Z",
+      "updatedAt": "2024-10-09T14:33:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "a4baa72f54be439ded2f4e9e7492cbde027a697c",
+      "baseRefOid": "3c9f80e8246af5661981e1b8e1a511403cbd7585",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "version",
-      "headRefOid": "02f363a4ef2bd10c351c818c917fd90982f93cce",
+      "headRefOid": "666902210c143bfc0cc235b5c0df21ebdf512a16",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The svn comparison text states that an svn must be a uint\r\n\r\nI think the text intends to say that the comparison applies to the svn value after the tagging is stripped away. That would mean the comparison applies to the uint part.",
+          "createdAt": "2024-10-08T23:42:01Z",
+          "updatedAt": "2024-10-08T23:42:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It also accounts for untagged uint as a possible value, which it isn't.\r\n\r\nTo support different Evidence formats, it is anticipated that the CBOR tagging may not be supplied. It may be that the verifier comparison algorithm is given an untagged uint. It seems quite reasonable to support this.",
+          "createdAt": "2024-10-08T23:44:44Z",
+          "updatedAt": "2024-10-08T23:44:44Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There should be also a subsection for min-svn alongside svn.\r\n\r\nBesides, is min-svn endorseable?  Or is it only meaningful on the ref-val side since it's \"fuzzy\"?",
+          "createdAt": "2024-10-09T14:18:23Z",
+          "updatedAt": "2024-10-09T14:30:30Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -43976,26 +44592,914 @@
       "id": "PR_kwDOH6-tI8593m3P",
       "title": "first stab at a security considerations section",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/309",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Privacy considerations are still TODO\r\n\r\nPartially address #11",
       "createdAt": "2024-10-07T21:18:05Z",
-      "updatedAt": "2024-10-07T21:18:32Z",
+      "updatedAt": "2024-10-09T15:12:09Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d9eb620c2eb5522d28a674cf4e7b53edea5e23ae",
+      "baseRefOid": "3c9f80e8246af5661981e1b8e1a511403cbd7585",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "sec-cons",
-      "headRefOid": "b59520af3040992452809db25b95f32c04788aa6",
+      "headRefOid": "24ce86229e23687193abc1b22fc25f8076018350",
+      "closedAt": "2024-10-09T15:12:01Z",
+      "mergedAt": "2024-10-09T15:12:01Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "82d7263e7c389f2902a0488336ff4e183c37be10"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86MUNBf",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T10:43:23Z",
+          "updatedAt": "2024-10-08T10:43:24Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nThe Verifier is effectively part of the Attesters' and Relying Parties' Trusted Computing Base (TCB).\r\n```",
+              "createdAt": "2024-10-08T10:43:24Z",
+              "updatedAt": "2024-10-08T10:43:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUN7Q",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T10:45:17Z",
+          "updatedAt": "2024-10-08T10:45:17Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\n- Minimizing the attack surface by avoiding unnecessary features that could be exploited by attackers;\r\n```",
+              "createdAt": "2024-10-08T10:45:17Z",
+              "updatedAt": "2024-10-08T10:45:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUPqI",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T10:48:51Z",
+          "updatedAt": "2024-10-08T10:48:51Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "This section is quite good, however I would certainly highlight the importance of the secrecy of the private key material used to sign the `Attestation Results` originating from a Verifier, as a fundamental item to be highlighted here.",
+              "createdAt": "2024-10-08T10:48:51Z",
+              "updatedAt": "2024-10-08T10:48:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUQKS",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T10:49:55Z",
+          "updatedAt": "2024-10-08T10:49:55Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nThe integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in a Trusted Execution Environment (TEE).\r\n```",
+              "createdAt": "2024-10-08T10:49:55Z",
+              "updatedAt": "2024-10-08T10:49:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUQbV",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "This section has come along nicely, thanks for this! I have left few minor comments for you to have a look!",
+          "createdAt": "2024-10-08T10:50:28Z",
+          "updatedAt": "2024-10-08T10:50:28Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUTsc",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T10:56:50Z",
+          "updatedAt": "2024-10-08T10:56:51Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Just a thought, should we also add some sentences about the \"Attestability\" of Verifier code, in addition to Auditability?\r\nMeaning the code been executed by the Verifier should be attestable, with a policy driven periodicity to ensure the overall trustworthiness of the code base. How this is implemented, is beyond the scope of this section!",
+              "createdAt": "2024-10-08T10:56:51Z",
+              "updatedAt": "2024-10-08T10:56:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUTzw",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see few more",
+          "createdAt": "2024-10-08T10:57:03Z",
+          "updatedAt": "2024-10-08T10:57:03Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUU-1",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T10:59:23Z",
+          "updatedAt": "2024-10-08T10:59:23Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "no, CoRIM doesn't deal with ARs",
+              "createdAt": "2024-10-08T10:59:23Z",
+              "updatedAt": "2024-10-08T10:59:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUVjy",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:00:29Z",
+          "updatedAt": "2024-10-08T11:00:29Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I don't think capitalisation is required.  See for example https://en.wikipedia.org/wiki/Trusted_computing_base",
+              "createdAt": "2024-10-08T11:00:29Z",
+              "updatedAt": "2024-10-08T11:00:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUV6-",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:01:11Z",
+          "updatedAt": "2024-10-08T11:01:11Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I thought we were also explaining the auditability of the Verifier code here?",
+              "createdAt": "2024-10-08T11:01:11Z",
+              "updatedAt": "2024-10-08T11:01:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUWEK",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:01:27Z",
+          "updatedAt": "2024-10-08T11:01:27Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "`The appraisal process should be auditable, reproducible, and transparent.`",
+              "createdAt": "2024-10-08T11:01:27Z",
+              "updatedAt": "2024-10-08T11:01:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUWoB",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:02:35Z",
+          "updatedAt": "2024-10-08T11:02:35Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "sure, we could say:\r\n\r\n> _\"attestable trusted exececution environment (TEE)\"_",
+              "createdAt": "2024-10-08T11:02:35Z",
+              "updatedAt": "2024-10-08T11:02:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUXZw",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:03:45Z",
+          "updatedAt": "2024-10-08T11:03:45Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Yes, strictly not required, but see how it renders nicely: https://confidentialcomputing.io/about/",
+              "createdAt": "2024-10-08T11:03:45Z",
+              "updatedAt": "2024-10-08T11:03:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUYOy",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:05:24Z",
+          "updatedAt": "2024-10-08T11:05:24Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Yes, that should be enough I guess, which implies the Environment is attestable!",
+              "createdAt": "2024-10-08T11:05:24Z",
+              "updatedAt": "2024-10-08T11:05:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUYul",
+          "commit": {
+            "abbreviatedOid": "da589ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:06:24Z",
+          "updatedAt": "2024-10-08T11:06:24Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "cool, done in [bcef629](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/309/commits/bcef629268c5ac28b86bff151993ce0a08e28bf6)",
+              "createdAt": "2024-10-08T11:06:24Z",
+              "updatedAt": "2024-10-08T11:06:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUZPU",
+          "commit": {
+            "abbreviatedOid": "bcef629"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! First iteration is coming along well..",
+          "createdAt": "2024-10-08T11:07:18Z",
+          "updatedAt": "2024-10-08T11:07:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUaXK",
+          "commit": {
+            "abbreviatedOid": "bcef629"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:08:55Z",
+          "updatedAt": "2024-10-08T11:08:55Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nRefer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.\r\n```",
+              "createdAt": "2024-10-08T11:08:55Z",
+              "updatedAt": "2024-10-08T11:08:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MUbEz",
+          "commit": {
+            "abbreviatedOid": "9d786d8"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T11:09:48Z",
+          "updatedAt": "2024-10-08T11:09:48Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nRefer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.\r\n\r\n[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11\r\n```",
+              "createdAt": "2024-10-08T11:09:48Z",
+              "updatedAt": "2024-10-08T11:09:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MQdTV",
+          "commit": {
+            "abbreviatedOid": "0e29193"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-07T23:50:37Z",
+          "updatedAt": "2024-10-08T15:01:50Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nFor instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.\r\n```",
+              "createdAt": "2024-10-07T23:50:37Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "I think your non-bullet point item below this list ought to be referenced as its own section of relevant system security principles to follow.",
+              "createdAt": "2024-10-08T00:03:34Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\n- Failing securely in the event of errors to avoid compromising the security of the system.\r\n```\r\nThe \"fail safe\" vs \"fail secure\" wording is nearly always in stark contrast to each other in security texts.",
+              "createdAt": "2024-10-08T00:06:19Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            },
+            {
+              "originalPosition": 23,
+              "body": "This section of text is still a list, but it's more to do with the system security bullet above. Should this be its own subsection?\r\n\r\nYour use of \"transparent\" is not elaborated upon. Sometimes \"transparent\" means that people don't notice it's there. Sometimes \"transparent\" means there's a window into the inner workings instead of a wall. Sometimes \"transparent\" means that every important action is published on a public append-only log.\r\n\r\nI'm guessing that you mean that the Verifier attests to itself as a background check model to RPs while implementing the passport model for other attesters, and that the attestation is meaningfully traced to sources that can be audited and re-built to reconstruct the measurements.",
+              "createdAt": "2024-10-08T00:09:19Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\nThis includes key material used to sign Attestation Results, key material carried in attestation key triples, and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).\r\n```",
+              "createdAt": "2024-10-08T00:11:36Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            },
+            {
+              "originalPosition": 31,
+              "body": "Please describe what you mean by \"These links\" and what \"deep\" means.\r\n\r\nIs \"link\" referring to the secure channel, or is it talking about a link in your supply chain? \r\n\r\nI see that \"possibly terminated in the appraisal session\" is indicative that you mean that your channels should be terminated at a controlled point in the operator's system, that the point should be close to or ideally inside the appraisal process. Yes?\r\n\r\nWhen you talk about suppliers and links, and going deep, I think more about the \"intermediaries\" you describe next.",
+              "createdAt": "2024-10-08T00:25:09Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            },
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nMinimize the use of intermediaries: each intermediary becomes another party that needs to be trusted and needs to be factored in the relying parties' TCBs.\r\n```\r\nIntermediaries of what? What counts as an intermediary? I can use cryptographic methods to ensure integrity over untrusted channels.\r\nAre you talking about people operating your Verifier? Implementing it? Sourcing its data?\r\nI'm sure the answer is all of the above, but the number is going to be big. Is there something we can suggest to help tame the chaos of supply chains?",
+              "createdAt": "2024-10-08T00:51:42Z",
+              "updatedAt": "2024-10-08T15:01:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MW0fW",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:04:58Z",
+          "updatedAt": "2024-10-08T15:04:58Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "ARs are not relevant to CoRIM.",
+              "createdAt": "2024-10-08T15:04:58Z",
+              "updatedAt": "2024-10-08T15:04:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MW2-K",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:08:49Z",
+          "updatedAt": "2024-10-08T15:08:49Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "ARs are explicitly described in the document and accounted for in phase 7. I think we can make this statement.",
+              "createdAt": "2024-10-08T15:08:49Z",
+              "updatedAt": "2024-10-08T15:08:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MW8ko",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:17:40Z",
+          "updatedAt": "2024-10-08T15:17:41Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I agree with @deeglaze ",
+              "createdAt": "2024-10-08T15:17:41Z",
+              "updatedAt": "2024-10-08T15:17:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXM00",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:44:08Z",
+          "updatedAt": "2024-10-08T15:44:08Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "> ARs are explicitly described in the document and accounted for in phase 7.\r\n\r\nThat's Phase 7 of _Verifier_ appraisal. The CoRIM processor boundaries do not include ARs assembly nor their signing.",
+              "createdAt": "2024-10-08T15:44:08Z",
+              "updatedAt": "2024-10-08T15:44:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXN1P",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:45:51Z",
+          "updatedAt": "2024-10-08T15:45:51Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Is there a usable reference for this (e.g., some NIST thing)?  If so, we could replace $this with a pointer to $that.",
+              "createdAt": "2024-10-08T15:45:51Z",
+              "updatedAt": "2024-10-08T15:45:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXOPt",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:46:35Z",
+          "updatedAt": "2024-10-08T15:46:35Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "I don't understand this comment.",
+              "createdAt": "2024-10-08T15:46:35Z",
+              "updatedAt": "2024-10-08T15:46:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXOi3",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:47:06Z",
+          "updatedAt": "2024-10-08T15:47:06Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "We have a huge section about a model of Verifier behavior. You have bullet points about implementing the verifier correctly. Do we want to explicitly separate the security discussion about CoRIM production and CoRIM consumption?",
+              "createdAt": "2024-10-08T15:47:06Z",
+              "updatedAt": "2024-10-08T15:47:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXO7A",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:47:45Z",
+          "updatedAt": "2024-10-08T15:47:46Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "I will remove \"transparent\"",
+              "createdAt": "2024-10-08T15:47:46Z",
+              "updatedAt": "2024-10-08T15:47:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXPWI",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:48:30Z",
+          "updatedAt": "2024-10-08T15:48:31Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "> Is \"link\" referring to the secure channel, or is it talking about a link in your supply chain?\r\n\r\nThe former.\r\n\r\n> I see that \"possibly terminated in the appraisal session\" is indicative that you mean that your channels should be terminated at a controlled point in the operator's system, that the point should be close to or ideally inside the appraisal process. Yes?\r\n\r\nyes.",
+              "createdAt": "2024-10-08T15:48:30Z",
+              "updatedAt": "2024-10-08T15:48:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXQyk",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:50:40Z",
+          "updatedAt": "2024-10-08T15:50:40Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "I mean a fail safe is a design to protect human life, which typically means being a fail open (don\u2019t trap people in a burning building) rather than fail closed, or fail secure (don\u2019t allow access to the key material room when the power goes out)",
+              "createdAt": "2024-10-08T15:50:40Z",
+              "updatedAt": "2024-10-08T15:50:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXUce",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T15:56:59Z",
+          "updatedAt": "2024-10-08T15:57:00Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "> Intermediaries of what? What counts as an intermediary?\r\n\r\nActors that somehow are part of the supply chain.\r\n\r\n> I can use cryptographic methods to ensure integrity over untrusted channels.\r\n\r\nSure, sometimes though the threat is not someone manipulating your data, but someone preventing you from seeing some data (e.g., a newly published vulnerability report), in which case cryptography is unhelpful.\r\n\r\n> Are you talking about people operating your Verifier? Implementing it?\r\n\r\nNo.\r\n\r\n> Sourcing its data?\r\n\r\nMaybe, depending on what \"sourcing\" exactly means.\r\n\r\nI am talking about external dependencies that for one reason or another you'd have to trust.\r\n\r\n> I'm sure the answer is all of the above, but the number is going to be big. Is there something we can suggest to help tame the chaos of supply chains?\r\n\r\nNot sure, apart from _\"Stay in your house and close all doors and windows!\"_ :rofl:\r\n",
+              "createdAt": "2024-10-08T15:56:59Z",
+              "updatedAt": "2024-10-08T15:57:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXXTx",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T16:01:49Z",
+          "updatedAt": "2024-10-08T16:01:49Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "These security considerations should be scoped to CoRIM (creation, ingestion and processing).  If something is missing in that scope (and I am sure there are lots of things we could and should add), let's add them.  Talking about the verifier in general is also ok as long as the intersection with CoRIM is non-zero.",
+              "createdAt": "2024-10-08T16:01:49Z",
+              "updatedAt": "2024-10-08T16:01:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MXYve",
+          "commit": {
+            "abbreviatedOid": "62d2c0b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T16:04:26Z",
+          "updatedAt": "2024-10-08T16:04:26Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nThe appraisal process should be auditable and reproducible.\r\n```",
+              "createdAt": "2024-10-08T16:04:26Z",
+              "updatedAt": "2024-10-08T16:04:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MYToC",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T18:02:55Z",
+          "updatedAt": "2024-10-08T18:02:56Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "Perhaps we should simply say\r\n\r\n```suggestion\r\nExample key management guidelines are {{?NIST SP 800-57}} and {{Annex A.10 of ISO/IEC 27001:2022}}\r\n```",
+              "createdAt": "2024-10-08T18:02:55Z",
+              "updatedAt": "2024-10-08T18:02:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MYWKD",
+          "commit": {
+            "abbreviatedOid": "b59520a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T18:08:19Z",
+          "updatedAt": "2024-10-08T18:08:19Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "CoRIM represents a form of improving supply chain security. Perhaps we can say, \"where possible, ensure your suppliers are following best practices (through SBOM and general security framework compliance) to make breaches of trust evident and thus more difficult\"",
+              "createdAt": "2024-10-08T18:08:19Z",
+              "updatedAt": "2024-10-08T18:08:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZk2h",
+          "commit": {
+            "abbreviatedOid": "2d0bc55"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T20:52:36Z",
+          "updatedAt": "2024-10-08T20:59:28Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nThe integrity of public and private key material and the secrecy of private key material must be ensured at all times.\r\n```",
+              "createdAt": "2024-10-08T20:52:36Z",
+              "updatedAt": "2024-10-08T20:59:28Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "Security considerations seem to be scoped toward Verifiers. But it may also apply to the entities that supply verifier inputs as well? The CoRIM draft primarily is a definition of a wire format that describes Endorsement and RV inputs to a Verifier. Nevertheless, whether describing security considerations from the perspective of Verifiers, Endorsers, or RVPs; the standard set of key management guidelines applies to all the roles (more precisely, to all the entities that implement one or more of the roles).",
+              "createdAt": "2024-10-08T20:59:20Z",
+              "updatedAt": "2024-10-08T20:59:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MZoaV",
+          "commit": {
+            "abbreviatedOid": "2d0bc55"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-08T21:01:18Z",
+          "updatedAt": "2024-10-08T21:01:24Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-10-08T21:01:18Z",
+              "updatedAt": "2024-10-08T21:01:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86MgpgU",
+          "commit": {
+            "abbreviatedOid": "2d0bc55"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-09T14:39:38Z",
+          "updatedAt": "2024-10-09T14:39:38Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "SOC type 2 audits, software component analysis against CVE databases (e.g., GUAC), SLSA for code handling",
+              "createdAt": "2024-10-09T14:39:38Z",
+              "updatedAt": "2024-10-09T14:39:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Mg2uu",
+          "commit": {
+            "abbreviatedOid": "24ce862"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-10-09T14:59:14Z",
+          "updatedAt": "2024-10-09T14:59:14Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 313,
+      "id": "PR_kwDOH6-tI85-G_dK",
+      "title": "Define raw public key",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/313",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Raw still needs an encoding. Taking this to mean the RawPublicKey encoding defined in TLS 1.3.",
+      "createdAt": "2024-10-09T17:11:17Z",
+      "updatedAt": "2024-10-09T18:58:10Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "82d7263e7c389f2902a0488336ff4e183c37be10",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "rawpk",
+      "headRefOid": "62994c84c0fb86c9a13b8b5f10a7018f393174bf",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's SubjectPublicKeyInfo from RFC5280.\r\n\r\nHaven't checked but we should have that defined somewhere already - I am pretty sure, because it's what we use for PSA/CCA",
+          "createdAt": "2024-10-09T18:25:15Z",
+          "updatedAt": "2024-10-09T18:25:15Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The corim spec and the TCG endorsement spec clarifies it as a PEM encoded SubjectPublicKeyInfo and points to Section 13 in RFC7468.",
+          "createdAt": "2024-10-09T18:27:48Z",
+          "updatedAt": "2024-10-09T18:27:48Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It would be helpful to file an issue before creating a PR so that there is opportunity to explore the problem a bit and to determine what/if a PR is needed.",
+          "createdAt": "2024-10-09T18:56:41Z",
+          "updatedAt": "2024-10-09T18:56:41Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86MjBEX",
+          "commit": {
+            "abbreviatedOid": "62994c8"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-09T18:52:01Z",
+          "updatedAt": "2024-10-09T18:58:10Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "This RFC doesn't define raw public key directly. Rather it defines: \r\n```\r\ncase RawPublicKey:\r\n              opaque ASN.1_subjectPublicKeyInfo<1..2^24-1>;\r\n```\r\nBut this seems to be referring to a TLS encoding of ASN.1 that is defined in RFC5280.\r\n\r\nThe key thumbprint refers to a digest of a raw key (as defined by `tagged-pkix-base64-key-type`) \r\nhttps://datatracker.ietf.org/doc/html/rfc7093 describes techniques for generating digests of SubjectPublicKeyInfo that is DER encoding. Since another PR added DER encoded key type. Possibly, it makes sense to define a thumbprint type that is the digest of the DER encoded SubjectPublicKeyInfo?\r\n\r\nI'm not aware of an RFC that defines a thumbprint for a PEM encoded SubjectPublicKeyInfo, but it may be sufficient for say that any digest algorithm can be applied to the PEM key. There isn't a need to reference anything as the output of a hash algorithm is bytes (bstr). \r\n\r\nSince, for the purposes of the Verifier, the comparison algorithm is to compare bytes (rather than to regenerate the digest using the clear-text input to a hash algorithm) there's little need to encode the algorithm.\r\n\r\nNote: `digests` encodes the alg-id for algorithm agility reasons.",
+              "createdAt": "2024-10-09T18:52:01Z",
+              "updatedAt": "2024-10-09T19:03:35Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 315,
+      "id": "PR_kwDOH6-tI85-JNWP",
+      "title": "Issue 303 fixes",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/315",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Addresses issue #303 consensus regarding anonymous mkey entries.",
+      "createdAt": "2024-10-10T00:17:54Z",
+      "updatedAt": "2024-10-10T00:33:32Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "82d7263e7c389f2902a0488336ff4e183c37be10",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "issue-303-fixes",
+      "headRefOid": "39325d565675ece1822387a2fcd254a1105352dc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86MlWY6",
+          "commit": {
+            "abbreviatedOid": "39325d5"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-10T00:33:32Z",
+          "updatedAt": "2024-10-10T00:33:32Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
