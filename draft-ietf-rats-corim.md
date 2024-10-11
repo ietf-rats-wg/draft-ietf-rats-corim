@@ -1758,7 +1758,7 @@ In Phase 1 the Verifier constructs an Appraisal Context that will serve as the s
 The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
 
 ~~~ cddl
-{::include cdd/intrep-actx.cddl}
+{::include cddl/intrep-actx.cddl}
 ~~~
 
 ### Input Collection {#sec-phase1-collect}
