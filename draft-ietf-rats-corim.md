@@ -1025,10 +1025,13 @@ A cryptographic key can be one of the following formats:
 * `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
   Defined in {{Section 7 of -cose}}.
 
+* `tagged-pkix-asn1der-cert-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
+  Defined in {{Section 4 of -pkix-cert}}.
+
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-thumbprint-type`: a `digest` of a raw public key. The digest value may
-  be used to find the public key if contained in a lookup table.
+* `tagged-thumbprint-type`: a `digest` of a raw public key.
+  The digest value may be used to find the public key if contained in a lookup table.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
   The digest value may be used to find the certificate if contained in a lookup table.
@@ -1036,8 +1039,7 @@ A cryptographic key digest can be one of the following formats:
 * `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
 
-* `tagged-pkix-asn1der-key-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
-  Defined in {{Section 4 of -pkix-cert}}.
+* `tagged-bytes`: a key identifier with no prescribed construction method.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
