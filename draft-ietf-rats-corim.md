@@ -104,7 +104,6 @@ informative:
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
-  I-D.ietf-rats-cobom: cobom
   SLSA: slsa
     title: Supply-chain Levels for Software Artifacts
     target: https://slsa.dev
