@@ -1821,7 +1821,7 @@ Unless otherwise specified by a profile that extends `$tag-rel-type-choice`, all
 
 #### Tag activation by CoBOM
 
-A tag's activity is determined by the flowchart in figure {#fig-tag-activity}
+A tag's activity is determined by the flowchart in figure {{#fig-tag-activity}}
 
 flowchart TD
     A[unknown] --> C{use_cobom}
