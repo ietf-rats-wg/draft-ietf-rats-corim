@@ -1119,7 +1119,8 @@ Table of Contents
    The following describes each member of the measurement-map:
 
    *  mkey (index 0): An optional measurement key.  Described in
-      Section 5.1.4.1.4.1.
+      Section 5.1.4.1.4.1.  A measurement-map without an mkey is said to
+      be anonymous.
 
    *  mval (index 1): The measurements associated with the environment.
       Described in Section 5.1.4.1.4.2.
@@ -1135,6 +1136,9 @@ Table of Contents
    initial types defined are OID, UUID, and uint. mkey may be necessary
    to disambiguate multiple measurements of the same type or to
    distinguish multiple measured elements within the same environment.
+   A single anonymous measurement-map is allowed within the same
+   environment.  Two or more measurement-map entries within the same
+   environment MUST populate mkey.
 
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
@@ -1567,8 +1571,8 @@ Table of Contents
    ]
 
    stateful-environment-record = [
-     environment-map,
-     [ + measurement-map ]
+     environment: environment-map,
+     claims-list: [ + measurement-map ]
    ]
 
    The conditional-endorsement-triple-record has the following
@@ -2587,50 +2591,58 @@ Table of Contents
    Step 2.  The cmtype of the addition ECT in the rv entry is set to
             reference-values.
 
-   Step 3.  The Reference Values Triple (Section 5.1.4.2) environment-
-            map is copied to the environment-map for both the rv
-            condition and rv addition ECTs.
+   Step 3.  The Reference Values Triple (RVT) (Section 5.1.4.2)
+            populates the rv ECTs.
 
-   Step 4.  For each measurement-map entry in the measurements list, the
-            i^th measurement-map is copied to the i^th element-map in
-            the element-list of the rv addition ECT.
+   i  RVT.ref-env
 
+      *copy*(environment-map, rv.condition.environment.environment-
+         map)
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/303
+      *copy*(environment-map, rv.addition.environment.environment-
+         map)
 
-   *  The issuer of the Endorsement conceptual message is copied to the
-      ev addition ECT authority field.
+   ii For each e in RVT.ref-claims:
 
-   *  If the Endorsement conceptual message has a profile, the profile
-      identifier is copied to the ev addition ECT profile field.
+      *copy*(e.measurement-map, rv.addition.element-list.element-map)
+
+   Step 4.  The signer of the Endorsement conceptual message is copied
+            to the rv.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile identifier is copied to the rv.addition.profile
+            field.
 
 8.3.3.3.  Endorsement Triples Transformations
 
-   Endorsement Triple Transformation :
+   Endorsed Values Triple Transformation :
 
    Step 1.  An ev entry (Section 8.2.1.3) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
 
-   Step 3.  The Endorsement Triple (Section 5.1.4.3) environment-map is
-            copied to the environment-map for both the ev condition and
-            ev addition ECTs.
+   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.4.3) populates
+            the ev ECTs.
 
-   Step 4.  For each measurement-map entry in the measurements list, the
-            i^th measurement-map entry is copied to the i^th entry in
-            the addition ECT element-map of the element-list.
+   i  EVT.condition
 
+      *copy*(environment-map, ev.condition.environment.environment-
+         map)
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/303
+      *copy*(environment-map, ev.addition.environment.environment-
+         map)
 
-   *  The issuer of the Endorsement conceptual message is copied to the
-      ev addition ECT authority field.
+   ii For each e in EVT.endorsement:
 
-   *  If the Endorsement conceptual message has a profile, the profile
-      is copied to the ev addition ECT profile field.
+      *copy*(e.endorsement.measurement-map, ev.addition.element-
+         list.element-map)
+
+   Step 4.  The signer of the Endorsement conceptual message is copied
+            to the ev.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
 
    Conditional Endorsement Triple Transformation :
 
@@ -2639,38 +2651,31 @@ Table of Contents
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
 
-   Step 3.  For each entry in the Conditional Endorsement Triple
-            (Section 5.1.4.4) conditions array, the stateful-
-            environment-record is copied to a condition ECT in the ev
-            entry.
+   Step 3.  Entries in the Conditional Endorsement Triple (CET)
+            (Section 5.1.4.4) conditions list are copied to a suitable
+            ECT in the internal representation.
 
-   Step 4.  For each measurement-map entry in the measurements list of
-            the stateful-environment-record, the i^th measurement-map
-            entry is copied to the i^th entry in the condition ECT
-            element-map of the element-list.
+   i  For each e in CET.conditions:
 
+      *copy*(e.stateful-environment-record.environment.environment-
+         map, ev.condition.environment.environment-map)
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/303
+      *copy*(e.stateful-environment-record.claims-list.measurement-
+         map, ev.condition.element-list.element-map)
 
-   *  For each entry in the Conditional Endorsement Triple endorsements
-      array, the endorsed-triple-record is copied to an addition ECT in
-      the ev entry.
+   ii For each e in CET.endorsements:
 
-   *  For each measurement-map entry in the measurements list of the
-      endorsed-triple-record, the i^th measurement-map entry is copied
-      to the i^th entry in the addition ECT element-map of the element-
-      list.
+      *copy*(e.endorsed-triple-record.condition.environment-map,
+         ev.addition.environment.environment-map)
 
+      *copy*(e.endorsed-triple-record.endorsement.measurement-map,
+         ev.addition.element-list.element-map)
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/303
+   Step 4.  The signer of the Conditional Endorsement conceptual message
+            is copied to the ev.addition.authority field.
 
-   *  The issuer of the Conditional Endorsement conceptual message is
-      copied to the ev addition ECT authority field.
-
-   *  If the Endorsement conceptual message has a profile, the profile
-      is copied to the ev addition ECT profile field.
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
 
    Conditional Endorsement Series Triple Transformation :
 
@@ -2679,35 +2684,37 @@ Table of Contents
    Step 2.  The cmtype of the evs entry's addition ECT is set to
             endorsements.
 
-   Step 3.  The stateful-environment-record from the Conditional
-            Endorsement Series Triple (Section 5.1.4.5) condition is
-            copied to the condition ECT in the evs entry.
+   Step 3.  Populate the evs ECTs using the Conditional Endorsement
+            Series Triple (CEST) (Section 5.1.4.5).
 
-   Step 4.  For each conditional-series-record in the series array, and
-            each evs series entry, the following steps are performed:
+   i.  CEST.condition:
 
-   Sub-step 1.  The i^th measurement-map in the selection is copied to
-                the i^th measurement-map in the evs selection ECT
-                element-map.
+      *copy*(stateful-environment-record.environment.environment-map,
+         evs.condition.environment.environment-map)
 
-   Sub-step 2.  The environment-map of the condition ECT is copied to
-                the i^th environment-map in the evs selection ECT
-                environment-map.
+      *copy*(stateful-environment-record.claims-list.measurement-map,
+         evs.condition.element-list.element-map)
 
-   Sub-step 3.  The i^th measurement-map in the addition is copied to
-                the i^th measurement-map in the evs addition ECT
-                element-map.
+   ii. For each e in CEST.series:
 
-   Sub-step 4.  The environment-map of the condition ECT is copied to
-                the i^th environment-map in the evs addition ECT
-                environment-map.
+      *copy*(evs.condition.environment.environment-map,
+         evs.series.selection.environment.environment-map)
 
-   Step 5.  The issuer of the Conditional Endorsement conceptual message
-            is copied to the evs series addition ECT authority field.
+      *copy*(e.conditional-series-
+         record.selection.measurement.measurement-map,
+         evs.series.selection.element-list.element-map)
 
-   Step 6.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the evs series addition ECT profile
-            field.
+      *copy*(evs.condition.environment.environment-map,
+         evs.series.addition.environment.environment-map)
+
+      *copy*(e.conditional-series-record.addition.measurement-map,
+         evs.series.addition.element-list.element-map)
+
+   Step 4.  The signer of the Conditional Endorsement conceptual message
+            is copied to the evs.series.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the evs.series.addition.profile field.
 
 8.3.3.4.  Evidence Tranformation
 
@@ -3076,10 +3083,6 @@ Table of Contents
 
    The order of the fields in each element-list field do not affect the
    result of the comparison.
-
-
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/303
 
    If any entry in the condition ECT element-list does not have a
    matching entry in the ACS entry element-list field then the element-
@@ -4188,8 +4191,8 @@ Appendix A.  Base CoRIM CDDL
    ]
 
    stateful-environment-record = [
-     environment-map,
-     [ + measurement-map ]
+     environment: environment-map,
+     claims-list: [ + measurement-map ]
    ]
 
    svn-type = uint
