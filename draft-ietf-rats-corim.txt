@@ -1404,6 +1404,9 @@ Table of Contents
    *  tagged-cose-key-type: CBOR encoded COSE_Key or COSE_KeySet.
       Defined in Section 7 of [STD96].
 
+   *  tagged-pkix-asn1der-cert-type: a bstr of ASN.1 DER encoded X.509
+      public key certificate.  Defined in Section 4 of [RFC5280].
+
    A cryptographic key digest can be one of the following formats:
 
    *  tagged-thumbprint-type: a digest of a raw public key.  The digest
@@ -1418,8 +1421,8 @@ Table of Contents
       path.  The digest value may be used to find the certificate path
       if contained in a lookup table.
 
-   *  tagged-pkix-asn1der-key-type: a bstr of ASN.1 DER encoded X.509
-      public key certificate.  Defined in Section 4 of [RFC5280].
+   *  tagged-bytes: a key identifier with no prescribed construction
+      method.
 
    $crypto-key-type-choice /= tagged-pkix-base64-key-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
@@ -1429,6 +1432,7 @@ Table of Contents
    $crypto-key-type-choice /= tagged-cert-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
    $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+   $crypto-key-type-choice /= tagged-bytes
 
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
@@ -4056,6 +4060,7 @@ Appendix A.  Base CoRIM CDDL
    $crypto-key-type-choice /= tagged-cert-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
    $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+   $crypto-key-type-choice /= tagged-bytes
 
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)

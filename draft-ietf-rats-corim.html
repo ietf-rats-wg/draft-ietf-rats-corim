@@ -3060,12 +3060,16 @@ the one preceding.<a href="#section-5.1.4.1.5-2.3.1" class="pilcrow">¶</a></p>
                   <p id="section-5.1.4.1.5-2.4.1"><code>tagged-cose-key-type</code>: CBOR encoded COSE_Key or COSE_KeySet.
 Defined in <span><a href="https://rfc-editor.org/rfc/rfc9052#section-7" class="relref">Section 7</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>.<a href="#section-5.1.4.1.5-2.4.1" class="pilcrow">¶</a></p>
 </li>
+                <li class="normal" id="section-5.1.4.1.5-2.5">
+                  <p id="section-5.1.4.1.5-2.5.1"><code>tagged-pkix-asn1der-cert-type</code>: a <code>bstr</code> of ASN.1 DER encoded X.509 public key certificate.
+Defined in <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4" class="relref">Section 4</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-5.1.4.1.5-2.5.1" class="pilcrow">¶</a></p>
+</li>
               </ul>
 <p id="section-5.1.4.1.5-3">A cryptographic key digest can be one of the following formats:<a href="#section-5.1.4.1.5-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.1.5-4.1">
-                  <p id="section-5.1.4.1.5-4.1.1"><code>tagged-thumbprint-type</code>: a <code>digest</code> of a raw public key. The digest value may
-be used to find the public key if contained in a lookup table.<a href="#section-5.1.4.1.5-4.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-5.1.4.1.5-4.1.1"><code>tagged-thumbprint-type</code>: a <code>digest</code> of a raw public key.
+The digest value may be used to find the public key if contained in a lookup table.<a href="#section-5.1.4.1.5-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.5-4.2">
                   <p id="section-5.1.4.1.5-4.2.1"><code>tagged-cert-thumbprint-type</code>: a <code>digest</code> of a certificate.
@@ -3076,8 +3080,7 @@ The digest value may be used to find the certificate if contained in a lookup ta
 The digest value may be used to find the certificate path if contained in a lookup table.<a href="#section-5.1.4.1.5-4.3.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.5-4.4">
-                  <p id="section-5.1.4.1.5-4.4.1"><code>tagged-pkix-asn1der-key-type</code>: a <code>bstr</code> of ASN.1 DER encoded X.509 public key certificate.
-Defined in <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4" class="relref">Section 4</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-5.1.4.1.5-4.4.1" class="pilcrow">¶</a></p>
+                  <p id="section-5.1.4.1.5-4.4.1"><code>tagged-bytes</code>: a key identifier with no prescribed construction method.<a href="#section-5.1.4.1.5-4.4.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.5-5">
@@ -3090,6 +3093,7 @@ $crypto-key-type-choice /= tagged-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
 $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+$crypto-key-type-choice /= tagged-bytes
 
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
@@ -6614,6 +6618,7 @@ $crypto-key-type-choice /= tagged-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
 $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+$crypto-key-type-choice /= tagged-bytes
 
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
