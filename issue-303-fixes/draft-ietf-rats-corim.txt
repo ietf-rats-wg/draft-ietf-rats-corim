@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 13 April 2025                                            Linaro
+Expires: 14 April 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         10 October 2024
+                                                         11 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 April 2025.
+   This Internet-Draft will expire on 14 April 2025.
 
 Copyright Notice
 
@@ -2590,46 +2590,58 @@ Table of Contents
    Step 2.  The cmtype of the addition ECT in the rv entry is set to
             reference-values.
 
-   Step 3.  The Reference Values Triple (Section 5.1.4.2) environment-
-            map is copied to the environment-map for both the rv
-            condition and rv addition ECTs.
+   Step 3.  The Reference Values Triple (RVT) (Section 5.1.4.2)
+            populates the rv ECTs.
 
-   Step 4.  For each entry in the ref-claims list, the measurement-map
-            is copied to the element-list element-map of the rv addition
-            ECT.
+   i  RVT.ref-env
 
+      *copy*(environment-map, rv.condition.environment.environment-
+         map)
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/303
+      *copy*(environment-map, rv.addition.environment.environment-
+         map)
 
-   *  The issuer of the Endorsement conceptual message is copied to the
-      ev addition ECT authority field.
+   ii For each e in RVT.ref-claims:
 
-   *  If the Endorsement conceptual message has a profile, the profile
-      identifier is copied to the ev addition ECT profile field.
+      *copy*(e.measurement-map, rv.addition.element-list.element-map)
+
+   Step 4.  The signer of the Endorsement conceptual message is copied
+            to the rv.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile identifier is copied to the rv.addition.profile
+            field.
 
 8.3.3.3.  Endorsement Triples Transformations
 
-   Endorsement Triple Transformation :
+   Endorsed Values Triple Transformation :
 
    Step 1.  An ev entry (Section 8.2.1.3) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
 
-   Step 3.  The Endorsement Triple (Section 5.1.4.3) environment-map is
-            copied to the environment-map for both the ev condition and
-            ev addition ECTs.
+   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.4.3) populates
+            the ev ECTs.
 
-   Step 4.  For each entry in the endorsement list, the measurement-map
-            is copied to an element-list element-map of the ev addition
-            ECTs.
+   i  EVT.condition
 
-   Step 5.  The issuer of the Endorsement conceptual message is copied
-            to the ev addition ECT authority field.
+      *copy*(environment-map, ev.condition.environment.environment-
+         map)
 
-   Step 6.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev addition ECT profile field.
+      *copy*(environment-map, ev.addition.environment.environment-
+         map)
+
+   ii For each e in EVT.endorsement:
+
+      *copy*(e.endorsement.measurement-map, ev.addition.element-
+         list.element-map)
+
+   Step 4.  The signer of the Endorsement conceptual message is copied
+            to the ev.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
 
    Conditional Endorsement Triple Transformation :
 
@@ -2638,25 +2650,31 @@ Table of Contents
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
 
-   Step 3.  For each entry in the Conditional Endorsement Triple
-            (Section 5.1.4.4) conditions list, the stateful-environment-
-            record environment is copied to the environment of the ev
-            condition ECT and the stateful-environment-record claims-
-            list entries are copied to the element-list of the ev
-            condition ECT.
+   Step 3.  Entries in the Conditional Endorsement Triple (CET)
+            (Section 5.1.4.4) conditions list are copied to a suitable
+            ECT in the internal representation.
 
-   Step 4.  For each entry in the Conditional Endorsement Triple
-            endorsements list, the endorsed-triple-record condition
-            environment-map is copied to the environment of the ev
-            addition ECT and the endorsed-triple-record endorsement list
-            entries are copied to the element-list entries of the ev
-            addition ECT.
+   i  For each e in CET.conditions:
 
-   Step 5.  The issuer of the Conditional Endorsement conceptual message
-            is copied to the ev addition ECT authority field.
+      *copy*(e.stateful-environment-record.environment.environment-
+         map, ev.condition.environment.environment-map)
 
-   Step 6.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev addition ECT profile field.
+      *copy*(e.stateful-environment-record.claims-list.measurement-
+         map, ev.condition.element-list.element-map)
+
+   ii For each e in CET.endorsements:
+
+      *copy*(e.endorsed-triple-record.condition.environment-map,
+         ev.addition.environment.environment-map)
+
+      *copy*(e.endorsed-triple-record.endorsement.measurement-map,
+         ev.addition.element-list.element-map)
+
+   Step 4.  The signer of the Conditional Endorsement conceptual message
+            is copied to the ev.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
 
    Conditional Endorsement Series Triple Transformation :
 
@@ -2665,31 +2683,37 @@ Table of Contents
    Step 2.  The cmtype of the evs entry's addition ECT is set to
             endorsements.
 
-   Step 3.  The stateful-environment-record from the Conditional
-            Endorsement Series Triple (Section 5.1.4.5) condition is
-            copied to the condition of an evs ECT.
+   Step 3.  Populate the evs ECTs using the Conditional Endorsement
+            Series Triple (CEST) (Section 5.1.4.5).
 
-   Step 4.  For each conditional-series-record in the series array, and
-            each evs series entry, the following steps are performed:
+   i.  CEST.condition:
 
-   Sub-step 1.  The conditional-series-record selection list is copied
-                to the element-list of the evs selection ECT `.
+      *copy*(stateful-environment-record.environment.environment-map,
+         evs.condition.environment.environment-map)
 
-   Sub-step 2.  The environment-map of the evs condition ECT is copied
-                to the environment-map of the evs selection ECT.
+      *copy*(stateful-environment-record.claims-list.measurement-map,
+         evs.condition.element-list.element-map)
 
-   Sub-step 3.  The conditional-series-record addition list is copied to
-                the element-list of the evs addition ECT.
+   ii. For each e in CEST.series:
 
-   Sub-step 4.  The environment-map of the evs condition ECT is copied
-                to the environment-map of the evs addition ECT.
+      *copy*(evs.condition.environment.environment-map,
+         evs.series.selection.environment.environment-map)
 
-   Step 5.  The issuer of the Conditional Endorsement conceptual message
-            is copied to the evs series addition ECT authority field.
+      *copy*(e.conditional-series-
+         record.selection.measurement.measurement-map,
+         evs.series.selection.element-list.element-map)
 
-   Step 6.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the evs series addition ECT profile
-            field.
+      *copy*(evs.condition.environment.environment-map,
+         evs.series.addition.environment.environment-map)
+
+      *copy*(e.conditional-series-record.addition.measurement-map,
+         evs.series.addition.element-list.element-map)
+
+   Step 4.  The signer of the Conditional Endorsement conceptual message
+            is copied to the evs.series.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the evs.series.addition.profile field.
 
 8.3.3.4.  Evidence Tranformation
 
