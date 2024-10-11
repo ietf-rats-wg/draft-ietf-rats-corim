@@ -1865,19 +1865,30 @@ The selected tags are mapped to an internal representation, making them suitable
 
 * The `cmtype` of the `addition` ECT in the `rv` entry is set to `reference-values`.
 
-* The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
+* The Reference Values Triple (RVT) ({{sec-comid-triple-refval}}) populates the `rv` ECTs.
 
-* For each entry in the `ref-claims` list, the `measurement-map` is copied to the `element-list` `element-map` of the `rv` `addition` ECT.
+{:rtt2-enum: counter="rtt2" style="format %i"}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303
+{: rtt2-enum}
+* RVT.`ref-env`
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
+> > **copy**(`environment-map`, `rv`.`condition`.`environment`.`environment-map`)
 
-* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `ev` `addition` ECT `profile` field.
+> > **copy**(`environment-map`, `rv`.`addition`.`environment`.`environment-map`)
+
+{: rtt2-enum}
+* For each e in RVT.`ref-claims`:
+
+> > **copy**(e.`measurement-map`, `rv`.`addition`.`element-list`.`element-map`)
+
+{: rtt-enum}
+* The signer of the Endorsement conceptual message is copied to the `rv`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
-Endorsement Triple Transformation :
+Endorsed Values Triple Transformation :
 
 {:ett-enum: counter="ett" style="format Step %d."}
 
@@ -1886,13 +1897,26 @@ Endorsement Triple Transformation :
 
 * The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
-* The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
+* The Endorsed Values Triple (EVT) ({{sec-comid-triple-endval}}) populates the `ev` ECTs.
 
-* For each entry in the `endorsement` list, the `measurement-map` is copied to an `element-list` `element-map` of the `ev` `addition` ECTs.
+{:ett2-enum: counter="ett2" style="format %i"}
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT `authority` field.
+{: ett2-enum}
+* EVT.`condition`
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT `profile` field.
+> > **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
+
+{: ett2-enum}
+* For each e in EVT.`endorsement`:
+
+> > **copy**(e.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
+
+{: ett-enum}
+* The signer of the Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 Conditional Endorsement Triple Transformation :
 
@@ -1903,13 +1927,29 @@ Conditional Endorsement Triple Transformation :
 
 * The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
-* For each entry in the Conditional Endorsement Triple ({{sec-comid-triple-cond-endors}}) `conditions` list, the `stateful-environment-record` `environment` is copied to the `environment` of the `ev` `condition` ECT and the `stateful-environment-record` `claims-list` entries are copied to the `element-list` of the `ev` `condition` ECT.
+* Entries in the Conditional Endorsement Triple (CET) ({{sec-comid-triple-cond-endors}}) `conditions` list are copied to a suitable ECT in the internal representation.
 
-* For each entry in the Conditional Endorsement Triple `endorsements` list, the `endorsed-triple-record` `condition` `environment-map` is copied to the `environment` of the `ev` `addition` ECT and the `endorsed-triple-record` `endorsement` list entries are copied to the `element-list` entries of the `ev` `addition` ECT.
+{:cett2-enum: counter="cett2" style="format %i"}
 
-* The issuer of the Conditional Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+{: cett2-enum}
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+ * For each e in CET.`conditions`:
+
+> > **copy**(e.`stateful-environment-record`.`environment`.`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(e.`stateful-environment-record`.`claims-list`.`measurement-map`, `ev`.`condition`.`element-list`.`element-map`)
+
+{: cett2-enum}
+* For each e in CET.`endorsements`:
+
+> > **copy**(e.`endorsed-triple-record`.`condition`.`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
+
+> > **copy**(e.`endorsed-triple-record`.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
+
+{: cett-enum}
+* The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 Conditional Endorsement Series Triple Transformation :
 
@@ -1920,25 +1960,32 @@ Conditional Endorsement Series Triple Transformation :
 
 * The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
 
-* The `stateful-environment-record` from the Conditional Endorsement Series Triple ({{sec-comid-triple-cond-series}}) `condition` is copied to the `condition` of an `evs` ECT.
+* Populate the `evs` ECTs using the Conditional Endorsement Series Triple (CEST) ({{sec-comid-triple-cond-series}}).
 
-* For each `conditional-series-record` in the `series` array, and each `evs` `series` entry, the following steps are performed:
-
-{:cestt2-enum: counter="cestt2" style="format Sub-step %d."}
+{:cestt2-enum: counter="cestt2" style="format %i."}
 
 {: cestt2-enum}
-* The `conditional-series-record` `selection` list is copied to the `element-list` of the `evs` `selection` ECT `.
+* CEST.`condition`:
 
-* The `environment-map` of the `evs` `condition` ECT is copied to the `environment-map` of the `evs` `selection` ECT.
+> > **copy**(`stateful-environment-record`.`environment`.`environment-map`, `evs`.`condition`.`environment`.`environment-map`)
 
-* The `conditional-series-record` `addition` list is copied to the `element-list` of the `evs` `addition` ECT.
+> > **copy**(`stateful-environment-record`.`claims-list`.`measurement-map`, `evs`.`condition`.`element-list`.`element-map`)
 
-* The `environment-map` of the `evs` `condition` ECT is copied to the `environment-map` of the `evs` `addition` ECT.
+{: cestt2-enum}
+* For each e in CEST.`series`:
+
+> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`selection`.`environment`.`environment-map`)
+
+> > **copy**(e.`conditional-series-record`.`selection`.`measurement`.`measurement-map`, `evs`.`series`.`selection`.`element-list`.`element-map`)
+
+> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`addition`.`environment`.`environment-map`)
+
+> > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
 
 {: cestt-enum}
-* The issuer of the Conditional Endorsement conceptual message is copied to the `evs` `series` `addition` ECT `authority` field.
+* The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `evs` `series` `addition` ECT `profile` field.
+* If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
 #### Evidence Tranformation
 
