@@ -1758,6 +1758,10 @@ The session state is implementation-specific, but conceptual messages defined in
 In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
 The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
 
+~~~ cddl
+{::include cdd/intrep-actx.cddl}
+~~~
+
 ### Input Collection {#sec-phase1-collect}
 
 The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
@@ -1776,6 +1780,8 @@ There will be some amount of CoRIMs and standalone tags available as inputs that
 {::include cddl/tag-state.cddl}
 ~~~
 
+Initially all inputs are in `cms` if interpreted by this specification, or `extra` if not.
+
 It is left to Verifier Policy to determine if input sources must use supply chain transparency constructs (see {{-scitt-arch}}) to track input provenance.
 It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
 
@@ -1785,39 +1791,52 @@ Note: Verifier Policy may be subject to external requirements by organizational 
 
 #### CoRIM and tag Selection
 
-All available CoRIMs and tags in the Appraisal Session's inputs are checked for validity.
+All available CoRIMs in `cms / corims` and tags in `csm / tags` from the Appraisal Session's inputs are checked for validity.
 
 Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded from the session.
 
 Any input that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded from the session.
 
+Selected tags are added to `/ select /` by mapping their tag identifier to a `tag-state` that is a pair of the tag and `activity: unknown`.
+
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier for that Evidence format MAY be discarded.
+Selection policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
+For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
+In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
 > The selection process MUST yield at least one usable conceptual message.
 > Dionna: I don't think this should be a requirement since the evidence combined with Verifier policy should be enough.
 
-Remaining CoRIMs and tags are transformed into an internal representation (see {{sec-phase1-trans}}) and added to the array in the session's `/ select / tag-unknown /`.
 
 #### Tag Extraction and Validation
 
-The Verifier chooses tags from the selected CoRIMs—including CoMID, CoSWID, CoBOM, and CoTS.
+From the selected CoRIMs, the tags it contains also go through selection and validation.
 
-The Verifier MUST discard or set `tag-invalid` all tags which are not syntactically and semantically valid.
+The Verifier MUST discard all tags which are not syntactically or semantically valid.
+The Verifier MUST discard all tags not within their validity period.
+
 In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples and CoBOM-listed tags) MUST reference valid entries of the Appraisal Context.
+A CoMID's `linked-tags` field is able to express cyclic references, but cyclic references that include `/ tag-rel / 1: / supplements / 0` or `/ tag-rel / 1: / replaces/  1` are invalid.
+Unless otherwise specified by a profile that extends `$tag-rel-type-choice`, all cyclic tag references are invalid.
 
 #### Tag activation by CoBOM
 
-If the Verifier does not use CoBOM, then all `tag-unknown` entries of the Appraisal Context are set to `tag-active` and rest of this section does not apply.
+A tag's activity is determined by the flowchart in figure {#fig-tag-activity}
 
-If the Verifier does use CoBOM, then only tags listed by valid CoBOM tags in the Appraisal Context are set to `tag-active`, and all others are set to `tag-inactive`.
+flowchart TD
+    A[unknown] --> C{use_cobom}
+    C -->|true| D{is_listed}
+    C -->|false| E[active]
+    D -->|true| F[active]
+    D -->|false| G[inactive]
+{: #fig-tag-activity title="Tag activity state decision tree"}
 
-CoBOMs which are not within their validity period are invalid.
+If the Verifier does not use CoBOM, then all selected tags have their `activity` state set to `active`.
 
-A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
-(Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.)
-For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
-In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
+If the Verifier does use CoBOM, then only tags listed by CoBOM tags remaining in `/ select /` in the Appraisal Context are set to `active`, and all others are set to `inactive`.
+
+The selected tags which are active are transformed into their internal representation and loaded into the Appraisal Context following the description in {{sec-phase1-trans}}.
 
 #### Evidence Selection
 
@@ -1929,7 +1948,7 @@ For a comparable notion of process fidelity and provenance tracking, see the dif
 
 ### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
-The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
+The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `ir-appraisal-context / ae ` to the ACS.
 See {{sec-add-to-acs}}.
 
 #### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
@@ -1990,7 +2009,7 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 ## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
-Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
+Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations.
 Reference Values may describe multiple possible Attester states.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
@@ -2017,6 +2036,8 @@ If the ECTs match, the `ev` `addition` ECT is added to the ACS.
 ### Processing Conditional Endorsements
 
 > [Ned] *This section should be identical to the previous section since Endorsement triples and Conditional Endorsement triples are transformed into the same internal representation based on `ev`*
+
+> [Dionna] this is not going to be identical. You will need to run the conditions and additions of `ev` and `evs` possibly multiple times. If a condition does not apply, it has to be set aside to try again. If you get through all conditional endorsements and have relations left, you have to try them again. If none of them match, you're done. If some match and some don't, you go again. This is a fixed point computation.
 
 ### Processing Conditional Endorsement Series
 
