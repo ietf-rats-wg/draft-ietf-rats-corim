@@ -1941,7 +1941,7 @@ Given the same Appraisol Context, different Verifier appraisals MUST produce det
 Note: the deterministic constraint applies to profile-defined comparison semantics.
 
 The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
-For a comparable notion of process fidelity and provenance tracking, see the different {{-slsa}} specification for build security.
+For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
