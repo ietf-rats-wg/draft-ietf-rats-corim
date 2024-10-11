@@ -1774,9 +1774,7 @@ How the Verifier collects its inputs is out of scope of this document.
 There will be some amount of CoRIMs and standalone tags available as inputs that make an `asession`:
 
 ~~~ cddl
-{::include cddl/asession.cddl}`
-
-{::include cddl/tag-state.cddl}
+{::include cddl/intrep-asession.cddl}`
 ~~~
 
 Initially all inputs are in `cms` if interpreted by this specification, or `extra` if not.
