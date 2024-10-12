@@ -116,9 +116,9 @@ informative:
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
-  I-D.ietf-rats-cobom: cobom
-  SLSA: slsa
-    title: Supply-chain Levels for Software Artifacts
+  SLSA:
+    title: >
+      Supply-chain Levels for Software Artifacts
     target: https://slsa.dev
 
 entity:
@@ -754,7 +754,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Environment Group {#sec-comid-group}
+##### Environment Group {#sec-comid-group}
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -1568,7 +1568,7 @@ Appraisal Claims Set (ACS):
 The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
 
 Appraisal Context:
-: A structure that contains all state needed for performing the Appraisal Procedure.
+: A structure that contains all validated state needed for performing the Appraisal Procedure.
 
 Appraisal Policy:
 : A description of the conditions that, if met, allow acceptance of Claims. Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion. Appraisal Policy resolves which entities are credible and under what conditions.  See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
@@ -1578,7 +1578,7 @@ Attestation Results Set (ARS):
 
 Appraisal Session:
 : A structure that tracks all state that corresponds to a single request for attestation appraisal.
-This includes the Appraisal Claims Set and Appraisal Context.
+This includes the inputs prior to validation as well as the Appraisal Context.
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
@@ -1768,24 +1768,13 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 {::include cddl/intrep-ars.cddl}
 ~~~
 
-### Internal Representation of Appraisal Session {#sec-ir-asession}
-
-An Appraisal Session includes Verifier-specific session state as well as a collection of inputs to process.
-Conceptual Messages are given explicit representation in the session.
-
-~~~ cddl
-{::include cddl/intrep-asession.cddl}
-~~~
-
-The session state is implementation-specific, but conceptual messages defined in this specification are specially represented.
-
 ## Appraisal Context Construction (Phase 1) {#sec-phase1}
 
-In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
-The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
+In Phase 1 the Verifier constructs an Appraisal Context that contains valid inputs to the Appraisal Procedure.
+The Appraisal Context is available to the Appraisal Procedure throughout the various phases.
 
 ~~~ cddl
-{::include cdd/intrep-actx.cddl}
+{::include cddl/intrep-actx.cddl}
 ~~~
 
 ### Input Collection {#sec-phase1-collect}
@@ -1798,13 +1787,6 @@ Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}})
 The clock time used for validity judgments and policy evaluation is an input.
 
 How the Verifier collects its inputs is out of scope of this document.
-There will be some amount of CoRIMs and standalone tags available as inputs that make an `asession`:
-
-~~~ cddl
-{::include cddl/asession.cddl}`
-
-{::include cddl/tag-state.cddl}
-~~~
 
 Initially all inputs are in `cms` if interpreted by this specification, or `extra` if not.
 
@@ -1832,7 +1814,7 @@ For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be 
 In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
 > The selection process MUST yield at least one usable conceptual message.
-> Dionna: I don't think this should be a requirement since the evidence combined with Verifier policy should be enough.
+> *Dionna*: I don't think this should be a requirement since the evidence combined with Verifier policy should be enough.
 
 
 #### Tag Extraction and Validation
@@ -2056,7 +2038,7 @@ Given the same Appraisol Context, different Verifier appraisals MUST produce det
 Note: the deterministic constraint applies to profile-defined comparison semantics.
 
 The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
-For a comparable notion of process fidelity and provenance tracking, see the different {{-slsa}} specification for build security.
+For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
