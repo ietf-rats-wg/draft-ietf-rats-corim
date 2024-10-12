@@ -1782,7 +1782,7 @@ The session state is implementation-specific, but conceptual messages defined in
 ## Appraisal Context Construction (Phase 1) {#sec-phase1}
 
 In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
-The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
+The Appraisal Context is available to the Appraisal Procedure throughout the various phases.
 
 ~~~ cddl
 {::include cdd/intrep-actx.cddl}
