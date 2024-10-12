@@ -1848,21 +1848,11 @@ Unless otherwise specified by a profile that extends `$tag-rel-type-choice`, all
 
 #### Tag activation by CoBOM
 
-A tag's activity is determined by the flowchart in figure {#fig-tag-activity}
-
-flowchart TD
-    A[unknown] --> C{use_cobom}
-    C -->|true| D{is_listed}
-    C -->|false| E[active]
-    D -->|true| F[active]
-    D -->|false| G[inactive]
-{: #fig-tag-activity title="Tag activity state decision tree"}
-
 If the Verifier does not use CoBOM, then all selected tags have their `activity` state set to `active`.
 
 If the Verifier does use CoBOM, then only tags listed by CoBOM tags remaining in `/ select /` in the Appraisal Context are set to `active`, and all others are set to `inactive`.
 
-The selected tags which are active are transformed into their internal representation and loaded into the Appraisal Context following the description in {{sec-phase1-trans}}.
+The selected tags which are `active` are transformed into their internal representation and loaded into the Appraisal Context following the description in {{sec-phase1-trans}}.
 
 #### Evidence Selection
 
