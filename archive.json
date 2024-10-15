@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-13T01:50:37.579476+00:00",
+  "timestamp": "2024-10-15T01:46:06.446572+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2597,7 +2597,7 @@
     {
       "number": 92,
       "id": "I_kwDOH6-tI85lvVaj",
-      "title": "Single unified CDDL definition to cover all conditional endorsements use cases",
+      "title": "Stateless conditional endorsement series use cases",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/92",
       "state": "OPEN",
       "author": "shnwc",
@@ -2608,7 +2608,7 @@
       ],
       "body": "Currently, the CDDL definition of `triples-map` supports `conditional-endorsement-series-triples`. In each `conditional-endorsement-series-triple-record`, the subject is a `stateful-environment-record`, where there must be at least one field in its `measurement-values-map`.\r\n\r\nIn the new use case, the environment is stateless, without any measurement value field. A new triple record such as the `stateless-conditional-endorsement-series-triple-record` defined below will be able to support this use case.\r\n```\r\nstateless-conditional-endorsement-series-triple-record = [\r\n  environment-map\r\n  ; order matters: the first matching record wins and halts matching\r\n  [ + conditional-series-record ]\r\n  ? authorized-by: [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nIn this triple record, the optional `authorized-by` field lists the authorities for all the `measurement-values-map` structures  in the series.\r\n\r\nSince there is no ambiguity between `conditional-endorsement-series-triple-record` (with its first entry as an record) and `stateless-conditional-endorsement-series-triple-record` (with its first entry as a map), the `triples-map` entry:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record ]\r\n```\r\ncan be updated to add `stateless-conditional-endorsement-series-triple-record` as an option:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record /  stateless-conditional-endorsement-series-triple-record ]\r\n```\r\n",
       "createdAt": "2023-05-12T04:30:46Z",
-      "updatedAt": "2024-05-07T09:25:59Z",
+      "updatedAt": "2024-10-14T17:01:41Z",
       "closedAt": null,
       "comments": [
         {
@@ -2871,7 +2871,7 @@
       "id": "I_kwDOH6-tI85rn4yG",
       "title": "Insight on verifier processing of conditional endorsements",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/110",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -2883,8 +2883,8 @@
       ],
       "body": "Conditional endorsement triples contain a `stateful-environment-record` that identifies the state of the target environment before the triple object (i.e., `measurement-values-map`) measurements can be applied (a.k.a., accepted into the ACCEPTED-CLAIMS). \r\n\r\nIt is currently unclear whether the `stateful-environment-record` is matched to Evidence or to ACCEPTED-CLAIMS.\r\n\r\nCorrect behavior should be that it is matched to ACCEPTED-CLAIMS where the subset of ACCEPTED-CLAIMS that matches the `stateful-environment-record` are used. \r\n\r\nThis is subtly different from matching against Reference Values where all claims in reference values must be matched before any values are accepted. \r\n\r\nIt also implies that if Evidence contains claims that do not have corresponding Reference Values, these claims would be copied into ACCEPTED-CLAIMS. Consequently, it is possible for `stateful-environment-record` in conditional endorsement triples to contain claims that are also matched by Reference Value claims. Failure to match `stateful-environment-record` claims in a conditional endorsement doesn't imply that the attestation fails, only that the endorsed values in the conditional endorsement triple object are not copied into ACCEPTED-CLAIMS.",
       "createdAt": "2023-07-14T21:42:15Z",
-      "updatedAt": "2024-05-07T09:03:47Z",
-      "closedAt": null,
+      "updatedAt": "2024-10-14T17:00:46Z",
+      "closedAt": "2024-10-14T17:00:18Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -2899,6 +2899,13 @@
           "body": "Note: there is an implied context for 'matching'. The context in which the reference values matching happened is the same context for matching conditional endorsements. \r\n\r\nNote: conditional endorsement currently applies to measurement-values-map measurements. Is there a reason why they shouldn't apply to all measurements (e.g., including `identity-triples` and `attest-key-triples`?  If a key is asserted as a claim, its reasonable for a conditional endorsement to be asserted where the key claim is the stateful environment to which other endorsed values conditionally apply. \r\n\r\nThe following CDDL captures this case:\r\n```\r\nstateful-environment-record = [\r\n   environment-map,\r\n   measurement-map / [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nNote the addition of `/ [ + $crypto-key-type-choice ]`\r\n\r\nIs it reasonable for identity / attest-key claims to be conditionally asserted given a particular stateful environment? For example, given an environment that possesses secure key storage capability, is it reasonable that a particular key can be conditionally asserted?\r\n\r\nThe CDDL for this might be:\r\n```\r\nconditional-endorsement-triple-record = [\r\n  stateful-environment-record,\r\n  ; endorsed values\r\n  measurement-values-map / [+ $crypto-key-type-choice ]\r\n]\r\n```\r\nNote the addition of `/ [ + $crypto-key-type-choice ]`\r\nAlso, it isn't nonsensical to express that key-B can exist if key-A exists. \r\nDICE layering may be a reasonable example if key-A is at a lower layer than key-B. \r\nAs endorsements, it also asserts that layers A and B are not dynamic (at least not without cooperation from the Endorser).  Such cooperation is reasonable for environments with tight change control management such as microcode update and certain firmware update.",
           "createdAt": "2023-08-10T21:14:29Z",
           "updatedAt": "2023-08-10T21:22:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by refactoring.",
+          "createdAt": "2024-10-14T17:00:44Z",
+          "updatedAt": "2024-10-14T17:00:44Z"
         }
       ]
     },
@@ -4163,17 +4170,15 @@
       "id": "I_kwDOH6-tI8549yKF",
       "title": "Cleanup Section 5.4.3. Adding CoMID Endorsed Values to the Accepted Claims Set",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [
-        "wontfix"
-      ],
+      "labels": [],
       "body": "Section 5.4.3 \"Adding CoMID Endorsed Values to the Accepted Claims Set\" hasn't been authored yet. It seems relevant to work on this text since there is on-going work to define and refine endorsement triples.\r\n\r\nSuggested text:\r\n\"An Endorser may publish Endorsements, which add new claims to the Accepted Claims Set (ACS) if specified conditions of the ACS are met. This section describes the process performed by the Verifier to determine if the ACS status satisfies the Endorsement condition and where to add the Endorsement claims.\r\n\r\nThe verifier compares the condition specified by endorsement triples to the ACS. Endorsement conditions may describe environments, or combinations of environment-measurement pairings, specific measurement values, and the authority that asserted the claims.\r\n\r\nIf the condition matches, the Endorsement claims, including the Endorser's authority, are added to the ACS. The new Endorsed claims are added to the part of the ACS as described by Endorsement triples (see {{sec-comid-triple-endval}}, {{sec-comid-triple-cond-series}}, {{sec-comid-triple-cond-end}}, {{sec-comid-triple-mec-endorsement}}).\"\r\n\r\n",
       "createdAt": "2023-12-06T22:04:39Z",
-      "updatedAt": "2024-06-22T17:26:24Z",
-      "closedAt": null,
+      "updatedAt": "2024-10-14T17:04:25Z",
+      "closedAt": "2024-10-14T17:04:19Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -4181,6 +4186,13 @@
           "body": "I don't understand the wontfix, since I don't understand endorsed triples from the text as written.\r\n\r\n> An Endorsed Values triple declares additional claims that are valid when a Target Environment has been verified against reference measurements.\r\n\r\nThere is no separation of the measurement-values-map contents into evidence property or endorsement property, so I'm not sure what the actual condition is that you're checking. If \"A says X only if B says X about environment E\", then are we supposed to track that X came from reference triples instead of endorsement triples, so that to process an endorsement \"A says Y only if C says Y about environment E\", we check that E had a reference triple already accepted by A (A is the CoRIM issuer)? And the properties in question are irrelevant? Are all reference triples required preconditions or is does just one need to be accepted?\r\n\r\nI don't see similar conditions on reference values for the conditional endorsements triples, so it seems only this triple has a triple-type processing order requirement. Is the order across CoMID processing, within fixed point, or only locally to the single CoMID in a single step?",
           "createdAt": "2024-06-22T17:26:23Z",
           "updatedAt": "2024-06-22T17:26:23Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Addressed through refactoring.",
+          "createdAt": "2024-10-14T17:04:24Z",
+          "updatedAt": "2024-10-14T17:04:24Z"
         }
       ]
     },
@@ -4935,11 +4947,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "For-next-release"
       ],
       "body": "We discussed in today's meeting that next time we will go over a PR or slides about simplification to CoRIM as a standard to a Core and some other bits.\r\n\r\nHere's what I think ought to be addressed:\r\n\r\n1. CoRIM is a closed CDDL without extension points.\r\n2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n3. Profiles for standard attestation technologies may choose to go through IETF standardization to allocate CBOR tags through IANA, but this is not required for profiles.\r\n4. The CoRIM working group may define reference value types with \"matching\" semantics that can be reused by other profile definitions. This should help extend the composability of the initially standardized notions of reference values. The policy should be, but still at the WG's discretion, that reference values are not given privileged CBOR representation through tag allocation without being applicable to at least 2 standard profiles. The applicability of the generalization must be concrete to give clear motivation behind the representation and semantics.\r\n5. The ACS discussion should not use CDDL because it confuses the conceptual with the serializable. It should use an ABNF to describe an algebra of claims and sets of claims. All reference value and endorsement types must have a defined operation to reflect into the algebra. Claims can be partially ordered in order to define simplification through subsumption. A set of claims must therefore contain pairwise incomparable claims. By defining this algebra, the standard may give a clear definition to word \"match\" for composition and reuse, but it does not limit what profiles are definable\u2013it is merely scaffolding. The algebraic notion of Claim is extensible by any profile, but each type of Claim is defined and owned by the standard/profile that defines it.\r\n6. A CoRIM either fails to \"match\" an accepted claim set, or it augments individual claims in the ACS with \"authorized-by\" tags.\r\n7. Evidence Appraisal should be defined explicitly as an operation to translate an octet string into a claim set.\r\n\r\nFor all of this, we've boiled the representation down to profile * profile-defined octet string. The algebra is a communication tool for specifying the semantics for composable standardized profile components.\r\n\r\nAll of the schema that is specified in the current document can be interpreted as, \"if your profile's representation structurally matches profiles defined in RFCs, then it must semantically mean the same\". You can keep TPM, PSA, and DICE following the same schema if you'd like as a way to provide a baseline for expected expressiveness.\r\n\r\nBut by doing this, you need to have reserved indices for the standard to grow and safe regions that custom profiles are allowed to define themselves. For example, `* $$corim-map-extension` allows for anyone to define index 6 or higher, but that is not desirable unless this type really should be considered \"closed\" from the standards body's perspective. If it's open, then say 0-1000 and [2^31, 2^32) are reserved for the specification to allow for custom profiles to use small indices without giving up a value space for the standard.\r\n\r\nThe reserved indices should be assigned by IANA for each following RFC, but the core CoRIM spec defines the value space for standard extension.\r\n\r\nDo folks find this reasonable? ",
       "createdAt": "2024-01-31T17:55:01Z",
-      "updatedAt": "2024-05-07T08:49:03Z",
+      "updatedAt": "2024-10-14T17:20:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -6195,16 +6208,31 @@
       "id": "I_kwDOH6-tI86P30GA",
       "title": "Endorsements are implicitly conditional on reference values. Which ones?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/251",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "> An Endorsed Values triple declares additional measurements that are valid when a Target Environment has been verified against reference measurements.\r\n\r\nThere can be multiple reference measurements that are signed for a certain class-id. I don't expect reference measurements to be signed as limited to any specific instance. It doesn't seem correct to just accept anything from the `authorized-by`. The only interpretation that I can think of that could work is if the endorsement triple's environment is also associated with a reference-value-triple in the same CoMID, and that reference value has been added to the ACS.\r\n\r\nThe 1 environment to identify the reference values doesn't apply to the conditional-endorsement-triple now though, so I'm guessing those _aren't_ implicitly conditional on the reference values? I'd really like if we could solidify the semantics by giving explicit transformations of triples in CoRIM to the relations that have more explicitly defined semantics?\r\n\r\n> Evidence is divided up into one or more `ev` relations where the condition ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.\r\n\r\nIs this \"Evidence is\" meant to be \"Endorsements are\"? The `ev` relation is for endorsements.\r\n\r\n> Evidence information is mapped to an addition ECT that populates each of the ECT fields.\r\n\r\nThis seems more correct, but by saying `addition` instead of the `ae` relation doesn't match the use of relation in the previous sentence.",
       "createdAt": "2024-07-17T14:29:13Z",
-      "updatedAt": "2024-07-17T14:29:14Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-10-14T18:35:55Z",
+      "closedAt": "2024-10-14T18:35:55Z",
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Has this issue been addressed?",
+          "createdAt": "2024-10-14T17:06:08Z",
+          "updatedAt": "2024-10-14T17:06:08Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, we changed the wording to not imply any measurement condition.",
+          "createdAt": "2024-10-14T18:35:55Z",
+          "updatedAt": "2024-10-14T18:35:55Z"
+        }
+      ]
     },
     {
       "number": 253,
@@ -6671,16 +6699,24 @@
       "id": "I_kwDOH6-tI86XV9i8",
       "title": "Flesh out Endorsement Triples Transformation section",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "There are placeholders for conditional endorsement and conditional endorsement series transformations in the Endorsement Triples Transformation section. \r\n\r\nThere are notes in the documents pointing to this issue.",
       "createdAt": "2024-09-20T15:38:34Z",
-      "updatedAt": "2024-09-20T15:38:34Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2024-10-14T16:52:53Z",
+      "closedAt": "2024-10-14T16:52:37Z",
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by #299",
+          "createdAt": "2024-10-14T16:52:51Z",
+          "updatedAt": "2024-10-14T16:52:51Z"
+        }
+      ]
     },
     {
       "number": 286,
@@ -7079,7 +7115,7 @@
       "id": "I_kwDOH6-tI86Y3MPf",
       "title": "Should `element-list` processing allow positional comparison",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/303",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -7088,8 +7124,8 @@
       "labels": [],
       "body": "The triple cddl allows mkey to be optional and multiple measurement-map entries to exist simultaneously. What should be Verifier behavior? There are two possibilities:\r\n\r\nOption (1) fall back to positional comparison where the record at position i of the `condition` relation is compared with the record at position i of the ACS ECT.\r\n\r\nOption (2) write normative text that bans multiplicity of measurement-map without mkey.\r\n\r\nI'm leaning toward option 1.",
       "createdAt": "2024-10-03T17:30:26Z",
-      "updatedAt": "2024-10-09T15:39:00Z",
-      "closedAt": null,
+      "updatedAt": "2024-10-14T16:48:00Z",
+      "closedAt": "2024-10-14T16:47:42Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -7195,6 +7231,20 @@
           "body": "recording rough consensus on option 5.",
           "createdAt": "2024-10-09T15:38:59Z",
           "updatedAt": "2024-10-09T15:38:59Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing issue - fixed by #315 ",
+          "createdAt": "2024-10-14T16:47:17Z",
+          "updatedAt": "2024-10-14T16:47:17Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed.",
+          "createdAt": "2024-10-14T16:47:58Z",
+          "updatedAt": "2024-10-14T16:47:58Z"
         }
       ]
     },
@@ -7400,11 +7450,19 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "These subsections are within the Phase 2 (Section 8.4) but are more specific to how non-evidence is supposed to be processed.\r\n\r\nWe don't have \"triples\" in this part of the spec either. We have relations of ECTs, so using \"CoMID triples\" in the section title is confusing.\r\n\r\nI understand that the order of conditional endorsement matching with the base CDDL can be understood as Horn clauses and thus can be understood with the P-complete Boolean Constraint Propagation problem. With profiles, that algorithm is not necessarily complete. Prolog-like unification with cuts could also be encoded, so a Verifier that implements it could diverge on broken/malicious input, for example.\r\n\r\nAny directive with a condition that can include an endorsement is subject to needing a fixed point computation.",
+      "body": "The sections \"Augmentation using CoMID triples\" and \"Order of triple processing\" are currently in Phase 2 (Section 8.4) but are more specific to how non-evidence is supposed to be processed.\r\n\r\nWe don't have \"triples\" in this part of the spec either. We have relations of ECTs, so using \"CoMID triples\" in the section title is confusing.\r\n\r\nI understand that the order of conditional endorsement matching with the base CDDL can be understood as Horn clauses and thus can be understood with the P-complete Boolean Constraint Propagation problem. With profiles, that algorithm is not necessarily complete. Prolog-like unification with cuts could also be encoded, so a Verifier that implements it could diverge on broken/malicious input, for example.\r\n\r\nAny directive with a condition that can include an endorsement is subject to needing a fixed point computation.",
       "createdAt": "2024-10-12T21:24:29Z",
-      "updatedAt": "2024-10-12T21:24:29Z",
+      "updatedAt": "2024-10-14T23:29:20Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There needs to be a new Input Transformation sub-section: \"Transformation of CoSWID Tags\". I anticipate this section will prepare `rv` and `ev` records. Possibly, there should be an evidence transformation section that describes how to produce `ae` records too?\r\n\r\nCoSWID tags can be asserted as evidence or Reference Values. Additionally, they contain information that logically are Endorsements. If the CoSWID transformation section is successful at mapping all the coswid information to `rv`, `ev`, or `ae` records, then the existing processing sections in phases 2, 3, and 4 should satisfy coswid inputs.\r\n\r\nThe ",
+          "createdAt": "2024-10-14T23:29:19Z",
+          "updatedAt": "2024-10-14T23:29:19Z"
+        }
+      ]
     },
     {
       "number": 321,
@@ -7418,7 +7476,68 @@
       "labels": [],
       "body": "The shortcutting semantics is a short form of having multiple regular conditional endorsements that include _negative_ conditions.\r\nThis violates the conditions of safe negation in Datalog (no negation allowed in the head of rules) because it makes the logic inconsistent.\r\n\r\nYou can order your processing such that\r\n\r\n*  the third alternate in a series condition is the first to match and add some endorsement.\r\n* some more endorsements are added\r\n* now the first alternate is the first to match and adds its endorsement.\r\n\r\nWhat if now you reorder your triples such that the endorsements that satisfy the first alternate are added before the series is processed? You have a different result.\r\n\r\n@andrew-draper are there restrictions you can think to add to your use case to restore consistency?",
       "createdAt": "2024-10-12T21:53:41Z",
-      "updatedAt": "2024-10-12T21:53:41Z",
+      "updatedAt": "2024-10-14T21:30:58Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Any pointers that help to \"see the issue\" in current documents somewhere is useful here, I think (e.g., Andy's use case).",
+          "createdAt": "2024-10-14T16:08:22Z",
+          "updatedAt": "2024-10-14T16:08:22Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The use cases I'm aware of don't anticipate more than one series match for a given Attester (TE). I think the inconsistency scenario only emerges if there are multiple series tuples that will match for a given TE. Since the series evaluation is within the context of the condition result, there isn't a generalized problem. The unspecified assumption is that only one series tuple can match. \r\n\r\nThis puts the burden on consistency on the shoulders of the triple/rim author. Is that OK?\r\n\r\nIf not, then the normative might change to say that all the series tuples will be evaluated. The trade-off is performance. ",
+          "createdAt": "2024-10-14T16:16:45Z",
+          "updatedAt": "2024-10-14T16:16:45Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If there\u2019s never any expectation that more than one case will match, then we should change the rule to be that all series variants are compared with no short-circuiting. That removes negation and should still satisfy the use case, no?\r\n\r\nEdit:yes, agree with Ned on the last point. I don\u2019t want to entrust consistency to the corim writer",
+          "createdAt": "2024-10-14T20:31:58Z",
+          "updatedAt": "2024-10-14T20:33:33Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It turns out that order of the series matters for the use case to get the right answer. \r\nIf the series is ordered, say from a..n, and b is the record whose condition matches. If another verifier chose the ordering to be n..a, then records n..b would all match. \r\n\r\nThe use case author is counting on the triple series preserving order. Normally, in CDDL arrays are ordered. In some cases in the CoRIM spec array are overly constrained in that we specified array (aka SEQUENCE), but unordered arrays (SET) is what was intended. \r\n\r\nI think I mischaracterized the consistency proposition when I asked: \"should the Endorser be entrusted with consistency of the Verifier\". A better characterization might be: \"should the Verifier be free to break the CDDL imposed ordering semantics?\"",
+          "createdAt": "2024-10-14T21:30:57Z",
+          "updatedAt": "2024-10-14T21:30:57Z"
+        }
+      ]
+    },
+    {
+      "number": 322,
+      "id": "I_kwDOH6-tI86aLKUl",
+      "title": "Recursion algorithm for processing layered Endorsements",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/322",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Conditional endorsements can be written such that the processing of Endorsement A depends on the acceptance of Endorsement B into the ACS. If A is processed before B, then the conditions in A will not be met. \r\n\r\nA recursive algorithm may address this problem. If A is processed before B and A isn't accepted into the ACS, then B is processed. Once B completes, A resumes. This time it completes.\r\n\r\nThere may be other ways to solve this problem. The spec needs to describe at least one viable strategy to both document the potential for inconsistent results, but also to show a viable solution.\r\n\r\nThis probably belongs in \"Ordering of Triple Processing\" section (wherever it gets moved to).",
+      "createdAt": "2024-10-14T17:14:51Z",
+      "updatedAt": "2024-10-14T23:07:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 324,
+      "id": "I_kwDOH6-tI86aNtsX",
+      "title": "Section \"Adding to the ACS\" should be moved",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/324",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Section 8.8 - Adding to the ACS contains two sub-sections of requirements. This is outside of the phase 2, 3, and 4 which describe ACS processing of the various triples. Possibly, requirements sections belong with the ACS internal representation section since requirements are placing constraints on processing steps. Or maybe they belong in Phase 2 ACS initialization?  \r\n\r\nAlternatively, section 8.8 is renamed to \"ACS Augmentation - Phases 2, 3, and 4\" and sections 8.4, 8.5, and 8.6 are moved into section 8.8 as sub-sections following the ACS requirements sections 8.8.1 and 8.8.2. We may want to augment the requirements sections to add something about ACS ending state being consistent across all Verifiers.",
+      "createdAt": "2024-10-14T23:42:06Z",
+      "updatedAt": "2024-10-14T23:42:06Z",
       "closedAt": null,
       "comments": []
     }
@@ -46236,7 +46355,7 @@
       "labels": [],
       "body": "Validation is specific to a method. This reorganizes example methods into subsections and adds a new example based on attest-key-triple and CoTS.\r\n\r\nThis is an attempt to make actionable \"key lookup\" normative language as marked in Issue #317.\r\n\r\nThis is an attempt to resolve the ae verification concern in Issue #314.",
       "createdAt": "2024-10-11T16:02:46Z",
-      "updatedAt": "2024-10-11T20:26:01Z",
+      "updatedAt": "2024-10-13T21:45:42Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
@@ -46328,8 +46447,84 @@
               "updatedAt": "2024-10-11T20:26:01Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86M9wZ3",
+          "commit": {
+            "abbreviatedOid": "7ce7565"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-13T21:45:42Z",
+          "updatedAt": "2024-10-13T21:45:42Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "RV triples that do binary compare operations of what? I'm not following.",
+              "createdAt": "2024-10-13T21:45:42Z",
+              "updatedAt": "2024-10-13T21:45:42Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 323,
+      "id": "PR_kwDOH6-tI85-me0a",
+      "title": "Update prose to reflect authorized-by and authority processing",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/323",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Issue #293 and #159 are addressed by this PR. Some section naming cleanup also applied.",
+      "createdAt": "2024-10-14T22:57:50Z",
+      "updatedAt": "2024-10-14T23:43:04Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "authorized-by-cleanup",
+      "headRefOid": "52025ff29472352dfe5e7a37ab5081930affbb48",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 325,
+      "id": "PR_kwDOH6-tI85-m1iT",
+      "title": "Allow mkey tstr",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/325",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Added tstr to $measured-element-type-choice.\r\n\r\nfixes issue #312",
+      "createdAt": "2024-10-15T00:40:55Z",
+      "updatedAt": "2024-10-15T00:41:44Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "allow-mkey-tstr",
+      "headRefOid": "eac7ec20783d4382a57f56f8384aae65f2080409",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
