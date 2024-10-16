@@ -2148,8 +2148,7 @@ Equivalence typically means values MUST be binary identical.
 
 If two Claims have the same Claim name, the CoRIM triples instruct the Verifier on how these Claims are related.
 
-If multiple Claims have the same name and the measurement values are equivalent, they are considered *duplicates*.
-Measurement values are duplicates if the `measurement-values-map` codepoints and values for each are equivalent.
+If multiple Claims have the same name and the measurement values (i.e., `measurement-values-map` codepoints and values) are equivalent, they are considered *duplicates*.
 Duplicate claims SHOULD be omitted.
 
 If multiple Claims have the same name and `measurement-values-map` contains duplicate codepoints but the measurement values are not equivalent, then a Verifier SHALL report an error and stop validation processing.
