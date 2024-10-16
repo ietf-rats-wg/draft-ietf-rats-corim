@@ -1165,7 +1165,9 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+The Conditional Endorsement Series Triple is used to assert endorsed values conditional on various sets of possible measurement values.
+Each series entry describes a different possible set of values.
+Series entries are ordered so that the set describing the most trustworthy state is evaluated first and least trustworthy state last.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1188,7 +1190,8 @@ The `conditional-series-record` has the following parameters:
 To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criteria are satisfied, the `series` tuples are processed.
 
-The `series` array contains a list of `conditional-series-record` entries.
+The `series` array contains an ordered list of `conditional-series-record` entries.
+Evaluation order begins at list position 0.
 
 For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
 The new entry is added to the existing set of Endorsements.
