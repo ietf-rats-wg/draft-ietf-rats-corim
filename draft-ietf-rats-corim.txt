@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 14 April 2025                                            Linaro
+Expires: 19 April 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         11 October 2024
+                                                         16 October 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 April 2025.
+   This Internet-Draft will expire on 19 April 2025.
 
 Copyright Notice
 
@@ -1133,16 +1133,17 @@ Table of Contents
 5.1.4.1.4.1.  Measurement Keys
 
    Measurement keys are locally scoped extensible identifiers.  The
-   initial types defined are OID, UUID, and uint. mkey may be necessary
-   to disambiguate multiple measurements of the same type or to
-   distinguish multiple measured elements within the same environment.
-   A single anonymous measurement-map is allowed within the same
-   environment.  Two or more measurement-map entries within the same
-   environment MUST populate mkey.
+   initial types defined are OID, UUID, uint, and tstr. mkey may be
+   necessary to disambiguate multiple measurements of the same type or
+   to distinguish multiple measured elements within the same
+   environment.  A single anonymous measurement-map is allowed within
+   the same environment.  Two or more measurement-map entries within the
+   same environment MUST populate mkey.
 
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
    $measured-element-type-choice /= uint
+   $measured-element-type-choice /= tstr
 
 5.1.4.1.4.2.  Measurement Values
 
@@ -4154,6 +4155,7 @@ Appendix A.  Base CoRIM CDDL
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
    $measured-element-type-choice /= uint
+   $measured-element-type-choice /= tstr
 
    measurement-map = {
      ? &(mkey: 0) => $measured-element-type-choice
