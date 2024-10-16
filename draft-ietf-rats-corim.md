@@ -1824,14 +1824,6 @@ If Evidence is cryptographically signed, its validation is applied before transf
 If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.
 
 The way cryptographic signature validation works depends on the specific Evidence collection method used.
-For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
-If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
-See Section 9.2.1 of {{DICE.Layer}}.
-If a trusted root certificate is found, the usual X.509 certificate validation is performed.
-
-As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
-If found, COSE Sign1 verification is performed accordingly.
-
 Regardless of the specific integrity protection method used, the Evidence's integrity MUST be validated successfully.
 
 > If a CoRIM profile is supplied, it MUST describe:
@@ -1839,6 +1831,26 @@ Regardless of the specific integrity protection method used, the Evidence's inte
 > * How cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags)
 > * How key material is associated with the Attesting Environment
 > * How the Attesting Environment is identified in Evidence
+
+##### Example: DICE
+In DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
+If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
+See Section 9.2.1 of {{DICE.Layer}}.
+If a trusted root certificate is found, the usual X.509 certificate validation is performed.
+
+##### Example: ARM PSA Token
+In PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
+If found, COSE Sign1 verification is performed accordingly.
+
+##### Example: `attest-key-triple`
+
+A more general method of verifying evidence purely with CoRIM constructs is by verifying the signature with a trusted attestation key associated with the Evidence's Target Environment.
+The Verifier MAY use environment-identifying elements of unverified Evidence to determine the Target Environment.
+The Verifier MAY establish trust in an attestation key by constructing a certificate path to an accepted trust anchor whose constraints apply to the Target Environment.
+For example, the Verifier has accepted a CoTS tag {{-ta-store}} with an environment that matches the `attest-key-triple`'s `environment-map` and a listed purpose is `"eat"`.
+The Verifier MAY associate an attestation key with the Target Environment if a valid `attest-key-triple`'s `environment-map` successfully compares with the Evidence's Target Environment.
+If the `$crypto-key-type-choice` is an identifier type (e.g., `tagged-thumbprint-type`) and the Verifier cannot retrieve the associated public key material, then the key identifier MUST be discarded.
+The Verifier MAY use the Evidence's Target Environment to fetch input to verify and admit a relevant `attest-key-triple`.
 
 ### Input Transformation {#sec-phase1-trans}
 
