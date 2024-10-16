@@ -641,8 +641,8 @@ The `triples-map` contains all the CoMID triples broken down per category.  Not
 all category need to be present but at least one category MUST be present and
 contain at least one entry.
 
-The supply chain entity that is responsible for providing a triple (i.e. Reference Values or Endorsed Values)
-is by default the CoRIM signer. The signer of a triple is said to be it's *authority*.
+The supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values)
+is by default the CoRIM signer. The signer of a triple is said to be its *authority*.
 
 ~~~ cddl
 {::include cddl/triples-map.cddl}
