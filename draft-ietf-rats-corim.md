@@ -644,6 +644,13 @@ contain at least one entry.
 The supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values) is by default the CoRIM signer.
 The signer of a triple is said to be its *authority*.
 
+In most cases, the supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values) is by default the CoRIM signer.
+The signer of a triple is said to be its *authority*.
+However, multiple authorities may be involved in signing triples.
+See {{-cose}}.
+Consequently, authority may differ for search criteria.
+See {{sec-measurements}}.
+
 ~~~ cddl
 {::include cddl/triples-map.cddl}
 ~~~
@@ -767,7 +774,7 @@ The types defined for a group identified are UUID and variable-length opaque byt
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Measurements
+##### Measurements {#sec-measurements}
 
 Measurements can be of a variety of things including software, firmware,
 configuration files, read-only memory, fuses, IO ring configuration, partial
