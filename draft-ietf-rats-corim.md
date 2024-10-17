@@ -641,6 +641,13 @@ The `triples-map` contains all the CoMID triples broken down per category.  Not
 all category need to be present but at least one category MUST be present and
 contain at least one entry.
 
+In most cases, the supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values) is by default the CoRIM signer.
+The signer of a triple is said to be its *authority*.
+However, multiple authorities may be involved in signing triples.
+See {{-cose}}.
+Consequently, authority may differ for search criteria.
+See {{sec-measurements}}.
+
 ~~~ cddl
 {::include cddl/triples-map.cddl}
 ~~~
@@ -764,7 +771,7 @@ The types defined for a group identified are UUID and variable-length opaque byt
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Measurements
+##### Measurements {#sec-measurements}
 
 Measurements can be of a variety of things including software, firmware,
 configuration files, read-only memory, fuses, IO ring configuration, partial
@@ -783,13 +790,11 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
-The supply chain entity that is responsible for providing the measurements (i.e. Reference Values or Endorsed Values)
-is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
-the `authorized-by` statement can be supplied in the `measurement-map`.
-
 An environment may have multiple measured elements.
 Measured elements are distinguished from each other by measurement keys.
 Measurement keys may be used to disambiguate measurements of the same type originating from different elements.
+
+Triples that have search conditions may specify authority as matching criteria by populating `authorized-by`.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -804,10 +809,12 @@ The following describes each member of the `measurement-map`:
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
 
-* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement.
- For example, the producer of the measurement.
+* `authorized-by` (index 2): The cryptographic identity of the entity (individual or organization) that is
+ the designated authority for measurement Claims.
+ For example, the signer of a CoMID triple.
  See {{sec-crypto-keys}}.
+ An entity is authoritative when it makes Claims that are inside its area of
+competence.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
@@ -1743,7 +1750,7 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `profile`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
-### Internal Representation of ACS {#sec-ir-acs}
+### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
 
 An ACS is a list of ECTs that describe an Attester's actual state.
 
@@ -2000,46 +2007,28 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
-### Appraisal Claims Set Initialization {#sec-acs-initialization}
+### Appraisal Claims Set (ACS) Initialization {#sec-acs-initialization}
 
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
 See {{sec-add-to-acs}}.
 
-#### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
+#### The authority field in the ACS {#sec-authority}
 
-The `a` field in an ECT in the ACS indicates the entity whose authority backs the claim.
+The `authority` field in an ACS ECT indicates the entity whose authority backs the Claims.
 
-An entity is authoritative when it makes Claims that are inside its area of
-competence. The Verifier keeps track of the authorities that assert Claims so
-that it can filter out claims from entities that do not satisfy appraisal
-policies.
+The Verifier keeps track of authority so that it can satisfy appraisal policy that specifies authority.
 
-When adding an Evidence Claim to the ACS, the
-Verifier SHALL set the `authorized-by` field in that Claim to the trusted
-authority keys at the head of each key chain which signed that Evidence. This
-key is often the subject of a self-signed certificate.
-The Verifier has already verified the certificate chain.
-See {{sec-crypto-validate-evidence}}.
+When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the Evidence.
 
-If multiple authorities approve the same Claim, for example if multiple key chains
-are available, then the `authorized-by` field SHALL be set to include the trusted
-authority keys used by each of those authorities.
+If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
 
-When adding Endorsement Claims to the ACS that resulted
-from CoRIM processing ({{sec-add-to-acs}}) the Verifier SHALL set the
-`authorized-by` field in that Evidence to the trusted authority key that is
-at the head of the key chain that signed the CoRIM.
+When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing ({{sec-add-to-acs}}).
+The Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
 
-When searching the ACS for an entry which matches a Reference
-Value containing an `authorized-by` field, the Verifier SHALL ignore ACS
-entries if none of the keys present in the Reference Value `authorized-by` field
-are also present in the ACS `authorized-by` field.
+When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
+The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 
-The Verifier SHOULD set the `authorized-by` field in ACS entries
-to a format which contains only a key, for example the `tagged-cose-key-type`
-format. Using a common format makes it easier to compare the field.
-
-#### Appraisal Claims Set augmentation using CoMID triples
+#### ACS augmentation using CoMID triples
 
 In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
 Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
@@ -2136,9 +2125,9 @@ Hence, the Verifier may need to maintain multiple Attestation Results contexts.
 An internal representation of Attestation Results as separate contexts ({{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
-## Adding to the Appraisal Claims Set {#sec-add-to-acs}
+## Adding to the Appraisal Claims Set (ACS) {#sec-add-to-acs}
 
-### Appraisal Claims Set Requirements {#sec-acs-reqs}
+### ACS Processing Requirements {#sec-acs-reqs}
 
 At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
 See {{sec-ir-cm}}.
@@ -2146,61 +2135,33 @@ See {{sec-ir-cm}}.
 Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232
+ACS entries contain Evidence (from Attesters), corroborated Reference Values, and Endorsements.
+The ACS SHALL contain the Attester's *actual state* as defined by its Target Environments (TEs).
 
-The ACS contains the actual state of Attester's Target Environments (TEs).
-The `state-triples` field contains Evidence (from Attesters) and Endorsements
-(e.g. from `endorsed-triple-record`).
+Each ACS ECT entry SHALL contain `authority`.
+See {{sec-authority}}.
+There can be multiple entries in the ACS which have the same `environment-map` and a different authority.
 
-CoMID Reference Values will be matched against the ACS, as per
-the appraisal policy of the Verifier.
-This document describes an example evidence structure which can be easily
-matched against these Reference Values.
+Each ACS entry is an ECT Claim.
+The ECT `environment` and `element-id` together define the Claim's name.
+The ECT `element-claims` are the Claim's *actual state*.
 
-Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
-When an `endorsed-triple-record` appears within `state-triples` it
-indicates that the authority named by `measurement-map`/`authorized-by`
-asserts that the actual state of one or more Claims within the
-Target Environment, as identified by `environment-map`, have the
-measurement values in `measurement-map`/`mval`.
-
-ECT authority is represented by cryptographic keys. Authority
-is asserted by digitally signing a Claim using the key. Hence, Claims are
-added to the ACS under the authority of a cryptographic key.
-
-Each Claim is encoded as an ECT. The `environment-map` and a
-key within `measurement-values-map` encode the name of the Claim.
-The value matching that key within `measurement-values-map` is the actual
-state of the Claim.
-
-This specification does not assign special meanings to any Claim name,
-it only specifies rules for determining when two Claim names are the same.
-
-If two Claims have the same `environment-map` encoding then this does not
-trigger special encoding in the Verifier. The Verifier follows instructions
-in the CoRIM file which tell it how claims are related.
-
-If Evidence or Endorsements from different sources has the same `environment-map`
-and `authorized-by` then the `measurement-values-map`s are merged.
-
-The ACS must maintain the authority information for each ECT. There can be
-multiple entries in `state-triples` which have the same `environment-map`
-and a different authority.
-See {{sec-authorized-by}}.
-
-If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are equivalent, then duplicate claims SHOULD be omitted.
+This specification defines rules for determining when two Claim names are equivalent.
+See {{sec-compare-environment}} and {{sec-compare-element-map}}.
 Equivalence typically means values MUST be binary identical.
 
-If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are not equivalent, then a Verifier SHALL report
-an error and stop validation processing.
+If two Claims have the same Claim name, the CoRIM triples instruct the Verifier on how these Claims are related.
 
-### ACS Augmentation {#sec-acs-aug}
+If multiple Claims have the same name and the measurement values (i.e., `measurement-values-map` codepoints and values) are equivalent, they are considered *duplicates*.
+Duplicate claims SHOULD be omitted.
+
+If multiple Claims have the same name and `measurement-values-map` contains duplicate codepoints but the measurement values are not equivalent, then a Verifier SHALL report an error and stop validation processing.
+
+### ACS Augmentation Requirements {#sec-acs-aug}
 
 The ordering of ECTs in the ACS is not significant.
 Logically, new ECT entries are appended to the existing ACS.
-But implementations may optimize ECT order to achieve better performance.
+Nevertheless, implementations may optimize ECT order, to achieve better performance.
 Additions to the ACS MUST be atomic.
 
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
