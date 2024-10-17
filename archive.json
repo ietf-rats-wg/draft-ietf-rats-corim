@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-15T01:46:06.446572+00:00",
+  "timestamp": "2024-10-17T01:44:55.284382+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7300,15 +7300,15 @@
       "id": "I_kwDOH6-tI86ZkGfr",
       "title": "Allow `mkey`s to be `tstr`",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/312",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "@jraman567 has a use case that needs this.\r\n\r\nAn alternative would be for Jag's profile to extend `$measured-element-type-choice`, but it seems that `tstr` would be common enough to deserve being brought into the base schema.",
       "createdAt": "2024-10-09T16:15:02Z",
-      "updatedAt": "2024-10-09T16:15:02Z",
-      "closedAt": null,
+      "updatedAt": "2024-10-16T14:05:00Z",
+      "closedAt": "2024-10-16T14:05:00Z",
       "comments": []
     },
     {
@@ -7452,17 +7452,9 @@
       "labels": [],
       "body": "The sections \"Augmentation using CoMID triples\" and \"Order of triple processing\" are currently in Phase 2 (Section 8.4) but are more specific to how non-evidence is supposed to be processed.\r\n\r\nWe don't have \"triples\" in this part of the spec either. We have relations of ECTs, so using \"CoMID triples\" in the section title is confusing.\r\n\r\nI understand that the order of conditional endorsement matching with the base CDDL can be understood as Horn clauses and thus can be understood with the P-complete Boolean Constraint Propagation problem. With profiles, that algorithm is not necessarily complete. Prolog-like unification with cuts could also be encoded, so a Verifier that implements it could diverge on broken/malicious input, for example.\r\n\r\nAny directive with a condition that can include an endorsement is subject to needing a fixed point computation.",
       "createdAt": "2024-10-12T21:24:29Z",
-      "updatedAt": "2024-10-14T23:29:20Z",
+      "updatedAt": "2024-10-16T19:16:46Z",
       "closedAt": null,
-      "comments": [
-        {
-          "author": "nedmsmith",
-          "authorAssociation": "COLLABORATOR",
-          "body": "There needs to be a new Input Transformation sub-section: \"Transformation of CoSWID Tags\". I anticipate this section will prepare `rv` and `ev` records. Possibly, there should be an evidence transformation section that describes how to produce `ae` records too?\r\n\r\nCoSWID tags can be asserted as evidence or Reference Values. Additionally, they contain information that logically are Endorsements. If the CoSWID transformation section is successful at mapping all the coswid information to `rv`, `ev`, or `ae` records, then the existing processing sections in phases 2, 3, and 4 should satisfy coswid inputs.\r\n\r\nThe ",
-          "createdAt": "2024-10-14T23:29:19Z",
-          "updatedAt": "2024-10-14T23:29:19Z"
-        }
-      ]
+      "comments": []
     },
     {
       "number": 321,
@@ -7538,6 +7530,54 @@
       "body": "Section 8.8 - Adding to the ACS contains two sub-sections of requirements. This is outside of the phase 2, 3, and 4 which describe ACS processing of the various triples. Possibly, requirements sections belong with the ACS internal representation section since requirements are placing constraints on processing steps. Or maybe they belong in Phase 2 ACS initialization?  \r\n\r\nAlternatively, section 8.8 is renamed to \"ACS Augmentation - Phases 2, 3, and 4\" and sections 8.4, 8.5, and 8.6 are moved into section 8.8 as sub-sections following the ACS requirements sections 8.8.1 and 8.8.2. We may want to augment the requirements sections to add something about ACS ending state being consistent across all Verifiers.",
       "createdAt": "2024-10-14T23:42:06Z",
       "updatedAt": "2024-10-14T23:42:06Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 327,
+      "id": "I_kwDOH6-tI86afytN",
+      "title": "Provide syntactically valid examples in the doc for $crypto-key-type-choice variants",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/327",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "554, 555, 556, 557, etc.",
+      "createdAt": "2024-10-16T14:11:22Z",
+      "updatedAt": "2024-10-16T14:11:22Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 328,
+      "id": "I_kwDOH6-tI86ai2-D",
+      "title": "CoSWID triple needs transformation and processing sections",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/328",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "CoSWID triples `coswid-triple-record` needs a transformation section and possibly a processing section. The transformation section will map contents of a coswid tag to internal representations for evidence, reference, and endorsements. If the mapping comes up with gaps (something that doesn't map) then a processing section may be needed.\r\n\r\nCoSWID field mappings are as follows:\r\npayload-entry : Reference Values\r\nevidence-entry : Evidence\r\nsoftware-meta.activation-status : Evidence? (if so, how should it be reported since concise-evidence omits it)\r\nchannel-type : Endorsement\r\ncolloquial-version : Endorsement\r\ndescription : Endorsement\r\nedition : Endorsement\r\nentitlement-data-required : ??? (feels like policy)\r\nentitlement-key : Endorsement\r\ngenerator : tag info\r\npersistent-id : Should be used in the construction of Environment-maps \r\nproduct : Endorsement\r\nproduct-family : Endorsement\r\nrevision : Endorsement\r\nsummary : Endorsement\r\nunspsc-code : Endorsement\r\nunspsc-version : Endorsement\r\n\r\nExtension to sw meta should describe their internal representation mapping / transformation.\r\n\r\nConcise Swid Tag:\r\nsoftware-name : Endorsement\r\nsoftware-version : Endorsement\r\nversion-scheme : Endorsement\r\nmedia : Endorsement (for example, it may contain a stringified representation of environment-map)\r\n\r\nAll other members of `concise-swid-tag` are tag specific.\r\n",
+      "createdAt": "2024-10-16T19:16:05Z",
+      "updatedAt": "2024-10-16T19:18:14Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 330,
+      "id": "I_kwDOH6-tI86ajdco",
+      "title": "Transformation and processing sections needed for attest key and identity key triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.",
+      "createdAt": "2024-10-16T20:30:08Z",
+      "updatedAt": "2024-10-16T20:30:09Z",
       "closedAt": null,
       "comments": []
     }
@@ -46484,25 +46524,242 @@
       "labels": [],
       "body": "Issue #293 and #159 are addressed by this PR. Some section naming cleanup also applied.",
       "createdAt": "2024-10-14T22:57:50Z",
-      "updatedAt": "2024-10-14T23:43:04Z",
+      "updatedAt": "2024-10-16T20:43:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "authorized-by-cleanup",
-      "headRefOid": "52025ff29472352dfe5e7a37ab5081930affbb48",
+      "headRefOid": "c20d97f0f0d605eef18782b96276939752a805f9",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86NbOBV",
+          "commit": {
+            "abbreviatedOid": "52025ff"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T14:40:49Z",
+          "updatedAt": "2024-10-16T14:40:50Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nThe supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values)\r\nis by default the CoRIM signer. The signer of a triple is said to be its *authority*.\r\n```",
+              "createdAt": "2024-10-16T14:40:50Z",
+              "updatedAt": "2024-10-16T14:40:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NbUDq",
+          "commit": {
+            "abbreviatedOid": "52025ff"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-16T14:49:44Z",
+          "updatedAt": "2024-10-16T14:49:44Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NbVmz",
+          "commit": {
+            "abbreviatedOid": "c9c57b0"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T14:52:01Z",
+          "updatedAt": "2024-10-16T14:52:02Z",
+          "comments": [
+            {
+              "originalPosition": 183,
+              "body": "```suggestion\r\nIf multiple Claims have the same name and the measurement values are equivalent, they are considered *duplicates*.\r\n```",
+              "createdAt": "2024-10-16T14:52:01Z",
+              "updatedAt": "2024-10-16T14:52:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NbV6d",
+          "commit": {
+            "abbreviatedOid": "c9c57b0"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T14:52:26Z",
+          "updatedAt": "2024-10-16T14:52:26Z",
+          "comments": [
+            {
+              "originalPosition": 184,
+              "body": "Reads redundant to L2151",
+              "createdAt": "2024-10-16T14:52:26Z",
+              "updatedAt": "2024-10-16T14:52:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Nbcyf",
+          "commit": {
+            "abbreviatedOid": "c9c57b0"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T14:59:43Z",
+          "updatedAt": "2024-10-16T14:59:43Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "If this is intended to be different from https://www.rfc-editor.org/rfc/rfc8949.html#name-basic-validity I would not recommend it.",
+              "createdAt": "2024-10-16T14:59:43Z",
+              "updatedAt": "2024-10-16T14:59:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NbnEM",
+          "commit": {
+            "abbreviatedOid": "c9c57b0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T15:14:27Z",
+          "updatedAt": "2024-10-16T15:14:28Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "It\u2019s the duplicate key basic validity condition for maps if we\u2019re thinking about map merging.\r\n\u201cname\u201d is maybe not clear as being the combination of environment map, mkey, and authority around the measurement values map.",
+              "createdAt": "2024-10-16T15:14:27Z",
+              "updatedAt": "2024-10-16T15:14:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NcUnU",
+          "commit": {
+            "abbreviatedOid": "c9c57b0"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T16:15:29Z",
+          "updatedAt": "2024-10-16T16:15:29Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "earlier text defined \"name\" so that the verbose explanation of the combination of the environment-map and the element-id doesn't have to be repeated multiple times in subsequent text referring to \"name\".",
+              "createdAt": "2024-10-16T16:15:29Z",
+              "updatedAt": "2024-10-16T16:15:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NckZg",
+          "commit": {
+            "abbreviatedOid": "f13c7b0"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-16T16:36:51Z",
+          "updatedAt": "2024-10-16T16:36:51Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 325,
       "id": "PR_kwDOH6-tI85-m1iT",
       "title": "Allow mkey tstr",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/325",
+      "state": "MERGED",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Added tstr to $measured-element-type-choice.\r\n\r\nFix #312",
+      "createdAt": "2024-10-15T00:40:55Z",
+      "updatedAt": "2024-10-16T14:05:06Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "allow-mkey-tstr",
+      "headRefOid": "eac7ec20783d4382a57f56f8384aae65f2080409",
+      "closedAt": "2024-10-16T14:04:59Z",
+      "mergedAt": "2024-10-16T14:04:59Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "a5a32094d40ce9f33bd0b09f8dbb77f9891f68ff"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86NJMJo",
+          "commit": {
+            "abbreviatedOid": "eac7ec2"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-15T02:47:45Z",
+          "updatedAt": "2024-10-15T02:47:45Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NLimm",
+          "commit": {
+            "abbreviatedOid": "eac7ec2"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-10-15T08:54:41Z",
+          "updatedAt": "2024-10-15T08:54:41Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NLmKn",
+          "commit": {
+            "abbreviatedOid": "eac7ec2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-15T09:00:14Z",
+          "updatedAt": "2024-10-15T09:00:14Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 326,
+      "id": "PR_kwDOH6-tI85-uCZD",
+      "title": "Conditional endorsement series triple section reworded",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/326",
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
@@ -46510,15 +46767,116 @@
         "nedmsmith"
       ],
       "labels": [],
-      "body": "Added tstr to $measured-element-type-choice.\r\n\r\nfixes issue #312",
-      "createdAt": "2024-10-15T00:40:55Z",
-      "updatedAt": "2024-10-15T00:41:44Z",
+      "body": "Added description to conditional series triple to address issues #310 and #321.\r\nUpdated example [here](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cond-series-wording/cddl/examples/comid-series.diag) to better illustrate a use case.",
+      "createdAt": "2024-10-15T19:07:50Z",
+      "updatedAt": "2024-10-16T17:14:22Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
-      "headRefName": "allow-mkey-tstr",
-      "headRefOid": "eac7ec20783d4382a57f56f8384aae65f2080409",
+      "headRefName": "cond-series-wording",
+      "headRefOid": "5c19de3142b4b2842af12a50c6a9b942261997b8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86NalpX",
+          "commit": {
+            "abbreviatedOid": "707ab32"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-10-16T13:50:29Z",
+          "updatedAt": "2024-10-16T13:59:50Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "Can we make this a syntactically valid 6.554 value like in the referenced documentation?\r\n\r\n-----BEGIN PUBLIC KEY-----\\nMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEn1LlwLN/KBYQRVH6HfIMTzfEqJOVztLe\\nkLchp2hi78cCaMY81FBlYs8J9l7krc+M4aBeCGYFjba+hiXttJWPL7ydlE+5UG4U\\nNkn3Eos8EiZByi9DVsyfy9eejh+8AXgp\\n-----END PUBLIC KEY-----",
+              "createdAt": "2024-10-16T13:50:29Z",
+              "updatedAt": "2024-10-16T13:59:50Z"
+            },
+            {
+              "originalPosition": 63,
+              "body": "```suggestion\r\n          [ / conditional-series-record #3 /\r\n```\r\n2 is already used.",
+              "createdAt": "2024-10-16T13:54:09Z",
+              "updatedAt": "2024-10-16T13:59:50Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "The ordering leads to negative conditions in the head of the rule still. The possible evaluation inconsistency from Issue #321 remains.\r\n\r\nIf the conditions are mutually-exclusive, then there's no need to order them and the triple is syntactic sugar for multiple normal conditions.\r\nIf the conditions are not mutually-exclusive, then you need a way to stratify condition matching to regain logical consistency.\r\n\r\nGiven that you haven't stated any condition, I don't know what your intention is here.",
+              "createdAt": "2024-10-16T13:59:47Z",
+              "updatedAt": "2024-10-16T13:59:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Na2N7",
+          "commit": {
+            "abbreviatedOid": "707ab32"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T14:12:17Z",
+          "updatedAt": "2024-10-16T14:12:17Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "Issue #327 ",
+              "createdAt": "2024-10-16T14:12:17Z",
+              "updatedAt": "2024-10-16T14:12:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Nc7wG",
+          "commit": {
+            "abbreviatedOid": "707ab32"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T17:14:22Z",
+          "updatedAt": "2024-10-16T17:14:22Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "> Issue #327\r\n\r\nGiven issue #327 addresses the concern. It doesn't need to be addressed in this PR.",
+              "createdAt": "2024-10-16T17:14:22Z",
+              "updatedAt": "2024-10-16T17:14:22Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 329,
+      "id": "PR_kwDOH6-tI85-4m79",
+      "title": "Section restructuring",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/329",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Created a section for acs augmentation and put ACS requirements, and phase 2 - 4 sections inside. order of triple processing became part of ACS requirements and augmentation using CoMID triples became introduction to the new ACS augmentation section\r\n\r\nThis PR addresses issues #320 and #324\r\n\r\nNote that PR #323 overlaps this PR possibly requiring manual merge.",
+      "createdAt": "2024-10-16T20:21:20Z",
+      "updatedAt": "2024-10-16T20:21:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "a5a32094d40ce9f33bd0b09f8dbb77f9891f68ff",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "Section-restructuring",
+      "headRefOid": "67ec31cf5c6b03476fa763f28026e44a83a7a798",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
