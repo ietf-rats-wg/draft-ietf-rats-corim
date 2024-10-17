@@ -2157,7 +2157,7 @@ If multiple Claims have the same name and `measurement-values-map` contains dupl
 
 The ordering of ECTs in the ACS is not significant.
 Logically, new ECT entries are appended to the existing ACS.
-Nevertheless, implementations may optimize ECT order to achieve better performance.
+Nevertheless, implementations may optimize ECT order, to achieve better performance.
 Additions to the ACS MUST be atomic.
 
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
