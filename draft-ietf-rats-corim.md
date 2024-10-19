@@ -2431,6 +2431,8 @@ These links must reach as deep as possible - possibly terminating within the app
 Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
+The signed CoRIM structure requires representing explicit purpose in the form of the prescribed value for `protected-corim-header-map`/`content-type` to follow standard signing security practice.
+
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
 
 # IANA Considerations {#sec-iana-cons}
