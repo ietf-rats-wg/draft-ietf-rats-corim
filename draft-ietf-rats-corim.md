@@ -114,7 +114,6 @@ informative:
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
-  I-D.ietf-rats-cobom: cobom
 
 entity:
   SELF: "RFCthis"
@@ -641,6 +640,13 @@ The `triples-map` contains all the CoMID triples broken down per category.  Not
 all category need to be present but at least one category MUST be present and
 contain at least one entry.
 
+In most cases, the supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values) is by default the CoRIM signer.
+The signer of a triple is said to be its *authority*.
+However, multiple authorities may be involved in signing triples.
+See {{-cose}}.
+Consequently, authority may differ for search criteria.
+See {{sec-measurements}}.
+
 ~~~ cddl
 {::include cddl/triples-map.cddl}
 ~~~
@@ -764,7 +770,7 @@ The types defined for a group identified are UUID and variable-length opaque byt
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Measurements
+##### Measurements {#sec-measurements}
 
 Measurements can be of a variety of things including software, firmware,
 configuration files, read-only memory, fuses, IO ring configuration, partial
@@ -783,13 +789,11 @@ identified by a class identifier have measurements that are common to the
 class. Environments identified by an instance identifier have measurements that
 are specific to that instance.
 
-The supply chain entity that is responsible for providing the measurements (i.e. Reference Values or Endorsed Values)
-is by default the CoRIM signer. If a different entity is authorized to provide measurement values,
-the `authorized-by` statement can be supplied in the `measurement-map`.
-
 An environment may have multiple measured elements.
 Measured elements are distinguished from each other by measurement keys.
 Measurement keys may be used to disambiguate measurements of the same type originating from different elements.
+
+Triples that have search conditions may specify authority as matching criteria by populating `authorized-by`.
 
 ~~~ cddl
 {::include cddl/measurement-map.cddl}
@@ -804,10 +808,12 @@ The following describes each member of the `measurement-map`:
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
 
-* `authorized-by` (index 2): The cryptographic identity of the individual or organization that is
- the designated authority for this measurement.
- For example, the producer of the measurement.
+* `authorized-by` (index 2): The cryptographic identity of the entity (individual or organization) that is
+ the designated authority for measurement Claims.
+ For example, the signer of a CoMID triple.
  See {{sec-crypto-keys}}.
+ An entity is authoritative when it makes Claims that are inside its area of
+competence.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
@@ -1743,7 +1749,7 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `profile`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
-### Internal Representation of ACS {#sec-ir-acs}
+### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
 
 An ACS is a list of ECTs that describe an Attester's actual state.
 
@@ -1761,7 +1767,7 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags {{-cobom}}, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
@@ -2094,39 +2100,30 @@ Additions to the ACS MUST be atomic.
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
 See {{sec-acs-aug}}.
 
-##### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
+#### The authority field in the ACS {#sec-authority}
 
-The `a` field in an ECT in the ACS indicates the entity whose authority backs the claim.
+The `authority` field in an ACS ECT indicates the entity whose authority backs the Claims.
 
-An entity is authoritative when it makes Claims that are inside its area of
-competence. The Verifier keeps track of the authorities that assert Claims so
-that it can filter out claims from entities that do not satisfy appraisal
-policies.
+The Verifier keeps track of authority so that it can satisfy appraisal policy that specifies authority.
 
-When adding an Evidence Claim to the ACS, the
-Verifier SHALL set the `authorized-by` field in that Claim to the trusted
-authority keys at the head of each key chain which signed that Evidence. This
-key is often the subject of a self-signed certificate.
-The Verifier has already verified the certificate chain.
-See {{sec-crypto-validate-evidence}}.
+When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the Evidence.
 
-If multiple authorities approve the same Claim, for example if multiple key chains
-are available, then the `authorized-by` field SHALL be set to include the trusted
-authority keys used by each of those authorities.
+If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
 
-When adding Endorsement Claims to the ACS that resulted
-from CoRIM processing ({{sec-acs-aug}}) the Verifier SHALL set the
-`authorized-by` field in that Evidence to the trusted authority key that is
-at the head of the key chain that signed the CoRIM.
+When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing ({{sec-add-to-acs}}).
+The Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
 
-When searching the ACS for an entry which matches a Reference
-Value containing an `authorized-by` field, the Verifier SHALL ignore ACS
-entries if none of the keys present in the Reference Value `authorized-by` field
-are also present in the ACS `authorized-by` field.
+When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
+The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 
-The Verifier SHOULD set the `authorized-by` field in ACS entries
-to a format which contains only a key, for example the `tagged-cose-key-type`
-format. Using a common format makes it easier to compare the field.
+#### ACS augmentation using CoMID triples
+
+In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
+Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
+
+Each triple is processed independently of other triples.
+However, the ACS state may change as a result of processing a triple.
+If a triple condition does not match, then the Verifier continues to process other triples.
 
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
@@ -2172,7 +2169,7 @@ where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series processing terminates when the first series entry matches.
 
-## Examples for optional phases 5, 6, and 7 {#sec-phases567}
+### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
 Phases 5, 6, and 7 are optional depending on implementation design.
 Verifier implementations that apply consistency, integrity, or validity checks could be represented as Claims that augment the ACS or could be handled by application specific interfaces.
@@ -2206,7 +2203,6 @@ Attestation Results contexts are the inputs to Attestation Results procedures th
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
-
 
 A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
