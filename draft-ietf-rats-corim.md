@@ -2025,7 +2025,7 @@ The `state-triples` field contains Evidence (from Attesters) and Endorsements
 
 CoMID Reference Values will be matched against the ACS, as per
 the appraisal policy of the Verifier.
-This document describes an example evidence structure which can be easily
+This document describes an example evidence structure which can be
 matched against these Reference Values.
 
 Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
