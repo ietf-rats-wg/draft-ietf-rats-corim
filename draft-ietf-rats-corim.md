@@ -2083,8 +2083,8 @@ This can be acheived by sorting the triples before processing, by repeating proc
 #### ACS Augmentation Requirements {#sec-acs-aug-req}
 
 The ordering of ECTs in the ACS is not significant.
-Logically, new ECT entries are appended to the existing ACS.
-But implementations may optimize ECT order to achieve better performance.
+Logically, the ACS represents the conjunction of all claims, so adding an ECT entry to the existing ACS at the end is equivalent to inserting it anywhere else.
+Implementations may optimize ECT order to achieve better performance.
 Additions to the ACS MUST be atomic.
 
 ### Evidence Augmentation (Phase 2) {#sec-phase2}
