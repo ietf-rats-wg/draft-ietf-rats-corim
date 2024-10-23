@@ -2004,12 +2004,101 @@ If the Evidence does not have a value for the mandatory `ae` fields, the Verifie
 Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
-## Evidence Augmentation (Phase 2) {#sec-phase2}
+## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
-### Appraisal Claims Set (ACS) Initialization {#sec-acs-initialization}
+In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
+Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
+
+Each triple is processed independently of other triples.
+However, the ACS state may change as a result of processing a triple.
+If a triple condition does not match, then the Verifier continues to process other triples.
+
+### ACS Requirements {#sec-acs-reqs}
+
+At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
+See {{sec-ir-cm}}.
+
+Verifiers are not required to use this as their internal representation.
+For the purposes of this document, appraisal is described in terms of the above cited internal representation.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232
+
+#### ACS Processing Requirements
+
+The ACS contains the actual state of Attester's Target Environments (TEs).
+The `state-triples` field contains Evidence (from Attesters) and Endorsements
+(e.g. from `endorsed-triple-record`).
+
+CoMID Reference Values will be matched against the ACS, as per
+the appraisal policy of the Verifier.
+This document describes an example evidence structure which can be
+matched against these Reference Values.
+
+Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
+When an `endorsed-triple-record` appears within `state-triples` it
+indicates that the authority named by `measurement-map`/`authorized-by`
+asserts that the actual state of one or more Claims within the
+Target Environment, as identified by `environment-map`, have the
+measurement values in `measurement-map`/`mval`.
+
+ECT authority is represented by cryptographic keys. Authority
+is asserted by digitally signing a Claim using the key. Hence, Claims are
+added to the ACS under the authority of a cryptographic key.
+
+Each Claim is encoded as an ECT. The `environment-map` and a
+key within `measurement-values-map` encode the name of the Claim.
+The value matching that key within `measurement-values-map` is the actual
+state of the Claim.
+
+This specification does not assign special meanings to any Claim name,
+it only specifies rules for determining when two Claim names are the same.
+
+If two Claims have the same `environment-map` encoding then this does not
+trigger special encoding in the Verifier. The Verifier follows instructions
+in the CoRIM file which tell it how claims are related.
+
+If Evidence or Endorsements from different sources has the same `environment-map`
+and `authorized-by` then the `measurement-values-map`s are merged.
+
+The ACS must maintain the authority information for each ECT. There can be
+multiple entries in `state-triples` which have the same `environment-map`
+and a different authority.
+See {{sec-authority}}.
+
+If the merged `measurement-values-map` contains duplicate codepoints and the
+measurement values are equivalent, then duplicate claims SHOULD be omitted.
+Equivalence typically means values MUST be binary identical.
+
+If the merged `measurement-values-map` contains duplicate codepoints and the
+measurement values are not equivalent, then a Verifier SHALL report
+an error and stop validation processing.
+
+##### Ordering of triple processing
+
+Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
+Most triples use an `environment-map` field to select the ACS entries to match or modify.
+This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
+
+The order of triples processing is important.
+Processing a triple may result in ACS modifications that affect matching behavior of other triples.
+
+The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
+
+This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
+
+#### ACS Augmentation Requirements {#sec-acs-aug-req}
+
+The ordering of ECTs in the ACS is not significant.
+Logically, the ACS represents the conjunction of all claims, so adding an ECT entry to the existing ACS at the end is equivalent to inserting it anywhere else.
+Implementations may optimize ECT order to achieve better performance.
+Additions to the ACS MUST be atomic.
+
+### Evidence Augmentation (Phase 2) {#sec-phase2}
+
+#### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
-See {{sec-add-to-acs}}.
+See {{sec-acs-aug}}.
 
 #### The authority field in the ACS {#sec-authority}
 
@@ -2021,7 +2110,7 @@ When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority`
 
 If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
 
-When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing ({{sec-add-to-acs}}).
+When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing.
 The Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
 
 When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
@@ -2036,20 +2125,7 @@ Each triple is processed independently of other triples.
 However, the ACS state may change as a result of processing a triple.
 If a triple condition does not match, then the Verifier continues to process other triples.
 
-#### Ordering of triple processing
-
-Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the ACS entries to match or modify.
-This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
-
-The order of triples processing is important.
-Processing a triple may result in ACS modifications that affect matching behavior of other triples.
-
-The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
-
-This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
-
-## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
+### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
 Reference Values may describe multiple possible Attester states.
@@ -2064,7 +2140,7 @@ For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the 
 
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
-## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
+### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
@@ -2072,18 +2148,18 @@ Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 
-### Processing Endorsements {#sec-process-end}
+#### Processing Endorsements {#sec-process-end}
 
 Endorsements are matched with ACS entries by iterating through the `ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
 
-### Processing Conditional Endorsements {#sec-process-cond-end}
+#### Processing Conditional Endorsements {#sec-process-cond-end}
 
 Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
 Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
 
-### Processing Conditional Endorsement Series {#sec-process-series}
+#### Processing Conditional Endorsement Series {#sec-process-series}
 
 Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
 Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
@@ -2093,7 +2169,7 @@ where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series processing terminates when the first series entry matches.
 
-## Examples for optional phases 5, 6, and 7 {#sec-phases567}
+### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
 Phases 5, 6, and 7 are optional depending on implementation design.
 Verifier implementations that apply consistency, integrity, or validity checks could be represented as Claims that augment the ACS or could be handled by application specific interfaces.
@@ -2124,49 +2200,9 @@ Hence, the Verifier may need to maintain multiple Attestation Results contexts.
 An internal representation of Attestation Results as separate contexts ({{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
-## Adding to the Appraisal Claims Set (ACS) {#sec-add-to-acs}
-
-### ACS Processing Requirements {#sec-acs-reqs}
-
-At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
-See {{sec-ir-cm}}.
-
-Verifiers are not required to use this as their internal representation.
-For the purposes of this document, appraisal is described in terms of the above cited internal representation.
-
-ACS entries contain Evidence (from Attesters), corroborated Reference Values, and Endorsements.
-The ACS SHALL contain the Attester's *actual state* as defined by its Target Environments (TEs).
-
-Each ACS ECT entry SHALL contain `authority`.
-See {{sec-authority}}.
-There can be multiple entries in the ACS which have the same `environment-map` and a different authority.
-
-Each ACS entry is an ECT Claim.
-The ECT `environment` and `element-id` together define the Claim's name.
-The ECT `element-claims` are the Claim's *actual state*.
-
-This specification defines rules for determining when two Claim names are equivalent.
-See {{sec-compare-environment}} and {{sec-compare-element-map}}.
-Equivalence typically means values MUST be binary identical.
-
-If two Claims have the same Claim name, the CoRIM triples instruct the Verifier on how these Claims are related.
-
-If multiple Claims have the same name and the measurement values (i.e., `measurement-values-map` codepoints and values) are equivalent, they are considered *duplicates*.
-Duplicate claims SHOULD be omitted.
-
-If multiple Claims have the same name and `measurement-values-map` contains duplicate codepoints but the measurement values are not equivalent, then a Verifier SHALL report an error and stop validation processing.
-
-### ACS Augmentation Requirements {#sec-acs-aug}
-
-The ordering of ECTs in the ACS is not significant.
-Logically, new ECT entries are appended to the existing ACS.
-Nevertheless, implementations may optimize ECT order, to achieve better performance.
-Additions to the ACS MUST be atomic.
-
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
-
 
 A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
