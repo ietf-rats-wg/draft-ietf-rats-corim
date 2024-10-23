@@ -61,7 +61,6 @@ CORIM_FRAGS += corim-meta-map.cddl
 CORIM_FRAGS += corim-role-type-choice.cddl
 CORIM_FRAGS += corim-signer-map.cddl
 CORIM_FRAGS += cose-sign1-corim.cddl
-CORIM_FRAGS += maybe-tagged-corim-map.cddl
 CORIM_FRAGS += profile-type-choice.cddl
 CORIM_FRAGS += protected-corim-header-map.cddl
 CORIM_FRAGS += signed-corim.cddl
