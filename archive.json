@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-22T01:46:13.916666+00:00",
+  "timestamp": "2024-10-24T01:44:52.668614+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7323,7 +7323,7 @@
       "labels": [],
       "body": "If we're dropping the need for RVPs to specify the attester authority, we ought to mention in Phase 1 that Evidence can only be transformed an ECT about environment E only if the evidence was signed by a key bound to E with an attest-key-triple, no? It probably works differently for SPDM since the measurement is over an authenticated channel rather than signed, but unfortunately that detail is missing from the TCG document https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf",
       "createdAt": "2024-10-09T17:42:10Z",
-      "updatedAt": "2024-10-11T05:24:53Z",
+      "updatedAt": "2024-10-23T16:16:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -7378,9 +7378,30 @@
         {
           "author": "deeglaze",
           "authorAssociation": "COLLABORATOR",
-          "body": "I'm afraid I don't follow that explanation. The RVP cannot say which exact keys the whole fleet that will run its signed firmware will have. We just know that the keys should be issued by AMD's intermediate CA.",
+          "body": "I'm afraid I don't follow that explanation. The RVP cannot say which exact keys the whole fleet that will run its signed firmware will have. We just know that the keys' certs should be issued by AMD's intermediate CA.",
           "createdAt": "2024-10-11T05:24:52Z",
-          "updatedAt": "2024-10-11T05:24:52Z"
+          "updatedAt": "2024-10-23T14:45:38Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Attest-key-triple can be encoded by AMD's KDS signing a VCEK certificate with extensions that identify the environment it's bound to.\r\n\r\nSEV-SNP Evidence can be interpreted as coming from a certain environment.\r\nIf there is a valid attest-key-triple for that environment and it verifies the evidence, then the evidence can be added as authorized by the attest-key. Yes? ",
+          "createdAt": "2024-10-23T14:52:11Z",
+          "updatedAt": "2024-10-23T14:52:11Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There is no ACS / Appraisal context representation of attest-key-triple. I think we need to concretize the internal representation and its meaning.",
+          "createdAt": "2024-10-23T14:55:44Z",
+          "updatedAt": "2024-10-23T14:55:44Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Reflecting rough consensus from the 2024-10-23 corim design team discussion:\r\n- attest-key-triple should be processed as an endorsement. \r\n- the combination of environment-map and a key ($crypto-key-type-choice) tuple (EKT) makes up the condition to be searched in the ACS. This means Evidence or Reference triples should have previously placed an EKT in the ACS.\r\n- If key verification is successful, then a new ACS entry is added that contains the EKT values as an ECT where the ECT authority includes both the original endorser and the verifier.\r\n- The verifier relies on the root of the certificate path that is provided in $crypto-key-type-choice as the trust anchor. (Note: if a key digest / key-id form of crypto-key-type-choice is used, the verifier will have to do \"best effort\" attempts to find a verifiable credential. Or we restrict the set of crypto-key-type-choice values to some subset). I'm leaning toward best effort rather than the spec having restrictions.\r\n\r\nOther considerations:\r\n- The attest-key-triple doesn't have a way to include authority as part of the condition. This could be a useful addition as it would allow an endorser to specify which RVP (or DICE layer key) it expects would have supplied the original (existential) measurement.\r\n- \r\n- A backwards compatible way to add authorized-by as a matching condition might be:\r\n```\r\nattest-key-triple-record = [\r\n  environment-map\r\n  key-list: [ + $crypto-key-type-choice ]\r\n  ? authorized-by\r\n]\r\n```\r\nIf there is a second key-list entry that has different authority, this can be modeled by using a second attest-key-triple-record.\r\n\r\nNote: to be consistent with measurement-map use of authorized-by we might want:\r\n```\r\nattest-key-triple-record = [\r\n  environment-map\r\n  key-list: [ + $crypto-key-type-choice ]\r\n  ? [ + authorized-by ]\r\n]\r\n```\r\nThe semantics are that there could be multiple entities asserting the EKT, meaning multiple signers of the evidence / reference triples. In practice, this seems unlikely, but it isn't much overhead if added.\r\n\r\n- The structure of the ACS addition (assuming key verification succeeds) would be an ECT where the environment is the EKT.environment-map and the ECT.element-id is omitted (anonymous), the ECT.element-claims.measurement-map.measurement-values-map is the EKT.measurement-map.measurement-values-map containing the key-list.",
+          "createdAt": "2024-10-23T16:00:17Z",
+          "updatedAt": "2024-10-23T16:16:30Z"
         }
       ]
     },
@@ -7575,9 +7596,88 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "A transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.",
+      "body": "Also relates to #314 \r\nA transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.",
       "createdAt": "2024-10-16T20:30:08Z",
-      "updatedAt": "2024-10-16T20:30:09Z",
+      "updatedAt": "2024-10-23T17:57:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 333,
+      "id": "I_kwDOH6-tI86bf5qP",
+      "title": "Nonsense: corim = tagged extensible type choice of tags ",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/333",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We need to remove the extensibility of $concise-rim-type-choice since extensibility is driven by profile, but profile isn't known at this point.\r\n\r\nWe also don't need to tag the type choice. Let's release the 500 tag?\r\n\r\n`corim = concise-rim-type-choice`",
+      "createdAt": "2024-10-23T14:31:01Z",
+      "updatedAt": "2024-10-23T14:31:01Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 334,
+      "id": "I_kwDOH6-tI86bf__A",
+      "title": "\"Claim name\" needs to include the mkey",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/334",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "PR #329 references the name of a claim but misses the aspect of the mkey.",
+      "createdAt": "2024-10-23T14:37:18Z",
+      "updatedAt": "2024-10-23T14:37:18Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 335,
+      "id": "I_kwDOH6-tI86bgBRj",
+      "title": "Conditional endorsement triple processing order \"is important\"",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/335",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The order should not be important so long as additions are followed by triple processing that has a condition that could match it. We don\u2019t want to impose other order dependencies unless you need to stratify triple processing more explicitly.\r\n\r\nGiven that we\u2019re defining a processing order for base triples, it should also be allowable for profiles to specify when their triples get processed if indeed order is important. Will they always be after the base triples, or can they be specified to happen at any time?",
+      "createdAt": "2024-10-23T14:39:24Z",
+      "updatedAt": "2024-10-23T22:24:11Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "See also #321",
+          "createdAt": "2024-10-23T14:43:01Z",
+          "updatedAt": "2024-10-23T14:43:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">Given that we\u2019re defining a processing order for base triples, it should also be allowable for profiles to specify when their triples get processed if indeed order is important. Will they always be after the base triples, or can they be specified to happen at any time?\r\n\r\nEvidence is the only CM type that doesn't require a `condition`. All the other CM types presume some sort of condition. Even the optional stages imply some sort of ACS condition has to exist before the stage can be processed.\r\n\r\nProfiles shouldn't, IMO, be permitted to change the basic assumption that an ACS condition has to be satisfied as a pre-condition to processing a profile defined triple. The spec normative claims that the ACS in in a consistent state at the end of phase 4. If a profile is permitted to inject itself before phase 4 it should be held to the same standard. But possibly, the spec should not permit this. Essentially, we would be saying profile defined phases are always optional and hence would be applied when the other optional phases are performed. I'm not sure I have an opinion about the ordering of optional phases. Ideally, that wouldn't matter, but if it does, it would be OK for the profile to say which other optional phases should go first.  At least that is my initial thinking.",
+          "createdAt": "2024-10-23T22:24:10Z",
+          "updatedAt": "2024-10-23T22:24:10Z"
+        }
+      ]
+    },
+    {
+      "number": 336,
+      "id": "I_kwDOH6-tI86bgDGY",
+      "title": "\"Reference values [..] matched against the ACS, as per the appraisal policy\"",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/336",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Reference value matching semantics is defined entirely by the CoRIM specification (including added semantics by profile) is it not?\r\n\r\nPolicy can drop reference values but not change semantics.",
+      "createdAt": "2024-10-23T14:41:54Z",
+      "updatedAt": "2024-10-23T14:41:54Z",
       "closedAt": null,
       "comments": []
     }
@@ -30841,7 +30941,7 @@
       "id": "PR_kwDOH6-tI85tf79r",
       "title": "Change Measurement to Property where appropriate",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/226",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -30850,14 +30950,14 @@
       ],
       "body": "A property is either a reference value or endorsed value, so the code points used and nomenclature in the document are overly constrained in points.\r\n\r\nCloses Issue#225",
       "createdAt": "2024-04-23T16:40:06Z",
-      "updatedAt": "2024-09-10T22:45:19Z",
+      "updatedAt": "2024-10-23T13:59:38Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "20fe75ebd7cb0b79c3b295b09bc59c0891f39247",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "claimsmap",
       "headRefOid": "91f2783faa3a321cf498695dd5a8b1cf2f041b4a",
-      "closedAt": null,
+      "closedAt": "2024-10-23T13:59:38Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -30945,6 +31045,13 @@
           "body": "Do we give up and just change ACS to AMS and ECT to EMT to keep internal consistency?",
           "createdAt": "2024-09-10T22:45:17Z",
           "updatedAt": "2024-09-10T22:45:17Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Unanimously Agreed that property is not sutable, but claims is more suitable, hence closing this PR!",
+          "createdAt": "2024-10-23T13:59:38Z",
+          "updatedAt": "2024-10-23T13:59:38Z"
         }
       ],
       "reviews": [
@@ -47295,7 +47402,7 @@
       "id": "PR_kwDOH6-tI85-4m79",
       "title": "Section restructuring",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/329",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -47304,17 +47411,19 @@
       "labels": [],
       "body": "Created a section for acs augmentation and put ACS requirements, and phase 2 - 4 sections inside. order of triple processing became part of ACS requirements and augmentation using CoMID triples became introduction to the new ACS augmentation section\r\n\r\nThis PR addresses issues #320 and #324\r\n\r\nNote that PR #323 overlaps this PR possibly requiring manual merge.",
       "createdAt": "2024-10-16T20:21:20Z",
-      "updatedAt": "2024-10-17T17:35:09Z",
+      "updatedAt": "2024-10-23T18:20:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "a5a32094d40ce9f33bd0b09f8dbb77f9891f68ff",
+      "baseRefOid": "69cb6fdf09c2cb88e714e49e5df1717c593ebadd",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "Section-restructuring",
-      "headRefOid": "67ec31cf5c6b03476fa763f28026e44a83a7a798",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "7e7ff12de841c739b2e57072769646403fb001ca",
+      "closedAt": "2024-10-23T18:20:28Z",
+      "mergedAt": "2024-10-23T18:20:28Z",
+      "mergedBy": "nedmsmith",
+      "mergeCommit": {
+        "oid": "866e582ea9c17cd57739557202ee95df76e600f0"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -47388,6 +47497,118 @@
               "updatedAt": "2024-10-17T03:00:14Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZRh4",
+          "commit": {
+            "abbreviatedOid": "ac0b5dd"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-10-23T14:36:20Z",
+          "updatedAt": "2024-10-23T14:36:20Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZRoh",
+          "commit": {
+            "abbreviatedOid": "ac0b5dd"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-23T14:36:24Z",
+          "updatedAt": "2024-10-23T14:36:24Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZTlQ",
+          "commit": {
+            "abbreviatedOid": "ac0b5dd"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-23T14:37:51Z",
+          "updatedAt": "2024-10-23T14:37:51Z",
+          "comments": [
+            {
+              "originalPosition": 48,
+              "body": "refer issue #334 ",
+              "createdAt": "2024-10-23T14:37:51Z",
+              "updatedAt": "2024-10-23T14:37:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZU1b",
+          "commit": {
+            "abbreviatedOid": "ac0b5dd"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-23T14:39:38Z",
+          "updatedAt": "2024-10-23T14:39:38Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "refer to issue #335",
+              "createdAt": "2024-10-23T14:39:38Z",
+              "updatedAt": "2024-10-23T14:39:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZVA3",
+          "commit": {
+            "abbreviatedOid": "ac0b5dd"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-10-23T14:39:53Z",
+          "updatedAt": "2024-10-23T14:39:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZVBU",
+          "commit": {
+            "abbreviatedOid": "ac0b5dd"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-23T14:39:53Z",
+          "updatedAt": "2024-10-23T14:39:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZXUQ",
+          "commit": {
+            "abbreviatedOid": "67ec31c"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-23T14:42:08Z",
+          "updatedAt": "2024-10-23T14:42:08Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "Issue #336",
+              "createdAt": "2024-10-23T14:42:08Z",
+              "updatedAt": "2024-10-23T14:42:08Z"
+            }
+          ]
         }
       ]
     },
@@ -47415,6 +47636,148 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 332,
+      "id": "PR_kwDOH6-tI85_hq8M",
+      "title": "Allow signing untagged corim-map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/332",
+      "state": "MERGED",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There's no need to require the tag, and the veraison/corim package hasn't been tagging its payload.",
+      "createdAt": "2024-10-22T23:52:01Z",
+      "updatedAt": "2024-10-23T14:30:43Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "27766e76f58b38ec5f7726c41051902026c74f8d",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "tagpayload",
+      "headRefOid": "5a16a2075a81c2fa99c39d38415bc736078c54ff",
+      "closedAt": "2024-10-23T14:30:43Z",
+      "mergedAt": "2024-10-23T14:30:43Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "69cb6fdf09c2cb88e714e49e5df1717c593ebadd"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86OY9-s",
+          "commit": {
+            "abbreviatedOid": "5068081"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-23T14:17:40Z",
+          "updatedAt": "2024-10-23T14:17:41Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\nCORIM_FRAGS +=corim-map.cddl\r\n```",
+              "createdAt": "2024-10-23T14:17:41Z",
+              "updatedAt": "2024-10-23T14:17:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZGUp",
+          "commit": {
+            "abbreviatedOid": "5068081"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-23T14:25:50Z",
+          "updatedAt": "2024-10-23T14:25:51Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n payload: bstr .cbor tagged-corim-map  / corim-map\r\n```",
+              "createdAt": "2024-10-23T14:25:50Z",
+              "updatedAt": "2024-10-23T14:25:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZIRu",
+          "commit": {
+            "abbreviatedOid": "5a16a20"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2024-10-23T14:28:34Z",
+          "updatedAt": "2024-10-23T14:28:34Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZJ0k",
+          "commit": {
+            "abbreviatedOid": "5a16a20"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-10-23T14:30:03Z",
+          "updatedAt": "2024-10-23T14:30:03Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86OZKa0",
+          "commit": {
+            "abbreviatedOid": "5a16a20"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-23T14:30:32Z",
+          "updatedAt": "2024-10-23T14:30:32Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 337,
+      "id": "PR_kwDOH6-tI85_qJoz",
+      "title": "Drop top level tagging requirement",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/337",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
+      "createdAt": "2024-10-23T18:12:02Z",
+      "updatedAt": "2024-10-23T18:57:32Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "topleveltag",
+      "headRefOid": "7d1c9e070a407520b9e9914bf065c5cd5499a94c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR probably should have some examples that tests the new functionality.\r\n\r\nThe section \"Concise Reference Integrity Manifest (CoRIM)\" may need to be updated to describe the possibility for unsigned payloads.",
+          "createdAt": "2024-10-23T18:53:43Z",
+          "updatedAt": "2024-10-23T18:57:32Z"
+        }
+      ],
       "reviews": []
     }
   ]
