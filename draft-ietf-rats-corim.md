@@ -114,6 +114,13 @@ informative:
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
+  DICE.cert:
+    title: DICE Certificate Profiles
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.0, Revision 0.01
+    date: July 2020
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
 
 entity:
   SELF: "RFCthis"
@@ -683,7 +690,7 @@ The following describes each member of the `triples-map`:
   stateful environment records.
   Described in {{sec-comid-triple-cond-endors}}.
 
-##### Environments
+##### Environments {#sec-environments}
 
 An `environment-map` may be used to represent a whole Attester, an Attesting
 Environment, or a Target Environment.  The exact semantic depends on the
@@ -1216,49 +1223,68 @@ The first `series` entry that successfully matches the `selection` criteria term
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
-A Device Identity triple record relates one or more cryptographic keys to a device identity.
-The cryptographic keys are bound to or associated with a Target Environment that is within the device.
-The device identifier may be part of the Target Environment's `environment-map` or may be part of some other device identity credential, such as a certificate.
-The cryptographic keys are expected to be used to authenticate the device.
+A Device Identity triple (`identity-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to a device identity.
+The identity keys are bound to or associated with a Target Environment (as identified by `environment` and `mkey` - see below) within the device.
+The identity keys may be asserted via Evidence or Reference Values.
+
+The device identity keys may have been used to authenticate the Attester device or may be held in reserve for use at a later time.
 
 Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
-A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
+A Device Identity triples endorse that the keys were securely provisioned to the named Target Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
-If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.
+If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use restrictions.
 
-Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
-Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
+Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the ACS.
+Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
+Additionally, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
 {::include cddl/identity-triple-record.cddl}
 ~~~
 
+* `environment`: An `environment-map` condition used to identify the target Evidence or Reference Value.
+  See {{sec-environments}}.
+
+* `mkey`: An optional `$measured-element-type-choice` condition used to identify the element within the target Evidence or Reference Value.
+  See {{sec-comid-mkey}}.
+
+* `key-list`: A list of `$crypto-key-type-choice` keys that identifies which keys are to be verified.
+  See {{sec-crypto-keys}}.
+
+* `authority-list`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the key-list in the target Evidence or Reference Values.
+
 #### Attest Key Triple {#sec-comid-triple-attest-key}
 
-An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
-The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
-The cryptographic keys sign Evidence.
+An Attest Key triple (`attest-key-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to an Attesting Environment (as identified by `environment` and `mkey`).
+The cryptographic attestation keys are wielded by an Attesting Environment.
+Attestation keys may be asserted via Evidence or Reference Values.
+
+The attestation keys may have been used to sign Evidence or may be held in reserve for use at a later time.
 
 Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
-Attest Key triples endorse that the keys were securely provisioned to the named (identified via an `environment-map`) Attesting Environment.
+Attest Key triples endorse that the keys were securely provisioned to the named Attesting Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.
+If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in [DICE.cert]).
+Verifiers SHOULD check for key use restrictions.
 
-Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
-Alternatively, Verifiers MAY report key verification results as part of an error reporting function.
+Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the ACS.
+Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
+Additionally, Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
 {::include cddl/attest-key-triple-record.cddl}
 ~~~
+
+See {{sec-comid-triple-identity}} for additional details.
 
 #### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
@@ -1909,7 +1935,7 @@ The selected tags are mapped to an internal representation, making them suitable
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
-Endorsed Values Triple Transformation :
+##### Endorsed Values Triple Transformation {#sec-end-trans-evt}
 
 {:ett-enum: counter="ett" style="format Step %d."}
 
@@ -1939,7 +1965,7 @@ Endorsed Values Triple Transformation :
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-Conditional Endorsement Triple Transformation :
+##### Conditional Endorsement Triple Transformation {#sec-end-trans-cet}
 
 {:cett-enum: counter="cett" style="format Step %d."}
 
@@ -1972,7 +1998,7 @@ Conditional Endorsement Triple Transformation :
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-Conditional Endorsement Series Triple Transformation :
+##### Conditional Endorsement Triple Transformation {#sec-end-trans-cest}
 
 {:cestt-enum: counter="cestt" style="format Step %d."}
 
@@ -2007,6 +2033,37 @@ Conditional Endorsement Series Triple Transformation :
 * The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+
+##### Key Verification Triples Transformation {#sec-end-trans-kvt}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330
+
+The following transformation steps are applied for both the `identity-triples` and `attest-key-triples`:
+
+{:kvt-enum: counter="ckvt" style="format Step %d."}
+
+{: kvt-enum}
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
+
+* Populate the `ev` `condition` ECT using either the `identity--triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:
+
+{:kvt2-enum: counter="kvt2" style="format %i."}
+
+{: kvt2-enum}
+* **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`).
+
+* If populated, **copy**(`mkey`, `ev`.`condition`.`element-list`.`element-map`.`element-id`).
+
+* **copy**(`key-list`, `ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
+
+* If populated, **copy**(`authority-list`, `ev`.`condition`.`authority`).
+
+{: kvt-enum}
+* The signer of the Identity or Attest Key Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 #### Evidence Tranformation
 
@@ -2164,7 +2221,7 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 #### Processing Endorsements {#sec-process-end}
 
 Endorsements are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
@@ -2176,11 +2233,38 @@ Conditional endorsements have the same processing steps as shown in ({{sec-proce
 
 Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
 Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
-where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series processing terminates when the first series entry matches.
+
+#### Processing Key Verification Endorsements {#sec-process-keys}
+
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), for each key in `ev`.`condition`.`element-claims`.`measurement-values-map`.`crypto-keys`:
+
+* Verify the certificate signatures for the certification path.
+
+* Verify certificate revocation status for the certification path.
+
+* Verify key usage restrictions appropriate for the type of key.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330
+
+* If key verification succeeds, **copy**(key, `ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
+
+If key verification succeeds for any key:
+
+* **copy**(`ev`.`condition`.`environment`, `ev`.`addition`.`environment`).
+
+* **copy**(`ev`.`condition`.`element-list`.`element-map`.`element-id`, `ev`.`addition`.`element-list`.`element-map`.`element-id`).
+
+* Set `ev`.`addition`.`cmtype` to `endorsements`.
+
+* Add the Verifier authority `$crypto-key-type-choice` to the `ev`.`addition`.`authority` field.
+
+Add the `addition` ECT to the ACS.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
