@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-24T01:44:52.668614+00:00",
+  "timestamp": "2024-10-27T01:51:24.641217+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7596,9 +7596,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Also relates to #314 \r\nA transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.",
+      "body": "Also relates to #314 \r\nA transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.\r\n\r\nNote: Given verifier behavior differs based on the type of key (identity vs. attest), there needs to be a way to represent the key type across external to internal processing. One approach is to modify the internal representation to include `key-type` info along with the `$crypto-key-type-choice` key.",
       "createdAt": "2024-10-16T20:30:08Z",
-      "updatedAt": "2024-10-23T17:57:54Z",
+      "updatedAt": "2024-10-26T00:06:51Z",
       "closedAt": null,
       "comments": []
     },
@@ -7678,6 +7678,53 @@
       "body": "Reference value matching semantics is defined entirely by the CoRIM specification (including added semantics by profile) is it not?\r\n\r\nPolicy can drop reference values but not change semantics.",
       "createdAt": "2024-10-23T14:41:54Z",
       "updatedAt": "2024-10-23T14:41:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 339,
+      "id": "I_kwDOH6-tI86bv15y",
+      "title": "Cleanup: drop #6.500 and #6.502",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/339",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The 500 tag is redundant with 501 and 502. The 502 tag is redundant with the COSE tags since the content-type is the disambiguating piece. It's kind of annoying to get a cose-signed corim that you can't just parse as a cose object because of irrelevant tags.",
+      "createdAt": "2024-10-25T03:57:21Z",
+      "updatedAt": "2024-10-26T06:18:48Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I wouldn't drop 500 and 502 since there are other contexts besides COSE/JOSE that carry corim. Rather, it should be possible to use the untagged variant if that makes the most sense.\r\nThere may be cases where there isn't a media-type definition for the various possible $concise-rim-type-choice variants, hence having the tagged alternative might be needed.\r\n\r\nWe discussed doing something like:\r\n```\r\ncorim = tagged-concise-rim-type-choice / $concise-rim-type-choice\r\n$concise-rim-type-choice /= tagged-corim-map\r\n$concise-rim-type-choice /= tagged-signed-corim\r\n$concise-rim-type-choice /= corim-map\r\n$concise-rim-type-choice /= signed-corim\r\n\r\ntagged-concise-rim-type-choice = #6.500($concise-rim-type-choice)\r\ntagged-corim-map = #6.501(corim-map)\r\ntagged-signed-corim = #6.502(signed-corim)\r\nsigned-corim = #6.18(COSE-Sign1-corim)\r\n\r\nCOSE-Sign1-corim = [\r\n  protected: bstr .cbor protected-corim-header-map\r\n  unprotected: unprotected-corim-header-map\r\n  payload: bstr .cbor (tagged-corim-map / corim-map)\r\n  signature: bstr\r\n]\r\n```\r\nCOSE payload as: `payload: bstr .cbor (tagged-corim-map / corim-map)` allows untagged form to be used if media type is supplied and sufficient. \r\n\r\nIt is unclear if media-types / CFs will have enough specificity to disambiguate the comid \"tag\" level thereby making the CBOR tags redundant but if so, we could define untagged variants.\r\n```\r\n$concise-tag-type-choice /= concise-swid-tag\r\n$concise-tag-type-choice /= concise-mid-tag\r\n$concise-tag-type-choice /= concise-bom-tag\r\n\r\n$concise-tag-type-choice /= tagged-concise-swid-tag\r\n$concise-tag-type-choice /= tagged-concise-mid-tag\r\n$concise-tag-type-choice /= tagged-concise-bom-tag\r\ntagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)\r\ntagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)\r\ntagged-concise-bom-tag = #6.508(bytes .cbor concise-bom-tag)\r\n```\r\n\r\n",
+          "createdAt": "2024-10-25T16:22:00Z",
+          "updatedAt": "2024-10-25T16:22:00Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The extensibility of the $concise-rim-type-choice doesn\u2019t make sense though. It\u2019s signed or unsigned. The signing envelope is cose. I\u2019m not saying to drop 501 for the case where you want to send around an unsigned corim.",
+          "createdAt": "2024-10-26T06:18:47Z",
+          "updatedAt": "2024-10-26T06:18:47Z"
+        }
+      ]
+    },
+    {
+      "number": 340,
+      "id": "I_kwDOH6-tI86b17S6",
+      "title": "accepted-claims-set.cddl can be removed",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/340",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The set of intrep-*.cddl files replaces the need for accepted-claims-set.cddl.",
+      "createdAt": "2024-10-25T16:41:04Z",
+      "updatedAt": "2024-10-25T16:41:04Z",
       "closedAt": null,
       "comments": []
     }
@@ -47310,13 +47357,13 @@
       "labels": [],
       "body": "Added description to conditional series triple to address issues #310 and #321.\r\nUpdated example [here](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cond-series-wording/cddl/examples/comid-series.diag) to better illustrate a use case.",
       "createdAt": "2024-10-15T19:07:50Z",
-      "updatedAt": "2024-10-16T17:14:22Z",
+      "updatedAt": "2024-10-24T22:16:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
+      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cond-series-wording",
-      "headRefOid": "5c19de3142b4b2842af12a50c6a9b942261997b8",
+      "headRefOid": "9834a8c8c0fc813cb3bd056f907ca04878209980",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -47758,13 +47805,13 @@
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2024-10-23T18:57:32Z",
+      "updatedAt": "2024-10-25T04:07:25Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "topleveltag",
-      "headRefOid": "7d1c9e070a407520b9e9914bf065c5cd5499a94c",
+      "headRefOid": "f0c91e5c6d6018a790f9f5d04e3083783bf4dc97",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -47776,9 +47823,209 @@
           "body": "This PR probably should have some examples that tests the new functionality.\r\n\r\nThe section \"Concise Reference Integrity Manifest (CoRIM)\" may need to be updated to describe the possibility for unsigned payloads.",
           "createdAt": "2024-10-23T18:53:43Z",
           "updatedAt": "2024-10-23T18:57:32Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Added a small change to the section about the specific #6.501 tag.",
+          "createdAt": "2024-10-25T03:54:18Z",
+          "updatedAt": "2024-10-25T03:54:18Z"
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 338,
+      "id": "PR_kwDOH6-tI85_2PvM",
+      "title": "Add COSE-Sign-corim for completeness",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/338",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The COSE specification allows for multiple sigantures, not just unprotected counter signatures. We should allow that representation with the same protected header requirements as COSE-Sign1-corim.",
+      "createdAt": "2024-10-25T03:52:23Z",
+      "updatedAt": "2024-10-25T03:53:01Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "cosign",
+      "headRefOid": "97c4d858f0450660dde4ae1f83201a4871495328",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 341,
+      "id": "PR_kwDOH6-tI85_-BLq",
+      "title": "Verify key triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/341",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses the majority of issue #330 (but one challenge remains).\r\n\r\nExpanded examples may be needed.",
+      "createdAt": "2024-10-26T00:38:33Z",
+      "updatedAt": "2024-10-26T06:09:46Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "verify-key-triples",
+      "headRefOid": "99bf3caf937954680ffecafa7081c09f397b637d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86O4DRs",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T05:57:18Z",
+          "updatedAt": "2024-10-26T05:57:19Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "This optional mkey is a parsing annoyance. Can we move the non-environment fields to a map? Backward compatibility can just select between array and map.",
+              "createdAt": "2024-10-26T05:57:18Z",
+              "updatedAt": "2024-10-26T05:57:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86O4DVU",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T05:59:51Z",
+          "updatedAt": "2024-10-26T05:59:51Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "I prefer the older wording",
+              "createdAt": "2024-10-26T05:59:51Z",
+              "updatedAt": "2024-10-26T05:59:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86O4DXi",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T06:00:58Z",
+          "updatedAt": "2024-10-26T06:00:59Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "I find this harder to understand",
+              "createdAt": "2024-10-26T06:00:58Z",
+              "updatedAt": "2024-10-26T06:00:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86O4DeV",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T06:04:57Z",
+          "updatedAt": "2024-10-26T06:04:57Z",
+          "comments": [
+            {
+              "originalPosition": 68,
+              "body": "```suggestion\r\n* `authority-list`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the `key-list` in the target Evidence or Reference Values.\r\n```",
+              "createdAt": "2024-10-26T06:04:57Z",
+              "updatedAt": "2024-10-26T06:04:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86O4DkH",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T06:07:55Z",
+          "updatedAt": "2024-10-26T06:07:56Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "Similar to prior comment. Would like to check for violations of the restriction",
+              "createdAt": "2024-10-26T06:07:56Z",
+              "updatedAt": "2024-10-26T06:07:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86O4Dmb",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T06:09:14Z",
+          "updatedAt": "2024-10-26T06:09:15Z",
+          "comments": [
+            {
+              "originalPosition": 150,
+              "body": "```suggestion\r\n* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.\r\n```",
+              "createdAt": "2024-10-26T06:09:15Z",
+              "updatedAt": "2024-10-26T06:09:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86O4DnP",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-26T06:09:46Z",
+          "updatedAt": "2024-10-26T06:09:46Z",
+          "comments": [
+            {
+              "originalPosition": 152,
+              "body": "```suggestion\r\n* Populate the `ev` `condition` ECT using either the `identity-triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:\r\n```",
+              "createdAt": "2024-10-26T06:09:46Z",
+              "updatedAt": "2024-10-26T06:09:46Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
