@@ -394,9 +394,12 @@ specification.
 {::include cddl/signed-corim.cddl}
 ~~~
 
-Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption {{-cose}}. A CoRIM tag MUST be wrapped in a COSE_Sign1 structure.
+A CoRIM MAY be signed with any signing envelope format and tagged with #6.502 to be recognized as a signed CoRIM.
+The payload of any signing envelope MUST be the binary encoding of a `tagged-corim-map`.
+It is RECOMMENDED to use a CBOR Object Signing and Encryption envelope {{-cose}}.
 The CoRIM MUST be signed by the CoRIM creator.
+
+### COSE_Sign1-corim
 
 The following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
