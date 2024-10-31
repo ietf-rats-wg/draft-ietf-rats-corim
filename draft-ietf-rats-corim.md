@@ -1111,7 +1111,8 @@ The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
+For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e. reference) measurements for the Target Environment.
 
 The Reference Values Triple has the following structure:
 
@@ -1121,10 +1122,11 @@ The Reference Values Triple has the following structure:
 
 The `reference-triple-record` has the following parameters:
 
-* `ref-env`: Search criterion that locates an Evidence environment that matches the reference environment.
-* `ref-claims`: Search criteria that locates the Evidence measurements that match the reference Claims.
+* `ref-env`: Reference Environment Identity of the Target Environment
 
-To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+* `ref-claims`: One or more measurement claims for the Target Environment
+
+To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries. First ref-env is used as a Search criterion to locate the Evidence environment that matches the reference environment. Subsequently, the ref-claims from this triple are used to match against the Evidence measurements for the matched environment.
 If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
 By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
 See {{-rats-endorsements}}.
@@ -1132,7 +1134,7 @@ Re-asserted Evidence using RVP authority is said to be "corroborated".
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+An Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against reference	measurements. For Endorsed Values Claims, the subject is either a Target or Attesting Environment, the object contains Endorsements for one or more measured elements of an Environment, and the predicate defines semantics for how the object relates to the subject.
 
 The Endorsed Values Triple has the following structure:
 
@@ -1151,7 +1153,7 @@ The new entry is added to the existing set of entries using the Endorser's autho
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+A Conditional Endorsement Triple declares one or more conditions that if matches, THEN every entry in the endorsements is added to the accepted state. The conditions are `stateful-environment-records` which match Target Environments from Evidence in certain reference state, for example a specific Target Environment with a specific revision of firmware with a reference measurement that has already matched.
 
 The Conditional Endorsement Triple has the following structure:
 
@@ -1171,7 +1173,9 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+A Conditional Endorsement Series triple uses a stateful environment, (i.e. stateful-environment-record), that identifies a Target Environment based on an environment-map plus the measurement-map measurements that have matching Evidence.	
+
+The series object is an array of conditional-series-record that has both Reference and Endorsed Values. Each conditional-series-record record is evaluated in the order it appears in the series array. The Endorsed Values are accepted if the series condition in a conditional-series-record matches the ACS.  The first conditional-series-record that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted. If none of the series conditions match an ACS Entry, the triple is not matched, and no Endorsed values are accepted.	
 
 The Conditional Endorsement Series Triple has the following structure:
 
