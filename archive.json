@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-29T01:47:17.646029+00:00",
+  "timestamp": "2024-10-31T01:47:20.017573+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7582,9 +7582,17 @@
       "labels": [],
       "body": "CoSWID triples `coswid-triple-record` needs a transformation section and possibly a processing section. The transformation section will map contents of a coswid tag to internal representations for evidence, reference, and endorsements. If the mapping comes up with gaps (something that doesn't map) then a processing section may be needed.\r\n\r\nCoSWID field mappings are as follows:\r\npayload-entry : Reference Values\r\nevidence-entry : Evidence\r\nsoftware-meta.activation-status : Evidence? (if so, how should it be reported since concise-evidence omits it)\r\nchannel-type : Endorsement\r\ncolloquial-version : Endorsement\r\ndescription : Endorsement\r\nedition : Endorsement\r\nentitlement-data-required : ??? (feels like policy)\r\nentitlement-key : Endorsement\r\ngenerator : tag info\r\npersistent-id : Should be used in the construction of Environment-maps \r\nproduct : Endorsement\r\nproduct-family : Endorsement\r\nrevision : Endorsement\r\nsummary : Endorsement\r\nunspsc-code : Endorsement\r\nunspsc-version : Endorsement\r\n\r\nExtension to sw meta should describe their internal representation mapping / transformation.\r\n\r\nConcise Swid Tag:\r\nsoftware-name : Endorsement\r\nsoftware-version : Endorsement\r\nversion-scheme : Endorsement\r\nmedia : Endorsement (for example, it may contain a stringified representation of environment-map)\r\n\r\nAll other members of `concise-swid-tag` are tag specific.\r\n",
       "createdAt": "2024-10-16T19:16:05Z",
-      "updatedAt": "2024-10-16T19:18:14Z",
+      "updatedAt": "2024-10-30T16:12:12Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What form of evidence is expected for communicating software information in a module at the granularity of CoSWIDs? Is there a real usage of this triple that the spec can reference to point a reader at something plausible?",
+          "createdAt": "2024-10-30T16:12:10Z",
+          "updatedAt": "2024-10-30T16:12:10Z"
+        }
+      ]
     },
     {
       "number": 330,
@@ -7614,9 +7622,52 @@
       "labels": [],
       "body": "We need to remove the extensibility of $concise-rim-type-choice since extensibility is driven by profile, but profile isn't known at this point.\r\n\r\nWe also don't need to tag the type choice. Let's release the 500 tag?\r\n\r\n`corim = concise-rim-type-choice`",
       "createdAt": "2024-10-23T14:31:01Z",
-      "updatedAt": "2024-10-23T14:31:01Z",
+      "updatedAt": "2024-10-30T15:24:53Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> We need to remove the extensibility of $concise-rim-type-choice since extensibility is driven by profile, but profile isn't known at this point.\r\n\r\nIndeed, that `$` looks like a typo to me.  `$concise-rim-type-choice` should be a closed type choice which, per [our typographical conventions](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-3), should read `concise-rim-type-choice`.\r\n\r\n> We also don't need to tag the type choice. Let's release the 500 tag?\r\n> \r\n> `corim = concise-rim-type-choice`\r\n\r\nThe two-level tagging system effectively smells like overengineering.\r\n\r\nI don't recall why we originally decided to use this tagging scheme.\r\n\r\nWhile I am not opposed to dropping it, this could produce wire-image incompatibility with the TCG's spec, which we agreed must be avoided.\r\n\r\n",
+          "createdAt": "2024-10-30T09:12:24Z",
+          "updatedAt": "2024-10-30T09:12:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "TCG Endorsement spec defines:\r\n```\r\ncorim = #6.500($concise-reference-integrity-manifest-type-choice)\r\ntagged-corim-map = #6.501(corim-map)\r\n$concise-reference-integrity-manifest-type-choice /= tagged-corim-map\r\n$concise-reference-integrity-manifest-type-choice /= #6.502(signed-corim)\r\n\r\nCOSE-Sign1-corim = [\r\n  protected: bstr .cbor protected-corim-header-map\r\n  unprotected: unprotected-corim-header-map\r\n  payload: bstr .cbor tagged-corim-map\r\n  signature: bstr\r\n]\r\n\r\n```\r\nThe TCG is doing errata for this spec. Maybe it makes sense to influence this?\r\nBut it would need to happen quickly and be minimally invasive.",
+          "createdAt": "2024-10-30T12:25:04Z",
+          "updatedAt": "2024-10-30T12:25:04Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> TCG Endorsement spec defines:\r\n> \r\n> ```\r\n> corim = #6.500($concise-reference-integrity-manifest-type-choice)\r\n> tagged-corim-map = #6.501(corim-map)\r\n> $concise-reference-integrity-manifest-type-choice /= tagged-corim-map\r\n> $concise-reference-integrity-manifest-type-choice /= #6.502(signed-corim)\r\n> \r\n> COSE-Sign1-corim = [\r\n>   protected: bstr .cbor protected-corim-header-map\r\n>   unprotected: unprotected-corim-header-map\r\n>   payload: bstr .cbor tagged-corim-map\r\n>   signature: bstr\r\n> ]\r\n> ```\r\n> \r\n> The TCG is doing errata for this spec. Maybe it makes sense to influence this? But it would need to happen quickly and be minimally invasive.\r\n\r\nThen I'd do:\r\n\r\n```\r\ncorim = tagged-corim-map / tagged-cose-sign1-corim\r\n```\r\n\r\nwhich uses 501 for the unprotected and 18 for the sign1-protected `corim-map`.\r\n",
+          "createdAt": "2024-10-30T12:57:52Z",
+          "updatedAt": "2024-10-30T12:57:52Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The TCG is doing errata for this spec. Maybe it makes sense to influence this? But it would need to happen quickly and be minimally invasive.\r\n\r\nWhich working group?\r\n\r\n(NOTE by thofos: I hit \"edit\" instead of \"quote reply\", apologies!)",
+          "createdAt": "2024-10-30T13:28:24Z",
+          "updatedAt": "2024-10-30T13:37:19Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The TCG is doing errata for this spec. Maybe it makes sense to influence this? But it would need to happen quickly and be minimally invasive.\r\n> \r\n> Which working group?\r\n\r\nShould be DICE.",
+          "createdAt": "2024-10-30T13:35:13Z",
+          "updatedAt": "2024-10-30T13:35:13Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Then I'd do:\r\n> \r\n> ```\r\n> corim = tagged-corim-map / tagged-cose-sign1-corim\r\n> ```\r\n\r\nThe TCG spec doesn't define `tagged-cose-sign1-corim` only `signed-corim = #6.18(COSE-Sign1-corim)`\r\nBut I think it is effectively the same thing. Essentially, the updated TCG spec would look like:\r\n```\r\ncorim = concise-rim-type-choice\r\ntagged-corim-map = #6.501(corim-map)\r\nconcise-rim-type-choice /= tagged-corim-map\r\nconcise-rim-type-choice /= #6.502(signed-corim)\r\n```\r\nIt would be an extension to add:\r\n```\r\nconcise-rim-type-choice /= signed-corim\r\n```",
+          "createdAt": "2024-10-30T15:24:52Z",
+          "updatedAt": "2024-10-30T15:24:52Z"
+        }
+      ]
     },
     {
       "number": 334,
@@ -7734,6 +7785,37 @@
       "updatedAt": "2024-10-25T16:41:04Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 342,
+      "id": "I_kwDOH6-tI86cbtSM",
+      "title": "Lack of clarity on Authority around Unsigned CoRIM Map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/342",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Current specification (06) has no clear way of determining the authority around unsigned corim map",
+      "createdAt": "2024-10-30T15:38:47Z",
+      "updatedAt": "2024-10-30T17:08:15Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Current specification (06) has no clear way of determining the authority around unsigned corim map\r\n\r\nThe idea behind unsigned-corim-map is that a conveyance protocol or some outer wrapper layer (e.g., CWT) supplies the signature. The verifier will know what context supplied the signature. It may not be something the CoRIM spec can anticipate.",
+          "createdAt": "2024-10-30T15:44:01Z",
+          "updatedAt": "2024-10-30T15:44:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There should be a clarifying text in the CoRIM which should state, that authority is out of band for the case of unsigned-corim-map, simply to make the document look more complete!",
+          "createdAt": "2024-10-30T17:08:13Z",
+          "updatedAt": "2024-10-30T17:08:13Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -47671,25 +47753,33 @@
       "id": "PR_kwDOH6-tI85_L_vT",
       "title": "Add signing practice comment in security considerations.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/331",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Thought this might be good to mention.",
       "createdAt": "2024-10-19T18:35:38Z",
-      "updatedAt": "2024-10-19T18:35:39Z",
+      "updatedAt": "2024-10-30T15:46:31Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "cef560ec815f27d0289991aefa912ada22ac8f65",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "encctx",
       "headRefOid": "3500c8e727eef6b9f8466d838073a06c1e6a8dcd",
-      "closedAt": null,
+      "closedAt": "2024-10-30T15:46:31Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as per @deeglaze Suggestion, as the context is set by tag 501",
+          "createdAt": "2024-10-30T15:46:31Z",
+          "updatedAt": "2024-10-30T15:46:31Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -47812,13 +47902,13 @@
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2024-10-25T04:07:25Z",
+      "updatedAt": "2024-10-30T22:24:33Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "topleveltag",
-      "headRefOid": "f0c91e5c6d6018a790f9f5d04e3083783bf4dc97",
+      "headRefOid": "7f35ed6f2dcf8279041cddc07fd9a8e2798f9db4",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -47837,6 +47927,69 @@
           "body": "Added a small change to the section about the specific #6.501 tag.",
           "createdAt": "2024-10-25T03:54:18Z",
           "updatedAt": "2024-10-25T03:54:18Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that this PR would allow four different tags (500, 501, 502, 18) instead of one (500) to represent a top-level CoRIM.",
+          "createdAt": "2024-10-30T10:59:37Z",
+          "updatedAt": "2024-10-30T10:59:37Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Note that this PR would allow four different tags (500, 501, 502, 18) instead of one (500) to represent a top-level CoRIM.\r\n\r\nI think this is the pattern for CBOR though. There\u2019s no single top level tag for COSE objects either.\r\n\r\n500 and 502 are for theoretical encoding options that I don\u2019t understand the justification for either.",
+          "createdAt": "2024-10-30T12:38:25Z",
+          "updatedAt": "2024-10-30T12:38:25Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Note that this PR would allow four different tags (500, 501, 502, 18) instead of one (500) to represent a top-level CoRIM.\r\n> \r\n> I think this is the pattern for CBOR though. There\u2019s no single top level tag for COSE objects either.\r\n> \r\n> 500 and 502 are for theoretical encoding options that I don\u2019t understand the justification for either.\r\n\r\nIn fact, I'd drop 500 for sure, and may also be convinced to drop 502 if offered one or two pints of Guinness :-)",
+          "createdAt": "2024-10-30T12:54:16Z",
+          "updatedAt": "2024-10-30T12:54:16Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Would the proposed solution allow both `500(signed-corim)` and `502(signed-corim)`? Would that be confusing?\r\n```\r\ncorim = (tagged-concise-rim-type-choice / concise-rim-type-choice)\r\ntagged-concise-rim-type-choice = #6.500(concise-rim-type-choice)\r\ntagged-signed-corim = #6.502(signed-corim)\r\nconcise-rim-type-choice /= tagged-corim-map\r\nconcise-rim-type-choice /= tagged-signed-corim\r\nconcise-rim-type-choice /= signed-corim\r\ntagged-corim-map = #6.501(corim-map)\r\ntagged-signed-corim = #6.502(signed-corim)\r\nsigned-corim = #6.18(COSE-Sign1-corim)\r\nCOSE-Sign1-corim = [\r\n  protected: bstr .cbor protected-corim-header-map\r\n  unprotected: unprotected-corim-header-map\r\n  payload: bstr .cbor (tagged-corim-map / corim-map)\r\n  signature: bstr\r\n]\r\n```\r\nIf #6.500 is dropped then wouldn't corim be defined as:\r\n```\r\ncorim = concise-rim-type-choice\r\nconcise-rim-type-choice /= #6.501(corim-map)\r\nconcise-rim-type-choice /= #6.502(signed-corim)\r\n```\r\nIf 502 is used, then the cose payload would  use `corim-map` instead of `tagged-corim-map`?\r\n",
+          "createdAt": "2024-10-30T13:45:07Z",
+          "updatedAt": "2024-10-30T13:45:07Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We can say 502 is for signing envelopes that don't have their own CBOR tag or need further disambiguation.\r\n\r\n500 is generally a confusing representation choice, so I think we've lost that one..\r\nI can be convinced to have the payload always be 501-tagged for simplicity, it'll just invalidate cocli-signed CoRIMs. That's fine.",
+          "createdAt": "2024-10-30T14:07:18Z",
+          "updatedAt": "2024-10-30T14:08:14Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> We can say 502 is for signing envelopes that don't have their own CBOR tag or need further disambiguation.\r\n> \r\n> 500 is generally a confusing representation choice, so I think we've lost that one.. I can be convinced to have the payload always be 501-tagged for simplicity, it'll just invalidate cocli-signed CoRIMs. That's fine.\r\n\r\nThe easiest, and most consistent, would be to always require 501 (even when found in 502) and 502.",
+          "createdAt": "2024-10-30T14:25:21Z",
+          "updatedAt": "2024-10-30T14:25:21Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Am I to understand that the MUST language in sec-corim-signed is not intended, and 502 is an anything-goes tag so long as the protected payload is a 501-tagged CBOR-encoded corim-map?",
+          "createdAt": "2024-10-30T14:53:07Z",
+          "updatedAt": "2024-10-30T14:53:07Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Am I to understand that the MUST language in sec-corim-signed is not intended,\r\n\r\nWhich MUST-language are you referring to?\r\n\r\n> and 502 is an anything-goes tag so long as the protected payload is a 501-tagged CBOR-encoded corim-map?\r\n\r\nNot sure, but at the moment we seem to have an inconsistency between CDDL and prose.  In S4.2 we say: _\"payload: A CBOR encoded *tagged* CoRIM.\"_, whilst the CDDL allows a \"naked\" `corim-map` alongside the tagged one.  Besides, \"CoRIM\" should be \"`corim-map`\".\r\n\r\n",
+          "createdAt": "2024-10-30T15:02:07Z",
+          "updatedAt": "2024-10-30T15:02:07Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It was concluded in CoRIM Meeting 30th october to drop tag for #6.500 and propose the same change in TCG.\r\n\r\nAlso remove type extensibility from top level $concise-rim-type-choice, i.e. make it\r\nonly: `concise-rim-type-choice` ",
+          "createdAt": "2024-10-30T15:43:25Z",
+          "updatedAt": "2024-10-30T15:43:25Z"
         }
       ],
       "reviews": []
@@ -47846,25 +47999,33 @@
       "id": "PR_kwDOH6-tI85_2PvM",
       "title": "Add COSE-Sign-corim for completeness",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/338",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The COSE specification allows for multiple sigantures, not just unprotected counter signatures. We should allow that representation with the same protected header requirements as COSE-Sign1-corim.",
       "createdAt": "2024-10-25T03:52:23Z",
-      "updatedAt": "2024-10-25T03:53:01Z",
+      "updatedAt": "2024-10-30T20:34:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "cosign",
       "headRefOid": "97c4d858f0450660dde4ae1f83201a4871495328",
-      "closedAt": null,
+      "closedAt": "2024-10-30T20:34:17Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed, we decided to allow only single signer signatures (i.e., `COSE_Sign1`) to eliminate any ambiguity regarding the authority.",
+          "createdAt": "2024-10-30T15:46:29Z",
+          "updatedAt": "2024-10-30T15:46:29Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -47879,7 +48040,7 @@
       "labels": [],
       "body": "Addresses the majority of issue #330 (but one challenge remains).\r\n\r\nExpanded examples may be needed.",
       "createdAt": "2024-10-26T00:38:33Z",
-      "updatedAt": "2024-10-26T06:09:46Z",
+      "updatedAt": "2024-10-30T20:32:56Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
@@ -48029,6 +48190,46 @@
               "body": "```suggestion\r\n* Populate the `ev` `condition` ECT using either the `identity-triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:\r\n```",
               "createdAt": "2024-10-26T06:09:46Z",
               "updatedAt": "2024-10-26T06:09:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PacpS",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-30T19:28:02Z",
+          "updatedAt": "2024-10-30T19:28:02Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "> This optional mkey is a parsing annoyance. Can we move the non-environment fields to a map? Backward compatibility can just select between array and map.\r\n\r\nCan you suggest what the map might look like?",
+              "createdAt": "2024-10-30T19:28:02Z",
+              "updatedAt": "2024-10-30T19:28:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PbHSi",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-30T20:32:56Z",
+          "updatedAt": "2024-10-30T20:32:56Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I want to first know why we need these additions to begin with. mkeys are meant for measured components of an attested environment, so there should not be different attestation keys at the mkey level. Why do we need authorities when attestation keys should be accepted based an trust anchors?",
+              "createdAt": "2024-10-30T20:32:56Z",
+              "updatedAt": "2024-10-30T20:32:56Z"
             }
           ]
         }
