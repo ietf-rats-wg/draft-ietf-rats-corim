@@ -2047,7 +2047,7 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
 
-* Populate the `ev` `condition` ECT using either the `identity--triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:
+* Populate the `ev` `condition` ECT using either the `identity-triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:
 
 {:kvt2-enum: counter="kvt2" style="format %i."}
 
