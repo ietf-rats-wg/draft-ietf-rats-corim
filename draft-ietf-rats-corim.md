@@ -1237,7 +1237,7 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
-If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use restrictions.
+If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates key use restrictions.
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the ACS.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
