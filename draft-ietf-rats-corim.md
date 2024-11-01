@@ -1232,7 +1232,7 @@ The device identity keys may have been used to authenticate the Attester device 
 Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
-A Device Identity triples endorse that the keys were securely provisioned to the named Target Environment.
+A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
