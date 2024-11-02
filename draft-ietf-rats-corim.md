@@ -1126,7 +1126,9 @@ The `reference-triple-record` has the following parameters:
 
 * `ref-claims`: One or more measurement claims for the Target Environment
 
-To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries. First ref-env is used as a Search criterion to locate the Evidence environment that matches the reference environment. Subsequently, the ref-claims from this triple are used to match against the Evidence measurements for the matched environment.
+To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+First `ref-env` is used as a Search criterion to locate the Evidence environment that matches the reference environment.
+Subsequently, the `ref-claims` from this triple are used to match against the Evidence measurements for the matched environment.
 If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
 By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
 See {{-rats-endorsements}}.
@@ -1134,7 +1136,8 @@ Re-asserted Evidence using RVP authority is said to be "corroborated".
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against reference	measurements. For Endorsed Values Claims, the subject is either a Target or Attesting Environment, the object contains Endorsements for one or more measured elements of an Environment, and the predicate defines semantics for how the object relates to the subject.
+An Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against Reference Values or Evidence.
+For Endorsed Values Claims, the _subject_ is a Target Environment, the _object_ contains Endorsement Claims for the Environment, and the _predicate_ defines semantics for how the _object_ relates to the _subject_.
 
 The Endorsed Values Triple has the following structure:
 
@@ -1153,7 +1156,8 @@ The new entry is added to the existing set of entries using the Endorser's autho
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-A Conditional Endorsement Triple declares one or more conditions that if matches, THEN every entry in the endorsements is added to the accepted state. The conditions are `stateful-environment-records` which match Target Environments from Evidence in certain reference state, for example a specific Target Environment with a specific revision of firmware with a reference measurement that has already matched.
+A Conditional Endorsement Triple declares one or more conditions that, once they match, cause every entry in the endorsements to be added to the accepted state.
+The conditions are `stateful-environment-records` which match Target Environments from Evidence in certain reference state.
 
 The Conditional Endorsement Triple has the following structure:
 
