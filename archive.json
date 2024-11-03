@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-31T01:47:20.017573+00:00",
+  "timestamp": "2024-11-03T01:51:45.239339+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7816,6 +7816,22 @@
           "updatedAt": "2024-10-30T17:08:13Z"
         }
       ]
+    },
+    {
+      "number": 344,
+      "id": "I_kwDOH6-tI86ctNkY",
+      "title": "TN function CBOR tags",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/344",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "RFC9277 defines TN function for generating CBOR tags from CF ID. The IANA sections don't clearly identify the corim entry point such that if a CBOR tag is generated, what CDDL/CBOR is the next byte following the tag value.\r\n\r\nFor example, a generated tag might replace #6.502.",
+      "createdAt": "2024-11-01T13:58:56Z",
+      "updatedAt": "2024-11-01T13:58:56Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -48040,13 +48056,13 @@
       "labels": [],
       "body": "Addresses the majority of issue #330 (but one challenge remains).\r\n\r\nExpanded examples may be needed.",
       "createdAt": "2024-10-26T00:38:33Z",
-      "updatedAt": "2024-10-30T20:32:56Z",
+      "updatedAt": "2024-11-02T16:55:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "verify-key-triples",
-      "headRefOid": "99bf3caf937954680ffecafa7081c09f397b637d",
+      "headRefOid": "621506004d2f6f2dd42c9b75805b71763e9e66b7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -48230,6 +48246,339 @@
               "body": "I want to first know why we need these additions to begin with. mkeys are meant for measured components of an attested environment, so there should not be different attestation keys at the mkey level. Why do we need authorities when attestation keys should be accepted based an trust anchors?",
               "createdAt": "2024-10-30T20:32:56Z",
               "updatedAt": "2024-10-30T20:32:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Pp9qP",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-01T14:08:56Z",
+          "updatedAt": "2024-11-01T14:08:56Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "> there should not be different attestation keys at the mkey level. Why do we need authorities when attestation keys should be accepted based an trust anchors?\r\n\r\nThe mkey and authority fields (along with the other fields) are condition values used for searching / matching ACS entries. The matched entry defines the context for the addition entry which is to add an endorsement under verifier authority for the subset of keys that satisfy verification checks. The addition ACS entry is otherwise identical to the matched ACS entry. Since the current ECT structure has mkey/element it makes sense to enable searching based on the mkey/element. ",
+              "createdAt": "2024-11-01T14:08:56Z",
+              "updatedAt": "2024-11-01T14:08:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PqfrI",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-01T15:19:18Z",
+          "updatedAt": "2024-11-01T15:19:18Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "reverted",
+              "createdAt": "2024-11-01T15:19:18Z",
+              "updatedAt": "2024-11-01T15:19:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ps72j",
+          "commit": {
+            "abbreviatedOid": "8c7a8ec"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-01T21:44:43Z",
+          "updatedAt": "2024-11-01T21:44:43Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "okay, then I'd suggest the following:\r\n\r\n```\r\nidentity-triple = identity-triple-record / identity-triple-map\r\nidentity-triple-map = {\r\n  &(environment: 0) => environment-map\r\n  ? &(mkey: 1) => $measured-element-type-choice\r\n  &(key-list: 2) => [ + $crypto-key-type-choice ]\r\n  ? &(authority-list: 3) => [ + $crypto-key-type-choice ]\r\n}\r\n```\r\nand not change identity-triple-record.",
+              "createdAt": "2024-11-01T21:44:43Z",
+              "updatedAt": "2024-11-01T21:44:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuQO_",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T15:10:27Z",
+          "updatedAt": "2024-11-02T15:10:27Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "What is wrong with the current proposal?",
+              "createdAt": "2024-11-02T15:10:27Z",
+              "updatedAt": "2024-11-02T15:10:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuQVf",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T15:13:53Z",
+          "updatedAt": "2024-11-02T15:13:53Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Suppose $measured-element-type-choice is a list of tagged bytes that get misinterpreted as crypto-key-type-choice. Do you have mkey,key-list or key-list,authority-list?",
+              "createdAt": "2024-11-02T15:13:53Z",
+              "updatedAt": "2024-11-02T15:13:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuRbI",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T15:39:29Z",
+          "updatedAt": "2024-11-02T15:39:29Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "The triples map defines the identity triple as an array of `identity-triple-record`. All of the triples are defined in terms of records (and not maps). This was discussed at length.\r\n\r\nIf the new fields are placed at the end of the existing fields then the ambiguity goes away.\r\n```\r\n? &(identity-triples: 2) =>\r\n    [ + identity-triple-record ]\r\n\r\nidentity-triple-record = [\r\n  environment: environment-map\r\n  key-list: [ + $crypto-key-type-choice ]\r\n  ? mkey: $measured-element-type-choice\r\n  ? authority-list: [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nIf mkey is omitted then the second list of crypto-key-type-choice is the authority-list. If mkey is included then it isn't confused with a key list.",
+              "createdAt": "2024-11-02T15:39:29Z",
+              "updatedAt": "2024-11-02T15:39:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuhKA",
+          "commit": {
+            "abbreviatedOid": "99bf3ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T16:55:17Z",
+          "updatedAt": "2024-11-02T16:55:17Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I don't think the reordering avoids the ambiguity. I think you'd need to require that measured-element-type-choice must not be an array.",
+              "createdAt": "2024-11-02T16:55:17Z",
+              "updatedAt": "2024-11-02T16:55:17Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 343,
+      "id": "PR_kwDOH6-tI86AjeYp",
+      "title": "Provide proper Triples explaination",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/343",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #310 ",
+      "createdAt": "2024-10-31T17:45:34Z",
+      "updatedAt": "2024-11-02T19:12:37Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "triples-explaination",
+      "headRefOid": "504306efdb4a5218330ca350e01fb0f807fc9e59",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86PkXA7",
+          "commit": {
+            "abbreviatedOid": "2a03203"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-31T17:46:57Z",
+          "updatedAt": "2024-10-31T17:46:57Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nAn Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against reference\tmeasurements. For Endorsed Values Claims, the subject is either a Target or Attesting Environment, the object contains Endorsements for one or more measured elements of an Environment, and the predicate defines semantics for how the object relates to the subject.\r\n```",
+              "createdAt": "2024-10-31T17:46:57Z",
+              "updatedAt": "2024-10-31T17:46:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Pm66m",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-01T01:46:30Z",
+          "updatedAt": "2024-11-01T01:46:31Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\nTo process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.\r\nFirst `ref-env` is used as a Search criterion to locate the Evidence environment that matches the reference environment.\r\nSubsequently, the `ref-claims` from this triple are used to match against the Evidence measurements for the matched environment.\r\n```",
+              "createdAt": "2024-11-01T01:46:30Z",
+              "updatedAt": "2024-11-01T21:31:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PqdUZ",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-01T15:15:26Z",
+          "updatedAt": "2024-11-01T15:15:26Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "`ref-claims` in last sentence is also missing back quotes.\r\nNote: It's easier to manage if each sentence starts a new line.",
+              "createdAt": "2024-11-01T15:15:26Z",
+              "updatedAt": "2024-11-01T15:15:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ps5Nq",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-11-01T21:32:01Z",
+          "updatedAt": "2024-11-01T21:38:50Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nAn Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against reference measurements.\r\nFor Endorsed Values Claims, the subject is either a Target or Attesting Environment, the object contains Endorsements for one or more measured elements of an Environment, and the predicate defines semantics for how the object relates to the subject.\r\n```",
+              "createdAt": "2024-11-01T21:32:01Z",
+              "updatedAt": "2024-11-01T21:38:50Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\nA Conditional Endorsement Triple declares one or more conditions that, once they match, cause every entry in the endorsements to be added to the accepted state.\r\nThe conditions are `stateful-environment-records` which match Target Environments from Evidence in certain reference state.\r\n```\r\n\r\nI think the example should be below the data definition and an a valid diag for better clarity.",
+              "createdAt": "2024-11-01T21:37:49Z",
+              "updatedAt": "2024-11-01T21:38:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuQZm",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T15:16:06Z",
+          "updatedAt": "2024-11-02T15:16:06Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "> An Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against reference measurements.\r\n\r\n```suggestion\r\nAn Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against Reference Values or Evidence.\r\nFor Endorsed Values Claims, the _subject_ is a Target Environment, the _object_ contains Endorsement Claims for the Environment, and the _predicate_ defines semantics for how the _object_ relates to the _subject_.\r\n```",
+              "createdAt": "2024-11-02T15:16:06Z",
+              "updatedAt": "2024-11-02T15:19:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuQl8",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T15:21:57Z",
+          "updatedAt": "2024-11-02T15:21:57Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Shouldn't the structure of a triple be described somewhere else in a section that applies to all triples not just Endorsed Value Triple? It shouldn't be repeated in every section having to do with triples. Clarification about what parts of the triple are subject and object might be needed however.",
+              "createdAt": "2024-11-02T15:21:57Z",
+              "updatedAt": "2024-11-02T15:21:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86PuQrK",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T15:24:41Z",
+          "updatedAt": "2024-11-02T15:24:41Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "> A Conditional Endorsement Triple declares one or more conditions that, once they match, cause every entry in the endorsements to be added to the accepted state.\r\n> The conditions are `stateful-environment-records` which match Target Environments from Evidence in certain reference state.\r\n\r\n```suggestion\r\nA Conditional Endorsement Triple declares one or more conditions that, once they match, cause every entry in `endorsements` to be added to the accepted state.\r\nThe conditions are `stateful-environment-records` which match Target Environments from Evidence in certain reference state.\r\n```",
+              "createdAt": "2024-11-02T15:24:41Z",
+              "updatedAt": "2024-11-02T15:24:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Pv7C-",
+          "commit": {
+            "abbreviatedOid": "0239db4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-02T19:11:07Z",
+          "updatedAt": "2024-11-02T19:11:08Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "Agree I will commit this suggestion",
+              "createdAt": "2024-11-02T19:11:08Z",
+              "updatedAt": "2024-11-02T19:11:08Z"
             }
           ]
         }
