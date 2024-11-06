@@ -1224,7 +1224,7 @@ The first `series` entry that successfully matches the `selection` criteria term
 #### Device Identity Triple {#sec-comid-triple-identity}
 
 A Device Identity triple (`identity-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to a device identity.
-The identity keys are bound to or associated with a Target Environment (as identified by `environment` and `mkey` - see below) within the device.
+The identity keys are bound to or associated with a Target Environment (as identified by `environment` and `mkey`—see below) within the device.
 The identity keys may be asserted via Evidence or Reference Values.
 
 The device identity keys may have been used to authenticate the Attester device or may be held in reserve for use at a later time.
