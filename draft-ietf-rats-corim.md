@@ -1177,9 +1177,15 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-A Conditional Endorsement Series triple uses a stateful environment, (i.e. stateful-environment-record), that identifies a Target Environment based on an environment-map plus the measurement-map measurements that have matching Evidence.	
+A Conditional Endorsement Series triple uses a stateful environment, (i.e. `stateful-environment-record`), that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements that have matching Evidence.	
 
-The series object is an array of conditional-series-record that has both Reference and Endorsed Values. Each conditional-series-record record is evaluated in the order it appears in the series array. The Endorsed Values are accepted if the series condition in a conditional-series-record matches the ACS.  The first conditional-series-record that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted. If none of the series conditions match an ACS Entry, the triple is not matched, and no Endorsed values are accepted.	
+The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
+Each conditional-series-record record is evaluated in the order it appears in the series array.
+The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
+The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
+If none of the series conditions match an ACS Entry, the triple is not matched, and no Endorsed values are accepted.	
+
+More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
 
 The Conditional Endorsement Series Triple has the following structure:
 
