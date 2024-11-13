@@ -1663,7 +1663,8 @@ Table of Contents
    one or more cryptographic keys to a device identity.  The identity
    keys are bound to or associated with a Target Environment (as
    identified by environment and mkey—see below) within the device.  The
-   identity keys may be asserted via Evidence or Reference Values.
+   identity keys may be asserted via Evidence, Reference Values, or
+   Endorsements.
 
    The device identity keys may have been used to authenticate the
    Attester device or may be held in reserve for use at a later time.
@@ -1682,14 +1683,13 @@ Table of Contents
    the Verifier may take different steps to locate and verify the key.
 
    If a key has usage restrictions that limit its use to device identity
-   challenges, Verifiers SHOULD check for key use that violates key use
-   restrictions.
+   challenges, Verifiers SHOULD enforce key use restrictions.
 
    Each successful verification of a key in key-list SHALL produce
-   Endorsement Claims that are added to the ACS.  Claims are asserted
-   with the joint authority of the Endorser (CoRIM signer) and the
-   Verifier.  Additionally, Verifiers MAY report key verification
-   results as part of an error reporting function.
+   Endorsement Claims that are added to the Attester's Claim set.
+   Claims are asserted with the joint authority of the Endorser (CoRIM
+   signer) and the Verifier.  Additionally, Verifiers MAY report key
+   verification results as part of an error reporting function.
 
    identity-triple-record = [
      environment: environment-map
@@ -1703,14 +1703,14 @@ Table of Contents
    *  environment: An environment-map condition used to identify the
       target Evidence or Reference Value.  See Section 5.1.4.1.
 
+   *  key-list: A list of $crypto-key-type-choice keys that identifies
+      which keys are to be verified.  See Section 5.1.4.1.5.
+
    *  mkey: An optional $measured-element-type-choice condition used to
       identify the element within the target Evidence or Reference
       Value.  See Section 5.1.4.1.4.1.
 
-   *  key-list: A list of $crypto-key-type-choice keys that identifies
-      which keys are to be verified.  See Section 5.1.4.1.5.
-
-   *  authority-list: An optional list of $crypto-key-type-choice keys
+   *  authorized-by: An optional list of $crypto-key-type-choice keys
       that identifies the authorities that asserted the key-list in the
       target Evidence or Reference Values.
 
@@ -1720,7 +1720,7 @@ Table of Contents
    one or more cryptographic keys to an Attesting Environment (as
    identified by environment and mkey).  The cryptographic attestation
    keys are wielded by an Attesting Environment.  Attestation keys may
-   be asserted via Evidence or Reference Values.
+   be asserted via Evidence, Reference Values, or Endorsements.
 
    The attestation keys may have been used to sign Evidence or may be
    held in reserve for use at a later time.
@@ -1742,10 +1742,10 @@ Table of Contents
    enforce key use restrictions.
 
    Each successful verification of a key in key-list SHALL produce
-   Endorsement Claims that are added to the ACS.  Claims are asserted
-   with the joint authority of the Endorser (CoRIM signer) and the
-   Verifier.  Additionally, Verifiers MAY report key verification
-   results as part of an error reporting function.
+   Endorsement Claims that are added to the Attester's Claim set.
+   Claims are asserted with the joint authority of the Endorser (CoRIM
+   signer) and the Verifier.  Additionally, Verifiers MAY report key
+   verification results as part of an error reporting function.
 
    attest-key-triple-record = [
      environment: environment-map
@@ -2765,10 +2765,6 @@ Table of Contents
 
 8.3.3.3.4.  Key Verification Triples Transformation
 
-
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/330
-
    The following transformation steps are applied for both the identity-
    triples and attest-key-triples:
 
@@ -2784,13 +2780,13 @@ Table of Contents
    i.    *copy*(environment-map, ev.condition.environment.environment-
          map).
 
-   ii.   If populated, *copy*(mkey, ev.condition.element-list.element-
-         map.element-id).
-
-   iii.  *copy*(key-list, ev.condition.element-list.element-map.element-
+   ii.   *copy*(key-list, ev.condition.element-list.element-map.element-
          claims.measurement-values-map.cryptokeys).
 
-   iv.   If populated, *copy*(authority-list, ev.condition.authority).
+   iii.  If populated, *copy*(mkey, ev.condition.element-list.element-
+         map.element-id).
+
+   iv.   If populated, *copy*(authorized-by, ev.condition.authority).
 
    Step 4.  The signer of the Identity or Attest Key Endorsement
             conceptual message is copied to the ev.addition.authority
@@ -3034,7 +3030,7 @@ Table of Contents
 
    For each ev entry, the condition ECT is compared with an ACS ECT,
    where the ACS ECT cmtype contains either evidence, reference-values,
-   or endorsements.  If the ECTs match (Section 8.5), for each key in
+   or endorsements.  If the ECTs match (Section 8.5), for each _key_ in
    ev.condition.element-claims.measurement-values-map.crypto-keys:
 
    *  Verify the certificate signatures for the certification path.
@@ -3043,15 +3039,11 @@ Table of Contents
 
    *  Verify key usage restrictions appropriate for the type of key.
 
+   *  If key verification succeeds, *append*(_key_, ev.addition.element-
+      list.element-map.element-claims.measurement-values-
+      map.cryptokeys).
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/330
-
-   *  If key verification succeeds, *extend*(ev.addition.element-
-      list.element-map.element-claims.measurement-values-map.cryptokeys,
-      key).
-
-   If key verification succeeds for any key:
+   If key verification succeeds for any _key_:
 
    *  *copy*(ev.condition.environment, ev.addition.environment).
 
@@ -3063,7 +3055,9 @@ Table of Contents
    *  Add the Verifier authority $crypto-key-type-choice to the
       ev.addition.authority field.
 
-   Add the addition ECT to the ACS.
+   *  Add the addition ECT to the ACS.
+
+   Otherwise, do not add the addition ECT to the ACS.
 
 8.4.5.  Examples for optional phases 5, 6, and 7
 
@@ -3081,13 +3075,12 @@ Table of Contents
    Phase 5: Verifier Augmentation
 
    Claims related to Verifier-applied consistency checks are asserted
-   under the authority of the Verifier.  For example, the attest-key-
-   triple-record may contain a cryptographic key to which the Verifier
-   applies certificate path construction and validation.  Validation may
-   reveal an expired certificate.  The Verifier implementation might
-   generate a certificate path validation exception that is handled
-   externally, or it could generate a Claim that the certificate path is
-   invalid.
+   under the authority of the Verifier.  For example, the Verifier may
+   supply evidence freshness nonces to the Attester to be included in
+   Evidence.  If a Verifier nonce is used, the Verifier may augment the
+   ACS with a nonce Claim using Verifier authority.  If the Attester
+   returns the nonce, it may also augment the ACS using Attester
+   authority.
 
    Phase 6: Policy Augmentation
 
@@ -3096,11 +3089,11 @@ Table of Contents
    of a collection of subcomponents satisfy a particular quality metric,
    the top-level component also satisfies the quality metric.  The
    Verifier might generate an Endorsement ECT for the top-level
-   component that asserts a quality metric.  Details about the policy
-   applied may also augment the ACS.  An internal representation of
-   policy details, based on the policy ECT, as described in
-   Section 8.2.1.4, contains the environments affected by the policy
-   with policy identifiers as Claims.
+   component that asserts a quality metric.  Details about the applied
+   policy may augment the ACS.  An internal representation of policy
+   details, based on the policy ECT, as described in Section 8.2.1.4,
+   contains the environments affected by the policy with policy
+   identifiers as Claims.
 
    Phase 7: Attestation Results Production and Transformation
 
