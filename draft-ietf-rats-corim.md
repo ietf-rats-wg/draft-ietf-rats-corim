@@ -1136,7 +1136,7 @@ Re-asserted Evidence using RVP authority is said to be "corroborated".
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple provides additional Endorsements that are valid when a Target Environment has been verified against Reference Values or Evidence.
+An Endorsed Values triple provides additional Endorsements for an existing Target Environment.
 For Endorsed Values Claims, the _subject_ is a Target Environment, the _object_ contains Endorsement Claims for the Environment, and the _predicate_ defines semantics for how the _object_ relates to the _subject_.
 
 The Endorsed Values Triple has the following structure:
