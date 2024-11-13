@@ -1225,7 +1225,7 @@ The first `series` entry that successfully matches the `selection` criteria term
 
 A Device Identity triple (`identity-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to a device identity.
 The identity keys are bound to or associated with a Target Environment (as identified by `environment` and `mkey`—see below) within the device.
-The identity keys may be asserted via Evidence or Reference Values.
+The identity keys may be asserted via Evidence, Reference Values, or Endorsements.
 
 The device identity keys may have been used to authenticate the Attester device or may be held in reserve for use at a later time.
 
@@ -1237,9 +1237,9 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
-If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates key use restrictions.
+If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD enforce key use restrictions.
 
-Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the ACS.
+Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
 Additionally, Verifiers MAY report key verification results as part of an error reporting function.
 
@@ -1250,19 +1250,19 @@ Additionally, Verifiers MAY report key verification results as part of an error 
 * `environment`: An `environment-map` condition used to identify the target Evidence or Reference Value.
   See {{sec-environments}}.
 
-* `mkey`: An optional `$measured-element-type-choice` condition used to identify the element within the target Evidence or Reference Value.
-  See {{sec-comid-mkey}}.
-
 * `key-list`: A list of `$crypto-key-type-choice` keys that identifies which keys are to be verified.
   See {{sec-crypto-keys}}.
 
-* `authority-list`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the `key-list` in the target Evidence or Reference Values.
+* `mkey`: An optional `$measured-element-type-choice` condition used to identify the element within the target Evidence or Reference Value.
+  See {{sec-comid-mkey}}.
+
+* `authorized-by`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the `key-list` in the target Evidence or Reference Values.
 
 #### Attest Key Triple {#sec-comid-triple-attest-key}
 
 An Attest Key triple (`attest-key-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to an Attesting Environment (as identified by `environment` and `mkey`).
 The cryptographic attestation keys are wielded by an Attesting Environment.
-Attestation keys may be asserted via Evidence or Reference Values.
+Attestation keys may be asserted via Evidence, Reference Values, or Endorsements.
 
 The attestation keys may have been used to sign Evidence or may be held in reserve for use at a later time.
 
@@ -1276,7 +1276,7 @@ Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifi
 If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in [DICE.cert]).
 Verifiers SHOULD enforce key use restrictions.
 
-Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the ACS.
+Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
 Additionally, Verifiers MAY report key verification results as part of an error reporting function.
 
@@ -2036,8 +2036,6 @@ The selected tags are mapped to an internal representation, making them suitable
 
 ##### Key Verification Triples Transformation {#sec-end-trans-kvt}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330
-
 The following transformation steps are applied for both the `identity-triples` and `attest-key-triples`:
 
 {:kvt-enum: counter="ckvt" style="format Step %d."}
@@ -2054,11 +2052,11 @@ The following transformation steps are applied for both the `identity-triples` a
 {: kvt2-enum}
 * **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`).
 
-* If populated, **copy**(`mkey`, `ev`.`condition`.`element-list`.`element-map`.`element-id`).
-
 * **copy**(`key-list`, `ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
 
-* If populated, **copy**(`authority-list`, `ev`.`condition`.`authority`).
+* If populated, **copy**(`mkey`, `ev`.`condition`.`element-list`.`element-map`.`element-id`).
+
+* If populated, **copy**(`authorized-by`, `ev`.`condition`.`authority`).
 
 {: kvt-enum}
 * The signer of the Identity or Attest Key Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
@@ -2242,7 +2240,7 @@ Series processing terminates when the first series entry matches.
 #### Processing Key Verification Endorsements {#sec-process-keys}
 
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), for each key in `ev`.`condition`.`element-claims`.`measurement-values-map`.`crypto-keys`:
+If the ECTs match ({{sec-match-condition-ect}}), for each _key_ in `ev`.`condition`.`element-claims`.`measurement-values-map`.`crypto-keys`:
 
 * Verify the certificate signatures for the certification path.
 
@@ -2250,11 +2248,9 @@ If the ECTs match ({{sec-match-condition-ect}}), for each key in `ev`.`condition
 
 * Verify key usage restrictions appropriate for the type of key.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330
+* If key verification succeeds, **append**(_key_, `ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
 
-* If key verification succeeds, **extend**(`ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`, key).
-
-If key verification succeeds for any key:
+If key verification succeeds for any _key_:
 
 * **copy**(`ev`.`condition`.`environment`, `ev`.`addition`.`environment`).
 
@@ -2264,7 +2260,9 @@ If key verification succeeds for any key:
 
 * Add the Verifier authority `$crypto-key-type-choice` to the `ev`.`addition`.`authority` field.
 
-Add the `addition` ECT to the ACS.
+* Add the `addition` ECT to the ACS.
+
+Otherwise, do not add the `addition` ECT to the ACS.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
@@ -2276,16 +2274,16 @@ Additionally, the creation of Attestation Results is out-of-scope for this docum
 Phase 5: Verifier Augmentation
 
 Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
-For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and validation.
-Validation may reveal an expired certificate.
-The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.
+For example, the Verifier may supply evidence freshness nonces to the Attester to be included in Evidence.
+If a Verifier nonce is used, the Verifier may augment the ACS with a nonce Claim using Verifier authority.
+If the Attester returns the nonce, it may also augment the ACS using Attester authority.
 
 Phase 6: Policy Augmentation
 
 Appraisal policy inputs could result in Claims that augment the ACS.
 For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
 The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
-Details about the policy applied may also augment the ACS.
+Details about the applied policy may augment the ACS.
 An internal representation of policy details, based on the policy ECT, as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
 
 Phase 7: Attestation Results Production and Transformation
