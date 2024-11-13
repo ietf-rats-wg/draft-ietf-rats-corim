@@ -1256,7 +1256,7 @@ Additionally, Verifiers MAY report key verification results as part of an error 
 * `key-list`: A list of `$crypto-key-type-choice` keys that identifies which keys are to be verified.
   See {{sec-crypto-keys}}.
 
-* `authority-list`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the key-list in the target Evidence or Reference Values.
+* `authority-list`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the `key-list` in the target Evidence or Reference Values.
 
 #### Attest Key Triple {#sec-comid-triple-attest-key}
 
