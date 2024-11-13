@@ -3471,8 +3471,10 @@ Additionally, Verifiers MAY report key verification results as part of an error 
 attest-key-triple-record = [
   environment: environment-map
   key-list: [ + $crypto-key-type-choice ]
-  ? mkey: $measured-element-type-choice
-  ? authority-list: [ + $crypto-key-type-choice ]
+non-empty&lt;{
+   ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+   ? &amp;(authorized-by: 2) =&gt; [ + $crypto-key-type-choice ]
+}&gt;
 ]
 </pre><a href="#section-5.1.4.7-7" class="pilcrow">¶</a>
 </div>
@@ -6781,8 +6783,10 @@ accepted-claims-set = {
 attest-key-triple-record = [
   environment: environment-map
   key-list: [ + $crypto-key-type-choice ]
-  ? mkey: $measured-element-type-choice
-  ? authority-list: [ + $crypto-key-type-choice ]
+non-empty&lt;{
+   ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+   ? &amp;(authorized-by: 2) =&gt; [ + $crypto-key-type-choice ]
+}&gt;
 ]
 
 $class-id-type-choice /= tagged-oid-type

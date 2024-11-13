@@ -1748,8 +1748,10 @@ Table of Contents
    attest-key-triple-record = [
      environment: environment-map
      key-list: [ + $crypto-key-type-choice ]
-     ? mkey: $measured-element-type-choice
-     ? authority-list: [ + $crypto-key-type-choice ]
+   non-empty<{
+      ? &(mkey: 0) => $measured-element-type-choice,
+      ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+   }>
    ]
 
    See Section 5.1.4.6 for additional details.
@@ -4121,8 +4123,10 @@ Appendix A.  Base CoRIM CDDL
    attest-key-triple-record = [
      environment: environment-map
      key-list: [ + $crypto-key-type-choice ]
-     ? mkey: $measured-element-type-choice
-     ? authority-list: [ + $crypto-key-type-choice ]
+   non-empty<{
+      ? &(mkey: 0) => $measured-element-type-choice,
+      ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+   }>
    ]
 
    $class-id-type-choice /= tagged-oid-type
