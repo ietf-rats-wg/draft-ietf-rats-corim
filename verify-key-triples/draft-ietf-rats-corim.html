@@ -3462,7 +3462,7 @@ The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#sectio
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in <span>[<a href="#DICE.cert" class="cite xref">DICE.cert</a>]</span>).
-Verifiers SHOULD check for key use restrictions.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
+Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-6">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the ACS.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
 Additionally, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.7-6" class="pilcrow">¶</a></p>
@@ -5381,7 +5381,7 @@ If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref"
 <p id="section-8.4.4.4-3"><span class="cref" id="issue_8">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330<a href="#section-8.4.4.4-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.4.4.4-4.1">
-                <p id="section-8.4.4.4-4.1.1">If key verification succeeds, <strong>copy</strong>(key, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>cryptokeys</code>).<a href="#section-8.4.4.4-4.1.1" class="pilcrow">¶</a></p>
+                <p id="section-8.4.4.4-4.1.1">If key verification succeeds, <strong>extend</strong>(<code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>cryptokeys</code>, key).<a href="#section-8.4.4.4-4.1.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <p id="section-8.4.4.4-5">If key verification succeeds for any key:<a href="#section-8.4.4.4-5" class="pilcrow">¶</a></p>
