@@ -1,8 +1,8 @@
 attest-key-triple-record = [
   environment: environment-map
   key-list: [ + $crypto-key-type-choice ]
-non-empty<{
-   ? &(mkey: 0) => $measured-element-type-choice,
-   ? &(authorized-by: 2) => [ + $crypto-key-type-choice ] 
-}>
+  ? conditions: non-empty< {
+    ? &(mkey: 0) => $measured-element-type-choice,
+    ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
+  }>
 ]
