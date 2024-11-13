@@ -1274,7 +1274,7 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in [DICE.cert]).
-Verifiers SHOULD check for key use restrictions.
+Verifiers SHOULD enforce key use restrictions.
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the ACS.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
@@ -2252,7 +2252,7 @@ If the ECTs match ({{sec-match-condition-ect}}), for each key in `ev`.`condition
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/330
 
-* If key verification succeeds, **copy**(key, `ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
+* If key verification succeeds, **extend**(`ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`, key).
 
 If key verification succeeds for any key:
 
