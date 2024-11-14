@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-12T01:42:07.886449+00:00",
+  "timestamp": "2024-11-14T01:44:27.466308+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7606,9 +7606,24 @@
       "labels": [],
       "body": "Also relates to #314 \r\nA transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.\r\n\r\nNote: Given verifier behavior differs based on the type of key (identity vs. attest), there needs to be a way to represent the key type across external to internal processing. One approach is to modify the internal representation to include `key-type` info along with the `$crypto-key-type-choice` key.",
       "createdAt": "2024-10-16T20:30:08Z",
-      "updatedAt": "2024-10-26T00:06:51Z",
+      "updatedAt": "2024-11-14T01:38:13Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There is a thread related to the semantics of what it means for a key to belong to an environment. \r\nThe diag snippet below shows a key identifier (e.g., cert path) as a measurement of the environment class-id ending in ...39. This means the key is in the target environment named ...39. Since the private key is a secret the cert / public key serves as its alias. \r\nExample:\r\n```\r\n  / comid.triples / 4 : {\r\n    / reference-triples / 0 : [\r\n      [\r\n        / environment-map / {\r\n          / class / 0 : {\r\n            / class-id / 0 :\r\n              / tagged-uuid-type / 37( h'67b28b6c34cc40a19117ab5b05911e39' )\r\n          }\r\n        },\r\n        [\r\n          / measurement-map / {\r\n            / mkey / 0 : \"thing 2\",\r\n            / mval / 1 : {\r\n              / cryptokeys / 13 : [\r\n                / tagged-pkix-base64-cert-path-type / 556(\"base64_cert_path_X\"),\r\n                / tagged-pkix-base64-cert-path-type / 556(\"base64_cert_path_Y\")\r\n              ]\r\n            }\r\n          }\r\n        ]\r\n      ]\r\n    ],\r\n```\r\nThe next snippet shows an identity-triple that matches the keys that were named above as measurements and instructs the verifier to do key verification.\r\n```\r\n    / identity-triples / 2 : [ \r\n      [\r\n        / environment-map / {\r\n          / class / 0 : {\r\n            / class-id / 0 :\r\n              / tagged-uuid-type / 37( h'67b28b6c34cc40a19117ab5b05911e39' )\r\n          }\r\n        },\r\n        / key-list / [\r\n          / tagged-pkix-base64-cert-path-type / 556(\"base64_cert_path_X\"),\r\n          / tagged-pkix-base64-cert-path-type / 556(\"base64_cert_path_Y\")\r\n        ],\r\n        / conditions / {\r\n          / mkey / 0 : \"thing 2\"\r\n        }\r\n      ]\r\n```\r\nIf the private key for base64_cert_path_X was used to authenticate the Attester to the Verifier. The verifier also has PoP that the private key is indeed on the Attester. The above RV claim asserts that the private key is in the environment named ...39.  The identity-key triple is almost a no-op since it did the key verification on key _X already. It just needs to add it to the endorsement record that will be added to the ACS. \r\n\r\nThe Verifier can also check key _Y, but since it wasn't used earlier, it has to do the cert path validation, crl check. It can't do the PoP check unless there the conveyance protocol exposes an interface for that (out of scope for this spec). Note, the Verifier has the option of creating richer endorsements that might indicate the variety of key verifications checks that were applied and the result for each. That might require breaking out each _X and _Y keys into separate triples entries so they can have different verifier asserted key verification results (or the verifier might just generate an audit log with that information in it). ",
+          "createdAt": "2024-11-13T23:20:48Z",
+          "updatedAt": "2024-11-13T23:20:48Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "So identity-triple and attest-key-triple both get processed the same way (perform checks before associating keys to environment), and there _isn't_ any requirement to verify a certificate path in cryptokeys if in evidence, since the claim itself means the keys have been verified by the attester? Ah, and that's why the Verifier is the authority when processing identity-triple and attest-key-triple.\r\n\r\nBut after translating both of these triples to the same internal representation, for what reason are there two triples for the same thing? It looks like they imply some meaning, but if you drop that meaning in the transformation prior to giving the ACS to your policy engine, I don't know what the point is of keeping them separate.",
+          "createdAt": "2024-11-14T01:38:12Z",
+          "updatedAt": "2024-11-14T01:38:12Z"
+        }
+      ]
     },
     {
       "number": 333,
@@ -7862,6 +7877,22 @@
       "body": "In the Verifier processing,the draft text states that Evidence is represented as `state-triples`\r\n\r\nHowever, there is no internal representation expressing Evidence as `state-triples`.\r\n\r\nThis part of the text needs to be re-visited..",
       "createdAt": "2024-11-11T19:45:55Z",
       "updatedAt": "2024-11-11T19:46:34Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 348,
+      "id": "I_kwDOH6-tI86eNC0U",
+      "title": "Domain membership wording looks wrong",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/348",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> Endorsed environments ([Section 5.1.4.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-endval)) membership is conditional upon successful matching of Reference Values ([Section 5.1.4.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-refval)) to Evidence.\r\n\r\nI don't think we have a sense of which reference values an environment is supposed to match before suggesting that its within a particular trust domain. We got rid of the wording of matching reference values for endorsed triples for this reason.",
+      "createdAt": "2024-11-13T05:22:46Z",
+      "updatedAt": "2024-11-13T05:22:46Z",
       "closedAt": null,
       "comments": []
     }
@@ -48088,13 +48119,13 @@
       "labels": [],
       "body": "Addresses the majority of issue #330 (but one challenge remains).\r\n\r\nExpanded examples may be needed.",
       "createdAt": "2024-10-26T00:38:33Z",
-      "updatedAt": "2024-11-06T16:32:06Z",
+      "updatedAt": "2024-11-13T23:33:43Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "verify-key-triples",
-      "headRefOid": "96d79ca42c90a668ef2d8dc888acc02ba82973c2",
+      "headRefOid": "552e89fe4aaa76e4ab582324cdc1513633544161",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -48540,6 +48571,325 @@
               "updatedAt": "2024-11-06T16:32:06Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDZ-J",
+          "commit": {
+            "abbreviatedOid": "96d79ca"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:23:58Z",
+          "updatedAt": "2024-11-13T15:23:58Z",
+          "comments": [
+            {
+              "originalPosition": 68,
+              "body": "okay",
+              "createdAt": "2024-11-13T15:23:58Z",
+              "updatedAt": "2024-11-13T15:23:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDbGi",
+          "commit": {
+            "abbreviatedOid": "96d79ca"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:25:12Z",
+          "updatedAt": "2024-11-13T15:25:12Z",
+          "comments": [
+            {
+              "originalPosition": 91,
+              "body": "In which cases do you not follow the SHOULD as an implementer?",
+              "createdAt": "2024-11-13T15:25:12Z",
+              "updatedAt": "2024-11-13T15:25:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDfGa",
+          "commit": {
+            "abbreviatedOid": "96d79ca"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:30:36Z",
+          "updatedAt": "2024-11-13T15:30:36Z",
+          "comments": [
+            {
+              "originalPosition": 193,
+              "body": "@deeglaze seems to have fixed the last remaining \"/\" in #346\r\n\r\nThis is resolved.",
+              "createdAt": "2024-11-13T15:30:36Z",
+              "updatedAt": "2024-11-13T15:30:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDmNb",
+          "commit": {
+            "abbreviatedOid": "96d79ca"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:40:31Z",
+          "updatedAt": "2024-11-13T15:40:31Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "```suggestion\r\n* If key verification succeeds, **extend**(`ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`, key).\r\n```\r\n\r\nNot sure what we're doing about adding to a list. Append? Extend?",
+              "createdAt": "2024-11-13T15:40:31Z",
+              "updatedAt": "2024-11-13T15:40:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDnzT",
+          "commit": {
+            "abbreviatedOid": "b628388"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:42:45Z",
+          "updatedAt": "2024-11-13T15:42:45Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "```suggestion\r\nVerifiers SHOULD enforce key use restrictions.\r\n```",
+              "createdAt": "2024-11-13T15:42:45Z",
+              "updatedAt": "2024-11-13T15:42:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDp3I",
+          "commit": {
+            "abbreviatedOid": "7b0c099"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-13T15:45:41Z",
+          "updatedAt": "2024-11-13T15:45:41Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDp73",
+          "commit": {
+            "abbreviatedOid": "96d79ca"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:45:47Z",
+          "updatedAt": "2024-11-13T15:45:48Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nnon-empty<{\r\n   ? &(mkey: 0) => $measured-element-type-choice,\r\n   ? &(authorized-by: 2) => [ + $crypto-key-type-choice ] \r\n}>\r\n```\r\n\r\nI used authorized-by in this suggestion. What's the difference to authority-list?",
+              "createdAt": "2024-11-13T15:45:48Z",
+              "updatedAt": "2024-11-13T15:45:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDv6Y",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:54:09Z",
+          "updatedAt": "2024-11-13T15:54:09Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Not sure how the suggestion was pulled in. This was:\r\n\r\n```suggestion\r\n  ? mkey: $measured-element-type-choice\r\n  ? authority-list: [ + $crypto-key-type-choice ]\r\n```",
+              "createdAt": "2024-11-13T15:54:09Z",
+              "updatedAt": "2024-11-13T15:54:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDwfO",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:55:00Z",
+          "updatedAt": "2024-11-13T15:55:00Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "What was the difference between authorized-by and authority-list?",
+              "createdAt": "2024-11-13T15:55:00Z",
+              "updatedAt": "2024-11-13T15:55:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REPWd",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2024-11-13T16:37:05Z",
+          "updatedAt": "2024-11-13T16:39:51Z",
+          "comments": [
+            {
+              "originalPosition": 160,
+              "body": "Needs updating with the added nesting.",
+              "createdAt": "2024-11-13T16:37:05Z",
+              "updatedAt": "2024-11-13T16:39:51Z"
+            },
+            {
+              "originalPosition": 203,
+              "body": "I'm thoroughly confused what point an attest-key-triple serves if it is exactly the same as an endorsement of a cryptokey. It loses information about the key usage for verifying evidence to just being about having some key provisioned to it.",
+              "createdAt": "2024-11-13T16:39:45Z",
+              "updatedAt": "2024-11-13T16:39:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REWvi",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T16:47:11Z",
+          "updatedAt": "2024-11-13T16:47:11Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "@yogeshbdeshpande when PSA (not CCA) has its token verified with the IAK, \"the verification public key is looked up in the appraisal context using the ueid claim found in the PSA claims-set.\"\r\n\r\nThis appraisal context is separate from the ACS? It's some unmentioned data structure that associates an environment with the key that should be used to verify the PSA? If not, and there is an ECT representation of it, then how is the transformation in #341 that strips the `attest-key-triple` quality to make it just another `cryptokey` measurement supposed to maintain the integrity of that lookup process?",
+              "createdAt": "2024-11-13T16:47:11Z",
+              "updatedAt": "2024-11-13T16:47:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REe2K",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T16:56:01Z",
+          "updatedAt": "2024-11-13T16:56:02Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "Hi @deeglaze : Veraison started when we did not had the concept of ACS within CoRIM draft, forget matching the exact data structure! However the concept of Appraisal context is the same as ACS. I would not prefer to explain too many details about Veraison implementation here, been this is a more generic CoRIM repo, but happy to explain it in a separate issue under Veraison repository!",
+              "createdAt": "2024-11-13T16:56:01Z",
+              "updatedAt": "2024-11-13T16:56:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RFAdG",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:43:07Z",
+          "updatedAt": "2024-11-13T17:43:08Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "Appraisal Context in this document is used as a nebulous, \"stuff related to appraisal that we didn't represent in the ACS\".\r\nIf we're making attest-key-triple mean something more than an endorsement of an (attesting) environment holding a key, we need to disambiguate it in the ACS to make the evidence verification section self-contained. ",
+              "createdAt": "2024-11-13T17:43:07Z",
+              "updatedAt": "2024-11-13T17:43:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RHR4e",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T22:27:24Z",
+          "updatedAt": "2024-11-13T22:27:25Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "> What was the difference between authorized-by and authority-list?\r\n\r\nnothing. This thread is outdated.",
+              "createdAt": "2024-11-13T22:27:24Z",
+              "updatedAt": "2024-11-13T22:31:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RHSwq",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T22:30:07Z",
+          "updatedAt": "2024-11-13T22:30:07Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "The original text was actually wrong (append direction was reversed). The new text fixes this. \r\n\r\nThe other thread doesn't seem related to the cited text. Maybe it belongs somewhere else or take it to the issue instead of the PR?",
+              "createdAt": "2024-11-13T22:30:07Z",
+              "updatedAt": "2024-11-13T22:30:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RHk1Z",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T23:33:43Z",
+          "updatedAt": "2024-11-13T23:33:43Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "> If we're making attest-key-triple mean something more than an endorsement of an (attesting) environment holding a key, we need to disambiguate it in the ACS to make the evidence verification section self-contained.\r\n\r\nWe're not. The ACS has an ECT that associates the name of the key with an environment. This exists under the authority of the RVP as well as the Attester.\r\n\r\nThe attest-key-triple asked the verifier to do key verification. As a result, the ACS has a third ECT entry identical to the first two, this time under the authority of the Endorser and the Verifier. The Endorser is the entity asking to do the key verify checks, and the Verifier is the entity that did the check. \r\n\r\nPutting it all together:\r\nstep 1: Attester says key _X exists in environment _E.\r\nstep 2: RVP says key _X is supposed to exist in env _E. (aka step 1 is corroborated)\r\nstep 3: Endorser says key _X is supposed to be verified.\r\nstep 4: Verifier says key _X was verified. \r\n\r\nAn RP may have a policy that wants to see all 4 steps. There are entries in the ACS for all 4.",
+              "createdAt": "2024-11-13T23:33:43Z",
+              "updatedAt": "2024-11-13T23:33:43Z"
+            }
+          ]
         }
       ]
     },
@@ -48555,18 +48905,26 @@
       "labels": [],
       "body": "Fixes #310 ",
       "createdAt": "2024-10-31T17:45:34Z",
-      "updatedAt": "2024-11-11T23:49:23Z",
+      "updatedAt": "2024-11-13T17:40:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "triples-explaination",
-      "headRefOid": "e9dee6f73476536b72782eed0f0b0a040eaa0290",
+      "headRefOid": "09bb82446a6e8eda4079fec37a605888a7a5b742",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith, @thomas-fossati and @andrew-draper Kindly review the same, as discussed during the review!",
+          "createdAt": "2024-11-13T16:10:02Z",
+          "updatedAt": "2024-11-13T16:10:02Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86PkXA7",
@@ -48799,6 +49157,584 @@
               "updatedAt": "2024-11-11T23:49:23Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDUSA",
+          "commit": {
+            "abbreviatedOid": "e9dee6f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:17:00Z",
+          "updatedAt": "2024-11-13T15:17:01Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "```suggestion\r\nAn Endorsed Values triple provides additional Endorsements for an existing Target Environment.\r\n```",
+              "createdAt": "2024-11-13T15:17:00Z",
+              "updatedAt": "2024-11-13T15:17:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDU7l",
+          "commit": {
+            "abbreviatedOid": "e9dee6f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-13T15:17:41Z",
+          "updatedAt": "2024-11-13T15:17:41Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDVoD",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-13T15:18:39Z",
+          "updatedAt": "2024-11-13T15:18:39Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDWqI",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T15:20:06Z",
+          "updatedAt": "2024-11-13T15:20:06Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nFor Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.\r\n```",
+              "createdAt": "2024-11-13T15:20:06Z",
+              "updatedAt": "2024-11-13T15:20:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REe-4",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T16:56:15Z",
+          "updatedAt": "2024-11-13T16:56:15Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nFor a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.\r\n```",
+              "createdAt": "2024-11-13T16:56:15Z",
+              "updatedAt": "2024-11-13T16:56:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REfh7",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T16:57:03Z",
+          "updatedAt": "2024-11-13T16:57:03Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "```suggestion\r\n* `ref-env`: Identifies the Target Environment\r\n```",
+              "createdAt": "2024-11-13T16:57:03Z",
+              "updatedAt": "2024-11-13T16:57:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REgGl",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T16:58:00Z",
+          "updatedAt": "2024-11-13T16:58:01Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\nFirst `ref-env` is used as a search criterion to locate the Evidence environment that matches the reference environment.\r\n```",
+              "createdAt": "2024-11-13T16:58:00Z",
+              "updatedAt": "2024-11-13T16:58:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REh2G",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:00:25Z",
+          "updatedAt": "2024-11-13T17:00:25Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "However, this seems phrased backwards, isn't it?  One uses the environment identifiers associated with the appraised evidence to locate the matching ref-triples.",
+              "createdAt": "2024-11-13T17:00:25Z",
+              "updatedAt": "2024-11-13T17:00:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REjKV",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:02:03Z",
+          "updatedAt": "2024-11-13T17:02:03Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "```suggestion\r\nAn Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.\r\n```",
+              "createdAt": "2024-11-13T17:02:03Z",
+              "updatedAt": "2024-11-13T17:02:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REmIu",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:04:57Z",
+          "updatedAt": "2024-11-13T17:04:58Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "unclear why `_` is used here (and not in the ref-value triple explainer)",
+              "createdAt": "2024-11-13T17:04:58Z",
+              "updatedAt": "2024-11-13T17:04:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REnFc",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:06:08Z",
+          "updatedAt": "2024-11-13T17:06:09Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "have we already defined \"accepted state\" at this point?  If not, I suggest using a more intelligible term (e.g., actual state, as per I-D.ietf-rats-endorsements)",
+              "createdAt": "2024-11-13T17:06:09Z",
+              "updatedAt": "2024-11-13T17:07:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REni6",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:06:35Z",
+          "updatedAt": "2024-11-13T17:06:35Z",
+          "comments": [
+            {
+              "originalPosition": 42,
+              "body": "```suggestion\r\nThe conditions are expressed via `stateful-environment-records`, which match Target Environments from Evidence in certain reference state.\r\n```",
+              "createdAt": "2024-11-13T17:06:35Z",
+              "updatedAt": "2024-11-13T17:06:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REppA",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:10:12Z",
+          "updatedAt": "2024-11-13T17:10:12Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "This reference to the internals is not in tune with the \"gentle introduction\" spirit of this PR.\r\n\r\n```suggestion\r\nA Conditional Endorsement Series triple uses a \"stateful environment\" that identifies a Target Environment plus the measurements that have matching Evidence.\t\r\n```",
+              "createdAt": "2024-11-13T17:10:12Z",
+              "updatedAt": "2024-11-13T17:10:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REqi0",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:11:21Z",
+          "updatedAt": "2024-11-13T17:11:21Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nThe series object is an array of records contaning both Reference and Endorsed Values.\r\n```",
+              "createdAt": "2024-11-13T17:11:21Z",
+              "updatedAt": "2024-11-13T17:11:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REqwa",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:11:34Z",
+          "updatedAt": "2024-11-13T17:11:34Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "```suggestion\r\nEach record is evaluated in the order it appears in the series array.\r\n```",
+              "createdAt": "2024-11-13T17:11:34Z",
+              "updatedAt": "2024-11-13T17:11:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RErZf",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:12:20Z",
+          "updatedAt": "2024-11-13T17:12:20Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "This one too seems too deep too soon: reference to internals, mention of ACS.",
+              "createdAt": "2024-11-13T17:12:20Z",
+              "updatedAt": "2024-11-13T17:12:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RErkA",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:12:37Z",
+          "updatedAt": "2024-11-13T17:12:37Z",
+          "comments": [
+            {
+              "originalPosition": 57,
+              "body": "ditto",
+              "createdAt": "2024-11-13T17:12:37Z",
+              "updatedAt": "2024-11-13T17:12:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REwHX",
+          "commit": {
+            "abbreviatedOid": "722da75"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:18:43Z",
+          "updatedAt": "2024-11-13T17:18:43Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "I think the original text is more clear as the triple is indeed very complex so more the text clarity the merrier it is!",
+              "createdAt": "2024-11-13T17:18:43Z",
+              "updatedAt": "2024-11-13T17:18:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REysz",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:23:17Z",
+          "updatedAt": "2024-11-13T17:23:17Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "As mentioned it is much safer to be precise as to which record we are referring  here!",
+              "createdAt": "2024-11-13T17:23:17Z",
+              "updatedAt": "2024-11-13T17:23:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86REzEG",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:23:58Z",
+          "updatedAt": "2024-11-13T17:23:58Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nA Conditional Endorsement Triple declares one or more conditions that, once they match, cause every entry in the endorsements to be added to the actual state.\r\n```",
+              "createdAt": "2024-11-13T17:23:58Z",
+              "updatedAt": "2024-11-13T17:23:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE0pu",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:25:07Z",
+          "updatedAt": "2024-11-13T17:25:08Z",
+          "comments": [
+            {
+              "originalPosition": 51,
+              "body": "Also `` is the convention we have been following, so prefer this way as against to a new convention of \"xyz\"",
+              "createdAt": "2024-11-13T17:25:07Z",
+              "updatedAt": "2024-11-13T17:25:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE1wj",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:26:05Z",
+          "updatedAt": "2024-11-13T17:26:06Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "It is much safer to be precise as to which record we are referring here!",
+              "createdAt": "2024-11-13T17:26:05Z",
+              "updatedAt": "2024-11-13T17:26:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE2cJ",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "I have addressed most of the comments!",
+          "createdAt": "2024-11-13T17:27:00Z",
+          "updatedAt": "2024-11-13T17:27:00Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE3s3",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:29:19Z",
+          "updatedAt": "2024-11-13T17:29:19Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "We can change ACS to attester's actual state",
+              "createdAt": "2024-11-13T17:29:19Z",
+              "updatedAt": "2024-11-13T17:29:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE4ct",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:30:39Z",
+          "updatedAt": "2024-11-13T17:30:39Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nThe Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.\r\n```",
+              "createdAt": "2024-11-13T17:30:39Z",
+              "updatedAt": "2024-11-13T17:30:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE4tU",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:31:07Z",
+          "updatedAt": "2024-11-13T17:31:07Z",
+          "comments": [
+            {
+              "originalPosition": 56,
+              "body": "```suggestion\r\nThe first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.\r\n```",
+              "createdAt": "2024-11-13T17:31:07Z",
+              "updatedAt": "2024-11-13T17:31:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE5cX",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:32:30Z",
+          "updatedAt": "2024-11-13T17:32:30Z",
+          "comments": [
+            {
+              "originalPosition": 57,
+              "body": "```suggestion\r\nIf none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.\t\r\n```",
+              "createdAt": "2024-11-13T17:32:30Z",
+              "updatedAt": "2024-11-13T17:32:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE7ka",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-13T17:36:12Z",
+          "updatedAt": "2024-11-13T17:36:13Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "The triple is hard to explain with out the context of ACS, The matching semantics needs ACS. Few alternatives below:\r\n\r\n1. Forward reference to ACS and request reader to understand ACS before arriving here!\r\n2. Change ACS to attester's actual state. Tried but does not improve the situation dramatically, infact matching on attester's actual state yield more ambIguity!",
+              "createdAt": "2024-11-13T17:36:13Z",
+              "updatedAt": "2024-11-13T17:36:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE8rN",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "I added my own comments to the earlier comments!",
+          "createdAt": "2024-11-13T17:37:01Z",
+          "updatedAt": "2024-11-13T17:37:01Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RE5vP",
+          "commit": {
+            "abbreviatedOid": "09bb824"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple comments",
+          "createdAt": "2024-11-13T17:33:05Z",
+          "updatedAt": "2024-11-13T17:40:15Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nA Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester with the Endorsement Claims.\r\n```\r\nI think the reader is equally confused by \"actual\" given the reader is confused by \"accepted\". ",
+              "createdAt": "2024-11-13T17:33:05Z",
+              "updatedAt": "2024-11-13T17:40:15Z"
+            },
+            {
+              "originalPosition": 51,
+              "body": "If using the actual CDDL (which occurs earlier in the document?) can't be used here, the reader is equally confused by \"stateful environment\" as they would be `stateful-environment`. The current text assumes the reader is familiar with what has been discussed in previous sections. \r\n\r\nThe goal of #310 is to provide one or two sentences of elevator text that describes the triple subject, object, and predicate without using those terms.",
+              "createdAt": "2024-11-13T17:39:48Z",
+              "updatedAt": "2024-11-13T17:40:15Z"
+            }
+          ]
         }
       ]
     },
@@ -48807,26 +49743,55 @@
       "id": "PR_kwDOH6-tI86BFnjK",
       "title": "Use . instead of / for field projection",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/346",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes Issue #345",
       "createdAt": "2024-11-06T17:28:16Z",
-      "updatedAt": "2024-11-06T17:28:17Z",
+      "updatedAt": "2024-11-13T15:21:47Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "deeglaze-patch-1",
       "headRefOid": "1ac55fb971f4068c02e8e969d6c6f73194da2f87",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-11-13T15:21:42Z",
+      "mergedAt": "2024-11-13T15:21:42Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "f22e072f3d1ee000dc3cc2fd9d3db41b294a790f"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86RDXXb",
+          "commit": {
+            "abbreviatedOid": "1ac55fb"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-13T15:21:01Z",
+          "updatedAt": "2024-11-13T15:21:01Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RDXbF",
+          "commit": {
+            "abbreviatedOid": "1ac55fb"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-11-13T15:21:06Z",
+          "updatedAt": "2024-11-13T15:21:06Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
