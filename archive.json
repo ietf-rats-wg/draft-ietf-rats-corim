@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-14T01:44:27.466308+00:00",
+  "timestamp": "2024-11-17T01:55:10.233723+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7606,7 +7606,7 @@
       "labels": [],
       "body": "Also relates to #314 \r\nA transformation section is needed for attest key and identity key triples that describes how attest/identity key triples are transformed into an internal representation.  \r\n\r\nA processing section is needed that describes how the internal representation is processed. For example, it might impact phase 3 where a negative result of the AKT prevents the reference values from being added to the ACS.\r\n\r\nNote: Given verifier behavior differs based on the type of key (identity vs. attest), there needs to be a way to represent the key type across external to internal processing. One approach is to modify the internal representation to include `key-type` info along with the `$crypto-key-type-choice` key.",
       "createdAt": "2024-10-16T20:30:08Z",
-      "updatedAt": "2024-11-14T01:38:13Z",
+      "updatedAt": "2024-11-15T19:25:56Z",
       "closedAt": null,
       "comments": [
         {
@@ -7622,6 +7622,13 @@
           "body": "So identity-triple and attest-key-triple both get processed the same way (perform checks before associating keys to environment), and there _isn't_ any requirement to verify a certificate path in cryptokeys if in evidence, since the claim itself means the keys have been verified by the attester? Ah, and that's why the Verifier is the authority when processing identity-triple and attest-key-triple.\r\n\r\nBut after translating both of these triples to the same internal representation, for what reason are there two triples for the same thing? It looks like they imply some meaning, but if you drop that meaning in the transformation prior to giving the ACS to your policy engine, I don't know what the point is of keeping them separate.",
           "createdAt": "2024-11-14T01:38:12Z",
           "updatedAt": "2024-11-14T01:38:12Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">I don't know what the point is of keeping them separate.\r\n\r\nDICE certs and TPM keys distinguish between keys intended for use to sign evidence vs. signing an authentication challenge. The Verifier presumably will check this. \r\n\r\nWe talked about merging the triples, but that would require parameterizing it in some way. Since the convention has been that the predicate part is implicit (not in CDDL) if there are semantic differences that would require parameterization, we decided to avoid that by creating a different triple.\r\n\r\nHowever, if the triples are restricted to using crypto-key-type-choice forms that have certs (or require the verifier to do path construction), then the key type is in the certificate (or the key object itself). It doesn't need to be a parameter of the triple (I don't think?). The wording in the transformation and processing sections imply that the key type / usage restrictions are part of the crypto-key-type-choice object already as the internal representation doesn't parameterize on key type / usage.\r\n\r\nAssuming others agree, I think the key verify triples could be merged.",
+          "createdAt": "2024-11-15T19:25:55Z",
+          "updatedAt": "2024-11-15T19:25:55Z"
         }
       ]
     },
@@ -48119,7 +48126,7 @@
       "labels": [],
       "body": "Addresses the majority of issue #330 (but one challenge remains).\r\n\r\nExpanded examples may be needed.",
       "createdAt": "2024-10-26T00:38:33Z",
-      "updatedAt": "2024-11-13T23:33:43Z",
+      "updatedAt": "2024-11-14T01:47:18Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
@@ -48888,6 +48895,26 @@
               "body": "> If we're making attest-key-triple mean something more than an endorsement of an (attesting) environment holding a key, we need to disambiguate it in the ACS to make the evidence verification section self-contained.\r\n\r\nWe're not. The ACS has an ECT that associates the name of the key with an environment. This exists under the authority of the RVP as well as the Attester.\r\n\r\nThe attest-key-triple asked the verifier to do key verification. As a result, the ACS has a third ECT entry identical to the first two, this time under the authority of the Endorser and the Verifier. The Endorser is the entity asking to do the key verify checks, and the Verifier is the entity that did the check. \r\n\r\nPutting it all together:\r\nstep 1: Attester says key _X exists in environment _E.\r\nstep 2: RVP says key _X is supposed to exist in env _E. (aka step 1 is corroborated)\r\nstep 3: Endorser says key _X is supposed to be verified.\r\nstep 4: Verifier says key _X was verified. \r\n\r\nAn RP may have a policy that wants to see all 4 steps. There are entries in the ACS for all 4.",
               "createdAt": "2024-11-13T23:33:43Z",
               "updatedAt": "2024-11-13T23:33:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86RIJ6j",
+          "commit": {
+            "abbreviatedOid": "cdde887"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-14T01:47:18Z",
+          "updatedAt": "2024-11-14T01:47:18Z",
+          "comments": [
+            {
+              "originalPosition": 203,
+              "body": "The triples are named wrong, then. We shouldn't say anything about attesting or identity of the triple just means the signer demands a check to be done. I don't like that though, since there's still nothing that cleanly says \"to get the attesting key for evidence of Target Environment E{layer n+1}, use the first cryptokey in E{layer n} (no mkey)\"\r\n\r\nA profile can of course say do something else, but as long as we're already translating everything to internal representations, I'd like to know in what senses I'm saying profile P's analog to evidence verification is \"treat X as Y\".",
+              "createdAt": "2024-11-14T01:47:18Z",
+              "updatedAt": "2024-11-14T01:47:18Z"
             }
           ]
         }
