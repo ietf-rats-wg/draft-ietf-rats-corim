@@ -1123,7 +1123,6 @@ The Reference Values Triple has the following structure:
 The `reference-triple-record` has the following parameters:
 
 * `ref-env`: Identifies the Target Environment
-
 * `ref-claims`: One or more measurement claims for the Target Environment
 
 To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
@@ -1177,13 +1176,13 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-A Conditional Endorsement Series triple uses a stateful environment, (i.e. `stateful-environment-record`), that identifies a Target Environment based on an `environment-map` plus the `measurement-map` measurements that have matching Evidence.	
+A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.	
 
 The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
 Each conditional-series-record record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the ACS.
-The first `conditional-series-record` that successfully matches an ACS Entry terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match an ACS Entry, the triple is not matched, and no Endorsed values are accepted.	
+The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.
+The first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
+If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.	
 
 More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
 
