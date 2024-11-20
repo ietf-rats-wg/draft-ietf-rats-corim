@@ -1262,7 +1262,6 @@ Additionally, Verifiers MAY report key verification results as part of an error 
 
 An Attest Key triple (`attest-key-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to an Attesting Environment (as identified by `environment` and `mkey`).
 The cryptographic attestation keys are wielded by an Attesting Environment.
-Attestation keys may be asserted via Evidence, Reference Values, or Endorsements.
 
 The attestation keys may have been used to sign Evidence or may be held in reserve for use at a later time.
 
