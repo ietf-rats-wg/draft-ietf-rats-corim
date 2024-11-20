@@ -1111,7 +1111,8 @@ The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
+For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.
 
 The Reference Values Triple has the following structure:
 
@@ -1121,10 +1122,12 @@ The Reference Values Triple has the following structure:
 
 The `reference-triple-record` has the following parameters:
 
-* `ref-env`: Search criterion that locates an Evidence environment that matches the reference environment.
-* `ref-claims`: Search criteria that locates the Evidence measurements that match the reference Claims.
+* `ref-env`: Identifies the Target Environment
+* `ref-claims`: One or more measurement claims for the Target Environment
 
 To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+First `ref-env` is used as a search criterion to locate the Evidence environment that matches the reference environment.
+Subsequently, the `ref-claims` from this triple are used to match against the Evidence measurements for the matched environment.
 If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
 By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
 See {{-rats-endorsements}}.
@@ -1132,7 +1135,8 @@ Re-asserted Evidence using RVP authority is said to be "corroborated".
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
+For Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.
 
 The Endorsed Values Triple has the following structure:
 
@@ -1151,7 +1155,8 @@ The new entry is added to the existing set of entries using the Endorser's autho
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
+The conditions are expressed via `stateful-environment-records`, which match Target Environments from Evidence in certain reference state.
 
 The Conditional Endorsement Triple has the following structure:
 
@@ -1171,7 +1176,15 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.	
+
+The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
+Each conditional-series-record record is evaluated in the order it appears in the series array.
+The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.
+The first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
+If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.	
+
+More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
 
 The Conditional Endorsement Series Triple has the following structure:
 
