@@ -1156,7 +1156,7 @@ The new entry is added to the existing set of entries using the Endorser's autho
 
 #### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-A Conditional Endorsement Triple declares one or more conditions that, once they match, cause every entry in the endorsements to be added to the accepted state.
+A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester with the Endorsement Claims.
 The conditions are expressed via `stateful-environment-records`, which match Target Environments from Evidence in certain reference state.
 
 The Conditional Endorsement Triple has the following structure:
