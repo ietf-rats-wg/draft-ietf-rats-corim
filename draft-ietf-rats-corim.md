@@ -2033,7 +2033,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 
 The Appraisal Context at the end of Phase 1 constitutes all inputs to the Appraisal Procedure.
 
-Given the same Appraisol Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
+Given the same Appraisal Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
 
 Note: the deterministic constraint applies to profile-defined comparison semantics.
 
