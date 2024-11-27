@@ -1506,6 +1506,8 @@ The CoRIM profile MUST provide a description of the expected Verifier behavior f
 
 Verifier implementations MUST exhibit the same externally visible behavior as described in this specification.
 They are not required to use the same internal representation or evaluation order described by this specification.
+They are not required to implement support for all triples, profile permitting.
+A Verifier MAY discard a triple based on policy.
 
 ## Appraisal Procedure {#sec-appraisal-procedure}
 
