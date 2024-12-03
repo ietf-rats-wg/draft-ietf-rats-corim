@@ -1,0 +1,14 @@
+$$measurement-values-map-extension //= (
+  &(intrep-key: 65534) => [ + typed-crypto-key ]
+)
+
+typed-crypto-key = {
+  &(key: 0) => $crypto-key-type-choice
+  ? &(key-type: 1) => uint .bits key-type
+}
+
+key-type = &(
+  attest-key: 0
+  identity-key: 1
+)
+
