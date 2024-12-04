@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 24 May 2025                                              Linaro
+Expires: 7 June 2025                                              Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        20 November 2024
+                                                         4 December 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 May 2025.
+   This Internet-Draft will expire on 7 June 2025.
 
 Copyright Notice
 
@@ -2203,16 +2203,16 @@ Table of Contents
    The following CDDL describes the ECT structure in more detail.
 
    ECT = {
-     ? environment: environment-map
-     ? element-list: [ + element-map ]
-     ? authority: [ + $crypto-key-type-choice ]
-     cmtype: cm-type
-     ? profile: $profile-type-choice
+     ? &(environment: 0) => environment-map
+     ? &(element-list: 1) => [ + element-map ]
+     ? &(authority: 2) => [ + $crypto-key-type-choice ]
+     &(cmtype: 3) => uint .bits cm-type
+     ? &(profile: 4) => $profile-type-choice
    }
 
    element-map = {
-     ? element-id: $measured-element-type-choice
-     element-claims: measurement-values-map
+     ? &(element-id: 0) => $measured-element-type-choice
+     &(element-claims: 1) => measurement-values-map
    }
 
    cm-type =  &(
@@ -2765,7 +2765,7 @@ Table of Contents
 8.3.3.3.4.  Key Verification Triples Transformation
 
    The following transformation steps are applied for both the identity-
-   triples and attest-key-triples:
+   triples and attest-key-triples with noted exceptions:
 
    Step 1.  An ev entry (Section 8.2.1.3) is allocated.
 
@@ -2779,13 +2779,24 @@ Table of Contents
    i.    *copy*(environment-map, ev.condition.environment.environment-
          map).
 
-   ii.   *copy*(key-list, ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.cryptokeys).
+   ii.   Foreach _key_ in keylist.$crypto-key-type-choice, *copy*(_key_,
+         ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key).
 
-   iii.  If populated, *copy*(mkey, ev.condition.element-list.element-
+   iii.  If key-list originated from attest-key-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = attest-
+         key).
+
+   iv.   Else if key-list originated from identity-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = identity-
+         key).
+
+   v.    If populated, *copy*(mkey, ev.condition.element-list.element-
          map.element-id).
 
-   iv.   If populated, *copy*(authorized-by, ev.condition.authority).
+   vi.   If populated, *copy*(authorized-by, ev.condition.authority).
 
    Step 4.  The signer of the Identity or Attest Key Endorsement
             conceptual message is copied to the ev.addition.authority
@@ -3030,7 +3041,7 @@ Table of Contents
    For each ev entry, the condition ECT is compared with an ACS ECT,
    where the ACS ECT cmtype contains either evidence, reference-values,
    or endorsements.  If the ECTs match (Section 8.5), for each _key_ in
-   ev.condition.element-claims.measurement-values-map.crypto-keys:
+   ev.condition.element-claims.measurement-values-map.intrep-keys:
 
    *  Verify the certificate signatures for the certification path.
 
@@ -3039,8 +3050,8 @@ Table of Contents
    *  Verify key usage restrictions appropriate for the type of key.
 
    *  If key verification succeeds, *append*(_key_, ev.addition.element-
-      list.element-map.element-claims.measurement-values-
-      map.cryptokeys).
+      list.element-map.element-claims.measurement-values-map.intrep-
+      keys).
 
    If key verification succeeds for any _key_:
 
