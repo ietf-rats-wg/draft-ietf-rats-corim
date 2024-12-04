@@ -1504,7 +1504,7 @@ Non-CoRIM-based data structures require mapping transformation, but these are ou
 If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
 The CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.
 
-Verifier implementations MUST provide the specified information model of the ACS at minimum following phase 4 as described in this specification.
+Verifier implementations MUST provide the specified information model of the ACS at the end of phase 4 as described in this specification.
 They are not required to use the same internal representation or evaluation order described by this specification.
 
 ## Appraisal Procedure {#sec-appraisal-procedure}
