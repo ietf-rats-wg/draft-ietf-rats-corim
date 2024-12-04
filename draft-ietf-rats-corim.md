@@ -2035,7 +2035,7 @@ The selected tags are mapped to an internal representation, making them suitable
 
 ##### Key Verification Triples Transformation {#sec-end-trans-kvt}
 
-The following transformation steps are applied for both the `identity-triples` and `attest-key-triples`:
+The following transformation steps are applied for both the `identity-triples` and `attest-key-triples` with noted exceptions:
 
 {:kvt-enum: counter="ckvt" style="format Step %d."}
 
@@ -2051,7 +2051,11 @@ The following transformation steps are applied for both the `identity-triples` a
 {: kvt2-enum}
 * **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`).
 
-* **copy**(`key-list`, `ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
+* Foreach _key_ in `keylist`.`$crypto-key-type-choice`, **copy**(_key_, `ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key`).
+
+* If `key-list` originated from `attest-key-triples`, **set**(`ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key-type` = `attest-key`).
+
+* Else if `key-list` originated from `identity-triples`, **set**(`ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key-type` = `identity-key`).
 
 * If populated, **copy**(`mkey`, `ev`.`condition`.`element-list`.`element-map`.`element-id`).
 
@@ -2239,7 +2243,7 @@ Series processing terminates when the first series entry matches.
 #### Processing Key Verification Endorsements {#sec-process-keys}
 
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), for each _key_ in `ev`.`condition`.`element-claims`.`measurement-values-map`.`crypto-keys`:
+If the ECTs match ({{sec-match-condition-ect}}), for each _key_ in `ev`.`condition`.`element-claims`.`measurement-values-map`.`intrep-keys`:
 
 * Verify the certificate signatures for the certification path.
 
@@ -2247,7 +2251,7 @@ If the ECTs match ({{sec-match-condition-ect}}), for each _key_ in `ev`.`conditi
 
 * Verify key usage restrictions appropriate for the type of key.
 
-* If key verification succeeds, **append**(_key_, `ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`cryptokeys`).
+* If key verification succeeds, **append**(_key_, `ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`).
 
 If key verification succeeds for any _key_:
 
