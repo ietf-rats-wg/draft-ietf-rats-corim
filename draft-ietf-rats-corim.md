@@ -1993,7 +1993,7 @@ Conditional Endorsement Series Triple Transformation :
 > > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
