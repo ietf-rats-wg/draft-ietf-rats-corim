@@ -1223,16 +1223,15 @@ The first `series` entry that successfully matches the `selection` criteria term
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
-A Device Identity triple (`identity-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to a device identity.
-The identity keys are bound to or are associated with a Target Environment (as identified by `environment` and `mkey`—see below) within the device.
-The identity keys may be asserted via Evidence, Reference Values, or Endorsements.
+Device Identity triples (see `identity-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Target Environment.
+A single Target Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
+The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.
 
-The device identity keys may have been used to authenticate the Attester device or may be held in reserve for use at a later time.
+The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.
 
 Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
-A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
@@ -1260,15 +1259,15 @@ Additionally, Verifiers MAY report key verification results as part of an error 
 
 #### Attest Key Triple {#sec-comid-triple-attest-key}
 
-An Attest Key triple (`attest-key-triples` in {{sec-comid-triples}}) relates one or more cryptographic keys to an Attesting Environment (as identified by `environment` and `mkey`).
-The cryptographic attestation keys are wielded by an Attesting Environment.
+Attest Key triples (see `attest-key-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Attesting Environment.
+An Attesting Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
+The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.
 
-The attestation keys may have been used to sign Evidence or may be held in reserve for use at a later time.
+The attestation keys may have been used to sign Evidence or may be held in reserve for later use.
 
 Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
-Attest Key triples endorse that the keys were securely provisioned to the named Attesting Environment.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
@@ -2276,10 +2275,9 @@ Additionally, the creation of Attestation Results is out-of-scope for this docum
 
 Phase 5: Verifier Augmentation
 
-Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
-For example, the Verifier may supply evidence freshness nonces to the Attester to be included in Evidence.
-If a Verifier nonce is used, the Verifier may augment the ACS with a nonce Claim using Verifier authority.
-If the Attester returns the nonce, it may also augment the ACS using Attester authority.
+Verifiers may add value to accepted Claims, such as ensuring freshness, consistency, and integrity.
+The results of the added value may be asserted as Claims with Verifier authority.
+For example, if a Verifier is able to ensure collected Evidence is fresh, it might create a freshness Claim that is included with the Evidence Claims in the ACS.
 
 Phase 6: Policy Augmentation
 
