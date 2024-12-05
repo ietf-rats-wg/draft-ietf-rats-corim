@@ -1052,7 +1052,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 7 June 2025</td>
+<td class="center">Expires 8 June 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1065,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-12-04" class="published">4 December 2024</time>
+<time datetime="2024-12-05" class="published">5 December 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-06-07">7 June 2025</time></dd>
+<dd class="expires"><time datetime="2025-06-08">8 June 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1132,7 +1132,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 7 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 8 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3368,14 +3368,13 @@ The new entry is added to the existing set of Endorsements.<a href="#section-5.1
             <h5 id="name-device-identity-triple">
 <a href="#section-5.1.4.6" class="section-number selfRef">5.1.4.6. </a><a href="#name-device-identity-triple" class="section-name selfRef">Device Identity Triple</a>
             </h5>
-<p id="section-5.1.4.6-1">A Device Identity triple (<code>identity-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) relates one or more cryptographic keys to a device identity.
-The identity keys are bound to or are associated with a Target Environment (as identified by <code>environment</code> and <code>mkey</code>—see below) within the device.
-The identity keys may be asserted via Evidence, Reference Values, or Endorsements.<a href="#section-5.1.4.6-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-2">The device identity keys may have been used to authenticate the Attester device or may be held in reserve for use at a later time.<a href="#section-5.1.4.6-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-1">Device Identity triples (see <code>identity-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) endorse that the keys were securely provisioned to the named Target Environment.
+A single Target Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
+The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.4.6-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-2">The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.<a href="#section-5.1.4.6-2" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-3">Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.<a href="#section-5.1.4.6-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-4">A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.6-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.6-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-5.1.4.6-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-6">If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.6-6" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-7">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
@@ -3417,13 +3416,13 @@ See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>
             <h5 id="name-attest-key-triple">
 <a href="#section-5.1.4.7" class="section-number selfRef">5.1.4.7. </a><a href="#name-attest-key-triple" class="section-name selfRef">Attest Key Triple</a>
             </h5>
-<p id="section-5.1.4.7-1">An Attest Key triple (<code>attest-key-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) relates one or more cryptographic keys to an Attesting Environment (as identified by <code>environment</code> and <code>mkey</code>).
-The cryptographic attestation keys are wielded by an Attesting Environment.<a href="#section-5.1.4.7-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-2">The attestation keys may have been used to sign Evidence or may be held in reserve for use at a later time.<a href="#section-5.1.4.7-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-1">Attest Key triples (see <code>attest-key-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) endorse that the keys were securely provisioned to the named Attesting Environment.
+An Attesting Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
+The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.4.7-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-2">The attestation keys may have been used to sign Evidence or may be held in reserve for later use.<a href="#section-5.1.4.7-2" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-3">Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#section-5.1.4.7-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-4">Attest Key triples endorse that the keys were securely provisioned to the named Attesting Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in <span>[<a href="#DICE.cert" class="cite xref">DICE.cert</a>]</span>).
 Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
@@ -5389,10 +5388,9 @@ Verifier implementations that apply consistency, integrity, or validity checks c
 Processing appraisal policies may result in augmentation or modification of the ACS, but techniques for tracking the application of policies during appraisal need not result in ACS augmentation.
 Additionally, the creation of Attestation Results is out-of-scope for this document, nevertheless internal staging may facilitate processing of Attestation Results.<a href="#section-8.4.5-1" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-2">Phase 5: Verifier Augmentation<a href="#section-8.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-8.4.5-3">Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
-For example, the Verifier may supply evidence freshness nonces to the Attester to be included in Evidence.
-If a Verifier nonce is used, the Verifier may augment the ACS with a nonce Claim using Verifier authority.
-If the Attester returns the nonce, it may also augment the ACS using Attester authority.<a href="#section-8.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-8.4.5-3">Verifiers may add value to accepted Claims, such as ensuring freshness, consistency, and integrity.
+The results of the added value may be asserted as Claims with Verifier authority.
+For example, if a Verifier is able to ensure collected Evidence is fresh, it might create a freshness Claim that is included with the Evidence Claims in the ACS.<a href="#section-8.4.5-3" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-4">Phase 6: Policy Augmentation<a href="#section-8.4.5-4" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-5">Appraisal policy inputs could result in Claims that augment the ACS.
 For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
