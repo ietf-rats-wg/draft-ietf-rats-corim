@@ -1959,7 +1959,7 @@ Conditional Endorsement Triple Transformation :
 {: cett-enum}
 * The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+* If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 Conditional Endorsement Series Triple Transformation :
 
@@ -1995,7 +1995,7 @@ Conditional Endorsement Series Triple Transformation :
 {: cestt-enum}
 * The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
 #### Evidence Tranformation
 
