@@ -1176,15 +1176,9 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.	
-
-The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
-Each conditional-series-record record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.
-The first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.	
-
-More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
+The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match followed by a series condition match where each series condition uses the same matching keys and where the data values are ordered.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1207,7 +1201,8 @@ The `conditional-series-record` has the following parameters:
 To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criteria are satisfied, the `series` tuples are processed.
 
-The `series` array contains a list of `conditional-series-record` entries.
+The `series` array contains an ordered list of `conditional-series-record` entries.
+Evaluation order begins at list position 0.
 
 For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
 The new entry is added to the existing set of Endorsements.
@@ -1970,7 +1965,7 @@ Conditional Endorsement Triple Transformation :
 {: cett-enum}
 * The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+* If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 Conditional Endorsement Series Triple Transformation :
 
@@ -2004,9 +1999,9 @@ Conditional Endorsement Series Triple Transformation :
 > > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
 #### Evidence Tranformation
 
@@ -2180,7 +2175,7 @@ where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, whe
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
-Series processing terminates when the first series entry matches.
+Series iteration terminates after the first matching series entry is processed or when no series entries match.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
