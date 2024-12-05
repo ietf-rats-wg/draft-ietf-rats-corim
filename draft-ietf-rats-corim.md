@@ -2169,7 +2169,7 @@ where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, whe
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
-Series processing terminates when the first series entry matches.
+Series iteration terminates after the first matching series entry is processed or when no series entries match.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
