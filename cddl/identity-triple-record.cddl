@@ -1,4 +1,8 @@
 identity-triple-record = [
-  environment-map
-  [ + $crypto-key-type-choice ]
+  environment: environment-map
+  key-list: [ + $crypto-key-type-choice ]
+  ? conditions: non-empty<{
+    ? &(mkey: 0) => $measured-element-type-choice,
+    ? &(authorized-by: 1) => [ + $crypto-key-type-choice ] 
+  }>
 ]
