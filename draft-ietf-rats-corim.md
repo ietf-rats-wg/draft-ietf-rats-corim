@@ -1171,9 +1171,8 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-The Conditional Endorsement Series Triple is used to assert endorsed values conditional on various sets of possible measurement values.
-Each series entry describes a different possible set of values.
-Series entries are ordered so that the set describing the most trustworthy state is evaluated first and least trustworthy state last.
+The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match followed by a series condition match where each series condition uses the same matching keys and where the data values are ordered.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last. The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
 The Conditional Endorsement Series Triple has the following structure:
 
