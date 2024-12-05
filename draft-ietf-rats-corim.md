@@ -487,18 +487,28 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-The set of triples is extensible.
-The following triples are currently defined:
+This specification defines two sets of triples.
+The first set of triples is essential to the fundamental principles of Evidence appraisal as illustrated in {{-rats-arch}} and {{-rats-endorsement}} and is mandatory to implement (MTI).
+Every Verifier MUST support the MTI triples, if CoRIM processing is supported by the Verifier.
+The second set of triples is included in this specification as they are generally useful across profiles and are optional to implement (OTI).
+Ever Verifier SHOULD support OTI triples, if CoRIM processing is supported by the Verifier, unless there are good reasons not to do so, such as restrictions imposed by constrained resource environments, reduced code complexity in support of periodic code review, or scoping to Attester simplicity.
+
+MTI Triples:
 
 * Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
 * Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
 * Conditional Endorsement triples: describing one or more conditions that, once matched, result in augmenting the Attester's actual state with the supplied Endorsed Values ({{sec-comid-triple-cond-endors}}).
+* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
+
+OTI Triples:
+
 * Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
-* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
+
+The set of triples is extensible and this document specifies an extension mechanism via profiles (see {{sec-extensibility}}). While the use of profiles can also define constraints that limit the types of triples processed by a Verifier, every Verifier MUST nevertheless implement and support triples specified as MTI in this document.
 
 ## Structure
 
