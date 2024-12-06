@@ -487,7 +487,7 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-This specification defines two sets of triples.
+This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
 The first set of triples is essential to the fundamental principles of Evidence appraisal as illustrated in {{-rats-arch}} and {{-rats-endorsements}} and is mandatory to implement (MTI).
 Every Verifier MUST support the MTI triples, if CoRIM processing is supported by the Verifier.
 The second set of triples is included in this specification as they are generally useful across profiles and are optional to implement (OTI).
