@@ -487,16 +487,30 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-The set of triples is extensible.
-The following triples are currently defined:
+This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
+Every CoRIM Verifier MUST support the MTI triples.
+The OTI class of triples are generally useful across profiles.
+A CoRIM Verifier SHOULD implement OTI triples.
+Verifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.
+For example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.
+
+MTI Triples:
 
 * Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
 * Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
+* Conditional Endorsement triples: describing one or more conditions that, once matched, result in augmenting the Attester's actual state with the supplied Endorsed Values ({{sec-comid-triple-cond-endors}}).
+* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
+
+OTI Triples:
+
+* Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
-* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
+
+The set of triples is extensible and this document specifies an extension mechanism via profiles (see {{sec-extensibility}}). While the use of profiles can also define constraints that limit the types of triples processed by a Verifier, every Verifier MUST nevertheless implement and support triples specified as MTI in this document.
 
 ## Structure
 
@@ -674,13 +688,10 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
   Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8): Triples describing a series of
-  conditional Endorsements based on the acceptance of a stateful environment.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
   Described in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 10): Triples describing a series of
-  Endorsement that are applicable based on the acceptance of a series of
-  stateful environment records.
+* `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
   Described in {{sec-comid-triple-cond-endors}}.
 
 ##### Environments
