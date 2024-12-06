@@ -491,7 +491,9 @@ This specification defines two classes of triples, the Mandatory to Implement (M
 The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
 Every Verifier MUST support the MTI triples, if CoRIM processing is supported by the Verifier.
 The second set of triples is included in this specification as they are generally useful across profiles and are optional to implement (OTI).
-Ever Verifier SHOULD support OTI triples, if CoRIM processing is supported by the Verifier, unless there are good reasons not to do so, such as restrictions imposed by constrained resource environments, reduced code complexity in support of periodic code review, or scoping to Attester simplicity.
+A CoRIM Verifier SHOULD implement OTI triples.
+Verifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.
+For example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.
 
 MTI Triples:
 
