@@ -14,7 +14,7 @@ include cddl/corim-frags.mk
 
 define cddl_targets
 
-$(drafts_xml):: cddl/$(1)-autogen.cddl
+$(drafts_xml): cddl/$(1)-autogen.cddl
 
 cddl/$(1)-autogen.cddl: $(addprefix cddl/,$(2))
 	$(MAKE) -C cddl check-$(1)
