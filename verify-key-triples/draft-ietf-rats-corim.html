@@ -542,7 +542,11 @@ figcaption, caption {
   }
   pre, svg {
     display: inline-block;
-    overflow-x: auto;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
   }
   pre {
     max-width: 100%;
@@ -1052,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 8 June 2025</td>
+<td class="center">Expires 14 June 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-12-05" class="published">5 December 2024</time>
+<time datetime="2024-12-11" class="published">11 December 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-06-08">8 June 2025</time></dd>
+<dd class="expires"><time datetime="2025-06-14">14 June 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1132,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3229,7 +3233,8 @@ $domain-type-choice /= tagged-oid-type
             <h5 id="name-reference-values-triple">
 <a href="#section-5.1.4.2" class="section-number selfRef">5.1.4.2. </a><a href="#name-reference-values-triple" class="section-name selfRef">Reference Values Triple</a>
             </h5>
-<p id="section-5.1.4.2-1"><span class="cref" id="issue">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310<a href="#section-5.1.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.2-1">A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
+For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.<a href="#section-5.1.4.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.2-2">The Reference Values Triple has the following structure:<a href="#section-5.1.4.2-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.2-3">
 <pre>
@@ -3242,13 +3247,15 @@ reference-triple-record = [
 <p id="section-5.1.4.2-4">The <code>reference-triple-record</code> has the following parameters:<a href="#section-5.1.4.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.2-5.1">
-                <p id="section-5.1.4.2-5.1.1"><code>ref-env</code>: Search criterion that locates an Evidence environment that matches the reference environment.<a href="#section-5.1.4.2-5.1.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.2-5.1.1"><code>ref-env</code>: Identifies the Target Environment<a href="#section-5.1.4.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.2-5.2">
-                <p id="section-5.1.4.2-5.2.1"><code>ref-claims</code>: Search criteria that locates the Evidence measurements that match the reference Claims.<a href="#section-5.1.4.2-5.2.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.2-5.2.1"><code>ref-claims</code>: One or more measurement claims for the Target Environment<a href="#section-5.1.4.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <p id="section-5.1.4.2-6">To process <code>reference-triple-record</code> both the <code>ref-env</code> and <code>ref-claims</code> criteria are compared with Evidence entries.
+First <code>ref-env</code> is used as a search criterion to locate the Evidence environment that matches the reference environment.
+Subsequently, the <code>ref-claims</code> from this triple are used to match against the Evidence measurements for the matched environment.
 If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
 By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
 See <span>[<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.
@@ -3260,7 +3267,8 @@ Re-asserted Evidence using RVP authority is said to be "corroborated".<a href="#
             <h5 id="name-endorsed-values-triple">
 <a href="#section-5.1.4.3" class="section-number selfRef">5.1.4.3. </a><a href="#name-endorsed-values-triple" class="section-name selfRef">Endorsed Values Triple</a>
             </h5>
-<p id="section-5.1.4.3-1"><span class="cref" id="issue_1">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310<a href="#section-5.1.4.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.3-1">An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
+For Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.<a href="#section-5.1.4.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.3-2">The Endorsed Values Triple has the following structure:<a href="#section-5.1.4.3-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.3-3">
 <pre>
@@ -3289,7 +3297,8 @@ The new entry is added to the existing set of entries using the Endorser's autho
             <h5 id="name-conditional-endorsement-tri">
 <a href="#section-5.1.4.4" class="section-number selfRef">5.1.4.4. </a><a href="#name-conditional-endorsement-tri" class="section-name selfRef">Conditional Endorsement Triple</a>
             </h5>
-<p id="section-5.1.4.4-1"><span class="cref" id="issue_2">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.4-1">A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
+The conditions are expressed via <code>stateful-environment-records</code>, which match Target Environments from Evidence in certain reference state.<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.4-2">The Conditional Endorsement Triple has the following structure:<a href="#section-5.1.4.4-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.4-3">
 <pre>
@@ -3322,9 +3331,15 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
             <h5 id="name-conditional-endorsement-ser">
 <a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
             </h5>
-<p id="section-5.1.4.5-1"><span class="cref" id="issue_3">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-2">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-3">
+<p id="section-5.1.4.5-1">A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-2">The series object is an array of <code>conditional-series-record</code> that has both Reference and Endorsed Values.
+Each conditional-series-record record is evaluated in the order it appears in the series array.
+The Endorsed Values are accepted if the series condition in a <code>conditional-series-record</code> matches the attester's actual state.
+The first <code>conditional-series-record</code> that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
+If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-3">More clarification about the usage and matching order will be resolved by: <span class="cref" id="tracked-at_2">Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-4">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-5">
 <pre>
 conditional-endorsement-series-triple-record = [
   condition: stateful-environment-record
@@ -3335,32 +3350,32 @@ conditional-series-record = [
   selection: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
-</pre><a href="#section-5.1.4.5-3" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-5" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.5-4">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.1.4.5-5.1">
-                <p id="section-5.1.4.5-5.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-5.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-5.1.4.5-5.2">
-                <p id="section-5.1.4.5-5.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-5.2.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<p id="section-5.1.4.5-6">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-6">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.5-7.1">
-                <p id="section-5.1.4.5-7.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-7.1.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.5-7.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-7.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.5-7.2">
-                <p id="section-5.1.4.5-7.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-7.2.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.5-7.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-7.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.5-8">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-8" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-9">The <code>series</code> array contains a list of <code>conditional-series-record</code> entries.<a href="#section-5.1.4.5-9" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-10">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-11">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-8">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-8" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.5-9.1">
+                <p id="section-5.1.4.5-9.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-9.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.5-9.2">
+                <p id="section-5.1.4.5-9.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-9.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-5.1.4.5-10">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-11">The <code>series</code> array contains a list of <code>conditional-series-record</code> entries.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-12">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-12" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-13">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-identity">
@@ -5162,7 +5177,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 See <a href="#sec-ir-cm" class="auto internal xref">Section 8.2.1</a>.<a href="#section-8.4.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.4.1-2">Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.<a href="#section-8.4.1-2" class="pilcrow">¶</a></p>
-<p id="section-8.4.1-3"><span class="cref" id="issue_4">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232<a href="#section-8.4.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.4.1-3"><span class="cref" id="issue">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232<a href="#section-8.4.1-3" class="pilcrow">¶</a></p>
 <div id="acs-processing-requirements">
 <section id="section-8.4.1.1">
             <h5 id="name-acs-processing-requirements">
@@ -5177,10 +5192,10 @@ This document describes an example evidence structure which can be
 matched against these Reference Values.<a href="#section-8.4.1.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.4.1.1-3">Each entry within <code>state-triples</code> uses the syntax of <code>endorsed-triple-record</code>.
 When an <code>endorsed-triple-record</code> appears within <code>state-triples</code> it
-indicates that the authority named by <code>measurement-map</code>/<code>authorized-by</code>
+indicates that the authority named by <code>measurement-map</code>.<code>authorized-by</code>
 asserts that the actual state of one or more Claims within the
 Target Environment, as identified by <code>environment-map</code>, have the
-measurement values in <code>measurement-map</code>/<code>mval</code>.<a href="#section-8.4.1.1-3" class="pilcrow">¶</a></p>
+measurement values in <code>measurement-map</code>.<code>mval</code>.<a href="#section-8.4.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.4.1.1-4">ECT authority is represented by cryptographic keys. Authority
 is asserted by digitally signing a Claim using the key. Hence, Claims are
 added to the ACS under the authority of a cryptographic key.<a href="#section-8.4.1.1-4" class="pilcrow">¶</a></p>
@@ -5288,7 +5303,7 @@ Reference Values may describe multiple possible Attester states.<a href="#sectio
 If satisfied, the RVP authority is added to the matching ACS entry.<a href="#section-8.4.3-2" class="pilcrow">¶</a></p>
 <p id="section-8.4.3-3">Reference Values are matched with ACS entries by iterating through the <code>rv</code> list.
 For each <code>rv</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains <code>evidence</code>.<a href="#section-8.4.3-3" class="pilcrow">¶</a></p>
-<p id="section-8.4.3-4"><span class="cref" id="issue_5">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302<a href="#section-8.4.3-4" class="pilcrow">¶</a></p>
+<p id="section-8.4.3-4"><span class="cref" id="issue_1">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302<a href="#section-8.4.3-4" class="pilcrow">¶</a></p>
 <p id="section-8.4.3-5">If the ECTs match except for authority, the <code>rv</code> <code>addition</code> ECT authority is added to the ACS ECT authority.<a href="#section-8.4.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -5297,7 +5312,7 @@ For each <code>rv</code> entry, the <code>condition</code> ECT is compared with 
           <h4 id="name-endorsed-values-augmentatio">
 <a href="#section-8.4.4" class="section-number selfRef">8.4.4. </a><a href="#name-endorsed-values-augmentatio" class="section-name selfRef">Endorsed Values Augmentation (Phase 4)</a>
           </h4>
-<p id="section-8.4.4-1"><span class="cref" id="issue_6">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179<a href="#section-8.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.4.4-1"><span class="cref" id="issue_2">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179<a href="#section-8.4.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.4.4-2">Endorsers publish Endorsements using endorsement triples (see <a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>), <a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>, and <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.5</a>) which are transformed (<a href="#sec-end-trans" class="auto internal xref">Section 8.3.3.3</a>) into an internal representation (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.<a href="#section-8.4.4-2" class="pilcrow">¶</a></p>
@@ -5413,7 +5428,7 @@ Attestation Results contexts are the inputs to Attestation Results procedures th
         <h3 id="name-comparing-a-condition-ect-a">
 <a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-comparing-a-condition-ect-a" class="section-name selfRef">Comparing a condition ECT against the ACS</a>
         </h3>
-<p id="section-8.5-1"><span class="cref" id="issue_7">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.5-1"><span class="cref" id="issue_3">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.5-1" class="pilcrow">¶</a></p>
 <p id="section-8.5-2">A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See <a href="#sec-match-one-condition-ect" class="auto internal xref">Section 8.5.1</a>.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
 <p id="section-8.5-3">If the matched entries array is not empty, then the condition ECT matches the ACS.<a href="#section-8.5-3" class="pilcrow">¶</a></p>
@@ -5570,7 +5585,7 @@ If the value associated with any common hash algorithm identifier in the conditi
               <h6 id="name-comparison-for-raw-value-en">
 <a href="#section-8.5.6.1.4" class="section-number selfRef">8.5.6.1.4. </a><a href="#name-comparison-for-raw-value-en" class="section-name selfRef">Comparison for raw-value entries</a>
               </h6>
-<p id="section-8.5.6.1.4-1"><span class="cref" id="issue_8">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.5.6.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.5.6.1.4-1"><span class="cref" id="issue_4">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71<a href="#section-8.5.6.1.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-cryptokeys-matching">
@@ -5736,7 +5751,7 @@ For more detailed information on protecting Trust Anchors, refer to <span><a hre
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
 Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="relref">Section 12.2</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span> for information on Conceptual Messages protection.<a href="#section-10-7" class="pilcrow">¶</a></p>
-<p id="section-10-8"><span class="cref" id="issue_9">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11<a href="#section-10-8" class="pilcrow">¶</a></p>
+<p id="section-10-8"><span class="cref" id="issue_5">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11<a href="#section-10-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-iana-cons">
@@ -5749,7 +5764,7 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
         <h3 id="name-new-cose-header-parameters">
 <a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-new-cose-header-parameters" class="section-name selfRef">New COSE Header Parameters</a>
         </h3>
-<p id="section-11.1-1"><span class="cref" id="issue_10">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-11.1-1"><span class="cref" id="issue_6">Content missing. Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12<a href="#section-11.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-iana-cbor-tags">
