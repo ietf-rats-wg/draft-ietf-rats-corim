@@ -17,11 +17,11 @@ Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
 This document specifies the information elements for representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.24.0" name="generator">
+<meta content="xml2rfc 3.25.0" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.24.0
+  xml2rfc 3.25.0
     Python 3.12.7
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -542,7 +542,11 @@ figcaption, caption {
   }
   pre, svg {
     display: inline-block;
-    overflow-x: auto;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
   }
   pre {
     max-width: 100%;
@@ -1048,11 +1052,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">CoRIM</td>
-<td class="right">November 2024</td>
+<td class="right">December 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 24 May 2025</td>
+<td class="center">Expires 14 June 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-11-20" class="published">20 November 2024</time>
+<time datetime="2024-12-11" class="published">11 December 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-05-24">24 May 2025</time></dd>
+<dd class="expires"><time datetime="2025-06-14">14 June 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1132,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 24 May 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1459,6 +1463,20 @@ This document specifies the information elements for representing Endorsements a
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.3.2.3">
                         <p id="section-toc.1-1.8.2.3.2.3.2.3.1"><a href="#section-8.3.3.3" class="auto internal xref">8.3.3.3</a>.  <a href="#name-endorsement-triples-transfo" class="internal xref">Endorsement Triples Transformations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.3.2.3.2.1">
+                            <p id="section-toc.1-1.8.2.3.2.3.2.3.2.1.1"><a href="#section-8.3.3.3.1" class="auto internal xref">8.3.3.3.1</a>.  <a href="#name-endorsed-values-triple-tran" class="internal xref">Endorsed Values Triple Transformation</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.3.2.3.2.2">
+                            <p id="section-toc.1-1.8.2.3.2.3.2.3.2.2.1"><a href="#section-8.3.3.3.2" class="auto internal xref">8.3.3.3.2</a>.  <a href="#name-conditional-endorsement-trip" class="internal xref">Conditional Endorsement Triple Transformation</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.3.2.3.2.3">
+                            <p id="section-toc.1-1.8.2.3.2.3.2.3.2.3.1"><a href="#section-8.3.3.3.3" class="auto internal xref">8.3.3.3.3</a>.  <a href="#name-conditional-endorsement-tripl" class="internal xref">Conditional Endorsement Triple Transformation</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.3.2.3.2.4">
+                            <p id="section-toc.1-1.8.2.3.2.3.2.3.2.4.1"><a href="#section-8.3.3.3.4" class="auto internal xref">8.3.3.3.4</a>.  <a href="#name-key-verification-triples-tr" class="internal xref">Key Verification Triples Transformation</a></p>
+</li>
+                        </ul>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3.2.3.2.4">
                         <p id="section-toc.1-1.8.2.3.2.3.2.4.1"><a href="#section-8.3.3.4" class="auto internal xref">8.3.3.4</a>.  <a href="#name-evidence-tranformation" class="internal xref">Evidence Tranformation</a></p>
@@ -1514,6 +1532,9 @@ This document specifies the information elements for representing Endorsements a
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4.2.4.2.3">
                         <p id="section-toc.1-1.8.2.4.2.4.2.3.1"><a href="#section-8.4.4.3" class="auto internal xref">8.4.4.3</a>.  <a href="#name-processing-conditional-endor" class="internal xref">Processing Conditional Endorsement Series</a></p>
+</li>
+                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4.2.4.2.4">
+                        <p id="section-toc.1-1.8.2.4.2.4.2.4.1"><a href="#section-8.4.4.4" class="auto internal xref">8.4.4.4</a>.  <a href="#name-processing-key-verification" class="internal xref">Processing Key Verification Endorsements</a></p>
 </li>
                     </ul>
 </li>
@@ -2580,7 +2601,7 @@ stateful environment records.
 Described in <a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>.<a href="#section-5.1.4-5.9.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<div id="environments">
+<div id="sec-environments">
 <section id="section-5.1.4.1">
             <h5 id="name-environments">
 <a href="#section-5.1.4.1" class="section-number selfRef">5.1.4.1. </a><a href="#name-environments" class="section-name selfRef">Environments</a>
@@ -3362,26 +3383,47 @@ The new entry is added to the existing set of Endorsements.<a href="#section-5.1
             <h5 id="name-device-identity-triple">
 <a href="#section-5.1.4.6" class="section-number selfRef">5.1.4.6. </a><a href="#name-device-identity-triple" class="section-name selfRef">Device Identity Triple</a>
             </h5>
-<p id="section-5.1.4.6-1">A Device Identity triple record relates one or more cryptographic keys to a device identity.
-The cryptographic keys are bound to or associated with a Target Environment that is within the device.
-The device identifier may be part of the Target Environment's <code>environment-map</code> or may be part of some other device identity credential, such as a certificate.
-The cryptographic keys are expected to be used to authenticate the device.<a href="#section-5.1.4.6-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-2">Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
-The Verifier SHOULD verify keys contained in Device Identity triples.<a href="#section-5.1.4.6-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-3">A Device Identity triple endorses that the keys were securely provisioned to the named Target Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.6-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-4">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-5.1.4.6-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-5">If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD check for key use that violates usage restrictions.<a href="#section-5.1.4.6-5" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-6">Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
-Alternatively, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.6-6" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.6-7">
+<p id="section-5.1.4.6-1">Device Identity triples (see <code>identity-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) endorse that the keys were securely provisioned to the named Target Environment.
+A single Target Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
+The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.4.6-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-2">The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.<a href="#section-5.1.4.6-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-3">Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
+The Verifier SHOULD verify keys contained in Device Identity triples.<a href="#section-5.1.4.6-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.6-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-5.1.4.6-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-6">If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.6-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-7">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
+Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
+Additionally, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.6-7" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.6-8">
 <pre>
 identity-triple-record = [
-  environment-map
-  [ + $crypto-key-type-choice ]
+  environment: environment-map
+  key-list: [ + $crypto-key-type-choice ]
+  ? conditions: non-empty&lt;{
+    ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+    ? &amp;(authorized-by: 1) =&gt; [ + $crypto-key-type-choice ]
+  }&gt;
 ]
-</pre><a href="#section-5.1.4.6-7" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.6-8" class="pilcrow">¶</a>
 </div>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.6-9.1">
+                <p id="section-5.1.4.6-9.1.1"><code>environment</code>: An <code>environment-map</code> condition used to identify the target Evidence or Reference Value.
+See <a href="#sec-environments" class="auto internal xref">Section 5.1.4.1</a>.<a href="#section-5.1.4.6-9.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.6-9.2">
+                <p id="section-5.1.4.6-9.2.1"><code>key-list</code>: A list of <code>$crypto-key-type-choice</code> keys that identifies which keys are to be verified.
+See <a href="#sec-crypto-keys" class="auto internal xref">Section 5.1.4.1.5</a>.<a href="#section-5.1.4.6-9.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.6-9.3">
+                <p id="section-5.1.4.6-9.3.1"><code>mkey</code>: An optional <code>$measured-element-type-choice</code> condition used to identify the element within the target Evidence or Reference Value.
+See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>.<a href="#section-5.1.4.6-9.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.6-9.4">
+                <p id="section-5.1.4.6-9.4.1"><code>authorized-by</code>: An optional list of <code>$crypto-key-type-choice</code> keys that identifies the authorities that asserted the <code>key-list</code> in the target Evidence or Reference Values.<a href="#section-5.1.4.6-9.4.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
 </section>
 </div>
 <div id="sec-comid-triple-attest-key">
@@ -3389,25 +3431,32 @@ identity-triple-record = [
             <h5 id="name-attest-key-triple">
 <a href="#section-5.1.4.7" class="section-number selfRef">5.1.4.7. </a><a href="#name-attest-key-triple" class="section-name selfRef">Attest Key Triple</a>
             </h5>
-<p id="section-5.1.4.7-1">An Attest Key triple record relates one or more cryptographic keys to an Attesting Environment.
-The cryptographic keys are wielded by an Attesting Environment that collects measurements from a Target Environment.
-The cryptographic keys sign Evidence.<a href="#section-5.1.4.7-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-2">Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
-The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#section-5.1.4.7-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-3">Attest Key triples endorse that the keys were securely provisioned to the named (identified via an <code>environment-map</code>) Attesting Environment.
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-4">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
-If a key has usage restrictions that limits its use to Evidence signing, Verifiers SHOULD check for key use that violates usage restrictions.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-5">Verification of a key, including its use restrictions, MAY produce Claims that are added to the ACS.
-Alternatively, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.7-6">
+<p id="section-5.1.4.7-1">Attest Key triples (see <code>attest-key-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) endorse that the keys were securely provisioned to the named Attesting Environment.
+An Attesting Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
+The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.4.7-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-2">The attestation keys may have been used to sign Evidence or may be held in reserve for later use.<a href="#section-5.1.4.7-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-3">Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
+The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#section-5.1.4.7-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
+If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in <span>[<a href="#DICE.cert" class="cite xref">DICE.cert</a>]</span>).
+Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.7-6">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
+Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
+Additionally, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.7-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.7-7">
 <pre>
 attest-key-triple-record = [
-  environment-map
-  [ + $crypto-key-type-choice ]
+  environment: environment-map
+  key-list: [ + $crypto-key-type-choice ]
+  ? conditions: non-empty&lt; {
+    ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+    ? &amp;(authorized-by: 1) =&gt; [ + $crypto-key-type-choice ]
+  }&gt;
 ]
-</pre><a href="#section-5.1.4.7-6" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.7-7" class="pilcrow">¶</a>
 </div>
+<p id="section-5.1.4.7-8">See <a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.4.6</a> for additional details.<a href="#section-5.1.4.7-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-domain-dependency">
@@ -4755,255 +4804,342 @@ The selected tags are mapped to an internal representation, making them suitable
             <h5 id="name-endorsement-triples-transfo">
 <a href="#section-8.3.3.3" class="section-number selfRef">8.3.3.3. </a><a href="#name-endorsement-triples-transfo" class="section-name selfRef">Endorsement Triples Transformations</a>
             </h5>
-<p id="section-8.3.3.3-1">Endorsed Values Triple Transformation :<a href="#section-8.3.3.3-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-2">
+<div id="sec-end-trans-evt">
+<section id="section-8.3.3.3.1">
+              <h6 id="name-endorsed-values-triple-tran">
+<a href="#section-8.3.3.3.1" class="section-number selfRef">8.3.3.3.1. </a><a href="#name-endorsed-values-triple-tran" class="section-name selfRef">Endorsed Values Triple Transformation</a>
+              </h6>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.1-1">
 <dt>Step 1.</dt>
-<dd id="section-8.3.3.3-2.1">
-                <p id="section-8.3.3.3-2.1.1">An <code>ev</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3-2.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.1-1.1">
+                  <p id="section-8.3.3.3.1-1.1.1">An <code>ev</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3.1-1.1.1" class="pilcrow">¶</a></p>
 </dd>
-              <dd class="break"></dd>
+                <dd class="break"></dd>
 <dt>Step 2.</dt>
-<dd id="section-8.3.3.3-2.2">
-                <p id="section-8.3.3.3-2.2.1">The <code>cmtype</code> of the <code>ev</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3-2.2.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.1-1.2">
+                  <p id="section-8.3.3.3.1-1.2.1">The <code>cmtype</code> of the <code>ev</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3.1-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 3.</dt>
+<dd id="section-8.3.3.3.1-1.3">
+                  <p id="section-8.3.3.3.1-1.3.1">The Endorsed Values Triple (EVT) (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>) populates the <code>ev</code> ECTs.<a href="#section-8.3.3.3.1-1.3.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt>Step 3.</dt>
-<dd id="section-8.3.3.3-2.3">
-                <p id="section-8.3.3.3-2.3.1">The Endorsed Values Triple (EVT) (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>) populates the <code>ev</code> ECTs.<a href="#section-8.3.3.3-2.3.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
 </dl>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-3">
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.1-2">
 <dt>i</dt>
-<dd id="section-8.3.3.3-3.1">
-                <p id="section-8.3.3.3-3.1.1">EVT.<code>condition</code><a href="#section-8.3.3.3-3.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.1-2.1">
+                  <p id="section-8.3.3.3.1-2.1.1">EVT.<code>condition</code><a href="#section-8.3.3.3.1-2.1.1" class="pilcrow">¶</a></p>
 </dd>
-            <dd class="break"></dd>
+              <dd class="break"></dd>
 </dl>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-4.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-4.1.1.1">
-                    <p id="section-8.3.3.3-4.1.1.1.1"><strong>copy</strong>(<code>environment-map</code>, <code>ev</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-4.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.1-3.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.1-3.1.1.1">
+                      <p id="section-8.3.3.3.1-3.1.1.1.1"><strong>copy</strong>(<code>environment-map</code>, <code>ev</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.1-3.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
+              </ul>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-5.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-5.1.1.1">
-                    <p id="section-8.3.3.3-5.1.1.1.1"><strong>copy</strong>(<code>environment-map</code>, <code>ev</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-5.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.1-4.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.1-4.1.1.1">
+                      <p id="section-8.3.3.3.1-4.1.1.1.1"><strong>copy</strong>(<code>environment-map</code>, <code>ev</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.1-4.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-6">
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.1-5">
 <dt>ii</dt>
-<dd id="section-8.3.3.3-6.1">
-                <p id="section-8.3.3.3-6.1.1">For each e in EVT.<code>endorsement</code>:<a href="#section-8.3.3.3-6.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.1-5.1">
+                  <p id="section-8.3.3.3.1-5.1.1">For each e in EVT.<code>endorsement</code>:<a href="#section-8.3.3.3.1-5.1.1" class="pilcrow">¶</a></p>
 </dd>
-            <dd class="break"></dd>
+              <dd class="break"></dd>
 </dl>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-7.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-7.1.1.1">
-                    <p id="section-8.3.3.3-7.1.1.1.1"><strong>copy</strong>(e.<code>endorsement</code>.<code>measurement-map</code>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3-7.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.1-6.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.1-6.1.1.1">
+                      <p id="section-8.3.3.3.1-6.1.1.1.1"><strong>copy</strong>(e.<code>endorsement</code>.<code>measurement-map</code>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3.1-6.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-8">
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.1-7">
 <dt>Step 4.</dt>
-<dd id="section-8.3.3.3-8.1">
-                <p id="section-8.3.3.3-8.1.1">The signer of the Endorsement conceptual message is copied to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3-8.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.1-7.1">
+                  <p id="section-8.3.3.3.1-7.1.1">The signer of the Endorsement conceptual message is copied to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3.1-7.1.1" class="pilcrow">¶</a></p>
 </dd>
-              <dd class="break"></dd>
+                <dd class="break"></dd>
 <dt>Step 5.</dt>
-<dd id="section-8.3.3.3-8.2">
-                <p id="section-8.3.3.3-8.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3-8.2.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.1-7.2">
+                  <p id="section-8.3.3.3.1-7.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.1-7.2.1" class="pilcrow">¶</a></p>
 </dd>
-            <dd class="break"></dd>
+              <dd class="break"></dd>
 </dl>
-<p id="section-8.3.3.3-9">Conditional Endorsement Triple Transformation :<a href="#section-8.3.3.3-9" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-10">
+</section>
+</div>
+<div id="sec-end-trans-cet">
+<section id="section-8.3.3.3.2">
+              <h6 id="name-conditional-endorsement-trip">
+<a href="#section-8.3.3.3.2" class="section-number selfRef">8.3.3.3.2. </a><a href="#name-conditional-endorsement-trip" class="section-name selfRef">Conditional Endorsement Triple Transformation</a>
+              </h6>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.2-1">
 <dt>Step 1.</dt>
-<dd id="section-8.3.3.3-10.1">
-                <p id="section-8.3.3.3-10.1.1">An <code>ev</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3-10.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.2-1.1">
+                  <p id="section-8.3.3.3.2-1.1.1">An <code>ev</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3.2-1.1.1" class="pilcrow">¶</a></p>
 </dd>
-              <dd class="break"></dd>
+                <dd class="break"></dd>
 <dt>Step 2.</dt>
-<dd id="section-8.3.3.3-10.2">
-                <p id="section-8.3.3.3-10.2.1">The <code>cmtype</code> of the <code>ev</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3-10.2.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.2-1.2">
+                  <p id="section-8.3.3.3.2-1.2.1">The <code>cmtype</code> of the <code>ev</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3.2-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 3.</dt>
+<dd id="section-8.3.3.3.2-1.3">
+                  <p id="section-8.3.3.3.2-1.3.1">Entries in the Conditional Endorsement Triple (CET) (<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>) <code>conditions</code> list are copied to a suitable ECT in the internal representation.<a href="#section-8.3.3.3.2-1.3.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt>Step 3.</dt>
-<dd id="section-8.3.3.3-10.3">
-                <p id="section-8.3.3.3-10.3.1">Entries in the Conditional Endorsement Triple (CET) (<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>) <code>conditions</code> list are copied to a suitable ECT in the internal representation.<a href="#section-8.3.3.3-10.3.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
 </dl>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-11">
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.2-2">
 <dt>i</dt>
-<dd id="section-8.3.3.3-11.1">
-                <p id="section-8.3.3.3-11.1.1">For each e in CET.<code>conditions</code>:<a href="#section-8.3.3.3-11.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.2-2.1">
+                  <p id="section-8.3.3.3.2-2.1.1">For each e in CET.<code>conditions</code>:<a href="#section-8.3.3.3.2-2.1.1" class="pilcrow">¶</a></p>
 </dd>
-            <dd class="break"></dd>
+              <dd class="break"></dd>
 </dl>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-12.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-12.1.1.1">
-                    <p id="section-8.3.3.3-12.1.1.1.1"><strong>copy</strong>(e.<code>stateful-environment-record</code>.<code>environment</code>.<code>environment-map</code>, <code>ev</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-12.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.2-3.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.2-3.1.1.1">
+                      <p id="section-8.3.3.3.2-3.1.1.1.1"><strong>copy</strong>(e.<code>stateful-environment-record</code>.<code>environment</code>.<code>environment-map</code>, <code>ev</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.2-3.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
+              </ul>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-13.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-13.1.1.1">
-                    <p id="section-8.3.3.3-13.1.1.1.1"><strong>copy</strong>(e.<code>stateful-environment-record</code>.<code>claims-list</code>.<code>measurement-map</code>, <code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3-13.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.2-4.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.2-4.1.1.1">
+                      <p id="section-8.3.3.3.2-4.1.1.1.1"><strong>copy</strong>(e.<code>stateful-environment-record</code>.<code>claims-list</code>.<code>measurement-map</code>, <code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3.2-4.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-14">
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.2-5">
 <dt>ii</dt>
-<dd id="section-8.3.3.3-14.1">
-                <p id="section-8.3.3.3-14.1.1">For each e in CET.<code>endorsements</code>:<a href="#section-8.3.3.3-14.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.2-5.1">
+                  <p id="section-8.3.3.3.2-5.1.1">For each e in CET.<code>endorsements</code>:<a href="#section-8.3.3.3.2-5.1.1" class="pilcrow">¶</a></p>
 </dd>
-            <dd class="break"></dd>
+              <dd class="break"></dd>
 </dl>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-15.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-15.1.1.1">
-                    <p id="section-8.3.3.3-15.1.1.1.1"><strong>copy</strong>(e.<code>endorsed-triple-record</code>.<code>condition</code>.<code>environment-map</code>, <code>ev</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-15.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.2-6.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.2-6.1.1.1">
+                      <p id="section-8.3.3.3.2-6.1.1.1.1"><strong>copy</strong>(e.<code>endorsed-triple-record</code>.<code>condition</code>.<code>environment-map</code>, <code>ev</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.2-6.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
+              </ul>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-16.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-16.1.1.1">
-                    <p id="section-8.3.3.3-16.1.1.1.1"><strong>copy</strong>(e.<code>endorsed-triple-record</code>.<code>endorsement</code>.<code>measurement-map</code>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3-16.1.1.1.1" class="pilcrow">¶</a></p>
+<li class="normal ulEmpty" id="section-8.3.3.3.2-7.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.2-7.1.1.1">
+                      <p id="section-8.3.3.3.2-7.1.1.1.1"><strong>copy</strong>(e.<code>endorsed-triple-record</code>.<code>endorsement</code>.<code>measurement-map</code>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3.2-7.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-17">
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.2-8">
 <dt>Step 4.</dt>
-<dd id="section-8.3.3.3-17.1">
-                <p id="section-8.3.3.3-17.1.1">The signer of the Conditional Endorsement conceptual message is copied to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3-17.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.2-8.1">
+                  <p id="section-8.3.3.3.2-8.1.1">The signer of the Conditional Endorsement conceptual message is copied to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3.2-8.1.1" class="pilcrow">¶</a></p>
 </dd>
-              <dd class="break"></dd>
+                <dd class="break"></dd>
 <dt>Step 5.</dt>
-<dd id="section-8.3.3.3-17.2">
-                <p id="section-8.3.3.3-17.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3-17.2.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.2-8.2">
+                  <p id="section-8.3.3.3.2-8.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.2-8.2.1" class="pilcrow">¶</a></p>
 </dd>
-            <dd class="break"></dd>
+              <dd class="break"></dd>
 </dl>
-<p id="section-8.3.3.3-18">Conditional Endorsement Series Triple Transformation :<a href="#section-8.3.3.3-18" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-19">
+</section>
+</div>
+<div id="sec-end-trans-cest">
+<section id="section-8.3.3.3.3">
+              <h6 id="name-conditional-endorsement-tripl">
+<a href="#section-8.3.3.3.3" class="section-number selfRef">8.3.3.3.3. </a><a href="#name-conditional-endorsement-tripl" class="section-name selfRef">Conditional Endorsement Triple Transformation</a>
+              </h6>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.3-1">
 <dt>Step 1.</dt>
-<dd id="section-8.3.3.3-19.1">
-                <p id="section-8.3.3.3-19.1.1">An <code>evs</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3-19.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.3-1.1">
+                  <p id="section-8.3.3.3.3-1.1.1">An <code>evs</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3.3-1.1.1" class="pilcrow">¶</a></p>
 </dd>
-              <dd class="break"></dd>
+                <dd class="break"></dd>
 <dt>Step 2.</dt>
-<dd id="section-8.3.3.3-19.2">
-                <p id="section-8.3.3.3-19.2.1">The <code>cmtype</code> of the <code>evs</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3-19.2.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.3-1.2">
+                  <p id="section-8.3.3.3.3-1.2.1">The <code>cmtype</code> of the <code>evs</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3.3-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 3.</dt>
+<dd id="section-8.3.3.3.3-1.3">
+                  <p id="section-8.3.3.3.3-1.3.1">Populate the <code>evs</code> ECTs using the Conditional Endorsement Series Triple (CEST) (<a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.5</a>).<a href="#section-8.3.3.3.3-1.3.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt>Step 3.</dt>
-<dd id="section-8.3.3.3-19.3">
-                <p id="section-8.3.3.3-19.3.1">Populate the <code>evs</code> ECTs using the Conditional Endorsement Series Triple (CEST) (<a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.5</a>).<a href="#section-8.3.3.3-19.3.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
 </dl>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-20">
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.3-2">
 <dt>i.</dt>
-<dd id="section-8.3.3.3-20.1">
-                <p id="section-8.3.3.3-20.1.1">CEST.<code>condition</code>:<a href="#section-8.3.3.3-20.1.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
-</dl>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-21.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-21.1.1.1">
-                    <p id="section-8.3.3.3-21.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-21.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-22.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-22.1.1.1">
-                    <p id="section-8.3.3.3-22.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>claims-list</code>.<code>measurement-map</code>, <code>evs</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3-22.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-23">
-<dt>ii.</dt>
-<dd id="section-8.3.3.3-23.1">
-                <p id="section-8.3.3.3-23.1.1">For each e in CEST.<code>series</code>:<a href="#section-8.3.3.3-23.1.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
-</dl>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-24.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-24.1.1.1">
-                    <p id="section-8.3.3.3-24.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-24.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-25.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-25.1.1.1">
-                    <p id="section-8.3.3.3-25.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>selection</code>.<code>measurement</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3-25.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-26.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-26.1.1.1">
-                    <p id="section-8.3.3.3-26.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3-26.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-27.1">
-                <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-8.3.3.3-27.1.1.1">
-                    <p id="section-8.3.3.3-27.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>addition</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3-27.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
-<span class="break"></span><dl class="olPercent" id="section-8.3.3.3-28">
-<dt>Step 4.</dt>
-<dd id="section-8.3.3.3-28.1">
-                <p id="section-8.3.3.3-28.1.1">The signer of the Conditional Endorsement conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3-28.1.1" class="pilcrow">¶</a></p>
+<dd id="section-8.3.3.3.3-2.1">
+                  <p id="section-8.3.3.3.3-2.1.1">CEST.<code>condition</code>:<a href="#section-8.3.3.3.3-2.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt>Step 5.</dt>
-<dd id="section-8.3.3.3-28.2">
-                <p id="section-8.3.3.3-28.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3-28.2.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
 </dl>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-3.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-3.1.1.1">
+                      <p id="section-8.3.3.3.3-3.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.3-3.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-4.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-4.1.1.1">
+                      <p id="section-8.3.3.3.3-4.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>claims-list</code>.<code>measurement-map</code>, <code>evs</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3.3-4.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.3-5">
+<dt>ii.</dt>
+<dd id="section-8.3.3.3.3-5.1">
+                  <p id="section-8.3.3.3.3-5.1.1">For each e in CEST.<code>series</code>:<a href="#section-8.3.3.3.3-5.1.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-6.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-6.1.1.1">
+                      <p id="section-8.3.3.3.3-6.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.3-6.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-7.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-7.1.1.1">
+                      <p id="section-8.3.3.3.3-7.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>selection</code>.<code>measurement</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3.3-7.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-8.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-8.1.1.1">
+                      <p id="section-8.3.3.3.3-8.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-8.3.3.3.3-8.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-9.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-8.3.3.3.3-9.1.1.1">
+                      <p id="section-8.3.3.3.3-9.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>addition</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-8.3.3.3.3-9.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.3-10">
+<dt>Step 4.</dt>
+<dd id="section-8.3.3.3.3-10.1">
+                  <p id="section-8.3.3.3.3-10.1.1">The signer of the Conditional Endorsement conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3.3-10.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 5.</dt>
+<dd id="section-8.3.3.3.3-10.2">
+                  <p id="section-8.3.3.3.3-10.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.3-10.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-end-trans-kvt">
+<section id="section-8.3.3.3.4">
+              <h6 id="name-key-verification-triples-tr">
+<a href="#section-8.3.3.3.4" class="section-number selfRef">8.3.3.3.4. </a><a href="#name-key-verification-triples-tr" class="section-name selfRef">Key Verification Triples Transformation</a>
+              </h6>
+<p id="section-8.3.3.3.4-1">The following transformation steps are applied for both the <code>identity-triples</code> and <code>attest-key-triples</code> with noted exceptions:<a href="#section-8.3.3.3.4-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.4-2">
+<dt>Step 1.</dt>
+<dd id="section-8.3.3.3.4-2.1">
+                  <p id="section-8.3.3.3.4-2.1.1">An <code>ev</code> entry (<a href="#sec-ir-end-val" class="auto internal xref">Section 8.2.1.3</a>) is allocated.<a href="#section-8.3.3.3.4-2.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 2.</dt>
+<dd id="section-8.3.3.3.4-2.2">
+                  <p id="section-8.3.3.3.4-2.2.1">The <code>cmtype</code> of the <code>ev</code> entry's <code>addition</code> ECT is set to <code>endorsements</code>.<a href="#section-8.3.3.3.4-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 3.</dt>
+<dd id="section-8.3.3.3.4-2.3">
+                  <p id="section-8.3.3.3.4-2.3.1">Populate the <code>ev</code> <code>condition</code> ECT using either the <code>identity-triple-record</code> or <code>attest-key-triple-record</code> (<a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.4.6</a>) as follows:<a href="#section-8.3.3.3.4-2.3.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.4-3">
+<dt>i.</dt>
+<dd id="section-8.3.3.3.4-3.1">
+                  <p id="section-8.3.3.3.4-3.1.1"><strong>copy</strong>(<code>environment-map</code>, <code>ev</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>).<a href="#section-8.3.3.3.4-3.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>ii.</dt>
+<dd id="section-8.3.3.3.4-3.2">
+                  <p id="section-8.3.3.3.4-3.2.1">Foreach <em>key</em> in <code>keylist</code>.<code>$crypto-key-type-choice</code>, <strong>copy</strong>(<em>key</em>, <code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>.<code>key</code>).<a href="#section-8.3.3.3.4-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>iii.</dt>
+<dd id="section-8.3.3.3.4-3.3">
+                  <p id="section-8.3.3.3.4-3.3.1">If <code>key-list</code> originated from <code>attest-key-triples</code>, <strong>set</strong>(<code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>.<code>key-type</code> = <code>attest-key</code>).<a href="#section-8.3.3.3.4-3.3.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>iv.</dt>
+<dd id="section-8.3.3.3.4-3.4">
+                  <p id="section-8.3.3.3.4-3.4.1">Else if <code>key-list</code> originated from <code>identity-triples</code>, <strong>set</strong>(<code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>.<code>key-type</code> = <code>identity-key</code>).<a href="#section-8.3.3.3.4-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>v.</dt>
+<dd id="section-8.3.3.3.4-3.5">
+                  <p id="section-8.3.3.3.4-3.5.1">If populated, <strong>copy</strong>(<code>mkey</code>, <code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>).<a href="#section-8.3.3.3.4-3.5.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>vi.</dt>
+<dd id="section-8.3.3.3.4-3.6">
+                  <p id="section-8.3.3.3.4-3.6.1">If populated, <strong>copy</strong>(<code>authorized-by</code>, <code>ev</code>.<code>condition</code>.<code>authority</code>).<a href="#section-8.3.3.3.4-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-8.3.3.3.4-4">
+<dt>Step 4.</dt>
+<dd id="section-8.3.3.3.4-4.1">
+                  <p id="section-8.3.3.3.4-4.1.1">The signer of the Identity or Attest Key Endorsement conceptual message is copied to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3.4-4.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 5.</dt>
+<dd id="section-8.3.3.3.4-4.2">
+                  <p id="section-8.3.3.3.4-4.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.4-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+</section>
+</div>
 </section>
 </div>
 <div id="evidence-tranformation">
@@ -5186,7 +5322,7 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 <a href="#section-8.4.4.1" class="section-number selfRef">8.4.4.1. </a><a href="#name-processing-endorsements" class="section-name selfRef">Processing Endorsements</a>
             </h5>
 <p id="section-8.4.4.1-1">Endorsements are matched with ACS entries by iterating through the <code>ev</code> list.
-For each <code>ev</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code> or <code>endorsements</code>.
+For each <code>ev</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
 If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 8.5</a>), the <code>ev</code> <code>addition</code> ECT is added to the ACS.<a href="#section-8.4.4.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -5206,11 +5342,53 @@ Conditional endorsements have the same processing steps as shown in (<a href="#s
             </h5>
 <p id="section-8.4.4.3-1">Conditional Endorsement Series Triples are transformed into an internal representation based on <code>evs</code>.
 Conditional series endorsements are matched with ACS entries first by iterating through the <code>evs</code> list,
-where for each <code>evs</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code> or <code>endorsements</code>.
+where for each <code>evs</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
 If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 8.5</a>), the <code>evs</code> <code>series</code> array is iterated,
 where for each <code>series</code> entry, if the <code>selection</code> ECT matches an ACS ECT,
 the <code>addition</code> ECT is added to the ACS.
 Series processing terminates when the first series entry matches.<a href="#section-8.4.4.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-process-keys">
+<section id="section-8.4.4.4">
+            <h5 id="name-processing-key-verification">
+<a href="#section-8.4.4.4" class="section-number selfRef">8.4.4.4. </a><a href="#name-processing-key-verification" class="section-name selfRef">Processing Key Verification Endorsements</a>
+            </h5>
+<p id="section-8.4.4.4-1">For each <code>ev</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
+If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 8.5</a>), for each <em>key</em> in <code>ev</code>.<code>condition</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>:<a href="#section-8.4.4.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.4.4.4-2.1">
+                <p id="section-8.4.4.4-2.1.1">Verify the certificate signatures for the certification path.<a href="#section-8.4.4.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-2.2">
+                <p id="section-8.4.4.4-2.2.1">Verify certificate revocation status for the certification path.<a href="#section-8.4.4.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-2.3">
+                <p id="section-8.4.4.4-2.3.1">Verify key usage restrictions appropriate for the type of key.<a href="#section-8.4.4.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-2.4">
+                <p id="section-8.4.4.4-2.4.1">If key verification succeeds, <strong>append</strong>(<em>key</em>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>).<a href="#section-8.4.4.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-8.4.4.4-3">If key verification succeeds for any <em>key</em>:<a href="#section-8.4.4.4-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.4.4.4-4.1">
+                <p id="section-8.4.4.4-4.1.1"><strong>copy</strong>(<code>ev</code>.<code>condition</code>.<code>environment</code>, <code>ev</code>.<code>addition</code>.<code>environment</code>).<a href="#section-8.4.4.4-4.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-4.2">
+                <p id="section-8.4.4.4-4.2.1"><strong>copy</strong>(<code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>).<a href="#section-8.4.4.4-4.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-4.3">
+                <p id="section-8.4.4.4-4.3.1">Set <code>ev</code>.<code>addition</code>.<code>cmtype</code> to <code>endorsements</code>.<a href="#section-8.4.4.4-4.3.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-4.4">
+                <p id="section-8.4.4.4-4.4.1">Add the Verifier authority <code>$crypto-key-type-choice</code> to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.4.4.4-4.4.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.4.4.4-4.5">
+                <p id="section-8.4.4.4-4.5.1">Add the <code>addition</code> ECT to the ACS.<a href="#section-8.4.4.4-4.5.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-8.4.4.4-5">Otherwise, do not add the <code>addition</code> ECT to the ACS.<a href="#section-8.4.4.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5225,15 +5403,14 @@ Verifier implementations that apply consistency, integrity, or validity checks c
 Processing appraisal policies may result in augmentation or modification of the ACS, but techniques for tracking the application of policies during appraisal need not result in ACS augmentation.
 Additionally, the creation of Attestation Results is out-of-scope for this document, nevertheless internal staging may facilitate processing of Attestation Results.<a href="#section-8.4.5-1" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-2">Phase 5: Verifier Augmentation<a href="#section-8.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-8.4.5-3">Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
-For example, the <code>attest-key-triple-record</code> may contain a cryptographic key to which the Verifier applies certificate path construction and validation.
-Validation may reveal an expired certificate.
-The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.<a href="#section-8.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-8.4.5-3">Verifiers may add value to accepted Claims, such as ensuring freshness, consistency, and integrity.
+The results of the added value may be asserted as Claims with Verifier authority.
+For example, if a Verifier is able to ensure collected Evidence is fresh, it might create a freshness Claim that is included with the Evidence Claims in the ACS.<a href="#section-8.4.5-3" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-4">Phase 6: Policy Augmentation<a href="#section-8.4.5-4" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-5">Appraisal policy inputs could result in Claims that augment the ACS.
 For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
 The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
-Details about the policy applied may also augment the ACS.
+Details about the applied policy may augment the ACS.
 An internal representation of policy details, based on the policy ECT, as described in <a href="#sec-ir-policy" class="auto internal xref">Section 8.2.1.4</a>, contains the environments affected by the policy with policy identifiers as Claims.<a href="#section-8.4.5-5" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-6">Phase 7: Attestation Results Production and Transformation<a href="#section-8.4.5-6" class="pilcrow">¶</a></p>
 <p id="section-8.4.5-7">Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
@@ -6425,6 +6602,10 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
+<dt id="DICE.cert">[DICE.cert]</dt>
+        <dd>
+<span class="refAuthor">Trusted Computing Group</span>, <span class="refTitle">"DICE Certificate Profiles"</span>, <span class="seriesInfo">Version 1.0, Revision 0.01 </span>, <time datetime="2020-07" class="refDate">July 2020</time>, <span>&lt;<a href="https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf">https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="DICE.Layer">[DICE.Layer]</dt>
         <dd>
 <span class="refAuthor">Trusted Computing Group</span>, <span class="refTitle">"DICE Layering Architecture"</span>, <span class="seriesInfo">Version 1.0, Revision 0.19 </span>, <time datetime="2020-07" class="refDate">July 2020</time>, <span>&lt;<a href="https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf">https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf</a>&gt;</span>. </dd>
@@ -6586,8 +6767,12 @@ accepted-claims-set = {
 }
 
 attest-key-triple-record = [
-  environment-map
-  [ + $crypto-key-type-choice ]
+  environment: environment-map
+  key-list: [ + $crypto-key-type-choice ]
+  ? conditions: non-empty&lt; {
+    ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+    ? &amp;(authorized-by: 1) =&gt; [ + $crypto-key-type-choice ]
+  }&gt;
 ]
 
 $class-id-type-choice /= tagged-oid-type
@@ -6717,8 +6902,12 @@ $group-id-type-choice /= tagged-uuid-type
 $group-id-type-choice /= tagged-bytes
 
 identity-triple-record = [
-  environment-map
-  [ + $crypto-key-type-choice ]
+  environment: environment-map
+  key-list: [ + $crypto-key-type-choice ]
+  ? conditions: non-empty&lt;{
+    ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+    ? &amp;(authorized-by: 1) =&gt; [ + $crypto-key-type-choice ]
+  }&gt;
 ]
 
 $instance-id-type-choice /= tagged-ueid-type

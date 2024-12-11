@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 24 May 2025                                              Linaro
+Expires: 14 June 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        20 November 2024
+                                                        11 December 2024
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 May 2025.
+   This Internet-Draft will expire on 14 June 2025.
 
 Copyright Notice
 
@@ -161,6 +161,10 @@ Table of Contents
          8.3.3.1.  Appraisal Context Construction
          8.3.3.2.  Reference Triples Transformation
          8.3.3.3.  Endorsement Triples Transformations
+           8.3.3.3.1.  Endorsed Values Triple Transformation
+           8.3.3.3.2.  Conditional Endorsement Triple Transformation
+           8.3.3.3.3.  Conditional Endorsement Triple Transformation
+           8.3.3.3.4.  Key Verification Triples Transformation
          8.3.3.4.  Evidence Tranformation
      8.4.  ACS Augmentation - Phases 2, 3, and 4
        8.4.1.  ACS Requirements
@@ -177,6 +181,7 @@ Table of Contents
          8.4.4.1.  Processing Endorsements
          8.4.4.2.  Processing Conditional Endorsements
          8.4.4.3.  Processing Conditional Endorsement Series
+         8.4.4.4.  Processing Key Verification Endorsements
        8.4.5.  Examples for optional phases 5, 6, and 7
      8.5.  Comparing a condition ECT against the ACS
        8.5.1.  Comparing a condition ECT against a single ACS entry
@@ -1681,73 +1686,101 @@ Table of Contents
 
 5.1.4.6.  Device Identity Triple
 
-   A Device Identity triple record relates one or more cryptographic
-   keys to a device identity.  The cryptographic keys are bound to or
-   associated with a Target Environment that is within the device.  The
-   device identifier may be part of the Target Environment's
-   environment-map or may be part of some other device identity
-   credential, such as a certificate.  The cryptographic keys are
-   expected to be used to authenticate the device.
+   Device Identity triples (see identity-triples in Section 5.1.4)
+   endorse that the keys were securely provisioned to the named Target
+   Environment.  A single Target Environment (as identified by
+   environment and mkey) may contain one or more cryptographic keys.
+   The existence of these keys is asserted in Evidence, Reference
+   Values, or Endorsements.
+
+   The device identity keys may have been used to authenticate the
+   Attester device or may be held in reserve for later use.
 
    Device Identity triples instruct a Verifier to perform key validation
    checks, such as revocation, certificate path construction &
    verification, or proof of possession.  The Verifier SHOULD verify
    keys contained in Device Identity triples.
 
-   A Device Identity triple endorses that the keys were securely
-   provisioned to the named Target Environment.  Additional details
-   about how a key was provisioned or is protected may be asserted using
-   Endorsements such as endorsed-triples.
+   Additional details about how a key was provisioned or is protected
+   may be asserted using Endorsements such as endorsed-triples.
 
    Depending on key formatting, as defined by $crypto-key-type-choice,
    the Verifier may take different steps to locate and verify the key.
 
    If a key has usage restrictions that limit its use to device identity
-   challenges, Verifiers SHOULD check for key use that violates usage
-   restrictions.
+   challenges, Verifiers SHOULD enforce key use restrictions.
 
-   Verification of a key, including its use restrictions, MAY produce
-   Claims that are added to the ACS.  Alternatively, Verifiers MAY
-   report key verification results as part of an error reporting
-   function.
+   Each successful verification of a key in key-list SHALL produce
+   Endorsement Claims that are added to the Attester's Claim set.
+   Claims are asserted with the joint authority of the Endorser (CoRIM
+   signer) and the Verifier.  Additionally, Verifiers MAY report key
+   verification results as part of an error reporting function.
 
    identity-triple-record = [
-     environment-map
-     [ + $crypto-key-type-choice ]
+     environment: environment-map
+     key-list: [ + $crypto-key-type-choice ]
+     ? conditions: non-empty<{
+       ? &(mkey: 0) => $measured-element-type-choice,
+       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
+     }>
    ]
+
+   *  environment: An environment-map condition used to identify the
+      target Evidence or Reference Value.  See Section 5.1.4.1.
+
+   *  key-list: A list of $crypto-key-type-choice keys that identifies
+      which keys are to be verified.  See Section 5.1.4.1.5.
+
+   *  mkey: An optional $measured-element-type-choice condition used to
+      identify the element within the target Evidence or Reference
+      Value.  See Section 5.1.4.1.4.1.
+
+   *  authorized-by: An optional list of $crypto-key-type-choice keys
+      that identifies the authorities that asserted the key-list in the
+      target Evidence or Reference Values.
 
 5.1.4.7.  Attest Key Triple
 
-   An Attest Key triple record relates one or more cryptographic keys to
-   an Attesting Environment.  The cryptographic keys are wielded by an
-   Attesting Environment that collects measurements from a Target
-   Environment.  The cryptographic keys sign Evidence.
+   Attest Key triples (see attest-key-triples in Section 5.1.4) endorse
+   that the keys were securely provisioned to the named Attesting
+   Environment.  An Attesting Environment (as identified by environment
+   and mkey) may contain one or more cryptographic keys.  The existence
+   of these keys is asserted in Evidence, Reference Values, or
+   Endorsements.
+
+   The attestation keys may have been used to sign Evidence or may be
+   held in reserve for later use.
 
    Attest Key triples instruct a Verifier to perform key validation
    checks, such as revocation, certificate path construction &
    verification, or proof of possession.  The Verifier SHOULD verify
    keys contained in Attest Key triples.
 
-   Attest Key triples endorse that the keys were securely provisioned to
-   the named (identified via an environment-map) Attesting Environment.
    Additional details about how a key was provisioned or is protected
    may be asserted using Endorsements such as endorsed-triples.
 
    Depending on key formatting, as defined by $crypto-key-type-choice,
    the Verifier may take different steps to locate and verify the key.
    If a key has usage restrictions that limits its use to Evidence
-   signing, Verifiers SHOULD check for key use that violates usage
-   restrictions.
+   signing (e.g., see Section 5.1.5.3 in [DICE.cert]).  Verifiers SHOULD
+   enforce key use restrictions.
 
-   Verification of a key, including its use restrictions, MAY produce
-   Claims that are added to the ACS.  Alternatively, Verifiers MAY
-   report key verification results as part of an error reporting
-   function.
+   Each successful verification of a key in key-list SHALL produce
+   Endorsement Claims that are added to the Attester's Claim set.
+   Claims are asserted with the joint authority of the Endorser (CoRIM
+   signer) and the Verifier.  Additionally, Verifiers MAY report key
+   verification results as part of an error reporting function.
 
    attest-key-triple-record = [
-     environment-map
-     [ + $crypto-key-type-choice ]
+     environment: environment-map
+     key-list: [ + $crypto-key-type-choice ]
+     ? conditions: non-empty< {
+       ? &(mkey: 0) => $measured-element-type-choice,
+       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
+     }>
    ]
+
+   See Section 5.1.4.6 for additional details.
 
 5.1.4.8.  Domain Dependency Triple
 
@@ -2653,7 +2686,7 @@ Table of Contents
 
 8.3.3.3.  Endorsement Triples Transformations
 
-   Endorsed Values Triple Transformation :
+8.3.3.3.1.  Endorsed Values Triple Transformation
 
    Step 1.  An ev entry (Section 8.2.1.3) is allocated.
 
@@ -2682,7 +2715,7 @@ Table of Contents
    Step 5.  If the Endorsement conceptual message has a profile, the
             profile is copied to the ev.addition.profile field.
 
-   Conditional Endorsement Triple Transformation :
+8.3.3.3.2.  Conditional Endorsement Triple Transformation
 
    Step 1.  An ev entry (Section 8.2.1.3) is allocated.
 
@@ -2715,7 +2748,7 @@ Table of Contents
    Step 5.  If the Endorsement conceptual message has a profile, the
             profile is copied to the ev.addition.profile field.
 
-   Conditional Endorsement Series Triple Transformation :
+8.3.3.3.3.  Conditional Endorsement Triple Transformation
 
    Step 1.  An evs entry (Section 8.2.1.3) is allocated.
 
@@ -2753,6 +2786,49 @@ Table of Contents
 
    Step 5.  If the Endorsement conceptual message has a profile, the
             profile is copied to the evs.series.addition.profile field.
+
+8.3.3.3.4.  Key Verification Triples Transformation
+
+   The following transformation steps are applied for both the identity-
+   triples and attest-key-triples with noted exceptions:
+
+   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Populate the ev condition ECT using either the identity-
+            triple-record or attest-key-triple-record (Section 5.1.4.6)
+            as follows:
+
+   i.    *copy*(environment-map, ev.condition.environment.environment-
+         map).
+
+   ii.   Foreach _key_ in keylist.$crypto-key-type-choice, *copy*(_key_,
+         ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key).
+
+   iii.  If key-list originated from attest-key-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = attest-
+         key).
+
+   iv.   Else if key-list originated from identity-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = identity-
+         key).
+
+   v.    If populated, *copy*(mkey, ev.condition.element-list.element-
+         map.element-id).
+
+   vi.   If populated, *copy*(authorized-by, ev.condition.authority).
+
+   Step 4.  The signer of the Identity or Attest Key Endorsement
+            conceptual message is copied to the ev.addition.authority
+            field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
 
 8.3.3.4.  Evidence Tranformation
 
@@ -2962,9 +3038,9 @@ Table of Contents
 
    Endorsements are matched with ACS entries by iterating through the ev
    list.  For each ev entry, the condition ECT is compared with an ACS
-   ECT, where the ACS ECT cmtype contains either evidence or
-   endorsements.  If the ECTs match (Section 8.5), the ev addition ECT
-   is added to the ACS.
+   ECT, where the ACS ECT cmtype contains either evidence, reference-
+   values, or endorsements.  If the ECTs match (Section 8.5), the ev
+   addition ECT is added to the ACS.
 
 8.4.4.2.  Processing Conditional Endorsements
 
@@ -2978,11 +3054,45 @@ Table of Contents
    internal representation based on evs.  Conditional series
    endorsements are matched with ACS entries first by iterating through
    the evs list, where for each evs entry, the condition ECT is compared
-   with an ACS ECT, where the ACS ECT cmtype contains either evidence or
-   endorsements.  If the ECTs match (Section 8.5), the evs series array
-   is iterated, where for each series entry, if the selection ECT
-   matches an ACS ECT, the addition ECT is added to the ACS.  Series
-   processing terminates when the first series entry matches.
+   with an ACS ECT, where the ACS ECT cmtype contains either evidence,
+   reference-values, or endorsements.  If the ECTs match (Section 8.5),
+   the evs series array is iterated, where for each series entry, if the
+   selection ECT matches an ACS ECT, the addition ECT is added to the
+   ACS.  Series processing terminates when the first series entry
+   matches.
+
+8.4.4.4.  Processing Key Verification Endorsements
+
+   For each ev entry, the condition ECT is compared with an ACS ECT,
+   where the ACS ECT cmtype contains either evidence, reference-values,
+   or endorsements.  If the ECTs match (Section 8.5), for each _key_ in
+   ev.condition.element-claims.measurement-values-map.intrep-keys:
+
+   *  Verify the certificate signatures for the certification path.
+
+   *  Verify certificate revocation status for the certification path.
+
+   *  Verify key usage restrictions appropriate for the type of key.
+
+   *  If key verification succeeds, *append*(_key_, ev.addition.element-
+      list.element-map.element-claims.measurement-values-map.intrep-
+      keys).
+
+   If key verification succeeds for any _key_:
+
+   *  *copy*(ev.condition.environment, ev.addition.environment).
+
+   *  *copy*(ev.condition.element-list.element-map.element-id,
+      ev.addition.element-list.element-map.element-id).
+
+   *  Set ev.addition.cmtype to endorsements.
+
+   *  Add the Verifier authority $crypto-key-type-choice to the
+      ev.addition.authority field.
+
+   *  Add the addition ECT to the ACS.
+
+   Otherwise, do not add the addition ECT to the ACS.
 
 8.4.5.  Examples for optional phases 5, 6, and 7
 
@@ -2999,14 +3109,12 @@ Table of Contents
 
    Phase 5: Verifier Augmentation
 
-   Claims related to Verifier-applied consistency checks are asserted
-   under the authority of the Verifier.  For example, the attest-key-
-   triple-record may contain a cryptographic key to which the Verifier
-   applies certificate path construction and validation.  Validation may
-   reveal an expired certificate.  The Verifier implementation might
-   generate a certificate path validation exception that is handled
-   externally, or it could generate a Claim that the certificate path is
-   invalid.
+   Verifiers may add value to accepted Claims, such as ensuring
+   freshness, consistency, and integrity.  The results of the added
+   value may be asserted as Claims with Verifier authority.  For
+   example, if a Verifier is able to ensure collected Evidence is fresh,
+   it might create a freshness Claim that is included with the Evidence
+   Claims in the ACS.
 
    Phase 6: Policy Augmentation
 
@@ -3015,11 +3123,11 @@ Table of Contents
    of a collection of subcomponents satisfy a particular quality metric,
    the top-level component also satisfies the quality metric.  The
    Verifier might generate an Endorsement ECT for the top-level
-   component that asserts a quality metric.  Details about the policy
-   applied may also augment the ACS.  An internal representation of
-   policy details, based on the policy ECT, as described in
-   Section 8.2.1.4, contains the environments affected by the policy
-   with policy identifiers as Claims.
+   component that asserts a quality metric.  Details about the applied
+   policy may augment the ACS.  An internal representation of policy
+   details, based on the policy ECT, as described in Section 8.2.1.4,
+   contains the environments affected by the policy with policy
+   identifiers as Claims.
 
    Phase 7: Attestation Results Production and Transformation
 
@@ -3860,6 +3968,12 @@ Table of Contents
 
 12.2.  Informative References
 
+   [DICE.cert]
+              Trusted Computing Group, "DICE Certificate Profiles",
+              Version 1.0, Revision 0.01 , July 2020,
+              <https://trustedcomputinggroup.org/wp-content/uploads/
+              DICE-Certificate-Profiles-r01_pub.pdf>.
+
    [DICE.Layer]
               Trusted Computing Group, "DICE Layering Architecture",
               Version 1.0, Revision 0.19 , July 2020,
@@ -4036,8 +4150,12 @@ Appendix A.  Base CoRIM CDDL
    }
 
    attest-key-triple-record = [
-     environment-map
-     [ + $crypto-key-type-choice ]
+     environment: environment-map
+     key-list: [ + $crypto-key-type-choice ]
+     ? conditions: non-empty< {
+       ? &(mkey: 0) => $measured-element-type-choice,
+       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
+     }>
    ]
 
    $class-id-type-choice /= tagged-oid-type
@@ -4167,8 +4285,12 @@ Appendix A.  Base CoRIM CDDL
    $group-id-type-choice /= tagged-bytes
 
    identity-triple-record = [
-     environment-map
-     [ + $crypto-key-type-choice ]
+     environment: environment-map
+     key-list: [ + $crypto-key-type-choice ]
+     ? conditions: non-empty<{
+       ? &(mkey: 0) => $measured-element-type-choice,
+       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
+     }>
    ]
 
    $instance-id-type-choice /= tagged-ueid-type
