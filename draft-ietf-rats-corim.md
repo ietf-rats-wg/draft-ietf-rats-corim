@@ -1183,7 +1183,10 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match followed by a series condition match where each series condition uses the same matching keys and where the data values are ordered.
+The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match followed by a series condition match.
+Every `series-condition-record` selection MUST select the same `mkey`s.
+Every selected `mkey`'s corresponding mentioned set of keys `mval`.key MUST be the same across each `series-condition-record`.
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
 The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
