@@ -77,7 +77,8 @@ CORIM_FRAGS += $(COMID_FRAGS)
 
 CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
 
-INTREP_FRAGS := intrep-acs.cddl
+INTREP_FRAGS := intrep-start.cddl
+INTREP_FRAGS += intrep-acs.cddl
 INTREP_FRAGS += intrep-ae.cddl
 INTREP_FRAGS += intrep-ar.cddl
 INTREP_FRAGS += intrep-ars.cddl
@@ -86,6 +87,7 @@ INTREP_FRAGS += intrep-ev.cddl
 INTREP_FRAGS += intrep-policy.cddl
 INTREP_FRAGS += intrep-rv.cddl
 INTREP_FRAGS += intrep-claims-map.cddl
+INTREP_FRAGS += intrep-key.cddl
 # deps
 INTREP_FRAGS += non-empty.cddl
 INTREP_FRAGS += environment-map.cddl
@@ -102,5 +104,11 @@ INTREP_FRAGS += ip-addr-type-choice.cddl
 INTREP_FRAGS += ueid.cddl
 INTREP_FRAGS += uuid.cddl
 INTREP_FRAGS += integrity-registers.cddl
+INTREP_FRAGS += crypto-key-type-choice.cddl
+INTREP_FRAGS += profile-type-choice.cddl
+INTREP_FRAGS += cose-key.cddl
+INTREP_FRAGS += cose-label-and-value.cddl
+INTREP_FRAGS += class-id-type-choice.cddl
+INTREP_FRAGS += oid.cddl
 
 INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
