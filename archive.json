@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-21T01:49:11.375496+00:00",
+  "timestamp": "2024-12-12T01:54:19.660675+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2310,7 +2310,7 @@
       ],
       "body": "At present locator allows reference by URLs.  Should we allow reference by `corim-map.id` implying that the links are local to the verifier?",
       "createdAt": "2023-03-29T11:56:51Z",
-      "updatedAt": "2024-05-07T09:26:47Z",
+      "updatedAt": "2024-12-04T21:28:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -2347,6 +2347,13 @@
           "body": "Seems reasonable. ",
           "createdAt": "2023-03-29T20:36:47Z",
           "updatedAt": "2023-03-29T20:36:47Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Poking at this to see what folks are thinking to move this forward. Given that we want to provide reference values for our firmware as built for multiple technologies, it'll need to be distributed with a RIM bundle. The TCG information model for RIMs allows for the dependency structure through dependent-rims\r\n\r\n```\r\ncorim-bundle = [ + corim ]\r\n```\r\nAnd recommend using `urn:uuid:`corim-id to reference locally-bundled CoRIMs?\r\nThis would need yet another content type, or we add it as a type-choice with a CBOR tag.",
+          "createdAt": "2024-12-04T21:26:44Z",
+          "updatedAt": "2024-12-04T21:28:22Z"
         }
       ]
     },
@@ -7902,6 +7909,46 @@
       "updatedAt": "2024-11-13T05:22:46Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 349,
+      "id": "I_kwDOH6-tI86g3apn",
+      "title": "Clarify that the ACS information model is normative",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/349",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We're doing a lot of work to translate the behavior of triples into the information they convey when verified. We need to ensure that verifier implementers understand that they need to present this information in their chosen data model to later stages.",
+      "createdAt": "2024-11-27T15:12:15Z",
+      "updatedAt": "2024-11-27T15:12:36Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 350,
+      "id": "I_kwDOH6-tI86g4FOu",
+      "title": "Clarify that normative triples that the Verifier does not understand MAY be ignored  ",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/350",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There will be extensions in later specs, and there are some heavy base spec triples that may not always be needed. We should state what the expected behavior is.",
+      "createdAt": "2024-11-27T16:03:18Z",
+      "updatedAt": "2024-12-04T15:54:22Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "instead of saying in the negative, we should instead say what are the absolutely mandatory to implement triples",
+          "createdAt": "2024-12-04T15:54:20Z",
+          "updatedAt": "2024-12-04T15:54:20Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -42352,7 +42399,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2024-10-07T15:48:55Z",
+      "updatedAt": "2024-12-11T15:36:46Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
@@ -42534,6 +42581,26 @@
               "body": "> tagged-masked-bytes = 563([data: bstr, mask: bstr])\r\n\r\nFrom the perspective of moving the Intel profile to a standard representation. This approach would be easier as the Intel profile already defines something similar:\r\n```\r\nmask-eq = 1\r\nmask-operator = mask-eq\r\nmask-type = bstr\r\nmask-expression = [ mask-operator, value: mask-type, mask: mask-type ]\r\ntagged-mask-expression = #6.60010( mask-expression )\r\n```\r\nI could see the following being easier to migrate to than the current raw-value:\r\n```\r\nmask-expression = [ mask-operator, 563([ data: bstr, mask: bstr]) ]\r\ntagged-mask-expression = #6.60010( mask-expression )\r\n```\r\nIn terms of disruptiveness, we should deprecate before deleting. Maybe the corim spec could add a second masked value type while discouraging use of raw-value?",
               "createdAt": "2024-10-07T15:48:55Z",
               "updatedAt": "2024-10-07T15:48:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UxtmI",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T15:36:46Z",
+          "updatedAt": "2024-12-11T15:36:46Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "@andrew-draper : Add more explanation to explain how to use the `raw-value-type`",
+              "createdAt": "2024-12-11T15:36:46Z",
+              "updatedAt": "2024-12-11T15:36:46Z"
             }
           ]
         }
@@ -44363,13 +44430,13 @@
       "labels": [],
       "body": "Closes Issue#242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2024-11-20T14:46:31Z",
+      "updatedAt": "2024-11-27T15:15:02Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "quant",
-      "headRefOid": "7fb65c70ae0ec6d587ad1a2f59c91eed4fd90e82",
+      "headRefOid": "d257e509ff114417731d7a589211142750b3b353",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -46784,7 +46851,7 @@
       "labels": [],
       "body": "Validation is specific to a method. This reorganizes example methods into subsections and adds a new example based on attest-key-triple and CoTS.\r\n\r\nThis is an attempt to make actionable \"key lookup\" normative language as marked in Issue #317.\r\n\r\nThis is an attempt to resolve the ae verification concern in Issue #314.",
       "createdAt": "2024-10-11T16:02:46Z",
-      "updatedAt": "2024-10-13T21:45:42Z",
+      "updatedAt": "2024-12-05T22:32:42Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
@@ -46894,6 +46961,64 @@
               "body": "RV triples that do binary compare operations of what? I'm not following.",
               "createdAt": "2024-10-13T21:45:42Z",
               "updatedAt": "2024-10-13T21:45:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86NepJq",
+          "commit": {
+            "abbreviatedOid": "7ce7565"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-16T20:33:40Z",
+          "updatedAt": "2024-12-05T22:16:10Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "These lines pertain to the handling of attest-key-triple-record and its transformation and processing logic. Possibly, it makes sense to move this text to issue #330? \r\nIt doesn't make sense to describe it as an example since it is / will be described in another part of the spec.",
+              "createdAt": "2024-10-16T20:33:40Z",
+              "updatedAt": "2024-12-05T22:16:10Z"
+            },
+            {
+              "originalPosition": 38,
+              "body": "These lines are included with the previous comment related to attest-key-triple-record.",
+              "createdAt": "2024-10-16T20:38:14Z",
+              "updatedAt": "2024-12-05T22:16:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UASE2",
+          "commit": {
+            "abbreviatedOid": "7ce7565"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-05T22:20:20Z",
+          "updatedAt": "2024-12-05T22:32:42Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-12-05T22:20:20Z",
+              "updatedAt": "2024-12-05T22:32:43Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\nNevertheless, Evidence integrity MUST be validated successfully.\r\n```",
+              "createdAt": "2024-12-05T22:22:00Z",
+              "updatedAt": "2024-12-05T22:32:43Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\n\r\n```\r\n\r\nThis logic shouldn't apply when crypto-key-type-choice is used as a measurement-values-map value. If the value is corroborated by RVs then that should be good enough.\r\n\r\nIf the context is a key verification triple like attest-key-triple, then it makes sense to consider this text as part of the processing steps. But this is one of many possible failure conditions. Maybe there isn't a need to callout this condition explicitly?",
+              "createdAt": "2024-12-05T22:31:18Z",
+              "updatedAt": "2024-12-05T22:32:43Z"
             }
           ]
         }
@@ -47592,18 +47717,26 @@
       "labels": [],
       "body": "Added description to conditional series triple to address issues #310 and #321.\r\nUpdated example [here](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cond-series-wording/cddl/examples/comid-series.diag) to better illustrate a use case.",
       "createdAt": "2024-10-15T19:07:50Z",
-      "updatedAt": "2024-10-24T22:16:01Z",
+      "updatedAt": "2024-12-11T23:13:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cond-series-wording",
-      "headRefOid": "9834a8c8c0fc813cb3bd056f907ca04878209980",
+      "headRefOid": "1d7ce2f14e94ef285a8dc58e72f371d6a131cb54",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Additional use case context: Some have characterized the triple as being an optimization of endorsement triples. The way to realize the same semantics using conditional-endorsement-triple is that there will be multiple valid RIMs containing statements about valid SVN ranges. A vendor may increment an SVN when a new image of security sensitive code is released, resulting in multiple valid RIMS in circulation. If at some later point one of the implementations is found to have a vulnerability, the affected RIM(s) can be revoked. \r\n\r\nNevertheless, there can be a range of RIMS that declare multiple valid SVN values. The RIMS could match the same component resulting in multiple ACS entries but with different matching reference SVN values. \r\n\r\nThe question then is how should these values be processed and by whom? Ideally, the best answer should be selected, because there will be additional endorsement statements that assert additional information based on SVN state. This approach distributes state across multiple RIMS resulting in multiple ACS entries that then needs to be post-processed to find the \"best\" correct answer. \r\n\r\nComparing this to the series triple. One RIM can be used to communicate the information that would otherwise be spread across in multiple RIMs and avoids adding, unnecessarily, multiple correct answers to the ACS that then need to be filtered in some way to find the best answer. \r\n\r\nAny vendor that relies on SVNs to manage security change control will likely need this capability. If they don't proactively increment SVNs as part of their release process, then they will need to release / install updates that update the SVN. The alternative is they merely have to revoke an already issued RIM. ",
+          "createdAt": "2024-11-25T23:21:36Z",
+          "updatedAt": "2024-11-25T23:21:36Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86NalpX",
@@ -47674,6 +47807,66 @@
               "body": "> Issue #327\r\n\r\nGiven issue #327 addresses the concern. It doesn't need to be addressed in this PR.",
               "createdAt": "2024-10-16T17:14:22Z",
               "updatedAt": "2024-10-16T17:14:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Uzw8g",
+          "commit": {
+            "abbreviatedOid": "2b2b5ed"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T19:04:42Z",
+          "updatedAt": "2024-12-11T19:04:42Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\nThe Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match followed by a series condition match.\r\nEvery `series-condition-record` selection MUST select the same `mkey`s.\r\nEvery selected `mkey`'s corresponding mentioned set of keys `mval`.key MUST be the same across each `series-condition-record`.\r\nThese restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.\r\n```",
+              "createdAt": "2024-12-11T19:04:42Z",
+              "updatedAt": "2024-12-11T19:04:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86U1mfa",
+          "commit": {
+            "abbreviatedOid": "1d7ce2f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T21:46:29Z",
+          "updatedAt": "2024-12-11T21:46:29Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Though one to parse... I am not sure I get what you mean here.  Is it that _\"each selected `mkey` MUST have the same corresponding set of `mval`s across all `series-condition-record` entries\"_ ?",
+              "createdAt": "2024-12-11T21:46:29Z",
+              "updatedAt": "2024-12-11T21:46:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86U2Kdf",
+          "commit": {
+            "abbreviatedOid": "1d7ce2f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T23:13:28Z",
+          "updatedAt": "2024-12-11T23:13:28Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Say you have 3 measurement-map in a selection. One has no mkey with mval { 0: \u2026}. One has mkey 1 with mval: { 1: \u2026, 4: \u2026 } and one has mkey 2 with mval {0: \u2026, 7: \u2026}. That has to be the same selection structure for all selections in the series.",
+              "createdAt": "2024-12-11T23:13:28Z",
+              "updatedAt": "2024-12-11T23:13:28Z"
             }
           ]
         }
@@ -48186,25 +48379,42 @@
       "id": "PR_kwDOH6-tI85_-BLq",
       "title": "Verify key triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/341",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Addresses the majority of issue #330 (but one challenge remains).\r\n\r\nExpanded examples may be needed.",
       "createdAt": "2024-10-26T00:38:33Z",
-      "updatedAt": "2024-11-20T16:28:38Z",
+      "updatedAt": "2024-12-11T15:39:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "baseRefOid": "50960a343824e237bc44c821a9d41df702a4bcaf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "verify-key-triples",
-      "headRefOid": "cfba2f1c1ae5a3717fea7295c9fecfba49e03260",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "headRefOid": "984e9522eace7a4f977a11f46629387a56ec8af6",
+      "closedAt": "2024-12-11T15:39:35Z",
+      "mergedAt": "2024-12-11T15:39:35Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "9895d5539d88910f940869560b6094d82f22f5a6"
+      },
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Additional use case background on verify-key-triple:\r\nA centralized RoT architecture has a single (monolithic) RoT that is either trusted or not. A distributed RoT architecture has multiple trusted components that are linked cryptographically. The bootstrap flow enables the RoT components but doesn't require each to be an AE. As RoT components they are not updatable / measurable other than that their public keys can be reported as evidence. \r\n\r\nUser / Verifier will never see data / evidence signed by these keys. However, if a key is revoked, it would be useful information to a RP who is managing security risk to know if such revocation happened. This is not an architecture unique to Intel as CXL devices will have this type of key. \r\n\r\nThe RefVal triple and concise-evidence triple can validate existence of the keys. However, it is up to downstream processing to determine if any of the keys pose an additional risk as the Verifier would not automatically discover existence of a compromised key. \r\n\r\nAs an optional to implement triple, a verifier could step up to do these checks (possibly as a way to achieve better scalability vs. pushing it off to downstream RPs? Some other endorsement specification could be used to achieve similar objectives, but that wouldn't change the performance / security dynamics. \r\n\r\nCompletely ignoring it is another option, but trades security for performance where the cost of doing the security check is easily quantifiable. It seems clear that there will be customers interested in doing the checking. The question is what role should corim play and when. ",
+          "createdAt": "2024-11-25T22:54:19Z",
+          "updatedAt": "2024-11-25T22:54:19Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I tried to build with map structure that doesn't use code points, but it failed (again). I'm using latest version of cddl. I don't see a reason to hold up this PR based on build issues. The prose in the .md file doesn't change. So it can be merged and if we want to change it to not use code points, that won't affect merged prose.",
+          "createdAt": "2024-12-04T18:07:55Z",
+          "updatedAt": "2024-12-04T18:07:55Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86O4DRs",
@@ -49064,6 +49274,124 @@
               "updatedAt": "2024-11-20T16:15:00Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86S8UQZ",
+          "commit": {
+            "abbreviatedOid": "cfba2f1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-11-27T15:02:54Z",
+          "updatedAt": "2024-11-27T15:02:54Z",
+          "comments": [
+            {
+              "originalPosition": 198,
+              "body": "Verifying a certificate path is not the same as verifying a proof of possession. The `cryptokeys` measurement needs to have a clear meaning in the base spec. What is it?",
+              "createdAt": "2024-11-27T15:02:54Z",
+              "updatedAt": "2024-11-27T15:02:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86TpXDB",
+          "commit": {
+            "abbreviatedOid": "fe27f31"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-04T01:51:53Z",
+          "updatedAt": "2024-12-04T01:58:59Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nThe identity keys are bound to or are associated with a Target Environment (as identified by `environment` and `mkey`\u2014see below) within the device.\r\n```",
+              "createdAt": "2024-12-04T01:51:53Z",
+              "updatedAt": "2024-12-04T01:58:59Z"
+            },
+            {
+              "originalPosition": 229,
+              "body": "What is a nonce Claim? Is this something like but isn't exactly `eat_nonce`? Given that the Verifier is allowed to add anything it wants with its authority, maybe we should drop this sentence and allow the reader to decide what claims they want to add.",
+              "createdAt": "2024-12-04T01:57:41Z",
+              "updatedAt": "2024-12-04T01:58:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86T0aOc",
+          "commit": {
+            "abbreviatedOid": "064098d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple comments.",
+          "createdAt": "2024-12-04T21:52:59Z",
+          "updatedAt": "2024-12-04T21:53:23Z",
+          "comments": [
+            {
+              "originalPosition": 229,
+              "body": "This is offered as an example. It is already assumed that the reader / implementer will decide what claims they want to add. Since the previous exemplary text is addressed as part of the triples, it isn't a good example. I updated the example to be less prescriptive / more conceptual.",
+              "createdAt": "2024-12-04T21:52:59Z",
+              "updatedAt": "2024-12-05T00:03:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86T1wKl",
+          "commit": {
+            "abbreviatedOid": "5bace9c"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-12-05T03:31:15Z",
+          "updatedAt": "2024-12-05T03:31:15Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Uxj4n",
+          "commit": {
+            "abbreviatedOid": "984e952"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-12-11T15:23:29Z",
+          "updatedAt": "2024-12-11T15:28:14Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UxmS4",
+          "commit": {
+            "abbreviatedOid": "984e952"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-12-11T15:27:29Z",
+          "updatedAt": "2024-12-11T15:28:14Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UxndX",
+          "commit": {
+            "abbreviatedOid": "984e952"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-12-11T15:29:03Z",
+          "updatedAt": "2024-12-11T15:29:03Z",
+          "comments": []
         }
       ]
     },
@@ -50085,6 +50413,756 @@
           "createdAt": "2024-11-13T15:21:06Z",
           "updatedAt": "2024-11-13T15:21:06Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 351,
+      "id": "PR_kwDOH6-tI86DXTuL",
+      "title": "Clarify that triples may be ignored/discarded",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/351",
+      "state": "CLOSED",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #350",
+      "createdAt": "2024-11-27T17:00:27Z",
+      "updatedAt": "2024-12-04T15:53:31Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "50960a343824e237bc44c821a9d41df702a4bcaf",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "tripig",
+      "headRefOid": "bc2101b61b2d915584132c872178d1f6d4325a72",
+      "closedAt": "2024-12-04T15:51:26Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discarding triples is left to later phases and not normative for up to phase 4.\r\nIgnoring new triples is a matter of what is NTI, which @henkbirkholz is going to write what is NTI.",
+          "createdAt": "2024-12-04T15:51:26Z",
+          "updatedAt": "2024-12-04T15:51:26Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86TwgSa",
+          "commit": {
+            "abbreviatedOid": "bc2101b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-04T15:01:20Z",
+          "updatedAt": "2024-12-04T15:01:20Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\nA Verifier might not implement all the Triples specified in this specification.\r\nIt depends on its Appraisal Policy for Evidence as mandated by its profile.\r\n```",
+              "createdAt": "2024-12-04T15:01:20Z",
+              "updatedAt": "2024-12-04T15:52:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86TxRPh",
+          "commit": {
+            "abbreviatedOid": "bc2101b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-04T15:49:40Z",
+          "updatedAt": "2024-12-04T15:49:40Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2024-12-04T15:49:40Z",
+              "updatedAt": "2024-12-04T15:49:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86TxUDM",
+          "commit": {
+            "abbreviatedOid": "bc2101b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-04T15:53:31Z",
+          "updatedAt": "2024-12-04T15:53:31Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Pending M T I work!",
+              "createdAt": "2024-12-04T15:53:31Z",
+              "updatedAt": "2024-12-04T15:53:31Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 352,
+      "id": "PR_kwDOH6-tI86DXYWT",
+      "title": "Clarify that the ACS is a minimal information model",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/352",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This makes the appraisal specification of every triple normative for what later phases can depend on.\r\nFixes #349",
+      "createdAt": "2024-11-27T17:11:21Z",
+      "updatedAt": "2024-12-11T21:47:25Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "infonorm",
+      "headRefOid": "94523418c2b82c437f9dcf169510795d756aced5",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't understand the build failure `Makefile:25: *** target file 'draft-ietf-rats-corim.xml' has both : and :: entries.  Stop.`",
+          "createdAt": "2024-12-11T15:20:11Z",
+          "updatedAt": "2024-12-11T15:20:11Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I don't understand the build failure `Makefile:25: *** target file 'draft-ietf-rats-corim.xml' has both : and :: entries. Stop.`\r\n\r\nI fixed it in top level Makefile",
+          "createdAt": "2024-12-11T18:32:37Z",
+          "updatedAt": "2024-12-11T18:32:37Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86Tw4UD",
+          "commit": {
+            "abbreviatedOid": "688483a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-04T15:18:52Z",
+          "updatedAt": "2024-12-04T15:18:52Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nVerifier implementations MUST provide the specified information model of the ACS at the end of phase 4 as described in this specification.\r\n```",
+              "createdAt": "2024-12-04T15:18:52Z",
+              "updatedAt": "2024-12-04T15:39:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86TxLBm",
+          "commit": {
+            "abbreviatedOid": "9452341"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2024-12-04T15:40:33Z",
+          "updatedAt": "2024-12-11T21:47:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86TxLOY",
+          "commit": {
+            "abbreviatedOid": "9452341"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-12-04T15:40:50Z",
+          "updatedAt": "2024-12-11T21:47:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86TxL9K",
+          "commit": {
+            "abbreviatedOid": "9452341"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I still think the wording is awkward, but at least we all seem to agree on what this means ;-)",
+          "createdAt": "2024-12-04T15:41:54Z",
+          "updatedAt": "2024-12-11T21:47:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UAPMq",
+          "commit": {
+            "abbreviatedOid": "9452341"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-12-05T22:12:37Z",
+          "updatedAt": "2024-12-11T21:47:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ujg7T",
+          "commit": {
+            "abbreviatedOid": "9452341"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-12-10T13:32:15Z",
+          "updatedAt": "2024-12-11T21:47:25Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 353,
+      "id": "PR_kwDOH6-tI86ENXz_",
+      "title": "Grouping Triples into MTI and OTI",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/353",
+      "state": "OPEN",
+      "author": "henkbirkholz",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "* Introduced an MTI/OTI categorization in an updated version of the itemized list in Section 5 Concise Module Identifier (CoMID)\r\n* Added normative language MUST for MTI & SHOULD for OTI, including examples when it is okay not to implement OTI\r\n\r\nThis is a \"first draft\", which I am not marking as a draft so it can be bashed early and ferociously.",
+      "createdAt": "2024-12-05T16:32:44Z",
+      "updatedAt": "2024-12-11T15:18:24Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "50960a343824e237bc44c821a9d41df702a4bcaf",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "mti-triples",
+      "headRefOid": "48369be4f9cb52f120f4bf29c3868fcaa6c39e6b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86T9dN4",
+          "commit": {
+            "abbreviatedOid": "411195b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-05T17:05:37Z",
+          "updatedAt": "2024-12-05T17:05:37Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "We should be consistent in stating either `stateful environment` or `stateful environment records` between `conditional-endorsement-series-triples` and `conditional-endorsement-triples`",
+              "createdAt": "2024-12-05T17:05:37Z",
+              "updatedAt": "2024-12-05T17:05:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86T9eRH",
+          "commit": {
+            "abbreviatedOid": "2bac775"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-05T17:07:35Z",
+          "updatedAt": "2024-12-05T17:07:36Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "In general looks good to me!",
+              "createdAt": "2024-12-05T17:07:36Z",
+              "updatedAt": "2024-12-05T17:07:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86T9ecA",
+          "commit": {
+            "abbreviatedOid": "2bac775"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! for the MTI part",
+          "createdAt": "2024-12-05T17:07:56Z",
+          "updatedAt": "2024-12-05T17:07:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86T-aoE",
+          "commit": {
+            "abbreviatedOid": "2bac775"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple comments",
+          "createdAt": "2024-12-05T18:48:35Z",
+          "updatedAt": "2024-12-05T19:32:44Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nThis specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).\r\n```",
+              "createdAt": "2024-12-05T18:48:35Z",
+              "updatedAt": "2024-12-05T19:32:44Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nThe MTI class of triples is essential for basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsement}}. \r\n```",
+              "createdAt": "2024-12-05T18:49:15Z",
+              "updatedAt": "2024-12-05T19:32:44Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nIf CoMID processing is supported by the Verifier, RATS Verifiers MUST implement the MTI class of triples.\r\n```",
+              "createdAt": "2024-12-05T18:53:56Z",
+              "updatedAt": "2024-12-06T13:33:32Z"
+            },
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nThe OTI class of triples are generally useful.\r\n```",
+              "createdAt": "2024-12-05T18:55:26Z",
+              "updatedAt": "2024-12-05T19:32:44Z"
+            },
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\nIf CoMID processing is supported by the Verifier, RATS Verifiers SHOULD implement OTI triples.\r\nVerifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.\r\nFor example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.\r\n```",
+              "createdAt": "2024-12-05T18:59:24Z",
+              "updatedAt": "2024-12-05T19:52:39Z"
+            },
+            {
+              "originalPosition": 17,
+              "body": "Why is coswid mandatory? CoSWID has its own tag type and can be processed as part of corim without impacting comid. There is significant work required to create a comid-to-coswid mapping. Processing of coswids could be done independent from processing of comids. ",
+              "createdAt": "2024-12-05T19:01:58Z",
+              "updatedAt": "2024-12-05T19:32:44Z"
+            },
+            {
+              "originalPosition": 28,
+              "body": "```suggestion\r\nCoMID triples are extensible ({{sec-comid-triples}}). Triples added via the extensibility feature MUST be OTI class triples. This document specifies profiles (see {{sec-extensibility}}). OTI triples MAY be reclassified as MTI using a profile. Profiles MUST NOT reclassify MTI triples as OTI.\r\n```",
+              "createdAt": "2024-12-05T19:27:09Z",
+              "updatedAt": "2024-12-06T13:12:43Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "Should this spec define a process for reclassifying OTI triples as MTI? For example, that a newer RFC could update an older RFC reclassifying from OTI to MTI or deprecating something (or is that obvious)?",
+              "createdAt": "2024-12-05T19:30:33Z",
+              "updatedAt": "2024-12-05T19:32:44Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "> We should be consistent in stating either `stateful environment` or `stateful environment records` between `conditional-endorsement-series-triples` and `conditional-endorsement-triples`\r\n\r\nI don't understand the significance. Isn't it sufficient to refer to the triples based on the name used in triples-map?",
+              "createdAt": "2024-12-05T19:32:21Z",
+              "updatedAt": "2024-12-05T19:32:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86T-1e_",
+          "commit": {
+            "abbreviatedOid": "7a421ea"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-05T19:51:06Z",
+          "updatedAt": "2024-12-05T19:55:11Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nThe MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.\r\n```",
+              "createdAt": "2024-12-05T19:51:06Z",
+              "updatedAt": "2024-12-05T19:55:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UGx_a",
+          "commit": {
+            "abbreviatedOid": "7a421ea"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:11:32Z",
+          "updatedAt": "2024-12-06T13:11:32Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "There was some comment about it being in the base set of CoRIM contents: CoBOM, CoMID, CoSWID.\r\n\r\nThat's why I put it in there. The requirements might be external to the CoMID structure. The editors have to figure that out in the next meeting.",
+              "createdAt": "2024-12-06T13:11:32Z",
+              "updatedAt": "2024-12-06T13:11:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UG3D0",
+          "commit": {
+            "abbreviatedOid": "7a421ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:19:27Z",
+          "updatedAt": "2024-12-06T13:19:28Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "YAS (yet another suggestion)\r\n\r\n```suggestion\r\nEvery CoRIM Verifier MUST support the MTI triples.\r\n```",
+              "createdAt": "2024-12-06T13:19:27Z",
+              "updatedAt": "2024-12-06T13:19:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UG4VB",
+          "commit": {
+            "abbreviatedOid": "7a421ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:22:21Z",
+          "updatedAt": "2024-12-06T13:22:22Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "YAS\r\n\r\n```suggestion\r\nA CoRIM Verifier SHOULD implement OTI triples.\r\nVerifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.\r\nFor example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.\r\n```",
+              "createdAt": "2024-12-06T13:22:21Z",
+              "updatedAt": "2024-12-06T13:22:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UG-1g",
+          "commit": {
+            "abbreviatedOid": "7a421ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:35:25Z",
+          "updatedAt": "2024-12-06T13:35:25Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "> _\"OTI triples MAY be reclassified as MTI using a profile.\"_\r\n\r\nMay be misinterpreted to say that a profile can reclassify an OTI to MTI _globally_.\r\n\r\nI'd rather say: \"Within the context of a profile, OTI triples MAY be reclassified as MTI.\"",
+              "createdAt": "2024-12-06T13:35:25Z",
+              "updatedAt": "2024-12-06T13:35:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UG_du",
+          "commit": {
+            "abbreviatedOid": "9aa506d"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:36:26Z",
+          "updatedAt": "2024-12-06T13:36:27Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "Thomas' version seems even more crisp. @nedmsmith, if you disagree we can dig this up again in next call.",
+              "createdAt": "2024-12-06T13:36:27Z",
+              "updatedAt": "2024-12-06T13:36:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UG_kl",
+          "commit": {
+            "abbreviatedOid": "7a421ea"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:36:38Z",
+          "updatedAt": "2024-12-06T13:36:38Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "> \"Profiles MUST NOT reclassify MTI triples as OTI.\"\r\n\r\nOK, but also \"Profiles can decide not to use MTI triples.\"",
+              "createdAt": "2024-12-06T13:36:38Z",
+              "updatedAt": "2024-12-06T13:36:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UHAMx",
+          "commit": {
+            "abbreviatedOid": "f73c6d8"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:38:00Z",
+          "updatedAt": "2024-12-06T13:38:01Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "I'd still say why:\r\n\r\n```suggestion\r\nThe OTI class of triples are generally useful across profiles.\r\n```",
+              "createdAt": "2024-12-06T13:38:00Z",
+              "updatedAt": "2024-12-06T13:38:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UHA15",
+          "commit": {
+            "abbreviatedOid": "f73c6d8"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:39:19Z",
+          "updatedAt": "2024-12-06T13:39:19Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "For symmetry, I'd go with Thomas' one here. @nedmsmith, we can dig this up again, if that is not okay with you.",
+              "createdAt": "2024-12-06T13:39:19Z",
+              "updatedAt": "2024-12-06T13:39:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UHDSI",
+          "commit": {
+            "abbreviatedOid": "16a5ff2"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:44:27Z",
+          "updatedAt": "2024-12-06T13:44:27Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "> Should this spec define a process for reclassifying OTI triples as MTI? For example, that a newer RFC could update an older RFC reclassifying from OTI to MTI or deprecating something (or is that obvious)?\r\n\r\nA CoRIM profile can prescribe its own MTIs. It cannot makre MTI from the base spec OTI, but it can make existing OTI from the base spec MTI. I am not certain how to deal with MTI from profiles, but I assume that a profile can inherit triple semantics from other profiles as is or redefine them MTI or OTI.",
+              "createdAt": "2024-12-06T13:44:27Z",
+              "updatedAt": "2024-12-06T13:51:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UHEq1",
+          "commit": {
+            "abbreviatedOid": "16a5ff2"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T13:46:50Z",
+          "updatedAt": "2024-12-06T13:46:50Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "> OK, but also \"Profiles can decide not to use MTI triples.\"\r\n\r\nYes. I think that is unavoidable, but also see [below](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/353/files#r1873359504).",
+              "createdAt": "2024-12-06T13:46:50Z",
+              "updatedAt": "2024-12-06T13:46:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UHOGl",
+          "commit": {
+            "abbreviatedOid": "411195b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T14:02:48Z",
+          "updatedAt": "2024-12-06T14:02:48Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "> A CoRIM profile can prescribe its own MTIs. It cannot makre MTI from the base spec OTI, but it can make existing OTI from the base spec MTI. I am not certain how to deal with MTI from profiles, but I assume that a profile can inherit triple semantics from other profiles as is or redefine them MTI or OTI.\r\n\r\nI interpreted Ned's question to be about whether we should create a process here to regulate how MTI and OTI classes are allowed to move.\r\nMy answer is no, we don't.  Let the future selves and fellow RATS decide how to deal based on accumulated wisdom. \r\n",
+              "createdAt": "2024-12-06T14:02:48Z",
+              "updatedAt": "2024-12-06T14:02:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UHTPB",
+          "commit": {
+            "abbreviatedOid": "411195b"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T14:10:11Z",
+          "updatedAt": "2024-12-06T14:10:11Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "Fair enough",
+              "createdAt": "2024-12-06T14:10:11Z",
+              "updatedAt": "2024-12-06T14:10:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UJ4-N",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-06T18:40:35Z",
+          "updatedAt": "2024-12-06T18:41:10Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "> The requirements might be external to the CoMID structure.\r\n\r\nInclusion of different (from CoMID) tags in a corim doesn't obviate the need to map the other tags to CoMID. There can be a separate discussion (not necessarily in the CoRIM draft) for how to translate the external representation into an internal representation that doesn't have to be `intrep`. However, could be `intrep` too. That would be the topic for a design team to wrestle with. The coswid triples in comid could be lower priority to work on now since a mapping between a coswid internal representation with a comid internal representation would be useful pretext. It seems this sort of thing doesn't meet the criteria of something that is \"base\" capability for a comid engine.",
+              "createdAt": "2024-12-06T18:40:35Z",
+              "updatedAt": "2024-12-06T18:41:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ujojl",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-10T13:43:55Z",
+          "updatedAt": "2024-12-10T13:44:23Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nCoMID triples are extensible ({{sec-comid-triples}}).\r\nTriples added via the extensibility feature MUST be OTI class triples.\r\nThis document specifies profiles (see {{sec-extensibility}}).\r\nOTI triples MAY be reclassified as MTI using a profile.\r\nConversely, profiles can choose not to _use_ certain MTI triples.\r\nProfiles MUST NOT reclassify MTI triples as OTI.\r\n```",
+              "createdAt": "2024-12-10T13:43:55Z",
+              "updatedAt": "2024-12-10T13:55:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UjpZH",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-10T13:45:20Z",
+          "updatedAt": "2024-12-10T13:45:20Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "This is Ned's proposal + L517 as per [my comment](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/353#discussion_r1873350523).",
+              "createdAt": "2024-12-10T13:45:20Z",
+              "updatedAt": "2024-12-10T13:45:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UxOE6",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T14:56:19Z",
+          "updatedAt": "2024-12-11T14:56:20Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "@thomas-fossati line 513 usage of MTI triples in a profile is contradictory to usage supported on Line 517 of your suggested text. We need to polish the language that \r\n\r\n1. Introduces generic text to say that it is required that Verifiers MUST implement MTI Triples.\r\nHowever certain profile may choose to not implement certain MTI Triples, as per their own Appraisal policy!\r\n\r\n",
+              "createdAt": "2024-12-11T14:56:20Z",
+              "updatedAt": "2024-12-11T14:56:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UxeUL",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T15:16:41Z",
+          "updatedAt": "2024-12-11T15:16:42Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nEvery CoRIM Verifier MUST implement the MTI triples.\r\n```",
+              "createdAt": "2024-12-11T15:16:41Z",
+              "updatedAt": "2024-12-11T15:16:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86UxffL",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-11T15:18:23Z",
+          "updatedAt": "2024-12-11T15:18:24Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Add a clarification: That Profiles cannot dictate an MTI behviour for all the Verifiers! (in a more clear way)",
+              "createdAt": "2024-12-11T15:18:23Z",
+              "updatedAt": "2024-12-11T15:18:24Z"
+            }
+          ]
         }
       ]
     }
