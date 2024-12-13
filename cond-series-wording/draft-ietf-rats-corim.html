@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 15 June 2025</td>
+<td class="center">Expires 16 June 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-12-12" class="published">12 December 2024</time>
+<time datetime="2024-12-13" class="published">13 December 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-06-15">15 June 2025</time></dd>
+<dd class="expires"><time datetime="2025-06-16">16 June 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 16 June 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3332,26 +3332,15 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
 <a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
             </h5>
 <p id="section-5.1.4.5-1">The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match followed by a series condition match.
-Every <code>series-condition-record</code> selection MUST select the same <code>mkey</code>s.
-Every selected <code>mkey</code>'s corresponding mentioned set of keys <code>mval</code>.key MUST be the same across each <code>series-condition-record</code>.
-For example, if a selection has 3 matching <code>measurement-map</code> statements:<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.1.4.5-2.1">
-                <p id="section-5.1.4.5-2.1.1">where <code>mkey</code> is omitted and where <code>mval</code> equals A,<a href="#section-5.1.4.5-2.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-5.1.4.5-2.2">
-                <p id="section-5.1.4.5-2.2.1">where <code>mkey</code> equals 1 and where <code>mval</code> equals B,<a href="#section-5.1.4.5-2.2.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-5.1.4.5-2.3">
-                <p id="section-5.1.4.5-2.3.1">where <code>mkey</code> equals 2 and where <code>mval</code> equals C.<a href="#section-5.1.4.5-2.3.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<p id="section-5.1.4.5-3">Then all selection statements in the series will use the same 3 matching criteria.<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-4">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Every <code>conditional-series-record</code> selection MUST select the same <code>mkey</code>s where
+every selected <code>mkey</code>'s corresponding set of keys (i.e., <code>mval</code>.<em>key</em>) MUST be the same across each <code>conditional-series-record</code>.
+For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements
+and <code>mval</code>, for each statement, contains A= <em>variable-X</em>, B= <em>variable-Y</em>, and C= <em>variable-Z</em> respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-5">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-6">
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-3">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-4">
 <pre>
 conditional-endorsement-series-triple-record = [
   condition: stateful-environment-record
@@ -3362,33 +3351,33 @@ conditional-series-record = [
   selection: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
-</pre><a href="#section-5.1.4.5-6" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-4" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.5-7">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-5">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.5-6.1">
+                <p id="section-5.1.4.5-6.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-6.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.5-6.2">
+                <p id="section-5.1.4.5-6.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-6.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-5.1.4.5-7">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-7" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.5-8.1">
-                <p id="section-5.1.4.5-8.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-8.1.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.5-8.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-8.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.5-8.2">
-                <p id="section-5.1.4.5-8.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-8.2.1" class="pilcrow">¶</a></p>
+                <p id="section-5.1.4.5-8.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-8.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.5-9">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-9" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.1.4.5-10.1">
-                <p id="section-5.1.4.5-10.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-10.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-5.1.4.5-10.2">
-                <p id="section-5.1.4.5-10.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-10.2.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<p id="section-5.1.4.5-11">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-12">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
-Evaluation order begins at list position 0.<a href="#section-5.1.4.5-12" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-13">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-13" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-14">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-14" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-9">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-9" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-10">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
+Evaluation order begins at list position 0.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-11">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-12">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-12" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-identity">
