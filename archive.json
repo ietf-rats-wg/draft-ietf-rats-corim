@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-12-12T01:54:19.660675+00:00",
+  "timestamp": "2024-12-15T02:01:25.128410+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -47717,13 +47717,13 @@
       "labels": [],
       "body": "Added description to conditional series triple to address issues #310 and #321.\r\nUpdated example [here](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cond-series-wording/cddl/examples/comid-series.diag) to better illustrate a use case.",
       "createdAt": "2024-10-15T19:07:50Z",
-      "updatedAt": "2024-12-11T23:13:28Z",
+      "updatedAt": "2024-12-13T21:10:50Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cond-series-wording",
-      "headRefOid": "1d7ce2f14e94ef285a8dc58e72f371d6a131cb54",
+      "headRefOid": "0793e3d6943b63999486c3734fc2a0bc091dc9b9",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -47867,6 +47867,146 @@
               "body": "Say you have 3 measurement-map in a selection. One has no mkey with mval { 0: \u2026}. One has mkey 1 with mval: { 1: \u2026, 4: \u2026 } and one has mkey 2 with mval {0: \u2026, 7: \u2026}. That has to be the same selection structure for all selections in the series.",
               "createdAt": "2024-12-11T23:13:28Z",
               "updatedAt": "2024-12-11T23:13:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86U5-0Z",
+          "commit": {
+            "abbreviatedOid": "1d7ce2f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-12T08:11:44Z",
+          "updatedAt": "2024-12-12T08:11:44Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "OK, surely L1188 needs unpacking.  I suggest reorganising it this way:\r\n1. make a short normative statement, followed by\r\n2. an example",
+              "createdAt": "2024-12-12T08:11:44Z",
+              "updatedAt": "2024-12-12T08:11:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VEUf8",
+          "commit": {
+            "abbreviatedOid": "64d496e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-12T22:58:48Z",
+          "updatedAt": "2024-12-12T22:58:48Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "A B and C being the same across conditions would make only the first condition match if any do. You need to check that for all n > 0, for all m in cond[n].selection, there uniquely exists some m\u2019 in cond[0].selection such that m\u2019.mkey = m.mkey AND keys(m.mval) = keys(m\u2019.mval).",
+              "createdAt": "2024-12-12T22:58:48Z",
+              "updatedAt": "2024-12-12T22:58:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VEU05",
+          "commit": {
+            "abbreviatedOid": "64d496e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-12T23:00:06Z",
+          "updatedAt": "2024-12-12T23:00:20Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Likewise every mkey in cond[0] must appear in later conds.",
+              "createdAt": "2024-12-12T23:00:06Z",
+              "updatedAt": "2024-12-12T23:00:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VEbmg",
+          "commit": {
+            "abbreviatedOid": "64d496e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-12T23:26:29Z",
+          "updatedAt": "2024-12-12T23:26:29Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "The existing text says that selection matching is based on the results of the condition. That means the selection conditions are not searching ACS, rather they are searching the results of the condition match. The above explanation seems to assume selection matching is over ACS no?",
+              "createdAt": "2024-12-12T23:26:29Z",
+              "updatedAt": "2024-12-12T23:27:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VE0Ab",
+          "commit": {
+            "abbreviatedOid": "64d496e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-13T01:19:13Z",
+          "updatedAt": "2024-12-13T01:19:13Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Say your stateful environment record is [E, [mval: {1: min-svn(1)}, {mkey: 1, mval: {1: min-svn(2), 4: h'f00'}]]\r\n\r\nYou have have multiple ECTs that match E and these measurement-maps. You then need to narrow down.\r\n[[{mval: {1: 10}}, {mkey: 1, mval: {1: min-svn(3), 4: h'f00'}}, some endorsements],\r\n [{mval: {1: 9}}, {mkey: 1, mval: {1: min-svn(2), 4: h'f00'}}, some endorsements]].\r\n\r\nWe have the same mkeys. The first selection binds your A to {1: 10} and B to {1: min-svn(3), 4: h'f00'}. That makes the second in the series invalid, since {1: 9} != {1: 10}. This is why I restricted only to the keys of the mval.\r\n\r\n",
+              "createdAt": "2024-12-13T01:19:13Z",
+              "updatedAt": "2024-12-13T01:19:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VL2Cm",
+          "commit": {
+            "abbreviatedOid": "64d496e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-13T18:39:13Z",
+          "updatedAt": "2024-12-13T18:39:13Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I made another editing pass. Is it OK?",
+              "createdAt": "2024-12-13T18:39:13Z",
+              "updatedAt": "2024-12-13T18:39:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VNHL4",
+          "commit": {
+            "abbreviatedOid": "2196c49"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-13T21:02:44Z",
+          "updatedAt": "2024-12-13T21:02:44Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "\"a selection\" and \"3 measurement-map statements\" seems like the wrong way of describing it, since a list of measurement-map with the same mkey is ill-formed. You can only have one measurement-map with a specific mkey in a list of measurement-map.\r\n\r\nI think you mean there are 3 conditional-series-record, and for each record, they have 1 measurement-map in their list each, and that measurement map has the same mkey, and an mval of the form you state below. That would be fine. It would also be fine for each record to have more than 1 measurement-map, such as\r\n\r\n```\r\n[[mkey: 0, mval: {A: _variable-X_, B: _variable-Y_, C: _variable-Z_ }], [mkey: 1, mval: {D: _variable-W_}]]\r\n```\r\nI don't think \"`mval` contains\" is appropriate either, since the first mval also contains \"A=_variable-X_\" without the closure. You need to state that `mval` contains exactly those 3 key/value pairs and no more.",
+              "createdAt": "2024-12-13T21:02:44Z",
+              "updatedAt": "2024-12-13T21:02:44Z"
             }
           ]
         }
