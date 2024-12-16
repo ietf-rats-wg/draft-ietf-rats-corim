@@ -99,6 +99,7 @@ INTREP_FRAGS += svn-type-choice.cddl
 INTREP_FRAGS += digest.cddl
 INTREP_FRAGS += flags-map.cddl
 INTREP_FRAGS += raw-value.cddl
+INTREP_FRAGS += raw-value-compare.cddl
 INTREP_FRAGS += tagged-bytes.cddl
 INTREP_FRAGS += mac-addr-type-choice.cddl
 INTREP_FRAGS += ip-addr-type-choice.cddl
