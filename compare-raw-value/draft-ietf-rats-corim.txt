@@ -1211,7 +1211,7 @@ Table of Contents
 
    *  raw-value (index 4): Contains the actual (not hashed) value of the
       element.  The vendor determines the encoding of raw-value.  When
-      used for comparison, a mask may be provided indicting which bits
+      used for comparison, a mask may be provided indicating which bits
       in the raw-value field must be compared.  Described in
       Section 5.1.4.1.4.6
 
@@ -1362,8 +1362,8 @@ Table of Contents
    checked by Verifiers for consistency only, since the security
    relevance is opaque to Verifiers.
 
-   A raw value from Evidence, or an Endorsement, is a value of type
-   bytes with an optional tag value.  The default raw value measurement
+   A raw-value from Evidence or an Endorsement is a value of type bytes
+   that is optionally tagged #6.560.  The default raw value measurement
    is of type tagged-bytes (Section 7.8).
 
    Additional raw value types can be defined, but must be a CBOR tagged
@@ -1382,7 +1382,7 @@ Table of Contents
    values and comparison algorithms.
 
    For backwards compatibility, the syntax where the mask appears under
-   a separate codepoint is still supported.  This will be removed before
+   codepoint 5 is still supported.  This will be removed before
    publication.
 
    $raw-value-type-choice /= bytes
@@ -3408,8 +3408,8 @@ Table of Contents
 
 8.5.6.1.4.  Comparison for raw-value entries
 
-   A raw-value entry contains binary data whose meaning the Verifier is
-   not required to understand.
+   A raw-value entry contains binary data which a Verifier following
+   this specification will treat as opaque.
 
    The value stored under measurement-values-map key 4 in an ACS entry
    must be a raw-value entry, which must have type bytes, with an
@@ -3422,8 +3422,8 @@ Table of Contents
    If the condition ECT measurement-value-map key 4 is of type bytes or
    tagged-bytes, then the Verifier treats it in the same way as a raw-
    value-compare with the value field holding the same contents and the
-   mask field omitted.  The tag value is not used in the standard
-   comparison function defined in this document.
+   mask field omitted.  The standard comparison function defined in this
+   document does not use the tag value.
 
    The comparison MUST return false if the lengths of the candidate
    entry value and the condition ECT value are different.
@@ -3432,11 +3432,12 @@ Table of Contents
    lengths of the condition ECT mask and value are different.
 
    If a mask is not provided, then the comparison MUST return true if
-   the condition ECT value is binary equal to the candidate entry value.
+   and only if the condition ECT value is binary equal to the candidate
+   entry value.
 
    If a mask field is provided, then the comparison MUST use the mask to
    determine which bits to compare.  If a bit in the mask is 0 then this
-   indicates that the corresponding bit in the ACE entry value may have
+   indicates that the corresponding bit in the ACS Entry value may have
    either value.  If, for every bit position in the mask whose value is
    1, the corresponding bits in both values are equal then the
    comparison MUST return true.
