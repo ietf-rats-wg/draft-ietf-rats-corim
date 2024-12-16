@@ -32,6 +32,7 @@ COMID_FRAGS += measurement-values-map.cddl
 COMID_FRAGS += non-empty.cddl
 COMID_FRAGS += oid.cddl
 COMID_FRAGS += raw-value.cddl
+COMID_FRAGS += raw-value-compare.cddl
 COMID_FRAGS += reference-triple-record.cddl
 COMID_FRAGS += stateful-environment-record.cddl
 COMID_FRAGS += svn-type-choice.cddl
