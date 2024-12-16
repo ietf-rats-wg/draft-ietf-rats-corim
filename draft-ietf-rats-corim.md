@@ -871,7 +871,7 @@ The following describes each member of the `measurement-values-map`.
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   The vendor determines the encoding of `raw-value`.
   When used for comparison, a mask may be provided indicting which bits in the `raw-value` field must be compared.
-  Described in {{sec-comid-raw-value-types}} 
+  Described in {{sec-comid-raw-value-types}}
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
   Described in {{sec-comid-address-types}}.
