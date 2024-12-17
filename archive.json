@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-12-15T02:01:25.128410+00:00",
+  "timestamp": "2024-12-17T01:54:11.952641+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -42390,7 +42390,7 @@
     {
       "number": 294,
       "id": "PR_kwDOH6-tI859Cqxv",
-      "title": "Move raw-value comparison algorithm to its own PR",
+      "title": "Add text describing raw-value comparison algorithm",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/294",
       "state": "OPEN",
       "author": "andrew-draper",
@@ -42399,13 +42399,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2024-12-11T15:36:46Z",
+      "updatedAt": "2024-12-16T23:28:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d8d1365ecaea023cd95c59b97ab8d2026397c0c6",
+      "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "compare-raw-value",
-      "headRefOid": "73d0726899ef20bc7f7ef907e89bba625aecf3b7",
+      "headRefOid": "73cf48638935a35324e277c417ea8fafd25155f9",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -42601,6 +42601,426 @@
               "body": "@andrew-draper : Add more explanation to explain how to use the `raw-value-type`",
               "createdAt": "2024-12-11T15:36:46Z",
               "updatedAt": "2024-12-11T15:36:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VSqwl",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-15T20:43:51Z",
+          "updatedAt": "2024-12-15T20:43:52Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I think tagged-mask-expresssion is a slightly nicer way to do the comparison. Since the mask only appears in CoRIM files (not in evidence) I don't think this has any outside effects.\r\nI agree with deprecating before deleting.\r\nThis makes things interesting, because if we do this then codepoint 4 in evidence and `endorsed-triple-record` becomes `BSTR .cbor ANY` while codepoint 4 in `stateful-environment-record` is `tagged-mask-expression`\r\n",
+              "createdAt": "2024-12-15T20:43:52Z",
+              "updatedAt": "2024-12-15T20:48:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VWW3K",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T09:45:17Z",
+          "updatedAt": "2024-12-16T09:45:17Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "There should be a tag before the array. I will add this if the direction is agreed.",
+              "createdAt": "2024-12-16T09:45:17Z",
+              "updatedAt": "2024-12-16T09:45:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VWgUo",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T10:00:27Z",
+          "updatedAt": "2024-12-16T10:00:28Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "The most recent proposal uses a mask expression (named `raw-value-compare`) similar to what is proposed by Ned.",
+              "createdAt": "2024-12-16T10:00:28Z",
+              "updatedAt": "2024-12-16T10:00:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VW_qM",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T10:54:54Z",
+          "updatedAt": "2024-12-16T10:54:54Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "I think we need to include non-tagged bstr because some evidence might be in that format. The place where tagging is useful is in raw-values within stateful-environment or similar, but that is not an essential requirement.",
+              "createdAt": "2024-12-16T10:54:54Z",
+              "updatedAt": "2024-12-16T10:55:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbUSP",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:27:55Z",
+          "updatedAt": "2024-12-16T18:27:55Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\n  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field must be compared.\r\n```",
+              "createdAt": "2024-12-16T18:27:55Z",
+              "updatedAt": "2024-12-16T18:27:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbUnH",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:28:36Z",
+          "updatedAt": "2024-12-16T18:28:36Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nA `raw-value` from Evidence or an Endorsement is a value of type `bytes` that is optionally tagged #6.560.\r\n```",
+              "createdAt": "2024-12-16T18:28:36Z",
+              "updatedAt": "2024-12-16T18:29:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbVb8",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:30:31Z",
+          "updatedAt": "2024-12-16T18:30:31Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "This reads like \"You can choose any color you want, as long as it's black.\" or do you mean a different tag than #6.560?",
+              "createdAt": "2024-12-16T18:30:31Z",
+              "updatedAt": "2024-12-16T18:31:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbWg3",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:33:01Z",
+          "updatedAt": "2024-12-16T18:33:01Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "Nooo. This should be a measurement value map extensionnn",
+              "createdAt": "2024-12-16T18:33:01Z",
+              "updatedAt": "2024-12-16T18:33:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbWs7",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:33:22Z",
+          "updatedAt": "2024-12-16T18:33:22Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\nFor backwards compatibility, the syntax where the mask appears under codepoint 5 is still supported.\r\n```",
+              "createdAt": "2024-12-16T18:33:22Z",
+              "updatedAt": "2024-12-16T18:33:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbXSn",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:34:40Z",
+          "updatedAt": "2024-12-16T18:34:41Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "\"Not required\" is different than MUST treat opaquely, or only with mask comparison. We don't want this type to have different meanings in different verifiers.",
+              "createdAt": "2024-12-16T18:34:41Z",
+              "updatedAt": "2024-12-16T18:34:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbYD7",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:36:12Z",
+          "updatedAt": "2024-12-16T18:36:12Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "```suggestion\r\n```suggestion\r\nThe value stored under `measurement-values-map` key 4 in an ACS entry MUST have type `bytes` with an optional tag, or type `raw-value-compare`.\r\n```\r\n```",
+              "createdAt": "2024-12-16T18:36:12Z",
+              "updatedAt": "2024-12-16T18:36:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbYWD",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:36:53Z",
+          "updatedAt": "2024-12-16T18:36:53Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "```suggestion\r\nThe tag value MUST NOT be used in the standard comparison function defined in this document.\r\n```",
+              "createdAt": "2024-12-16T18:36:53Z",
+              "updatedAt": "2024-12-16T18:36:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbYw5",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:37:45Z",
+          "updatedAt": "2024-12-16T18:37:46Z",
+          "comments": [
+            {
+              "originalPosition": 67,
+              "body": "```suggestion\r\nIf a mask is not provided, then the comparison MUST return true if and only if the condition ECT value is binary equal to the candidate entry value.\r\n```",
+              "createdAt": "2024-12-16T18:37:46Z",
+              "updatedAt": "2024-12-16T18:37:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VbZB0",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T18:38:22Z",
+          "updatedAt": "2024-12-16T18:38:23Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "What's an ACE entry?",
+              "createdAt": "2024-12-16T18:38:23Z",
+              "updatedAt": "2024-12-16T18:38:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Vdh_H",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:20:34Z",
+          "updatedAt": "2024-12-16T23:20:34Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "I'm trying to keep the spirit of what was written before. The intention is that tags other than 6.560 can be used, providing the tagged object is `bstr`. A Verifier following this spec looks at the `bstr` as opaque binary data. A relying party following an extension can use the tag to understand what is inside the `bstr`.",
+              "createdAt": "2024-12-16T23:20:34Z",
+              "updatedAt": "2024-12-16T23:20:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VdiI1",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:21:13Z",
+          "updatedAt": "2024-12-16T23:21:13Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "Trying to keep the spirit of what was there before. Happy to lose this sentence.",
+              "createdAt": "2024-12-16T23:21:13Z",
+              "updatedAt": "2024-12-16T23:21:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VdiVp",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:22:02Z",
+          "updatedAt": "2024-12-16T23:22:03Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nA `raw-value` entry contains binary data which a Verifier following this specification will treat as opaque.\r\n```",
+              "createdAt": "2024-12-16T23:22:02Z",
+              "updatedAt": "2024-12-16T23:22:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Vdi0S",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:23:58Z",
+          "updatedAt": "2024-12-16T23:23:58Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "I think it is worthwhile for the spec to call out the difference between codepoint 4 in Evidence/Endorsements and in reference values (eg in stateful-environment-map).",
+              "createdAt": "2024-12-16T23:23:58Z",
+              "updatedAt": "2024-12-16T23:23:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VdjEC",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:25:03Z",
+          "updatedAt": "2024-12-16T23:25:03Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "```suggestion\r\nThe standard comparison function defined in this document does not use the tag value.\r\n```",
+              "createdAt": "2024-12-16T23:25:03Z",
+              "updatedAt": "2024-12-16T23:25:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VdjRb",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:25:39Z",
+          "updatedAt": "2024-12-16T23:25:39Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "```suggestion\r\nIf a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.\r\n```",
+              "createdAt": "2024-12-16T23:25:39Z",
+              "updatedAt": "2024-12-16T23:25:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VdkAy",
+          "commit": {
+            "abbreviatedOid": "24cf734"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-16T23:28:27Z",
+          "updatedAt": "2024-12-16T23:28:27Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "I changed the text to say that a Verifier following this spec must treat `raw-value` as opaque data.",
+              "createdAt": "2024-12-16T23:28:27Z",
+              "updatedAt": "2024-12-16T23:28:27Z"
             }
           ]
         }
