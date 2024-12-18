@@ -1254,6 +1254,19 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
+##### Linear Privilege Level {#sec-comid-linear-privlevel}
+
+A Linear Privilege Level describes an operating privilege for the target environment.
+The convention is that 0 is the highest privilege, and higher numbers correspond to fewer privileges.
+The semantics of the ordering indicate a total inclusion of all higher privilege levels.
+This means that there is no privilege strictly afforded to, e.g., privilege level 3 that isn't also available to privilege level 1.
+
+~~~ cddl
+{::include cddl/linear-privilege-level.cddl}
+~~~
+
+For environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.
+
 ##### Domain Types {#sec-comid-domain-type}
 
 A domain is a context for bundling a collection of related environments and their measurements.
