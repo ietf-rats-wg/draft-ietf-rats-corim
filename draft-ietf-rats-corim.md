@@ -266,7 +266,7 @@ For more detail, see {{sec-corim-profile-types}}.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, CoRIM can be encoded as a CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
+Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
 
 The following CDDL describes the top-level CoRIM.
 
@@ -363,8 +363,7 @@ Exercised extension points should preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
 
-A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-corim-signed}} and
-{{sec-mt-corim-unsigned}} with the `profile` parameter set to the appropriate value.
+A CoRIM profile can use one of the base CoRIM media type defined in {{sec-mt-rim-cbor}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
@@ -2591,10 +2590,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                     | Reference |
 |     --- | ---------           | ---------                                                     | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}      | {{&SELF}} |
+|     500 | `tag`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}               | {{&SELF}} |
-| 503-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+| 502-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
 |     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
@@ -2705,78 +2703,17 @@ IANA is requested to add the following media types to the "Media Types"
 registry {{!IANA.media-types}}.
 
 | Name | Template | Reference |
-| corim-signed+cbor | application/corim-signed+cbor | {{&SELF}}, ({{sec-mt-corim-signed}}) |
-| corim-unsigned+cbor | application/corim-unsigned+cbor | {{&SELF}}, ({{sec-mt-corim-unsigned}}) |
+| rim+cbor | application/rim+cbor | {{&SELF}}, ({{sec-mt-rim-cbor}}) |
 {: #tbl-media-type align="left" title="New Media Types"}
 
-### corim-signed+cbor {#sec-mt-corim-signed}
+### rim+cbor {#sec-mt-rim-cbor}
 
 {:compact}
 Type name:
 : `application`
 
 Subtype name:
-: `corim-signed+cbor`
-
-Required parameters:
-: n/a
-
-Optional parameters:
-: "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
-  notation.)
-
-Encoding considerations:
-: binary
-
-Security considerations:
-: ({{sec-sec}}) of {{&SELF}}
-
-Interoperability considerations:
-: n/a
-
-Published specification:
-: {{&SELF}}
-
-Applications that use this media type:
-: Attestation Verifiers, Endorsers and Reference-Value providers that need to
-  transfer COSE Sign1 wrapped CoRIM payloads over HTTP(S), CoAP(S), and other
-  transports.
-
-Fragment identifier considerations:
-: n/a
-
-Magic number(s):
-: `D9 01 F6 D2`, `D9 01 F4 D9 01 F6 D2`
-
-File extension(s):
-: n/a
-
-Macintosh file type code(s):
-: n/a
-
-Person and email address to contact for further information:
-: RATS WG mailing list (rats@ietf.org)
-
-Intended usage:
-: COMMON
-
-Restrictions on usage:
-: none
-
-Author/Change controller:
-: IETF
-
-Provisional registration?
-: Maybe
-
-### corim-unsigned+cbor {#sec-mt-corim-unsigned}
-
-{:compact}
-Type name:
-: `application`
-
-Subtype name:
-: `corim-unsigned+cbor`
+: `rim+cbor`
 
 Required parameters:
 : n/a
@@ -2837,8 +2774,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 | Content-Type | Content Coding | ID | Reference |
 |---
-| application/corim-signed+cbor | - | TBD1 | {{&SELF}} |
-| application/corim-unsigned+cbor | - | TBD2 | {{&SELF}} |
+| application/rim+cbor | - | TBD1 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
 
 --- back
