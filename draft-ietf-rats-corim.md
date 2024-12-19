@@ -1183,13 +1183,13 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.	
+A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.
 
 The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
 Each conditional-series-record record is evaluated in the order it appears in the series array.
 The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.
 The first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.	
+If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.
 
 More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
 
@@ -1832,7 +1832,7 @@ Later stages will further select the CoRIMs appropriate to the Evidence Appraisa
 The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
 
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
-Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is 
+Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is
 a CoMID-CoSWID linking triple.
 
 #### CoBOM Extraction
