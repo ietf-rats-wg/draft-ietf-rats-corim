@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-12-17T01:54:11.952641+00:00",
+  "timestamp": "2024-12-19T01:51:19.394543+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7915,15 +7915,15 @@
       "id": "I_kwDOH6-tI86g3apn",
       "title": "Clarify that the ACS information model is normative",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/349",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "We're doing a lot of work to translate the behavior of triples into the information they convey when verified. We need to ensure that verifier implementers understand that they need to present this information in their chosen data model to later stages.",
       "createdAt": "2024-11-27T15:12:15Z",
-      "updatedAt": "2024-11-27T15:12:36Z",
-      "closedAt": null,
+      "updatedAt": "2024-12-18T14:58:38Z",
+      "closedAt": "2024-12-18T14:58:38Z",
       "comments": []
     },
     {
@@ -42399,7 +42399,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2024-12-16T23:28:27Z",
+      "updatedAt": "2024-12-18T15:01:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
@@ -43021,6 +43021,26 @@
               "body": "I changed the text to say that a Verifier following this spec must treat `raw-value` as opaque data.",
               "createdAt": "2024-12-16T23:28:27Z",
               "updatedAt": "2024-12-16T23:28:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Vu31k",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-18T15:01:44Z",
+          "updatedAt": "2024-12-18T15:01:45Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Agreed.",
+              "createdAt": "2024-12-18T15:01:45Z",
+              "updatedAt": "2024-12-18T15:01:45Z"
             }
           ]
         }
@@ -48801,13 +48821,13 @@
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2024-11-20T15:28:51Z",
+      "updatedAt": "2024-12-18T23:22:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "866e582ea9c17cd57739557202ee95df76e600f0",
+      "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "topleveltag",
-      "headRefOid": "7f35ed6f2dcf8279041cddc07fd9a8e2798f9db4",
+      "headRefOid": "e11242b993aead325ba7070e55789cefb78a5e17",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -48896,9 +48916,64 @@
           "body": "We should return to this when the DICE errata has been accepted to remove the top level tags as well.",
           "createdAt": "2024-11-20T15:28:50Z",
           "updatedAt": "2024-11-20T15:28:50Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed in our meeting that we're going with 1 content type and dropping 500 and 502.",
+          "createdAt": "2024-12-18T20:02:48Z",
+          "updatedAt": "2024-12-18T20:02:48Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @henkbirkholz @thomas-fossati @yogeshbdeshpande @andrew-draper please take a look.",
+          "createdAt": "2024-12-18T23:22:52Z",
+          "updatedAt": "2024-12-18T23:22:52Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86VvFSu",
+          "commit": {
+            "abbreviatedOid": "7f35ed6"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-18T15:21:11Z",
+          "updatedAt": "2024-12-18T15:21:12Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I think we've agreed to drop the extensibility of the signing format.",
+              "createdAt": "2024-12-18T15:21:12Z",
+              "updatedAt": "2024-12-18T15:21:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86VvJOS",
+          "commit": {
+            "abbreviatedOid": "7f35ed6"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-12-18T15:27:02Z",
+          "updatedAt": "2024-12-18T15:27:03Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "TODO: Drop 500, 502, deprecate 501 but allow it for the TCG spec conformance.\r\n\r\nWe change the IANA request to have a single content type, application/rim+cbor.",
+              "createdAt": "2024-12-18T15:27:03Z",
+              "updatedAt": "2024-12-18T15:27:03Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 338,
@@ -51076,24 +51151,26 @@
       "id": "PR_kwDOH6-tI86DXYWT",
       "title": "Clarify that the ACS is a minimal information model",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/352",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This makes the appraisal specification of every triple normative for what later phases can depend on.\r\nFixes #349",
       "createdAt": "2024-11-27T17:11:21Z",
-      "updatedAt": "2024-12-11T21:47:25Z",
+      "updatedAt": "2024-12-18T14:58:37Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "infonorm",
       "headRefOid": "94523418c2b82c437f9dcf169510795d756aced5",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-12-18T14:58:37Z",
+      "mergedAt": "2024-12-18T14:58:37Z",
+      "mergedBy": "deeglaze",
+      "mergeCommit": {
+        "oid": "443a061d4d458643ca891a72069328ad3d930c96"
+      },
       "comments": [
         {
           "author": "deeglaze",
@@ -51725,6 +51802,58 @@
           ]
         }
       ]
+    },
+    {
+      "number": 354,
+      "id": "PR_kwDOH6-tI86FrMSz",
+      "title": "Add linear privilege level measurement value type",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/354",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As a means of representing a CPL or VMPL, this provides some extra semantic understanding. Leaving condition-matching to a later PR.",
+      "createdAt": "2024-12-18T16:46:55Z",
+      "updatedAt": "2024-12-18T16:58:00Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "privlevel",
+      "headRefOid": "879c4b2b67a9caca5a809ab61df6e391672cf515",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 355,
+      "id": "PR_kwDOH6-tI86FtZTH",
+      "title": "Minor edits to Input Validation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/355",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-12-18T23:37:47Z",
+      "updatedAt": "2024-12-18T23:37:48Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "input-validation",
+      "headRefOid": "aabb1bf07eaf92c36dbfa2f689da0b86120777d5",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
