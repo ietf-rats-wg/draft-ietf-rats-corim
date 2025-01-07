@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-05T01:52:09.007639+00:00",
+  "timestamp": "2025-01-07T01:46:25.113532+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -48821,13 +48821,13 @@
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2025-01-03T13:47:30Z",
+      "updatedAt": "2025-01-07T00:26:13Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "topleveltag",
-      "headRefOid": "e11242b993aead325ba7070e55789cefb78a5e17",
+      "headRefOid": "cfba300b01987ba16bcf36bbaa5f7469e0a6b0bc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -49036,6 +49036,65 @@
               "updatedAt": "2025-01-03T13:50:25Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86W_K-b",
+          "commit": {
+            "abbreviatedOid": "e11242b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-06T23:35:19Z",
+          "updatedAt": "2025-01-06T23:47:51Z",
+          "comments": [
+            {
+              "originalPosition": 126,
+              "body": "I didn't see that application/rim+cbor was taken. What made it invalid?",
+              "createdAt": "2025-01-06T23:35:19Z",
+              "updatedAt": "2025-01-06T23:47:51Z"
+            },
+            {
+              "originalPosition": 126,
+              "body": "> Let's call it `corim` rather than `rim` - we don't want to create confusion with TCG's \"Reference Integrity Manifest (RIM).\"\r\n\r\nThere are a variety of TCG specs that refer to themselves as \"rim\", but I don't believe any have registered media types. The DICE Endorsement Architecture spec (that defines corim) includes \"application/rim+cbor\" which is published (but didn't yet request a media type - this could be done immediately if necessary). \r\nTCG regards the published spec as having priority over subsequent specs. But it really comes down to what's registered by IANA. \r\nPragmatically, should the TCG corim and the IETF corim have different media types. For any given release of the specs one spec may be a subset of the other's functionality (due to processing idiosyncrasies). Can they both have the same media type name? Conversely, when the specs are aligned, but they have different media type names - is that desirable?\r\nNote that TCG DICE Endorsement appendices are not normative. The normative expressions are cddl-like (but not cddl). The intent was the I-D would make the cddl normative. If there are separate media types for each, then that seems to say the TCG should create normative cddl. ",
+              "createdAt": "2025-01-06T23:47:20Z",
+              "updatedAt": "2025-01-06T23:54:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86W_R3s",
+          "commit": {
+            "abbreviatedOid": "e11242b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-07T00:07:35Z",
+          "updatedAt": "2025-01-07T00:07:50Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "This seems like a gratuitous change that likely will conflict with PR #326 ",
+              "createdAt": "2025-01-07T00:07:35Z",
+              "updatedAt": "2025-01-07T00:07:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86W_VH7",
+          "commit": {
+            "abbreviatedOid": "cfba300"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I basically approve but need to resolve thread related to which media type string to request.",
+          "createdAt": "2025-01-07T00:26:13Z",
+          "updatedAt": "2025-01-07T00:26:13Z",
+          "comments": []
         }
       ]
     },
