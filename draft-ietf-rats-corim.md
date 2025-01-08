@@ -1823,7 +1823,6 @@ Any CoRIM that has been secured by a cryptographic mechanism, such as a signatur
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
-The selection process MUST yield at least one usable tag else the Verifier MUST NOT proceed to the next stage.
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
