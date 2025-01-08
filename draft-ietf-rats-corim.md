@@ -1874,7 +1874,7 @@ If a trusted root certificate is found, X.509 certificate validation is performe
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.
 
-Regardless of the specific integrity protection method used, the Evidence's integrity MUST be validated successfully else the Verifier MUST NOT evaluate the Evidence in later stages.
+Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
 > If a CoRIM profile is supplied, it MUST describe:
 >
