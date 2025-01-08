@@ -500,7 +500,6 @@ MTI Triples:
 * Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
 * Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
 * Conditional Endorsement triples: describing one or more conditions that, once matched, result in augmenting the Attester's actual state with the supplied Endorsed Values ({{sec-comid-triple-cond-endors}}).
-* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
 
 OTI Triples:
 
@@ -509,6 +508,7 @@ OTI Triples:
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
+* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
 
 The set of triples is extensible and this document specifies an extension mechanism via profiles (see {{sec-extensibility}}). While the use of profiles can also define constraints that limit the types of triples processed by a Verifier, every Verifier MUST nevertheless implement and support triples specified as MTI in this document.
 
