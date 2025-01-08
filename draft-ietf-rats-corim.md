@@ -510,7 +510,12 @@ OTI Triples:
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
 * CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
 
-The set of triples is extensible and this document specifies an extension mechanism via profiles (see {{sec-extensibility}}). While the use of profiles can also define constraints that limit the types of triples processed by a Verifier, every Verifier MUST nevertheless implement and support triples specified as MTI in this document.
+CoMID triples are extensible ({{sec-comid-triples}}).
+Triples added via the extensibility feature MUST be OTI class triples.
+This document specifies profiles (see {{sec-extensibility}}).
+OTI triples MAY be reclassified as MTI using a profile.
+Conversely, profiles can choose not to _use_ certain MTI triples.
+Profiles MUST NOT reclassify MTI triples as OTI.
 
 ## Structure
 
