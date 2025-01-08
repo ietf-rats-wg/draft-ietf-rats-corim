@@ -489,7 +489,7 @@ CoMID triples typically encode assertions made by the CoRIM author about Attesti
 
 This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
 The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
-Every CoRIM Verifier MUST support the MTI triples.
+Every CoRIM Verifier MUST implement the MTI triples.
 The OTI class of triples are generally useful across profiles.
 A CoRIM Verifier SHOULD implement OTI triples.
 Verifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.
