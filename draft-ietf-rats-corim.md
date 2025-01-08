@@ -1831,8 +1831,7 @@ Later stages will further select the CoRIMs appropriate to the Evidence Appraisa
 The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
 
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
-Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is
-a CoMID-CoSWID linking triple.
+Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.
 
 #### CoBOM Extraction
 
