@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-07T01:46:25.113532+00:00",
+  "timestamp": "2025-01-09T02:13:46.097610+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7949,6 +7949,22 @@
           "updatedAt": "2024-12-04T15:54:20Z"
         }
       ]
+    },
+    {
+      "number": 356,
+      "id": "I_kwDOH6-tI86lcXkt",
+      "title": "What to do if no CoRIM are selected?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/356",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "              I think this requirement should be removed actually. There are cases where you verify evidence purely through policy and no corims. You just trivially go from phase 1 to phase 5\r\n\r\n\r\nWe should be clear about the interface between the CoRIM verifier and the rest of the Appraisal stages.  Then, we can re-introduce a normative sentence explaining what is expected in such case.\r\n\r\n_Originally posted by @deeglaze in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/355#discussion_r1891112961_\r\n            ",
+      "createdAt": "2025-01-08T15:25:48Z",
+      "updatedAt": "2025-01-08T15:25:48Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -42399,7 +42415,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2024-12-18T15:01:45Z",
+      "updatedAt": "2025-01-08T15:59:31Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
@@ -43041,6 +43057,66 @@
               "body": "Agreed.",
               "createdAt": "2024-12-18T15:01:45Z",
               "updatedAt": "2024-12-18T15:01:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XP5TZ",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:48:20Z",
+          "updatedAt": "2025-01-08T15:48:20Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "TODO: Rename this object to a name which is a noun rather than a verb",
+              "createdAt": "2025-01-08T15:48:20Z",
+              "updatedAt": "2025-01-08T15:48:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XP5Uh",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:48:22Z",
+          "updatedAt": "2025-01-08T15:48:22Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "why is this needed? is `tagged-bytes` not sufficient?",
+              "createdAt": "2025-01-08T15:48:22Z",
+              "updatedAt": "2025-01-08T15:48:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XQAaK",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:59:31Z",
+          "updatedAt": "2025-01-08T15:59:31Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\r\n```\r\nShould we remove the untagged bytes?",
+              "createdAt": "2025-01-08T15:59:31Z",
+              "updatedAt": "2025-01-08T15:59:44Z"
             }
           ]
         }
@@ -48821,13 +48897,13 @@
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2025-01-07T00:26:13Z",
+      "updatedAt": "2025-01-08T15:41:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "topleveltag",
-      "headRefOid": "cfba300b01987ba16bcf36bbaa5f7469e0a6b0bc",
+      "headRefOid": "67aaaa43b02db2541c1bc306a52b68d5299e6304",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -49095,6 +49171,106 @@
           "createdAt": "2025-01-07T00:26:13Z",
           "updatedAt": "2025-01-07T00:26:13Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPoV8",
+          "commit": {
+            "abbreviatedOid": "cfba300"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:21:06Z",
+          "updatedAt": "2025-01-08T15:21:06Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "The media type for signed-corim would be application/cose. The unprotected header for the payload's media type would be application/rim+cbor.",
+              "createdAt": "2025-01-08T15:21:06Z",
+              "updatedAt": "2025-01-08T15:21:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPr-D",
+          "commit": {
+            "abbreviatedOid": "6e77393"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:27:07Z",
+          "updatedAt": "2025-01-08T15:27:07Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I don't understand your second comment. ts=2?",
+              "createdAt": "2025-01-08T15:27:07Z",
+              "updatedAt": "2025-01-08T15:27:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPwDC",
+          "commit": {
+            "abbreviatedOid": "e11242b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:33:43Z",
+          "updatedAt": "2025-01-08T15:33:43Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Fixed?",
+              "createdAt": "2025-01-08T15:33:43Z",
+              "updatedAt": "2025-01-08T15:33:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPwGL",
+          "commit": {
+            "abbreviatedOid": "e11242b"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:33:47Z",
+          "updatedAt": "2025-01-08T15:33:47Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Removed.",
+              "createdAt": "2025-01-08T15:33:47Z",
+              "updatedAt": "2025-01-08T15:33:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XP1cI",
+          "commit": {
+            "abbreviatedOid": "a4c2f02"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:41:54Z",
+          "updatedAt": "2025-01-08T15:41:54Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "My text editor trims trailing whitespace automatically. Removed.",
+              "createdAt": "2025-01-08T15:41:54Z",
+              "updatedAt": "2025-01-08T15:41:54Z"
+            }
+          ]
         }
       ]
     },
@@ -51410,13 +51586,13 @@
       "labels": [],
       "body": "* Introduced an MTI/OTI categorization in an updated version of the itemized list in Section 5 Concise Module Identifier (CoMID)\r\n* Added normative language MUST for MTI & SHOULD for OTI, including examples when it is okay not to implement OTI\r\n\r\nThis is a \"first draft\", which I am not marking as a draft so it can be bashed early and ferociously.",
       "createdAt": "2024-12-05T16:32:44Z",
-      "updatedAt": "2024-12-11T15:18:24Z",
+      "updatedAt": "2025-01-08T15:12:29Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "50960a343824e237bc44c821a9d41df702a4bcaf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "mti-triples",
-      "headRefOid": "48369be4f9cb52f120f4bf29c3868fcaa6c39e6b",
+      "headRefOid": "2d6d0ce75897d5bad2bc55172155ebfd2fef279b",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -51923,6 +52099,32 @@
               "updatedAt": "2024-12-11T15:18:24Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPgmQ",
+          "commit": {
+            "abbreviatedOid": "48369be"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-08T15:10:27Z",
+          "updatedAt": "2025-01-08T15:10:27Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPikM",
+          "commit": {
+            "abbreviatedOid": "2d6d0ce"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-08T15:12:29Z",
+          "updatedAt": "2025-01-08T15:12:29Z",
+          "comments": []
         }
       ]
     },
@@ -51964,13 +52166,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-12-18T23:37:47Z",
-      "updatedAt": "2024-12-19T22:32:35Z",
+      "updatedAt": "2025-01-08T15:40:56Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "input-validation",
-      "headRefOid": "be374185c70ff32b0db869c903ec4388d284eebf",
+      "headRefOid": "ef7d073183376b229ea82f0ec9fda4243555f1df",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -52076,6 +52278,105 @@
               "updatedAt": "2024-12-19T22:32:36Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPoIr",
+          "commit": {
+            "abbreviatedOid": "be37418"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:20:45Z",
+          "updatedAt": "2025-01-08T15:20:46Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\n```",
+              "createdAt": "2025-01-08T15:20:46Z",
+              "updatedAt": "2025-01-08T15:20:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPsJF",
+          "commit": {
+            "abbreviatedOid": "febc493"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:27:24Z",
+          "updatedAt": "2025-01-08T15:27:25Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nCross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.\r\n```",
+              "createdAt": "2025-01-08T15:27:25Z",
+              "updatedAt": "2025-01-08T15:27:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPt04",
+          "commit": {
+            "abbreviatedOid": "be37418"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-08T15:30:07Z",
+          "updatedAt": "2025-01-08T15:30:07Z",
+          "comments": [
+            {
+              "originalPosition": 62,
+              "body": "```suggestion\r\nRegardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.\r\n```",
+              "createdAt": "2025-01-08T15:30:07Z",
+              "updatedAt": "2025-01-08T15:37:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XPzm4",
+          "commit": {
+            "abbreviatedOid": "ef7d073"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-08T15:39:24Z",
+          "updatedAt": "2025-01-08T15:39:24Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XP0Di",
+          "commit": {
+            "abbreviatedOid": "ef7d073"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-01-08T15:39:55Z",
+          "updatedAt": "2025-01-08T15:39:55Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XP0xy",
+          "commit": {
+            "abbreviatedOid": "ef7d073"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-08T15:40:56Z",
+          "updatedAt": "2025-01-08T15:40:56Z",
+          "comments": []
         }
       ]
     }
