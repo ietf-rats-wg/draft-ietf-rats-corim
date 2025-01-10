@@ -2292,31 +2292,52 @@ unprotected-corim-header-map = {
 <p id="section-5-3">A CoMID defines several types of Claims, using "triples" semantics.<a href="#section-5-3" class="pilcrow">¶</a></p>
 <p id="section-5-4">At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">The set of triples is extensible.
-The following triples are currently defined:<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-5">This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+The MTI triples are essential to basic appraisal processing as illustrated in <span>[<a href="#RFC9334" class="cite xref">RFC9334</a>]</span> and <span>[<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.
+Every CoRIM Verifier MUST implement the MTI triples.
+The OTI class of triples are generally useful across profiles.
+A CoRIM Verifier SHOULD implement OTI triples.
+Verifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.
+For example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-6">MTI Triples:<a href="#section-5-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-6.1">
-          <p id="section-5-6.1.1">Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment (<a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>).<a href="#section-5-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5-7.1">
+          <p id="section-5-7.1.1">Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment (<a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>).<a href="#section-5-7.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-6.2">
-          <p id="section-5-6.2.1">Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>).<a href="#section-5-6.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-5-7.2">
+          <p id="section-5-7.2.1">Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>).<a href="#section-5-7.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-5-6.3">
-          <p id="section-5-6.3.1">Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device (<a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.4.6</a>).<a href="#section-5-6.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-5-6.4">
-          <p id="section-5-6.4.1">Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester (<a href="#sec-comid-triple-attest-key" class="auto internal xref">Section 5.1.4.7</a>).<a href="#section-5-6.4.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-5-6.5">
-          <p id="section-5-6.5.1">Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements (<a href="#sec-comid-triple-domain-dependency" class="auto internal xref">Section 5.1.4.8</a>).<a href="#section-5-6.5.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-5-6.6">
-          <p id="section-5-6.6.1">Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments (<a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.4.9</a>).<a href="#section-5-6.6.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-5-6.7">
-          <p id="section-5-6.7.1">CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags (<a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.4.10</a>).<a href="#section-5-6.7.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-5-7.3">
+          <p id="section-5-7.3.1">Conditional Endorsement triples: describing one or more conditions that, once matched, result in augmenting the Attester's actual state with the supplied Endorsed Values (<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>).<a href="#section-5-7.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
+<p id="section-5-8">OTI Triples:<a href="#section-5-8" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-9.1">
+          <p id="section-5-9.1.1">Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm (<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>).<a href="#section-5-9.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-9.2">
+          <p id="section-5-9.2.1">Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device (<a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.4.6</a>).<a href="#section-5-9.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-9.3">
+          <p id="section-5-9.3.1">Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester (<a href="#sec-comid-triple-attest-key" class="auto internal xref">Section 5.1.4.7</a>).<a href="#section-5-9.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-9.4">
+          <p id="section-5-9.4.1">Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements (<a href="#sec-comid-triple-domain-dependency" class="auto internal xref">Section 5.1.4.8</a>).<a href="#section-5-9.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-9.5">
+          <p id="section-5-9.5.1">Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments (<a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.4.9</a>).<a href="#section-5-9.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-9.6">
+          <p id="section-5-9.6.1">CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags (<a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.4.10</a>).<a href="#section-5-9.6.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-5-10">CoMID triples are extensible (<a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>).
+Triples added via the extensibility feature MUST be OTI class triples.
+This document specifies profiles (see <a href="#sec-extensibility" class="auto internal xref">Section 5.2</a>).
+OTI triples MAY be reclassified as MTI using a profile.
+Conversely, profiles can choose not to <em>use</em> certain MTI triples.
+Profiles MUST NOT reclassify MTI triples as OTI.<a href="#section-5-10" class="pilcrow">¶</a></p>
 <div id="structure">
 <section id="section-5.1">
         <h3 id="name-structure">
@@ -2590,14 +2611,11 @@ Described in <a href="#sec-comid-triple-domain-membership" class="auto internal 
 Described in <a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.4.10</a>.<a href="#section-5.1.4-5.7.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-5.8">
-              <p id="section-5.1.4-5.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of
-conditional Endorsements based on the acceptance of a stateful environment.
+              <p id="section-5.1.4-5.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
 Described in <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.5</a>.<a href="#section-5.1.4-5.8.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-5.9">
-              <p id="section-5.1.4-5.9.1"><code>conditional-endorsement-triples</code> (index 10): Triples describing a series of
-Endorsement that are applicable based on the acceptance of a series of
-stateful environment records.
+              <p id="section-5.1.4-5.9.1"><code>conditional-endorsement-triples</code> (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
 Described in <a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.4.4</a>.<a href="#section-5.1.4-5.9.1" class="pilcrow">¶</a></p>
 </li>
           </ul>

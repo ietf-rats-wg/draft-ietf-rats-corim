@@ -746,8 +746,18 @@ Table of Contents
    their security features, for example measurements, cryptographic key
    material, etc.
 
-   The set of triples is extensible.  The following triples are
-   currently defined:
+   This specification defines two classes of triples, the Mandatory to
+   Implement (MTI) and the Optional to Implement (OTI).  The MTI triples
+   are essential to basic appraisal processing as illustrated in
+   [RFC9334] and [I-D.ietf-rats-endorsements].  Every CoRIM Verifier
+   MUST implement the MTI triples.  The OTI class of triples are
+   generally useful across profiles.  A CoRIM Verifier SHOULD implement
+   OTI triples.  Verifiers may be constrained in various ways that may
+   make implementation of the OTI class infeasible or unnecessary.  For
+   example, deployment environments may have constrained resources,
+   limited code size, or limited scope Attesters.
+
+   MTI Triples:
 
    *  Reference Values triples: containing Reference Values that are
       expected to match Evidence for a given Target Environment
@@ -757,6 +767,16 @@ Table of Contents
       features about an Environment that do not appear in Evidence.
       Specific examples include testing or certification data pertaining
       to a module (Section 5.1.4.3).
+
+   *  Conditional Endorsement triples: describing one or more conditions
+      that, once matched, result in augmenting the Attester's actual
+      state with the supplied Endorsed Values (Section 5.1.4.4).
+
+   OTI Triples:
+
+   *  Conditional Endorsement Series triples: describing conditional
+      endorsements that are evaluated using a special matching algorithm
+      (Section 5.1.4.4).
 
    *  Device Identity triples: containing cryptographic credentials -
       for example, an IDevID - uniquely identifying a device
@@ -777,7 +797,14 @@ Table of Contents
       sub- Attester environments (Section 5.1.4.9).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID tags (Section 5.1.4.10).
+      with existing CoSWID Payload tags (Section 5.1.4.10).
+
+   CoMID triples are extensible (Section 5.1.4).  Triples added via the
+   extensibility feature MUST be OTI class triples.  This document
+   specifies profiles (see Section 5.2).  OTI triples MAY be
+   reclassified as MTI using a profile.  Conversely, profiles can choose
+   not to _use_ certain MTI triples.  Profiles MUST NOT reclassify MTI
+   triples as OTI.
 
 5.1.  Structure
 
@@ -984,14 +1011,13 @@ Table of Contents
       existing CoSWID tags.  Described in Section 5.1.4.10.
 
    *  conditional-endorsement-series-triples (index 8): Triples
-      describing a series of conditional Endorsements based on the
-      acceptance of a stateful environment.  Described in
-      Section 5.1.4.5.
+      describing a series of Endorsement that are applicable based on
+      the acceptance of a series of stateful environment records.
+      Described in Section 5.1.4.5.
 
    *  conditional-endorsement-triples (index 10): Triples describing a
-      series of Endorsement that are applicable based on the acceptance
-      of a series of stateful environment records.  Described in
-      Section 5.1.4.4.
+      series of conditional Endorsements based on the acceptance of a
+      stateful environment.  Described in Section 5.1.4.4.
 
 5.1.4.1.  Environments
 
