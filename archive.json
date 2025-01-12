@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-09T02:13:46.097610+00:00",
+  "timestamp": "2025-01-12T01:53:59.151559+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7962,9 +7962,31 @@
       "labels": [],
       "body": "              I think this requirement should be removed actually. There are cases where you verify evidence purely through policy and no corims. You just trivially go from phase 1 to phase 5\r\n\r\n\r\nWe should be clear about the interface between the CoRIM verifier and the rest of the Appraisal stages.  Then, we can re-introduce a normative sentence explaining what is expected in such case.\r\n\r\n_Originally posted by @deeglaze in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/355#discussion_r1891112961_\r\n            ",
       "createdAt": "2025-01-08T15:25:48Z",
-      "updatedAt": "2025-01-08T15:25:48Z",
+      "updatedAt": "2025-01-10T17:05:43Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As I said [here](https://mailarchive.ietf.org/arch/msg/rats/1ul4ybOOUeQJ4-sqb8Jl9KVuKaE/) there can/should be at least two specifications:\r\n1. A standalone CoRIM-as-a-file-format (CDDL and all that) specification.\r\n2. A RATS-approved Verifier specification that may (but does not have to) operate on CoRIMs.",
+          "createdAt": "2025-01-10T16:54:00Z",
+          "updatedAt": "2025-01-10T16:54:00Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Originally corim was \"just\" a format spec, but questions were raised about whether or not the appraisal process would work. Maybe something was missing or something was extraneous. This led to the internal representation schema and the transformation layer etc. Now that this is in place possibly it makes sense to separate them? However, they are tightly coupled in terms of the cddl that is used, so you would need to progress them in lock step if separate. Separating them would require WG adoption which will add a procedural component for not much benefit.",
+          "createdAt": "2025-01-10T17:01:57Z",
+          "updatedAt": "2025-01-10T17:01:57Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agree with Ned here. The TCG spec for DICE endorsements coming to IETF to specify general endorsements significantly delayed the spec due to expanded scope. A new I-D for a general attestation verifier independent of CoRIM has the risk of a similar feature creep and delay.",
+          "createdAt": "2025-01-10T17:05:41Z",
+          "updatedAt": "2025-01-10T17:05:41Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -42415,7 +42437,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2025-01-08T15:59:31Z",
+      "updatedAt": "2025-01-10T01:01:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
@@ -43117,6 +43139,120 @@
               "body": "```suggestion\r\n```\r\nShould we remove the untagged bytes?",
               "createdAt": "2025-01-08T15:59:31Z",
               "updatedAt": "2025-01-08T15:59:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XUZtk",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-09T04:12:12Z",
+          "updatedAt": "2025-01-09T04:12:12Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I see no strong reason to potentially break spdm evidence.",
+              "createdAt": "2025-01-09T04:12:12Z",
+              "updatedAt": "2025-01-09T04:12:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XdyPO",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-09T23:55:29Z",
+          "updatedAt": "2025-01-09T23:55:29Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "> I see no strong reason to potentially break spdm evidence.\r\n\r\nI prefer to keep it. This saves a couple of bytes, and it so happens I've been in conversations where I'm being asked to shave a handful of bytes. ",
+              "createdAt": "2025-01-09T23:55:29Z",
+              "updatedAt": "2025-01-09T23:55:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Xdzt6",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see multiple comments",
+          "createdAt": "2025-01-10T00:03:22Z",
+          "updatedAt": "2025-01-10T01:01:35Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "If the goal is to have a form that is for reference values and another for evidence then `mask : bytes` doesn't make sense to be optional since they could use $raw-value-type-choice /= bytes or tagged-bytes.\r\n\r\nMaybe call it `masked-raw-value = [ value : bytes, mask : bytes ]`",
+              "createdAt": "2025-01-10T00:03:22Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 28,
+              "body": "Use of CBOR tagged $raw-value-type-choice should be a constraint on profile extensions rather than on the spec itself. ",
+              "createdAt": "2025-01-10T00:11:59Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "\"This\" may be ambiguous. Does it mean \"CBOR tagged values allows ...\"? The justification text that follows is true if the parser understands the CBOR tag (which it might not if it is a vendor-specific and there isn't an overarching profile context. The wording in general goes too far in that the first 4 phases of verifier are not dealing with semantically rich values (even if the CDDL implies rich semantics). ",
+              "createdAt": "2025-01-10T00:16:31Z",
+              "updatedAt": "2025-01-10T01:01:35Z"
+            },
+            {
+              "originalPosition": 31,
+              "body": "```suggestion\r\nA raw value intended for comparison using a mask value selects the bits to compare during appraisal.\r\n```\r\nI don't think the example is helpful since it implies the reader knows something about the CM type wherein the stateful-environment-record is asserted. It's still meaningful without the example.\r\n",
+              "createdAt": "2025-01-10T00:19:50Z",
+              "updatedAt": "2025-01-10T01:01:35Z"
+            },
+            {
+              "originalPosition": 37,
+              "body": "There are lots of ways to extend the schema. The conventions should be described somewhere in a section that overviews the various extension points and the registries that control them. The `$raw-value-type-choice` extension point can be a small paragraph there. Writing that section will be the right place to have the discussion about who and how extensions are managed IMO.",
+              "createdAt": "2025-01-10T00:26:20Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nFor backwards compatibility, the syntax where the mask appears under codepoint 5 is still supported.\r\nThis will be removed before publication.\r\n```\r\nThe `raw-value-mask` in `measurement-values-map` is deprecated for backwards compatibility. This code point may be removed in a future revision of this specification.",
+              "createdAt": "2025-01-10T00:29:38Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\n\r\n```\r\n\r\nAll of the measurements are opaque to the Verifier through Phase-4. It is ambiguous as stated, but also rehashes what is described elsewhere.",
+              "createdAt": "2025-01-10T00:34:57Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "Are we using \"key\" or \"code point\"? Almost all other uses are in the context of cryptographic keys except for 'mkey'. There are two cases where \"code point\" is used. I didn't find any other cases where \"key\" is used to mean code point. (but I may have missed them).\r\n\r\nHowever, this text may be going in the wrong direction as the ACS contains actual state (and not possible state) which means corroborated evidence will have applied the mask to produce an unmasked value. That is to say, the evidence value (in bytes) will be matched even though the corroborated evidence value (in bytes) is different. Both will be in the ACS under different authorities.  \r\nThe reference bytes might be the inverse of the mask since reference doesn't care about the other state of the attester in evidence bytes. If this assumption is true, the mask can be computed from ACS entries. But if not, it's peculiar why a reference value would contain bits that are otherwise ignored. ",
+              "createdAt": "2025-01-10T00:38:50Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 73,
+              "body": "There's the potential for the mask in 4.raw-value-compare (or better name) to be different from the mask in 5 of both are populated. The language should be clear that if 4.raw-value-compare is used then 5 MUST/SHOULD not be used.  Or if 5 is used then 4.raw-value-compare MUST/SHOULD not be used.\r\n\r\nSHOULD makes it harder to get verifier logic right. I'm leaning toward MUST.",
+              "createdAt": "2025-01-10T01:00:03Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
+            },
+            {
+              "originalPosition": 74,
+              "body": "```suggestion\r\n\r\n```\r\n\r\nA previous paragraph already said 5 is deprecated. Don't need to repeat it here (in possibly more ambiguous text).",
+              "createdAt": "2025-01-10T01:01:12Z",
+              "updatedAt": "2025-01-10T01:01:36Z"
             }
           ]
         }
@@ -51579,24 +51715,26 @@
       "id": "PR_kwDOH6-tI86ENXz_",
       "title": "Grouping Triples into MTI and OTI",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/353",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "* Introduced an MTI/OTI categorization in an updated version of the itemized list in Section 5 Concise Module Identifier (CoMID)\r\n* Added normative language MUST for MTI & SHOULD for OTI, including examples when it is okay not to implement OTI\r\n\r\nThis is a \"first draft\", which I am not marking as a draft so it can be bashed early and ferociously.",
       "createdAt": "2024-12-05T16:32:44Z",
-      "updatedAt": "2025-01-08T15:12:29Z",
+      "updatedAt": "2025-01-10T17:15:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "50960a343824e237bc44c821a9d41df702a4bcaf",
+      "baseRefOid": "d7d593cc338d08a3d8f2ae04b0729f323201cc57",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "mti-triples",
-      "headRefOid": "2d6d0ce75897d5bad2bc55172155ebfd2fef279b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "141bd595f589c3fb35935817b9c74f4be8183418",
+      "closedAt": "2025-01-10T17:15:39Z",
+      "mergedAt": "2025-01-10T17:15:39Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "ad08b31f94b524b69edd8710f51b1497a389e496"
+      },
       "comments": [],
       "reviews": [
         {
@@ -52116,14 +52254,27 @@
         {
           "id": "PRR_kwDOH6-tI86XPikM",
           "commit": {
-            "abbreviatedOid": "2d6d0ce"
+            "abbreviatedOid": "141bd59"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-01-08T15:12:29Z",
-          "updatedAt": "2025-01-08T15:12:29Z",
+          "updatedAt": "2025-01-10T17:13:35Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Xkv8G",
+          "commit": {
+            "abbreviatedOid": "141bd59"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-10T17:06:13Z",
+          "updatedAt": "2025-01-10T17:13:35Z",
           "comments": []
         }
       ]
@@ -52159,25 +52310,35 @@
       "id": "PR_kwDOH6-tI86FtZTH",
       "title": "Minor edits to Input Validation",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/355",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-12-18T23:37:47Z",
-      "updatedAt": "2025-01-08T15:40:56Z",
+      "updatedAt": "2025-01-10T10:47:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "input-validation",
       "headRefOid": "ef7d073183376b229ea82f0ec9fda4243555f1df",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2025-01-10T09:23:10Z",
+      "mergedAt": "2025-01-10T09:23:10Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "d7d593cc338d08a3d8f2ae04b0729f323201cc57"
+      },
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith & @andrew-draper : We were awaiting your review, we had this discussed during the CoRIM Meeting on 08th Jan 2025.",
+          "createdAt": "2025-01-09T18:08:14Z",
+          "updatedAt": "2025-01-09T18:08:14Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86VzZFe",
@@ -52376,6 +52537,19 @@
           "body": "",
           "createdAt": "2025-01-08T15:40:56Z",
           "updatedAt": "2025-01-08T15:40:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86XdxV4",
+          "commit": {
+            "abbreviatedOid": "ef7d073"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-01-09T23:50:41Z",
+          "updatedAt": "2025-01-09T23:50:41Z",
           "comments": []
         }
       ]
