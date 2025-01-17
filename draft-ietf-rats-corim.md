@@ -563,7 +563,7 @@ The following describes each member of the `concise-mid-tag` map.
   modules.
   Described in {{sec-comid-triples}}.
 
-* `profile-override` (index 5): A profile identifier that replaces the
+* `profile-override` (index 5): A profile identifier that overrides the
   `corim-map.profile` to interpret the contents of the `concise-mid-tag`. 
 The `corim-map.profile` MUST NOT change the interpretation of the `CoMID` tag when
   a `profile-override` value is supplied.
