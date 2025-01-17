@@ -362,6 +362,7 @@ A profile MAY extend the set of a given CoRIM type using the defined extension p
 Exercised extension points should preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
+If a CoRIM profile extends CoSWID extension points, the profile MUST be specified in a publicly available document to satisfy the "Specification Required" constraint of the IANA registries.
 
 A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-corim-signed}} and
 {{sec-mt-corim-unsigned}} with the `profile` parameter set to the appropriate value.
@@ -561,6 +562,11 @@ The following describes each member of the `concise-mid-tag` map.
   material, or structural relationship between the described module and other
   modules.
   Described in {{sec-comid-triples}}.
+
+* `profile-override` (index 5): A profile identifier that replaces the
+  `corim-map`'s profile to interpret the contents of the `concise-mid-tag`. The
+  `corim-map`'s profile MUST NOT change the interpretation of this `CoMID` when
+  the `profile-override` is specified.
 
 ### Tag Identity {#sec-comid-tag-id}
 
@@ -1408,6 +1414,11 @@ The following describes each member of the `concise-bom-tag` map.
 
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
   Described in {{sec-common-validity}}.
+
+* `profile-override` (index 3): A profile identifier that replaces the
+  `corim-map`'s profile to interpret the contents of the `concise-bom-tag`. The
+  `corim-map`'s profile MUST NOT change the interpretation of this `CoBOM` when
+  the `profile-override` is specified
 
 * `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
   See {{sec-iana-cobom}}.
@@ -2489,6 +2500,17 @@ The profile must specify how to compare the CBOR tagged Reference Value against 
 
 Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
 
+## Concise Software Identifier Extension {#sec-coswid}
+
+A CoRIM may contain a CoSWID tag as specified in {{-coswid}}.
+The CoRIM profile allows for the specifier to provide meaning to extension points in the "Specification Required" range of the extension points `$version-scheme` and `$$coswid-extension`.
+The CoRIM profile is not permitted to specify negative values for these extension points.
+To allow for tag-level scoping of profile identifier to bundle multiple items under a single CoRIM, this specification registers a `$$coswid-extension` to specifically name the profile that gives meaning to the profile-defined extensions.
+
+~~~ cddl
+{::include cddl/coswid-extension.cddl}
+~~~
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
@@ -2840,6 +2862,15 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 | application/corim-signed+cbor | - | TBD1 | {{&SELF}} |
 | application/corim-unsigned+cbor | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
+
+## CoSWID Item Registration
+
+IANA is requested to add the following CoSWID Items to the "Concise Software Identifier"
+registry {{!IANA.coswid}}.
+
+| Index | Item Name | Reference |
+| 58 | profile | {{&SELF}} |
+{: #tbl-coswid-item align="left" title="New CoSWID Items"}
 
 --- back
 
