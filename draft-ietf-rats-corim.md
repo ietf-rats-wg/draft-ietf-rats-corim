@@ -56,8 +56,8 @@ contributor:
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
   - ins: A. Draper
     name: Andrew Draper
-    org: Intel Corporation
-    email: andrew.draper@intel.com
+    org: Altera
+    email: andrew.draper@altera.com
     contribution: >
       Andrew contributed the concept, description, and semantics of conditional endorsements as well as consistent contribution to weekly reviews of others' edits.
   - ins: D. Glaze
