@@ -990,10 +990,11 @@ the sensitive values in memory are encrypted.
 Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers.
 
-A `raw-value` from Evidence or an Endorsement is a value of type `bytes` that is optionally tagged #6.560.
+A `raw-value` from Evidence or an Endorsement is a tagged value of type `bytes`.
+This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 
-Additional raw value types can be defined, but must be a CBOR tagged `bstr`.
+Additional value types can be added to `$raw-value-type-choice`, these additional values must be CBOR tagged `bstr`s.
 Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
 
 A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
@@ -2448,7 +2449,7 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 A `raw-value` entry contains binary data.
 
-The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must have type `bytes`, with an optional tag.
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must be tagged and have type `bytes`.
 
 The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `masked-raw-value` entry, which specifies an expected value and a mask.
 
