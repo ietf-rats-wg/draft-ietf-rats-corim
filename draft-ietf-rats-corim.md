@@ -564,9 +564,9 @@ The following describes each member of the `concise-mid-tag` map.
   Described in {{sec-comid-triples}}.
 
 * `profile-override` (index 5): A profile identifier that replaces the
-  `corim-map`'s profile to interpret the contents of the `concise-mid-tag`. The
-  `corim-map`'s profile MUST NOT change the interpretation of this `CoMID` when
-  the `profile-override` is specified.
+  `corim-map.profile` to interpret the contents of the `concise-mid-tag`. 
+The `corim-map.profile` MUST NOT change the interpretation of the `CoMID` tag when
+  a `profile-override` value is supplied.
 
 ### Tag Identity {#sec-comid-tag-id}
 
@@ -1415,10 +1415,10 @@ The following describes each member of the `concise-bom-tag` map.
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
   Described in {{sec-common-validity}}.
 
-* `profile-override` (index 3): A profile identifier that replaces the
-  `corim-map`'s profile to interpret the contents of the `concise-bom-tag`. The
-  `corim-map`'s profile MUST NOT change the interpretation of this `CoBOM` when
-  the `profile-override` is specified
+* `profile-override` (index 3): A profile identifier that overrides the
+  `corim-map.profile` to interpret the contents of the `concise-bom-tag`.
+The `corim-map.profile`  MUST NOT change the interpretation of the `CoBOM` tag when
+  a `profile-override` value is supplied.
 
 * `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
   See {{sec-iana-cobom}}.
@@ -2502,9 +2502,8 @@ Note that a Verifier may compare Reference Values in any order, so the compariso
 
 ## Concise Software Identifier Extension {#sec-coswid}
 
-A CoRIM may contain a CoSWID tag as specified in {{-coswid}}.
+A CoRIM may contain a CoSWID tag as specified in ({{sec-corim-tags}}).
 The CoRIM profile allows for the specifier to provide meaning to extension points in the "Specification Required" range of the extension points `$version-scheme` and `$$coswid-extension`.
-The CoRIM profile is not permitted to specify negative values for these extension points.
 To allow for tag-level scoping of profile identifier to bundle multiple items under a single CoRIM, this specification registers a `$$coswid-extension` to specifically name the profile that gives meaning to the profile-defined extensions.
 
 ~~~ cddl
