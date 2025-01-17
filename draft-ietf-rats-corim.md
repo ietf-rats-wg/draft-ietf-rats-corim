@@ -994,21 +994,18 @@ A `raw-value` from Evidence or an Endorsement is a value of type `bytes` that is
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 
 Additional raw value types can be defined, but must be a CBOR tagged `bstr`.
-This allows parsers to distinguish between the various semantics of raw values, and lets Verifiers compare raw values without understanding their contents.
+Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
 
-A raw value intended for comparison, for example in `stateful-environment-record` can include a mask value, which selects the bits to compare during appraisal.
+A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
 
-When a new raw value type is defined, a comparison algorithm may also be defined.
-Typically, a CoRIM profile is used to define new raw values and comparison algorithms.
-
-For backwards compatibility, the syntax where the mask appears under codepoint 5 is still supported.
-This will be removed before publication.
+The `raw-value-mask` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
+This code point may be removed in a future revision of this specification.
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
-{::include cddl/raw-value-compare.cddl}
+{::include cddl/masked-raw-value.cddl}
 ~~~
 
 ###### Address Types {#sec-comid-address-types}
@@ -2449,27 +2446,24 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
-A `raw-value` entry contains binary data which a Verifier following this specification will treat as opaque.
+A `raw-value` entry contains binary data.
 
-The value stored under `measurement-values-map` key 4 in an ACS entry must be a `raw-value` entry, which must have type `bytes`, with an optional tag.
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must have type `bytes`, with an optional tag.
 
-The value stored under the condition ECT `measurement-values-map` key 4 may additionally be a `raw-value-compare` entry, which specifies an expected value and an optional mask.
+The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `masked-raw-value` entry, which specifies an expected value and a mask.
 
-If the condition ECT `measurement-value-map` key 4 is of type `bytes` or `tagged-bytes`, then the Verifier treats it in the same way as a `raw-value-compare` with the `value` field holding the same contents and the `mask` field omitted.
+If the condition ECT `measurement-value-map` codepoint 4 is of type `bytes` or `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
 The standard comparison function defined in this document does not use the tag value.
+
+For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `bytes` or `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
 
 The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
 
-If a mask is provided, then the comparison MUST return false if the lengths of the condition ECT mask and value are different.
+The comparison MUST return false if the lengths of the condition ECT mask and value are different.
 
-If a mask is not provided, then the comparison MUST return true if and only if the condition ECT value is binary equal to the candidate entry value.
-
-If a mask field is provided, then the comparison MUST use the mask to determine which bits to compare.
+The comparison MUST use the mask to determine which bits to compare.
 If a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.
 If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
-
-For backwards compatibility, a Verifier SHOULD treat a mask provided in condition ECT `measurement-values-mask` key 5 in the same way as a mask provided in the `mask` entry of `raw-value-compare`.
-This backwards compatibility option will be removed before publication.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
@@ -2617,7 +2611,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
-| 563-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     563 | `masked-raw-value`  | masked-raw-value, see {{sec-comid-raw-value-types}}           | {{&SELF}} |
+| 564-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
