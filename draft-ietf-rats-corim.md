@@ -1187,7 +1187,7 @@ The Conditional Endorsement Series Triple is used to assert endorsed values base
 Every `conditional-series-record` selection MUST select the same `mkey`s where
 every selected `mkey`'s corresponding set of keys (i.e., `mval`._key_) MUST be the same across each `conditional-series-record`.
 For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements
-and `mval` contains only A= _variable-X_, B= _variable-Y_, and C= _variable-Z_ respectively for every `conditional-series-record` in the series.
+and `mval` contains only A= _variable-X_, B= _variable-Y_, and C= _variable-Z_ (exactly the set of keys A, B, and C) respectively for every `conditional-series-record` in the series.
 
 These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
