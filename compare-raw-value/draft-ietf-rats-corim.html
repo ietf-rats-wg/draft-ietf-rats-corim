@@ -3041,9 +3041,10 @@ the sensitive values in memory are encrypted.<a href="#section-5.1.4.1.4.5-4.10.
                 </h6>
 <p id="section-5.1.4.1.4.6-1">Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers.<a href="#section-5.1.4.1.4.6-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4.6-2">A <code>raw-value</code> from Evidence or an Endorsement is a value of type <code>bytes</code> that is optionally tagged #6.560.
+<p id="section-5.1.4.1.4.6-2">A <code>raw-value</code> from Evidence or an Endorsement is a tagged value of type <code>bytes</code>.
+This specification defines tag #6.560.
 The default raw value measurement is of type <code>tagged-bytes</code> (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>).<a href="#section-5.1.4.1.4.6-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4.6-3">Additional raw value types can be defined, but must be a CBOR tagged <code>bstr</code>.
+<p id="section-5.1.4.1.4.6-3">Additional value types can be added to <code>$raw-value-type-choice</code>, these additional values must be CBOR tagged <code>bstr</code>s.
 Constraining all raw value types to be <code>bstr</code> lets Verifiers compare raw values without understanding their contents.<a href="#section-5.1.4.1.4.6-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1.4.6-4">A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
 The mask is applied by the Verifier as part of appraisal.
@@ -3052,7 +3053,6 @@ Only the raw value bits with corresponding TRUE mask bits are compared during ap
 This code point may be removed in a future revision of this specification.<a href="#section-5.1.4.1.4.6-5" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.4.6-6">
 <pre>
-$raw-value-type-choice /= bytes
 $raw-value-type-choice /= tagged-bytes
 $raw-value-type-choice /= masked-raw-value
 
@@ -5588,7 +5588,7 @@ If the value associated with any common hash algorithm identifier in the conditi
 <a href="#section-8.5.6.1.4" class="section-number selfRef">8.5.6.1.4. </a><a href="#name-comparison-for-raw-value-en" class="section-name selfRef">Comparison for raw-value entries</a>
               </h6>
 <p id="section-8.5.6.1.4-1">A <code>raw-value</code> entry contains binary data.<a href="#section-8.5.6.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.5.6.1.4-2">The value stored under <code>measurement-values-map</code> codepoint 4 in an ACS entry must be a <code>raw-value</code> entry, which must have type <code>bytes</code>, with an optional tag.<a href="#section-8.5.6.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.5.6.1.4-2">The value stored under <code>measurement-values-map</code> codepoint 4 in an ACS entry must be a <code>raw-value</code> entry, which must be tagged and have type <code>bytes</code>.<a href="#section-8.5.6.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-8.5.6.1.4-3">The value stored under the condition ECT <code>measurement-values-map</code> codepoint 4 may additionally be a <code>masked-raw-value</code> entry, which specifies an expected value and a mask.<a href="#section-8.5.6.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-8.5.6.1.4-4">If the condition ECT <code>measurement-value-map</code> codepoint 4 is of type <code>bytes</code> or <code>tagged-bytes</code>, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a <code>masked-raw-value</code> with the <code>value</code> field holding the same contents and a <code>mask</code> of the same length as the value with all bits set.
 The standard comparison function defined in this document does not use the tag value.<a href="#section-8.5.6.1.4-4" class="pilcrow">¶</a></p>
@@ -6985,7 +6985,6 @@ non-empty&lt;M&gt; = (M) .and ({ + any =&gt; any })
 oid-type = bytes
 tagged-oid-type = #6.111(oid-type)
 
-$raw-value-type-choice /= bytes
 $raw-value-type-choice /= tagged-bytes
 $raw-value-type-choice /= masked-raw-value
 
