@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-16T01:42:02.679378+00:00",
+  "timestamp": "2025-01-19T01:48:34.353690+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -7994,6 +7994,62 @@
           "updatedAt": "2025-01-12T23:04:04Z"
         }
       ]
+    },
+    {
+      "number": 357,
+      "id": "I_kwDOH6-tI86mnk8K",
+      "title": "Add section describing how to extend types",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/357",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The following text was proposed for addition to the description of `$raw-value-type-choice`, but was not added:\n\n`When a new raw value type is defined, a comparison algorithm may also be defined.`\n\nNed wrote a comment regarding this text as follows:\n\n> There are lots of ways to extend the schema. The conventions should be described somewhere in a section that overviews the various extension points and the registries that control them. The $raw-value-type-choice extension point can be a small paragraph there. Writing that section will be the right place to have the discussion about who and how extensions are managed IMO.\n\nI agree that we should write a section about extending different types, and include `$raw-value-type-choice` in that section.",
+      "createdAt": "2025-01-17T12:41:27Z",
+      "updatedAt": "2025-01-17T14:40:38Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If we\u2019re permitting tagged bytes of any tag, I\u2019m wondering if we can add the base CBOR bytes tags like 70, 71 for little endian numbers. Again I\u2019m looking to avoid needing profiles, and that stipulation in the text seemed to suggest that these are natural options.",
+          "createdAt": "2025-01-17T14:40:37Z",
+          "updatedAt": "2025-01-17T14:40:37Z"
+        }
+      ]
+    },
+    {
+      "number": 358,
+      "id": "I_kwDOH6-tI86mo1DR",
+      "title": "Signing one artifact for multiple profiles",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/358",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The CoRIM schema disallows multiple profiles, but also does not have a means of representing a bundle of CoRIMs each with their own profiles. This is troublesome when signing reference measurements for a firmware binary that is measured in different ways depending on the technology. Intel TDX, AMD SEV-SNP, and ARM CCA all have different ways of constructing a digest of a machine initial state that a firmware file like an IGVM describes how to load. I have no specified way to have a single document to deliver with the firmware that endorses each of the measurements that it could be seen with.\n\nEither we bind this with CMW and a specific cmwc_t that specifies something like tag-identity => #6.<TN for corim>(<<corim-map>>)?",
+      "createdAt": "2025-01-17T15:18:50Z",
+      "updatedAt": "2025-01-17T15:18:50Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 359,
+      "id": "I_kwDOH6-tI86mo-z3",
+      "title": "Update examples for raw-value",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/359",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Need to add issues for PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/294 (adding `raw-value-compare`)",
+      "createdAt": "2025-01-17T15:38:37Z",
+      "updatedAt": "2025-01-17T15:38:37Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -42444,13 +42500,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2025-01-10T01:01:35Z",
+      "updatedAt": "2025-01-17T19:02:50Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "compare-raw-value",
-      "headRefOid": "73cf48638935a35324e277c417ea8fafd25155f9",
+      "headRefOid": "5adc6367c73aa24f1f682112a82b610b18f96cc5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -43262,6 +43318,500 @@
               "updatedAt": "2025-01-10T01:01:36Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhbbT",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T12:29:42Z",
+          "updatedAt": "2025-01-17T12:29:42Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Tag 563 added. Name of type changed to masked-raw-value. Mask changed to required (not optional)",
+              "createdAt": "2025-01-17T12:29:42Z",
+              "updatedAt": "2025-01-17T12:29:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhcFL",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T12:31:06Z",
+          "updatedAt": "2025-01-17T12:31:06Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Comments below suggest we should keep it. Let's discuss in the meeting.",
+              "createdAt": "2025-01-17T12:31:06Z",
+              "updatedAt": "2025-01-17T12:32:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yhg6E",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T12:42:07Z",
+          "updatedAt": "2025-01-17T12:42:08Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "Issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/357 filed.\r\nParagraph describing extension here removed.",
+              "createdAt": "2025-01-17T12:42:07Z",
+              "updatedAt": "2025-01-17T12:42:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhiTj",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T12:45:18Z",
+          "updatedAt": "2025-01-17T12:45:18Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "Changed to use Ned's proposed text.",
+              "createdAt": "2025-01-17T12:45:18Z",
+              "updatedAt": "2025-01-17T12:45:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhouC",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T12:59:26Z",
+          "updatedAt": "2025-01-17T12:59:27Z",
+          "comments": [
+            {
+              "originalPosition": 56,
+              "body": "I have changed \"key\" in this section to \"codepoint\". Should there be a space?\r\n\r\nMy take on the use of reference is that if a reference value with mask matches an ACS entry, then the reference value provider is corroborating the ACS entry which exists.\r\n",
+              "createdAt": "2025-01-17T12:59:26Z",
+              "updatedAt": "2025-01-17T12:59:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhpL7",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T13:00:27Z",
+          "updatedAt": "2025-01-17T13:00:27Z",
+          "comments": [
+            {
+              "originalPosition": 73,
+              "body": "I have changed the text to say that codepoint 5 is only used if codepoint 4 is of type `bytes` or `tagged-bytes`",
+              "createdAt": "2025-01-17T13:00:27Z",
+              "updatedAt": "2025-01-17T13:00:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhpiN",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T13:01:10Z",
+          "updatedAt": "2025-01-17T13:01:10Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "Removed",
+              "createdAt": "2025-01-17T13:01:10Z",
+              "updatedAt": "2025-01-17T13:01:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhrU4",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T13:04:55Z",
+          "updatedAt": "2025-01-17T13:04:55Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "I have removed the second part of the sentence.\r\nEach subsection in this area has an introductory paragraph and I think it would be odd for raw-value not to have one.",
+              "createdAt": "2025-01-17T13:04:55Z",
+              "updatedAt": "2025-01-17T13:04:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yhupj",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T13:11:26Z",
+          "updatedAt": "2025-01-17T13:11:26Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Yes, this is ambiguous. Rewritten.",
+              "createdAt": "2025-01-17T13:11:26Z",
+              "updatedAt": "2025-01-17T13:11:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YhvLb",
+          "commit": {
+            "abbreviatedOid": "73cf486"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T13:12:12Z",
+          "updatedAt": "2025-01-17T13:12:12Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "Example removed",
+              "createdAt": "2025-01-17T13:12:12Z",
+              "updatedAt": "2025-01-17T13:12:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yi5fp",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T15:20:50Z",
+          "updatedAt": "2025-01-17T15:20:50Z",
+          "comments": [
+            {
+              "originalPosition": 28,
+              "body": "```suggestion\r\nAdditional value types can be added to `$raw-value-type-choice`, these additional values must be CBOR tagged `bstr`s.\r\n```",
+              "createdAt": "2025-01-17T15:20:50Z",
+              "updatedAt": "2025-01-17T15:26:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yi7FX",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T15:23:46Z",
+          "updatedAt": "2025-01-17T15:23:46Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "please remove optionally here!",
+              "createdAt": "2025-01-17T15:23:46Z",
+              "updatedAt": "2025-01-17T15:23:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yi-ra",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T15:30:07Z",
+          "updatedAt": "2025-01-17T15:30:08Z",
+          "comments": [
+            {
+              "originalPosition": 57,
+              "body": "```suggestion\r\nIf the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.\r\n```",
+              "createdAt": "2025-01-17T15:30:08Z",
+              "updatedAt": "2025-01-17T15:30:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yi-_m",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T15:30:43Z",
+          "updatedAt": "2025-01-17T15:30:43Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nThe value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must be tagged and have type `bytes`.\r\n```",
+              "createdAt": "2025-01-17T15:30:43Z",
+              "updatedAt": "2025-01-17T15:30:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yi_ju",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T15:31:44Z",
+          "updatedAt": "2025-01-17T15:31:44Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nA `raw-value` from Evidence or an Endorsement is a tagged value of type `bytes`.\r\nThis specification defines tag #6.560.\r\n```",
+              "createdAt": "2025-01-17T15:31:44Z",
+              "updatedAt": "2025-01-17T15:31:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjAKQ",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T15:32:51Z",
+          "updatedAt": "2025-01-17T15:32:51Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjCwy",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T15:37:27Z",
+          "updatedAt": "2025-01-17T15:37:27Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjC2f",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T15:37:37Z",
+          "updatedAt": "2025-01-17T15:37:37Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjiBN",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "LGTM, apart from a few small issues that should be easy to fix",
+          "createdAt": "2025-01-17T16:31:20Z",
+          "updatedAt": "2025-01-17T17:14:23Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "we should mention that the usage modes for raw-values are either:\r\n1. semantics provided by the profile\r\n2. fully opaque semantics",
+              "createdAt": "2025-01-17T16:31:21Z",
+              "updatedAt": "2025-01-17T17:14:23Z"
+            },
+            {
+              "originalPosition": 23,
+              "body": "Evidence seems out of scope here, while Reference Values should be in scope. (Also, some minor cleanup around value/type.)\r\n\r\n```suggestion\r\nA `raw-value` from Reference Values or an Endorsement is a value of type `tagged-bytes`.\r\n```",
+              "createdAt": "2025-01-17T16:33:11Z",
+              "updatedAt": "2025-01-17T18:03:46Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nThis specification defines tag #6.560 for the purpose.\r\n```",
+              "createdAt": "2025-01-17T16:34:13Z",
+              "updatedAt": "2025-01-17T17:14:23Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "If this is a requirement we need RFC2119 keywords:\r\n```suggestion\r\nAdditional value types can be added to `$raw-value-type-choice`, these additional values MUST be CBOR tagged `bstr`s.\r\n```",
+              "createdAt": "2025-01-17T16:35:34Z",
+              "updatedAt": "2025-01-17T17:14:23Z"
+            },
+            {
+              "originalPosition": 59,
+              "body": "in CBOR, the tag value is the whole thing.  \"number\" and \"content\" are the parts that we want to refer to here.\r\n\r\n\r\n```suggestion\r\nThe standard comparison function defined in this document only uses the tag content (i.e., the tag number is stripped off).\r\n```",
+              "createdAt": "2025-01-17T17:09:43Z",
+              "updatedAt": "2025-01-17T17:14:23Z"
+            },
+            {
+              "originalPosition": 61,
+              "body": "I think we agreed that simple `bytes` is not a valid type:\r\n\r\n```suggestion\r\nFor backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.\r\n```",
+              "createdAt": "2025-01-17T17:10:56Z",
+              "updatedAt": "2025-01-17T17:14:23Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "hmm, isn't this an inconsistency that should be flagged as an error instead?",
+              "createdAt": "2025-01-17T17:11:48Z",
+              "updatedAt": "2025-01-17T17:14:23Z"
+            },
+            {
+              "originalPosition": 78,
+              "body": "If you change this table you also need to recompute the cbor-tags file.\r\n\r\n\r\n```sh\r\nmake -C cddl cbor-tags-unique\r\n```\r\nshould do the trick",
+              "createdAt": "2025-01-17T17:13:29Z",
+              "updatedAt": "2025-01-17T18:39:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ykipk",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T18:29:43Z",
+          "updatedAt": "2025-01-17T18:29:43Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Agree with Thomas, we should remove Evidence from the equation, but just focus on Reference Values and Endorsed Values",
+              "createdAt": "2025-01-17T18:29:43Z",
+              "updatedAt": "2025-01-17T18:29:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YktOo",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T18:50:53Z",
+          "updatedAt": "2025-01-17T18:50:54Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nA raw value intended for comparison can also include a mask value, using the type `masked-raw-value` which selects the bits to compare during appraisal.\r\nThe mask is applied by the Verifier as part of appraisal.\r\nOnly the raw value bits with corresponding mask bits set to TRUE are compared during appraisal.\r\n```",
+              "createdAt": "2025-01-17T18:50:54Z",
+              "updatedAt": "2025-01-17T18:50:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yktwx",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T18:52:13Z",
+          "updatedAt": "2025-01-17T18:52:13Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "```suggestion\r\nThe `raw-value-mask` (code point 5) in `measurement-values-map` is deprecated, but retained for backwards compatibility.\r\n```",
+              "createdAt": "2025-01-17T18:52:13Z",
+              "updatedAt": "2025-01-17T18:52:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YkxnU",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T19:01:45Z",
+          "updatedAt": "2025-01-17T19:01:46Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "ACS been an array of ECT, should this also not have either `tagged-bytes` or `masked-raw-value` ?",
+              "createdAt": "2025-01-17T19:01:45Z",
+              "updatedAt": "2025-01-17T19:01:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YkyB2",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Left some comments, happy to discuss before the meeting, to make progress...",
+          "createdAt": "2025-01-17T19:02:50Z",
+          "updatedAt": "2025-01-17T19:02:50Z",
+          "comments": []
         }
       ]
     },
@@ -48376,13 +48926,13 @@
       "labels": [],
       "body": "Added description to conditional series triple to address issues #310 and #321.\r\nUpdated example [here](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cond-series-wording/cddl/examples/comid-series.diag) to better illustrate a use case.",
       "createdAt": "2024-10-15T19:07:50Z",
-      "updatedAt": "2024-12-13T21:10:50Z",
+      "updatedAt": "2025-01-17T19:23:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cond-series-wording",
-      "headRefOid": "0793e3d6943b63999486c3734fc2a0bc091dc9b9",
+      "headRefOid": "8d0d138efd92a2ecf3bc6e4e1cc8990179ff072d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -48394,6 +48944,20 @@
           "body": "Additional use case context: Some have characterized the triple as being an optimization of endorsement triples. The way to realize the same semantics using conditional-endorsement-triple is that there will be multiple valid RIMs containing statements about valid SVN ranges. A vendor may increment an SVN when a new image of security sensitive code is released, resulting in multiple valid RIMS in circulation. If at some later point one of the implementations is found to have a vulnerability, the affected RIM(s) can be revoked. \r\n\r\nNevertheless, there can be a range of RIMS that declare multiple valid SVN values. The RIMS could match the same component resulting in multiple ACS entries but with different matching reference SVN values. \r\n\r\nThe question then is how should these values be processed and by whom? Ideally, the best answer should be selected, because there will be additional endorsement statements that assert additional information based on SVN state. This approach distributes state across multiple RIMS resulting in multiple ACS entries that then needs to be post-processed to find the \"best\" correct answer. \r\n\r\nComparing this to the series triple. One RIM can be used to communicate the information that would otherwise be spread across in multiple RIMs and avoids adding, unnecessarily, multiple correct answers to the ACS that then need to be filtered in some way to find the best answer. \r\n\r\nAny vendor that relies on SVNs to manage security change control will likely need this capability. If they don't proactively increment SVNs as part of their release process, then they will need to release / install updates that update the SVN. The alternative is they merely have to revoke an already issued RIM. ",
           "createdAt": "2024-11-25T23:21:36Z",
           "updatedAt": "2024-11-25T23:21:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith I will ensure this gets reviewed today!",
+          "createdAt": "2025-01-17T16:34:39Z",
+          "updatedAt": "2025-01-17T16:34:39Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Rest all changes looks good and I have approved it!",
+          "createdAt": "2025-01-17T19:23:20Z",
+          "updatedAt": "2025-01-17T19:23:20Z"
         }
       ],
       "reviews": [
@@ -48668,6 +49232,105 @@
               "updatedAt": "2024-12-13T21:02:44Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjUhO",
+          "commit": {
+            "abbreviatedOid": "0793e3d"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T16:10:04Z",
+          "updatedAt": "2025-01-17T16:10:04Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjZPd",
+          "commit": {
+            "abbreviatedOid": "0793e3d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T16:19:05Z",
+          "updatedAt": "2025-01-17T16:19:05Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nand `mval` contains only A= _variable-X_, B= _variable-Y_, and C= _variable-Z_ (exactly the set of keys A, B, and C) respectively for every `conditional-series-record` in the series.\r\n```",
+              "createdAt": "2025-01-17T16:19:05Z",
+              "updatedAt": "2025-01-17T16:19:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YjZat",
+          "commit": {
+            "abbreviatedOid": "0793e3d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Approved with my clarification on 1190",
+          "createdAt": "2025-01-17T16:19:26Z",
+          "updatedAt": "2025-01-17T16:19:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yk4hw",
+          "commit": {
+            "abbreviatedOid": "8d0d138"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T19:19:23Z",
+          "updatedAt": "2025-01-17T19:19:23Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nThe Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside conditional-series-record). Every conditional-series-record selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each conditional-series-record. For example, if a selection matches on 3 measurement-map statements; mkey is the same for all 3 statements and mval contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every conditional-series-record in the series.\r\n```",
+              "createdAt": "2025-01-17T19:19:23Z",
+              "updatedAt": "2025-01-17T19:19:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yk40S",
+          "commit": {
+            "abbreviatedOid": "8d0d138"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T19:20:11Z",
+          "updatedAt": "2025-01-17T19:20:12Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2025-01-17T19:20:12Z",
+              "updatedAt": "2025-01-17T19:20:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yk5LP",
+          "commit": {
+            "abbreviatedOid": "8d0d138"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "@nedmsmith I suggested a minor improvement/clarity in the text describing `conditional-endorsement-series-triple`. Please review and take it if you deem fit!",
+          "createdAt": "2025-01-17T19:21:09Z",
+          "updatedAt": "2025-01-17T19:21:09Z",
+          "comments": []
         }
       ]
     },
@@ -49040,7 +49703,7 @@
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2025-01-08T15:41:54Z",
+      "updatedAt": "2025-01-17T17:20:40Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
@@ -49149,6 +49812,13 @@
           "body": "@nedmsmith @henkbirkholz @thomas-fossati @yogeshbdeshpande @andrew-draper please take a look.",
           "createdAt": "2024-12-18T23:22:52Z",
           "updatedAt": "2024-12-18T23:22:52Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm guessing we're delaying merging due to dropping 502, so I'm opening a dialogue with IANA MIME types and RFC9052 to consider adding content-type as an optional parameter for application/cose.",
+          "createdAt": "2025-01-17T17:20:38Z",
+          "updatedAt": "2025-01-17T17:20:38Z"
         }
       ],
       "reviews": [
@@ -52558,6 +53228,368 @@
           "createdAt": "2025-01-09T23:50:41Z",
           "updatedAt": "2025-01-09T23:50:41Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 360,
+      "id": "PR_kwDOH6-tI86IK_OT",
+      "title": "Change email address for Andrew Draper",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/360",
+      "state": "MERGED",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-01-17T15:42:03Z",
+      "updatedAt": "2025-01-17T19:23:48Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ad08b31f94b524b69edd8710f51b1497a389e496",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "andrew-draper-email-change",
+      "headRefOid": "d1a935ec8f49d3b6446bd518c9a69538d3122d23",
+      "closedAt": "2025-01-17T19:23:48Z",
+      "mergedAt": "2025-01-17T19:23:48Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "ce4e95c2df6b54b5bfd0ddd78146d6b6c2b2c66f"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86YjTzP",
+          "commit": {
+            "abbreviatedOid": "d1a935e"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T16:08:38Z",
+          "updatedAt": "2025-01-17T16:08:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YkQr1",
+          "commit": {
+            "abbreviatedOid": "d1a935e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T18:00:38Z",
+          "updatedAt": "2025-01-17T18:00:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YkXPT",
+          "commit": {
+            "abbreviatedOid": "d1a935e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-01-17T18:10:13Z",
+          "updatedAt": "2025-01-17T18:10:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ykyud",
+          "commit": {
+            "abbreviatedOid": "d1a935e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-17T19:04:42Z",
+          "updatedAt": "2025-01-17T19:04:42Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 361,
+      "id": "PR_kwDOH6-tI86IMBPW",
+      "title": "Add tag-level profile scoping.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/361",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses Issue #358.\r\nThis does include a CoSWID registry addition.",
+      "createdAt": "2025-01-17T18:27:03Z",
+      "updatedAt": "2025-01-18T03:03:35Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ad08b31f94b524b69edd8710f51b1497a389e496",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "nested-profile",
+      "headRefOid": "d2e9b8e58ee7832401168ed11ecbf57f5ad04abb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86YlBF0",
+          "commit": {
+            "abbreviatedOid": "e0a0f99"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T19:42:47Z",
+          "updatedAt": "2025-01-17T20:32:35Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\r\n  `corim-map.profile` to interpret the contents of the `concise-mid-tag`. \r\nThe `corim-map.profile` MUST NOT change the interpretation of the `CoMID` tag when\r\n```",
+              "createdAt": "2025-01-17T19:42:48Z",
+              "updatedAt": "2025-01-17T20:34:27Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\n  `corim-map.profile` to interpret the contents of the `concise-bom-tag`.\r\nThe `corim-map.profile`  MUST NOT change the interpretation of the `CoBOM` tag when\r\n```",
+              "createdAt": "2025-01-17T19:43:20Z",
+              "updatedAt": "2025-01-17T20:33:38Z"
+            },
+            {
+              "originalPosition": 38,
+              "body": "```suggestion\r\nA CoRIM may contain a CoSWID tag as specified in ({{sec-corim-tags}}).\r\n```",
+              "createdAt": "2025-01-17T19:50:25Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nThis specification registers an extension to `concise-swid-tag` using the `$$coswid-extension` mechanism. This extension defines a CoSWID profile code point that allows for an optional CoSWID profile identifier.\r\nThe CoSWID profile identifier takes precedence over the CoRIM profile identifier.\r\n\r\n* `profile` (index 58): A profile identifier that overrides the `corim-map.profile` to interpret the contents of the `concise-swid-tag`.\r\nThe `corim-map.profile` MUST NOT change the interpretation of the `CoSWID` tag when a `profile` value is supplied.\r\n```",
+              "createdAt": "2025-01-17T20:06:54Z",
+              "updatedAt": "2025-01-18T03:00:47Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\n\r\n```\r\nNot needed as this spec will follow CoSWID requirements for extension.",
+              "createdAt": "2025-01-17T20:08:17Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Reword this sentence. I find it confusing. Perhaps it recites CoSWID rules for using extension points. If so, it can be assumed that this spec will follow IANA / CoSWID rules for extension points.",
+              "createdAt": "2025-01-17T20:10:13Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\n  a `profile-override` value is supplied.\r\n```",
+              "createdAt": "2025-01-17T20:11:50Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\n* `profile-override` (index 5): A profile identifier that overrides the\r\n```",
+              "createdAt": "2025-01-17T20:13:49Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\n  a `profile-override` value is supplied.\r\n```",
+              "createdAt": "2025-01-17T20:16:57Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\n* `profile-override` (index 3): A profile identifier that overrides the\r\n```",
+              "createdAt": "2025-01-17T20:17:51Z",
+              "updatedAt": "2025-01-17T20:32:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YlWKa",
+          "commit": {
+            "abbreviatedOid": "e0a0f99"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T20:44:38Z",
+          "updatedAt": "2025-01-17T20:44:38Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\n```\r\nIs removal okay since I already describe essentially the same thing in the profile section above?",
+              "createdAt": "2025-01-17T20:44:38Z",
+              "updatedAt": "2025-01-17T20:44:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YlW2-",
+          "commit": {
+            "abbreviatedOid": "e0a0f99"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T20:46:46Z",
+          "updatedAt": "2025-01-17T20:46:46Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "Since this registration is to CoSWID Items, I specifically avoided \"profile-override\". A CoSWID could be created on its own with the \"profile\" code point as a reference in itself to the specification for any extension on the base spec.",
+              "createdAt": "2025-01-17T20:46:46Z",
+              "updatedAt": "2025-01-17T20:46:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YlXI1",
+          "commit": {
+            "abbreviatedOid": "5d42a89"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T20:47:39Z",
+          "updatedAt": "2025-01-17T20:47:39Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "```suggestion\r\n$$coswid-extension //= (profile => $profile-type-choice)\r\n```",
+              "createdAt": "2025-01-17T20:47:39Z",
+              "updatedAt": "2025-01-17T20:47:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YlfZi",
+          "commit": {
+            "abbreviatedOid": "e0a0f99"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-17T21:04:47Z",
+          "updatedAt": "2025-01-17T21:04:47Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "I kind of think \"profile\" is better overall since the spec language describes scoping semantics normatively. Other specs could incorporate CoMID or CoBOM subsets resulting in a similar dynamic as with CoSWID.",
+              "createdAt": "2025-01-17T21:04:47Z",
+              "updatedAt": "2025-01-17T21:04:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ymlvd",
+          "commit": {
+            "abbreviatedOid": "5d3a1ee"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-18T03:01:10Z",
+          "updatedAt": "2025-01-18T03:01:10Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "I shall update the other occurrences as well then.",
+              "createdAt": "2025-01-18T03:01:10Z",
+              "updatedAt": "2025-01-18T03:01:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YmlxS",
+          "commit": {
+            "abbreviatedOid": "5d3a1ee"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-18T03:01:50Z",
+          "updatedAt": "2025-01-18T03:01:50Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\n* `profile` (index 5): A profile identifier that overrides the\r\n  `corim-map.profile` to interpret the contents of the `concise-mid-tag`. \r\nThe `corim-map.profile` MUST NOT change the interpretation of the `CoMID` tag when\r\n  a `profile` value is supplied.\r\n```",
+              "createdAt": "2025-01-18T03:01:50Z",
+              "updatedAt": "2025-01-18T03:01:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ymlxn",
+          "commit": {
+            "abbreviatedOid": "5d3a1ee"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-18T03:02:02Z",
+          "updatedAt": "2025-01-18T03:02:02Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n  &(profile: 3) => $profile-type-choice,\r\n```",
+              "createdAt": "2025-01-18T03:02:02Z",
+              "updatedAt": "2025-01-18T03:02:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86YmlyA",
+          "commit": {
+            "abbreviatedOid": "5d3a1ee"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-18T03:02:10Z",
+          "updatedAt": "2025-01-18T03:02:11Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n  &(profile: 5) => $profile-type-choice\r\n```",
+              "createdAt": "2025-01-18T03:02:10Z",
+              "updatedAt": "2025-01-18T03:02:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ymly5",
+          "commit": {
+            "abbreviatedOid": "5d3a1ee"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-18T03:02:32Z",
+          "updatedAt": "2025-01-18T03:02:32Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\n* `profile` (index 3): A profile identifier that overrides the\r\n  `corim-map.profile` to interpret the contents of the `concise-bom-tag`.\r\nThe `corim-map.profile`  MUST NOT change the interpretation of the `CoBOM` tag when\r\n  a `profile` value is supplied.\r\n```",
+              "createdAt": "2025-01-18T03:02:32Z",
+              "updatedAt": "2025-01-18T03:02:32Z"
+            }
+          ]
         }
       ]
     }
