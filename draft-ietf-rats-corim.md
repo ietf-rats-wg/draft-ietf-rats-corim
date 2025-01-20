@@ -438,7 +438,7 @@ The following describes each child item of this map.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A bit string which is a key identity pertaining to the CoRIM Issuer.
+* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
