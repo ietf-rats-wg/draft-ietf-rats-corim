@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-19T01:48:34.353690+00:00",
+  "timestamp": "2025-01-21T01:42:05.352108+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8031,9 +8031,24 @@
       "labels": [],
       "body": "The CoRIM schema disallows multiple profiles, but also does not have a means of representing a bundle of CoRIMs each with their own profiles. This is troublesome when signing reference measurements for a firmware binary that is measured in different ways depending on the technology. Intel TDX, AMD SEV-SNP, and ARM CCA all have different ways of constructing a digest of a machine initial state that a firmware file like an IGVM describes how to load. I have no specified way to have a single document to deliver with the firmware that endorses each of the measurements that it could be seen with.\n\nEither we bind this with CMW and a specific cmwc_t that specifies something like tag-identity => #6.<TN for corim>(<<corim-map>>)?",
       "createdAt": "2025-01-17T15:18:50Z",
-      "updatedAt": "2025-01-17T15:18:50Z",
+      "updatedAt": "2025-01-20T17:26:49Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze In this use case, is there a Guest Image, or a component, that remains same when the underlying attestation technologies change? I mean if such is the case, one could establish that image measurement in an Environment to establish the Parent CoRIM and then link the other technologies CoRIM (CoRIM per Intel/TDX, Arm CCA etc) through `corim-locator-map` to establish a chain. \n\nAlso before suggesting any further model, I would like to understand How the change/life cycle management is expected in this scenario? Does the update responsibility of each of the technology CoRIM is responsibility of technology provider in your use case, or it is the responsibility of the owner who is holding the Monolithic single combined blob?",
+          "createdAt": "2025-01-20T12:09:34Z",
+          "updatedAt": "2025-01-20T12:09:34Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The IGVM format allows us to create a single file with multiple headers on how to load the firmware depending on the TEE technology, so we should be able to have 1 CoSWID and multiple CoMIDs of diffferent profiles for the same firmware. My problem with the corim-locator-map is there is no format for a local bundle. But I did suggest we could put them all in a CMW if we agree on a cmwc_t for local bundling. I could be fine with that too, but it's more cumbersome given I'll need to carry multiple signatures instead of 1, which PQC can make pretty hefty.\n\nLifecycle management would be that we release a new firmware binary in the event of a problem with any technology, but we would bind TEE-specific information to the CoMID instead of the CoSWID. We don't really replace CoRIMs so much as we let old ones expire.",
+          "createdAt": "2025-01-20T17:26:48Z",
+          "updatedAt": "2025-01-20T17:26:48Z"
+        }
+      ]
     },
     {
       "number": 359,
@@ -53590,6 +53605,72 @@
               "updatedAt": "2025-01-18T03:02:32Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 362,
+      "id": "PR_kwDOH6-tI86IVHqF",
+      "title": "protected-header-map: kid: bit -> byte",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/362",
+      "state": "OPEN",
+      "author": "pranjalkole",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "`bstr` is a byte string according to the CDDL RFC",
+      "createdAt": "2025-01-20T10:07:39Z",
+      "updatedAt": "2025-01-20T17:27:15Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ce4e95c2df6b54b5bfd0ddd78146d6b6c2b2c66f",
+      "headRepository": "pranjalkole/draft-ietf-rats-corim",
+      "headRefName": "main",
+      "headRefOid": "be56d026e73f9004b05e977a5700121abaad1e87",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86YtGbx",
+          "commit": {
+            "abbreviatedOid": "be56d02"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "thanks @pranjalkole for spotting this!",
+          "createdAt": "2025-01-20T10:17:57Z",
+          "updatedAt": "2025-01-20T10:18:17Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Yt63h",
+          "commit": {
+            "abbreviatedOid": "be56d02"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks for spotting this!",
+          "createdAt": "2025-01-20T11:45:43Z",
+          "updatedAt": "2025-01-20T11:45:43Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Ywtvd",
+          "commit": {
+            "abbreviatedOid": "be56d02"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-20T17:27:15Z",
+          "updatedAt": "2025-01-20T17:27:15Z",
+          "comments": []
         }
       ]
     }
