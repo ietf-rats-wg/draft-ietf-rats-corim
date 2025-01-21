@@ -2704,6 +2704,7 @@ registry {{!IANA.media-types}}.
 
 | Name | Template | Reference |
 | rim+cbor | application/rim+cbor | {{&SELF}}, ({{sec-mt-rim-cbor}}) |
+| rim+cose | application/rim+cose | {{&SELF}}, ({{sec-signed-rim}}) |
 {: #tbl-media-type align="left" title="New Media Types"}
 
 ### rim+cbor {#sec-mt-rim-cbor}
@@ -2743,10 +2744,70 @@ Fragment identifier considerations:
 : n/a
 
 Magic number(s):
-: `D9 01 F5`, `D9 01 F4 D9 01 F5`
+: `D9 01 F5`
 
 File extension(s):
+: .corim
+
+Macintosh file type code(s):
 : n/a
+
+Person and email address to contact for further information:
+: RATS WG mailing list (rats@ietf.org)
+
+Intended usage:
+: COMMON
+
+Restrictions on usage:
+: none
+
+Author/Change controller:
+: IETF
+
+Provisional registration?
+: Maybe
+
+### rim+cose {#sec-mt-rim-cose}
+
+{:compact}
+Type name:
+: `application`
+
+Subtype name:
+: `rim+cose`
+
+Required parameters:
+: n/a
+
+Optional parameters:
+: "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
+  notation.)
+
+Encoding considerations:
+: binary
+
+Security considerations:
+: {{sec-sec}} of {{&SELF}}
+
+Interoperability considerations:
+: n/a
+
+Published specification:
+: {{&SELF}}
+
+Applications that use this media type:
+: Attestation Verifiers, Endorsers and Reference-Value providers that need to
+  transfer protected CoRIM payloads over HTTP(S), CoAP(S), and other
+  transports.
+
+Fragment identifier considerations:
+: n/a
+
+Magic number(s):
+: `D2` (for COSE), and TBD given CoAP C-F assignment with TN transformation {{?RFC9277}} (e.g., for C-F 141 `D9 63 74 01 8F D2`).
+
+File extension(s):
+: .corim
 
 Macintosh file type code(s):
 : n/a
@@ -2775,6 +2836,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 | Content-Type | Content Coding | ID | Reference |
 |---
 | application/rim+cbor | - | TBD1 | {{&SELF}} |
+| application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
 
 --- back
