@@ -990,7 +990,7 @@ the sensitive values in memory are encrypted.
 Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers.
 
-A `raw-value` from Evidence or an Endorsement is a tagged value of type `bytes`.
+A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 
@@ -2454,7 +2454,7 @@ The value stored under `measurement-values-map` codepoint 4 in an ACS entry must
 The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `masked-raw-value` entry, which specifies an expected value and a mask.
 
 If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
-The standard comparison function defined in this document does not use the tag value.
+The standard comparison function defined in this document removes the tag before performing the comparison.
 
 For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `bytes` or `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
 
