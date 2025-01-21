@@ -110,7 +110,6 @@ informative:
     seriesinfo: Version 1.0, Revision 0.19
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
-  IANA.coswid: coswid-reg
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
@@ -563,8 +562,8 @@ The following describes each member of the `concise-mid-tag` map.
   modules.
   Described in {{sec-comid-triples}}.
 
-* `profile` (index 5): A profile identifier that overrides the
-  `corim-map.profile` to interpret the contents of the `concise-mid-tag`. 
+* `profile` (index 5): An optional profile identifier that overrides the
+  `corim-map.profile` to interpret the contents of the `concise-mid-tag`.
 The `corim-map.profile` MUST NOT change the interpretation of the `CoMID` tag when
   a `profile` value is supplied.
 
@@ -1356,7 +1355,7 @@ Map extensions provide extensibility support to CoRIM map structures.
 CDDL map extensibility enables a CoRIM profile to extend the base CoRIM CDDL definition.
 CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map and '$$' signifies map extensibility.
 Typically, map extension requires a convention for code point naming that avoids code-point reuse.
-Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
+Well-known code points may be in a registry, such as CoSWID {{-coswid}}.
 Non-negative integers are reserved for IANA to assign meaning globally.
 
 ### Data Type Extensions
@@ -1415,7 +1414,7 @@ The following describes each member of the `concise-bom-tag` map.
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
   Described in {{sec-common-validity}}.
 
-* `profile` (index 3): A profile identifier that overrides the
+* `profile` (index 3): An optional profile identifier that overrides the
   `corim-map.profile` to interpret the contents of the `concise-bom-tag`.
 The `corim-map.profile`  MUST NOT change the interpretation of the `CoBOM` tag when
   a `profile` value is supplied.
