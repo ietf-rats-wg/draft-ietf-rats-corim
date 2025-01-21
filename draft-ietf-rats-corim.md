@@ -2704,7 +2704,7 @@ registry {{!IANA.media-types}}.
 
 | Name | Template | Reference |
 | rim+cbor | application/rim+cbor | {{&SELF}}, ({{sec-mt-rim-cbor}}) |
-| rim+cose | application/rim+cose | {{&SELF}}, ({{sec-signed-rim}}) |
+| rim+cose | application/rim+cose | {{&SELF}}, ({{sec-mt-rim-cose}}) |
 {: #tbl-media-type align="left" title="New Media Types"}
 
 ### rim+cbor {#sec-mt-rim-cbor}
