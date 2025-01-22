@@ -2866,8 +2866,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 ## CoSWID Item Registration
 
-IANA is requested to add the following CoSWID Items to the "Concise Software Identifier"
-registry {{!IANA.coswid}}.
+IANA is requested to add the following CoSWID Items to the "CoSWID Items" registry within the "Concise Software Identifier" registry group {{-coswid-reg}}.
 
 | Index | Item Name | Reference |
 | 58 | profile | {{&SELF}} |
