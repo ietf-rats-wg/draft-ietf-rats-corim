@@ -56,8 +56,8 @@ contributor:
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
   - ins: A. Draper
     name: Andrew Draper
-    org: Intel Corporation
-    email: andrew.draper@intel.com
+    org: Altera
+    email: andrew.draper@altera.com
     contribution: >
       Andrew contributed the concept, description, and semantics of conditional endorsements as well as consistent contribution to weekly reviews of others' edits.
   - ins: D. Glaze
@@ -438,7 +438,7 @@ The following describes each child item of this map.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A bit string which is a key identity pertaining to the CoRIM Issuer.
+* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
@@ -494,16 +494,35 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-The set of triples is extensible.
-The following triples are currently defined:
+This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
+Every CoRIM Verifier MUST implement the MTI triples.
+The OTI class of triples are generally useful across profiles.
+A CoRIM Verifier SHOULD implement OTI triples.
+Verifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.
+For example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.
+
+MTI Triples:
 
 * Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
 * Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
+* Conditional Endorsement triples: describing one or more conditions that, once matched, result in augmenting the Attester's actual state with the supplied Endorsed Values ({{sec-comid-triple-cond-endors}}).
+
+OTI Triples:
+
+* Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
-* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
+* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
+
+CoMID triples are extensible ({{sec-comid-triples}}).
+Triples added via the extensibility feature MUST be OTI class triples.
+This document specifies profiles (see {{sec-extensibility}}).
+OTI triples MAY be reclassified as MTI using a profile.
+Conversely, profiles can choose not to _use_ certain MTI triples.
+Profiles MUST NOT reclassify MTI triples as OTI.
 
 ## Structure
 
@@ -681,13 +700,10 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
   Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8): Triples describing a series of
-  conditional Endorsements based on the acceptance of a stateful environment.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
   Described in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 10): Triples describing a series of
-  Endorsement that are applicable based on the acceptance of a series of
-  stateful environment records.
+* `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
   Described in {{sec-comid-triple-cond-endors}}.
 
 ##### Environments {#sec-environments}
@@ -1191,6 +1207,7 @@ These restrictions ensure that evaluation order does not change the meaning of t
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
 The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
+
 The Conditional Endorsement Series Triple has the following structure:
 
 ~~~ cddl
@@ -1527,7 +1544,7 @@ Non-CoRIM-based data structures require mapping transformation, but these are ou
 If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
 The CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points.
 
-Verifier implementations MUST exhibit the same externally visible behavior as described in this specification.
+Verifier implementations MUST provide the specified information model of the ACS at the end of phase 4 as described in this specification.
 They are not required to use the same internal representation or evaluation order described by this specification.
 
 ## Appraisal Procedure {#sec-appraisal-procedure}
@@ -1822,7 +1839,6 @@ Any CoRIM that has been secured by a cryptographic mechanism, such as a signatur
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
-The selection process MUST yield at least one usable tag.
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
@@ -1831,20 +1847,20 @@ Later stages will further select the CoRIMs appropriate to the Evidence Appraisa
 The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
 
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.
 
 #### CoBOM Extraction
 
 This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
 
-CoBOMs which are not within their validity period are discarded.
+CoBOMs which are not within their validity period MUST be discarded.
 
 The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 
 A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
-(Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.)
+Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
-In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
+In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
 After the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
@@ -1869,12 +1885,12 @@ The way cryptographic signature validation works depends on the specific Evidenc
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
 See Section 9.2.1 of {{DICE.Layer}}.
-If a trusted root certificate is found, the usual X.509 certificate validation is performed.
+If a trusted root certificate is found, X.509 certificate validation is performed.
 
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.
 
-Regardless of the specific integrity protection method used, the Evidence's integrity MUST be validated successfully.
+Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
 > If a CoRIM profile is supplied, it MUST describe:
 >
