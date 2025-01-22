@@ -380,6 +380,13 @@ that MUST have a different identifier.
 
 For an example profile definition, see {{-psa-endorsements}}.
 
+A tag (e.g., CoMID, CoBOM) MAY specify a profile identifier to take precedence for the interpretation of the remainder of the tag contents if the following requirements hold:
+
+*  Any interpretation of the tag that depends on contents from the `corim-map` containing the tag have the same meaning across the tag's profile and the `corim-map.profile`.
+*  The `corim-map.profile` permits (exclusively or by omission) the tag to to use the profile.
+
+A profile MUST NOT have a different interpretation when specified on a tag; the tag should behave as if it were in a CoRIM with the profile specified in the `corim-map` instead.
+
 ### Entities {#sec-corim-entity}
 
 The CoRIM Entity is an instantiation of the Entity generic ({{sec-common-entity}}) using a `$corim-role-type-choice`.
