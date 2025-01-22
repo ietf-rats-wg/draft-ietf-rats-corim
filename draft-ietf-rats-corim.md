@@ -2456,7 +2456,7 @@ The value stored under the condition ECT `measurement-values-map` codepoint 4 ma
 If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
 The standard comparison function defined in this document removes the tag before performing the comparison.
 
-For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `bytes` or `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
 
 The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
 
