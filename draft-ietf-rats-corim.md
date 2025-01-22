@@ -994,7 +994,7 @@ A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 
-Additional value types can be added to `$raw-value-type-choice`, these additional values must be CBOR tagged `bstr`s.
+Additional value types can be added to `$raw-value-type-choice`, these additional values MUST be CBOR tagged `bstr`s.
 Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
 
 A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
