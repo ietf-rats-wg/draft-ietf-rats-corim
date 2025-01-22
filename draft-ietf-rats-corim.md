@@ -2804,7 +2804,7 @@ Fragment identifier considerations:
 : n/a
 
 Magic number(s):
-: `D2` (for COSE), and TBD given CoAP C-F assignment with TN transformation {{?RFC9277}} (e.g., for C-F 141 `D9 63 74 01 8F D2`).
+: `D2 84`
 
 File extension(s):
 : .corim
