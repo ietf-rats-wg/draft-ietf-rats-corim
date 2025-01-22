@@ -56,8 +56,8 @@ contributor:
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
   - ins: A. Draper
     name: Andrew Draper
-    org: Intel Corporation
-    email: andrew.draper@intel.com
+    org: Altera
+    email: andrew.draper@altera.com
     contribution: >
       Andrew contributed the concept, description, and semantics of conditional endorsements as well as consistent contribution to weekly reviews of others' edits.
   - ins: D. Glaze
@@ -266,7 +266,7 @@ For more detail, see {{sec-corim-profile-types}}.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, CoRIM can be encoded as a CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
+Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
 
 The following CDDL describes the top-level CoRIM.
 
@@ -364,8 +364,7 @@ Exercised extension points should preserve the intent of the original semantics.
 CoRIM profiles SHOULD be specified in a publicly available document.
 If a CoRIM profile extends CoSWID extension points, the profile MUST be specified in a publicly available document to satisfy the "Specification Required" constraint of the IANA registries.
 
-A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-corim-signed}} and
-{{sec-mt-corim-unsigned}} with the `profile` parameter set to the appropriate value.
+A CoRIM profile can use one of the base CoRIM media type defined in {{sec-mt-rim-cbor}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
@@ -446,7 +445,7 @@ The following describes each child item of this map.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A bit string which is a key identity pertaining to the CoRIM Issuer.
+* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
@@ -1211,15 +1210,14 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.
+The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each `conditional-series-record`.
+For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
 
-The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
-Each conditional-series-record record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.
-The first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
-More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1242,7 +1240,8 @@ The `conditional-series-record` has the following parameters:
 To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criteria are satisfied, the `series` tuples are processed.
 
-The `series` array contains a list of `conditional-series-record` entries.
+The `series` array contains an ordered list of `conditional-series-record` entries.
+Evaluation order begins at list position 0.
 
 For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
 The new entry is added to the existing set of Endorsements.
@@ -2025,7 +2024,7 @@ The selected tags are mapped to an internal representation, making them suitable
 {: cett-enum}
 * The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+* If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 ##### Conditional Endorsement Triple Transformation {#sec-end-trans-cest}
 
@@ -2059,9 +2058,9 @@ The selected tags are mapped to an internal representation, making them suitable
 > > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
 ##### Key Verification Triples Transformation {#sec-end-trans-kvt}
 
@@ -2268,7 +2267,7 @@ where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, whe
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
-Series processing terminates when the first series entry matches.
+Series iteration terminates after the first matching series entry is processed or when no series entries match.
 
 #### Processing Key Verification Endorsements {#sec-process-keys}
 
@@ -2620,10 +2619,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                     | Reference |
 |     --- | ---------           | ---------                                                     | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}      | {{&SELF}} |
+|     500 | `tag`               | Reserved for backward compatibility                   | {{&SELF}} |
 |     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}               | {{&SELF}} |
-| 503-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+| 502-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
 |     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
@@ -2734,78 +2732,18 @@ IANA is requested to add the following media types to the "Media Types"
 registry {{!IANA.media-types}}.
 
 | Name | Template | Reference |
-| corim-signed+cbor | application/corim-signed+cbor | {{&SELF}}, ({{sec-mt-corim-signed}}) |
-| corim-unsigned+cbor | application/corim-unsigned+cbor | {{&SELF}}, ({{sec-mt-corim-unsigned}}) |
+| rim+cbor | application/rim+cbor | {{&SELF}}, ({{sec-mt-rim-cbor}}) |
+| rim+cose | application/rim+cose | {{&SELF}}, ({{sec-mt-rim-cose}}) |
 {: #tbl-media-type align="left" title="New Media Types"}
 
-### corim-signed+cbor {#sec-mt-corim-signed}
+### rim+cbor {#sec-mt-rim-cbor}
 
 {:compact}
 Type name:
 : `application`
 
 Subtype name:
-: `corim-signed+cbor`
-
-Required parameters:
-: n/a
-
-Optional parameters:
-: "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
-  notation.)
-
-Encoding considerations:
-: binary
-
-Security considerations:
-: ({{sec-sec}}) of {{&SELF}}
-
-Interoperability considerations:
-: n/a
-
-Published specification:
-: {{&SELF}}
-
-Applications that use this media type:
-: Attestation Verifiers, Endorsers and Reference-Value providers that need to
-  transfer COSE Sign1 wrapped CoRIM payloads over HTTP(S), CoAP(S), and other
-  transports.
-
-Fragment identifier considerations:
-: n/a
-
-Magic number(s):
-: `D9 01 F6 D2`, `D9 01 F4 D9 01 F6 D2`
-
-File extension(s):
-: n/a
-
-Macintosh file type code(s):
-: n/a
-
-Person and email address to contact for further information:
-: RATS WG mailing list (rats@ietf.org)
-
-Intended usage:
-: COMMON
-
-Restrictions on usage:
-: none
-
-Author/Change controller:
-: IETF
-
-Provisional registration?
-: Maybe
-
-### corim-unsigned+cbor {#sec-mt-corim-unsigned}
-
-{:compact}
-Type name:
-: `application`
-
-Subtype name:
-: `corim-unsigned+cbor`
+: `rim+cbor`
 
 Required parameters:
 : n/a
@@ -2835,10 +2773,70 @@ Fragment identifier considerations:
 : n/a
 
 Magic number(s):
-: `D9 01 F5`, `D9 01 F4 D9 01 F5`
+: `D9 01 F5`
 
 File extension(s):
+: .corim
+
+Macintosh file type code(s):
 : n/a
+
+Person and email address to contact for further information:
+: RATS WG mailing list (rats@ietf.org)
+
+Intended usage:
+: COMMON
+
+Restrictions on usage:
+: none
+
+Author/Change controller:
+: IETF
+
+Provisional registration?
+: Maybe
+
+### rim+cose {#sec-mt-rim-cose}
+
+{:compact}
+Type name:
+: `application`
+
+Subtype name:
+: `rim+cose`
+
+Required parameters:
+: n/a (cose-type is explicitly not supported, as it is understood to be "cose-sign1")
+
+Optional parameters:
+: "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
+  notation.)
+
+Encoding considerations:
+: binary
+
+Security considerations:
+: {{sec-sec}} of {{&SELF}}
+
+Interoperability considerations:
+: n/a
+
+Published specification:
+: {{&SELF}}
+
+Applications that use this media type:
+: Attestation Verifiers, Endorsers and Reference-Value providers that need to
+  transfer CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S), and other
+  transports.
+
+Fragment identifier considerations:
+: n/a
+
+Magic number(s):
+: `D2 84`
+
+File extension(s):
+: .corim
 
 Macintosh file type code(s):
 : n/a
@@ -2866,8 +2864,8 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 | Content-Type | Content Coding | ID | Reference |
 |---
-| application/corim-signed+cbor | - | TBD1 | {{&SELF}} |
-| application/corim-unsigned+cbor | - | TBD2 | {{&SELF}} |
+| application/rim+cbor | - | TBD1 | {{&SELF}} |
+| application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
 
 ## CoSWID Item Registration
