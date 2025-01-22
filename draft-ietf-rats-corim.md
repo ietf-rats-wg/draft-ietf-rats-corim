@@ -2500,7 +2500,7 @@ Note that a Verifier may compare Reference Values in any order, so the compariso
 
 ## Concise Software Identifier Extension {#sec-coswid}
 
-A CoRIM may contain a CoSWID tag as specified in ({{sec-corim-tags}}).
+A CoRIM may contain a CoSWID tag as specified in {{sec-corim-tags}}.
 This specification registers an extension to `concise-swid-tag` using the `$$coswid-extension` socket.
 This extension defines a CoSWID profile code point that allows for an optional CoSWID profile identifier.
 The CoSWID profile identifier takes precedence over the CoRIM profile identifier.
