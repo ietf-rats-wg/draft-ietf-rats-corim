@@ -1381,10 +1381,10 @@ Table of Contents
    in a future revision of this specification.
 
    $raw-value-type-choice /= tagged-bytes
-   $raw-value-type-choice /= masked-raw-value
+   $raw-value-type-choice /= tagged-masked-raw-value
 
    raw-value-mask-type = bytes
-   masked-raw-value = #6.563([
+   tagged-masked-raw-value = #6.563([
      value: bytes
      mask : bytes
    ])
@@ -3409,22 +3409,22 @@ Table of Contents
    bytes.
 
    The value stored under the condition ECT measurement-values-map
-   codepoint 4 may additionally be a masked-raw-value entry, which
-   specifies an expected value and a mask.
+   codepoint 4 may additionally be a tagged-masked-raw-value entry,
+   which specifies an expected value and a mask.
 
    If the condition ECT measurement-value-map codepoint 4 is of tagged-
    bytes, and there is no value stored under codepoint 5, then the
-   Verifier treats it in the same way as a masked-raw-value with the
-   value field holding the same contents and a mask of the same length
-   as the value with all bits set.  The standard comparison function
-   defined in this document removes the tag before performing the
-   comparison.
+   Verifier treats it in the same way as a tagged-masked-raw-value with
+   the value field holding the same contents and a mask of the same
+   length as the value with all bits set.  The standard comparison
+   function defined in this document removes the tag before performing
+   the comparison.
 
    For backwards compatibility, if the condition ECT measurement-value-
    map codepoint 4 is of type tagged-bytes, and there is a mask stored
    under codepoint 5, then the Verifier treats it in the same way as a
-   masked-raw-value with the value field holding the same contents and a
-   mask holding the contents of codepoint 5.
+   tagged-masked-raw-value with the value field holding the same
+   contents and a mask holding the contents of codepoint 5.
 
    The comparison MUST return false if the lengths of the candidate
    entry value and the condition ECT value are different.
@@ -3683,8 +3683,9 @@ Table of Contents
    | 562     | bytes       | tagged-pkix-asn1der-cert-     | RFCthis   |
    |         |             | type, see Section 5.1.4.1.5   |           |
    +---------+-------------+-------------------------------+-----------+
-   | 563     | masked-raw- | masked-raw-value, see         | RFCthis   |
-   |         | value       | Section 5.1.4.1.4.6           |           |
+   | 563     | tagged-     | tagged-masked-raw-value,      | RFCthis   |
+   |         | masked-raw- | see Section 5.1.4.1.4.6       |           |
+   |         | value       |                               |           |
    +---------+-------------+-------------------------------+-----------+
    | 564-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
@@ -4390,11 +4391,11 @@ Appendix A.  Base CoRIM CDDL
    tagged-oid-type = #6.111(oid-type)
 
    $raw-value-type-choice /= tagged-bytes
-   $raw-value-type-choice /= masked-raw-value
+   $raw-value-type-choice /= tagged-masked-raw-value
 
    raw-value-mask-type = bytes
 
-   masked-raw-value = #6.563([
+   tagged-masked-raw-value = #6.563([
      value: bytes
      mask : bytes
    ])
