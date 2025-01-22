@@ -209,8 +209,8 @@ Table of Contents
      11.4.  CoMID Map Registry
      11.5.  CoBOM Map Registry
      11.6.  New Media Types
-       11.6.1.  corim-signed+cbor
-       11.6.2.  corim-unsigned+cbor
+       11.6.1.  rim+cbor
+       11.6.2.  rim+cose
      11.7.  CoAP Content-Formats Registration
    12. References
      12.1.  Normative References
@@ -482,15 +482,15 @@ Table of Contents
    A CoRIM can be signed (Section 4.2) using COSE Sign1 to provide end-
    to-end security to the CoRIM contents.  When CoRIM is signed, the
    protected header carries further identifying information about the
-   CoRIM signer.  Alternatively, CoRIM can be encoded as a CBOR-tagged
-   payload (Section 4.1) and transported over a secure channel.
+   CoRIM signer.  Alternatively, CoRIM can be encoded as a #6.501 CBOR-
+   tagged payload (Section 4.1) and transported over a secure channel.
 
    The following CDDL describes the top-level CoRIM.
 
-   corim = tagged-concise-rim-type-choice
+   corim = concise-rim-type-choice
 
-   $concise-rim-type-choice /= tagged-corim-map
-   $concise-rim-type-choice /= tagged-signed-corim
+   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= signed-corim
 
 4.1.  CoRIM Map
 
@@ -593,10 +593,9 @@ Table of Contents
 
    CoRIM profiles SHOULD be specified in a publicly available document.
 
-   A CoRIM profile can use one of the base CoRIM media types defined in
-   Section 11.6.1 and Section 11.6.2 with the profile parameter set to
-   the appropriate value.  Alternatively, it MAY define and register its
-   own media type.
+   A CoRIM profile can use one of the base CoRIM media type defined in
+   Section 11.6.1 with the profile parameter set to the appropriate
+   value.  Alternatively, it MAY define and register its own media type.
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
 
@@ -642,7 +641,7 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor (tagged-corim-map / corim-map)
+     payload: bstr .cbor tagged-corim-map
      signature: bstr
    ]
 
@@ -664,7 +663,7 @@ Table of Contents
 
    protected-corim-header-map = {
      &(alg: 1) => int
-     &(content-type: 3) => "application/corim-unsigned+cbor"
+     &(content-type: 3) => "application/rim+cbor"
      &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
@@ -3610,72 +3609,69 @@ Table of Contents
    registry [IANA.cbor-tags], preferably with the specific CBOR tag
    value requested:
 
-   +=======+===========+====================================+=========+
-   |Tag    |Data Item  | Semantics                          |Reference|
-   +=======+===========+====================================+=========+
-   |500    |tag        | A tagged-concise-rim-type-choice,  |RFCthis  |
-   |       |           | see Section 4.1.2                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |501    |map        | A tagged-corim-map, see            |RFCthis  |
-   |       |           | Section 4.1                        |         |
-   +-------+-----------+------------------------------------+---------+
-   |502    |tag        | A tagged-signed-corim, see         |RFCthis  |
-   |       |           | Section 4.2                        |         |
-   +-------+-----------+------------------------------------+---------+
-   |503-504|any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |505    |bytes      | A tagged-concise-swid-tag, see     |RFCthis  |
-   |       |           | Section 4.1.2                      |         |
-   +-------+-----------+------------------------------------+---------+
-   |506    |bytes      | A tagged-concise-mid-tag, see      |RFCthis  |
-   |       |           | Section 4.1.2                      |         |
-   +-------+-----------+------------------------------------+---------+
-   |507    |any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |508    |bytes      | A tagged-concise-bom-tag, see      |RFCthis  |
-   |       |           | Section 4.1.2                      |         |
-   +-------+-----------+------------------------------------+---------+
-   |509-549|any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |550    |bytes .size| tagged-ueid-type, see Section 7.5  |RFCthis  |
-   |       |33         |                                    |         |
-   +-------+-----------+------------------------------------+---------+
-   |552    |uint       | tagged-svn, see                    |RFCthis  |
-   |       |           | Section 5.1.4.1.4.4                |         |
-   +-------+-----------+------------------------------------+---------+
-   |553    |uint       | tagged-min-svn, see                |RFCthis  |
-   |       |           | Section 5.1.4.1.4.4                |         |
-   +-------+-----------+------------------------------------+---------+
-   |554    |text       | tagged-pkix-base64-key-type, see   |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |555    |text       | tagged-pkix-base64-cert-type, see  |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |556    |text       | tagged-pkix-base64-cert-path-type, |RFCthis  |
-   |       |           | see Section 5.1.4.1.5              |         |
-   +-------+-----------+------------------------------------+---------+
-   |557    |[int/text, | tagged-thumbprint-type, see        |RFCthis  |
-   |       |bytes]     | Section 7.7                        |         |
-   +-------+-----------+------------------------------------+---------+
-   |558    |COSE_Key/  | tagged-cose-key-type, see          |RFCthis  |
-   |       |COSE_KeySet| Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |559    |digest     | tagged-cert-thumbprint-type, see   |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |560    |bytes      | tagged-bytes, see Section 7.8      |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
-   |       |           | see Section 5.1.4.1.5              |         |
-   +-------+-----------+------------------------------------+---------+
-   |562    |bytes      | tagged-pkix-asn1der-cert-type, see |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |563-599|any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
+   +=======+===========+=====================================+=========+
+   |Tag    |Data Item  | Semantics                           |Reference|
+   +=======+===========+=====================================+=========+
+   |500    |tag        | Reserved for backward               |RFCthis  |
+   |       |           | compatibility                       |         |
+   +-------+-----------+-------------------------------------+---------+
+   |501    |map        | A tagged-corim-map, see             |RFCthis  |
+   |       |           | Section 4.1                         |         |
+   +-------+-----------+-------------------------------------+---------+
+   |502-504|any        | Earmarked for CoRIM                 |RFCthis  |
+   +-------+-----------+-------------------------------------+---------+
+   |505    |bytes      | A tagged-concise-swid-tag, see      |RFCthis  |
+   |       |           | Section 4.1.2                       |         |
+   +-------+-----------+-------------------------------------+---------+
+   |506    |bytes      | A tagged-concise-mid-tag, see       |RFCthis  |
+   |       |           | Section 4.1.2                       |         |
+   +-------+-----------+-------------------------------------+---------+
+   |507    |any        | Earmarked for CoRIM                 |RFCthis  |
+   +-------+-----------+-------------------------------------+---------+
+   |508    |bytes      | A tagged-concise-bom-tag, see       |RFCthis  |
+   |       |           | Section 4.1.2                       |         |
+   +-------+-----------+-------------------------------------+---------+
+   |509-549|any        | Earmarked for CoRIM                 |RFCthis  |
+   +-------+-----------+-------------------------------------+---------+
+   |550    |bytes .size| tagged-ueid-type, see Section 7.5   |RFCthis  |
+   |       |33         |                                     |         |
+   +-------+-----------+-------------------------------------+---------+
+   |552    |uint       | tagged-svn, see                     |RFCthis  |
+   |       |           | Section 5.1.4.1.4.4                 |         |
+   +-------+-----------+-------------------------------------+---------+
+   |553    |uint       | tagged-min-svn, see                 |RFCthis  |
+   |       |           | Section 5.1.4.1.4.4                 |         |
+   +-------+-----------+-------------------------------------+---------+
+   |554    |text       | tagged-pkix-base64-key-type, see    |RFCthis  |
+   |       |           | Section 5.1.4.1.5                   |         |
+   +-------+-----------+-------------------------------------+---------+
+   |555    |text       | tagged-pkix-base64-cert-type, see   |RFCthis  |
+   |       |           | Section 5.1.4.1.5                   |         |
+   +-------+-----------+-------------------------------------+---------+
+   |556    |text       | tagged-pkix-base64-cert-path-type,  |RFCthis  |
+   |       |           | see Section 5.1.4.1.5               |         |
+   +-------+-----------+-------------------------------------+---------+
+   |557    |[int/text, | tagged-thumbprint-type, see         |RFCthis  |
+   |       |bytes]     | Section 7.7                         |         |
+   +-------+-----------+-------------------------------------+---------+
+   |558    |COSE_Key/  | tagged-cose-key-type, see           |RFCthis  |
+   |       |COSE_KeySet| Section 5.1.4.1.5                   |         |
+   +-------+-----------+-------------------------------------+---------+
+   |559    |digest     | tagged-cert-thumbprint-type, see    |RFCthis  |
+   |       |           | Section 5.1.4.1.5                   |         |
+   +-------+-----------+-------------------------------------+---------+
+   |560    |bytes      | tagged-bytes, see Section 7.8       |RFCthis  |
+   +-------+-----------+-------------------------------------+---------+
+   |561    |digest     | tagged-cert-path-thumbprint-type,   |RFCthis  |
+   |       |           | see Section 5.1.4.1.5               |         |
+   +-------+-----------+-------------------------------------+---------+
+   |562    |bytes      | tagged-pkix-asn1der-cert-type, see  |RFCthis  |
+   |       |           | Section 5.1.4.1.5                   |         |
+   +-------+-----------+-------------------------------------+---------+
+   |563-599|any        | Earmarked for CoRIM                 |RFCthis  |
+   +-------+-----------+-------------------------------------+---------+
 
-                                 Table 8
+                                  Table 8
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -3819,48 +3815,20 @@ Table of Contents
    IANA is requested to add the following media types to the "Media
    Types" registry [IANA.media-types].
 
-   +=====================+=====================+==================+
-   | Name                | Template            | Reference        |
-   +=====================+=====================+==================+
-   | corim-signed+cbor   | application/corim-  | RFCthis,         |
-   |                     | signed+cbor         | (Section 11.6.1) |
-   +---------------------+---------------------+------------------+
-   | corim-unsigned+cbor | application/corim-  | RFCthis,         |
-   |                     | unsigned+cbor       | (Section 11.6.2) |
-   +---------------------+---------------------+------------------+
+   +==========+======================+===========================+
+   | Name     | Template             | Reference                 |
+   +==========+======================+===========================+
+   | rim+cbor | application/rim+cbor | RFCthis, (Section 11.6.1) |
+   +----------+----------------------+---------------------------+
+   | rim+cose | application/rim+cose | RFCthis, (Section 11.6.2) |
+   +----------+----------------------+---------------------------+
 
                       Table 15: New Media Types
 
-11.6.1.  corim-signed+cbor
+11.6.1.  rim+cbor
 
    Type name:  application
-   Subtype name:  corim-signed+cbor
-   Required parameters:  n/a
-   Optional parameters:  "profile" (CoRIM profile in string format.
-      OIDs MUST use the dotted-decimal notation.)
-   Encoding considerations:  binary
-   Security considerations:  (Section 10) of RFCthis
-   Interoperability considerations:  n/a
-   Published specification:  RFCthis
-   Applications that use this media type:  Attestation Verifiers,
-      Endorsers and Reference-Value providers that need to transfer COSE
-      Sign1 wrapped CoRIM payloads over HTTP(S), CoAP(S), and other
-      transports.
-   Fragment identifier considerations:  n/a
-   Magic number(s):  D9 01 F6 D2, D9 01 F4 D9 01 F6 D2
-   File extension(s):  n/a
-   Macintosh file type code(s):  n/a
-   Person and email address to contact for further information:  RATS WG
-      mailing list (rats@ietf.org)
-   Intended usage:  COMMON
-   Restrictions on usage:  none
-   Author/Change controller:  IETF
-   Provisional registration?  Maybe
-
-11.6.2.  corim-unsigned+cbor
-
-   Type name:  application
-   Subtype name:  corim-unsigned+cbor
+   Subtype name:  rim+cbor
    Required parameters:  n/a
    Optional parameters:  "profile" (CoRIM profile in string format.
       OIDs MUST use the dotted-decimal notation.)
@@ -3873,8 +3841,35 @@ Table of Contents
       unprotected CoRIM payloads over HTTP(S), CoAP(S), and other
       transports.
    Fragment identifier considerations:  n/a
-   Magic number(s):  D9 01 F5, D9 01 F4 D9 01 F5
-   File extension(s):  n/a
+   Magic number(s):  D9 01 F5
+   File extension(s):  .corim
+   Macintosh file type code(s):  n/a
+   Person and email address to contact for further information:  RATS WG
+      mailing list (rats@ietf.org)
+   Intended usage:  COMMON
+   Restrictions on usage:  none
+   Author/Change controller:  IETF
+   Provisional registration?  Maybe
+
+11.6.2.  rim+cose
+
+   Type name:  application
+   Subtype name:  rim+cose
+   Required parameters:  n/a (cose-type is explicitly not supported, as
+      it is understood to be "cose-sign1")
+   Optional parameters:  "profile" (CoRIM profile in string format.
+      OIDs MUST use the dotted-decimal notation.)
+   Encoding considerations:  binary
+   Security considerations:  Section 10 of RFCthis
+   Interoperability considerations:  n/a
+   Published specification:  RFCthis
+   Applications that use this media type:  Attestation Verifiers,
+      Endorsers and Reference-Value providers that need to transfer
+      CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S),
+      and other transports.
+   Fragment identifier considerations:  n/a
+   Magic number(s):  D2 84
+   File extension(s):  .corim
    Macintosh file type code(s):  n/a
    Person and email address to contact for further information:  RATS WG
       mailing list (rats@ietf.org)
@@ -3890,17 +3885,15 @@ Table of Contents
    "Constrained RESTful Environments (CoRE) Parameters" Registry
    [IANA.core-parameters]:
 
-   +===============================+================+======+===========+
-   | Content-Type                  | Content Coding | ID   | Reference |
-   +===============================+================+======+===========+
-   | application/corim-            | -              | TBD1 | RFCthis   |
-   | signed+cbor                   |                |      |           |
-   +-------------------------------+----------------+------+-----------+
-   | application/corim-            | -              | TBD2 | RFCthis   |
-   | unsigned+cbor                 |                |      |           |
-   +-------------------------------+----------------+------+-----------+
+   +======================+================+======+===========+
+   | Content-Type         | Content Coding | ID   | Reference |
+   +======================+================+======+===========+
+   | application/rim+cbor | -              | TBD1 | RFCthis   |
+   +----------------------+----------------+------+-----------+
+   | application/rim+cose | -              | TBD2 | RFCthis   |
+   +----------------------+----------------+------+-----------+
 
-                       Table 16: New Content-Formats
+                  Table 16: New Content-Formats
 
 12.  References
 
@@ -4069,10 +4062,10 @@ Table of Contents
 
 Appendix A.  Base CoRIM CDDL
 
-   corim = tagged-concise-rim-type-choice
+   corim = concise-rim-type-choice
 
-   $concise-rim-type-choice /= tagged-corim-map
-   $concise-rim-type-choice /= tagged-signed-corim
+   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= signed-corim
 
    concise-bom-tag = {
      &(tag-identity: 0) => tag-identity-map
@@ -4122,7 +4115,7 @@ Appendix A.  Base CoRIM CDDL
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor (tagged-corim-map / corim-map)
+     payload: bstr .cbor tagged-corim-map
      signature: bstr
    ]
 
@@ -4131,7 +4124,7 @@ Appendix A.  Base CoRIM CDDL
 
    protected-corim-header-map = {
      &(alg: 1) => int
-     &(content-type: 3) => "application/corim-unsigned+cbor"
+     &(content-type: 3) => "application/rim+cbor"
      &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
@@ -4140,11 +4133,6 @@ Appendix A.  Base CoRIM CDDL
    signed-corim = #6.18(COSE-Sign1-corim)
 
    tagged-corim-map = #6.501(corim-map)
-
-
-   tagged-concise-rim-type-choice = #6.500($concise-rim-type-choice)
-
-   tagged-signed-corim = #6.502(signed-corim)
 
    tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
 
