@@ -1629,10 +1629,10 @@ This document specifies the information elements for representing Endorsements a
                 <p id="section-toc.1-1.11.2.6.1"><a href="#section-11.6" class="auto internal xref">11.6</a>.  <a href="#name-new-media-types" class="internal xref">New Media Types</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6.2.1">
-                    <p id="section-toc.1-1.11.2.6.2.1.1"><a href="#section-11.6.1" class="auto internal xref">11.6.1</a>.  <a href="#name-corim-signedcbor" class="internal xref">corim-signed+cbor</a></p>
+                    <p id="section-toc.1-1.11.2.6.2.1.1"><a href="#section-11.6.1" class="auto internal xref">11.6.1</a>.  <a href="#name-rimcbor" class="internal xref">rim+cbor</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6.2.2">
-                    <p id="section-toc.1-1.11.2.6.2.2.1"><a href="#section-11.6.2" class="auto internal xref">11.6.2</a>.  <a href="#name-corim-unsignedcbor" class="internal xref">corim-unsigned+cbor</a></p>
+                    <p id="section-toc.1-1.11.2.6.2.2.1"><a href="#section-11.6.2" class="auto internal xref">11.6.2</a>.  <a href="#name-rimcose" class="internal xref">rim+cose</a></p>
 </li>
                 </ul>
 </li>
@@ -1948,14 +1948,14 @@ For more detail, see <a href="#sec-corim-profile-types" class="auto internal xre
       </ul>
 <p id="section-4-8">A CoRIM can be signed (<a href="#sec-corim-signed" class="auto internal xref">Section 4.2</a>) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, CoRIM can be encoded as a CBOR-tagged payload (<a href="#sec-corim-map" class="auto internal xref">Section 4.1</a>) and transported over a secure channel.<a href="#section-4-8" class="pilcrow">¶</a></p>
+Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload (<a href="#sec-corim-map" class="auto internal xref">Section 4.1</a>) and transported over a secure channel.<a href="#section-4-8" class="pilcrow">¶</a></p>
 <p id="section-4-9">The following CDDL describes the top-level CoRIM.<a href="#section-4-9" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4-10">
 <pre>
-corim = tagged-concise-rim-type-choice
+corim = concise-rim-type-choice
 
-$concise-rim-type-choice /= tagged-corim-map
-$concise-rim-type-choice /= tagged-signed-corim
+concise-rim-type-choice /= tagged-corim-map
+concise-rim-type-choice /= signed-corim
 </pre><a href="#section-4-10" class="pilcrow">¶</a>
 </div>
 <div id="sec-corim-map">
@@ -2090,8 +2090,7 @@ A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this 
 A profile MAY extend the set of a given CoRIM type using the defined extension points (<a href="#sec-extensibility" class="auto internal xref">Section 5.2</a>).
 Exercised extension points should preserve the intent of the original semantics.<a href="#section-4.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-4">CoRIM profiles SHOULD be specified in a publicly available document.<a href="#section-4.1.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media types defined in <a href="#sec-mt-corim-signed" class="auto internal xref">Section 11.6.1</a> and
-<a href="#sec-mt-corim-unsigned" class="auto internal xref">Section 11.6.2</a> with the <code>profile</code> parameter set to the appropriate value.
+<p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media type defined in <a href="#sec-mt-rim-cbor" class="auto internal xref">Section 11.6.1</a> with the <code>profile</code> parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.<a href="#section-4.1.4-5" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-6">A profile identifier is either an OID <span>[<a href="#RFC9090" class="cite xref">RFC9090</a>]</span> or a URL <span>[<a href="#STD66" class="cite xref">STD66</a>]</span>.<a href="#section-4.1.4-6" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-7">The profile identifier uniquely identifies a documented profile.  Any changes
@@ -2149,7 +2148,7 @@ information about the CoRIM encoded in a <code>corim-meta-map</code> (<a href="#
 COSE-Sign1-corim = [
   protected: bstr .cbor protected-corim-header-map
   unprotected: unprotected-corim-header-map
-  payload: bstr .cbor (tagged-corim-map / corim-map)
+  payload: bstr .cbor tagged-corim-map
   signature: bstr
 ]
 </pre><a href="#section-4.2-4" class="pilcrow">¶</a>
@@ -2180,7 +2179,7 @@ and payload components of the signed CoRIM.<a href="#section-4.2-6.4.1" class="p
 <pre>
 protected-corim-header-map = {
   &amp;(alg: 1) =&gt; int
-  &amp;(content-type: 3) =&gt; "application/corim-unsigned+cbor"
+  &amp;(content-type: 3) =&gt; "application/rim+cbor"
   &amp;(kid: 4) =&gt; bstr
   &amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map
   * cose-label =&gt; cose-value
@@ -3351,15 +3350,14 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
             <h5 id="name-conditional-endorsement-ser">
 <a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
             </h5>
-<p id="section-5.1.4.5-1">A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-2">The series object is an array of <code>conditional-series-record</code> that has both Reference and Endorsed Values.
-Each conditional-series-record record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a <code>conditional-series-record</code> matches the attester's actual state.
-The first <code>conditional-series-record</code> that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-3">More clarification about the usage and matching order will be resolved by: <span class="cref" id="tracked-at_2">Tracked at:</span> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-4">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-5">
+<p id="section-5.1.4.5-1">The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in <code>condition:</code>) followed by a series condition match (specified in <code>selection:</code> inside <code>conditional-series-record</code>).
+Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each <code>conditional-series-record</code>.
+For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-3">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-4">
 <pre>
 conditional-endorsement-series-triple-record = [
   condition: stateful-environment-record
@@ -3370,32 +3368,33 @@ conditional-series-record = [
   selection: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
-</pre><a href="#section-5.1.4.5-5" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-4" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.5-6">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-5">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.5-7.1">
-                <p id="section-5.1.4.5-7.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-7.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.5-6.1">
+                <p id="section-5.1.4.5-6.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-6.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-5.1.4.5-7.2">
-                <p id="section-5.1.4.5-7.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-7.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-5.1.4.5-6.2">
+                <p id="section-5.1.4.5-6.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-6.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.5-8">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-8" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-7">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-7" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.5-9.1">
-                <p id="section-5.1.4.5-9.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-9.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.5-8.1">
+                <p id="section-5.1.4.5-8.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-8.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-5.1.4.5-9.2">
-                <p id="section-5.1.4.5-9.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-9.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-5.1.4.5-8.2">
+                <p id="section-5.1.4.5-8.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-8.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.5-10">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-11">The <code>series</code> array contains a list of <code>conditional-series-record</code> entries.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-12">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-12" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-13">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-13" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-9">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-9" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-10">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
+Evaluation order begins at list position 0.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-11">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-12">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-12" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-identity">
@@ -4980,7 +4979,7 @@ The selected tags are mapped to an internal representation, making them suitable
                 <dd class="break"></dd>
 <dt>Step 5.</dt>
 <dd id="section-8.3.3.3.2-8.2">
-                  <p id="section-8.3.3.3.2-8.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.2-8.2.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.3.3.3.2-8.2.1">If the Conditional Endorsement conceptual message has a profile, the profile is copied to the <code>ev</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.2-8.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
@@ -5079,12 +5078,12 @@ The selected tags are mapped to an internal representation, making them suitable
 <span class="break"></span><dl class="olPercent" id="section-8.3.3.3.3-10">
 <dt>Step 4.</dt>
 <dd id="section-8.3.3.3.3-10.1">
-                  <p id="section-8.3.3.3.3-10.1.1">The signer of the Conditional Endorsement conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3.3-10.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.3.3.3.3-10.1.1">The signer of the Conditional Endorsement Series conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-8.3.3.3.3-10.1.1" class="pilcrow">¶</a></p>
 </dd>
                 <dd class="break"></dd>
 <dt>Step 5.</dt>
 <dd id="section-8.3.3.3.3-10.2">
-                  <p id="section-8.3.3.3.3-10.2.1">If the Endorsement conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.3-10.2.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.3.3.3.3-10.2.1">If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-8.3.3.3.3-10.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
@@ -5365,7 +5364,7 @@ where for each <code>evs</code> entry, the <code>condition</code> ECT is compare
 If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 8.5</a>), the <code>evs</code> <code>series</code> array is iterated,
 where for each <code>series</code> entry, if the <code>selection</code> ECT matches an ACS ECT,
 the <code>addition</code> ECT is added to the ACS.
-Series processing terminates when the first series entry matches.<a href="#section-8.4.4.3-1" class="pilcrow">¶</a></p>
+Series iteration terminates after the first matching series entry is processed or when no series entries match.<a href="#section-8.4.4.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-process-keys">
@@ -5818,8 +5817,7 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
               <td class="text-left" rowspan="1" colspan="1">
                 <code>tag</code>
 </td>
-              <td class="text-left" rowspan="1" colspan="1">A tagged-concise-rim-type-choice, see <a href="#sec-corim-tags" class="auto internal xref">Section 4.1.2</a>
-</td>
+              <td class="text-left" rowspan="1" colspan="1">Reserved for backward compatibility</td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
@@ -5832,16 +5830,7 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">502</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <code>tag</code>
-</td>
-              <td class="text-left" rowspan="1" colspan="1">A tagged-signed-corim, see <a href="#sec-corim-signed" class="auto internal xref">Section 4.2</a>
-</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">503-504</td>
+              <td class="text-left" rowspan="1" colspan="1">502-504</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <code>any</code>
 </td>
@@ -6290,22 +6279,22 @@ registry <span>[<a href="#IANA.media-types" class="cite xref">IANA.media-types</
           </thead>
           <tbody>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">corim-signed+cbor</td>
-              <td class="text-left" rowspan="1" colspan="1">application/corim-signed+cbor</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCthis, (<a href="#sec-mt-corim-signed" class="auto internal xref">Section 11.6.1</a>)</td>
+              <td class="text-left" rowspan="1" colspan="1">rim+cbor</td>
+              <td class="text-left" rowspan="1" colspan="1">application/rim+cbor</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis, (<a href="#sec-mt-rim-cbor" class="auto internal xref">Section 11.6.1</a>)</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">corim-unsigned+cbor</td>
-              <td class="text-left" rowspan="1" colspan="1">application/corim-unsigned+cbor</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCthis, (<a href="#sec-mt-corim-unsigned" class="auto internal xref">Section 11.6.2</a>)</td>
+              <td class="text-left" rowspan="1" colspan="1">rim+cose</td>
+              <td class="text-left" rowspan="1" colspan="1">application/rim+cose</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis, (<a href="#sec-mt-rim-cose" class="auto internal xref">Section 11.6.2</a>)</td>
             </tr>
           </tbody>
         </table>
 </div>
-<div id="sec-mt-corim-signed">
+<div id="sec-mt-rim-cbor">
 <section id="section-11.6.1">
-          <h4 id="name-corim-signedcbor">
-<a href="#section-11.6.1" class="section-number selfRef">11.6.1. </a><a href="#name-corim-signedcbor" class="section-name selfRef">corim-signed+cbor</a>
+          <h4 id="name-rimcbor">
+<a href="#section-11.6.1" class="section-number selfRef">11.6.1. </a><a href="#name-rimcbor" class="section-name selfRef">rim+cbor</a>
           </h4>
 <span class="break"></span><dl class="dlCompact dlParallel" id="section-11.6.1-1">
             <dt id="section-11.6.1-1.1">Type name:</dt>
@@ -6315,7 +6304,7 @@ registry <span>[<a href="#IANA.media-types" class="cite xref">IANA.media-types</
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.3">Subtype name:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.1-1.4">
-              <p id="section-11.6.1-1.4.1"><code>corim-signed+cbor</code><a href="#section-11.6.1-1.4.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.1-1.4.1"><code>rim+cbor</code><a href="#section-11.6.1-1.4.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.5">Required parameters:</dt>
@@ -6336,7 +6325,7 @@ notation.)<a href="#section-11.6.1-1.8.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.11">Security considerations:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.1-1.12">
-              <p id="section-11.6.1-1.12.1">(<a href="#sec-sec" class="auto internal xref">Section 10</a>) of RFCthis<a href="#section-11.6.1-1.12.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.1-1.12.1"><a href="#sec-sec" class="auto internal xref">Section 10</a> of RFCthis<a href="#section-11.6.1-1.12.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.13">Interoperability considerations:</dt>
@@ -6352,7 +6341,7 @@ notation.)<a href="#section-11.6.1-1.8.1" class="pilcrow">¶</a></p>
 <dt id="section-11.6.1-1.17">Applications that use this media type:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.1-1.18">
               <p id="section-11.6.1-1.18.1">Attestation Verifiers, Endorsers and Reference-Value providers that need to
-transfer COSE Sign1 wrapped CoRIM payloads over HTTP(S), CoAP(S), and other
+transfer unprotected CoRIM payloads over HTTP(S), CoAP(S), and other
 transports.<a href="#section-11.6.1-1.18.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
@@ -6363,12 +6352,12 @@ transports.<a href="#section-11.6.1-1.18.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.21">Magic number(s):</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.1-1.22">
-              <p id="section-11.6.1-1.22.1"><code>D9 01 F6 D2</code>, <code>D9 01 F4 D9 01 F6 D2</code><a href="#section-11.6.1-1.22.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.1-1.22.1"><code>D9 01 F5</code><a href="#section-11.6.1-1.22.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.23">File extension(s):</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.1-1.24">
-              <p id="section-11.6.1-1.24.1">n/a<a href="#section-11.6.1-1.24.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.1-1.24.1">.corim<a href="#section-11.6.1-1.24.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.1-1.25">Macintosh file type code(s):</dt>
@@ -6404,10 +6393,10 @@ transports.<a href="#section-11.6.1-1.18.1" class="pilcrow">¶</a></p>
 </dl>
 </section>
 </div>
-<div id="sec-mt-corim-unsigned">
+<div id="sec-mt-rim-cose">
 <section id="section-11.6.2">
-          <h4 id="name-corim-unsignedcbor">
-<a href="#section-11.6.2" class="section-number selfRef">11.6.2. </a><a href="#name-corim-unsignedcbor" class="section-name selfRef">corim-unsigned+cbor</a>
+          <h4 id="name-rimcose">
+<a href="#section-11.6.2" class="section-number selfRef">11.6.2. </a><a href="#name-rimcose" class="section-name selfRef">rim+cose</a>
           </h4>
 <span class="break"></span><dl class="dlCompact dlParallel" id="section-11.6.2-1">
             <dt id="section-11.6.2-1.1">Type name:</dt>
@@ -6417,12 +6406,12 @@ transports.<a href="#section-11.6.1-1.18.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.3">Subtype name:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.2-1.4">
-              <p id="section-11.6.2-1.4.1"><code>corim-unsigned+cbor</code><a href="#section-11.6.2-1.4.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.2-1.4.1"><code>rim+cose</code><a href="#section-11.6.2-1.4.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.5">Required parameters:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.2-1.6">
-              <p id="section-11.6.2-1.6.1">n/a<a href="#section-11.6.2-1.6.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.2-1.6.1">n/a (cose-type is explicitly not supported, as it is understood to be "cose-sign1")<a href="#section-11.6.2-1.6.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.7">Optional parameters:</dt>
@@ -6454,7 +6443,7 @@ notation.)<a href="#section-11.6.2-1.8.1" class="pilcrow">¶</a></p>
 <dt id="section-11.6.2-1.17">Applications that use this media type:</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.2-1.18">
               <p id="section-11.6.2-1.18.1">Attestation Verifiers, Endorsers and Reference-Value providers that need to
-transfer unprotected CoRIM payloads over HTTP(S), CoAP(S), and other
+transfer CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S), and other
 transports.<a href="#section-11.6.2-1.18.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
@@ -6465,12 +6454,12 @@ transports.<a href="#section-11.6.2-1.18.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.21">Magic number(s):</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.2-1.22">
-              <p id="section-11.6.2-1.22.1"><code>D9 01 F5</code>, <code>D9 01 F4 D9 01 F5</code><a href="#section-11.6.2-1.22.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.2-1.22.1"><code>D2 84</code><a href="#section-11.6.2-1.22.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.23">File extension(s):</dt>
             <dd style="margin-left: 1.5em" id="section-11.6.2-1.24">
-              <p id="section-11.6.2-1.24.1">n/a<a href="#section-11.6.2-1.24.1" class="pilcrow">¶</a></p>
+              <p id="section-11.6.2-1.24.1">.corim<a href="#section-11.6.2-1.24.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-11.6.2-1.25">Macintosh file type code(s):</dt>
@@ -6531,13 +6520,13 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
           </thead>
           <tbody>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">application/corim-signed+cbor</td>
+              <td class="text-left" rowspan="1" colspan="1">application/rim+cbor</td>
               <td class="text-left" rowspan="1" colspan="1">-</td>
               <td class="text-left" rowspan="1" colspan="1">TBD1</td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">application/corim-unsigned+cbor</td>
+              <td class="text-left" rowspan="1" colspan="1">application/rim+cose</td>
               <td class="text-left" rowspan="1" colspan="1">-</td>
               <td class="text-left" rowspan="1" colspan="1">TBD2</td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
@@ -6696,10 +6685,10 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
       </h2>
 <div class="breakable lang-cddl sourcecode" id="appendix-A-1">
 <pre>
-corim = tagged-concise-rim-type-choice
+corim = concise-rim-type-choice
 
-$concise-rim-type-choice /= tagged-corim-map
-$concise-rim-type-choice /= tagged-signed-corim
+concise-rim-type-choice /= tagged-corim-map
+concise-rim-type-choice /= signed-corim
 
 concise-bom-tag = {
   &amp;(tag-identity: 0) =&gt; tag-identity-map
@@ -6749,7 +6738,7 @@ corim-signer-map = {
 COSE-Sign1-corim = [
   protected: bstr .cbor protected-corim-header-map
   unprotected: unprotected-corim-header-map
-  payload: bstr .cbor (tagged-corim-map / corim-map)
+  payload: bstr .cbor tagged-corim-map
   signature: bstr
 ]
 
@@ -6758,7 +6747,7 @@ $profile-type-choice /= tagged-oid-type
 
 protected-corim-header-map = {
   &amp;(alg: 1) =&gt; int
-  &amp;(content-type: 3) =&gt; "application/corim-unsigned+cbor"
+  &amp;(content-type: 3) =&gt; "application/rim+cbor"
   &amp;(kid: 4) =&gt; bstr
   &amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map
   * cose-label =&gt; cose-value
@@ -6767,11 +6756,6 @@ protected-corim-header-map = {
 signed-corim = #6.18(COSE-Sign1-corim)
 
 tagged-corim-map = #6.501(corim-map)
-
-
-tagged-concise-rim-type-choice = #6.500($concise-rim-type-choice)
-
-tagged-signed-corim = #6.502(signed-corim)
 
 tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
 
