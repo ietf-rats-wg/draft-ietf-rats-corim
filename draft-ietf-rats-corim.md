@@ -564,8 +564,7 @@ The following describes each member of the `concise-mid-tag` map.
 
 * `profile` (index 5): An optional profile identifier that overrides the
   `corim-map.profile` to interpret the contents of the `concise-mid-tag`.
-The `corim-map.profile` MUST NOT change the interpretation of the `CoMID` tag when
-  a `profile` value is supplied.
+The CoMID profile identifier takes precedence over the CoRIM profile identifier.
 
 ### Tag Identity {#sec-comid-tag-id}
 
@@ -1416,8 +1415,7 @@ The following describes each member of the `concise-bom-tag` map.
 
 * `profile` (index 3): An optional profile identifier that overrides the
   `corim-map.profile` to interpret the contents of the `concise-bom-tag`.
-The `corim-map.profile`  MUST NOT change the interpretation of the `CoBOM` tag when
-  a `profile` value is supplied.
+The CoBOM profile identifier takes precedence over the CoRIM profile identifier.
 
 * `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
   See {{sec-iana-cobom}}.
@@ -2502,11 +2500,11 @@ Note that a Verifier may compare Reference Values in any order, so the compariso
 ## Concise Software Identifier Extension {#sec-coswid}
 
 A CoRIM may contain a CoSWID tag as specified in ({{sec-corim-tags}}).
-This specification registers an extension to `concise-swid-tag` using the `$$coswid-extension` mechanism. This extension defines a CoSWID profile code point that allows for an optional CoSWID profile identifier.
+This specification registers an extension to `concise-swid-tag` using the `$$coswid-extension` socket.
+This extension defines a CoSWID profile code point that allows for an optional CoSWID profile identifier.
 The CoSWID profile identifier takes precedence over the CoRIM profile identifier.
 
 * `profile` (index 58): A profile identifier that overrides the `corim-map.profile` to interpret the contents of the `concise-swid-tag`.
-The `corim-map.profile` MUST NOT change the interpretation of the `CoSWID` tag when a `profile` value is supplied.
 
 ~~~ cddl
 {::include cddl/coswid-extension.cddl}
