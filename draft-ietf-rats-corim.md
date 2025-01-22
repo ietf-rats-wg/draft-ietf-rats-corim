@@ -2590,7 +2590,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                     | Reference |
 |     --- | ---------           | ---------                                                     | --------- |
-|     500 | `tag`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     500 | `tag`               | Reserved for backward compatibility                   | {{&SELF}} |
 |     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
 | 502-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
