@@ -2777,7 +2777,7 @@ Subtype name:
 : `rim+cose`
 
 Required parameters:
-: n/a
+: n/a (cose-type is explicitly not supported, as it is understood to be "cose-sign1")
 
 Optional parameters:
 : "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
