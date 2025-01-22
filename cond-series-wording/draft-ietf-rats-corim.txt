@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 21 July 2025                                             Linaro
+Expires: 26 July 2025                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         17 January 2025
+                                                         22 January 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 July 2025.
+   This Internet-Draft will expire on 26 July 2025.
 
 Copyright Notice
 
@@ -1619,15 +1619,16 @@ Table of Contents
 5.1.4.5.  Conditional Endorsement Series Triple
 
    The Conditional Endorsement Series Triple is used to assert endorsed
-   values based on an initial condition match followed by a series
-   condition match.  Every conditional-series-record selection MUST
-   select the same mkeys where every selected mkey's corresponding set
-   of keys (i.e., mval._key_) MUST be the same across each conditional-
-   series-record.  For example, if a selection matches on 3 measurement-
-   map statements; mkey is the same for all 3 statements and mval
-   contains only A= _variable-X_, B= _variable-Y_, and C= _variable-Z_
-   (exactly the set of keys A, B, and C) respectively for every
-   conditional-series-record in the series.
+   values based on an initial condition match (specified in condition:)
+   followed by a series condition match (specified in selection: inside
+   conditional-series-record).  Every conditional-series-record
+   selection MUST select the same mkeys where every selected mkey's
+   corresponding set of code points (i.e., mval.key) MUST be the same
+   across each conditional-series-record.  For example, if a selection
+   matches on 3 measurement-map statements; mkey is the same for all 3
+   statements and mval contains only A= variable-X, B= variable-Y, and
+   C= variable-Z (exactly the set of code points A, B, and C)
+   respectively for every conditional-series-record in the series.
 
    These restrictions ensure that evaluation order does not change the
    meaning of the triple during the appraisal process.  Series entries
