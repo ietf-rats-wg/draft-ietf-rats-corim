@@ -2797,7 +2797,7 @@ Published specification:
 
 Applications that use this media type:
 : Attestation Verifiers, Endorsers and Reference-Value providers that need to
-  transfer protected CoRIM payloads over HTTP(S), CoAP(S), and other
+  transfer CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S), and other
   transports.
 
 Fragment identifier considerations:
