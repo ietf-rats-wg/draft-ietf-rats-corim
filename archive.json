@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-21T01:42:05.352108+00:00",
+  "timestamp": "2025-01-23T01:42:46.897827+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -335,7 +335,7 @@
       ],
       "body": "Provide a description of the Raw Values types. Also clarify why we need a type choice instead of just raw bytes.",
       "createdAt": "2022-09-23T16:38:41Z",
-      "updatedAt": "2024-05-07T09:05:50Z",
+      "updatedAt": "2025-01-22T23:53:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -351,6 +351,13 @@
           "body": "This issue also needs to describe the :\r\n\r\n1) What is the role of mask?\r\n\r\n2) How verifier would use the mask during appraisal",
           "createdAt": "2023-08-16T14:30:08Z",
           "updatedAt": "2023-08-16T14:30:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #294 \n\nOK to close?",
+          "createdAt": "2025-01-22T23:53:13Z",
+          "updatedAt": "2025-01-22T23:53:13Z"
         }
       ]
     },
@@ -2615,7 +2622,7 @@
       ],
       "body": "Currently, the CDDL definition of `triples-map` supports `conditional-endorsement-series-triples`. In each `conditional-endorsement-series-triple-record`, the subject is a `stateful-environment-record`, where there must be at least one field in its `measurement-values-map`.\r\n\r\nIn the new use case, the environment is stateless, without any measurement value field. A new triple record such as the `stateless-conditional-endorsement-series-triple-record` defined below will be able to support this use case.\r\n```\r\nstateless-conditional-endorsement-series-triple-record = [\r\n  environment-map\r\n  ; order matters: the first matching record wins and halts matching\r\n  [ + conditional-series-record ]\r\n  ? authorized-by: [ + $crypto-key-type-choice ]\r\n]\r\n```\r\nIn this triple record, the optional `authorized-by` field lists the authorities for all the `measurement-values-map` structures  in the series.\r\n\r\nSince there is no ambiguity between `conditional-endorsement-series-triple-record` (with its first entry as an record) and `stateless-conditional-endorsement-series-triple-record` (with its first entry as a map), the `triples-map` entry:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record ]\r\n```\r\ncan be updated to add `stateless-conditional-endorsement-series-triple-record` as an option:\r\n```\r\n  ? &(conditional-endorsement-series-triples: 8) =>\r\n    [ + conditional-endorsement-series-triple-record /  stateless-conditional-endorsement-series-triple-record ]\r\n```\r\n",
       "createdAt": "2023-05-12T04:30:46Z",
-      "updatedAt": "2024-10-14T17:01:41Z",
+      "updatedAt": "2025-01-22T23:55:31Z",
       "closedAt": null,
       "comments": [
         {
@@ -2645,6 +2652,13 @@
           "body": "@andrew-draper to check if all concerns are addressed and close it subsequently!",
           "createdAt": "2024-03-27T15:50:47Z",
           "updatedAt": "2024-03-27T15:50:47Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #326 \nOK to close?",
+          "createdAt": "2025-01-22T23:55:30Z",
+          "updatedAt": "2025-01-22T23:55:30Z"
         }
       ]
     },
@@ -3216,7 +3230,7 @@
       ],
       "body": "The section of Verification does cover a reference to profile for performing appraisal procedure.\r\n\r\nHowever the sections only addresses `profiles` in terms of CoRIM Profiles. However, \r\n\r\n1. There are actually two profiles, one in Endorsements (Reference Values and Endorsed Values) and the other in Evidence.\r\n2. Evidence profile is associated to Endorsement profile and there is a linkage between the two ( there could be 1:N relationship between them) and they are not identical.\r\n4. Also not all Evidence are carried out as CoRIM as well.\r\n\r\nConsidering all the above aspects the Verification sections which describes profile based Verification needs to clearly set the context in which profiles are referred.\r\n\r\nOne suggestion is to use another term: known as \"Attestation Format\" OR \"Attestation Scheme\" which maps to a unique scheme for Appraisal considering CoRIM Endorsement + Evidence Profile into consideration!\r\n\r\n",
       "createdAt": "2023-09-06T15:43:10Z",
-      "updatedAt": "2024-05-07T09:12:18Z",
+      "updatedAt": "2025-01-22T23:53:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -3232,6 +3246,13 @@
           "body": "I see the relationship between profile between evidence and reference in a more fundamental way. In order for the Verifier to parse evidence it needs to know if it is capable of parsing the rest of the evidence. This is Andy's bullet number 1, but applied to parsing not just processing. The SPDM table of contents header, in the TCG Concise Evidence binding for SPDM spec, is there to ensure the parser knows which profile was used to construct the evidence found in the `consise-evidence` field. This allows the Verifier to find a suitable parser before trying and failing to parse something that is specific to a profile. \r\nThat spec sets the precedent that the conceptual message wrapper containing `concise-evidence` will define the profile if one is needed. Anything that is based on the default behavior (e.g., DICE layering) doesn't require a profile.\r\n\r\nI'm not certain there is (should be) a 1:N relationship between profiles for Evidence and Reference Values. (BTW: 9334 separates Endorsers from RVPs - the terminology in Yogesh's bullet 2 seems to combine them).  The reasoning why there is a 1:1 relationship between evidence and reference value profile is that it will be difficult to ensure combinatorics of supporting multiple profiles doesn't result in a security error. This was the reason we dialed back the multiplicity of profile in the current comid schema to be a singleton. There is an assumption that the CoMID profile id/name should be the same as the evidence profile id/name. Maybe this should be clarified in prose?\r\n\r\nIn cases such as DICE X.509 certificates as Evidence and for SPDM indirect cases. There is a pre-step assumed that maps the DiceTcbInfo format into a `concise-evidence` format. Since DICE is the default profile no explicit profile name is needed.\r\n\r\nThere is also a profile in EAR / Concise Attestation Results schemas. There are similar dependencies on parsing as well as processing. If the AR profile differs from the comid profile, there is an assumption that the AR profile includes semantics for selecting an appropriate comid profile. This could be expressed as prose in the profile. Ideally, they are the same profile id/name to avoid combinatoric disconnect. ",
           "createdAt": "2023-10-16T23:15:31Z",
           "updatedAt": "2023-10-16T23:23:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK to close?",
+          "createdAt": "2025-01-22T23:53:57Z",
+          "updatedAt": "2025-01-22T23:53:57Z"
         }
       ]
     },
@@ -4692,7 +4713,7 @@
       ],
       "body": "Note from Ned in a review:\r\n\r\n> Note: The Appraisal Context initialization and Evidence Collection sections don't adequately describe that Evidence updates the ACS. This should be explained before the sections describing ACS augmentation.",
       "createdAt": "2024-01-12T14:59:34Z",
-      "updatedAt": "2024-05-07T08:48:23Z",
+      "updatedAt": "2025-01-22T23:56:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -4715,6 +4736,13 @@
           "body": "Issue #194 tries to clean up some the document structure loose ends.",
           "createdAt": "2024-01-20T00:28:53Z",
           "updatedAt": "2024-01-20T00:28:53Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK to close?",
+          "createdAt": "2025-01-22T23:56:15Z",
+          "updatedAt": "2025-01-22T23:56:15Z"
         }
       ]
     },
@@ -4750,7 +4778,7 @@
       ],
       "body": "Here are few points raised by Hannes, which are listed in sequence below, so that they are not lost and feedback incorporated.\r\n\r\n1. **Document Readability** : Overall, the document is hard to read. As a reader one is lost in details and there is no big picture. The introduction is 2 paragraphs long to be followed by lots of CDDL definitions in the terminology section. \r\n2. **Document Purpose** Need to clearly define the `Goal` of the document.\r\n3. Need a clear and consistent definition of a `CoMID`. \r\n4. Define the concept of \"module composition\" in context of CoRIM document\r\n5. Needs consistency in terminology: Example some places, `language` is referred as `lang`.\r\n6. Need to clearly highlight that JSON is also supported as encoding format for `Triples` and one should provide Examples as to how JSON Encoding will look like?",
       "createdAt": "2024-01-25T17:19:10Z",
-      "updatedAt": "2024-05-07T18:30:28Z",
+      "updatedAt": "2025-01-22T23:57:33Z",
       "closedAt": null,
       "comments": [
         {
@@ -4941,6 +4969,13 @@
           "body": "Recapping:\r\n1. Document Readability : Overall, the document is hard to read. As a reader one is lost in details and there is no big picture. The introduction is 2 paragraphs long to be followed by lots of CDDL definitions in the terminology section. (There are two requests here, one is readability - do the sentences make sense? The other is document structure. Readability is an ongoing thing. Document structure could be revisited. Should it read like a BNF grammar - which is top down, or like a reference document which defines all the parts in some sort of lexicon structure - sort of bottom up? The current structure is more the latter, but I don't think either is \"right\" or \"wrong\". Just different, different readers will have different opinions. I want to avoid rework simply due to someone's opinion because someone else will have a different opinion and you don't make progress.\r\n2. Document Purpose Need to clearly define the Goal of the document. (needs an owner)\r\n3. Need a clear and consistent definition of a CoMID. (needs an owner)\r\n4. Define the concept of \"module composition\" in context of CoRIM document (I find this ambiguous as the RATS Arch describes composition already and the schema is all about composition).\r\n5. Needs consistency in terminology: Example some places, language is referred as lang. (needs an owner)\r\n6. Need to clearly highlight that JSON is also supported as encoding format for Triples and one should provide Examples as to how JSON Encoding will look like? (Focus on CBOR only to avoid scope creep and move more quickly to WGLC)\r\n\r\n2, 3, and 5 seem actionable. \r\n\r\nMaybe the next step is to create separate issues for each and someone volunteers to do the work?",
           "createdAt": "2024-05-07T18:30:28Z",
           "updatedAt": "2024-05-07T18:30:28Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK to close?",
+          "createdAt": "2025-01-22T23:57:32Z",
+          "updatedAt": "2025-01-22T23:57:32Z"
         }
       ]
     },
@@ -7726,7 +7761,7 @@
       "labels": [],
       "body": "The order should not be important so long as additions are followed by triple processing that has a condition that could match it. We don\u2019t want to impose other order dependencies unless you need to stratify triple processing more explicitly.\r\n\r\nGiven that we\u2019re defining a processing order for base triples, it should also be allowable for profiles to specify when their triples get processed if indeed order is important. Will they always be after the base triples, or can they be specified to happen at any time?",
       "createdAt": "2024-10-23T14:39:24Z",
-      "updatedAt": "2024-10-23T22:24:11Z",
+      "updatedAt": "2025-01-22T23:50:04Z",
       "closedAt": null,
       "comments": [
         {
@@ -7742,6 +7777,13 @@
           "body": ">Given that we\u2019re defining a processing order for base triples, it should also be allowable for profiles to specify when their triples get processed if indeed order is important. Will they always be after the base triples, or can they be specified to happen at any time?\r\n\r\nEvidence is the only CM type that doesn't require a `condition`. All the other CM types presume some sort of condition. Even the optional stages imply some sort of ACS condition has to exist before the stage can be processed.\r\n\r\nProfiles shouldn't, IMO, be permitted to change the basic assumption that an ACS condition has to be satisfied as a pre-condition to processing a profile defined triple. The spec normative claims that the ACS in in a consistent state at the end of phase 4. If a profile is permitted to inject itself before phase 4 it should be held to the same standard. But possibly, the spec should not permit this. Essentially, we would be saying profile defined phases are always optional and hence would be applied when the other optional phases are performed. I'm not sure I have an opinion about the ordering of optional phases. Ideally, that wouldn't matter, but if it does, it would be OK for the profile to say which other optional phases should go first.  At least that is my initial thinking.",
           "createdAt": "2024-10-23T22:24:10Z",
           "updatedAt": "2024-10-23T22:24:10Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #326 \n\nOK to close?",
+          "createdAt": "2025-01-22T23:50:03Z",
+          "updatedAt": "2025-01-22T23:50:03Z"
         }
       ]
     },
@@ -7773,7 +7815,7 @@
       "labels": [],
       "body": "The 500 tag is redundant with 501 and 502. The 502 tag is redundant with the COSE tags since the content-type is the disambiguating piece. It's kind of annoying to get a cose-signed corim that you can't just parse as a cose object because of irrelevant tags.",
       "createdAt": "2024-10-25T03:57:21Z",
-      "updatedAt": "2024-10-28T20:26:47Z",
+      "updatedAt": "2025-01-22T23:36:08Z",
       "closedAt": null,
       "comments": [
         {
@@ -7796,6 +7838,13 @@
           "body": "If you're saying you'd like #6.500 to be an arbitrary \"treat my contents as a corim\" without any further information, I have a problem with that. You don't learn enough about the value to interpret the contents effectively.\r\n\r\nIf #6.502 is for signing envelopes that are more ambiguous to CBOR, then I'd like that better explained in the text, including the need to use #6.501 for the payload if there is no concept like a protected header to disambiguate the context of the signature. I'd also like to recommend that #6.502 NOT be used for COSE representations.",
           "createdAt": "2024-10-28T20:26:45Z",
           "updatedAt": "2024-10-28T20:26:45Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #337. OK to close?",
+          "createdAt": "2025-01-22T23:36:06Z",
+          "updatedAt": "2025-01-22T23:36:06Z"
         }
       ]
     },
@@ -7811,9 +7860,17 @@
       "labels": [],
       "body": "The set of intrep-*.cddl files replaces the need for accepted-claims-set.cddl.",
       "createdAt": "2024-10-25T16:41:04Z",
-      "updatedAt": "2024-10-25T16:41:04Z",
+      "updatedAt": "2025-01-22T23:47:08Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #365 \nOK to close?",
+          "createdAt": "2025-01-22T23:39:10Z",
+          "updatedAt": "2025-01-22T23:47:08Z"
+        }
+      ]
     },
     {
       "number": 342,
@@ -8065,6 +8122,63 @@
       "updatedAt": "2025-01-17T15:38:37Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 363,
+      "id": "I_kwDOH6-tI86nAjae",
+      "title": "Mandatory kid: why?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/363",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Moving discussion out of a trivial PR.\n\nThomas asked, \u201cThere's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?\u201d\n\nI replied, \u201cDon\u2019t you need to bind the key to the contents so you can reissue a certificate for the signer and still have the contents understood?\nI don't understand. The contents of what? If the CoRIM's, they are (should be) independent of the CoRIM signer, no?\u201d\n\nThomas responded, \u201cIf one needs to reissue a short-term cert for the same signing key, it can do so easily. Clearly, if you need to handle many keys, having a kid for fast lookup can speed up the functionality, but that seems to me like a matter of local policy (if you only have one key, it would likely be unnecessary) rather than forcing a requirement on everybody.\n[\u2026]\nMay I ask you why you want the signer key's cert chain to be also signed?\u201d\n",
+      "createdAt": "2025-01-21T14:00:41Z",
+      "updatedAt": "2025-01-22T09:44:08Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> May I ask you why you want the signer key's cert chain to be also signed?\n\nOur crypto team has opinions about protected vs unprotected headers, so advised to just have a pair of the signed text and the signature. I was expressing that I prefer to use a `kid` to more easily reissue certs while keeping the contents associated with the key.\n\nI want to say the requirement was an EU thing, given one meeting participant\u2019s discussion, but I don\u2019t clearly recall. It seems like prudent practice anyway, and with regulation you have to assume an unmotivated implementer.",
+          "createdAt": "2025-01-21T14:10:10Z",
+          "updatedAt": "2025-01-21T14:10:10Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > May I ask you why you want the signer key's cert chain to be also signed?\n> \n> Our crypto team has opinions about protected vs unprotected headers, so advised to just have a pair of the signed text and the signature.\n\nIf the cert chain contains information used to make authorisation decisions, that makes sense.\nIf it doesn't (i.e., it's only used to verify the signing key), there is no good reason to seal the chain in the COSE.  If you really need to -- say, for long-term archival of the signed object -- you are better off with an explicit timestamped counter-signature. \n\n> I was expressing that I prefer to use a `kid` to more easily reissue certs while keeping the contents associated with the key.\n\nI agree with you; this could be quite useful in that scenario. However, I simply don't want to make it a requirement for everyone.\n\n> I want to say the requirement was an EU thing, given one meeting participant\u2019s discussion, but I don\u2019t clearly recall. It seems like prudent practice anyway, and with regulation you have to assume an unmotivated implementer.\n\nI am not sure I buy this argument.  An \"encrypt all the things\" approach does not protect you from sloppy implementations.  I would be more concerned about a malicious `kid` containing SQL or LDAP injection that goes unchecked from COSE into my DB, than about a certificate chain included in an unprotected header :-)\n\n\n",
+          "createdAt": "2025-01-22T09:44:06Z",
+          "updatedAt": "2025-01-22T09:44:06Z"
+        }
+      ]
+    },
+    {
+      "number": 364,
+      "id": "I_kwDOH6-tI86nIgHJ",
+      "title": "Add examples of signed CoRIMs",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/364",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "deeglaze"
+      ],
+      "labels": [],
+      "body": "The test suite needs to be expanded with complete, signed examples.\r\n\r\nThis requires changes to the cddl build machinery and the CI.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/337#discussion_r1901718526_\r\n            ",
+      "createdAt": "2025-01-22T10:39:34Z",
+      "updatedAt": "2025-01-22T15:35:10Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Given openssl and envsubst are not in the base image, we need a different test method than what is commented in #337",
+          "createdAt": "2025-01-22T15:34:47Z",
+          "updatedAt": "2025-01-22T15:34:47Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -42515,18 +42629,40 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2025-01-17T19:02:50Z",
+      "updatedAt": "2025-01-22T17:55:40Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
+      "baseRefOid": "8fced546a8a8c6fc9ce156df64607029c09fca4e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "compare-raw-value",
-      "headRefOid": "5adc6367c73aa24f1f682112a82b610b18f96cc5",
+      "headRefOid": "1d6a99c33ec7250fdc497eecffea23c8a2b57779",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm OK to merge this PR as is.",
+          "createdAt": "2025-01-21T20:08:50Z",
+          "updatedAt": "2025-01-21T20:08:50Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper I have rebased the PR to the main and it compiles. Do you have any outstanding work left to this PR? if so please do it now! Otherwise, we are happy to squash and merge!\r\n\r\nBetween, @thomas-fossati I do not see your approval, so I assume you will review it again?",
+          "createdAt": "2025-01-22T17:38:30Z",
+          "updatedAt": "2025-01-22T17:38:40Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @andrew-draper I have rebased the PR to the main and it compiles. Do you have any outstanding work left to this PR? if so please do it now! Otherwise, we are happy to squash and merge!\r\n> \r\n> Between, @thomas-fossati I do not see your approval, so I assume you will review it again?\r\n\r\nI have made a non-blocking comment https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/294#discussion_r1920448659 which is still pending.",
+          "createdAt": "2025-01-22T17:42:57Z",
+          "updatedAt": "2025-01-22T17:43:12Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86LPUGq",
@@ -43827,6 +43963,499 @@
           "createdAt": "2025-01-17T19:02:50Z",
           "updatedAt": "2025-01-17T19:02:50Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y22ye",
+          "commit": {
+            "abbreviatedOid": "73d0726"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:44:13Z",
+          "updatedAt": "2025-01-21T12:44:14Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "We decided not to include non-tagged bstr",
+              "createdAt": "2025-01-21T12:44:13Z",
+              "updatedAt": "2025-01-21T12:44:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y23_F",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:46:16Z",
+          "updatedAt": "2025-01-21T12:46:16Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nA `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.\r\n```",
+              "createdAt": "2025-01-21T12:46:16Z",
+              "updatedAt": "2025-01-21T12:46:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y24gU",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:47:13Z",
+          "updatedAt": "2025-01-21T12:47:14Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "I have committed a different change which talks about measurements rather than evidence",
+              "createdAt": "2025-01-21T12:47:14Z",
+              "updatedAt": "2025-01-21T12:47:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y24tg",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:47:35Z",
+          "updatedAt": "2025-01-21T12:47:35Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Applied, thanks",
+              "createdAt": "2025-01-21T12:47:35Z",
+              "updatedAt": "2025-01-21T12:47:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y25qp",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:49:22Z",
+          "updatedAt": "2025-01-21T12:49:22Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Syntactically yes, but it doesn't make sense to me. Do we want a way for evidence or an endorsement to say \"I know these bits but not those bits?\"",
+              "createdAt": "2025-01-21T12:49:22Z",
+              "updatedAt": "2025-01-21T12:49:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y26dK",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:50:48Z",
+          "updatedAt": "2025-01-21T12:50:49Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "```suggestion\r\nThe standard comparison function defined in this document removes the tag before performing the comparison.\r\n```",
+              "createdAt": "2025-01-21T12:50:48Z",
+              "updatedAt": "2025-01-21T12:50:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y28Nm",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:53:20Z",
+          "updatedAt": "2025-01-21T12:53:20Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "I don't think this is an error.\r\nPerhaps the raw-value measurement is variable length, but the conditional endorser wants it to be 4 bytes long. If the measurement provided is not 4 bytes long then that is just a failure to match, there might be another triple which contains an acceptable value of the correct length.",
+              "createdAt": "2025-01-21T12:53:20Z",
+              "updatedAt": "2025-01-21T12:53:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y28-C",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:54:13Z",
+          "updatedAt": "2025-01-21T12:54:13Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "I am not sure how to do this, I will move this comment to an issue.",
+              "createdAt": "2025-01-21T12:54:13Z",
+              "updatedAt": "2025-01-21T12:54:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y29rn",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:55:11Z",
+          "updatedAt": "2025-01-21T12:55:12Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "I made a similar change with different text.",
+              "createdAt": "2025-01-21T12:55:11Z",
+              "updatedAt": "2025-01-21T12:55:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y2-rM",
+          "commit": {
+            "abbreviatedOid": "bb13628"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T12:56:41Z",
+          "updatedAt": "2025-01-21T12:56:41Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Done",
+              "createdAt": "2025-01-21T12:56:41Z",
+              "updatedAt": "2025-01-21T12:56:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y3Wrc",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T13:33:22Z",
+          "updatedAt": "2025-01-21T13:33:22Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "Yes, please raise a new issue, so that we address it in next iteration!",
+              "createdAt": "2025-01-21T13:33:22Z",
+              "updatedAt": "2025-01-21T13:33:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y3WyP",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-01-21T13:33:33Z",
+          "updatedAt": "2025-01-21T13:33:33Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y3XMZ",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T13:34:12Z",
+          "updatedAt": "2025-01-21T13:34:13Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I don\u2019t think 1. is an acceptable design decision. It\u2019s not raw if it\u2019s interpreted.",
+              "createdAt": "2025-01-21T13:34:12Z",
+              "updatedAt": "2025-01-21T13:34:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y5AXM",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T16:04:17Z",
+          "updatedAt": "2025-01-21T16:04:17Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "When you say \"can be added\", do you mean that a base CoRIM is permitted to have any tagged byte string as registered in https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml ? That would be convenient for me (and Ned, I think). If you mean that any profile extensions to `$raw-value-type-choice` are restricted to specify only tagged byte strings, that's less appealing.",
+              "createdAt": "2025-01-21T16:04:17Z",
+              "updatedAt": "2025-01-21T16:04:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y65L0",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T19:56:54Z",
+          "updatedAt": "2025-01-21T19:56:55Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "Actually, the current text makes sense for two reasons. (i) measurement-values-map is already extensible. If we want a differently typed \"raw-value\" then we can define one using a new code point. A numeric raw value type would be useful. (ii) The DiceTcbInfo.vendorInfo is the equivalent of CoRIM raw-value with the exception of the CBOR tag. The DiceTcbInfo evidence depends on CoRIM cbor tagging to disambiguate the contents of vendorInfo OCTET STRING. I think it's best not to over complicate the extensibility aspect.\r\n",
+              "createdAt": "2025-01-21T19:56:54Z",
+              "updatedAt": "2025-01-21T19:56:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y69YE",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T20:06:37Z",
+          "updatedAt": "2025-01-21T20:06:37Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "The Verifier in phase <= 4 treats all measurements as semantically opaque. Whether a bstr or some other measurement type (say ip-address) is \"fully\" opaque hasn't been defined AFAIK. But maybe it doesn't need to be as the Verifier ignores ip-address semantics anyway. The only difference is how a comparison operation is defined. \r\n\r\nA profile can describe semantics for phases above 4 and for attestation results too. A section on profiles can document this. But there's little value in sprinkling bits from that section in other parts of the CoRIM spec especially in sections pertaining to phases 1-4. There's nothing really special about raw-value measurement type other than its name doesn't have semantic bias.",
+              "createdAt": "2025-01-21T20:06:37Z",
+              "updatedAt": "2025-01-21T20:06:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y7HTf",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-21T20:30:40Z",
+          "updatedAt": "2025-01-21T20:30:40Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "What do \"deprecated\" and \"backwards compatible\" refer to here? Previous drafts of this document?",
+              "createdAt": "2025-01-21T20:30:40Z",
+              "updatedAt": "2025-01-21T20:30:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y-kni",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T08:40:18Z",
+          "updatedAt": "2025-01-22T08:40:19Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "This deviates from the typographical conventions.\r\n```suggestion\r\ntagged-masked-raw-value = #6.563([\r\n```",
+              "createdAt": "2025-01-22T08:40:19Z",
+              "updatedAt": "2025-01-22T08:40:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y-wV3",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T09:01:24Z",
+          "updatedAt": "2025-01-22T09:01:24Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "> A profile can describe semantics for phases above 4\r\n\r\nThat is true, but a profile can also describe Evidence transformations. In that context, a semantic mapping from an Evidence claim to a `raw-value` can occur, with the `raw-value` being assigned a certain \"name\" (i.e., \"semantics provided by the profile\").\r\nIn Dionna's model (i.e., \"fully opaque semantics\"), this doesn't happen because `mkey` is already the name.",
+              "createdAt": "2025-01-22T09:01:24Z",
+              "updatedAt": "2025-01-22T09:01:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y-1ZL",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T09:10:11Z",
+          "updatedAt": "2025-01-22T09:10:11Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "This is a trivial change.  There is no need to go through another issue/PR cycle.  If you don't have `make` at hand, I can do it and add a commit.",
+              "createdAt": "2025-01-22T09:10:11Z",
+              "updatedAt": "2025-01-22T09:10:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y-2WP",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T09:11:43Z",
+          "updatedAt": "2025-01-22T09:11:44Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "Done in [5858002](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/294/commits/5858002560904ffcfc1c1d439efcef737c3dd53e)",
+              "createdAt": "2025-01-22T09:11:44Z",
+              "updatedAt": "2025-01-22T09:11:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCTfo",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:17:57Z",
+          "updatedAt": "2025-01-22T15:17:57Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "That's my understanding.",
+              "createdAt": "2025-01-22T15:17:57Z",
+              "updatedAt": "2025-01-22T15:17:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCjBi",
+          "commit": {
+            "abbreviatedOid": "0f45c14"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:40:44Z",
+          "updatedAt": "2025-01-22T15:40:44Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Ok then presumably the code point, and its deprecation, will (not may) be removed before ratification. No point in publishing a first version with deprecated content.",
+              "createdAt": "2025-01-22T15:40:44Z",
+              "updatedAt": "2025-01-22T15:40:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZDrpH",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T17:41:12Z",
+          "updatedAt": "2025-01-22T17:41:12Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "What do we do with this?",
+              "createdAt": "2025-01-22T17:41:12Z",
+              "updatedAt": "2025-01-22T17:41:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZDyx4",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T17:55:40Z",
+          "updatedAt": "2025-01-22T17:55:40Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I do not have a particular objection to line 872, as truly it is up to a Vendor to decide how it uses `raw-value`\r\n\r\nI would say to resolve the deadlock, shall we say?\r\nThe vendor determines the encoding of `raw-value` (as per the profile).\r\n\r\nAs the bottom text clarifies already, Thomas:\r\n`Constraining all raw value types to be bstr lets Verifiers compare raw values without understanding their contents.`",
+              "createdAt": "2025-01-22T17:55:40Z",
+              "updatedAt": "2025-01-22T17:55:40Z"
+            }
+          ]
         }
       ]
     },
@@ -48075,7 +48704,7 @@
       "labels": [],
       "body": "Validation is specific to a method. This reorganizes example methods into subsections and adds a new example based on attest-key-triple and CoTS.\r\n\r\nThis is an attempt to make actionable \"key lookup\" normative language as marked in Issue #317.\r\n\r\nThis is an attempt to resolve the ae verification concern in Issue #314.",
       "createdAt": "2024-10-11T16:02:46Z",
-      "updatedAt": "2024-12-05T22:32:42Z",
+      "updatedAt": "2025-01-21T21:35:10Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
@@ -48086,7 +48715,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Does PR #341 close this PR?",
+          "createdAt": "2025-01-21T21:35:08Z",
+          "updatedAt": "2025-01-21T21:35:08Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86M3L5H",
@@ -48932,7 +49569,7 @@
       "id": "PR_kwDOH6-tI85-uCZD",
       "title": "Conditional endorsement series triple section reworded",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/326",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -48941,17 +49578,19 @@
       "labels": [],
       "body": "Added description to conditional series triple to address issues #310 and #321.\r\nUpdated example [here](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cond-series-wording/cddl/examples/comid-series.diag) to better illustrate a use case.",
       "createdAt": "2024-10-15T19:07:50Z",
-      "updatedAt": "2025-01-17T19:23:21Z",
+      "updatedAt": "2025-01-22T17:20:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "9895d5539d88910f940869560b6094d82f22f5a6",
+      "baseRefOid": "bbb06a3b177d7c74a22633ea4c51aabfbd5716a4",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cond-series-wording",
-      "headRefOid": "8d0d138efd92a2ecf3bc6e4e1cc8990179ff072d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "4edc23ceb9b48e27a7436c62003c6e6a7d2f6399",
+      "closedAt": "2025-01-22T17:20:30Z",
+      "mergedAt": "2025-01-22T17:20:30Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "9514060d647a76149284511598a0ed8d69b8a517"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -49308,9 +49947,9 @@
           "comments": [
             {
               "originalPosition": 8,
-              "body": "```suggestion\r\nThe Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside conditional-series-record). Every conditional-series-record selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each conditional-series-record. For example, if a selection matches on 3 measurement-map statements; mkey is the same for all 3 statements and mval contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every conditional-series-record in the series.\r\n```",
+              "body": "```suggestion\r\nThe Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).\r\nEvery `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each `conditional-series-record`.\r\nFor example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.\r\n```",
               "createdAt": "2025-01-17T19:19:23Z",
-              "updatedAt": "2025-01-17T19:19:24Z"
+              "updatedAt": "2025-01-22T15:18:03Z"
             }
           ]
         },
@@ -49345,6 +49984,32 @@
           "body": "@nedmsmith I suggested a minor improvement/clarity in the text describing `conditional-endorsement-series-triple`. Please review and take it if you deem fit!",
           "createdAt": "2025-01-17T19:21:09Z",
           "updatedAt": "2025-01-17T19:21:09Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCUFS",
+          "commit": {
+            "abbreviatedOid": "8d0d138"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-22T15:18:47Z",
+          "updatedAt": "2025-01-22T15:18:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCUzf",
+          "commit": {
+            "abbreviatedOid": "7151f6a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-22T15:19:49Z",
+          "updatedAt": "2025-01-22T15:19:49Z",
           "comments": []
         }
       ]
@@ -49711,24 +50376,26 @@
       "id": "PR_kwDOH6-tI85_qJoz",
       "title": "Drop top level tagging requirement",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/337",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Tagged type choices are not typical.\r\nI would go so far as to drop the 500 tag as the entrypoint to CoRIM altogether. NVIDIA is creating CoRIMs this way, but they are using a different content-type in the protected header. I think we can drop it in an follow-up.\r\n\r\nThis patch drops\r\n\r\n* the need to tag the type choice\r\n* the extensibility of concise-rim-type-choice, since extensibility is governed by a profile, and the profile is not known at this point in parsing.\r\n* the need to tag the signed corim, since it is a COSE-sign1 with an unambigiuous content-type, and COSE-sign1 already has its own tag.\r\n\r\nAddresses Issue #333, but 500 removal is TBD.",
       "createdAt": "2024-10-23T18:12:02Z",
-      "updatedAt": "2025-01-17T17:20:40Z",
+      "updatedAt": "2025-01-22T17:28:23Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
+      "baseRefOid": "9514060d647a76149284511598a0ed8d69b8a517",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "topleveltag",
-      "headRefOid": "67aaaa43b02db2541c1bc306a52b68d5299e6304",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "efe9950560146bbc650af7e678b015eaf1449df2",
+      "closedAt": "2025-01-22T17:28:23Z",
+      "mergedAt": "2025-01-22T17:28:23Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "8fced546a8a8c6fc9ce156df64607029c09fca4e"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -49834,6 +50501,13 @@
           "body": "I'm guessing we're delaying merging due to dropping 502, so I'm opening a dialogue with IANA MIME types and RFC9052 to consider adding content-type as an optional parameter for application/cose.",
           "createdAt": "2025-01-17T17:20:38Z",
           "updatedAt": "2025-01-17T17:20:38Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed in the thread that `application/rim+cose` with CoRE C-F registration and without the 502 tag in the CoRIM representation is the most viable path forward.",
+          "createdAt": "2025-01-21T16:08:44Z",
+          "updatedAt": "2025-01-21T16:08:44Z"
         }
       ],
       "reviews": [
@@ -50099,6 +50773,285 @@
               "updatedAt": "2025-01-08T15:41:54Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_h2q",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:22:10Z",
+          "updatedAt": "2025-01-22T10:22:10Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "**Update**\r\n\r\n| media type | CBOR tag | data item |\r\n| -- | -- | -- |\r\n| `application/rim+cbor` | 501 | `tagged-corim-map` | \r\n| `application/rim+cose` | 18 | `signed-corim` | \r\n\r\nAlso\r\n\r\n* The content type (key=3) in the `protected-corim-header-map` is `application/rim+cbor`\r\n* The `.corim` extension is registered for both `rim+cbor` and `rim+cose`\r\n\r\n\r\n",
+              "createdAt": "2025-01-22T10:22:10Z",
+              "updatedAt": "2025-01-22T10:22:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_jE5",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:24:12Z",
+          "updatedAt": "2025-01-22T10:24:12Z",
+          "comments": [
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\r\n  transfer CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S), and other\r\n```",
+              "createdAt": "2025-01-22T10:24:12Z",
+              "updatedAt": "2025-01-22T10:24:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_mEd",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:29:24Z",
+          "updatedAt": "2025-01-22T10:29:24Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "There is no TN here, it's just the tagged COSE Sign1:\r\n\r\n```suggestion\r\n: `D2 84`\r\n```",
+              "createdAt": "2025-01-22T10:29:24Z",
+              "updatedAt": "2025-01-22T10:29:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_pO9",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:34:28Z",
+          "updatedAt": "2025-01-22T10:34:28Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "I meant:\r\n\r\n```suggestion\r\n501(\r\n  / corim-map / {\r\n    / corim.id / 0 : h'284e6c3e5d9f4f6b851f5a4247f243a7',\r\n```",
+              "createdAt": "2025-01-22T10:34:28Z",
+              "updatedAt": "2025-01-22T10:34:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_pcv",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:34:51Z",
+          "updatedAt": "2025-01-22T10:34:51Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/337/files#r1925086997",
+              "createdAt": "2025-01-22T10:34:51Z",
+              "updatedAt": "2025-01-22T10:34:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_sY9",
+          "commit": {
+            "abbreviatedOid": "e11242b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:40:10Z",
+          "updatedAt": "2025-01-22T10:40:10Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "Raised #364 ",
+              "createdAt": "2025-01-22T10:40:10Z",
+              "updatedAt": "2025-01-22T10:40:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_tLw",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T10:41:32Z",
+          "updatedAt": "2025-01-22T10:41:32Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Sure?",
+              "createdAt": "2025-01-22T10:41:32Z",
+              "updatedAt": "2025-01-22T10:41:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_uBk",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "LGTM, apart from a couple of editorial fixes.",
+          "createdAt": "2025-01-22T10:42:50Z",
+          "updatedAt": "2025-01-22T10:42:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZAmLg",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T12:28:23Z",
+          "updatedAt": "2025-01-22T12:28:23Z",
+          "comments": [
+            {
+              "originalPosition": 101,
+              "body": "Here we should explicitly say that the `cose-type` parameter is not used.\r\n\r\nSee also the \"Interop considerations\" of the `+cose` entry in the [SSS  registry](https://www.iana.org/assignments/media-type-structured-suffix/media-type-structured-suffix.xhtml)",
+              "createdAt": "2025-01-22T12:28:23Z",
+              "updatedAt": "2025-01-22T12:30:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCLOt",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:05:49Z",
+          "updatedAt": "2025-01-22T15:05:50Z",
+          "comments": [
+            {
+              "originalPosition": 101,
+              "body": "```suggestion\r\n: n/a (cose-type is explicitly not supported, as it is understood to be \"cose-sign1\")\r\n```",
+              "createdAt": "2025-01-22T15:05:49Z",
+              "updatedAt": "2025-01-22T15:05:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCMXt",
+          "commit": {
+            "abbreviatedOid": "28b18d6"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:07:30Z",
+          "updatedAt": "2025-01-22T15:07:30Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "I thought you wanted the +cose CoAP C-F number to serialize the .corim at rest. The COSE_Sign1-only form is just for on-the-wire.",
+              "createdAt": "2025-01-22T15:07:30Z",
+              "updatedAt": "2025-01-22T15:07:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCPB1",
+          "commit": {
+            "abbreviatedOid": "dd3a302"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:11:25Z",
+          "updatedAt": "2025-01-22T15:11:26Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Oh it was an unadded file on my side that `make` readded. Removed.",
+              "createdAt": "2025-01-22T15:11:26Z",
+              "updatedAt": "2025-01-22T15:11:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCYu_",
+          "commit": {
+            "abbreviatedOid": "7ed8759"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:25:38Z",
+          "updatedAt": "2025-01-22T15:25:39Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\n|     500 | `tag`               | Reserved for backward compatibility                   | {{&SELF}} |\r\n```\r\nWe have published CoRIMs using tag 500 and if we reuse that for something else it could cause confusion",
+              "createdAt": "2025-01-22T15:25:38Z",
+              "updatedAt": "2025-01-22T15:26:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCbbq",
+          "commit": {
+            "abbreviatedOid": "004c1f2"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-01-22T15:29:36Z",
+          "updatedAt": "2025-01-22T15:29:36Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZDO3g",
+          "commit": {
+            "abbreviatedOid": "efe9950"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM, thanks!",
+          "createdAt": "2025-01-22T16:48:41Z",
+          "updatedAt": "2025-01-22T17:23:31Z",
+          "comments": []
         }
       ]
     },
@@ -52983,7 +53936,7 @@
       "labels": [],
       "body": "As a means of representing a CPL or VMPL, this provides some extra semantic understanding. Leaving condition-matching to a later PR.",
       "createdAt": "2024-12-18T16:46:55Z",
-      "updatedAt": "2024-12-18T16:58:00Z",
+      "updatedAt": "2025-01-22T15:50:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "443a061d4d458643ca891a72069328ad3d930c96",
@@ -52994,8 +53947,117 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze Instead of directly making a change request, can we please have an issue, which describes a requirement.\r\n\r\nWhat is a Privilege level of an Environment ?\r\n\r\nWhy it is needed? What uses cases are relevant when this feature gains relevance ?",
+          "createdAt": "2025-01-22T13:28:57Z",
+          "updatedAt": "2025-01-22T13:28:57Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Add matching rules to the PR\r\n\r\nAdd examples to the PR, in CDDL ",
+          "createdAt": "2025-01-22T15:46:02Z",
+          "updatedAt": "2025-01-22T15:46:02Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86Y8h6N",
+          "commit": {
+            "abbreviatedOid": "879c4b2"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T01:27:25Z",
+          "updatedAt": "2025-01-22T15:36:29Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "It's unclear if both positive and negative privilege levels can be used simultaneously.",
+              "createdAt": "2025-01-22T01:27:25Z",
+              "updatedAt": "2025-01-22T15:36:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCmZ9",
+          "commit": {
+            "abbreviatedOid": "879c4b2"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:45:46Z",
+          "updatedAt": "2025-01-22T15:45:47Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "@andrew-draper requests this PR to contain a matching algorithm.",
+              "createdAt": "2025-01-22T15:45:47Z",
+              "updatedAt": "2025-01-22T15:45:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCmks",
+          "commit": {
+            "abbreviatedOid": "879c4b2"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:46:01Z",
+          "updatedAt": "2025-01-22T15:46:01Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "Also example diags.",
+              "createdAt": "2025-01-22T15:46:01Z",
+              "updatedAt": "2025-01-22T15:46:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCm1j",
+          "commit": {
+            "abbreviatedOid": "879c4b2"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Please continue good work on the PR",
+          "createdAt": "2025-01-22T15:46:25Z",
+          "updatedAt": "2025-01-22T15:46:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCpQE",
+          "commit": {
+            "abbreviatedOid": "879c4b2"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:50:02Z",
+          "updatedAt": "2025-01-22T15:50:03Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nFor environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.\r\nThe full range if signed integers may be used.\r\n```",
+              "createdAt": "2025-01-22T15:50:03Z",
+              "updatedAt": "2025-01-22T15:50:03Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 355,
@@ -53258,7 +54320,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-01-17T15:42:03Z",
-      "updatedAt": "2025-01-17T19:23:48Z",
+      "updatedAt": "2025-01-21T12:42:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ad08b31f94b524b69edd8710f51b1497a389e496",
@@ -53339,18 +54401,54 @@
       "labels": [],
       "body": "Addresses Issue #358.\r\nThis does include a CoSWID registry addition.",
       "createdAt": "2025-01-17T18:27:03Z",
-      "updatedAt": "2025-01-18T03:03:35Z",
+      "updatedAt": "2025-01-22T23:25:32Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "ad08b31f94b524b69edd8710f51b1497a389e496",
+      "baseRefOid": "8fced546a8a8c6fc9ce156df64607029c09fca4e",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "nested-profile",
-      "headRefOid": "d2e9b8e58ee7832401168ed11ecbf57f5ad04abb",
+      "headRefOid": "2745ddd23cbbf3f63cf38b4b4d9567eaa60d80cc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed build errors",
+          "createdAt": "2025-01-21T23:52:08Z",
+          "updatedAt": "2025-01-21T23:52:08Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR seems inadequate, as it does not explain what is the meaning of a profile when specified at a CoRIM Level versus a tag level? When would one use a profile at CoRIM level versus profile at `tag` level?\r\nWhat are the rules for specifying profiles fields one per each tag ?\r\nWhat are the implications of specifying one at each level?",
+          "createdAt": "2025-01-22T13:48:30Z",
+          "updatedAt": "2025-01-22T13:48:30Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This PR seems inadequate,\r\n\r\nThis seems a bit harsh :-)\r\n\r\n> as it does not explain what is the meaning of a profile when specified at a CoRIM Level versus a tag level?\r\n\r\nThe meaning of profile does not change, only the scope does, which is explained.\r\n\r\n> When would one use a profile at CoRIM level versus profile at `tag` level?\r\n\r\nWhen they need to include tags with different profiles under the same issuer's signature.\r\n\r\n> What are the rules for specifying profiles fields one per each tag ?\r\n\r\nThere are no rules.  One either specifies it, or one doesn't. \r\n\r\n> What are the implications of specifying one at each level?\r\n\r\nThe implication is simply that any profile information at the CoRIM level is overridden.\r\n\r\n",
+          "createdAt": "2025-01-22T14:08:57Z",
+          "updatedAt": "2025-01-22T14:08:57Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > This PR seems inadequate,\r\n> \r\n> This seems a bit harsh :-)\r\n> \r\n> > as it does not explain what is the meaning of a profile when specified at a CoRIM Level versus a tag level?\r\n> \r\n> The meaning of profile does not change, only the scope does, which is explained.\r\n> \r\n> > When would one use a profile at CoRIM level versus profile at `tag` level?\r\n> \r\n> When they need to include tags with different profiles under the same issuer's signature.\r\n> \r\n> > What are the rules for specifying profiles fields one per each tag ?\r\n> \r\n> There are no rules. One either specifies it, or one doesn't.\r\n> \r\n> > What are the implications of specifying one at each level?\r\n> \r\n> The implication is simply that any profile information at the CoRIM level is overridden.\r\n\r\n@thomas-fossati What I imply is `Simply specifying` profile at each level is not adequate from specification perspective, needs more care and explanation what specifying at each level has a bearing.\r\n\r\nAlso, I do not agree with the assessment, \r\n> > What are the implications of specifying one at each level?\r\n> \r\n> The implication is simply that any profile information at the CoRIM level is overridden.\r\n\r\nCoRIM Profile cannot be over-ridden by inner profile, but inner profiles may define composition elements for an outer profile.",
+          "createdAt": "2025-01-22T14:25:18Z",
+          "updatedAt": "2025-01-22T14:25:18Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I added safety requirements as per our discussion at the end of the last meeting. Please check if these are adequate @yogeshbdeshpande @thomas-fossati @nedmsmith @andrew-draper ",
+          "createdAt": "2025-01-22T18:50:23Z",
+          "updatedAt": "2025-01-22T18:50:23Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86YlBF0",
@@ -53605,6 +54703,304 @@
               "updatedAt": "2025-01-18T03:02:32Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y7VlV",
+          "commit": {
+            "abbreviatedOid": "d2e9b8e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-01-21T21:05:50Z",
+          "updatedAt": "2025-01-21T21:05:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y_Mkd",
+          "commit": {
+            "abbreviatedOid": "ddceeb4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "LGTM, apart from a bunch of purely editorial things that should be trivial to fix.",
+          "createdAt": "2025-01-22T09:47:06Z",
+          "updatedAt": "2025-01-22T10:11:56Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "indent gone wild :)",
+              "createdAt": "2025-01-22T09:47:06Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 23,
+              "body": "This sounds a bit awkward.  I suggest using the formula you used for CoSWID instead:\r\n\r\n```suggestion\r\nThe CoMID profile identifier takes precedence over the CoRIM profile identifier.\r\n```\r\n",
+              "createdAt": "2025-01-22T09:56:23Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "I don't get why the ref is moved to RFC9393.  The IANA registry seems very appropriate here.  ",
+              "createdAt": "2025-01-22T09:58:30Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nA CoRIM may contain a CoSWID tag as specified in {{sec-corim-tags}}.\r\n```",
+              "createdAt": "2025-01-22T10:00:01Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "```suggestion\r\nThis specification registers an extension to `concise-swid-tag` using the `$$coswid-extension` socket.\r\nThis extension defines a CoSWID profile code point that allows for an optional CoSWID profile identifier.\r\n```",
+              "createdAt": "2025-01-22T10:00:26Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 57,
+              "body": "I like this.  We can reuse it for CoMID and CoBOM.",
+              "createdAt": "2025-01-22T10:02:32Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 44,
+              "body": "ditto:\r\n\r\n```suggestion\r\nThe CoBOM profile identifier takes precedence over the CoRIM profile identifier.\r\n```",
+              "createdAt": "2025-01-22T10:04:36Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 60,
+              "body": "I think L2506 is sufficient.\r\n```suggestion\r\n```",
+              "createdAt": "2025-01-22T10:05:38Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "```suggestion\r\nIANA is requested to add the following CoSWID Items to the \"CoSWID Items\" registry within the \"Concise Software Identifier\" registry group {{-coswid-reg}}.\r\n```",
+              "createdAt": "2025-01-22T10:10:42Z",
+              "updatedAt": "2025-01-22T10:11:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCD1q",
+          "commit": {
+            "abbreviatedOid": "e365ed8"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T14:56:54Z",
+          "updatedAt": "2025-01-22T14:56:55Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "This wasn't intentional. Appears to be a merge artifact?",
+              "createdAt": "2025-01-22T14:56:54Z",
+              "updatedAt": "2025-01-22T14:56:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCHBy",
+          "commit": {
+            "abbreviatedOid": "e365ed8"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:00:34Z",
+          "updatedAt": "2025-01-22T15:00:34Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\n            / BOM profile / 3 : 32(\"tag:example.com,2025:abc#xyz\")\r\n```",
+              "createdAt": "2025-01-22T15:00:34Z",
+              "updatedAt": "2025-01-22T15:00:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCQiS",
+          "commit": {
+            "abbreviatedOid": "ddceeb4"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:13:40Z",
+          "updatedAt": "2025-01-22T15:13:41Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "No, Ned removed it in ddceeb4219e2e1f8dfccca8b48a2e693860227d1...",
+              "createdAt": "2025-01-22T15:13:41Z",
+              "updatedAt": "2025-01-22T15:13:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCj1v",
+          "commit": {
+            "abbreviatedOid": "6544cac"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:41:56Z",
+          "updatedAt": "2025-01-22T15:41:56Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Can this use the same codepoint as mid tag?",
+              "createdAt": "2025-01-22T15:41:56Z",
+              "updatedAt": "2025-01-22T15:41:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCk0k",
+          "commit": {
+            "abbreviatedOid": "6544cac"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I agree with this in principle, please fill in the missing contents.",
+          "createdAt": "2025-01-22T15:43:25Z",
+          "updatedAt": "2025-01-22T15:46:27Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCmT-",
+          "commit": {
+            "abbreviatedOid": "6544cac"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T15:45:38Z",
+          "updatedAt": "2025-01-22T15:45:38Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "re-reading it in context, ISTM that L1358 can be dropped altogether.",
+              "createdAt": "2025-01-22T15:45:38Z",
+              "updatedAt": "2025-01-22T15:45:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZCwRQ",
+          "commit": {
+            "abbreviatedOid": "6544cac"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T16:00:35Z",
+          "updatedAt": "2025-01-22T16:00:35Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "But not the coswid tag?",
+              "createdAt": "2025-01-22T16:00:35Z",
+              "updatedAt": "2025-01-22T16:00:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZELRi",
+          "commit": {
+            "abbreviatedOid": "98c2d11"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T18:43:11Z",
+          "updatedAt": "2025-01-22T18:43:11Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "I think we need to be clear that we're not suggesting that a profile is free to extend all extension points freely with negative values when the data type is under control of another RFC/registry.",
+              "createdAt": "2025-01-22T18:43:11Z",
+              "updatedAt": "2025-01-22T18:43:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZFx-t",
+          "commit": {
+            "abbreviatedOid": "98c2d11"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T22:29:54Z",
+          "updatedAt": "2025-01-22T22:30:00Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "> re-reading it in context, ISTM that L1358 can be dropped altogether.\r\n\r\nThe tooling was failing because the same reference was duplicated. Somehow the tooling equated them as the same reference. I removed one to make it build successfully.",
+              "createdAt": "2025-01-22T22:29:54Z",
+              "updatedAt": "2025-01-22T22:30:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZFzR-",
+          "commit": {
+            "abbreviatedOid": "98c2d11"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-22T22:34:06Z",
+          "updatedAt": "2025-01-22T23:05:42Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\n          / href / 0 : 32(\"https://rims.example.com/path/to/file_adkfhaeria-dfka_efkj.corim\")\r\n```\r\nShould follow convention based on IANA Considerations section.",
+              "createdAt": "2025-01-22T22:34:07Z",
+              "updatedAt": "2025-01-22T23:05:42Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\nIf a CoRIM profile extends CoSWID extension points, the profile MUST be specified in a publicly available document to satisfy the \"Specification Required\" constraint of the IANA CoSWID registry.\r\n```\r\nIt's not clear why coswid profiles are held to a different standard than corim, coswid, comid, or cobom profiles in terms of SHOULD vs. MUST. Shouldn't they be consistent? If the intent is for inner profiles to have tighter requirements from outer (corim) profile. The wording should be inclusive of the other tag types (rather than single out CoSWID). ",
+              "createdAt": "2025-01-22T22:41:05Z",
+              "updatedAt": "2025-01-22T23:05:42Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\n*  The `corim-map.profile` scope applies to all tags within the `corim-map` unless specifically overidden by a profile in a tag-specific profile.\r\n```\r\nI'm trying to find wording that is clearer to a typical reader.",
+              "createdAt": "2025-01-22T22:42:20Z",
+              "updatedAt": "2025-01-22T23:05:42Z"
+            },
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\r\n*  A profile's interpretation MUST be consistent regardless of where the profile identifier is supplied; whether in `corim-map.profile` or in a tag.\r\n```",
+              "createdAt": "2025-01-22T23:00:01Z",
+              "updatedAt": "2025-01-22T23:32:58Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\n\r\n```\r\nThe reworded line 385 seems to be inclusive of intent of this statement. \r\n",
+              "createdAt": "2025-01-22T23:01:30Z",
+              "updatedAt": "2025-01-22T23:05:42Z"
+            }
+          ]
         }
       ]
     },
@@ -53613,25 +55009,77 @@
       "id": "PR_kwDOH6-tI86IVHqF",
       "title": "protected-header-map: kid: bit -> byte",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/362",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "pranjalkole",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "`bstr` is a byte string according to the CDDL RFC",
       "createdAt": "2025-01-20T10:07:39Z",
-      "updatedAt": "2025-01-20T17:27:15Z",
+      "updatedAt": "2025-01-22T10:37:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ce4e95c2df6b54b5bfd0ddd78146d6b6c2b2c66f",
       "headRepository": "pranjalkole/draft-ietf-rats-corim",
       "headRefName": "main",
       "headRefOid": "be56d026e73f9004b05e977a5700121abaad1e87",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
+      "closedAt": "2025-01-22T10:37:45Z",
+      "mergedAt": "2025-01-22T10:37:45Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "bbb06a3b177d7c74a22633ea4c51aabfbd5716a4"
+      },
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @henkbirkholz : Simple change, we can merge this today, if you both approve!",
+          "createdAt": "2025-01-21T11:46:51Z",
+          "updatedAt": "2025-01-21T11:46:51Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Simple change, we can merge this today, if you both approve!\r\n\r\nYes.\r\n\r\nThere's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?",
+          "createdAt": "2025-01-21T11:52:18Z",
+          "updatedAt": "2025-01-21T11:52:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Simple change, we can merge this today, if you both approve!\r\n> \r\n> Yes.\r\n> \r\n> There's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?\r\n\r\nSure, do you want to track it with another issue so as to discuss in next CoRIM Meeting ?",
+          "createdAt": "2025-01-21T12:05:36Z",
+          "updatedAt": "2025-01-21T12:05:56Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Simple change, we can merge this today, if you both approve!\r\n> \r\n> Yes.\r\n> \r\n> There's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?\r\n\r\nDon\u2019t you need to bind the key to the contents so you can reissue a certificate for the signer and still have the contents understood? My endorsement format just had the whole key certificate as part of the signed contents and that makes it harder since you have to reissue both the cert and all the endorsements.",
+          "createdAt": "2025-01-21T12:44:37Z",
+          "updatedAt": "2025-01-21T12:44:37Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > Simple change, we can merge this today, if you both approve!\r\n> > \r\n> > \r\n> > Yes.\r\n> > There's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?\r\n> \r\n> Don\u2019t you need to bind the key to the contents so you can reissue a certificate for the signer and still have the contents understood?\r\n\r\nI don't understand.  The _contents_ of what?  If the CoRIM's, they are (should be) independent of the CoRIM signer, no?\r\n\r\nIf one needs to reissue a short-term cert for the same signing key, it can do so easily.  Clearly, if you need to handle many keys, having a kid for fast lookup can speed up the functionality, but that seems to me like a matter of local policy (if you only have one key, it would likely be unnecessary) rather than forcing a requirement on everybody.\r\n\r\n> My endorsement format just had the whole key certificate as part of the signed contents and that makes it harder since you have to reissue both the cert and all the endorsements.\r\n\r\nMay I ask you why you want the signer key's cert chain to be also signed?\r\n\r\n\r\n\r\n",
+          "createdAt": "2025-01-21T13:53:44Z",
+          "updatedAt": "2025-01-21T13:55:47Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Moving discussion to Issue #363 \r\n",
+          "createdAt": "2025-01-21T14:02:13Z",
+          "updatedAt": "2025-01-21T14:02:13Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Moving discussion to Issue #363\r\n\r\nThank you @deeglaze ",
+          "createdAt": "2025-01-21T14:05:33Z",
+          "updatedAt": "2025-01-21T14:05:33Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86YtGbx",
@@ -53671,8 +55119,49 @@
           "createdAt": "2025-01-20T17:27:15Z",
           "updatedAt": "2025-01-20T17:27:15Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86Y7TEz",
+          "commit": {
+            "abbreviatedOid": "be56d02"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-01-21T20:59:35Z",
+          "updatedAt": "2025-01-21T20:59:35Z",
+          "comments": []
         }
       ]
+    },
+    {
+      "number": 365,
+      "id": "PR_kwDOH6-tI86IsPGj",
+      "title": "Removed unused cddl file",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/365",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "We no longer use accepted-claim-set.cddl",
+      "createdAt": "2025-01-22T23:45:57Z",
+      "updatedAt": "2025-01-22T23:47:58Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "8fced546a8a8c6fc9ce156df64607029c09fca4e",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "remove-unused-cddl",
+      "headRefOid": "464a3352f26fad57048c7fc6d49965223e18fc24",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
