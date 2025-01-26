@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-23T01:42:46.897827+00:00",
+  "timestamp": "2025-01-26T01:45:23.643816+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -335,7 +335,7 @@
       ],
       "body": "Provide a description of the Raw Values types. Also clarify why we need a type choice instead of just raw bytes.",
       "createdAt": "2022-09-23T16:38:41Z",
-      "updatedAt": "2025-01-22T23:53:15Z",
+      "updatedAt": "2025-01-23T10:57:45Z",
       "closedAt": null,
       "comments": [
         {
@@ -358,6 +358,13 @@
           "body": "Fixed by PR #294 \n\nOK to close?",
           "createdAt": "2025-01-22T23:53:13Z",
           "updatedAt": "2025-01-22T23:53:13Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Sure, once we merge PR #294, we should close this!",
+          "createdAt": "2025-01-23T10:57:43Z",
+          "updatedAt": "2025-01-23T10:57:43Z"
         }
       ]
     },
@@ -3230,7 +3237,7 @@
       ],
       "body": "The section of Verification does cover a reference to profile for performing appraisal procedure.\r\n\r\nHowever the sections only addresses `profiles` in terms of CoRIM Profiles. However, \r\n\r\n1. There are actually two profiles, one in Endorsements (Reference Values and Endorsed Values) and the other in Evidence.\r\n2. Evidence profile is associated to Endorsement profile and there is a linkage between the two ( there could be 1:N relationship between them) and they are not identical.\r\n4. Also not all Evidence are carried out as CoRIM as well.\r\n\r\nConsidering all the above aspects the Verification sections which describes profile based Verification needs to clearly set the context in which profiles are referred.\r\n\r\nOne suggestion is to use another term: known as \"Attestation Format\" OR \"Attestation Scheme\" which maps to a unique scheme for Appraisal considering CoRIM Endorsement + Evidence Profile into consideration!\r\n\r\n",
       "createdAt": "2023-09-06T15:43:10Z",
-      "updatedAt": "2025-01-22T23:53:58Z",
+      "updatedAt": "2025-01-23T18:40:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -3253,6 +3260,27 @@
           "body": "OK to close?",
           "createdAt": "2025-01-22T23:53:57Z",
           "updatedAt": "2025-01-22T23:53:57Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> OK to close?\n\nUpon quickly scanning the editor's copy, I could not locate a clear statement regarding a 1:1 relationship between evidence and the CoRIM profile.",
+          "createdAt": "2025-01-23T10:11:05Z",
+          "updatedAt": "2025-01-23T10:11:05Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We have not done any explicit work to address this PR, so we should not be closing this, at the moment!",
+          "createdAt": "2025-01-23T10:53:27Z",
+          "updatedAt": "2025-01-23T10:53:27Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We opted to move the corim sections that described evidence mapping to internal representation to https://github.com/ietf-rats-wg/draft-smith-rats-evidence-trans \n\nThis draft depends on the corim draft/RFC but the internal representation in CoRIM for evidence doesn't have external dependencies. \n\nIf this issue still exists, but applies to evidence, maybe it makes sense to move it to I-D.smith-rats-evidence-trans?",
+          "createdAt": "2025-01-23T18:40:56Z",
+          "updatedAt": "2025-01-23T18:40:56Z"
         }
       ]
     },
@@ -7860,7 +7888,7 @@
       "labels": [],
       "body": "The set of intrep-*.cddl files replaces the need for accepted-claims-set.cddl.",
       "createdAt": "2024-10-25T16:41:04Z",
-      "updatedAt": "2025-01-22T23:47:08Z",
+      "updatedAt": "2025-01-23T10:15:07Z",
       "closedAt": null,
       "comments": [
         {
@@ -7869,6 +7897,13 @@
           "body": "Fixed by PR #365 \nOK to close?",
           "createdAt": "2025-01-22T23:39:10Z",
           "updatedAt": "2025-01-22T23:47:08Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Fixed by PR [#365](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/365) OK to close?\n\nYes.  I have added the `Fix: ...` annotation in the PR, therefore, it'll be automatically closed when #365 is merged.",
+          "createdAt": "2025-01-23T10:15:06Z",
+          "updatedAt": "2025-01-23T10:15:06Z"
         }
       ]
     },
@@ -8135,7 +8170,7 @@
       "labels": [],
       "body": "Moving discussion out of a trivial PR.\n\nThomas asked, \u201cThere's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?\u201d\n\nI replied, \u201cDon\u2019t you need to bind the key to the contents so you can reissue a certificate for the signer and still have the contents understood?\nI don't understand. The contents of what? If the CoRIM's, they are (should be) independent of the CoRIM signer, no?\u201d\n\nThomas responded, \u201cIf one needs to reissue a short-term cert for the same signing key, it can do so easily. Clearly, if you need to handle many keys, having a kid for fast lookup can speed up the functionality, but that seems to me like a matter of local policy (if you only have one key, it would likely be unnecessary) rather than forcing a requirement on everybody.\n[\u2026]\nMay I ask you why you want the signer key's cert chain to be also signed?\u201d\n",
       "createdAt": "2025-01-21T14:00:41Z",
-      "updatedAt": "2025-01-22T09:44:08Z",
+      "updatedAt": "2025-01-24T06:44:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -8151,6 +8186,20 @@
           "body": "> > May I ask you why you want the signer key's cert chain to be also signed?\n> \n> Our crypto team has opinions about protected vs unprotected headers, so advised to just have a pair of the signed text and the signature.\n\nIf the cert chain contains information used to make authorisation decisions, that makes sense.\nIf it doesn't (i.e., it's only used to verify the signing key), there is no good reason to seal the chain in the COSE.  If you really need to -- say, for long-term archival of the signed object -- you are better off with an explicit timestamped counter-signature. \n\n> I was expressing that I prefer to use a `kid` to more easily reissue certs while keeping the contents associated with the key.\n\nI agree with you; this could be quite useful in that scenario. However, I simply don't want to make it a requirement for everyone.\n\n> I want to say the requirement was an EU thing, given one meeting participant\u2019s discussion, but I don\u2019t clearly recall. It seems like prudent practice anyway, and with regulation you have to assume an unmotivated implementer.\n\nI am not sure I buy this argument.  An \"encrypt all the things\" approach does not protect you from sloppy implementations.  I would be more concerned about a malicious `kid` containing SQL or LDAP injection that goes unchecked from COSE into my DB, than about a certificate chain included in an unprotected header :-)\n\n\n",
           "createdAt": "2025-01-22T09:44:06Z",
           "updatedAt": "2025-01-22T09:44:06Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Okay well I have no strong attachment to it. We\u2019ll see at WGLC.",
+          "createdAt": "2025-01-24T06:08:04Z",
+          "updatedAt": "2025-01-24T06:08:04Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I do recall further reason to bind the contents to the key, and that is to avoid the problems that come with letting an adversary control the algorithmic choices for a key. A key is not just the key material but also the way it is used. The Tink key format makes this clear. By keeping the key ID with the signed content, you ensure that the correct parameters will be used. I could be misinterpreting the \u201cfull key\u201d notion though as it could just be important to symmetric keys which don\u2019t have certificates https://developers.google.com/tink/design/keysets",
+          "createdAt": "2025-01-24T06:44:04Z",
+          "updatedAt": "2025-01-24T06:44:04Z"
         }
       ]
     },
@@ -42627,9 +42676,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "",
+      "body": "Fix #9 ",
       "createdAt": "2024-09-30T00:00:07Z",
-      "updatedAt": "2025-01-22T17:55:40Z",
+      "updatedAt": "2025-01-23T11:39:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8fced546a8a8c6fc9ce156df64607029c09fca4e",
@@ -44454,6 +44503,26 @@
               "body": "I do not have a particular objection to line 872, as truly it is up to a Vendor to decide how it uses `raw-value`\r\n\r\nI would say to resolve the deadlock, shall we say?\r\nThe vendor determines the encoding of `raw-value` (as per the profile).\r\n\r\nAs the bottom text clarifies already, Thomas:\r\n`Constraining all raw value types to be bstr lets Verifiers compare raw values without understanding their contents.`",
               "createdAt": "2025-01-22T17:55:40Z",
               "updatedAt": "2025-01-22T17:55:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZJr7j",
+          "commit": {
+            "abbreviatedOid": "5adc636"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-01-23T10:23:43Z",
+          "updatedAt": "2025-01-23T10:23:43Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I have no objections to what is in the PR.\r\nI only asked to highlight that there are two cases: fully opaque semantics and semantics driven by profile.\r\n",
+              "createdAt": "2025-01-23T10:23:43Z",
+              "updatedAt": "2025-01-23T10:23:43Z"
             }
           ]
         }
@@ -55147,9 +55216,9 @@
         "nedmsmith"
       ],
       "labels": [],
-      "body": "We no longer use accepted-claim-set.cddl",
+      "body": "We no longer use accepted-claim-set.cddl\r\n\r\nFix #340",
       "createdAt": "2025-01-22T23:45:57Z",
-      "updatedAt": "2025-01-22T23:47:58Z",
+      "updatedAt": "2025-01-23T11:07:51Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8fced546a8a8c6fc9ce156df64607029c09fca4e",
@@ -55161,7 +55230,47 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86ZHpVq",
+          "commit": {
+            "abbreviatedOid": "464a335"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-01-23T05:47:11Z",
+          "updatedAt": "2025-01-23T05:47:11Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZJfHa",
+          "commit": {
+            "abbreviatedOid": "464a335"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "thanks!",
+          "createdAt": "2025-01-23T10:01:57Z",
+          "updatedAt": "2025-01-23T10:01:57Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ZKGqX",
+          "commit": {
+            "abbreviatedOid": "464a335"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-01-23T11:07:51Z",
+          "updatedAt": "2025-01-23T11:07:51Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
