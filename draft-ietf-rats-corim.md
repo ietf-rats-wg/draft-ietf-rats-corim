@@ -1021,7 +1021,7 @@ This code point may be removed in a future revision of this specification.
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
-{::include cddl/masked-raw-value.cddl}
+{::include cddl/tagged-masked-raw-value.cddl}
 ~~~
 
 ###### Address Types {#sec-comid-address-types}
