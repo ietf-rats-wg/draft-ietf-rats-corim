@@ -884,14 +884,9 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-flags}}.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
-  An optional `raw-value-mask` (index 5) indicates which bits in the
-  `raw-value` field are relevant for verification. A mask of all ones ("1")
-  means all bits in the `raw-value` field are relevant. Multiple values could
-  be combined to create a single `raw-value` attribute. The vendor determines
-  how to pack multiple values into a single `raw-value` structure. The same
-  packing format is used when collecting Evidence so that Reference Values and
-  collected values are bit-wise comparable. The vendor determines the encoding
-  of `raw-value` and the corresponding `raw-value-mask`.
+  The vendor determines the encoding of `raw-value`.
+  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field must be compared.
+  Described in {{sec-comid-raw-value-types}}
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
   Described in {{sec-comid-address-types}}.
@@ -1010,19 +1005,23 @@ the sensitive values in memory are encrypted.
 Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers.
 
-There are two parts to a `raw-value-group`, a measurement and an optional mask.
+A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
+This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
-Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
-between the various semantics of type values.
 
+Additional value types can be added to `$raw-value-type-choice`, these additional values MUST be CBOR tagged `bstr`s.
+Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
+
+A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
 
-When a new raw value type is defined, the convention for applying the mask is also defined.
-Typically, a CoRIM profile is used to define new raw values and mask semantics.
+The `raw-value-mask` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
+This code point may be removed in a future revision of this specification.
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
+{::include cddl/tagged-masked-raw-value.cddl}
 ~~~
 
 ###### Address Types {#sec-comid-address-types}
@@ -1635,7 +1634,9 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
-ECTs have five attributes:
+#### Internal Representation of Environment Claims Tuple {#sec-ir-ect}
+
+Environment-Claims Tuples (ECT) have five attributes:
 
 {:ect-enum: style="format %d."}
 
@@ -1657,6 +1658,16 @@ The following CDDL describes the ECT structure in more detail.
 ~~~
 
 The Conceptual Message type determines which attributes are mandatory.
+
+#### Internal Representation Extensions {#sec-ir-ext}
+
+The internal representation extends `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
+`typed-crypto-key` consists of a `key` and an optional `key-type`.
+There are two types of keys `attest-key` and `identity-key`.
+
+~~~ cddl
+{::include cddl/intrep-key.cddl}
+~~~
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
@@ -2462,8 +2473,24 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
+A `raw-value` entry contains binary data.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must be tagged and have type `bytes`.
+
+The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
+
+If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
+The standard comparison function defined in this document removes the tag before performing the comparison.
+
+For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+
+The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
+
+The comparison MUST return false if the lengths of the condition ECT mask and value are different.
+
+The comparison MUST use the mask to determine which bits to compare.
+If a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.
+If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
@@ -2610,7 +2637,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
-| 563-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
+| 564-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
