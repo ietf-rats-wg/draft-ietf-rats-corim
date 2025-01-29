@@ -51,7 +51,7 @@ COMID_FRAGS += concise-swid-tag.cddl
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
 
 CORIM_FRAGS := corim.cddl
-CORIM_FRAGS += concise-bom-tag.cddl
+CORIM_FRAGS += concise-tl-tag.cddl
 CORIM_FRAGS += concise-tag-type-choice.cddl
 CORIM_FRAGS += corim-entity-map.cddl
 CORIM_FRAGS += corim-id-type-choice.cddl
@@ -67,7 +67,7 @@ CORIM_FRAGS += signed-corim.cddl
 CORIM_FRAGS += tagged-corim-map.cddl
 CORIM_FRAGS += tagged-concise-swid-tag.cddl
 CORIM_FRAGS += tagged-concise-mid-tag.cddl
-CORIM_FRAGS += tagged-concise-bom-tag.cddl
+CORIM_FRAGS += tagged-concise-tl-tag.cddl
 CORIM_FRAGS += unprotected-corim-header-map.cddl
 CORIM_FRAGS += validity-map.cddl
 
