@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 1 August 2025                                            Linaro
+Expires: 2 August 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         28 January 2025
+                                                         29 January 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 August 2025.
+   This Internet-Draft will expire on 2 August 2025.
 
 Copyright Notice
 
@@ -142,11 +142,13 @@ Table of Contents
      8.1.  Appraisal Procedure
      8.2.  Verifier Abstraction
        8.2.1.  Internal Representation of Conceptual Messages
-         8.2.1.1.  Internal Representation of Evidence
-         8.2.1.2.  Internal Representation of Reference Values
-         8.2.1.3.  Internal Representation of Endorsed Values
-         8.2.1.4.  Internal Representation of Policy Statements
-         8.2.1.5.  Internal Representation of Attestation Results
+         8.2.1.1.  Internal Representation of Environment Claims Tuple
+         8.2.1.2.  Internal Representation Extensions
+         8.2.1.3.  Internal Representation of Evidence
+         8.2.1.4.  Internal Representation of Reference Values
+         8.2.1.5.  Internal Representation of Endorsed Values
+         8.2.1.6.  Internal Representation of Policy Statements
+         8.2.1.7.  Internal Representation of Attestation Results
        8.2.2.  Internal Representation of Appraisal Claims Set (ACS)
        8.2.3.  Internal Representation of Attestation Results Set
                (ARS)
@@ -367,7 +369,7 @@ Table of Contents
    |              | series of          | is satisfied, then add the   |
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
-   |              |                    | See Section 8.2.1.3          |
+   |              |                    | See Section 8.2.1.5          |
    +--------------+--------------------+------------------------------+
    | Verifier     | List of expected   | If the list of expected      |
    |              | actual state       | claims are in the ACS, then  |
@@ -2231,7 +2233,9 @@ Table of Contents
    common building block structure called Environment-Claims Tuple
    (ECT).
 
-   ECTs have five attributes:
+8.2.1.1.  Internal Representation of Environment Claims Tuple
+
+   Environment-Claims Tuples (ECT) have five attributes:
 
    1.  Environment : Identifies the Target Environment.  Environments
        are identified using instance, class, or group identifiers.
@@ -2280,7 +2284,28 @@ Table of Contents
    The Conceptual Message type determines which attributes are
    mandatory.
 
-8.2.1.1.  Internal Representation of Evidence
+8.2.1.2.  Internal Representation Extensions
+
+   The internal representation extends measurement-values-map with the
+   intrep-keys claim that consists of a list of typed-crypto-key. typed-
+   crypto-key consists of a key and an optional key-type.  There are two
+   types of keys attest-key and identity-key.
+
+   $$measurement-values-map-extension //= (
+     &(intrep-keys: 65534) => [ + typed-crypto-key ]
+   )
+
+   typed-crypto-key = {
+     key: $crypto-key-type-choice
+     ? key-type: uint .bits key-type
+   }
+
+   key-type = &(
+     attest-key: 0
+     identity-key: 1
+   )
+
+8.2.1.3.  Internal Representation of Evidence
 
    An internal representation of attestation Evidence uses the ae
    relation.
@@ -2315,7 +2340,7 @@ Table of Contents
 
                     Table 3: Evidence tuple requirements
 
-8.2.1.2.  Internal Representation of Reference Values
+8.2.1.4.  Internal Representation of Reference Values
 
    An internal representation of Reference Values uses the rv relation,
    which is a list of ECTs that contains possible states and a list of
@@ -2365,7 +2390,7 @@ Table of Contents
                      Table 4: Reference Values tuple
                                requirements
 
-8.2.1.3.  Internal Representation of Endorsed Values
+8.2.1.5.  Internal Representation of Endorsed Values
 
    An internal representation of Endorsed Values uses the ev and evs
    relations, which are lists of ECTs that describe matching conditions
@@ -2436,7 +2461,7 @@ Table of Contents
                   Table 5: Endorsed Values and Endorsed
                     Values Series tuples requirements
 
-8.2.1.4.  Internal Representation of Policy Statements
+8.2.1.6.  Internal Representation of Policy Statements
 
    The policy relation compares the condition ECTs to the ACS.
 
@@ -2477,7 +2502,7 @@ Table of Contents
 
                     Table 6: Policy tuple requirements
 
-8.2.1.5.  Internal Representation of Attestation Results
+8.2.1.7.  Internal Representation of Attestation Results
 
    The ar relation compares the acs-condition to the ACS.
 
@@ -2685,7 +2710,7 @@ Table of Contents
 
 8.3.3.2.  Reference Triples Transformation
 
-   Step 1.  An rv list entry (Section 8.2.1.2) is allocated.
+   Step 1.  An rv list entry (Section 8.2.1.4) is allocated.
 
    Step 2.  The cmtype of the addition ECT in the rv entry is set to
             reference-values.
@@ -2716,7 +2741,7 @@ Table of Contents
 
 8.3.3.3.1.  Endorsed Values Triple Transformation
 
-   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+   Step 1.  An ev entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -2745,7 +2770,7 @@ Table of Contents
 
 8.3.3.3.2.  Conditional Endorsement Triple Transformation
 
-   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+   Step 1.  An ev entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -2779,7 +2804,7 @@ Table of Contents
 
 8.3.3.3.3.  Conditional Endorsement Triple Transformation
 
-   Step 1.  An evs entry (Section 8.2.1.3) is allocated.
+   Step 1.  An evs entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the evs entry's addition ECT is set to
             endorsements.
@@ -2823,7 +2848,7 @@ Table of Contents
    The following transformation steps are applied for both the identity-
    triples and attest-key-triples with noted exceptions:
 
-   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+   Step 1.  An ev entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -2864,7 +2889,7 @@ Table of Contents
 8.3.3.4.  Evidence Tranformation
 
    Evidence is transformed from an external representation to an
-   internal representation based on the ae relation (Section 8.2.1.1).
+   internal representation based on the ae relation (Section 8.2.1.3).
    The Evidence is mapped into one or more addition ECTs.  If the
    Evidence does not have a value for the mandatory ae fields, the
    Verifier MUST NOT process the Evidence.
@@ -3034,7 +3059,7 @@ Table of Contents
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.4.2) which are transformed
-   (Section 8.3.3.2) into an internal representation (Section 8.2.1.2).
+   (Section 8.3.3.2) into an internal representation (Section 8.2.1.4).
    Reference Values may describe multiple possible Attester states.
 
    Corroboration is the process of determining whether actual Attester
@@ -3061,7 +3086,7 @@ Table of Contents
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
    transformed (Section 8.3.3.3) into an internal representation
-   (Section 8.2.1.3).  Endorsements describe actual Attester state.
+   (Section 8.2.1.5).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
    satisifed by the ACS.
 
@@ -3156,7 +3181,7 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the applied
    policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 8.2.1.4,
+   details, based on the policy ECT, as described in Section 8.2.1.6,
    contains the environments affected by the policy with policy
    identifiers as Claims.
 
