@@ -362,7 +362,7 @@ A profile MAY extend the set of a given CoRIM type using the defined extension p
 Exercised extension points should preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
-If a CoRIM profile extends CoSWID extension points, the profile MUST be specified in a publicly available document to satisfy the "Specification Required" constraint of the IANA registries.
+If a CoRIM profile extends CoSWID extension points, the profile MUST be specified in a publicly available document to satisfy the "Specification Required" constraint of the IANA CoSWID registry.
 
 A CoRIM profile can use one of the base CoRIM media type defined in {{sec-mt-rim-cbor}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
