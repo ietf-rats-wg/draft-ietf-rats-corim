@@ -1634,7 +1634,9 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
-ECTs have five attributes:
+#### Internal Representation of Environment Claims Tuple {#sec-ir-ect}
+
+Environment-Claims Tuples (ECT) have five attributes:
 
 {:ect-enum: style="format %d."}
 
@@ -1656,6 +1658,16 @@ The following CDDL describes the ECT structure in more detail.
 ~~~
 
 The Conceptual Message type determines which attributes are mandatory.
+
+#### Internal Representation Extensions {#sec-ir-ext}
+
+The internal representation extends `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
+`typed-crypto-key` consists of a `key` and an optional `key-type`.
+There are two types of keys `attest-key` and `identity-key`.
+
+~~~ cddl
+{::include cddl/intrep-key.cddl}
+~~~
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
