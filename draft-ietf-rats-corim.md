@@ -2719,8 +2719,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 | Index | Item Name | Specification
 |---
 | 0 | tag-identity | {{&SELF}}
-| 1 | tags-list | {{&SELF}}
+| 1 | tags-list    | {{&SELF}}
 | 2 | bom-validity | {{&SELF}}
+| 3 | profile      | {{&SELF}}
 | 5-255 | Unassigned
 {: #tbl-iana-cobom-map-items title="CoBOM Map Items Initial Registrations"}
 
