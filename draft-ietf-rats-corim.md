@@ -381,10 +381,8 @@ For an example profile definition, see {{-psa-endorsements}}.
 
 A tag (e.g., CoMID, CoBOM) MAY specify a profile identifier to take precedence for the interpretation of the remainder of the tag contents if the following requirements hold:
 
-*  Any interpretation of the tag that depends on contents from the `corim-map` containing the tag have the same meaning across the tag's profile and the `corim-map.profile`.
-*  The `corim-map.profile` permits (exclusively or by omission) the tag to to use the profile.
-
-A profile MUST NOT have a different interpretation when specified on a tag; the tag should behave as if it were in a CoRIM with the profile specified in the `corim-map` instead.
+*  A profile's interpretation MUST be consistent regardless of where the profile identifier is supplied; whether in `corim-map.profile` or in a tag.
+*  The `corim-map.profile` scope applies to all tags within the `corim-map` unless specifically overidden by a profile in a tag-specific profile.
 
 ### Entities {#sec-corim-entity}
 
