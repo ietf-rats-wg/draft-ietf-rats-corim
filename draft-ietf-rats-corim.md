@@ -1422,6 +1422,7 @@ The following describes each member of the `concise-bom-tag` map.
 * `profile` (index 3): An optional profile identifier that overrides the
   `corim-map.profile` to interpret the contents of the `concise-bom-tag`.
 The CoBOM profile identifier takes precedence over the CoRIM profile identifier.
+The CoBOM profile identifier does not override the profile of any cross-referenced tag.
 
 * `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
   See {{sec-iana-cobom}}.
