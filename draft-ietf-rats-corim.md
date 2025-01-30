@@ -2774,7 +2774,6 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     564 | `int`               | tagged-int-eq, see {{sec-comid-linear-privlevel}}             | {{&SELF}} |
 |     565 | `[int, int]`        | tagged-int-range, see {{sec-comid-linear-privlevel}}          | {{&SELF}} |
 | 566-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
->>>>>>> 3b73a92 (Add linear privilege level comparison rules)
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
