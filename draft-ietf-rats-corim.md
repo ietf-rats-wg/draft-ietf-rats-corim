@@ -243,7 +243,7 @@ Tags can be of different types:
 
 * Concise Software ID (CoSWID) tags ({{-coswid}}) describe software components.
 
-* Concise Bill of Material (CoBOM) tags ({{sec-cobom}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
+* Concise Tag List (CoTL) tags ({{sec-cotl}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
 
 The set of tags is extensible so that future specifications can add new kinds of information.
 For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
@@ -328,7 +328,7 @@ Other types of identifiers could be defined as needed.
 ### Tags {#sec-corim-tags}
 
 A `$concise-tag-type-choice` is a tagged CBOR payload that carries either a
-CoMID ({{sec-comid}}), a CoSWID ({{-coswid}}), or a CoBOM ({{sec-cobom}}).
+CoMID ({{sec-comid}}), a CoSWID ({{-coswid}}), or a CoTL ({{sec-cotl}}).
 
 ~~~ cddl
 {::include cddl/concise-tag-type-choice.cddl}
@@ -486,7 +486,7 @@ Described in {{sec-common-validity}}.
 
 A CoMID tag contains information about hardware, firmware, or module composition.
 
-Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoBOM tag.
+Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
 
 A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -1358,42 +1358,42 @@ Data type extensibility has the form `($NAME-type-choice)` where "NAME" is the t
 New data type extensions SHOULD be documented to facilitate interoperability.
 CoRIM profiles are best used to document vendor or industry defined extensions.
 
-# CoBOM {#sec-cobom}
+# CoTL {#sec-cotl}
 
-A Concise Bill of Material (CoBOM) object represents the signal for the
-Verifier to activate the listed tags. Verifier policy determines whether CoBOMs are required.
+A Concise Tag List (CoTL) object represents the signal for the
+Verifier to activate the listed tags. Verifier policy determines whether CoTLs are required.
 
-When CoBOMs are required, each tag MUST be activated by a CoBOM before being processed.
-All the tags listed in the CoBOM MUST be activated atomically. If any tag activated by a CoBOM is not available to the Verifier, the entire CoBOM is rejected.
+When CoTLs are required, each tag MUST be activated by a CoTL before being processed.
+All the tags listed in the CoTL MUST be activated atomically. If any tag activated by a CoTL is not available to the Verifier, the entire CoTL is rejected.
 
-The number of CoBOMs required in a given supply chain ecosystem is dependent on
+The number of CoTLs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
 
-If a Verifier Owner has a policy that does not require CoBOM, tags within a CoRIM received by a Verifier
+If a Verifier Owner has a policy that does not require CoTL, tags within a CoRIM received by a Verifier
 are activated immediately and treated valid for appraisal.
 
 There may be cases when Verifier receives CoRIMs from multiple
 Reference Value providers and Endorsers. In such cases, a supplier (or other authorities, such as integrators)
-may be designated to issue a single CoBOM to activate all the tags submitted to the Verifier
+may be designated to issue a single CoTL to activate all the tags submitted to the Verifier
 in these CoRIMs.
 
-In a more complex case, there may be multiple authorities that issue CoBOMs at different points in time.
-An Appraisal Policy for Evidence may dictate how multiple CoBOMs are to be processed within the Verifier.
+In a more complex case, there may be multiple authorities that issue CoTLs at different points in time.
+An Appraisal Policy for Evidence may dictate how multiple CoTLs are to be processed within the Verifier.
 
 ## Structure
 
-The CDDL specification for the `concise-bom-tag` map is as follows and this
-rule and its constraints MUST be followed when creating or validating a CoBOM
+The CDDL specification for the `concise-tl-tag` map is as follows and this
+rule and its constraints MUST be followed when creating or validating a CoTL
 tag:
 
 ~~~ cddl
-{::include cddl/concise-bom-tag.cddl}
+{::include cddl/concise-tl-tag.cddl}
 ~~~
 
-The following describes each member of the `concise-bom-tag` map.
+The following describes each member of the `concise-tl-tag` map.
 
 * `tag-identity` (index 0): A `tag-identity-map` containing unique
-  identification information for the CoBOM.
+  identification information for the CoTL.
   Described in {{sec-comid-tag-id}}.
 
 * `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
@@ -1404,16 +1404,16 @@ The following describes each member of the `concise-bom-tag` map.
   appraisal process. The activation is atomic: all tags listed in `tags-list`
   MUST be activated or no tags are activated.
 
-* `bom-validity` (index 2): Specifies the validity period of the CoBOM.
+* `tl-validity` (index 2): Specifies the validity period of the CoTL.
   Described in {{sec-common-validity}}.
 
-* `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
-  See {{sec-iana-cobom}}.
-  The `$$concise-bom-tag-extension` extension socket is empty in this specification.
+* `$$concise-tl-tag-extension`: This CDDL socket is used to add new information structures to the `concise-tl-tag`.
+  See {{sec-iana-cotl}}.
+  The `$$concise-tl-tag-extension` extension socket is empty in this specification.
 
 # Common Types {#sec-common-types}
 
-The following CDDL types may be shared by CoRIM, CoMID, and CoBOM.
+The following CDDL types may be shared by CoRIM, CoMID, and CoTL.
 
 ## Non-Empty {#sec-non-empty}
 
@@ -1830,7 +1830,7 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoTL tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
@@ -1854,25 +1854,25 @@ Later stages will further select the CoRIMs appropriate to the Evidence Appraisa
 
 #### Tags Extraction and Validation
 
-The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
+The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoTL, and CoTS.
 
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
 Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.
 
-#### CoBOM Extraction
+#### CoTL Extraction
 
-This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
+This section is not applicable if the Verifier appraisal policy does not require CoTLs.
 
-CoBOMs which are not within their validity period MUST be discarded.
+CoTLs which are not within their validity period MUST be discarded.
 
-The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
+The Verifier processes all CoTLs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 
-A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
+A Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
 Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
-In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
+In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoTLs that are not also activated by the trusted integrator.
 
-After the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
+After the Verifier has processed all CoTLs it MUST discard any tags which have not been activated by a CoTL.
 
 ### Evidence Collection {#sec-ev-coll}
 
@@ -2623,7 +2623,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
 |     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
-|     508 | `bytes`             | A tagged-concise-bom-tag, see {{sec-corim-tags}}              | {{&SELF}} |
+|     508 | `bytes`             | A tagged-concise-tl-tag, see {{sec-corim-tags}}              | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     550 | `bytes .size 33`    | tagged-ueid-type, see {{sec-common-ueid}}                     | {{&SELF}} |
 |     552 | `uint`              | tagged-svn, see {{sec-comid-svn}}                             | {{&SELF}} |
@@ -2699,10 +2699,10 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 5-255 | Unassigned
 {: #tbl-iana-comid-map-items title="CoMID Map Items Initial Registrations"}
 
-## CoBOM Map Registry {#sec-iana-cobom}
+## CoTL Map Registry {#sec-iana-cotl}
 
-This document defines a new registry titled "CoBOM Map".
-The registry uses integer values as index values for items in 'concise-bom-tag' CBOR maps.
+This document defines a new registry titled "CoTL Map".
+The registry uses integer values as index values for items in 'concise-tl-tag' CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
@@ -2710,20 +2710,20 @@ Future registrations for this registry are to be made based on {{?RFC8126}} as f
 |---
 | 0-127    | Standards Action
 | 128-255  | Specification Required
-{: #tbl-iana-cobom-map-items-reg-procedures title="CoBOM Map Items Registration Procedures"}
+{: #tbl-iana-cotl-map-items-reg-procedures title="CoTL Map Items Registration Procedures"}
 
 All negative values are reserved for Private Use.
 
-Initial registrations for the "CoBOM Map" registry are provided below.
+Initial registrations for the "CoTL Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
 | Index | Item Name | Specification
 |---
 | 0 | tag-identity | {{&SELF}}
 | 1 | tags-list | {{&SELF}}
-| 2 | bom-validity | {{&SELF}}
+| 2 | tl-validity | {{&SELF}}
 | 5-255 | Unassigned
-{: #tbl-iana-cobom-map-items title="CoBOM Map Items Initial Registrations"}
+{: #tbl-iana-tl-map-items title="CoTL Map Items Initial Registrations"}
 
 ## New Media Types {#sec-iana-media-types}
 
