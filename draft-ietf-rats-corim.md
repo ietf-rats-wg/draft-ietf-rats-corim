@@ -2632,7 +2632,7 @@ If the entry `linear-privlevel-type-choice` is an `int` or an `int` tagged with 
 The comparison MUST return true if the value of PRIV is equal to the `int` value in the condition ECT.
 
 *  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` or an `int-range` tagged with #6.565 then a range inclusion comparison is performed.
-The comparison MUST return true if the value of PRIV is greater than or equal to the `min` value in the condition ECT AND the value of PRIV is less or equal to than the `max` value in the condition ECT
+The comparison MUST return true if the value of PRIV is greater than or equal to the `min` value in the condition ECT AND the value of PRIV is less than or equal to than the `max` value in the condition ECT
 
 If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.565, then comparison with the pair of `inf-int` values MINPRIV and MAXPRIV is as follows.
 
