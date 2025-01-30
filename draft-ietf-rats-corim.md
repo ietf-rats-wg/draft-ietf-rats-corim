@@ -379,7 +379,7 @@ that MUST have a different identifier.
 
 For an example profile definition, see {{-psa-endorsements}}.
 
-A tag (e.g., CoMID, CoBOM) MAY specify a profile identifier to take precedence for the interpretation of the remainder of the tag contents if the following requirements hold:
+A tag (e.g., CoMID) MAY specify a profile identifier to take precedence for the interpretation of the remainder of the tag contents if the following requirements hold:
 
 *  A profile's interpretation MUST be consistent regardless of where the profile identifier is supplied; whether in `corim-map.profile` or in a tag.
 *  The `corim-map.profile` scope applies to all tags within the `corim-map` unless specifically overidden by a profile in a tag-specific profile.
