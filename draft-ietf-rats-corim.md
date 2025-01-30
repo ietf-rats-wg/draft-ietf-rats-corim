@@ -384,6 +384,7 @@ A tag (e.g., CoMID, CoBOM) MAY specify a profile identifier to take precedence f
 *  A profile's interpretation MUST be consistent regardless of where the profile identifier is supplied; whether in `corim-map.profile` or in a tag.
 *  The `corim-map.profile` scope applies to all tags within the `corim-map` unless specifically overidden by a profile in a tag-specific profile.
 
+The scope of the profile identifier in a tag does not change the interpretation of any cross-referenced tags or CoRIMs.
 ### Entities {#sec-corim-entity}
 
 The CoRIM Entity is an instantiation of the Entity generic ({{sec-common-entity}}) using a `$corim-role-type-choice`.
