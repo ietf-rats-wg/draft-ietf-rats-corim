@@ -362,6 +362,7 @@ A profile MAY extend the set of a given CoRIM type using the defined extension p
 Exercised extension points should preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
+If a CoRIM profile extends CoSWID extension points, the profile MUST be specified in a publicly available document to satisfy the "Specification Required" constraint of the IANA CoSWID registry.
 
 A CoRIM profile can use one of the base CoRIM media type defined in {{sec-mt-rim-cbor}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
@@ -378,6 +379,12 @@ that MUST have a different identifier.
 
 For an example profile definition, see {{-psa-endorsements}}.
 
+A tag (e.g., CoMID) MAY specify a profile identifier to take precedence for the interpretation of the remainder of the tag contents if the following requirements hold:
+
+*  A profile's interpretation MUST be consistent regardless of where the profile identifier is supplied; whether in `corim-map.profile` or in a tag.
+*  The `corim-map.profile` scope applies to all tags within the `corim-map` unless specifically overidden by a profile in a tag-specific profile.
+
+The scope of the profile identifier in a tag does not change the interpretation of any cross-referenced tags or CoRIMs.
 ### Entities {#sec-corim-entity}
 
 The CoRIM Entity is an instantiation of the Entity generic ({{sec-common-entity}}) using a `$corim-role-type-choice`.
@@ -560,6 +567,10 @@ The following describes each member of the `concise-mid-tag` map.
   material, or structural relationship between the described module and other
   modules.
   Described in {{sec-comid-triples}}.
+
+* `profile` (index 5): An optional profile identifier that overrides the
+  `corim-map.profile` to interpret the contents of the `concise-mid-tag`.
+The CoMID profile identifier takes precedence over the CoRIM profile identifier.
 
 ### Tag Identity {#sec-comid-tag-id}
 
@@ -1348,7 +1359,7 @@ Map extensions provide extensibility support to CoRIM map structures.
 CDDL map extensibility enables a CoRIM profile to extend the base CoRIM CDDL definition.
 CDDL map extension points have the form `($$NAME-extension)` where "NAME" is the name of the map and '$$' signifies map extensibility.
 Typically, map extension requires a convention for code point naming that avoids code-point reuse.
-Well-known code points may be in a registry, such as CoSWID {{-coswid-reg}}.
+Well-known code points may be in a registry, such as CoSWID {{-coswid}}.
 Non-negative integers are reserved for IANA to assign meaning globally.
 
 ### Data Type Extensions
@@ -1406,6 +1417,11 @@ The following describes each member of the `concise-bom-tag` map.
 
 * `bom-validity` (index 2): Specifies the validity period of the CoBOM.
   Described in {{sec-common-validity}}.
+
+* `profile` (index 3): An optional profile identifier that overrides the
+  `corim-map.profile` to interpret the contents of the `concise-bom-tag`.
+The CoBOM profile identifier takes precedence over the CoRIM profile identifier.
+The CoBOM profile identifier does not override the profile of any cross-referenced tag.
 
 * `$$concise-bom-tag-extension`: This CDDL socket is used to add new information structures to the `concise-bom-tag`.
   See {{sec-iana-cobom}}.
@@ -2515,6 +2531,19 @@ The profile must specify how to compare the CBOR tagged Reference Value against 
 
 Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
 
+## Concise Software Identifier Extension {#sec-coswid}
+
+A CoRIM may contain a CoSWID tag as specified in {{sec-corim-tags}}.
+This specification registers an extension to `concise-swid-tag` using the `$$coswid-extension` socket.
+This extension defines a CoSWID profile code point that allows for an optional CoSWID profile identifier.
+The CoSWID profile identifier takes precedence over the CoRIM profile identifier.
+
+* `profile` (index 58): A profile identifier that overrides the `corim-map.profile` to interpret the contents of the `concise-swid-tag`.
+
+~~~ cddl
+{::include cddl/coswid-extension.cddl}
+~~~
+
 # Implementation Status
 
 This section records the status of known implementations of the protocol
@@ -2720,8 +2749,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 | Index | Item Name | Specification
 |---
 | 0 | tag-identity | {{&SELF}}
-| 1 | tags-list | {{&SELF}}
+| 1 | tags-list    | {{&SELF}}
 | 2 | bom-validity | {{&SELF}}
+| 3 | profile      | {{&SELF}}
 | 5-255 | Unassigned
 {: #tbl-iana-cobom-map-items title="CoBOM Map Items Initial Registrations"}
 
@@ -2866,6 +2896,14 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 | application/rim+cbor | - | TBD1 | {{&SELF}} |
 | application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
+
+## CoSWID Item Registration
+
+IANA is requested to add the following CoSWID Items to the "CoSWID Items" registry within the "Concise Software Identifier" registry group {{-coswid-reg}}.
+
+| Index | Item Name | Reference |
+| 58 | profile | {{&SELF}} |
+{: #tbl-coswid-item align="left" title="New CoSWID Items"}
 
 --- back
 
