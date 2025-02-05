@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 2 August 2025                                            Linaro
+Expires: 9 August 2025                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         29 January 2025
+                                                         5 February 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 August 2025.
+   This Internet-Draft will expire on 9 August 2025.
 
 Copyright Notice
 
@@ -127,7 +127,7 @@ Table of Contents
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
-   6.  CoBOM
+   6.  CoTL
      6.1.  Structure
    7.  Common Types
      7.1.  Non-Empty
@@ -156,7 +156,7 @@ Table of Contents
        8.3.1.  Input Validation
          8.3.1.1.  CoRIM Selection
          8.3.1.2.  Tags Extraction and Validation
-         8.3.1.3.  CoBOM Extraction
+         8.3.1.3.  CoTL Extraction
        8.3.2.  Evidence Collection
          8.3.2.1.  Cryptographic Validation of Evidence
        8.3.3.  Input Transformation
@@ -209,7 +209,7 @@ Table of Contents
      11.2.  New CBOR Tags
      11.3.  CoRIM Map Registry
      11.4.  CoMID Map Registry
-     11.5.  CoBOM Map Registry
+     11.5.  CoTL Map Registry
      11.6.  New Media Types
        11.6.1.  rim+cbor
        11.6.2.  rim+cose
@@ -447,9 +447,9 @@ Table of Contents
    *  Concise Software ID (CoSWID) tags ([RFC9393]) describe software
       components.
 
-   *  Concise Bill of Material (CoBOM) tags (Section 6) contain the list
-      of CoMID and CoSWID tags that the Verifier should consider as
-      "active" at a certain point in time.
+   *  Concise Tag List (CoTL) tags (Section 6) contain the list of CoMID
+      and CoSWID tags that the Verifier should consider as "active" at a
+      certain point in time.
 
    The set of tags is extensible so that future specifications can add
    new kinds of information.  For example, Concise Trust Anchor Stores
@@ -551,12 +551,12 @@ Table of Contents
 4.1.2.  Tags
 
    A $concise-tag-type-choice is a tagged CBOR payload that carries
-   either a CoMID (Section 5), a CoSWID ([RFC9393]), or a CoBOM
+   either a CoMID (Section 5), a CoSWID ([RFC9393]), or a CoTL
    (Section 6).
 
    $concise-tag-type-choice /= tagged-concise-swid-tag
    $concise-tag-type-choice /= tagged-concise-mid-tag
-   $concise-tag-type-choice /= tagged-concise-bom-tag
+   $concise-tag-type-choice /= tagged-concise-tl-tag
 
 4.1.3.  Locator Map
 
@@ -737,7 +737,7 @@ Table of Contents
 
    Each CoMID has a unique ID that is used to unambiguously identify
    CoMID instances when cross referencing CoMID tags, for example in
-   typed link relations, or in a CoBOM tag.
+   typed link relations, or in a CoTL tag.
 
    A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -1885,54 +1885,54 @@ Table of Contents
    interoperability.  CoRIM profiles are best used to document vendor or
    industry defined extensions.
 
-6.  CoBOM
+6.  CoTL
 
-   A Concise Bill of Material (CoBOM) object represents the signal for
-   the Verifier to activate the listed tags.  Verifier policy determines
-   whether CoBOMs are required.
+   A Concise Tag List (CoTL) object represents the signal for the
+   Verifier to activate the listed tags.  Verifier policy determines
+   whether CoTLs are required.
 
-   When CoBOMs are required, each tag MUST be activated by a CoBOM
-   before being processed.  All the tags listed in the CoBOM MUST be
-   activated atomically.  If any tag activated by a CoBOM is not
-   available to the Verifier, the entire CoBOM is rejected.
+   When CoTLs are required, each tag MUST be activated by a CoTL before
+   being processed.  All the tags listed in the CoTL MUST be activated
+   atomically.  If any tag activated by a CoTL is not available to the
+   Verifier, the entire CoTL is rejected.
 
-   The number of CoBOMs required in a given supply chain ecosystem is
+   The number of CoTLs required in a given supply chain ecosystem is
    dependent on Verifier Owner's Appraisal Policy for Evidence.
    Corresponding policies are often driven by the complexity and nature
    of the use case.
 
-   If a Verifier Owner has a policy that does not require CoBOM, tags
+   If a Verifier Owner has a policy that does not require CoTL, tags
    within a CoRIM received by a Verifier are activated immediately and
    treated valid for appraisal.
 
    There may be cases when Verifier receives CoRIMs from multiple
    Reference Value providers and Endorsers.  In such cases, a supplier
    (or other authorities, such as integrators) may be designated to
-   issue a single CoBOM to activate all the tags submitted to the
+   issue a single CoTL to activate all the tags submitted to the
    Verifier in these CoRIMs.
 
    In a more complex case, there may be multiple authorities that issue
-   CoBOMs at different points in time.  An Appraisal Policy for Evidence
-   may dictate how multiple CoBOMs are to be processed within the
+   CoTLs at different points in time.  An Appraisal Policy for Evidence
+   may dictate how multiple CoTLs are to be processed within the
    Verifier.
 
 6.1.  Structure
 
-   The CDDL specification for the concise-bom-tag map is as follows and
+   The CDDL specification for the concise-tl-tag map is as follows and
    this rule and its constraints MUST be followed when creating or
-   validating a CoBOM tag:
+   validating a CoTL tag:
 
-   concise-bom-tag = {
+   concise-tl-tag = {
      &(tag-identity: 0) => tag-identity-map
      &(tags-list: 1) => [ + tag-identity-map ],
-     &(bom-validity: 2) => validity-map
-     * $$concise-bom-tag-extension
+     &(tl-validity: 2) => validity-map
+     * $$concise-tl-tag-extension
    }
 
-   The following describes each member of the concise-bom-tag map.
+   The following describes each member of the concise-tl-tag map.
 
    *  tag-identity (index 0): A tag-identity-map containing unique
-      identification information for the CoBOM.  Described in
+      identification information for the CoTL.  Described in
       Section 5.1.1.
 
    *  tags-list (index 1): A list of one or more tag-identity-maps
@@ -1944,17 +1944,17 @@ Table of Contents
       process.  The activation is atomic: all tags listed in tags-list
       MUST be activated or no tags are activated.
 
-   *  bom-validity (index 2): Specifies the validity period of the
-      CoBOM.  Described in Section 7.3.
+   *  tl-validity (index 2): Specifies the validity period of the CoTL.
+      Described in Section 7.3.
 
-   *  $$concise-bom-tag-extension: This CDDL socket is used to add new
-      information structures to the concise-bom-tag.  See Section 11.5.
-      The $$concise-bom-tag-extension extension socket is empty in this
+   *  $$concise-tl-tag-extension: This CDDL socket is used to add new
+      information structures to the concise-tl-tag.  See Section 11.5.
+      The $$concise-tl-tag-extension extension socket is empty in this
       specification.
 
 7.  Common Types
 
-   The following CDDL types may be shared by CoRIM, CoMID, and CoBOM.
+   The following CDDL types may be shared by CoRIM, CoMID, and CoTL.
 
 7.1.  Non-Empty
 
@@ -2562,7 +2562,7 @@ Table of Contents
 
    During the initialization phase, the CoRIM Appraisal Context is
    loaded with various conceptual message inputs such as CoMID tags
-   (Section 5), CoSWID tags [RFC9393], CoBOM tags, and cryptographic
+   (Section 5), CoSWID tags [RFC9393], CoTL tags, and cryptographic
    validation key material (including raw public keys, root
    certificates, intermediate CA certificate chains), and Concise Trust
    Anchor Stores (CoTS) [I-D.ietf-rats-concise-ta-stores].  These
@@ -2596,35 +2596,35 @@ Table of Contents
 8.3.1.2.  Tags Extraction and Validation
 
    The Verifier chooses tags from the selected CoRIMs - including CoMID,
-   CoSWID, CoBOM, and CoTS.
+   CoSWID, CoTL, and CoTS.
 
    The Verifier MUST discard all tags which are not syntactically and
    semantically valid.  Cross-referenced triples MUST be successfully
    resolved.  An example of a cross-referenced triple is a CoMID-CoSWID
    linking triple.
 
-8.3.1.3.  CoBOM Extraction
+8.3.1.3.  CoTL Extraction
 
    This section is not applicable if the Verifier appraisal policy does
-   not require CoBOMs.
+   not require CoTLs.
 
-   CoBOMs which are not within their validity period MUST be discarded.
+   CoTLs which are not within their validity period MUST be discarded.
 
-   The Verifier processes all CoBOMs that are valid at the point in time
+   The Verifier processes all CoTLs that are valid at the point in time
    of Evidence Appraisal and activates all tags referenced therein.
 
    A Verifier MAY decide to discard some of the available and valid
-   CoBOMs depending on any locally configured authorization policies.
+   CoTLs depending on any locally configured authorization policies.
    Such policies model the trust relationships between the Verifier
    Owner and the relevant suppliers, and are out of the scope of the
    present document.  For example, a composite device (Section 3.3 of
    [RFC9334]) is likely to be fully described by multiple CoRIMs, each
    signed by a different supplier.  In such a case, the Verifier Owner
-   may instruct the Verifier to discard tags activated by supplier
-   CoBOMs that are not also activated by the trusted integrator.
+   may instruct the Verifier to discard tags activated by supplier CoTLs
+   that are not also activated by the trusted integrator.
 
-   After the Verifier has processed all CoBOMs it MUST discard any tags
-   which have not been activated by a CoBOM.
+   After the Verifier has processed all CoTLs it MUST discard any tags
+   which have not been activated by a CoTL.
 
 8.3.2.  Evidence Collection
 
@@ -3689,7 +3689,7 @@ Table of Contents
    +---------+-------------+-------------------------------+-----------+
    | 507     | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
-   | 508     | bytes       | A tagged-concise-bom-tag,     | RFCthis   |
+   | 508     | bytes       | A tagged-concise-tl-tag,      | RFCthis   |
    |         |             | see Section 4.1.2             |           |
    +---------+-------------+-------------------------------+-----------+
    | 509-549 | any         | Earmarked for CoRIM           | RFCthis   |
@@ -3837,11 +3837,11 @@ Table of Contents
                     Table 12: CoMID Map Items Initial
                               Registrations
 
-11.5.  CoBOM Map Registry
+11.5.  CoTL Map Registry
 
-   This document defines a new registry titled "CoBOM Map".  The
-   registry uses integer values as index values for items in 'concise-
-   bom-tag' CBOR maps.
+   This document defines a new registry titled "CoTL Map".  The registry
+   uses integer values as index values for items in 'concise-tl-tag'
+   CBOR maps.
 
    Future registrations for this registry are to be made based on
    [RFC8126] as follows:
@@ -3854,14 +3854,14 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 13: CoBOM Map Items
+                          Table 13: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
 
-   Initial registrations for the "CoBOM Map" registry are provided
-   below.  Assignments consist of an integer index value, the item name,
-   and a reference to the defining specification.
+   Initial registrations for the "CoTL Map" registry are provided below.
+   Assignments consist of an integer index value, the item name, and a
+   reference to the defining specification.
 
                  +=======+==============+===============+
                  | Index | Item Name    | Specification |
@@ -3870,12 +3870,12 @@ Table of Contents
                  +-------+--------------+---------------+
                  | 1     | tags-list    | RFCthis       |
                  +-------+--------------+---------------+
-                 | 2     | bom-validity | RFCthis       |
+                 | 2     | tl-validity  | RFCthis       |
                  +-------+--------------+---------------+
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 14: CoBOM Map Items Initial
+                     Table 14: CoTL Map Items Initial
                               Registrations
 
 11.6.  New Media Types
@@ -4135,16 +4135,16 @@ Appendix A.  Base CoRIM CDDL
    concise-rim-type-choice /= tagged-corim-map
    concise-rim-type-choice /= signed-corim
 
-   concise-bom-tag = {
+   concise-tl-tag = {
      &(tag-identity: 0) => tag-identity-map
      &(tags-list: 1) => [ + tag-identity-map ],
-     &(bom-validity: 2) => validity-map
-     * $$concise-bom-tag-extension
+     &(tl-validity: 2) => validity-map
+     * $$concise-tl-tag-extension
    }
 
    $concise-tag-type-choice /= tagged-concise-swid-tag
    $concise-tag-type-choice /= tagged-concise-mid-tag
-   $concise-tag-type-choice /= tagged-concise-bom-tag
+   $concise-tag-type-choice /= tagged-concise-tl-tag
 
    corim-entity-map =
      entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
@@ -4206,7 +4206,7 @@ Appendix A.  Base CoRIM CDDL
 
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
 
-   tagged-concise-bom-tag = #6.508(bytes .cbor concise-bom-tag)
+   tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
