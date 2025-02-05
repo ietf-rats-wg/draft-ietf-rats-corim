@@ -1267,7 +1267,7 @@ This means that there is no privilege strictly afforded to, e.g., privilege leve
 
 For environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.
 The full range if signed integers may be used.
-The signed integer range representation is an inclusive range unless either `min` or `max` are infinite, in which case, each infinity is necessarily exclusive.
+The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
 ##### Domain Types {#sec-comid-domain-type}
 
@@ -2628,19 +2628,19 @@ The ACS entry value stored under `measurement-values-map` codepoint 15 is a line
 
 If the entry `linear-privlevel-type-choice` is an `int` or an `int` tagged with #6.564, then comparison with the `int` named as PRIV is as follows.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an untagged `int` or an `int` tagged with #6.564 then an equality comparison is performed on the `int` components.
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an untagged `int` then an equality comparison is performed on the `int` components.
 The comparison MUST return true if the value of PRIV is equal to the `int` value in the condition ECT.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` or an `int-range` tagged with #6.565 then a range inclusion comparison is performed.
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range inclusion comparison is performed.
 The comparison MUST return true if the value of PRIV is greater than or equal to the `min` value in the condition ECT AND the value of PRIV is less than or equal to than the `max` value in the condition ECT
 
-If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.565, then comparison with the pair of `inf-int` values MINPRIV and MAXPRIV is as follows.
+If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.564, then comparison with the pair of `inf-int` values MINPRIV and MAXPRIV is as follows.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an untagged `int` or an `int` tagged with #6.564 then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an untagged `int` then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` or an `int-range` tagged with #6.565 then a range subsumption comparison is performed.
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range subsumption comparison is performed.
 The comparison MUST return true if the value of MINPRIV is greater than or equal to the `min` value of the condition ECT and the value of MAXPRIV is less than or equal to the `max` value of the condition ECT.
-In this case, -Infinity equals -Infinity and Infinity equals Infinity.
+In this case, `null` in `min` is less than `null` and any integer, and `null` in `max` is greater than `null` and any integer.
 
 ### Profile-directed Comparison {#sec-compare-profile}
 
@@ -2771,9 +2771,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
-|     564 | `int`               | tagged-int-eq, see {{sec-comid-linear-privlevel}}             | {{&SELF}} |
-|     565 | `[int, int]`        | tagged-int-range, see {{sec-comid-linear-privlevel}}          | {{&SELF}} |
-| 566-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     564 | `[int, int]`        | tagged-int-range, see {{sec-comid-linear-privlevel}}          | {{&SELF}} |
+| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
