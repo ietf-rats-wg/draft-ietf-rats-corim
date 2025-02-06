@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-04T01:43:03.918896+00:00",
+  "timestamp": "2025-02-06T01:44:31.321168+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8580,7 +8580,7 @@
       "labels": [],
       "body": "The CoRIM schema disallows multiple profiles, but also does not have a means of representing a bundle of CoRIMs each with their own profiles. This is troublesome when signing reference measurements for a firmware binary that is measured in different ways depending on the technology. Intel TDX, AMD SEV-SNP, and ARM CCA all have different ways of constructing a digest of a machine initial state that a firmware file like an IGVM describes how to load. I have no specified way to have a single document to deliver with the firmware that endorses each of the measurements that it could be seen with.\n\nEither we bind this with CMW and a specific cmwc_t that specifies something like tag-identity => #6.<TN for corim>(<<corim-map>>)?",
       "createdAt": "2025-01-17T15:18:50Z",
-      "updatedAt": "2025-02-01T14:46:43Z",
+      "updatedAt": "2025-02-05T16:42:42Z",
       "closedAt": null,
       "comments": [
         {
@@ -8680,6 +8680,34 @@
           "body": "> I'm still not sure what the use cases are. If a community of FW/SW vendors develops a profile they use the community profile.\n\nYou and I wrote profiles for TDX and SEV-SNP respectively, and they're not for OVMF. They're for VMs that run on these platforms. If everyone who signs their software and hardware modules with a different profile, what point is there of the base spec?",
           "createdAt": "2025-02-01T14:46:42Z",
           "updatedAt": "2025-02-01T14:46:42Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> what point is there of the base spec\n\nThe base spec is a profile for a community of vendors that is broad enough to include the ecosystem of vendors. It's the set of expressions that are the least common denominator for that community. Since it is captured in a standards document, it doesn't need a separate profile name/number. Or you can argue the spec name/version is the profile name. I feel like this thread is going in circles and my attempts to understand the concrete issue don't seem to result in much added clarity. Can the problem this issue is trying to resolve be concisely rephrased?\n\nGoing back to the original post:\n> ...when signing reference measurements for a firmware binary that is measured in different ways depending on the technology.\n\nWhat is going on in the supply chain that causes signing of Reference Values that produces different measurements from the Evidence measurements collected by an Attesting Environment?",
+          "createdAt": "2025-02-04T22:21:41Z",
+          "updatedAt": "2025-02-04T22:21:41Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\n> What is going on in the supply chain that causes signing of Reference Values that produces different measurements from the Evidence measurements collected by an Attesting Environment?\n\nThere\u2019s a concept of a \u201cfat binary\u201d that carries enough information inside for a loader on different platforms to interpret it correctly. You want to sign it once, the measurement mechanism is employed _as a part of_ loading. The measurement is thus different t on the different platforms.\n\nConcretely, virtual firmware for TDX and SEV-SNP are measured differently when setting up a VM context. I want both of those measurements in one signed document I embed in the binary for distribution.",
+          "createdAt": "2025-02-05T03:08:43Z",
+          "updatedAt": "2025-02-05T03:08:43Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Now I understand @deeglaze requirement clearly. I am confident that we can do a good job here for this specific use case..\n\nI would like to propose the following at a high level, we can flush out the details in today's meeting\n\n1. Define a signature semantics in CMW that allows/permits bundling of unsigned-CoRIM's together..\n2. Clarify in CoRIM document:\n* 2.a That an unsigned CORIM may be used as a payload/container in other Conceptual RATS Messages\n* 2.b The clarification of meaning on certain fields in CoRIM Meta or outer data elements in CoRIM outside of CoMID. CoSWID or CoTS, when Unsigned CoRIMs are used, in other Messages ..\n* 2.c How the Authority needs to be interpreted in this case...",
+          "createdAt": "2025-02-05T09:31:45Z",
+          "updatedAt": "2025-02-05T09:31:45Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It was agreed in the meeting 05th Feb 2025 that CoRIM team will proceed with CMW  signed object for Bundle of Unsigned CoRIMs",
+          "createdAt": "2025-02-05T16:42:40Z",
+          "updatedAt": "2025-02-05T16:42:40Z"
         }
       ]
     },
@@ -8880,15 +8908,15 @@
       "id": "I_kwDOH6-tI86oBhBH",
       "title": "Rename CoBOM to a suitable name",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/369",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "As per feedback from IETF RATS session, the name CoBOM which expands to Concise Bill of Materials is colliding with SBOM and also does not clearly reflect the scope of what is defined in CoBOM.\n\nThis needs to be changed.\n\nI would propose a better name like\n\nCoBOM ==> Changed to CoTL (Concise Tag List)",
       "createdAt": "2025-01-29T18:44:54Z",
-      "updatedAt": "2025-01-29T18:44:54Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-05T15:48:54Z",
+      "closedAt": "2025-02-05T15:48:54Z",
       "comments": []
     },
     {
@@ -8919,7 +8947,7 @@
       "labels": [],
       "body": "CoTL Concise Tag List is not really a tag on its own, but it is a list of tags + another MetaData.\n\nThis issue revisits the new entry in corim-map for this tag list related information :\n\n1. Suitable data structure \n2. Modifying the CoRIM specification with the required and impacted text around this new structure!",
       "createdAt": "2025-01-31T09:04:43Z",
-      "updatedAt": "2025-02-01T15:19:53Z",
+      "updatedAt": "2025-02-04T22:02:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -8942,6 +8970,37 @@
           "body": "A CoTL seems like a tag to me. A tag is added metadata about an object, and given that CoRIM is about system assembly and not simply individual items, an assembly of individual items that are meant to be understood as a unit is an appropriate tag IMO.",
           "createdAt": "2025-02-01T15:19:52Z",
           "updatedAt": "2025-02-01T15:19:52Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> A tag is added metadata about an object\n\nIn the context of attestation I think it is more. It is a measurement / claim about a Target Environment. Consequently, there should be some part of the tag that results in values being added to the ACS.\n\n> we have to make code point 1 (`tags` as optional\n\nAre you saying if CoTL values are populated then comid / coswid tags are not needed?\nI think of CoTLs as pointer to tags. If you dereference a pointer that points to unallocated memory you get a page fault error. Or you could think of CoTL as a DB index. If you remove the index the data doesn't get removed from the database.",
+          "createdAt": "2025-02-04T22:01:58Z",
+          "updatedAt": "2025-02-04T22:01:58Z"
+        }
+      ]
+    },
+    {
+      "number": 374,
+      "id": "I_kwDOH6-tI86o4ZA-",
+      "title": "unsigned-corim-map referenced but not defined anymore.",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/374",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We simplified to corim-map, but now we want to talk explicitly about the case that a corim is unsigned, so let's change the cddl again.",
+      "createdAt": "2025-02-05T16:02:14Z",
+      "updatedAt": "2025-02-05T16:39:36Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We need to add back the `unsigned-corim-map` CDDL as this would be used to bundle CoRIMs using CMW.",
+          "createdAt": "2025-02-05T16:39:34Z",
+          "updatedAt": "2025-02-05T16:39:34Z"
         }
       ]
     }
@@ -54863,13 +54922,13 @@
       "labels": [],
       "body": "As a means of representing a CPL or VMPL, this provides some extra semantic understanding. Leaving condition-matching to a later PR.",
       "createdAt": "2024-12-18T16:46:55Z",
-      "updatedAt": "2025-01-30T23:53:02Z",
+      "updatedAt": "2025-02-05T15:48:49Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ed9e89fe252c399ea03f60f095e4678e4d417d51",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "privlevel",
-      "headRefOid": "3d7e2e7fcf3d960562aa82608315f5ce874bef7f",
+      "headRefOid": "87a4abb3e639fa7646dcfdc9f1365823f0a5b9bd",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -55036,6 +55095,199 @@
           "createdAt": "2025-01-30T23:53:02Z",
           "updatedAt": "2025-01-30T23:53:02Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avBUc",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:48:20Z",
+          "updatedAt": "2025-02-05T14:48:20Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I would swap the bottom sentence to state that:\r\n\r\n",
+              "createdAt": "2025-02-05T14:48:20Z",
+              "updatedAt": "2025-02-05T14:48:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avCWP",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:49:34Z",
+          "updatedAt": "2025-02-05T14:49:34Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nA Linear Privilege Level describes an operating privilege for the target environment. The privilege can be expressed in either positive integer ranges or in negative integer ranges.\r\n```",
+              "createdAt": "2025-02-05T14:49:34Z",
+              "updatedAt": "2025-02-05T14:49:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avDcK",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:50:29Z",
+          "updatedAt": "2025-02-05T14:50:29Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nWhen expressed in positive integer ranges the convention is that 0 is the highest privilege, and higher numbers correspond to fewer privileges. No negative number representation is allowed, in this setting.\r\n```",
+              "createdAt": "2025-02-05T14:50:29Z",
+              "updatedAt": "2025-02-05T14:50:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avDzr",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:51:01Z",
+          "updatedAt": "2025-02-05T14:51:01Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "0 is also legal though.",
+              "createdAt": "2025-02-05T14:51:01Z",
+              "updatedAt": "2025-02-05T14:51:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avEQ3",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:51:33Z",
+          "updatedAt": "2025-02-05T14:51:34Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "I am not clear when was PRIV introduced and what its context is? Can you please clarify..",
+              "createdAt": "2025-02-05T14:51:34Z",
+              "updatedAt": "2025-02-05T14:51:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avEsc",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:52:02Z",
+          "updatedAt": "2025-02-05T14:52:02Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "What setting? This is convention.",
+              "createdAt": "2025-02-05T14:52:02Z",
+              "updatedAt": "2025-02-05T14:52:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avFAb",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:52:28Z",
+          "updatedAt": "2025-02-05T14:52:29Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "When would one use `int` and when would one use `tagged-int`. can you please explain as this is the base spec!",
+              "createdAt": "2025-02-05T14:52:29Z",
+              "updatedAt": "2025-02-05T14:52:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avGlD",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:54:27Z",
+          "updatedAt": "2025-02-05T14:54:28Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "This looks like a policy construct which i am little nervous in absorbing here..?\r\n\r\nis there a way to express it more clearly using base types?",
+              "createdAt": "2025-02-05T14:54:28Z",
+              "updatedAt": "2025-02-05T14:54:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avGsR",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Made some comments!",
+          "createdAt": "2025-02-05T14:54:38Z",
+          "updatedAt": "2025-02-05T14:54:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avHwy",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T14:55:53Z",
+          "updatedAt": "2025-02-05T14:55:53Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "> What setting? This is convention.\r\n\r\nYes, I mean that you can replace it with convention or something similar!",
+              "createdAt": "2025-02-05T14:55:53Z",
+              "updatedAt": "2025-02-05T14:55:53Z"
+            }
+          ]
         }
       ]
     },
@@ -55381,7 +55633,7 @@
       "labels": [],
       "body": "Addresses Issue #358.\r\nThis does include a CoSWID registry addition.",
       "createdAt": "2025-01-17T18:27:03Z",
-      "updatedAt": "2025-01-30T09:47:31Z",
+      "updatedAt": "2025-02-05T16:46:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ed9e89fe252c399ea03f60f095e4678e4d417d51",
@@ -55434,6 +55686,13 @@
           "body": "I have sought some more clarifications via Issue #358 whether this change is necessary or not?\r\nRequest we discuss this aspect on 01/29, before proceeding.\r\n",
           "createdAt": "2025-01-28T22:44:07Z",
           "updatedAt": "2025-01-28T22:44:07Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR will not be addressed as `Scope of profiles` will be retained at CoRIM level (the signer level).\r\n\r\nThe text for the issue #358 adequately describes the use case and the solution. This PR needs to be closed now!",
+          "createdAt": "2025-02-05T16:46:00Z",
+          "updatedAt": "2025-02-05T16:46:00Z"
         }
       ],
       "reviews": [
@@ -56440,24 +56699,26 @@
       "id": "PR_kwDOH6-tI86JZw3x",
       "title": "Rename CoBOM to CoTL (Concise Tag List)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/370",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #369 ",
       "createdAt": "2025-01-29T18:49:02Z",
-      "updatedAt": "2025-01-31T20:10:01Z",
+      "updatedAt": "2025-02-05T15:49:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ed9e89fe252c399ea03f60f095e4678e4d417d51",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cobom-renaming",
       "headRefOid": "60da33525d2e32e6ff57ea301fe8211ee809158f",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-02-05T15:48:53Z",
+      "mergedAt": "2025-02-05T15:48:53Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "d7718c1e390ccf23e374930e7469a89232bafa8e"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -56608,6 +56869,45 @@
           "createdAt": "2025-01-31T20:10:01Z",
           "updatedAt": "2025-01-31T20:10:01Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86av0ZL",
+          "commit": {
+            "abbreviatedOid": "60da335"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-05T15:47:39Z",
+          "updatedAt": "2025-02-05T15:47:39Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86av0rB",
+          "commit": {
+            "abbreviatedOid": "60da335"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-05T15:48:04Z",
+          "updatedAt": "2025-02-05T15:48:04Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86av04c",
+          "commit": {
+            "abbreviatedOid": "60da335"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-05T15:48:21Z",
+          "updatedAt": "2025-02-05T15:48:21Z",
+          "comments": []
         }
       ]
     },
@@ -56623,19 +56923,81 @@
       "labels": [],
       "body": "Proposed change during discussion in Issue #358.",
       "createdAt": "2025-02-01T15:11:10Z",
-      "updatedAt": "2025-02-01T15:11:11Z",
+      "updatedAt": "2025-02-05T17:02:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ed9e89fe252c399ea03f60f095e4678e4d417d51",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "locate",
-      "headRefOid": "5795deaf693de501411a988af6c07f78f7d44033",
+      "headRefOid": "f5a4b9771049da8953cde76f5b6f667dc2048bea",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Simple change, @henkbirkholz & @thomas-fossati please review, if you can today, we can progress this!",
+          "createdAt": "2025-02-05T17:02:22Z",
+          "updatedAt": "2025-02-05T17:02:22Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86aoHOR",
+          "commit": {
+            "abbreviatedOid": "5795dea"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM - but suggested a wording change",
+          "createdAt": "2025-02-04T22:25:30Z",
+          "updatedAt": "2025-02-04T22:28:50Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n* `href` (index 0): a URI or array of redundant URIs identifying locations where the additional resource can be fetched.\r\n```",
+              "createdAt": "2025-02-04T22:25:31Z",
+              "updatedAt": "2025-02-05T15:08:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avRkM",
+          "commit": {
+            "abbreviatedOid": "4e2f40f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-05T15:08:51Z",
+          "updatedAt": "2025-02-05T15:08:52Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n* `href` (index 0): a URI or array of redundant URIs identifying locations where the additional resource can be fetched.\r\n```",
+              "createdAt": "2025-02-05T15:08:51Z",
+              "updatedAt": "2025-02-05T15:08:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86avS02",
+          "commit": {
+            "abbreviatedOid": "f5a4b97"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-02-05T15:09:34Z",
+          "updatedAt": "2025-02-05T15:09:34Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
