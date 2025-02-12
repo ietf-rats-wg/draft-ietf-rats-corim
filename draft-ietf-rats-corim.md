@@ -345,7 +345,7 @@ certificates, or other relevant information can be retrieved by the Verifier.
 
 The following describes each child element of this type.
 
-* `href` (index 0): a URI or array of redundant URIs identifying locations where the additional resource can be fetched.
+* `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
 
 * `thumbprint` (index 1): expected digest of the resource referenced by `href`.
   See sec-common-hash-entry}}.
