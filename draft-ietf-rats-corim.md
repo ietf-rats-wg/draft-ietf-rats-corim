@@ -56,8 +56,8 @@ contributor:
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
   - ins: A. Draper
     name: Andrew Draper
-    org: Intel Corporation
-    email: andrew.draper@intel.com
+    org: Altera
+    email: andrew.draper@altera.com
     contribution: >
       Andrew contributed the concept, description, and semantics of conditional endorsements as well as consistent contribution to weekly reviews of others' edits.
   - ins: D. Glaze
@@ -266,7 +266,7 @@ For more detail, see {{sec-corim-profile-types}}.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, CoRIM can be encoded as a CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
+Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
 
 The following CDDL describes the top-level CoRIM.
 
@@ -363,8 +363,7 @@ Exercised extension points should preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
 
-A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-corim-signed}} and
-{{sec-mt-corim-unsigned}} with the `profile` parameter set to the appropriate value.
+A CoRIM profile can use one of the base CoRIM media type defined in {{sec-mt-rim-cbor}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
@@ -438,7 +437,7 @@ The following describes each child item of this map.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A bit string which is a key identity pertaining to the CoRIM Issuer.
+* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
@@ -494,16 +493,35 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-The set of triples is extensible.
-The following triples are currently defined:
+This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
+Every CoRIM Verifier MUST implement the MTI triples.
+The OTI class of triples are generally useful across profiles.
+A CoRIM Verifier SHOULD implement OTI triples.
+Verifiers may be constrained in various ways that may make implementation of the OTI class infeasible or unnecessary.
+For example, deployment environments may have constrained resources, limited code size, or limited scope Attesters.
+
+MTI Triples:
 
 * Reference Values triples: containing Reference Values that are expected to match Evidence for a given Target Environment ({{sec-comid-triple-refval}}).
 * Endorsed Values triples: containing "Endorsed Values", i.e., features about an Environment that do not appear in Evidence. Specific examples include testing or certification data pertaining to a module ({{sec-comid-triple-endval}}).
+* Conditional Endorsement triples: describing one or more conditions that, once matched, result in augmenting the Attester's actual state with the supplied Endorsed Values ({{sec-comid-triple-cond-endors}}).
+
+OTI Triples:
+
+* Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
-* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID tags ({{sec-comid-triple-coswid}}).
+* CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
+
+CoMID triples are extensible ({{sec-comid-triples}}).
+Triples added via the extensibility feature MUST be OTI class triples.
+This document specifies profiles (see {{sec-extensibility}}).
+OTI triples MAY be reclassified as MTI using a profile.
+Conversely, profiles can choose not to _use_ certain MTI triples.
+Profiles MUST NOT reclassify MTI triples as OTI.
 
 ## Structure
 
@@ -681,13 +699,10 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
   Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8): Triples describing a series of
-  conditional Endorsements based on the acceptance of a stateful environment.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
   Described in {{sec-comid-triple-cond-series}}.
 
-* `conditional-endorsement-triples` (index 10): Triples describing a series of
-  Endorsement that are applicable based on the acceptance of a series of
-  stateful environment records.
+* `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
   Described in {{sec-comid-triple-cond-endors}}.
 
 ##### Environments {#sec-environments}
@@ -869,14 +884,9 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-flags}}.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
-  An optional `raw-value-mask` (index 5) indicates which bits in the
-  `raw-value` field are relevant for verification. A mask of all ones ("1")
-  means all bits in the `raw-value` field are relevant. Multiple values could
-  be combined to create a single `raw-value` attribute. The vendor determines
-  how to pack multiple values into a single `raw-value` structure. The same
-  packing format is used when collecting Evidence so that Reference Values and
-  collected values are bit-wise comparable. The vendor determines the encoding
-  of `raw-value` and the corresponding `raw-value-mask`.
+  The vendor determines the encoding of `raw-value`.
+  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field must be compared.
+  Described in {{sec-comid-raw-value-types}}
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
   Described in {{sec-comid-address-types}}.
@@ -995,19 +1005,23 @@ the sensitive values in memory are encrypted.
 Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers.
 
-There are two parts to a `raw-value-group`, a measurement and an optional mask.
+A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
+This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
-Additional raw value types can be defined, but must be CBOR tagged so that parsers can distinguish
-between the various semantics of type values.
 
+Additional value types can be added to `$raw-value-type-choice`, these additional values MUST be CBOR tagged `bstr`s.
+Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
+
+A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
 
-When a new raw value type is defined, the convention for applying the mask is also defined.
-Typically, a CoRIM profile is used to define new raw values and mask semantics.
+The `raw-value-mask` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
+This code point may be removed in a future revision of this specification.
 
 ~~~ cddl
 {::include cddl/raw-value.cddl}
+{::include cddl/tagged-masked-raw-value.cddl}
 ~~~
 
 ###### Address Types {#sec-comid-address-types}
@@ -1116,6 +1130,8 @@ This means that there is no privilege strictly afforded to, e.g., privilege leve
 ~~~
 
 For environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.
+The full range if signed integers may be used.
+The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
 ##### Domain Types {#sec-comid-domain-type}
 
@@ -1196,15 +1212,14 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-A Conditional Endorsement Series triple uses a "stateful environment" that identifies a Target Environment plus the measurements that have matching Evidence.	
+The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each `conditional-series-record`.
+For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
 
-The series object is an array of `conditional-series-record` that has both Reference and Endorsed Values.
-Each conditional-series-record record is evaluated in the order it appears in the series array.
-The Endorsed Values are accepted if the series condition in a `conditional-series-record` matches the attester's actual state.
-The first `conditional-series-record` that successfully matches an attester's actual state terminates the matching and the corresponding Endorsed Values are accepted.
-If none of the series conditions match the attester's actual state, the triple is not matched, and no Endorsed values are accepted.	
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
-More clarification about the usage and matching order will be resolved by: [^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/321
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1227,7 +1242,8 @@ The `conditional-series-record` has the following parameters:
 To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criteria are satisfied, the `series` tuples are processed.
 
-The `series` array contains a list of `conditional-series-record` entries.
+The `series` array contains an ordered list of `conditional-series-record` entries.
+Evaluation order begins at list position 0.
 
 For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
 The new entry is added to the existing set of Endorsements.
@@ -1633,7 +1649,9 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
-ECTs have five attributes:
+#### Internal Representation of Environment Claims Tuple {#sec-ir-ect}
+
+Environment-Claims Tuples (ECT) have five attributes:
 
 {:ect-enum: style="format %d."}
 
@@ -1655,6 +1673,16 @@ The following CDDL describes the ECT structure in more detail.
 ~~~
 
 The Conceptual Message type determines which attributes are mandatory.
+
+#### Internal Representation Extensions {#sec-ir-ext}
+
+The internal representation extends `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
+`typed-crypto-key` consists of a `key` and an optional `key-type`.
+There are two types of keys `attest-key` and `identity-key`.
+
+~~~ cddl
+{::include cddl/intrep-key.cddl}
+~~~
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
@@ -1836,7 +1864,6 @@ Any CoRIM that has been secured by a cryptographic mechanism, such as a signatur
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
-The selection process MUST yield at least one usable tag.
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
@@ -1845,20 +1872,20 @@ Later stages will further select the CoRIMs appropriate to the Evidence Appraisa
 The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoBOM, and CoTS.
 
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
-In particular, any cross-referenced triples (e.g., CoMID-CoSWID linking triples) MUST be successfully resolved.
+Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.
 
 #### CoBOM Extraction
 
 This section is not applicable if the Verifier appraisal policy does not require CoBOMs.
 
-CoBOMs which are not within their validity period are discarded.
+CoBOMs which are not within their validity period MUST be discarded.
 
 The Verifier processes all CoBOMs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 
 A Verifier MAY decide to discard some of the available and valid CoBOMs depending on any locally configured authorization policies.
-(Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.)
+Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
-In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
+In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
 After the Verifier has processed all CoBOMs it MUST discard any tags which have not been activated by a CoBOM.
 
@@ -1883,12 +1910,12 @@ The way cryptographic signature validation works depends on the specific Evidenc
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
 See Section 9.2.1 of {{DICE.Layer}}.
-If a trusted root certificate is found, the usual X.509 certificate validation is performed.
+If a trusted root certificate is found, X.509 certificate validation is performed.
 
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.
 
-Regardless of the specific integrity protection method used, the Evidence's integrity MUST be validated successfully.
+Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
 > If a CoRIM profile is supplied, it MUST describe:
 >
@@ -2007,7 +2034,7 @@ The selected tags are mapped to an internal representation, making them suitable
 {: cett-enum}
 * The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+* If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 ##### Conditional Endorsement Triple Transformation {#sec-end-trans-cest}
 
@@ -2041,9 +2068,9 @@ The selected tags are mapped to an internal representation, making them suitable
 > > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
 ##### Key Verification Triples Transformation {#sec-end-trans-kvt}
 
@@ -2250,7 +2277,7 @@ where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, whe
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
-Series processing terminates when the first series entry matches.
+Series iteration terminates after the first matching series entry is processed or when no series entries match.
 
 #### Processing Key Verification Endorsements {#sec-process-keys}
 
@@ -2461,8 +2488,24 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
+A `raw-value` entry contains binary data.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must be tagged and have type `bytes`.
+
+The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
+
+If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
+The standard comparison function defined in this document removes the tag before performing the comparison.
+
+For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+
+The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
+
+The comparison MUST return false if the lengths of the condition ECT mask and value are different.
+
+The comparison MUST use the mask to determine which bits to compare.
+If a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.
+If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
@@ -2479,6 +2522,26 @@ For each Integrity Register entry in the condition ECT, the Verifier will use th
 If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
+
+##### Comparison for linear-privlevel entries
+
+The ACS entry value stored under `measurement-values-map` codepoint 15 is a linear privilege level, which must have type `linear-privlevel-type-choice`.
+
+If the entry `linear-privlevel-type-choice` is an `int`, name it PRIV and compare as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then an equality comparison is performed on the `int` components.
+The comparison MUST return true if the value of PRIV is equal to the `int` value in the condition ECT.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range inclusion comparison is performed.
+The comparison MUST return true if the value of PRIV is greater than or equal to the `min` value in the condition ECT AND the value of PRIV is less than or equal to than the `max` value in the condition ECT
+
+If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.564, then comparison with the pair of `inf-int` values MINPRIV and MAXPRIV is as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range subsumption comparison is performed.
+The comparison MUST return true if the value of MINPRIV is greater than or equal to the `min` value of the condition ECT and the value of MAXPRIV is less than or equal to the `max` value of the condition ECT.
+In this case, `null` in `min` is less than `null` and any integer, and `null` in `max` is greater than `null` and any integer.
 
 ### Profile-directed Comparison {#sec-compare-profile}
 
@@ -2589,10 +2652,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 
 |     Tag | Data Item           | Semantics                                                     | Reference |
 |     --- | ---------           | ---------                                                     | --------- |
-|     500 | `tag`               | A tagged-concise-rim-type-choice, see {{sec-corim-tags}}      | {{&SELF}} |
+|     500 | `tag`               | Reserved for backward compatibility                   | {{&SELF}} |
 |     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
-|     502 | `tag`               | A tagged-signed-corim, see {{sec-corim-signed}}               | {{&SELF}} |
-| 503-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+| 502-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
 |     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
 |     507 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
@@ -2610,7 +2672,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
-| 563-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
+|     564 | `[int, int]`        | tagged-int-range, see {{sec-comid-linear-privlevel}}          | {{&SELF}} |
+| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
@@ -2703,78 +2767,18 @@ IANA is requested to add the following media types to the "Media Types"
 registry {{!IANA.media-types}}.
 
 | Name | Template | Reference |
-| corim-signed+cbor | application/corim-signed+cbor | {{&SELF}}, ({{sec-mt-corim-signed}}) |
-| corim-unsigned+cbor | application/corim-unsigned+cbor | {{&SELF}}, ({{sec-mt-corim-unsigned}}) |
+| rim+cbor | application/rim+cbor | {{&SELF}}, ({{sec-mt-rim-cbor}}) |
+| rim+cose | application/rim+cose | {{&SELF}}, ({{sec-mt-rim-cose}}) |
 {: #tbl-media-type align="left" title="New Media Types"}
 
-### corim-signed+cbor {#sec-mt-corim-signed}
+### rim+cbor {#sec-mt-rim-cbor}
 
 {:compact}
 Type name:
 : `application`
 
 Subtype name:
-: `corim-signed+cbor`
-
-Required parameters:
-: n/a
-
-Optional parameters:
-: "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
-  notation.)
-
-Encoding considerations:
-: binary
-
-Security considerations:
-: ({{sec-sec}}) of {{&SELF}}
-
-Interoperability considerations:
-: n/a
-
-Published specification:
-: {{&SELF}}
-
-Applications that use this media type:
-: Attestation Verifiers, Endorsers and Reference-Value providers that need to
-  transfer COSE Sign1 wrapped CoRIM payloads over HTTP(S), CoAP(S), and other
-  transports.
-
-Fragment identifier considerations:
-: n/a
-
-Magic number(s):
-: `D9 01 F6 D2`, `D9 01 F4 D9 01 F6 D2`
-
-File extension(s):
-: n/a
-
-Macintosh file type code(s):
-: n/a
-
-Person and email address to contact for further information:
-: RATS WG mailing list (rats@ietf.org)
-
-Intended usage:
-: COMMON
-
-Restrictions on usage:
-: none
-
-Author/Change controller:
-: IETF
-
-Provisional registration?
-: Maybe
-
-### corim-unsigned+cbor {#sec-mt-corim-unsigned}
-
-{:compact}
-Type name:
-: `application`
-
-Subtype name:
-: `corim-unsigned+cbor`
+: `rim+cbor`
 
 Required parameters:
 : n/a
@@ -2804,10 +2808,70 @@ Fragment identifier considerations:
 : n/a
 
 Magic number(s):
-: `D9 01 F5`, `D9 01 F4 D9 01 F5`
+: `D9 01 F5`
 
 File extension(s):
+: .corim
+
+Macintosh file type code(s):
 : n/a
+
+Person and email address to contact for further information:
+: RATS WG mailing list (rats@ietf.org)
+
+Intended usage:
+: COMMON
+
+Restrictions on usage:
+: none
+
+Author/Change controller:
+: IETF
+
+Provisional registration?
+: Maybe
+
+### rim+cose {#sec-mt-rim-cose}
+
+{:compact}
+Type name:
+: `application`
+
+Subtype name:
+: `rim+cose`
+
+Required parameters:
+: n/a (cose-type is explicitly not supported, as it is understood to be "cose-sign1")
+
+Optional parameters:
+: "profile" (CoRIM profile in string format.  OIDs MUST use the dotted-decimal
+  notation.)
+
+Encoding considerations:
+: binary
+
+Security considerations:
+: {{sec-sec}} of {{&SELF}}
+
+Interoperability considerations:
+: n/a
+
+Published specification:
+: {{&SELF}}
+
+Applications that use this media type:
+: Attestation Verifiers, Endorsers and Reference-Value providers that need to
+  transfer CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S), and other
+  transports.
+
+Fragment identifier considerations:
+: n/a
+
+Magic number(s):
+: `D2 84`
+
+File extension(s):
+: .corim
 
 Macintosh file type code(s):
 : n/a
@@ -2835,8 +2899,8 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 | Content-Type | Content Coding | ID | Reference |
 |---
-| application/corim-signed+cbor | - | TBD1 | {{&SELF}} |
-| application/corim-unsigned+cbor | - | TBD2 | {{&SELF}} |
+| application/rim+cbor | - | TBD1 | {{&SELF}} |
+| application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
 
 --- back
