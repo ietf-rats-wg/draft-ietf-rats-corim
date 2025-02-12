@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 9 August 2025                                            Linaro
+Expires: 16 August 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         5 February 2025
+                                                        12 February 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 August 2025.
+   This Internet-Draft will expire on 16 August 2025.
 
 Copyright Notice
 
@@ -565,14 +565,14 @@ Table of Contents
    retrieved by the Verifier.
 
    corim-locator-map = {
-     &(href: 0) => uri
+     &(href: 0) => uri / [ + uri ]
      ? &(thumbprint: 1) => digest
    }
 
    The following describes each child element of this type.
 
-   *  href (index 0): URI identifying the additional resource that can
-      be fetched
+   *  href (index 0): a URI or array of alternative URIs identifying
+      locations where the additional resource can be fetched.
 
    *  thumbprint (index 1): expected digest of the resource referenced
       by href.  See sec-common-hash-entry}}.
@@ -4081,9 +4081,9 @@ Table of Contents
               Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
               Scarlata, "Attestation Results for Secure Interactions",
               Work in Progress, Internet-Draft, draft-ietf-rats-ar4si-
-              07, 2 September 2024,
+              08, 6 February 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              ar4si-07>.
+              ar4si-08>.
 
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
@@ -4153,7 +4153,7 @@ Appendix A.  Base CoRIM CDDL
    $corim-id-type-choice /= uuid-type
 
    corim-locator-map = {
-     &(href: 0) => uri
+     &(href: 0) => uri / [ + uri ]
      ? &(thumbprint: 1) => digest
    }
 
