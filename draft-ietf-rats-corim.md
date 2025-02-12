@@ -323,9 +323,8 @@ For more detail, see {{sec-corim-profile-types}}.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
-If a CoRIM is contained within a larger signed document or message, there MUST be a single signer assigned to the scope of the CoRIM as part of the document's specification or protocol conveying the message, respectively.
-For example, an application may use TLS to transmit an unsigned CoRIM and specify that the signer is the public key in the Certificate message.
+Alternatively, an unsigned CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
+If an unsigned CoRIM is conveyed in a larger secured context such as another signed message or through a secured channel, there MUST be a single signer assigned to the scope of the CoRIM as part of the document's specification or protocol conveying the message, respectively.
 
 The following CDDL describes the top-level CoRIM.
 
