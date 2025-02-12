@@ -2626,9 +2626,9 @@ Note that it is not required for all the entries in the candidate entry to be us
 
 The ACS entry value stored under `measurement-values-map` codepoint 15 is a linear privilege level, which must have type `linear-privlevel-type-choice`.
 
-If the entry `linear-privlevel-type-choice` is an `int` or an `int` tagged with #6.564, then comparison with the `int` named as PRIV is as follows.
+If the entry `linear-privlevel-type-choice` is an `int`, name it PRIV and compare as follows.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an untagged `int` then an equality comparison is performed on the `int` components.
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then an equality comparison is performed on the `int` components.
 The comparison MUST return true if the value of PRIV is equal to the `int` value in the condition ECT.
 
 *  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range inclusion comparison is performed.
@@ -2636,7 +2636,7 @@ The comparison MUST return true if the value of PRIV is greater than or equal to
 
 If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.564, then comparison with the pair of `inf-int` values MINPRIV and MAXPRIV is as follows.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an untagged `int` then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
 
 *  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range subsumption comparison is performed.
 The comparison MUST return true if the value of MINPRIV is greater than or equal to the `min` value of the condition ECT and the value of MAXPRIV is less than or equal to the `max` value of the condition ECT.
