@@ -323,8 +323,7 @@ For more detail, see {{sec-corim-profile-types}}.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, an unsigned CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
-If an unsigned CoRIM is conveyed in a larger secured context such as another signed message or through a secured channel, there MUST be a single signer assigned to the scope of the CoRIM as part of the document's specification or protocol conveying the message, respectively.
+Alternatively, an unsigned CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel and maintain a notion of a CoRIM signer ({{sec-conveyed-signer}}).
 
 The following CDDL describes the top-level CoRIM.
 
@@ -540,6 +539,14 @@ Described in {{sec-common-validity}}.
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
 
+## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
+
+An unsigned (#6.501-tagged) CoRIM may be contained in a larger signed document.
+An unsigned CoRIM may be conveyed over a secure channel.
+In both cases, there is a method of integrity protection that relies on some authentication.
+The role of "the CoRIM signer" MUST be specified in both cases, with the same constraint on the signed CoRIM that there is a single signer.
+
+It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
