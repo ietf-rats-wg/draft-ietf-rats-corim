@@ -235,7 +235,7 @@ The CDDL definitions in this document follows the naming conventions illustrated
 
 A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
 A CoRIM can be digitally signed with a COSE {{-cose}} signature.
-A tag is a structured, machine-readable metadata format used to uniquely identify, describe and manage modules or components of a system.
+A tag is a structured, machine-readable metadata format used to uniquely identify, describe, and manage modules or components of a system.
 
 Tags can be of different types:
 
