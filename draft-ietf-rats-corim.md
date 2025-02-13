@@ -541,7 +541,7 @@ Described in {{sec-common-validity}}.
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
-An unsigned (#6.501-tagged) CoRIM may be contained in a larger signed document.
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
 An unsigned CoRIM may be conveyed over a secure channel.
 In both cases, there is a method of integrity protection that relies on some authentication.
 The role of "the CoRIM signer" MUST be specified in both cases, with the same constraint on the signed CoRIM that there is a single signer.
