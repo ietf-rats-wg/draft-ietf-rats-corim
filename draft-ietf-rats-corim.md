@@ -1257,6 +1257,7 @@ Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which cas
 ##### Linear Privilege Level {#sec-comid-linear-privlevel}
 
 A Linear Privilege Level describes an operating privilege for the target environment.
+A privilege level is represented by a signed integer.
 The semantics of the ordering indicate a total inclusion of all higher privilege levels.
 This means that there is no privilege strictly afforded to, e.g., privilege level 3 that isn't also available to privilege level 1.
 
