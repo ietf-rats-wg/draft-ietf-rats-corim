@@ -1257,7 +1257,6 @@ Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which cas
 ##### Linear Privilege Level {#sec-comid-linear-privlevel}
 
 A Linear Privilege Level describes an operating privilege for the target environment.
-The convention is that 0 is the highest privilege, and higher numbers correspond to fewer privileges.
 The semantics of the ordering indicate a total inclusion of all higher privilege levels.
 This means that there is no privilege strictly afforded to, e.g., privilege level 3 that isn't also available to privilege level 1.
 
@@ -1265,6 +1264,7 @@ This means that there is no privilege strictly afforded to, e.g., privilege leve
 {::include cddl/linear-privilege-level.cddl}
 ~~~
 
+The convention is that 0 is the highest privilege, and higher numbers correspond to fewer privileges.
 For environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.
 The full range if signed integers may be used.
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
