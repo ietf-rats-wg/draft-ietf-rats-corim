@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-11T01:44:10.478881+00:00",
+  "timestamp": "2025-02-13T01:45:05.403635+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -415,7 +415,7 @@
       "id": "I_kwDOH6-tI85Sfu8b",
       "title": "Security and privacy considerations",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -427,8 +427,8 @@
       ],
       "body": "Add security and privacy considerations.",
       "createdAt": "2022-09-23T16:40:06Z",
-      "updatedAt": "2025-01-29T16:42:17Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-12T15:44:44Z",
+      "closedAt": "2025-02-12T15:44:44Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -551,14 +551,16 @@
       "state": "OPEN",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "thomas-fossati"
+      ],
       "labels": [
         "enhancement",
         "mustfix"
       ],
       "body": "We should provide clear and unambiguous definitions for (at least) the following terms:\r\n\r\n* endorsed values\r\n* reference values\r\n* environments\r\n* triple",
       "createdAt": "2022-09-23T16:46:25Z",
-      "updatedAt": "2024-05-07T09:18:45Z",
+      "updatedAt": "2025-02-12T15:54:04Z",
       "closedAt": null,
       "comments": [
         {
@@ -567,6 +569,13 @@
           "body": "Consider adding 'measurements' and 'class ID' and 'instance ID' as well. \r\n",
           "createdAt": "2022-09-23T19:05:50Z",
           "updatedAt": "2022-09-23T19:05:50Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agreed to work on this issue!",
+          "createdAt": "2025-02-12T15:52:53Z",
+          "updatedAt": "2025-02-12T15:52:53Z"
         }
       ]
     },
@@ -1479,7 +1488,7 @@
       "id": "I_kwDOH6-tI85czNuL",
       "title": "Get CBOR tag allocation for CoRIM",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/46",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -1490,8 +1499,8 @@
       ],
       "body": "The TCG Endorsement Architecture spec can be used to justify the need for a block allocation from #6.500 to #6.599 from IANA CBOR tag registry.",
       "createdAt": "2023-01-25T16:24:07Z",
-      "updatedAt": "2025-01-29T17:24:53Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-12T15:50:19Z",
+      "closedAt": "2025-02-12T15:50:19Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -2255,13 +2264,15 @@
       "state": "OPEN",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "andrew-draper"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "## Verifier matching measurements from a single set of attestation environments\r\n\r\nThis issue uses the term Attestation Transport to describe the transport over which evidence was passed to the Verifier. A SPDM connection is an example of an Attestation Transport, it carries measurements from the SPDM Attestation Environment and from related DICE Attestation Environments within the same entity.\r\n\r\nThe simple use case for a Verifier is where it has received a set of measurements through a single Attestation Transport and it needs to match these against a CoMID tag containing reference values.\r\n\r\nIMHO we should make the simple case easy to encode. I suggest that when matching a Reference Value Triple containing only `environment-map` and `measurement-values-map`, the Verifier must ensure that match them against evidence received from the same Attestation Transport. In some cases there may be multiple Attestation Environment groups which match against the same Reference Value Triple, if this happens then each group would receive an identical Endorsement.\r\n\r\nFor example, a CoMID tag encoding the semantics \"If this device has a measurement identified by OID 1.2.3.4 and SHA-384 hash 0x5678 then the device is an Acme Ethernet Card version 1.0\"\r\n\r\n## Verifier matching measurements from multiple attesters\r\n\r\nHigher level Verifiers, or rather the CoRIMs controlling higher level Verifiers, will want to match against more complicated sets of evidence. For example, a CoRIM might want to encode the semantics _Match against a type A PCIe card in slot 0, with firmware hash B, and against a second identical PCIe card in slot 1_.\r\n\r\nDo we need a way for a CoRIM to indicate that it must match against a set of evidence from one source (eg one Attestation Transport) and a potentially different set of evidence from a different source?\r\n\r\n## An example encoding of reference-values when matching against multiple Attestation Transports\r\n\r\nI suggest that we use the `mkey` field to identify the attestor to be chosen.\r\n\r\nFor example, the following encoding encodes the two PCIe cards case above:\r\nSolution 1:\r\n```\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K1\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K2\r\n      - mvalue = B\r\n\r\n```\r\nThis would be associated with an Endorsement triple or similar providing more information about the combined system.\r\n\r\nThe exact values of K1 and K2 are not important, what is important is that all measurements with the same `mkey` value must come over the same Attestation Transport. Using the integer encoding of `mkey` normally produces the smallest encoding.\r\n\r\nWe might need a profile to enable this behavior.\r\n\r\nI think this can be extended to multiple levels of compound devices, but wanted to get a sense of whether this is going in the right direction first.\r\n\r\n## Question\r\n\r\n**Is it going in the right direction?**\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2023-03-17T11:48:02Z",
-      "updatedAt": "2024-07-31T14:57:40Z",
+      "updatedAt": "2025-02-12T19:20:18Z",
       "closedAt": null,
       "comments": [
         {
@@ -3022,13 +3033,16 @@
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith",
+        "yogeshbdeshpande"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "The `domain-dependency-triple-record` lists target environments and the other environments, usually attesting environments, the target depends on for trust establishment. \r\n\r\nIt may be unclear what behavior the Verifier should take if a target environment appears in Evidence, but does not have a corresponding dependency triple. \r\n\r\nA concern is that if an env is compromised (after its measurement / evidence is collected), the compromised env could measure an additional (attack) env, with evidence, that the Verifier will accept. \r\n\r\nNote: There may be other ways to detect this attack. The compromised env could have been issued a DICE certificate that excludes the `ECA` key purpose OID. The compromised env could have been issued an X.509 certificate with a pathlen value=0.\r\nGiven there may be multiple evidence formats that don't have these mitigations, the dependency triple may be an additional form of mitigation.\r\n\r\nHowever, to mitigate this attack, there needs to be conventions for its use. If the dependency triples are a closed set. Then only attack environments will not show up in dependency triples. Can CoRIM assert this requirement?\r\n\r\nVerifier behavior should be clear whether it detects this attack. \r\n\r\nIf the verifier should detect the attack using RIMs, then RIM authors MUST specify dependency triples. \r\n\r\nDetection requires an all-or-nothing approach. All the target envs MUST be included in RIMs, or the verifier is not expected to detect the attack. Otherwise, the possibility of unnamed, but trusted environments could exist. The Verifier is undecided as to which is legitimate. \r\n\r\nDo we think CoBOM plays a role toward identifying tags that contain dependency triples?\r\n\r\n",
       "createdAt": "2023-07-14T21:57:40Z",
-      "updatedAt": "2024-09-27T04:58:23Z",
+      "updatedAt": "2025-02-12T19:19:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -3312,7 +3326,7 @@
       "id": "I_kwDOH6-tI85wUADQ",
       "title": "Verification Flow needs to consider both profile in CoRIM and Evidence",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/137",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -3321,8 +3335,8 @@
       ],
       "body": "The section of Verification does cover a reference to profile for performing appraisal procedure.\r\n\r\nHowever the sections only addresses `profiles` in terms of CoRIM Profiles. However, \r\n\r\n1. There are actually two profiles, one in Endorsements (Reference Values and Endorsed Values) and the other in Evidence.\r\n2. Evidence profile is associated to Endorsement profile and there is a linkage between the two ( there could be 1:N relationship between them) and they are not identical.\r\n4. Also not all Evidence are carried out as CoRIM as well.\r\n\r\nConsidering all the above aspects the Verification sections which describes profile based Verification needs to clearly set the context in which profiles are referred.\r\n\r\nOne suggestion is to use another term: known as \"Attestation Format\" OR \"Attestation Scheme\" which maps to a unique scheme for Appraisal considering CoRIM Endorsement + Evidence Profile into consideration!\r\n\r\n",
       "createdAt": "2023-09-06T15:43:10Z",
-      "updatedAt": "2025-01-23T18:40:57Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-12T15:49:31Z",
+      "closedAt": "2025-02-12T15:49:31Z",
       "comments": [
         {
           "author": "andrew-draper",
@@ -3798,13 +3812,15 @@
       "state": "OPEN",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
-      "assignees": [],
+      "assignees": [
+        "henkbirkholz"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "At least a notion to the effect of \"reusing evidence generating key material to identify an attesting environment is fine\" is required as part of the SecConSec.",
       "createdAt": "2023-09-27T14:34:47Z",
-      "updatedAt": "2025-01-30T13:09:52Z",
+      "updatedAt": "2025-02-12T19:19:34Z",
       "closedAt": null,
       "comments": [
         {
@@ -4917,9 +4933,9 @@
       "labels": [
         "mustfix"
       ],
-      "body": "Here are few points raised by Hannes, which are listed in sequence below, so that they are not lost and feedback incorporated.\r\n\r\n1. **Document Readability** : Overall, the document is hard to read. As a reader one is lost in details and there is no big picture. The introduction is 2 paragraphs long to be followed by lots of CDDL definitions in the terminology section. \r\n2. **Document Purpose** Need to clearly define the `Goal` of the document.\r\n3. Need a clear and consistent definition of a `CoMID`. \r\n4. Define the concept of \"module composition\" in context of CoRIM document\r\n5. Needs consistency in terminology: Example some places, `language` is referred as `lang`.\r\n6. Need to clearly highlight that JSON is also supported as encoding format for `Triples` and one should provide Examples as to how JSON Encoding will look like?",
+      "body": "Here are few points raised by Hannes, which are listed in sequence below, so that they are not lost and feedback incorporated.\n\n1. [] Document Readability** : Overall, the document is hard to read. As a reader one is lost in details and there is no big picture. The introduction is 2 paragraphs long to be followed by lots of CDDL definitions in the terminology section. \n2. **Document Purpose** Need to clearly define the `Goal` of the document.\n3. Need a clear and consistent definition of a `CoMID`. \n4. Define the concept of \"module composition\" in context of CoRIM document\n5. Needs consistency in terminology: Example some places, `language` is referred as `lang`.",
       "createdAt": "2024-01-25T17:19:10Z",
-      "updatedAt": "2025-01-22T23:57:33Z",
+      "updatedAt": "2025-02-12T23:53:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -5117,6 +5133,27 @@
           "body": "OK to close?",
           "createdAt": "2025-01-22T23:57:32Z",
           "updatedAt": "2025-01-22T23:57:32Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Remvoved JSON dependency: We need to work on some of the requirements prior to closing this one!",
+          "createdAt": "2025-02-12T19:17:46Z",
+          "updatedAt": "2025-02-12T19:17:46Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Need a clear and consistent definition of a CoMID.\n\nThis relates to the need for a clear definition of a \"tag\". ",
+          "createdAt": "2025-02-12T22:32:16Z",
+          "updatedAt": "2025-02-12T22:32:16Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree we need to define a `tag`. For this we need to understand does SWID defines a tag..?\n\nIf yes, inherit the definition and apply Hardware and Firmware for the context of CoMID...",
+          "createdAt": "2025-02-12T23:53:49Z",
+          "updatedAt": "2025-02-12T23:53:49Z"
         }
       ]
     },
@@ -5931,11 +5968,15 @@
       "state": "OPEN",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "deeglaze"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "We talked today about reference values and endorsements expressed in the same manner of conditions and assertions. I'd like to say I like the direction this is going. I think that the expression of condition is still coarse and can be specified in simpler language.\r\n\r\nWe say \"match\" and \"assert\" a lot, and I want to get to the heart of their meaning. I mentioned that a meet-semilattice seems like an appropriate abstraction, but I'll break down the bare bones requirements here. A meet-semilattice is not required.\r\n\r\nWe have individual claims that have their own theory behind their interpretation, either by standard or by profile. A claim is now an atomic proposition `c` interpreted in theory `T_p` (theory of the profile) asserted by `A`. The theory of the profile gets to determine if the conjunction of claims `(and c ...)` is consistent or not, and whether `(and c ...) => c'`, a collection of claims `c ...` implies another claim `c'`.\r\n\r\nAssert becomes the addition of `(c, p, A)` into the context, or \"ACS\". The `T_p` decides if appraisal has failed with this new assertion.\r\n\r\nThe interface we have now for `match` is \"do I know if `(c,p,a)` is implied by the ACS?\" An expression language that allows complex conditionals is left to the language design, say an array of ECTs meaning an `and` of the orthogonal claims represented by each ECT.\r\n\r\nSo here we have it: implication and conjunction. The expression language for the standard can be limited but not prescriptive of all manners of expressing combinations of assert and match. We do not allow asserting complex combinations of atoms like `(and c0 (or c1 (not c2)))` to maintain reasonable complexity, but a theory may decide that its atoms get to be interpreted as more complex expressions\u2013it is then responsible for any further interpretation of the atoms it contains. Combining theories modularly is not easy, and is the topic of many papers in the realm of satisfiability modulo theories.\r\n\r\nGiven this limited interface, we know first that `c => c`, or exact matching. The rest of the semantics of matching comes from how we interpret other measured values.\r\n\r\n`svn(x) and minsvn(y)` is consistent only if `y <= x`.\r\n`digests(alg_i => digest_i ...) and digests(alg_j => digest_j ...)` only if the same algorithms map to the same digests. Expressing each map as a finite function, you can say the condition for consistency is `let d = dom(d_0) intersect dom(d_1). d_0|d = d_1|d` (where `f|d` is the notation of a function `f` restricted to a domain `d`).\r\n\r\nThe implication decision procedure follows similarly, but now it behooves us to express \"combination\" for easier description of implication. This is the augmentation process. How do you combine digests? Provided they don't collide, you can say `Digests(d_0) meet Digests(d_1) = Digests(lambda alg. if alg in dom(d_0). d_0(alg) else d_1(alg))` since if the algorithm is in both, the result is the same.\r\n\r\nYou can further lift the meet operation over integrity registers pointwise, or allow for textual and integer names to compare according to the IANA table before performing the meet of the values under the names.\r\n\r\nIf folks agree with this, we can start describing the condition language as first reflecting an ECT into a set of claims `(c, p, A) ...` and then performing some logical combination querying them before continuing to an assert. ",
       "createdAt": "2024-05-08T15:41:57Z",
-      "updatedAt": "2024-05-10T21:21:14Z",
+      "updatedAt": "2025-02-12T19:03:19Z",
       "closedAt": null,
       "comments": [
         {
@@ -5951,6 +5992,13 @@
           "body": "Ah yes, an unwritten assumption was that the meaning of claim c is defined by p, so you can\u2019t pair a claim from profile \u2018a\u2019 with profile \u2018b\u2019 when a!=b",
           "createdAt": "2024-05-10T21:21:12Z",
           "updatedAt": "2024-05-10T21:21:12Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Please check, if requirements addressed or not?",
+          "createdAt": "2025-02-12T19:03:11Z",
+          "updatedAt": "2025-02-12T19:03:11Z"
         }
       ]
     },
@@ -6058,11 +6106,15 @@
       "state": "OPEN",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "deeglaze"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "In PR#232 the addition \"CoRIM data structures may be used by Evidence and Attestation Results that wish to describe overlapping structure\" is particularly concerning. I've seen Ned describe the desire to avoid needing to define new translations between all new evidence formats by declaring that industry evidence formats are just always going to use CoRIM triples. That's not at all decided, and I think there are phase distinction concerns to address when trying to blend the provisioning+signing time and run time representations of both expectations and raw evidence.\r\n\r\nGiven that, just saying that \"CoRIM data structures may be used\" is certainly a possibility, but it's too hypothetical to solidify in the standard. When another entity decides their message representation, they are of course well within their rights to reuse CoRIM encodings, but without a standard to describe the common core between evidence, attestation results, and CoRIMs, it's too early to muddy the waters. A concrete example of the bleeding between reference and evidence is the mkey https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/230, and I don't think that it belongs there in the reference structure.",
       "createdAt": "2024-05-23T15:30:11Z",
-      "updatedAt": "2024-07-31T15:31:24Z",
+      "updatedAt": "2025-02-12T19:14:14Z",
       "closedAt": null,
       "comments": [
         {
@@ -6092,6 +6144,13 @@
           "body": "Perhaps we can make a label for issues that are better handled in a \"User guide\" type of document to accompany the reference document? If we have that, I'd say label it that and close so we can come back to it in a follow-up doc.",
           "createdAt": "2024-07-31T15:31:23Z",
           "updatedAt": "2024-07-31T15:31:23Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze  Can you please check and see, if we need to add more clarification in Matching sections?",
+          "createdAt": "2025-02-12T18:56:44Z",
+          "updatedAt": "2025-02-12T18:56:54Z"
         }
       ]
     },
@@ -6103,11 +6162,15 @@
       "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "",
       "createdAt": "2024-05-29T14:32:25Z",
-      "updatedAt": "2024-05-29T14:32:25Z",
+      "updatedAt": "2025-02-12T19:13:46Z",
       "closedAt": null,
       "comments": []
     },
@@ -6154,16 +6217,24 @@
       "id": "I_kwDOH6-tI86Kwtio",
       "title": "Create new RFC draft for appendices",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/240",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The SPDM and DICE concise evidence appendices ought to be follow-on RFCs to the CoRIM RFC @andrew-draper ",
       "createdAt": "2024-05-31T14:51:16Z",
-      "updatedAt": "2024-05-31T14:51:16Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-02-12T19:02:36Z",
+      "closedAt": "2025-02-12T19:02:34Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This issue will be taken in Evidence Profile documents!",
+          "createdAt": "2025-02-12T19:02:34Z",
+          "updatedAt": "2025-02-12T19:02:34Z"
+        }
+      ]
     },
     {
       "number": 241,
@@ -6205,10 +6276,12 @@
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "Need to complete the section - that deals with \r\nQuantizing Inputs {#sec-quantize}",
       "createdAt": "2024-06-05T15:41:31Z",
-      "updatedAt": "2024-10-04T15:33:40Z",
+      "updatedAt": "2025-02-12T19:01:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -6294,6 +6367,13 @@
           "body": "Forgot about this issue and added more thoughts in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/298 which I closed as a dupe of this.",
           "createdAt": "2024-10-04T15:33:38Z",
           "updatedAt": "2024-10-04T15:33:38Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "A PR has been worked upon. We need to speed this up now!",
+          "createdAt": "2025-02-12T19:01:45Z",
+          "updatedAt": "2025-02-12T19:01:45Z"
         }
       ]
     },
@@ -6334,10 +6414,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "wontfix"
+      ],
       "body": "I don't think it's appropriate at all for X to sign a document that Y is the one that actually authorized the claims. There is no signature by Y. This is a clear spoofing problem. Even if the Verifier is supposedly forwarding an authorization that it had previously seen by including it in the CoRIM, I don't think that Y has delegated that authority to the Verifier. The Verifier would need to use a \"hearsay\" claim that it had already shown that Y authorized the claim.",
       "createdAt": "2024-06-19T17:25:35Z",
-      "updatedAt": "2025-01-30T23:56:52Z",
+      "updatedAt": "2025-02-12T19:00:51Z",
       "closedAt": null,
       "comments": [
         {
@@ -6424,15 +6506,15 @@
       "id": "I_kwDOH6-tI86OYvHF",
       "title": "Should we deprecate endorsed value triple in favour of conditional endorsments triple?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/249",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "It looks like the former is a superset of the latter.",
       "createdAt": "2024-07-03T14:54:37Z",
-      "updatedAt": "2025-01-30T04:50:24Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-12T18:55:27Z",
+      "closedAt": "2025-02-12T18:55:25Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -6461,6 +6543,13 @@
           "body": "I have no issue keeping it at this point",
           "createdAt": "2025-01-30T04:50:23Z",
           "updatedAt": "2025-01-30T04:50:23Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as we agreed to keep both the triples!",
+          "createdAt": "2025-02-12T18:55:25Z",
+          "updatedAt": "2025-02-12T18:55:25Z"
         }
       ]
     },
@@ -6472,11 +6561,15 @@
       "state": "OPEN",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "henkbirkholz"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "              Should we say how? Or, if we do already, reference the place(s) that contain the relevant text.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/135#discussion_r1666725465_\r\n            ",
       "createdAt": "2024-07-06T08:43:31Z",
-      "updatedAt": "2024-07-06T08:43:31Z",
+      "updatedAt": "2025-02-12T18:54:43Z",
       "closedAt": null,
       "comments": []
     },
@@ -6558,12 +6651,22 @@
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "\"The diagram\" in RATS Endorsement + provenance/authority is essentially the ACS.",
       "createdAt": "2024-08-14T07:41:13Z",
-      "updatedAt": "2024-08-14T07:41:13Z",
+      "updatedAt": "2025-02-12T19:15:03Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@henkbirkholz Could you please clarify more on this Issue.\n\nIs it needed an immediate attention ...?",
+          "createdAt": "2025-02-12T18:53:20Z",
+          "updatedAt": "2025-02-12T18:53:20Z"
+        }
+      ]
     },
     {
       "number": 256,
@@ -6574,10 +6677,12 @@
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "With recent discussions with various teams using CoRIMs with their own profile it has become evident that there is a requirement to express in CoRIM, the following:\r\n\r\n_For a given single Environment, there can be multiple measurements of the same type, i.e. For an Environment there can be a series of SVN\u2019s pertaining to the environment. The other example is: for a given environment, it can have multiple acceptable states where each state has a unique measurement expressed either by a Digest or a Serial Number or a UUID (each of these are entries in a Measurement Values Map), in the base CoRIM schema._\r\n\r\nThis issue tracks the requirement and CoRIM Authors are requested to provide suitable possible options to debate on. \r\n\r\nHere are few which was discussed during Extended Meeting 14th August 2024:\r\n\r\nOption 1: Individual CoRIM Profile extends the Measurement Values Map. The singular Measurement is expressed using Base CoRIM Schema and the Extension slot offer mechanism for expressing multiplicity.\r\n\r\nPros: The base schema is NOT impacted. The Implementation is specific to required profile where individual measurements for an Environment is uniquely identified by the profile owner. The matching rules are profile specific\r\n\r\nCons: Multiple profiles requiring a similar extension will end up duplicating implementation. A single Verifier supporting these profiles will have difficulty scaling the implementation.\r\n\r\n",
       "createdAt": "2024-08-14T16:19:09Z",
-      "updatedAt": "2025-01-29T16:35:35Z",
+      "updatedAt": "2025-02-12T19:00:18Z",
       "closedAt": null,
       "comments": [
         {
@@ -6685,16 +6790,24 @@
       "id": "I_kwDOH6-tI86TtjLG",
       "title": "Documentation of Profiles",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/262",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": " Clarify the use of Extension and requirement for documentation as per the existing text on Line 1280\r\n        \r\n      No, CoRIM profiles can be entirely private and not be meant for use outside of a closed circuit.\r\n\r\n_Originally posted by @deeglaze in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/260#discussion_r1725100324_\r\n            ",
       "createdAt": "2024-08-21T14:29:50Z",
-      "updatedAt": "2024-08-21T14:29:50Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-02-12T18:52:22Z",
+      "closedAt": "2025-02-12T18:52:21Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as this is already addressed!",
+          "createdAt": "2025-02-12T18:52:21Z",
+          "updatedAt": "2025-02-12T18:52:21Z"
+        }
+      ]
     },
     {
       "number": 266,
@@ -6766,11 +6879,15 @@
       "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "              Line 1583 which describes the claims needs to be:\r\n1. Reworded with a more appropriate name, like a set of claims \r\n2. Needs to explain better, regarding the claims pertaining to each of the measured elements belonging to a target environment\r\n\r\n_Originally posted by @yogeshbdeshpande in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268#discussion_r1765100087_\r\n            ",
       "createdAt": "2024-09-18T14:46:35Z",
-      "updatedAt": "2024-09-18T14:46:35Z",
+      "updatedAt": "2025-02-12T18:59:04Z",
       "closedAt": null,
       "comments": []
     },
@@ -6859,16 +6976,24 @@
       "id": "I_kwDOH6-tI86XFImc",
       "title": "DICE and SPDM references no longer needed",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/280",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The sections on DICE and SPDM were moved into another draft. The references to DICE and SPDM are not cited within the document, hence should be removed.",
       "createdAt": "2024-09-18T20:51:33Z",
-      "updatedAt": "2024-09-18T20:51:33Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-02-12T18:50:26Z",
+      "closedAt": "2025-02-12T18:50:23Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as DICE and SPDM references removed!",
+          "createdAt": "2025-02-12T18:50:23Z",
+          "updatedAt": "2025-02-12T18:50:23Z"
+        }
+      ]
     },
     {
       "number": 281,
@@ -7024,15 +7149,15 @@
       "id": "I_kwDOH6-tI86XWC8E",
       "title": "Truth tables should not use abbreviations",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/287",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The truth tables in section 8.2.1 Internal Representation of Conceptual Messages uses abbreviations for the various attributes of the ECT structure. These should be replaced with more readable values used in the ECT CDDL.",
       "createdAt": "2024-09-20T15:49:37Z",
-      "updatedAt": "2024-10-01T23:50:21Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-12T19:00:04Z",
+      "closedAt": "2025-02-12T19:00:03Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -7047,6 +7172,13 @@
           "body": "See PR #296 ",
           "createdAt": "2024-10-01T23:50:21Z",
           "updatedAt": "2024-10-01T23:50:21Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as the issue has been fixed!",
+          "createdAt": "2025-02-12T19:00:03Z",
+          "updatedAt": "2025-02-12T19:00:03Z"
         }
       ]
     },
@@ -7132,10 +7264,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "> The value stored under measurement-values-map key 12 is an array of $crypto-key-type-choice entries. $crypto-key-type-choice entries are CBOR tagged values. The array contains one or more entries in sequence.\r\n>\r\n> The CBOR tag of the first entry of the Reference Value cryptokeys array is compared with the CBOR tag of the first entry of the ACS cryptokeys value. If the CBOR tags match, then the bytes following the CBOR tag from the Reference Value entry are compared with the bytes following the CBOR tag from the ACS entry. If the byte strings match, and there is another array entry, then the next entry from the Reference Values array is likewise compared with the next entry of the ACS array. If all entries of the Reference Values array match a corresponding entry in the ACS array, then the cryptokeys Reference Value matches. Otherwise, cryptokeys does not match.\r\n\r\n\r\n\r\nThis confuses me. I can't conceptualize the procedure this is describing, and I don't know why it only cares about tagged values. The $crypto-key-type-choice choice can be extended with non-tagged values. I don't know why it describes the tagged value comparison in two steps when it seems equivalent to just compare binary encodings.\r\n\r\nIt seems like it requires the size of the condition's key array to be less than or equal to the candidate's key array size, and that all elements of the condition's key array must be binary equal to the corresponding position in the candidate's key array. Seems strange to not allow some permutation in the comparison. Why is this not a subset semantics? Does this really need to impose an ordering?\r\n\r\nThe intended meaning of the triple is lost on me. It would help to have some supporting prose. Is it that the environment could be reasonably expected to give a proof of possession for these keys? I could see the ordering mattering if you're expecting the format of a CA bundle, but whether you're iterating from the left or right can cause problems due to bundle inconsistencies across server implementations as root..leaf or leaf..root\r\n\r\n",
       "createdAt": "2024-09-27T15:10:40Z",
-      "updatedAt": "2024-09-27T15:10:40Z",
+      "updatedAt": "2025-02-12T18:55:06Z",
       "closedAt": null,
       "comments": []
     },
@@ -7207,10 +7341,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "In the space of candidate and condition having a profile id, we've discussed\r\n\r\nboth without: use base semantics\r\ncondition with, candidate without: use the profile matching algorithm for any extensions, but I think we're missing wording in the spec that if there are any non-base CDDL bits of a CoRIM that it MUST have a profile-id to give them meaning. The text in the current draft just falls back to binary equality,\r\n\r\n> If a codepoint's comparison algorithm is not stated or does not default to the comparison algorithms described in this specification, then the Verifier MUST compare the binary equality of the CBOR encodings of the values.\r\n\r\nBut I worry that a -1: 1 in one profile may have completely different meaning from -1: 1 in another, and the lack of a profile can mean that two completely different measurements are getting viewed as the same.\r\n\r\nWe haven't discussed\r\ncondition without, candidate with: I'm guessing we use the base semantics' matching algorithm applies and rejects to match any nonstandard values.\r\ncondition with, candidate with: This one really does require mentioning in the document. I think that we need to require equality or at least condition profile-specified matching condition to allow for subsumption judgments.\r\n\r\nIn an email thread I discussed the merits and dangers of allowing a profile in a condition to override the profile in the ACS. Recap here\r\n\r\n>> is there any downside to giving that flexibility to the profile?\r\n>\r\n> There is, but we probably shouldn't rule it out entirely.\r\n>\r\n>Evidence can be translated to an ECT with some specific profile that assigns meaning to nonstandard codepoints, and another profile comes along and says, \"ya ya ya, whatever\" and adds its CoRIM issuer authority to the ACS entry that still has the evidence's profile identifier associated and not the CoRIM's. I mean I guess if you trust both the CoRIM issuer and the semantics of the profile, then you could trust this behavior, but it seems like it would be cause for confusion and inadvertent privilege escalation. You shift more burden into the policy side of the Verifier to accept a profile's overreach to subsume ACS entries' profiles.\r\nGiven that the base CDDL says that a profile MUST NOT override its specified semantics for its codepoints, I would think that you might want the option for an ACS entry's profile to also have non-expansive matching semantics.\r\n>\r\n>If we do allow for the profile to do whatever, we ought to add a note that profile identifier comparisons that are not binary equality are NOT RECOMMENDED due to the additional burden of ensuring the interactions are acceptable by policy.\r\n",
       "createdAt": "2024-10-01T17:47:44Z",
-      "updatedAt": "2024-10-04T04:04:19Z",
+      "updatedAt": "2025-02-12T18:55:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -7365,10 +7501,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "Normally, an RVP mints RVs that are applied to Evidence (only). The question is raised whether it is meaningful if an RVP could also mint RVs for Endorsements.\r\n\r\nNote: It is possible for an Endorser to endorse another Endorser's Claims using conditional endorsements so long as the `condition` expressions are permitted to use possible state expressions. \r\n\r\nThe current spec is silent. That is to say, the cmtype of the `condition` ECT is not specified.",
       "createdAt": "2024-10-03T17:20:50Z",
-      "updatedAt": "2025-02-10T20:49:09Z",
+      "updatedAt": "2025-02-12T19:07:08Z",
       "closedAt": null,
       "comments": [
         {
@@ -7761,10 +7899,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "It doesn't make sense to have a cycle in supplements / replaces relationships, since they are apparently causally ordered.\r\n\r\nSince `$tag-rel-type-choice` is extensible by profiles, do we say that only cycles involving supplements/replaces are invalid and leave the validity of cycles to a profile that extends the relationship enum to decide? Or just disallow cycles entirely? ",
       "createdAt": "2024-10-11T03:33:33Z",
-      "updatedAt": "2025-01-29T20:24:33Z",
+      "updatedAt": "2025-02-12T19:07:36Z",
       "closedAt": null,
       "comments": [
         {
@@ -7798,11 +7938,15 @@
       "state": "OPEN",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "deeglaze"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": ">  The digest value may be used to find the public key if contained in a lookup table.\r\n\r\nWe've decided that crypto-key-type-choice can only be binary-compared, so lookups are not meaningful to appraisal.",
       "createdAt": "2024-10-11T14:28:41Z",
-      "updatedAt": "2024-10-11T16:04:00Z",
+      "updatedAt": "2025-02-12T19:07:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -7943,13 +8087,25 @@
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "Conditional endorsements can be written such that the processing of Endorsement A depends on the acceptance of Endorsement B into the ACS. If A is processed before B, then the conditions in A will not be met. \r\n\r\nA recursive algorithm may address this problem. If A is processed before B and A isn't accepted into the ACS, then B is processed. Once B completes, A resumes. This time it completes.\r\n\r\nThere may be other ways to solve this problem. The spec needs to describe at least one viable strategy to both document the potential for inconsistent results, but also to show a viable solution.\r\n\r\nThis probably belongs in \"Ordering of Triple Processing\" section (wherever it gets moved to).",
       "createdAt": "2024-10-14T17:14:51Z",
-      "updatedAt": "2024-10-14T23:07:03Z",
+      "updatedAt": "2025-02-12T19:08:16Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Please address this!",
+          "createdAt": "2025-02-12T19:06:20Z",
+          "updatedAt": "2025-02-12T19:06:20Z"
+        }
+      ]
     },
     {
       "number": 324,
@@ -7997,11 +8153,15 @@
       "state": "OPEN",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "deeglaze"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "554, 555, 556, 557, etc.",
       "createdAt": "2024-10-16T14:11:22Z",
-      "updatedAt": "2025-01-30T23:16:19Z",
+      "updatedAt": "2025-02-12T19:05:49Z",
       "closedAt": null,
       "comments": [
         {
@@ -8043,10 +8203,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "CoSWID triples `coswid-triple-record` needs a transformation section and possibly a processing section. The transformation section will map contents of a coswid tag to internal representations for evidence, reference, and endorsements. If the mapping comes up with gaps (something that doesn't map) then a processing section may be needed.\r\n\r\nCoSWID field mappings are as follows:\r\npayload-entry : Reference Values\r\nevidence-entry : Evidence\r\nsoftware-meta.activation-status : Evidence? (if so, how should it be reported since concise-evidence omits it)\r\nchannel-type : Endorsement\r\ncolloquial-version : Endorsement\r\ndescription : Endorsement\r\nedition : Endorsement\r\nentitlement-data-required : ??? (feels like policy)\r\nentitlement-key : Endorsement\r\ngenerator : tag info\r\npersistent-id : Should be used in the construction of Environment-maps \r\nproduct : Endorsement\r\nproduct-family : Endorsement\r\nrevision : Endorsement\r\nsummary : Endorsement\r\nunspsc-code : Endorsement\r\nunspsc-version : Endorsement\r\n\r\nExtension to sw meta should describe their internal representation mapping / transformation.\r\n\r\nConcise Swid Tag:\r\nsoftware-name : Endorsement\r\nsoftware-version : Endorsement\r\nversion-scheme : Endorsement\r\nmedia : Endorsement (for example, it may contain a stringified representation of environment-map)\r\n\r\nAll other members of `concise-swid-tag` are tag specific.\r\n",
       "createdAt": "2024-10-16T19:16:05Z",
-      "updatedAt": "2024-10-30T16:12:12Z",
+      "updatedAt": "2025-02-12T18:48:35Z",
       "closedAt": null,
       "comments": [
         {
@@ -8185,12 +8347,22 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "PR #329 references the name of a claim but misses the aspect of the mkey.",
       "createdAt": "2024-10-23T14:37:18Z",
-      "updatedAt": "2024-10-23T14:37:18Z",
+      "updatedAt": "2025-02-12T18:58:08Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think, we have a unique name of `element identifier`  in ACS. Does this address your concerns  @deeglaze  ??",
+          "createdAt": "2025-02-12T18:57:57Z",
+          "updatedAt": "2025-02-12T18:57:57Z"
+        }
+      ]
     },
     {
       "number": 335,
@@ -8246,10 +8418,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "Reference value matching semantics is defined entirely by the CoRIM specification (including added semantics by profile) is it not?\r\n\r\nPolicy can drop reference values but not change semantics.",
       "createdAt": "2024-10-23T14:41:54Z",
-      "updatedAt": "2024-10-23T14:41:54Z",
+      "updatedAt": "2025-02-12T19:06:38Z",
       "closedAt": null,
       "comments": []
     },
@@ -8341,15 +8515,15 @@
       "id": "I_kwDOH6-tI86cbtSM",
       "title": "Lack of clarity on Authority around Unsigned CoRIM Map",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/342",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Current specification (06) has no clear way of determining the authority around unsigned corim map",
       "createdAt": "2024-10-30T15:38:47Z",
-      "updatedAt": "2025-02-01T15:15:59Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-12T19:13:21Z",
+      "closedAt": "2025-02-12T19:13:18Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -8371,6 +8545,13 @@
           "body": "Pinging this due to issue #358",
           "createdAt": "2025-02-01T15:15:58Z",
           "updatedAt": "2025-02-01T15:15:58Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "issue will be addressed using issue #358 \n\nHence marking this as duplicate!",
+          "createdAt": "2025-02-12T19:13:18Z",
+          "updatedAt": "2025-02-12T19:13:18Z"
         }
       ]
     },
@@ -8382,11 +8563,15 @@
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "RFC9277 defines TN function for generating CBOR tags from CF ID. The IANA sections don't clearly identify the corim entry point such that if a CBOR tag is generated, what CDDL/CBOR is the next byte following the tag value.\r\n\r\nFor example, a generated tag might replace #6.502.",
       "createdAt": "2024-11-01T13:58:56Z",
-      "updatedAt": "2024-11-01T13:58:56Z",
+      "updatedAt": "2025-02-12T19:12:06Z",
       "closedAt": null,
       "comments": []
     },
@@ -8395,16 +8580,24 @@
       "id": "I_kwDOH6-tI86dSCTx",
       "title": "Use consistent field projection syntax",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/345",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "We have `a`/`b` in some places and `a`.`b` in others. Since '.' is more commonly used syntax for projection, let's stick to that.",
       "createdAt": "2024-11-06T17:26:54Z",
-      "updatedAt": "2024-11-06T17:26:54Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-02-12T19:09:00Z",
+      "closedAt": "2025-02-12T19:08:58Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as the issue has been addressed!",
+          "createdAt": "2025-02-12T19:08:58Z",
+          "updatedAt": "2025-02-12T19:08:58Z"
+        }
+      ]
     },
     {
       "number": 347,
@@ -8414,11 +8607,15 @@
       "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "In the Verifier processing,the draft text states that Evidence is represented as `state-triples`\r\n\r\nHowever, there is no internal representation expressing Evidence as `state-triples`.\r\n\r\nThis part of the text needs to be re-visited..",
       "createdAt": "2024-11-11T19:45:55Z",
-      "updatedAt": "2024-11-11T19:46:34Z",
+      "updatedAt": "2025-02-12T19:04:55Z",
       "closedAt": null,
       "comments": []
     },
@@ -8430,11 +8627,16 @@
       "state": "OPEN",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "nedmsmith",
+        "yogeshbdeshpande"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "> Endorsed environments ([Section 5.1.4.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-endval)) membership is conditional upon successful matching of Reference Values ([Section 5.1.4.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-refval)) to Evidence.\r\n\r\nI don't think we have a sense of which reference values an environment is supposed to match before suggesting that its within a particular trust domain. We got rid of the wording of matching reference values for endorsed triples for this reason.",
       "createdAt": "2024-11-13T05:22:46Z",
-      "updatedAt": "2024-11-13T05:22:46Z",
+      "updatedAt": "2025-02-12T19:10:43Z",
       "closedAt": null,
       "comments": []
     },
@@ -8494,10 +8696,12 @@
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "              I think this requirement should be removed actually. There are cases where you verify evidence purely through policy and no corims. You just trivially go from phase 1 to phase 5\r\n\r\n\r\nWe should be clear about the interface between the CoRIM verifier and the rest of the Appraisal stages.  Then, we can re-introduce a normative sentence explaining what is expected in such case.\r\n\r\n_Originally posted by @deeglaze in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/355#discussion_r1891112961_\r\n            ",
       "createdAt": "2025-01-08T15:25:48Z",
-      "updatedAt": "2025-01-29T17:56:03Z",
+      "updatedAt": "2025-02-12T19:11:26Z",
       "closedAt": null,
       "comments": [
         {
@@ -8559,11 +8763,15 @@
       "state": "OPEN",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "andrew-draper"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "The following text was proposed for addition to the description of `$raw-value-type-choice`, but was not added:\n\n`When a new raw value type is defined, a comparison algorithm may also be defined.`\n\nNed wrote a comment regarding this text as follows:\n\n> There are lots of ways to extend the schema. The conventions should be described somewhere in a section that overviews the various extension points and the registries that control them. The $raw-value-type-choice extension point can be a small paragraph there. Writing that section will be the right place to have the discussion about who and how extensions are managed IMO.\n\nI agree that we should write a section about extending different types, and include `$raw-value-type-choice` in that section.",
       "createdAt": "2025-01-17T12:41:27Z",
-      "updatedAt": "2025-01-17T14:40:38Z",
+      "updatedAt": "2025-02-12T19:11:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -8726,11 +8934,15 @@
       "state": "OPEN",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "andrew-draper"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "Need to add issues for PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/294 (adding `raw-value-compare`)",
       "createdAt": "2025-01-17T15:38:37Z",
-      "updatedAt": "2025-01-30T09:34:07Z",
+      "updatedAt": "2025-02-12T19:10:10Z",
       "closedAt": null,
       "comments": [
         {
@@ -8739,6 +8951,13 @@
           "body": "@andrew-draper Request if we can progress on this , for the coming week, this will help greatly bringing this down to closure!",
           "createdAt": "2025-01-30T09:34:06Z",
           "updatedAt": "2025-01-30T09:34:06Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper : please try to close this, in coming week",
+          "createdAt": "2025-02-12T18:47:38Z",
+          "updatedAt": "2025-02-12T18:47:38Z"
         }
       ]
     },
@@ -8751,10 +8970,12 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "Moving discussion out of a trivial PR.\n\nThomas asked, \u201cThere's probably another conversation to have around the \"kid\" topic: why did we make it mandatory?\u201d\n\nI replied, \u201cDon\u2019t you need to bind the key to the contents so you can reissue a certificate for the signer and still have the contents understood?\nI don't understand. The contents of what? If the CoRIM's, they are (should be) independent of the CoRIM signer, no?\u201d\n\nThomas responded, \u201cIf one needs to reissue a short-term cert for the same signing key, it can do so easily. Clearly, if you need to handle many keys, having a kid for fast lookup can speed up the functionality, but that seems to me like a matter of local policy (if you only have one key, it would likely be unnecessary) rather than forcing a requirement on everybody.\n[\u2026]\nMay I ask you why you want the signer key's cert chain to be also signed?\u201d\n",
       "createdAt": "2025-01-21T14:00:41Z",
-      "updatedAt": "2025-01-31T03:22:18Z",
+      "updatedAt": "2025-02-12T19:09:53Z",
       "closedAt": null,
       "comments": [
         {
@@ -8826,10 +9047,12 @@
       "assignees": [
         "deeglaze"
       ],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "The test suite needs to be expanded with complete, signed examples.\r\n\r\nThis requires changes to the cddl build machinery and the CI.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/337#discussion_r1901718526_\r\n            ",
       "createdAt": "2025-01-22T10:39:34Z",
-      "updatedAt": "2025-01-22T15:35:10Z",
+      "updatedAt": "2025-02-12T19:09:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -8934,11 +9157,15 @@
       "state": "OPEN",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "Add examples that test the CoTL cddl.\r\n\r\n_Originally posted by @nedmsmith in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/370#issuecomment-2622678907_\r\n            ",
       "createdAt": "2025-01-30T09:46:23Z",
-      "updatedAt": "2025-01-30T09:46:23Z",
+      "updatedAt": "2025-02-12T19:14:40Z",
       "closedAt": null,
       "comments": []
     },
@@ -8951,10 +9178,12 @@
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "CoTL Concise Tag List is not really a tag on its own, but it is a list of tags + another MetaData.\n\nThis issue revisits the new entry in corim-map for this tag list related information :\n\n1. Suitable data structure \n2. Modifying the CoRIM specification with the required and impacted text around this new structure!",
       "createdAt": "2025-01-31T09:04:43Z",
-      "updatedAt": "2025-02-04T22:02:00Z",
+      "updatedAt": "2025-02-12T18:45:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -8984,6 +9213,20 @@
           "body": "> A tag is added metadata about an object\n\nIn the context of attestation I think it is more. It is a measurement / claim about a Target Environment. Consequently, there should be some part of the tag that results in values being added to the ACS.\n\n> we have to make code point 1 (`tags` as optional\n\nAre you saying if CoTL values are populated then comid / coswid tags are not needed?\nI think of CoTLs as pointer to tags. If you dereference a pointer that points to unallocated memory you get a page fault error. Or you could think of CoTL as a DB index. If you remove the index the data doesn't get removed from the database.",
           "createdAt": "2025-02-04T22:01:58Z",
           "updatedAt": "2025-02-04T22:01:58Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Does anyone have context as to what the original intent was for CoBOM? I understand it can \"activate\" tags or whatever, but was the expectation that target environments would send a CoBOM id with their evidence as a matter of claiming their composition as a hint to the verifier? If not that, it feels like it's really meant as yet another bill of material format to link together CoSWIDs and CoMIDs to say this is what the OEM has assembled for your machine model and initial disk image. In that sense it's a system assembly tag, and not merely an index.",
+          "createdAt": "2025-02-12T05:07:05Z",
+          "updatedAt": "2025-02-12T05:07:05Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [...] In that sense it's a system assembly tag, [...]\n\nAs with many other matters, with time there may have been some semantic shift, but that's exactly the original idea, or at least my original reasoning for putting forward the need for this.\n\n",
+          "createdAt": "2025-02-12T08:47:16Z",
+          "updatedAt": "2025-02-12T08:47:16Z"
         }
       ]
     },
@@ -9008,6 +9251,39 @@
           "body": "We need to add back the `unsigned-corim-map` CDDL as this would be used to bundle CoRIMs using CMW.",
           "createdAt": "2025-02-05T16:39:34Z",
           "updatedAt": "2025-02-05T16:39:34Z"
+        }
+      ]
+    },
+    {
+      "number": 375,
+      "id": "I_kwDOH6-tI86psTdE",
+      "title": "DER key type",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/375",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "When Evidence is included in X.509 certs or when an X.509 cert is the signer of Evidence (other CM), the signer key is in DER/BER. Given the way to map an external representation to internal by copying, there needs to be a DER form of $crypto-key-type-choice. \n\nAlternatively, there needs to be a convention for converting keys to an internal representation. But since the CoRIM internal representation is optional. It isn't pragmatic to rely on the internal representation convention for authoring conditions. \n\nIt may be reasonable for implementations to support key mapping routines and make a best effort attempt at matching based on  this. Does it make sense to make it mandatory for implementations to do best-effort key conversion? \n\nAlternatively, does it make sense for CoRIM to standardize an internal representation for keys independent of the current (optional) internal representation convention? ",
+      "createdAt": "2025-02-12T01:39:42Z",
+      "updatedAt": "2025-02-12T19:04:35Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "First of all, I'm glad you've come back around to more flexible key comparison. You had previously not allowed for `$crypto-key-type-choice` to \"match\" anything but binary-equal values, despite there not being a specified way to go from some sense of \"CoRIM signer\" to the ECT's signer representation for comparison to then be fixed.\n\nI think mandatory + best effort = optional however. We should be explicit for the MTI and OTI key comparison algorithms. We should have MTI for EC2, EdDSA, and RSA. As long as we're saying keys are comparable purely by their key type and their key type parameters, no other subjectpublickey metadata, we should be good. We have to be explicit about what those are for a baseline set of algorithms however.\n\nWe can use the examples that (\"EC2\",x,y,crv) (\"OKP\",x,y,crv), (\"RSA\",n,e), (\"HSS-LMS\",pub) are pretty much all you need for common PKI. \n\nMTI EC2 and EdDSA Curve comparisons\n```\nP-256\t\t1\t= 1.2.840.10045.3.1.7\nP-384\t\t2\t= 1.3.132.0.34\nP-521\t\t3\t= 1.3.132.0.35\nX25519\t\t4\t= 1.3.101.110\nX448\t\t5\t= 1.3.101.111\nEd25519\t\t6\t= 1.3.101.112\nEd448\t\t7\t= 1.3.101.113\nsecp256k1\t8\t= 1.3.132.0.10\n```\n\nOTI curve comparisons include non-fixed curves where you get all 7 parameters, or fixed curves not listed above, e.g.,\n```\nbrainpoolP256r1 256 = 1.3.36.3.3.2.8.1.1.7 [RFC5639]\nbrainpoolP320r1 257 = 1.3.36.3.3.2.8.1.1.9 [RFC5639]\nbrainpoolP384r1 258 = 1.3.36.3.3.2.8.1.1.11 [RFC5639]\nbrainpoolP512r1 259 = 1.3.36.3.3.2.8.1.1.13 [RFC5639]\n```\n\nI think any other key comparison MUST be specified by the profile. There should be no key comparison that is verifier implementation-dependent.",
+          "createdAt": "2025-02-12T04:26:39Z",
+          "updatedAt": "2025-02-12T04:27:22Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think the key part of this is whether a verifier is allowed to match an authority against an authorized-by using anything other than exact match (which is what the current text says).\n\nConverting DER to cose_key is evidence preserving, but there are other conversions which are more difficult.\n\nFor example, a verifier might choose to store SHA512(cose-key) for efficiency, but if a CoRIM requires authorized-by(SHAKE2(cose_key) then there is no way to perform the comparison.\n\nI am in favour of allowing conversions, but I think we probably need to include a type field (CBOR tag?) with each element of `$crypto-key-type-choice` if we do this.",
+          "createdAt": "2025-02-12T15:31:02Z",
+          "updatedAt": "2025-02-12T15:31:02Z"
         }
       ]
     }
@@ -54929,13 +55205,13 @@
       "labels": [],
       "body": "As a means of representing a CPL or VMPL, this provides some extra semantic understanding. Leaving condition-matching to a later PR.",
       "createdAt": "2024-12-18T16:46:55Z",
-      "updatedAt": "2025-02-05T15:48:49Z",
+      "updatedAt": "2025-02-13T01:43:55Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ed9e89fe252c399ea03f60f095e4678e4d417d51",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "privlevel",
-      "headRefOid": "87a4abb3e639fa7646dcfdc9f1365823f0a5b9bd",
+      "headRefOid": "2b4bb621139db8da24768b2f2acdd9f4b249c798",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -54961,6 +55237,20 @@
           "body": "@deeglaze I assume, there is still work to be done on this PR, so we would not take this up during CoRIM Meeting on 29th Jan 2025 ?",
           "createdAt": "2025-01-29T12:48:12Z",
           "updatedAt": "2025-01-29T12:48:12Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "General feedback: The value of an integer measurement type that is strictly used for privilege levels doesn't allow the flexibility to be used for other measurement types (as in the type mechanism isn't extensible) means it isn't as generally useful. I thought we were going to give it semantics that were similar to raw-value where the mkey tag can be used to distginguish semantic richness while the appraisal comparison doesn't care as it's simple checking whether a singleton value falls within the range of integers.",
+          "createdAt": "2025-02-12T19:25:35Z",
+          "updatedAt": "2025-02-12T19:25:35Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> General feedback: The value of an integer measurement type that is strictly used for privilege levels doesn't allow the flexibility to be used for other measurement types (as in the type mechanism isn't extensible) means it isn't as generally useful.\r\n\r\nAgreed, which is why the tagged value is a tagged-int-range, and not a tagged-linear-privilege-range. The added semantic context of linear privilege comes from codepoint 15. An mkey can add further context that it's for a specific notion of privilege like CPL or VMPL.\r\n\r\n> I thought we were going to give it semantics that were similar to raw-value where the mkey tag can be used to distginguish semantic richness while the appraisal comparison doesn't care as it's simple checking whether a singleton value falls within the range of integers.\r\n\r\nThe comparison only cares so much as it provides the semantics of range inclusion.\r\n",
+          "createdAt": "2025-02-13T01:34:27Z",
+          "updatedAt": "2025-02-13T01:34:27Z"
         }
       ],
       "reviews": [
@@ -55097,10 +55387,10 @@
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
-          "state": "APPROVED",
+          "state": "DISMISSED",
           "body": "LGTM",
           "createdAt": "2025-01-30T23:53:02Z",
-          "updatedAt": "2025-01-30T23:53:02Z",
+          "updatedAt": "2025-02-12T19:26:41Z",
           "comments": []
         },
         {
@@ -55293,6 +55583,158 @@
               "body": "> What setting? This is convention.\r\n\r\nYes, I mean that you can replace it with convention or something similar!",
               "createdAt": "2025-02-05T14:55:53Z",
               "updatedAt": "2025-02-05T14:55:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bncCD",
+          "commit": {
+            "abbreviatedOid": "87a4abb"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T04:51:03Z",
+          "updatedAt": "2025-02-12T04:51:03Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I don't understand this comment. Replace what with convention? I'm trying to encode a range comparison that requires an internalized notion of order.",
+              "createdAt": "2025-02-12T04:51:03Z",
+              "updatedAt": "2025-02-12T04:51:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bncv2",
+          "commit": {
+            "abbreviatedOid": "87a4abb"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T04:54:09Z",
+          "updatedAt": "2025-02-12T04:54:09Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "PRIV is referenced below when describing the comparison. PRIV here represents an exact privilege level in the ACS that will be compared against a CoRIM. I'm following the same wording form as for SVN.",
+              "createdAt": "2025-02-12T04:54:09Z",
+              "updatedAt": "2025-02-12T04:54:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86buPsl",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T16:47:49Z",
+          "updatedAt": "2025-02-12T16:47:49Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Please clarify.",
+              "createdAt": "2025-02-12T16:47:49Z",
+              "updatedAt": "2025-02-12T16:47:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86buP33",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T16:48:03Z",
+          "updatedAt": "2025-02-12T16:48:03Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "Fixed.",
+              "createdAt": "2025-02-12T16:48:03Z",
+              "updatedAt": "2025-02-12T16:48:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bvfTV",
+          "commit": {
+            "abbreviatedOid": "7d670fd"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T18:54:56Z",
+          "updatedAt": "2025-02-12T19:17:26Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I added to the example showing that a range can include both negative and positive integers. Maybe just document that the values are integers?",
+              "createdAt": "2025-02-12T18:54:56Z",
+              "updatedAt": "2025-02-12T19:17:26Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "The text related to positive range should follow the cddl section as the rest of the discussion on ranges is following the cddl section.",
+              "createdAt": "2025-02-12T19:06:33Z",
+              "updatedAt": "2025-02-12T19:17:26Z"
+            },
+            {
+              "originalPosition": 38,
+              "body": "`inf-int` doesn't appear to be defined anywhere.",
+              "createdAt": "2025-02-12T19:17:06Z",
+              "updatedAt": "2025-02-12T19:17:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86byKD7",
+          "commit": {
+            "abbreviatedOid": "3d7e2e7"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:38:17Z",
+          "updatedAt": "2025-02-13T01:38:17Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "It's a weak form of comparison for use in conditional endorsements. We have SVN range comparisons. This is just slightly broader.",
+              "createdAt": "2025-02-13T01:38:17Z",
+              "updatedAt": "2025-02-13T01:38:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86byKJh",
+          "commit": {
+            "abbreviatedOid": "7d670fd"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:38:43Z",
+          "updatedAt": "2025-02-13T01:38:43Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Fixed.",
+              "createdAt": "2025-02-13T01:38:43Z",
+              "updatedAt": "2025-02-13T01:38:43Z"
             }
           ]
         }
@@ -56923,24 +57365,26 @@
       "id": "PR_kwDOH6-tI86JvBNk",
       "title": "Add locator redundancy for listing mirrors.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/373",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Proposed change during discussion in Issue #358.",
       "createdAt": "2025-02-01T15:11:10Z",
-      "updatedAt": "2025-02-05T17:02:24Z",
+      "updatedAt": "2025-02-12T15:38:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "ed9e89fe252c399ea03f60f095e4678e4d417d51",
+      "baseRefOid": "d7718c1e390ccf23e374930e7469a89232bafa8e",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "locate",
-      "headRefOid": "f5a4b9771049da8953cde76f5b6f667dc2048bea",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "25190932a2ded4fe7516cada41b4801f893c21fa",
+      "closedAt": "2025-02-12T15:38:58Z",
+      "mergedAt": "2025-02-12T15:38:58Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "592fc963e488d41af109f8011524bc1fbc5497c9"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -56994,15 +57438,545 @@
         {
           "id": "PRR_kwDOH6-tI86avS02",
           "commit": {
-            "abbreviatedOid": "f5a4b97"
+            "abbreviatedOid": "c52e56a"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM!",
           "createdAt": "2025-02-05T15:09:34Z",
-          "updatedAt": "2025-02-05T15:09:34Z",
+          "updatedAt": "2025-02-12T11:26:18Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bs8gp",
+          "commit": {
+            "abbreviatedOid": "c52e56a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T15:04:39Z",
+          "updatedAt": "2025-02-12T15:04:40Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n* `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.\r\n```",
+              "createdAt": "2025-02-12T15:04:39Z",
+              "updatedAt": "2025-02-12T15:04:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bs-A0",
+          "commit": {
+            "abbreviatedOid": "c52e56a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-12T15:05:43Z",
+          "updatedAt": "2025-02-12T15:05:43Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86btYUD",
+          "commit": {
+            "abbreviatedOid": "2519093"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-12T15:37:58Z",
+          "updatedAt": "2025-02-12T15:37:58Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 376,
+      "id": "PR_kwDOH6-tI86K5hxE",
+      "title": "Rename tagged-corim-map to tagged-unsigned-corim",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/376",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This allows for better interpreting the tag as an entrypoint to a CoRIM document. This fixes the hanging reference to unsigned-corim-map noted in Issue #374.",
+      "createdAt": "2025-02-12T04:47:48Z",
+      "updatedAt": "2025-02-12T19:45:57Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d7718c1e390ccf23e374930e7469a89232bafa8e",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "unsigned",
+      "headRefOid": "d9806202f737eae24a6d7fc561723a04204b66a6",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86bpBqg",
+          "commit": {
+            "abbreviatedOid": "6d58e95"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Note that it breaks the `NAME-map` typographic convention.",
+          "createdAt": "2025-02-12T08:56:00Z",
+          "updatedAt": "2025-02-12T08:56:00Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqbpR",
+          "commit": {
+            "abbreviatedOid": "6d58e95"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T11:13:49Z",
+          "updatedAt": "2025-02-12T11:13:50Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "please re-base `BOM` no longer exists",
+              "createdAt": "2025-02-12T11:13:49Z",
+              "updatedAt": "2025-02-12T11:13:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqhXV",
+          "commit": {
+            "abbreviatedOid": "6d58e95"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T11:24:47Z",
+          "updatedAt": "2025-02-12T11:24:48Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "1. and 2. are now super confusing to me!\r\n line 1 can be deleted presumably as no one uses tagged-corim-map ..?",
+              "createdAt": "2025-02-12T11:24:47Z",
+              "updatedAt": "2025-02-12T11:24:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqho0",
+          "commit": {
+            "abbreviatedOid": "6d58e95"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "please review!",
+          "createdAt": "2025-02-12T11:25:18Z",
+          "updatedAt": "2025-02-12T11:25:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86buPVc",
+          "commit": {
+            "abbreviatedOid": "d980620"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! Thanks for making the changes!",
+          "createdAt": "2025-02-12T16:47:19Z",
+          "updatedAt": "2025-02-12T16:47:19Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bv7ti",
+          "commit": {
+            "abbreviatedOid": "d980620"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-02-12T19:45:57Z",
+          "updatedAt": "2025-02-12T19:45:57Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 377,
+      "id": "PR_kwDOH6-tI86K5rvW",
+      "title": "Language for signer inheritance",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/377",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "With the proposed additions to CMW, this fixes Issue #358.",
+      "createdAt": "2025-02-12T05:27:05Z",
+      "updatedAt": "2025-02-13T01:30:49Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d7718c1e390ccf23e374930e7469a89232bafa8e",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "sig-inherit",
+      "headRefOid": "d51c27bd7c0e58da376405a38947a4bec0b00280",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Push https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/377/commits/5df10eeff9cb7913af86b0e862c2e902555fb180 adds the manifest-signer role so that an unsigned-corim can contain the signer entity information when the COSE-Sign1-corim form of signing isn't available.",
+          "createdAt": "2025-02-12T21:12:20Z",
+          "updatedAt": "2025-02-12T21:15:39Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86bpH0J",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T09:05:40Z",
+          "updatedAt": "2025-02-12T09:06:33Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "There is no (authentication) public key in the TLS Hello messages.\r\nIt's sent in the Certificate messages.\r\n\r\n```suggestion\r\nFor example, an application may use TLS to transmit an unsigned CoRIM and specify that the signer is the public key in the Certificate message.\r\n```",
+              "createdAt": "2025-02-12T09:05:40Z",
+              "updatedAt": "2025-02-12T09:06:59Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "Worth adding CMW as another example.",
+              "createdAt": "2025-02-12T09:06:27Z",
+              "updatedAt": "2025-02-12T09:06:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqZqV",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T11:10:23Z",
+          "updatedAt": "2025-02-12T11:10:24Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I would phrase the statement something like this.\r\n\r\n`A CoRIM can be used without signature protection (please see unsigned-corim-map),\r\n\r\nFor example, an application may use TLS to transmit an unsigned CORIM and specify that the signer\r\nis the public key in the Certificate Message.\r\n\r\nAlternatively an unsigned CoRIM can be a part of a RATS Message which itself is signed (example a signed CMW).\r\nIn such cases the authority of CoRIM is delegated to the signer encapsulating the CoRIM.`\r\n\r\n",
+              "createdAt": "2025-02-12T11:10:23Z",
+              "updatedAt": "2025-02-12T11:10:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqaPV",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "We also need to re-instate unsigned -corim-map and possibly the tag to identify it again!",
+          "createdAt": "2025-02-12T11:11:29Z",
+          "updatedAt": "2025-02-12T11:16:52Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqclJ",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Just realised PR #376, so modifying the review!",
+          "createdAt": "2025-02-12T11:15:31Z",
+          "updatedAt": "2025-02-12T11:15:31Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bqc4H",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "suggested changes",
+          "createdAt": "2025-02-12T11:16:07Z",
+          "updatedAt": "2025-02-12T11:16:07Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bs_YK",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T15:07:11Z",
+          "updatedAt": "2025-02-12T15:07:11Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I didn't want to make a circular citation since CMW references CoRIM.",
+              "createdAt": "2025-02-12T15:07:11Z",
+              "updatedAt": "2025-02-12T15:07:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86btDUH",
+          "commit": {
+            "abbreviatedOid": "a633d3d"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T15:11:39Z",
+          "updatedAt": "2025-02-12T15:11:39Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "No problem with that.  These are \"weak\" links since the references are both informative.",
+              "createdAt": "2025-02-12T15:11:39Z",
+              "updatedAt": "2025-02-12T15:11:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86btFL1",
+          "commit": {
+            "abbreviatedOid": "fd6f80f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T15:14:03Z",
+          "updatedAt": "2025-02-12T15:14:04Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nFor example, an application may use TLS to transmit an unsigned CORIM and specify that the signer is the public key in the Certificate Message.\r\nAlternatively an unsigned CoRIM can be a part of a RATS Message which itself is signed (example a signed CMW).\r\nIn such cases the authority of CoRIM is delegated to the signer encapsulating the CoRIM.\r\n```",
+              "createdAt": "2025-02-12T15:14:04Z",
+              "updatedAt": "2025-02-12T15:19:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bt80A",
+          "commit": {
+            "abbreviatedOid": "6132f97"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-12T16:18:52Z",
+          "updatedAt": "2025-02-12T16:18:52Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "\"document\" usually means \"specification\". Maybe \"payload\" instead of \"document\"?",
+              "createdAt": "2025-02-12T16:18:52Z",
+              "updatedAt": "2025-02-12T16:18:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86bv9p3",
+          "commit": {
+            "abbreviatedOid": "6132f97"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "The corim-meta-map information is not available unless the COSE_Sign1 is used. Hence, the signer role has to be added to corim-entity-map. This means we need a `manifest-signer` role defined.",
+          "createdAt": "2025-02-12T19:49:09Z",
+          "updatedAt": "2025-02-12T20:18:28Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nAn unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.\r\n```",
+              "createdAt": "2025-02-12T19:49:09Z",
+              "updatedAt": "2025-02-12T20:18:28Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "```suggestion\r\nAn unsigned CoRIM may be a payload within a secure channel.\r\n```",
+              "createdAt": "2025-02-12T19:50:00Z",
+              "updatedAt": "2025-02-12T20:18:28Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nAlternatively, an unsigned CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel where the CoRIM signer authority is inherited from the secure channel credential. (See {{sec-conveyed-signer}}).\r\n```",
+              "createdAt": "2025-02-12T19:53:08Z",
+              "updatedAt": "2025-02-12T20:18:28Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\nThe CoRIM signer authority is taken from the authenticated credential of the same entity that originates the CoRIM.\r\nA CoRIM role entry that contains the `manifest-signer` role MUST be added to `corim-entity-map`.\r\n```",
+              "createdAt": "2025-02-12T20:10:40Z",
+              "updatedAt": "2025-02-12T20:18:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86byHUT",
+          "commit": {
+            "abbreviatedOid": "6132f97"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:27:12Z",
+          "updatedAt": "2025-02-13T01:27:12Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Are the parentheses necessary for the pointer?",
+              "createdAt": "2025-02-13T01:27:12Z",
+              "updatedAt": "2025-02-13T01:27:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86byIBz",
+          "commit": {
+            "abbreviatedOid": "6132f97"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:30:18Z",
+          "updatedAt": "2025-02-13T01:30:18Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "The role MUST be added? By the sender or receiver? This will be hard to enforce. Anyone transmitting a CoRIM has to transform it first? ",
+              "createdAt": "2025-02-13T01:30:18Z",
+              "updatedAt": "2025-02-13T01:30:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86byIIn",
+          "commit": {
+            "abbreviatedOid": "6132f97"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:30:48Z",
+          "updatedAt": "2025-02-13T01:30:49Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Accepted Ned's changes. Thanks.",
+              "createdAt": "2025-02-13T01:30:48Z",
+              "updatedAt": "2025-02-13T01:30:49Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 378,
+      "id": "PR_kwDOH6-tI86LCAW7",
+      "title": "Add better description of tag and CoMID/CoSWID tags",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/378",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses part of Issue #195 ",
+      "createdAt": "2025-02-13T00:15:24Z",
+      "updatedAt": "2025-02-13T01:23:22Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "592fc963e488d41af109f8011524bc1fbc5497c9",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "tag-definition",
+      "headRefOid": "4b438ebe633ad4fde51cfb93391ffc55d2e7b4fe",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86byFgi",
+          "commit": {
+            "abbreviatedOid": "4b438eb"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:19:20Z",
+          "updatedAt": "2025-02-13T01:19:20Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nA tag is a structured, machine-readable metadata format used to uniquely identify, describe, and manage modules or components of a system.\r\n```",
+              "createdAt": "2025-02-13T01:19:20Z",
+              "updatedAt": "2025-02-13T01:19:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86byGbQ",
+          "commit": {
+            "abbreviatedOid": "4b438eb"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-13T01:23:22Z",
+          "updatedAt": "2025-02-13T01:23:22Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "This is inaccurate. There is an extension socket that allows other kinds of information to be added. The tag list's use of `tag-identity-map` has no internal notion of type safety to ensure the referenced tag is only a CoMID or CoSWID, so technically any tag could resolve without any changes to the CDDL.",
+              "createdAt": "2025-02-13T01:23:22Z",
+              "updatedAt": "2025-02-13T01:23:23Z"
+            }
+          ]
         }
       ]
     }
