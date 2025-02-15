@@ -100,9 +100,11 @@ normative:
 
 informative:
   RFC7942:
+  RFC9277:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
+  I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -547,6 +549,27 @@ In both cases, there is a method of integrity protection that relies on some aut
 The role of "the CoRIM signer" MUST be specified in both cases, with the same constraint on the signed CoRIM that there is a single signer.
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
+
+### CoRIM bundles
+
+A method of signing a bundle of CoRIMs together is through a signed RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
+Let `tag:{{&SELF}}:bundle` name a collection type that when signed MUST include the `corim-meta` protected header.
+The `corim-meta` header ensures that each CoRIM in the bundle has an identified signer.
+
+The CMW MAY use any label for its CoRIMs.
+If there is a hierarchical structure to the CoRIM bundle, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
+It is RECOMMENDED to use to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by [RFC4122].
+CoRIMs distributed in a bundle MAY declare their interdependence `dependent-rims` with local resource indicators.
+It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
+It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
+It is RECOMMENDED for a `corim-locator-map` containing local URI to afterwards list a nonzero amount of reachable URLs as remote references.
+
+<!-- TODO: replace "supposes" when the number is allocated. -->
+The following example supposes the CoAP Content-Format ID for `application/rim+cbor` to be 10572 for the `TN()` transformation in {{Appendix B of RFC9277}}.
+
+~~~cbor-diag
+{::include cddl/examples/cmw-corim-bundle.diag}
+~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
