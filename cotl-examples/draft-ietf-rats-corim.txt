@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 21 July 2025                                             Linaro
+Expires: 22 August 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         17 January 2025
+                                                        18 February 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 July 2025.
+   This Internet-Draft will expire on 22 August 2025.
 
 Copyright Notice
 
@@ -127,7 +127,7 @@ Table of Contents
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
-   6.  CoBOM
+   6.  CoTL
      6.1.  Structure
    7.  Common Types
      7.1.  Non-Empty
@@ -142,11 +142,13 @@ Table of Contents
      8.1.  Appraisal Procedure
      8.2.  Verifier Abstraction
        8.2.1.  Internal Representation of Conceptual Messages
-         8.2.1.1.  Internal Representation of Evidence
-         8.2.1.2.  Internal Representation of Reference Values
-         8.2.1.3.  Internal Representation of Endorsed Values
-         8.2.1.4.  Internal Representation of Policy Statements
-         8.2.1.5.  Internal Representation of Attestation Results
+         8.2.1.1.  Internal Representation of Environment Claims Tuple
+         8.2.1.2.  Internal Representation Extensions
+         8.2.1.3.  Internal Representation of Evidence
+         8.2.1.4.  Internal Representation of Reference Values
+         8.2.1.5.  Internal Representation of Endorsed Values
+         8.2.1.6.  Internal Representation of Policy Statements
+         8.2.1.7.  Internal Representation of Attestation Results
        8.2.2.  Internal Representation of Appraisal Claims Set (ACS)
        8.2.3.  Internal Representation of Attestation Results Set
                (ARS)
@@ -154,7 +156,7 @@ Table of Contents
        8.3.1.  Input Validation
          8.3.1.1.  CoRIM Selection
          8.3.1.2.  Tags Extraction and Validation
-         8.3.1.3.  CoBOM Extraction
+         8.3.1.3.  CoTL Extraction
        8.3.2.  Evidence Collection
          8.3.2.1.  Cryptographic Validation of Evidence
        8.3.3.  Input Transformation
@@ -207,10 +209,10 @@ Table of Contents
      11.2.  New CBOR Tags
      11.3.  CoRIM Map Registry
      11.4.  CoMID Map Registry
-     11.5.  CoBOM Map Registry
+     11.5.  CoTL Map Registry
      11.6.  New Media Types
-       11.6.1.  corim-signed+cbor
-       11.6.2.  corim-unsigned+cbor
+       11.6.1.  rim+cbor
+       11.6.2.  rim+cose
      11.7.  CoAP Content-Formats Registration
    12. References
      12.1.  Normative References
@@ -367,7 +369,7 @@ Table of Contents
    |              | series of          | is satisfied, then add the   |
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
-   |              |                    | See Section 8.2.1.3          |
+   |              |                    | See Section 8.2.1.5          |
    +--------------+--------------------+------------------------------+
    | Verifier     | List of expected   | If the list of expected      |
    |              | actual state       | claims are in the ACS, then  |
@@ -445,9 +447,9 @@ Table of Contents
    *  Concise Software ID (CoSWID) tags ([RFC9393]) describe software
       components.
 
-   *  Concise Bill of Material (CoBOM) tags (Section 6) contain the list
-      of CoMID and CoSWID tags that the Verifier should consider as
-      "active" at a certain point in time.
+   *  Concise Tag List (CoTL) tags (Section 6) contain the list of CoMID
+      and CoSWID tags that the Verifier should consider as "active" at a
+      certain point in time.
 
    The set of tags is extensible so that future specifications can add
    new kinds of information.  For example, Concise Trust Anchor Stores
@@ -482,15 +484,15 @@ Table of Contents
    A CoRIM can be signed (Section 4.2) using COSE Sign1 to provide end-
    to-end security to the CoRIM contents.  When CoRIM is signed, the
    protected header carries further identifying information about the
-   CoRIM signer.  Alternatively, CoRIM can be encoded as a CBOR-tagged
-   payload (Section 4.1) and transported over a secure channel.
+   CoRIM signer.  Alternatively, CoRIM can be encoded as a #6.501 CBOR-
+   tagged payload (Section 4.1) and transported over a secure channel.
 
    The following CDDL describes the top-level CoRIM.
 
-   corim = tagged-concise-rim-type-choice
+   corim = concise-rim-type-choice
 
-   $concise-rim-type-choice /= tagged-corim-map
-   $concise-rim-type-choice /= tagged-signed-corim
+   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= signed-corim
 
 4.1.  CoRIM Map
 
@@ -549,12 +551,12 @@ Table of Contents
 4.1.2.  Tags
 
    A $concise-tag-type-choice is a tagged CBOR payload that carries
-   either a CoMID (Section 5), a CoSWID ([RFC9393]), or a CoBOM
+   either a CoMID (Section 5), a CoSWID ([RFC9393]), or a CoTL
    (Section 6).
 
    $concise-tag-type-choice /= tagged-concise-swid-tag
    $concise-tag-type-choice /= tagged-concise-mid-tag
-   $concise-tag-type-choice /= tagged-concise-bom-tag
+   $concise-tag-type-choice /= tagged-concise-tl-tag
 
 4.1.3.  Locator Map
 
@@ -563,14 +565,14 @@ Table of Contents
    retrieved by the Verifier.
 
    corim-locator-map = {
-     &(href: 0) => uri
+     &(href: 0) => uri / [ + uri ]
      ? &(thumbprint: 1) => digest
    }
 
    The following describes each child element of this type.
 
-   *  href (index 0): URI identifying the additional resource that can
-      be fetched
+   *  href (index 0): a URI or array of alternative URIs identifying
+      locations where the additional resource can be fetched.
 
    *  thumbprint (index 1): expected digest of the resource referenced
       by href.  See sec-common-hash-entry}}.
@@ -593,10 +595,9 @@ Table of Contents
 
    CoRIM profiles SHOULD be specified in a publicly available document.
 
-   A CoRIM profile can use one of the base CoRIM media types defined in
-   Section 11.6.1 and Section 11.6.2 with the profile parameter set to
-   the appropriate value.  Alternatively, it MAY define and register its
-   own media type.
+   A CoRIM profile can use one of the base CoRIM media type defined in
+   Section 11.6.1 with the profile parameter set to the appropriate
+   value.  Alternatively, it MAY define and register its own media type.
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
 
@@ -642,7 +643,7 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor (tagged-corim-map / corim-map)
+     payload: bstr .cbor tagged-corim-map
      signature: bstr
    ]
 
@@ -664,7 +665,7 @@ Table of Contents
 
    protected-corim-header-map = {
      &(alg: 1) => int
-     &(content-type: 3) => "application/corim-unsigned+cbor"
+     &(content-type: 3) => "application/rim+cbor"
      &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
@@ -679,7 +680,7 @@ Table of Contents
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
 
-   *  kid (index 4): A bit string which is a key identity pertaining to
+   *  kid (index 4): A byte string which is a key identity pertaining to
       the CoRIM Issuer.
 
    *  corim-meta (index 8): A map that contains metadata associated with
@@ -736,7 +737,7 @@ Table of Contents
 
    Each CoMID has a unique ID that is used to unambiguously identify
    CoMID instances when cross referencing CoMID tags, for example in
-   typed link relations, or in a CoBOM tag.
+   typed link relations, or in a CoTL tag.
 
    A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -1236,15 +1237,10 @@ Table of Contents
       environment.  Described in Section 5.1.4.1.4.5.
 
    *  raw-value (index 4): Contains the actual (not hashed) value of the
-      element.  An optional raw-value-mask (index 5) indicates which
-      bits in the raw-value field are relevant for verification.  A mask
-      of all ones ("1") means all bits in the raw-value field are
-      relevant.  Multiple values could be combined to create a single
-      raw-value attribute.  The vendor determines how to pack multiple
-      values into a single raw-value structure.  The same packing format
-      is used when collecting Evidence so that Reference Values and
-      collected values are bit-wise comparable.  The vendor determines
-      the encoding of raw-value and the corresponding raw-value-mask.
+      element.  The vendor determines the encoding of raw-value.  When
+      used for comparison, a mask may be provided indicating which bits
+      in the raw-value field must be compared.  Described in
+      Section 5.1.4.1.4.6
 
    *  mac-addr (index 6): A EUI-48 or EUI-64 MAC address associated with
       the measured environment.  Described in Section 5.1.4.1.4.7.
@@ -1393,23 +1389,32 @@ Table of Contents
    checked by Verifiers for consistency only, since the security
    relevance is opaque to Verifiers.
 
-   There are two parts to a raw-value-group, a measurement and an
-   optional mask.  The default raw value measurement is of type tagged-
-   bytes (Section 7.8).  Additional raw value types can be defined, but
-   must be CBOR tagged so that parsers can distinguish between the
-   various semantics of type values.
+   A raw-value measurement, or an Endorsement, is a tagged value of type
+   bytes.  This specification defines tag #6.560.  The default raw value
+   measurement is of type tagged-bytes (Section 7.8).
 
-   The mask is applied by the Verifier as part of appraisal.  Only the
-   raw value bits with corresponding TRUE mask bits are compared during
-   appraisal.
+   Additional value types can be added to $raw-value-type-choice, these
+   additional values MUST be CBOR tagged bstrs.  Constraining all raw
+   value types to be bstr lets Verifiers compare raw values without
+   understanding their contents.
 
-   When a new raw value type is defined, the convention for applying the
-   mask is also defined.  Typically, a CoRIM profile is used to define
-   new raw values and mask semantics.
+   A raw value intended for comparison can include a mask value, which
+   selects the bits to compare during appraisal.  The mask is applied by
+   the Verifier as part of appraisal.  Only the raw value bits with
+   corresponding TRUE mask bits are compared during appraisal.
+
+   The raw-value-mask in measurement-values-map is deprecated, but
+   retained for backwards compatibility.  This code point may be removed
+   in a future revision of this specification.
 
    $raw-value-type-choice /= tagged-bytes
+   $raw-value-type-choice /= tagged-masked-raw-value
 
    raw-value-mask-type = bytes
+   tagged-masked-raw-value = #6.563([
+     value: bytes
+     mask : bytes
+   ])
 
 5.1.4.1.4.7.  Address Types
 
@@ -1644,25 +1649,24 @@ Table of Contents
 
 5.1.4.5.  Conditional Endorsement Series Triple
 
-   A Conditional Endorsement Series triple uses a "stateful environment"
-   that identifies a Target Environment plus the measurements that have
-   matching Evidence.
+   The Conditional Endorsement Series Triple is used to assert endorsed
+   values based on an initial condition match (specified in condition:)
+   followed by a series condition match (specified in selection: inside
+   conditional-series-record).  Every conditional-series-record
+   selection MUST select the same mkeys where every selected mkey's
+   corresponding set of code points (i.e., mval.key) MUST be the same
+   across each conditional-series-record.  For example, if a selection
+   matches on 3 measurement-map statements; mkey is the same for all 3
+   statements and mval contains only A= variable-X, B= variable-Y, and
+   C= variable-Z (exactly the set of code points A, B, and C)
+   respectively for every conditional-series-record in the series.
 
-   The series object is an array of conditional-series-record that has
-   both Reference and Endorsed Values.  Each conditional-series-record
-   record is evaluated in the order it appears in the series array.  The
-   Endorsed Values are accepted if the series condition in a
-   conditional-series-record matches the attester's actual state.  The
-   first conditional-series-record that successfully matches an
-   attester's actual state terminates the matching and the corresponding
-   Endorsed Values are accepted.  If none of the series conditions match
-   the attester's actual state, the triple is not matched, and no
-   Endorsed values are accepted.
-
-   More clarification about the usage and matching order will be
-   resolved by:
-   // Tracked at: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/
-   issues/321
+   These restrictions ensure that evaluation order does not change the
+   meaning of the triple during the appraisal process.  Series entries
+   are ordered such that the most precise match is evaluated first and
+   least precise match is evaluated last.  The first series condition
+   that matches terminates series matching and the endorsement values
+   are added to the Attester's actual state.
 
    The Conditional Endorsement Series Triple has the following
    structure:
@@ -1698,8 +1702,8 @@ Table of Contents
    Endorsements.  If the search criteria are satisfied, the series
    tuples are processed.
 
-   The series array contains a list of conditional-series-record
-   entries.
+   The series array contains an ordered list of conditional-series-
+   record entries.  Evaluation order begins at list position 0.
 
    For each series entry, if the selection criteria matches an entry
    found in the condition result, the series addition is combined with
@@ -1881,54 +1885,54 @@ Table of Contents
    interoperability.  CoRIM profiles are best used to document vendor or
    industry defined extensions.
 
-6.  CoBOM
+6.  CoTL
 
-   A Concise Bill of Material (CoBOM) object represents the signal for
-   the Verifier to activate the listed tags.  Verifier policy determines
-   whether CoBOMs are required.
+   A Concise Tag List (CoTL) object represents the signal for the
+   Verifier to activate the listed tags.  Verifier policy determines
+   whether CoTLs are required.
 
-   When CoBOMs are required, each tag MUST be activated by a CoBOM
-   before being processed.  All the tags listed in the CoBOM MUST be
-   activated atomically.  If any tag activated by a CoBOM is not
-   available to the Verifier, the entire CoBOM is rejected.
+   When CoTLs are required, each tag MUST be activated by a CoTL before
+   being processed.  All the tags listed in the CoTL MUST be activated
+   atomically.  If any tag activated by a CoTL is not available to the
+   Verifier, the entire CoTL is rejected.
 
-   The number of CoBOMs required in a given supply chain ecosystem is
+   The number of CoTLs required in a given supply chain ecosystem is
    dependent on Verifier Owner's Appraisal Policy for Evidence.
    Corresponding policies are often driven by the complexity and nature
    of the use case.
 
-   If a Verifier Owner has a policy that does not require CoBOM, tags
+   If a Verifier Owner has a policy that does not require CoTL, tags
    within a CoRIM received by a Verifier are activated immediately and
    treated valid for appraisal.
 
    There may be cases when Verifier receives CoRIMs from multiple
    Reference Value providers and Endorsers.  In such cases, a supplier
    (or other authorities, such as integrators) may be designated to
-   issue a single CoBOM to activate all the tags submitted to the
+   issue a single CoTL to activate all the tags submitted to the
    Verifier in these CoRIMs.
 
    In a more complex case, there may be multiple authorities that issue
-   CoBOMs at different points in time.  An Appraisal Policy for Evidence
-   may dictate how multiple CoBOMs are to be processed within the
+   CoTLs at different points in time.  An Appraisal Policy for Evidence
+   may dictate how multiple CoTLs are to be processed within the
    Verifier.
 
 6.1.  Structure
 
-   The CDDL specification for the concise-bom-tag map is as follows and
+   The CDDL specification for the concise-tl-tag map is as follows and
    this rule and its constraints MUST be followed when creating or
-   validating a CoBOM tag:
+   validating a CoTL tag:
 
-   concise-bom-tag = {
+   concise-tl-tag = {
      &(tag-identity: 0) => tag-identity-map
      &(tags-list: 1) => [ + tag-identity-map ],
-     &(bom-validity: 2) => validity-map
-     * $$concise-bom-tag-extension
+     &(tl-validity: 2) => validity-map
+     * $$concise-tl-tag-extension
    }
 
-   The following describes each member of the concise-bom-tag map.
+   The following describes each member of the concise-tl-tag map.
 
    *  tag-identity (index 0): A tag-identity-map containing unique
-      identification information for the CoBOM.  Described in
+      identification information for the CoTL.  Described in
       Section 5.1.1.
 
    *  tags-list (index 1): A list of one or more tag-identity-maps
@@ -1940,17 +1944,17 @@ Table of Contents
       process.  The activation is atomic: all tags listed in tags-list
       MUST be activated or no tags are activated.
 
-   *  bom-validity (index 2): Specifies the validity period of the
-      CoBOM.  Described in Section 7.3.
+   *  tl-validity (index 2): Specifies the validity period of the CoTL.
+      Described in Section 7.3.
 
-   *  $$concise-bom-tag-extension: This CDDL socket is used to add new
-      information structures to the concise-bom-tag.  See Section 11.5.
-      The $$concise-bom-tag-extension extension socket is empty in this
+   *  $$concise-tl-tag-extension: This CDDL socket is used to add new
+      information structures to the concise-tl-tag.  See Section 11.5.
+      The $$concise-tl-tag-extension extension socket is empty in this
       specification.
 
 7.  Common Types
 
-   The following CDDL types may be shared by CoRIM, CoMID, and CoBOM.
+   The following CDDL types may be shared by CoRIM, CoMID, and CoTL.
 
 7.1.  Non-Empty
 
@@ -2229,7 +2233,9 @@ Table of Contents
    common building block structure called Environment-Claims Tuple
    (ECT).
 
-   ECTs have five attributes:
+8.2.1.1.  Internal Representation of Environment Claims Tuple
+
+   Environment-Claims Tuples (ECT) have five attributes:
 
    1.  Environment : Identifies the Target Environment.  Environments
        are identified using instance, class, or group identifiers.
@@ -2278,7 +2284,28 @@ Table of Contents
    The Conceptual Message type determines which attributes are
    mandatory.
 
-8.2.1.1.  Internal Representation of Evidence
+8.2.1.2.  Internal Representation Extensions
+
+   The internal representation extends measurement-values-map with the
+   intrep-keys claim that consists of a list of typed-crypto-key. typed-
+   crypto-key consists of a key and an optional key-type.  There are two
+   types of keys attest-key and identity-key.
+
+   $$measurement-values-map-extension //= (
+     &(intrep-keys: 65534) => [ + typed-crypto-key ]
+   )
+
+   typed-crypto-key = {
+     key: $crypto-key-type-choice
+     ? key-type: uint .bits key-type
+   }
+
+   key-type = &(
+     attest-key: 0
+     identity-key: 1
+   )
+
+8.2.1.3.  Internal Representation of Evidence
 
    An internal representation of attestation Evidence uses the ae
    relation.
@@ -2313,7 +2340,7 @@ Table of Contents
 
                     Table 3: Evidence tuple requirements
 
-8.2.1.2.  Internal Representation of Reference Values
+8.2.1.4.  Internal Representation of Reference Values
 
    An internal representation of Reference Values uses the rv relation,
    which is a list of ECTs that contains possible states and a list of
@@ -2363,7 +2390,7 @@ Table of Contents
                      Table 4: Reference Values tuple
                                requirements
 
-8.2.1.3.  Internal Representation of Endorsed Values
+8.2.1.5.  Internal Representation of Endorsed Values
 
    An internal representation of Endorsed Values uses the ev and evs
    relations, which are lists of ECTs that describe matching conditions
@@ -2434,7 +2461,7 @@ Table of Contents
                   Table 5: Endorsed Values and Endorsed
                     Values Series tuples requirements
 
-8.2.1.4.  Internal Representation of Policy Statements
+8.2.1.6.  Internal Representation of Policy Statements
 
    The policy relation compares the condition ECTs to the ACS.
 
@@ -2475,7 +2502,7 @@ Table of Contents
 
                     Table 6: Policy tuple requirements
 
-8.2.1.5.  Internal Representation of Attestation Results
+8.2.1.7.  Internal Representation of Attestation Results
 
    The ar relation compares the acs-condition to the ACS.
 
@@ -2535,7 +2562,7 @@ Table of Contents
 
    During the initialization phase, the CoRIM Appraisal Context is
    loaded with various conceptual message inputs such as CoMID tags
-   (Section 5), CoSWID tags [RFC9393], CoBOM tags, and cryptographic
+   (Section 5), CoSWID tags [RFC9393], CoTL tags, and cryptographic
    validation key material (including raw public keys, root
    certificates, intermediate CA certificate chains), and Concise Trust
    Anchor Stores (CoTS) [I-D.ietf-rats-concise-ta-stores].  These
@@ -2569,35 +2596,35 @@ Table of Contents
 8.3.1.2.  Tags Extraction and Validation
 
    The Verifier chooses tags from the selected CoRIMs - including CoMID,
-   CoSWID, CoBOM, and CoTS.
+   CoSWID, CoTL, and CoTS.
 
    The Verifier MUST discard all tags which are not syntactically and
    semantically valid.  Cross-referenced triples MUST be successfully
    resolved.  An example of a cross-referenced triple is a CoMID-CoSWID
    linking triple.
 
-8.3.1.3.  CoBOM Extraction
+8.3.1.3.  CoTL Extraction
 
    This section is not applicable if the Verifier appraisal policy does
-   not require CoBOMs.
+   not require CoTLs.
 
-   CoBOMs which are not within their validity period MUST be discarded.
+   CoTLs which are not within their validity period MUST be discarded.
 
-   The Verifier processes all CoBOMs that are valid at the point in time
+   The Verifier processes all CoTLs that are valid at the point in time
    of Evidence Appraisal and activates all tags referenced therein.
 
    A Verifier MAY decide to discard some of the available and valid
-   CoBOMs depending on any locally configured authorization policies.
+   CoTLs depending on any locally configured authorization policies.
    Such policies model the trust relationships between the Verifier
    Owner and the relevant suppliers, and are out of the scope of the
    present document.  For example, a composite device (Section 3.3 of
    [RFC9334]) is likely to be fully described by multiple CoRIMs, each
    signed by a different supplier.  In such a case, the Verifier Owner
-   may instruct the Verifier to discard tags activated by supplier
-   CoBOMs that are not also activated by the trusted integrator.
+   may instruct the Verifier to discard tags activated by supplier CoTLs
+   that are not also activated by the trusted integrator.
 
-   After the Verifier has processed all CoBOMs it MUST discard any tags
-   which have not been activated by a CoBOM.
+   After the Verifier has processed all CoTLs it MUST discard any tags
+   which have not been activated by a CoTL.
 
 8.3.2.  Evidence Collection
 
@@ -2683,7 +2710,7 @@ Table of Contents
 
 8.3.3.2.  Reference Triples Transformation
 
-   Step 1.  An rv list entry (Section 8.2.1.2) is allocated.
+   Step 1.  An rv list entry (Section 8.2.1.4) is allocated.
 
    Step 2.  The cmtype of the addition ECT in the rv entry is set to
             reference-values.
@@ -2714,7 +2741,7 @@ Table of Contents
 
 8.3.3.3.1.  Endorsed Values Triple Transformation
 
-   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+   Step 1.  An ev entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -2743,7 +2770,7 @@ Table of Contents
 
 8.3.3.3.2.  Conditional Endorsement Triple Transformation
 
-   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+   Step 1.  An ev entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -2771,12 +2798,13 @@ Table of Contents
    Step 4.  The signer of the Conditional Endorsement conceptual message
             is copied to the ev.addition.authority field.
 
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev.addition.profile field.
+   Step 5.  If the Conditional Endorsement conceptual message has a
+            profile, the profile is copied to the ev.addition.profile
+            field.
 
 8.3.3.3.3.  Conditional Endorsement Triple Transformation
 
-   Step 1.  An evs entry (Section 8.2.1.3) is allocated.
+   Step 1.  An evs entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the evs entry's addition ECT is set to
             endorsements.
@@ -2807,18 +2835,20 @@ Table of Contents
       *copy*(e.conditional-series-record.addition.measurement-map,
          evs.series.addition.element-list.element-map)
 
-   Step 4.  The signer of the Conditional Endorsement conceptual message
-            is copied to the evs.series.addition.authority field.
+   Step 4.  The signer of the Conditional Endorsement Series conceptual
+            message is copied to the evs.series.addition.authority
+            field.
 
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the evs.series.addition.profile field.
+   Step 5.  If the Conditional Endorsement Series conceptual message has
+            a profile, the profile is copied to the
+            evs.series.addition.profile field.
 
 8.3.3.3.4.  Key Verification Triples Transformation
 
    The following transformation steps are applied for both the identity-
    triples and attest-key-triples with noted exceptions:
 
-   Step 1.  An ev entry (Section 8.2.1.3) is allocated.
+   Step 1.  An ev entry (Section 8.2.1.5) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -2859,7 +2889,7 @@ Table of Contents
 8.3.3.4.  Evidence Tranformation
 
    Evidence is transformed from an external representation to an
-   internal representation based on the ae relation (Section 8.2.1.1).
+   internal representation based on the ae relation (Section 8.2.1.3).
    The Evidence is mapped into one or more addition ECTs.  If the
    Evidence does not have a value for the mandatory ae fields, the
    Verifier MUST NOT process the Evidence.
@@ -3029,7 +3059,7 @@ Table of Contents
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.4.2) which are transformed
-   (Section 8.3.3.2) into an internal representation (Section 8.2.1.2).
+   (Section 8.3.3.2) into an internal representation (Section 8.2.1.4).
    Reference Values may describe multiple possible Attester states.
 
    Corroboration is the process of determining whether actual Attester
@@ -3056,7 +3086,7 @@ Table of Contents
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
    transformed (Section 8.3.3.3) into an internal representation
-   (Section 8.2.1.3).  Endorsements describe actual Attester state.
+   (Section 8.2.1.5).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
    satisifed by the ACS.
 
@@ -3084,8 +3114,8 @@ Table of Contents
    reference-values, or endorsements.  If the ECTs match (Section 8.5),
    the evs series array is iterated, where for each series entry, if the
    selection ECT matches an ACS ECT, the addition ECT is added to the
-   ACS.  Series processing terminates when the first series entry
-   matches.
+   ACS.  Series iteration terminates after the first matching series
+   entry is processed or when no series entries match.
 
 8.4.4.4.  Processing Key Verification Endorsements
 
@@ -3151,7 +3181,7 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the applied
    policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 8.2.1.4,
+   details, based on the policy ECT, as described in Section 8.2.1.6,
    contains the environments affected by the policy with policy
    identifiers as Claims.
 
@@ -3424,9 +3454,41 @@ Table of Contents
 
 8.5.6.1.4.  Comparison for raw-value entries
 
+   A raw-value entry contains binary data.
 
-   // Content missing.  Tracked at: https://github.com/ietf-rats-wg/
-   draft-ietf-rats-corim/issues/71
+   The value stored under measurement-values-map codepoint 4 in an ACS
+   entry must be a raw-value entry, which must be tagged and have type
+   bytes.
+
+   The value stored under the condition ECT measurement-values-map
+   codepoint 4 may additionally be a tagged-masked-raw-value entry,
+   which specifies an expected value and a mask.
+
+   If the condition ECT measurement-value-map codepoint 4 is of tagged-
+   bytes, and there is no value stored under codepoint 5, then the
+   Verifier treats it in the same way as a tagged-masked-raw-value with
+   the value field holding the same contents and a mask of the same
+   length as the value with all bits set.  The standard comparison
+   function defined in this document removes the tag before performing
+   the comparison.
+
+   For backwards compatibility, if the condition ECT measurement-value-
+   map codepoint 4 is of type tagged-bytes, and there is a mask stored
+   under codepoint 5, then the Verifier treats it in the same way as a
+   tagged-masked-raw-value with the value field holding the same
+   contents and a mask holding the contents of codepoint 5.
+
+   The comparison MUST return false if the lengths of the candidate
+   entry value and the condition ECT value are different.
+
+   The comparison MUST return false if the lengths of the condition ECT
+   mask and value are different.
+
+   The comparison MUST use the mask to determine which bits to compare.
+   If a bit in the mask is 0 then this indicates that the corresponding
+   bit in the ACS Entry value may have either value.  If, for every bit
+   position in the mask whose value is 1, the corresponding bits in both
+   values are equal then the comparison MUST return true.
 
 8.5.6.1.5.  Comparison for cryptokeys entries
 
@@ -3608,72 +3670,76 @@ Table of Contents
    registry [IANA.cbor-tags], preferably with the specific CBOR tag
    value requested:
 
-   +=======+===========+====================================+=========+
-   |Tag    |Data Item  | Semantics                          |Reference|
-   +=======+===========+====================================+=========+
-   |500    |tag        | A tagged-concise-rim-type-choice,  |RFCthis  |
-   |       |           | see Section 4.1.2                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |501    |map        | A tagged-corim-map, see            |RFCthis  |
-   |       |           | Section 4.1                        |         |
-   +-------+-----------+------------------------------------+---------+
-   |502    |tag        | A tagged-signed-corim, see         |RFCthis  |
-   |       |           | Section 4.2                        |         |
-   +-------+-----------+------------------------------------+---------+
-   |503-504|any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |505    |bytes      | A tagged-concise-swid-tag, see     |RFCthis  |
-   |       |           | Section 4.1.2                      |         |
-   +-------+-----------+------------------------------------+---------+
-   |506    |bytes      | A tagged-concise-mid-tag, see      |RFCthis  |
-   |       |           | Section 4.1.2                      |         |
-   +-------+-----------+------------------------------------+---------+
-   |507    |any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |508    |bytes      | A tagged-concise-bom-tag, see      |RFCthis  |
-   |       |           | Section 4.1.2                      |         |
-   +-------+-----------+------------------------------------+---------+
-   |509-549|any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |550    |bytes .size| tagged-ueid-type, see Section 7.5  |RFCthis  |
-   |       |33         |                                    |         |
-   +-------+-----------+------------------------------------+---------+
-   |552    |uint       | tagged-svn, see                    |RFCthis  |
-   |       |           | Section 5.1.4.1.4.4                |         |
-   +-------+-----------+------------------------------------+---------+
-   |553    |uint       | tagged-min-svn, see                |RFCthis  |
-   |       |           | Section 5.1.4.1.4.4                |         |
-   +-------+-----------+------------------------------------+---------+
-   |554    |text       | tagged-pkix-base64-key-type, see   |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |555    |text       | tagged-pkix-base64-cert-type, see  |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |556    |text       | tagged-pkix-base64-cert-path-type, |RFCthis  |
-   |       |           | see Section 5.1.4.1.5              |         |
-   +-------+-----------+------------------------------------+---------+
-   |557    |[int/text, | tagged-thumbprint-type, see        |RFCthis  |
-   |       |bytes]     | Section 7.7                        |         |
-   +-------+-----------+------------------------------------+---------+
-   |558    |COSE_Key/  | tagged-cose-key-type, see          |RFCthis  |
-   |       |COSE_KeySet| Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |559    |digest     | tagged-cert-thumbprint-type, see   |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |560    |bytes      | tagged-bytes, see Section 7.8      |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
-   |561    |digest     | tagged-cert-path-thumbprint-type,  |RFCthis  |
-   |       |           | see Section 5.1.4.1.5              |         |
-   +-------+-----------+------------------------------------+---------+
-   |562    |bytes      | tagged-pkix-asn1der-cert-type, see |RFCthis  |
-   |       |           | Section 5.1.4.1.5                  |         |
-   +-------+-----------+------------------------------------+---------+
-   |563-599|any        | Earmarked for CoRIM                |RFCthis  |
-   +-------+-----------+------------------------------------+---------+
+   +=========+=============+===============================+===========+
+   | Tag     | Data Item   | Semantics                     | Reference |
+   +=========+=============+===============================+===========+
+   | 500     | tag         | Reserved for backward         | RFCthis   |
+   |         |             | compatibility                 |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 501     | map         | A tagged-corim-map, see       | RFCthis   |
+   |         |             | Section 4.1                   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 502-504 | any         | Earmarked for CoRIM           | RFCthis   |
+   +---------+-------------+-------------------------------+-----------+
+   | 505     | bytes       | A tagged-concise-swid-tag,    | RFCthis   |
+   |         |             | see Section 4.1.2             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 506     | bytes       | A tagged-concise-mid-tag,     | RFCthis   |
+   |         |             | see Section 4.1.2             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 507     | any         | Earmarked for CoRIM           | RFCthis   |
+   +---------+-------------+-------------------------------+-----------+
+   | 508     | bytes       | A tagged-concise-tl-tag,      | RFCthis   |
+   |         |             | see Section 4.1.2             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 509-549 | any         | Earmarked for CoRIM           | RFCthis   |
+   +---------+-------------+-------------------------------+-----------+
+   | 550     | bytes .size | tagged-ueid-type, see         | RFCthis   |
+   |         | 33          | Section 7.5                   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 552     | uint        | tagged-svn, see               | RFCthis   |
+   |         |             | Section 5.1.4.1.4.4           |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 553     | uint        | tagged-min-svn, see           | RFCthis   |
+   |         |             | Section 5.1.4.1.4.4           |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 554     | text        | tagged-pkix-base64-key-       | RFCthis   |
+   |         |             | type, see Section 5.1.4.1.5   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 555     | text        | tagged-pkix-base64-cert-      | RFCthis   |
+   |         |             | type, see Section 5.1.4.1.5   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 556     | text        | tagged-pkix-base64-cert-      | RFCthis   |
+   |         |             | path-type, see                |           |
+   |         |             | Section 5.1.4.1.5             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 557     | [int/text,  | tagged-thumbprint-type, see   | RFCthis   |
+   |         | bytes]      | Section 7.7                   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 558     | COSE_Key/   | tagged-cose-key-type, see     | RFCthis   |
+   |         | COSE_KeySet | Section 5.1.4.1.5             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 559     | digest      | tagged-cert-thumbprint-       | RFCthis   |
+   |         |             | type, see Section 5.1.4.1.5   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 560     | bytes       | tagged-bytes, see             | RFCthis   |
+   |         |             | Section 7.8                   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 561     | digest      | tagged-cert-path-             | RFCthis   |
+   |         |             | thumbprint-type, see          |           |
+   |         |             | Section 5.1.4.1.5             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 562     | bytes       | tagged-pkix-asn1der-cert-     | RFCthis   |
+   |         |             | type, see Section 5.1.4.1.5   |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 563     | tagged-     | tagged-masked-raw-value,      | RFCthis   |
+   |         | masked-raw- | see Section 5.1.4.1.4.6       |           |
+   |         | value       |                               |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 564-599 | any         | Earmarked for CoRIM           | RFCthis   |
+   +---------+-------------+-------------------------------+-----------+
 
-                                 Table 8
+                                  Table 8
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -3771,11 +3837,11 @@ Table of Contents
                     Table 12: CoMID Map Items Initial
                               Registrations
 
-11.5.  CoBOM Map Registry
+11.5.  CoTL Map Registry
 
-   This document defines a new registry titled "CoBOM Map".  The
-   registry uses integer values as index values for items in 'concise-
-   bom-tag' CBOR maps.
+   This document defines a new registry titled "CoTL Map".  The registry
+   uses integer values as index values for items in 'concise-tl-tag'
+   CBOR maps.
 
    Future registrations for this registry are to be made based on
    [RFC8126] as follows:
@@ -3788,14 +3854,14 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 13: CoBOM Map Items
+                          Table 13: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
 
-   Initial registrations for the "CoBOM Map" registry are provided
-   below.  Assignments consist of an integer index value, the item name,
-   and a reference to the defining specification.
+   Initial registrations for the "CoTL Map" registry are provided below.
+   Assignments consist of an integer index value, the item name, and a
+   reference to the defining specification.
 
                  +=======+==============+===============+
                  | Index | Item Name    | Specification |
@@ -3804,12 +3870,12 @@ Table of Contents
                  +-------+--------------+---------------+
                  | 1     | tags-list    | RFCthis       |
                  +-------+--------------+---------------+
-                 | 2     | bom-validity | RFCthis       |
+                 | 2     | tl-validity  | RFCthis       |
                  +-------+--------------+---------------+
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 14: CoBOM Map Items Initial
+                     Table 14: CoTL Map Items Initial
                               Registrations
 
 11.6.  New Media Types
@@ -3817,48 +3883,20 @@ Table of Contents
    IANA is requested to add the following media types to the "Media
    Types" registry [IANA.media-types].
 
-   +=====================+=====================+==================+
-   | Name                | Template            | Reference        |
-   +=====================+=====================+==================+
-   | corim-signed+cbor   | application/corim-  | RFCthis,         |
-   |                     | signed+cbor         | (Section 11.6.1) |
-   +---------------------+---------------------+------------------+
-   | corim-unsigned+cbor | application/corim-  | RFCthis,         |
-   |                     | unsigned+cbor       | (Section 11.6.2) |
-   +---------------------+---------------------+------------------+
+   +==========+======================+===========================+
+   | Name     | Template             | Reference                 |
+   +==========+======================+===========================+
+   | rim+cbor | application/rim+cbor | RFCthis, (Section 11.6.1) |
+   +----------+----------------------+---------------------------+
+   | rim+cose | application/rim+cose | RFCthis, (Section 11.6.2) |
+   +----------+----------------------+---------------------------+
 
                       Table 15: New Media Types
 
-11.6.1.  corim-signed+cbor
+11.6.1.  rim+cbor
 
    Type name:  application
-   Subtype name:  corim-signed+cbor
-   Required parameters:  n/a
-   Optional parameters:  "profile" (CoRIM profile in string format.
-      OIDs MUST use the dotted-decimal notation.)
-   Encoding considerations:  binary
-   Security considerations:  (Section 10) of RFCthis
-   Interoperability considerations:  n/a
-   Published specification:  RFCthis
-   Applications that use this media type:  Attestation Verifiers,
-      Endorsers and Reference-Value providers that need to transfer COSE
-      Sign1 wrapped CoRIM payloads over HTTP(S), CoAP(S), and other
-      transports.
-   Fragment identifier considerations:  n/a
-   Magic number(s):  D9 01 F6 D2, D9 01 F4 D9 01 F6 D2
-   File extension(s):  n/a
-   Macintosh file type code(s):  n/a
-   Person and email address to contact for further information:  RATS WG
-      mailing list (rats@ietf.org)
-   Intended usage:  COMMON
-   Restrictions on usage:  none
-   Author/Change controller:  IETF
-   Provisional registration?  Maybe
-
-11.6.2.  corim-unsigned+cbor
-
-   Type name:  application
-   Subtype name:  corim-unsigned+cbor
+   Subtype name:  rim+cbor
    Required parameters:  n/a
    Optional parameters:  "profile" (CoRIM profile in string format.
       OIDs MUST use the dotted-decimal notation.)
@@ -3871,8 +3909,35 @@ Table of Contents
       unprotected CoRIM payloads over HTTP(S), CoAP(S), and other
       transports.
    Fragment identifier considerations:  n/a
-   Magic number(s):  D9 01 F5, D9 01 F4 D9 01 F5
-   File extension(s):  n/a
+   Magic number(s):  D9 01 F5
+   File extension(s):  .corim
+   Macintosh file type code(s):  n/a
+   Person and email address to contact for further information:  RATS WG
+      mailing list (rats@ietf.org)
+   Intended usage:  COMMON
+   Restrictions on usage:  none
+   Author/Change controller:  IETF
+   Provisional registration?  Maybe
+
+11.6.2.  rim+cose
+
+   Type name:  application
+   Subtype name:  rim+cose
+   Required parameters:  n/a (cose-type is explicitly not supported, as
+      it is understood to be "cose-sign1")
+   Optional parameters:  "profile" (CoRIM profile in string format.
+      OIDs MUST use the dotted-decimal notation.)
+   Encoding considerations:  binary
+   Security considerations:  Section 10 of RFCthis
+   Interoperability considerations:  n/a
+   Published specification:  RFCthis
+   Applications that use this media type:  Attestation Verifiers,
+      Endorsers and Reference-Value providers that need to transfer
+      CoRIM payloads protected using COSE Sign1 over HTTP(S), CoAP(S),
+      and other transports.
+   Fragment identifier considerations:  n/a
+   Magic number(s):  D2 84
+   File extension(s):  .corim
    Macintosh file type code(s):  n/a
    Person and email address to contact for further information:  RATS WG
       mailing list (rats@ietf.org)
@@ -3888,17 +3953,15 @@ Table of Contents
    "Constrained RESTful Environments (CoRE) Parameters" Registry
    [IANA.core-parameters]:
 
-   +===============================+================+======+===========+
-   | Content-Type                  | Content Coding | ID   | Reference |
-   +===============================+================+======+===========+
-   | application/corim-            | -              | TBD1 | RFCthis   |
-   | signed+cbor                   |                |      |           |
-   +-------------------------------+----------------+------+-----------+
-   | application/corim-            | -              | TBD2 | RFCthis   |
-   | unsigned+cbor                 |                |      |           |
-   +-------------------------------+----------------+------+-----------+
+   +======================+================+======+===========+
+   | Content-Type         | Content Coding | ID   | Reference |
+   +======================+================+======+===========+
+   | application/rim+cbor | -              | TBD1 | RFCthis   |
+   +----------------------+----------------+------+-----------+
+   | application/rim+cose | -              | TBD2 | RFCthis   |
+   +----------------------+----------------+------+-----------+
 
-                       Table 16: New Content-Formats
+                  Table 16: New Content-Formats
 
 12.  References
 
@@ -4018,9 +4081,9 @@ Table of Contents
               Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
               Scarlata, "Attestation Results for Secure Interactions",
               Work in Progress, Internet-Draft, draft-ietf-rats-ar4si-
-              07, 2 September 2024,
+              08, 6 February 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              ar4si-07>.
+              ar4si-08>.
 
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
@@ -4067,21 +4130,21 @@ Table of Contents
 
 Appendix A.  Base CoRIM CDDL
 
-   corim = tagged-concise-rim-type-choice
+   corim = concise-rim-type-choice
 
-   $concise-rim-type-choice /= tagged-corim-map
-   $concise-rim-type-choice /= tagged-signed-corim
+   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= signed-corim
 
-   concise-bom-tag = {
+   concise-tl-tag = {
      &(tag-identity: 0) => tag-identity-map
      &(tags-list: 1) => [ + tag-identity-map ],
-     &(bom-validity: 2) => validity-map
-     * $$concise-bom-tag-extension
+     &(tl-validity: 2) => validity-map
+     * $$concise-tl-tag-extension
    }
 
    $concise-tag-type-choice /= tagged-concise-swid-tag
    $concise-tag-type-choice /= tagged-concise-mid-tag
-   $concise-tag-type-choice /= tagged-concise-bom-tag
+   $concise-tag-type-choice /= tagged-concise-tl-tag
 
    corim-entity-map =
      entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
@@ -4090,7 +4153,7 @@ Appendix A.  Base CoRIM CDDL
    $corim-id-type-choice /= uuid-type
 
    corim-locator-map = {
-     &(href: 0) => uri
+     &(href: 0) => uri / [ + uri ]
      ? &(thumbprint: 1) => digest
    }
 
@@ -4120,7 +4183,7 @@ Appendix A.  Base CoRIM CDDL
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor (tagged-corim-map / corim-map)
+     payload: bstr .cbor tagged-corim-map
      signature: bstr
    ]
 
@@ -4129,7 +4192,7 @@ Appendix A.  Base CoRIM CDDL
 
    protected-corim-header-map = {
      &(alg: 1) => int
-     &(content-type: 3) => "application/corim-unsigned+cbor"
+     &(content-type: 3) => "application/rim+cbor"
      &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
@@ -4139,16 +4202,11 @@ Appendix A.  Base CoRIM CDDL
 
    tagged-corim-map = #6.501(corim-map)
 
-
-   tagged-concise-rim-type-choice = #6.500($concise-rim-type-choice)
-
-   tagged-signed-corim = #6.502(signed-corim)
-
    tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
 
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
 
-   tagged-concise-bom-tag = #6.508(bytes .cbor concise-bom-tag)
+   tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
@@ -4166,13 +4224,6 @@ Appendix A.  Base CoRIM CDDL
      ? &(linked-tags: 3) => [ + linked-tag-map ]
      &(triples: 4) => triples-map
      * $$concise-mid-tag-extension
-   }
-
-   accepted-claims-set = {
-     &(state-triples: 0) => [ + endorsed-triple-record ]
-     ? &(identity-triples: 1) => [ + identity-triple-record ]
-     ? &(coswid-triples: 2) => [ + ev-coswid-triple-record ]
-     * $$accepted-claims-set-extension
    }
 
    attest-key-triple-record = [
@@ -4374,8 +4425,14 @@ Appendix A.  Base CoRIM CDDL
    tagged-oid-type = #6.111(oid-type)
 
    $raw-value-type-choice /= tagged-bytes
+   $raw-value-type-choice /= tagged-masked-raw-value
 
    raw-value-mask-type = bytes
+
+   tagged-masked-raw-value = #6.563([
+     value: bytes
+     mask : bytes
+   ])
 
    reference-triple-record = [
      ref-env: environment-map
