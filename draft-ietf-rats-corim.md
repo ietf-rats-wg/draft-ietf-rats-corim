@@ -556,6 +556,10 @@ A method of signing a bundle of CoRIMs together is through a signed RATS Concept
 Let `tag:{{&SELF}}:bundle` name a collection type that when signed MUST include the `corim-meta` protected header.
 The `corim-meta` statement ensures that each CoRIM in the bundle has an identified signer.
 
+~~~ cddl
+{::include cddl/cmw-corim-bundle.cddl}
+~~~
+
 The CMW MAY use any label for its CoRIMs.
 If there is a hierarchical structure to the CoRIM bundle, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
 It is RECOMMENDED to use to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by [RFC4122].
@@ -565,7 +569,7 @@ It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&S
 It is RECOMMENDED for a `corim-locator-map` containing local URI to afterwards list a nonzero amount of reachable URLs as remote references.
 
 <!-- TODO: replace "supposes" when the number is allocated. -->
-The following example supposes the CoAP Content-Format ID for `application/rim+cbor` to be 10572 for the `TN()` transformation in {{Appendix B of RFC9277}}.
+The following example supposes the CoAP Content-Format ID for `application/rim+cbor` to be 10572.
 
 ~~~cbor-diag
 {::include cddl/examples/cmw-corim-bundle.diag}
