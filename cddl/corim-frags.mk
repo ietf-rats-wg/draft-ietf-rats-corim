@@ -56,6 +56,7 @@ COTL_FRAGS += version-map.cddl
 COTL_FRAGS += tag-id-type-choice.cddl
 COTL_FRAGS += tag-identity-map.cddl
 COTL_FRAGS += uuid.cddl
+COTL_FRAGS += tag-version-type.cddl
 COTL_FRAGS += concise-swid-tag.cddl
 
 COTL_EXAMPLES := $(wildcard examples/cotl-*.diag)
