@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-16T01:51:54.829382+00:00",
+  "timestamp": "2025-02-18T01:44:32.408337+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -9343,6 +9343,37 @@
           "body": "I think the key part of this is whether a verifier is allowed to match an authority against an authorized-by using anything other than exact match (which is what the current text says).\n\nConverting DER to cose_key is evidence preserving, but there are other conversions which are more difficult.\n\nFor example, a verifier might choose to store SHA512(cose-key) for efficiency, but if a CoRIM requires authorized-by(SHAKE2(cose_key) then there is no way to perform the comparison.\n\nI am in favour of allowing conversions, but I think we probably need to include a type field (CBOR tag?) with each element of `$crypto-key-type-choice` if we do this.",
           "createdAt": "2025-02-12T15:31:02Z",
           "updatedAt": "2025-02-12T15:31:02Z"
+        }
+      ]
+    },
+    {
+      "number": 381,
+      "id": "I_kwDOH6-tI86qYcxf",
+      "title": "EAT Measured Components as measurement values",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/381",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "[EAT Measured Components (MC)](https://datatracker.ietf.org/doc/draft-ietf-rats-eat-measured-component/) are an extension to the EAT type system that can be used to model \"measurable\" objects of an attester's target environment, i.e., objects whose state can be sampled and digested.\n\nExamples of such _measured components_ include the invariant part of firmware loaded in memory at startup time, a run-time integrity check (RTIC), a file system object, or a CPU register.\n\nMCs are defined as extensions of the EAT [`Measurement`](https://www.ietf.org/archive/id/draft-ietf-rats-eat-31.html#section-4.2.16) claim, alongside \"payload\" CoSWIDs.\nUnlike CoSWID, these do not require an anchoring file system, making them more suitable for early boot components.\n\nArm [PSA and CCA software components](https://www.ietf.org/archive/id/draft-tschofenig-rats-psa-token-24.html#section-4.4.1) can be straightforwardly mapped to MCs.\nFuture attester technologies utilizing EAT will be able to use MCs seamlessly.\n\nMCs reuse some parts of the CoRIM type systems (namely, [`digest`](https://www.ietf.org/archive/id/draft-ietf-rats-corim-06.html#section-7.7) and [`version`](https://www.ietf.org/archive/id/draft-ietf-rats-corim-06.html#section-5.1.4.1.4.3)) and have CBOR and JSON serialisations.\n\nThis issue tracks their addition to the [`measurement-values`](https://www.ietf.org/archive/id/draft-ietf-rats-corim-06.html#section-5.1.4.1.4.2) map.\n",
+      "createdAt": "2025-02-17T18:16:30Z",
+      "updatedAt": "2025-02-18T00:56:08Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The CBOR-only CDDL is as follows:\n\n```cddl\nmeasured-component = {\n  &(id: 1) => component-id\n  &(measurement: 2) => digest\n  ? &(signers: 3) => [ + bytes ]\n  ? &(flags: 4) => bytes .size 4\n}\n```\nwhere\n```cddl\ncomponent-id = [\n  name: text\n  ? version: version\n]\n```\n\nThe semantics of the fields are described in [Section 4.1 of I-D.rats-eat-measured-component](https://www.ietf.org/archive/id/draft-fft-rats-eat-measured-component-03.html#section-4.1).",
+          "createdAt": "2025-02-17T19:54:36Z",
+          "updatedAt": "2025-02-17T19:59:25Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "`flags` is not in your referenced document, so I can't assess what its meaning is.\n\nIt grinds my gears a little bit to see version as a 1- or 2-element array when we have version-map as a 1- or 2-entry map with the same value space. Oh well.",
+          "createdAt": "2025-02-18T00:56:06Z",
+          "updatedAt": "2025-02-18T00:56:06Z"
         }
       ]
     }
@@ -57694,13 +57725,13 @@
       "labels": [],
       "body": "With the proposed additions to CMW, this fixes Issue #358.",
       "createdAt": "2025-02-12T05:27:05Z",
-      "updatedAt": "2025-02-15T21:42:38Z",
+      "updatedAt": "2025-02-18T00:50:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d7718c1e390ccf23e374930e7469a89232bafa8e",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "sig-inherit",
-      "headRefOid": "5cd166940ee927d3b3e35c9deb854a423ecc3063",
+      "headRefOid": "4decf89f844ae70400689367269da3bd99fec26b",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -58043,6 +58074,98 @@
               "updatedAt": "2025-02-14T01:47:18Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cRpp3",
+          "commit": {
+            "abbreviatedOid": "5cd1669"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See comments inline.",
+          "createdAt": "2025-02-17T19:59:22Z",
+          "updatedAt": "2025-02-17T20:06:13Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\nThe CMW collection signature structure has a protected header.\r\nThe collection type name SHALL be of the form: `tag:{{&SELF}}:bundle`.\r\nThe signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.\r\n```",
+              "createdAt": "2025-02-17T19:59:22Z",
+              "updatedAt": "2025-02-18T00:37:14Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\nThe `corim-meta` statement ensures that each CoRIM in the bundle has an identified signer.\r\n```",
+              "createdAt": "2025-02-17T19:59:49Z",
+              "updatedAt": "2025-02-17T20:06:13Z"
+            },
+            {
+              "originalPosition": 22,
+              "body": "The following section seems too terse to follow. Possibly, more of the CDDL context is needed?",
+              "createdAt": "2025-02-17T20:01:41Z",
+              "updatedAt": "2025-02-17T20:06:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cSn_y",
+          "commit": {
+            "abbreviatedOid": "5cd1669"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-18T00:37:57Z",
+          "updatedAt": "2025-02-18T00:37:57Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "\"The CMW collection signature structure\" sounds strange to me, since it's the COSE signing structure.",
+              "createdAt": "2025-02-18T00:37:57Z",
+              "updatedAt": "2025-02-18T00:37:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cSpqV",
+          "commit": {
+            "abbreviatedOid": "6132f97"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-18T00:44:17Z",
+          "updatedAt": "2025-02-18T00:44:17Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I don't like the requirement to modify the internals of the map. It's unnecessary in the case of my bundle use, where the signature must be a COSE envelope and must use the corim-meta statement.",
+              "createdAt": "2025-02-18T00:44:17Z",
+              "updatedAt": "2025-02-18T00:44:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cSrRX",
+          "commit": {
+            "abbreviatedOid": "5cd1669"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-18T00:50:44Z",
+          "updatedAt": "2025-02-18T00:50:45Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "Added.",
+              "createdAt": "2025-02-18T00:50:44Z",
+              "updatedAt": "2025-02-18T00:50:45Z"
+            }
+          ]
         }
       ]
     },
@@ -58158,7 +58281,7 @@
       "labels": [],
       "body": "Fixes Issue #334.",
       "createdAt": "2025-02-15T22:18:18Z",
-      "updatedAt": "2025-02-15T22:18:19Z",
+      "updatedAt": "2025-02-17T19:08:43Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "592fc963e488d41af109f8011524bc1fbc5497c9",
@@ -58170,7 +58293,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86cRb_l",
+          "commit": {
+            "abbreviatedOid": "8e73c34"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-02-17T19:08:43Z",
+          "updatedAt": "2025-02-17T19:08:43Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 380,
