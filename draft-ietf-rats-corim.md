@@ -554,7 +554,7 @@ It is out of scope of this document to specify a method of delegating the signer
 
 A method of signing a bundle of CoRIMs together is through a signed RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
 Let `tag:{{&SELF}}:bundle` name a collection type that when signed MUST include the `corim-meta` protected header.
-The `corim-meta` header ensures that each CoRIM in the bundle has an identified signer.
+The `corim-meta` statement ensures that each CoRIM in the bundle has an identified signer.
 
 The CMW MAY use any label for its CoRIMs.
 If there is a hierarchical structure to the CoRIM bundle, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
