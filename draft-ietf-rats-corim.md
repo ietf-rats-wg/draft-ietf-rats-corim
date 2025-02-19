@@ -212,7 +212,7 @@ Reference Values with matching Evidence produce "acceptable Claims."
 See also {{Section 4.2 of -rats-arch}}, {{Section 8.3 of -rats-arch}}, and {{Section 2 of -rats-endorsements}}.
 
 Triple:
-: A term derived from Resource Description Framework (RDF) to mean a statement expressing a relationship between a subject and an object resource.
+: A term derived from the Resource Description Framework (RDF) to mean a statement expressing a relationship between a subject and an object resource.
 The nature of the relationship between subject and object is expressed via a predicate.
 Unlike RDF, in CoRIM, the predicate of the triple is implicit and is encoded in the triple's name/codepoint.
 In CoRIM, triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
