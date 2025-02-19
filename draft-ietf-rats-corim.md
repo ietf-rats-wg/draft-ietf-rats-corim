@@ -214,7 +214,7 @@ See also {{Section 4.2 of -rats-arch}}, {{Section 8.3 of -rats-arch}}, and {{Sec
 Triple:
 : A term derived from the Resource Description Framework (RDF) to mean a statement expressing a relationship between a subject and an object resource.
 The nature of the relationship between subject and object is expressed via a predicate.
-Unlike RDF, in CoRIM, the predicate of the triple is implicit and is encoded in the triple's name/codepoint.
+In CoRIM, unlike RDF, the predicate of the triple is implicit and is encoded in the triple's name/codepoint.
 In CoRIM, triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
 See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
