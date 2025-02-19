@@ -75,10 +75,10 @@ CORIM_FRAGS += cose-sign1-corim.cddl
 CORIM_FRAGS += profile-type-choice.cddl
 CORIM_FRAGS += protected-corim-header-map.cddl
 CORIM_FRAGS += signed-corim.cddl
-CORIM_FRAGS += tagged-corim-map.cddl
 CORIM_FRAGS += tagged-concise-swid-tag.cddl
 CORIM_FRAGS += tagged-concise-mid-tag.cddl
 CORIM_FRAGS += tagged-concise-tl-tag.cddl
+CORIM_FRAGS += tagged-unsigned-corim-map.cddl
 CORIM_FRAGS += unprotected-corim-header-map.cddl
 CORIM_FRAGS += validity-map.cddl
 

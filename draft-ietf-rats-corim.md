@@ -368,8 +368,9 @@ The following describes each child item of this map.
   structures to the `corim-map`.
   Described in {{sec-iana-corim}}.
 
+A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a CoRIM, so it is named `tagged-unsigned-corim-map`.
 ~~~ cddl
-{::include cddl/tagged-corim-map.cddl}
+{::include cddl/tagged-unsigned-corim-map.cddl}
 ~~~
 
 ### Identity {#sec-corim-id}
@@ -2675,7 +2676,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     Tag | Data Item           | Semantics                                                     | Reference |
 |     --- | ---------           | ---------                                                     | --------- |
 |     500 | `tag`               | Reserved for backward compatibility                   | {{&SELF}} |
-|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
+|     501 | `map`               | A tagged-unsigned-corim-map, see {{sec-corim-map}}            | {{&SELF}} |
 | 502-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
 |     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
@@ -2702,7 +2703,7 @@ Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advi
 ## CoRIM Map Registry {#sec-iana-corim}
 
 This document defines a new registry titled "CoRIM Map".
-The registry uses integer values as index values for items in 'unsigned-corim-map' CBOR maps.
+The registry uses integer values as index values for items in `corim-map` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
