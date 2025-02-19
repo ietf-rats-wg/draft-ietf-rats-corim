@@ -912,6 +912,8 @@ The following describes each member of the `measurement-values-map`.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
+* `eat-measured-component` (index 15): A measured component information element that includes includes the digest of the component's sampled state along with metadata that helps in identifying the component {{sec-eat-measured-component}}.
+
 ###### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -1116,6 +1118,14 @@ and
 are acceptable states.
 
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
+
+##### EAT Measured Component {#sec-eat-measured-component}
+An EAT measured component is a standard way to represent a component measurements in a measurement values map.
+A "measured component" information element includes the digest of the component's sampled state along with metadata that helps in identifying the component. Optionally, one or more entities responsible for signing the installed component can also be specified.
+
+~~~ cddl
+{::include cddl/eat-measured-component.cddl}
+~~~
 
 
 ##### Domain Types {#sec-comid-domain-type}
