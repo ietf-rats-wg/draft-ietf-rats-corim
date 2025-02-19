@@ -181,7 +181,7 @@ This document uses the following terms:
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
-Endorsed Values are said to be "conditional" when they apply if other actual state matches Verifiers accepted Claims.
+Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches Verifier's accepted Claims.
 See also {{Section 3 of -rats-endorsements}}.
 
 Environment:
