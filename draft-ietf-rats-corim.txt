@@ -251,6 +251,12 @@ Table of Contents
 
 1.1.  Terminology and Requirements Language
 
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
    This document uses terms and concepts defined by the RATS
    architecture.  For a complete glossary, see Section 4 of [RFC9334].
 
@@ -265,11 +271,64 @@ Table of Contents
    Section 8 of [STD94] and Appendix G of [RFC8610].  Terms and concepts
    are always referenced as proper nouns, i.e., with Capital Letters.
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in
-   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
+   This document uses the following terms:
+
+   Endorsed values:
+      A set of characteristics of an Attester that do not appear in
+      Evidence.  For example, Endorsed Values may include testing or
+      certification data related to a hardware or firmware module.
+      Endorsed Values are said to be "conditional" when they apply if
+      Attester's actual state matches Verifier's accepted Claims.  See
+      also Section 3 of [I-D.ietf-rats-endorsements].
+
+   Environment:
+      A logical partition within an Attester.  The term "Target
+      Environment" refers to the group of system security metrics that
+      are reported through Evidence.  The term "Attesting Environment"
+      refers to the entity that collects and cryptographically signs
+      such security metrics.  See also Section 3.1 of [RFC9334].
+
+   Measurement:
+      A value associated with specific security characteristics of an
+      Attester that influences the trustworthiness of that Attester.
+      The object of a Measurement could be the invariant part of a
+      firmware component loaded into memory during startup, a run-time
+      integrity check (RTIC), a file system object, or a CPU register.
+      A measured object is part of the Attester's Target Environment.
+      Expected, or "golden," Measurements are compiled as Reference
+      Values, which are used by the Verifier to assess the trust state
+      of the Attester.  See also [TNC.Arch], and Section 9.5.5 of
+      [TPM2.Part1].
+
+   Class ID:
+      An identifier for an Environment that is shared among similar
+      Environment instances, such as those with the same hardware
+      assembly.  See also Section 4.2.4 of [I-D.ietf-rats-eat].
+
+   Instance ID:
+      An identifier of an Environment that is unique to that Environment
+      instance, such as the serial number of a hardware module.  See
+      also Section 4.2.1 of [I-D.ietf-rats-eat].
+
+   Reference Values:
+      A set of values that represent the desired or undesired state of
+      an Attester.  Reference Values are compared against Evidence to
+      determine the trustworthiness of the Attester.  Reference Values
+      with matching Evidence produce "acceptable Claims."  See also
+      Section 4.2 of [RFC9334], Section 8.3 of [RFC9334], and Section 2
+      of [I-D.ietf-rats-endorsements].
+
+   Triple:
+      A term derived from the Resource Description Framework (RDF) to
+      mean a statement expressing a relationship between a subject and
+      an object resource.  The nature of the relationship between
+      subject and object is expressed via a predicate.  In CoRIM, unlike
+      RDF, the predicate of the triple is implicit and is encoded in the
+      triple's name/codepoint.  CoRIM triples typically represent
+      assertions made by the CoRIM author regarding Attesting or Target
+      Environments and their security features, such as Measurements and
+      cryptographic key material.  See also Section 3.1 of
+      [W3C.rdf11-primer].
 
 2.  Verifier Reconciliation
 
@@ -4127,6 +4186,23 @@ Table of Contents
               Writing an IANA Considerations Section in RFCs", BCP 26,
               RFC 8126, DOI 10.17487/RFC8126, June 2017,
               <https://www.rfc-editor.org/rfc/rfc8126>.
+
+   [TNC.Arch] Trusted Computing Group, "TCG Trusted Network Connect TNC
+              Architecture for Interoperability", Specification Version
+              1.1 Revision 2 , May 2006,
+              <https://trustedcomputinggroup.org/wp-content/uploads/
+              TNC_Architecture_v1_1_r2.pdf>.
+
+   [TPM2.Part1]
+              Trusted Computing Group, "Trusted Platform Module Library,
+              Part 1: Architecture", Family "2.0", Level 00, Revision
+              01.83 , January 2024,
+              <https://trustedcomputinggroup.org/resource/tpm-library-
+              specification/>.
+
+   [W3C.rdf11-primer]
+              "RDF 1.1 Primer", W3C NOTE rdf11-primer, W3C rdf11-primer,
+              <https://www.w3.org/TR/rdf11-primer/>.
 
 Appendix A.  Base CoRIM CDDL
 
