@@ -198,7 +198,7 @@ Expected, or "golden," Measurements are compiled as Reference Values, which are 
 See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
 
 Class ID:
-: An identifier for an Environment that is shared among similar Environments, such as those with the same hardware assembly.
+: An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
 Instance ID:
