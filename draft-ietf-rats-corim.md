@@ -912,7 +912,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
-* `eat-measured-component` (index 15): A measured component information element that includes includes the digest of the component's sampled state along with metadata that helps in identifying the component {{sec-eat-measured-component}}.
+* `eat-measured-component` (index 15): A measured component map that includes the digest of the component's sampled state along with metadata that helps in identifying the component {{sec-eat-measured-component}}.
 
 ###### Version {#sec-comid-version}
 
