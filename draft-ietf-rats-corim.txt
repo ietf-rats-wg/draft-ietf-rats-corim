@@ -550,7 +550,7 @@ Table of Contents
 
    corim = concise-rim-type-choice
 
-   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= tagged-unsigned-corim-map
    concise-rim-type-choice /= signed-corim
 
 4.1.  CoRIM Map
@@ -568,6 +568,7 @@ Table of Contents
      ? &(entities: 5) => [ + corim-entity-map ]
      * $$corim-map-extension
    }
+   unsigned-corim-map = corim-map
 
    The following describes each child item of this map.
 
@@ -596,7 +597,9 @@ Table of Contents
       information structures to the corim-map.  Described in
       Section 11.3.
 
-   tagged-corim-map = #6.501(corim-map)
+   A corim-map is unsigned, and its tagged form is an entrypoint for
+   parsing a CoRIM, so it is named tagged-unsigned-corim-map. ~~~ cddl
+   tagged-unsigned-corim-map = #6.501(unsigned-corim-map) ~~~
 
 4.1.1.  Identity
 
@@ -702,7 +705,7 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map
      signature: bstr
    ]
 
@@ -3735,8 +3738,8 @@ Table of Contents
    | 500     | tag         | Reserved for backward         | RFCthis   |
    |         |             | compatibility                 |           |
    +---------+-------------+-------------------------------+-----------+
-   | 501     | map         | A tagged-corim-map, see       | RFCthis   |
-   |         |             | Section 4.1                   |           |
+   | 501     | map         | A tagged-unsigned-corim-      | RFCthis   |
+   |         |             | map, see Section 4.1          |           |
    +---------+-------------+-------------------------------+-----------+
    | 502-504 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
@@ -3807,8 +3810,8 @@ Table of Contents
 11.3.  CoRIM Map Registry
 
    This document defines a new registry titled "CoRIM Map".  The
-   registry uses integer values as index values for items in 'unsigned-
-   corim-map' CBOR maps.
+   registry uses integer values as index values for items in corim-map
+   CBOR maps.
 
    Future registrations for this registry are to be made based on
    [RFC8126] as follows:
@@ -4208,7 +4211,7 @@ Appendix A.  Base CoRIM CDDL
 
    corim = concise-rim-type-choice
 
-   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= tagged-unsigned-corim-map
    concise-rim-type-choice /= signed-corim
 
    concise-tl-tag = {
@@ -4242,6 +4245,7 @@ Appendix A.  Base CoRIM CDDL
      ? &(entities: 5) => [ + corim-entity-map ]
      * $$corim-map-extension
    }
+   unsigned-corim-map = corim-map
 
    corim-meta-map = {
      &(signer: 0) => corim-signer-map
@@ -4259,7 +4263,7 @@ Appendix A.  Base CoRIM CDDL
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map
      signature: bstr
    ]
 
@@ -4276,13 +4280,13 @@ Appendix A.  Base CoRIM CDDL
 
    signed-corim = #6.18(COSE-Sign1-corim)
 
-   tagged-corim-map = #6.501(corim-map)
-
    tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
 
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
 
    tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
+
+   tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
