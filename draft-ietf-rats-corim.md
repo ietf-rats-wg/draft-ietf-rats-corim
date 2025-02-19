@@ -2436,7 +2436,7 @@ If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then compari
 The comparison MUST return true if the value of SVN is equal to the `uint` value in the condition ECT.
 
 *  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
-The comparison MUST return true if the value of SVN is less or equal to than the `uint` value in the condition ECT.
+The comparison MUST return true if the `uint` value in the condition ECT is less than or equal to the value of SVN.
 
 If the entry `svn-type` is a `uint` tagged with #6.553, then comparison with the `uint` named as MINSVN is as follows.
 
