@@ -568,8 +568,7 @@ It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI 
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
 It is RECOMMENDED for a `corim-locator-map` containing local URI to afterwards list a nonzero amount of reachable URLs as remote references.
 
-<!-- TODO: replace "supposes" when the number is allocated. -->
-The following example supposes the CoAP Content-Format ID for `application/rim+cbor` to be 10572.
+The following example demonstrates these recommendations for bundling CoRIMs that are subject to different profiles.
 
 ~~~cbor-diag
 {::include cddl/examples/cmw-corim-bundle.diag}
