@@ -50,6 +50,17 @@ COMID_FRAGS += concise-swid-tag.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
 
+COTL_FRAGS := concise-tl-tag.cddl
+COTL_FRAGS += validity-map.cddl
+COTL_FRAGS += version-map.cddl
+COTL_FRAGS += tag-id-type-choice.cddl
+COTL_FRAGS += tag-identity-map.cddl
+COTL_FRAGS += uuid.cddl
+COTL_FRAGS += tag-version-type.cddl
+COTL_FRAGS += concise-swid-tag.cddl
+
+COTL_EXAMPLES := $(wildcard examples/cotl-*.diag)
+
 CORIM_FRAGS := corim.cddl
 CORIM_FRAGS += concise-tl-tag.cddl
 CORIM_FRAGS += concise-tag-type-choice.cddl
