@@ -1684,7 +1684,7 @@ Appraisal Policy:
 
 Attestation Results Set (ARS):
 : A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
-## Verifier internal representation 
+## Verifier internal representation
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
