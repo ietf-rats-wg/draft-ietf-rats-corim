@@ -199,7 +199,7 @@ Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
 Attestation Results Set (ARS):
-: A structure that holds results of appraisal and Environment-Claim Tuples that are to be conveyed to a Relying Party.
+: A structure that holds results of appraisal and Environment-Claim Tuples that are used to construct an Attestation Results message that is conveyed to a Relying Party.
 
 Authority:
 : The entity asserting that a Claim is true.
