@@ -1648,10 +1648,10 @@ These Claims are added with the policy author's authority.
 During Phase 7, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
 The Claims in the output staging area and other Verifier related metadata are transformed into an external representation suitable for consumption by a Relying Party.
 
-## Verifier Abstraction {#sec-verifier-abstraction}
+# Example Verifier Algorithm {#sec-verifier-abstraction}
 
 This document assumes that Verifier implementations may differ.
-To facilitate the description of normative Verifier behavior, this document uses an abstract representation of Verifier internals.
+To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the verification phases outlined in {{#sec-appraisal-procedure}}.
 
 The following terms are used:
 
@@ -1684,6 +1684,7 @@ Appraisal Policy:
 
 Attestation Results Set (ARS):
 : A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
+## Verifier internal representation 
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
@@ -1691,7 +1692,7 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
-#### Internal Representation of Environment Claims Tuple {#sec-ir-ect}
+### Internal structure of ECT {#sec-ir-ect}
 
 Environment-Claims Tuples (ECT) have five attributes:
 
@@ -1716,9 +1717,9 @@ The following CDDL describes the ECT structure in more detail.
 
 The Conceptual Message type determines which attributes are mandatory.
 
-#### Internal Representation Extensions {#sec-ir-ext}
+### Internal Representation of keys {#sec-ir-ext}
 
-The internal representation extends `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
+The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
 `typed-crypto-key` consists of a `key` and an optional `key-type`.
 There are two types of keys `attest-key` and `identity-key`.
 
@@ -1726,7 +1727,7 @@ There are two types of keys `attest-key` and `identity-key`.
 {::include cddl/intrep-key.cddl}
 ~~~
 
-#### Internal Representation of Evidence {#sec-ir-evidence}
+### Internal Representation of Evidence {#sec-ir-evidence}
 
 An internal representation of attestation Evidence uses the `ae` relation.
 
@@ -1751,7 +1752,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `profile`       | Optional    |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
-#### Internal Representation of Reference Values {#sec-ir-ref-val}
+### Internal Representation of Reference Values {#sec-ir-ref-val}
 
 An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
 
@@ -1781,7 +1782,7 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 |           | `profile`       | Optional    |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
-#### Internal Representation of Endorsed Values {#sec-ir-end-val}
+### Internal Representation of Endorsed Values {#sec-ir-end-val}
 
 An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
 
@@ -1816,7 +1817,7 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `profile`       | Optional    |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
-#### Internal Representation of Policy Statements {#sec-ir-policy}
+### Internal Representation of Policy Statements {#sec-ir-policy}
 
 The `policy` relation compares the `condition` ECTs to the ACS.
 
@@ -1842,7 +1843,7 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `profile`       | Optional    |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
-#### Internal Representation of Attestation Results {#sec-ir-ar}
+### Internal Representation of Attestation Results {#sec-ir-ar}
 
 The `ar` relation compares the `acs-condition` to the ACS.
 
@@ -1906,7 +1907,6 @@ Any CoRIM that has been secured by a cryptographic mechanism, such as a signatur
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
-
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### Tags Extraction and Validation
@@ -1967,7 +1967,7 @@ Regardless of the specific integrity protection method used, the Verifier MUST N
 
 ### Input Transformation {#sec-phase1-trans}
 
-Input Conceptual Messages, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
+Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
 
 The following mapping conventions apply to all forms of input transformation:
 
@@ -1982,6 +1982,15 @@ The following mapping conventions apply to all forms of input transformation:
 All of the extracted and validated tags are loaded into an *appraisal context*.
 The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
 The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
+
+#### Evidence Tranformation
+
+Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
+The Evidence is mapped into one or more `addition` ECTs.
+If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
+
+Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
+The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 #### Reference Triples Transformation {#sec-ref-trans}
 
@@ -2147,14 +2156,6 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-#### Evidence Tranformation
-
-Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
-The Evidence is mapped into one or more `addition` ECTs.
-If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
-
-Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
-The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2176,7 +2177,7 @@ For the purposes of this document, appraisal is described in terms of the above 
 #### ACS Processing Requirements
 
 The ACS contains the actual state of Attester's Target Environments (TEs).
-The `state-triples` field contains Evidence (from Attesters) and Endorsements
+The ACS contains Evidence ECTs (from Attesters) and Endorsements ECTs
 (e.g. from `endorsed-triple-record`).
 
 CoMID Reference Values will be matched against the ACS, as per
@@ -2184,8 +2185,8 @@ the appraisal policy of the Verifier.
 This document describes an example evidence structure which can be
 matched against these Reference Values.
 
-Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
-When an `endorsed-triple-record` appears within `state-triples` it
+Each entry within Endorsements ECTs uses the syntax of `endorsed-triple-record`.
+When an `endorsed-triple-record` is translated to Endorsements ECTs it
 indicates that the authority named by `measurement-map`.`authorized-by`
 asserts that the actual state of one or more Claims within the
 Target Environment, as identified by `environment-map`, have the
@@ -2541,7 +2542,6 @@ If a bit in the mask is 0 then this indicates that the corresponding bit in the 
 If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
-
 
 The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
 If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
