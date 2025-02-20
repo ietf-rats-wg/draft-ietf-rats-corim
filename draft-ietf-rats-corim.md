@@ -121,6 +121,20 @@ informative:
     seriesinfo: Version 1.0, Revision 0.01
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
+  TNC.Arch:
+    title: "TCG Trusted Network Connect TNC Architecture for Interoperability"
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Specification Version 1.1 Revision 2
+    date: 1 May 2006
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TNC_Architecture_v1_1_r2.pdf
+  TPM2.Part1:
+    title: "Trusted Platform Module Library, Part 1: Architecture"
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Family "2.0", Level 00, Revision 01.83
+    date: January 24, 2024,
+    target: https://trustedcomputinggroup.org/resource/tpm-library-specification/
 
 entity:
   SELF: "RFCthis"
@@ -150,6 +164,8 @@ See {{sec-verifier-rec}}.
 
 ## Terminology and Requirements Language
 
+{::boilerplate bcp14}
+
 This document uses terms and concepts defined by the RATS architecture.
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
@@ -159,7 +175,48 @@ The terminology from CBOR {{-cbor}}, CDDL {{-cddl}} and COSE {{-cose}} applies;
 in particular, CBOR diagnostic notation is defined in {{Section 8 of -cbor}}
 and {{Section G of -cddl}}. Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.
 
-{::boilerplate bcp14}
+This document uses the following terms:
+
+{: vspace="0"}
+Endorsed values:
+: A set of characteristics of an Attester that do not appear in Evidence.
+For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
+Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches Verifier's accepted Claims.
+See also {{Section 3 of -rats-endorsements}}.
+
+Environment:
+: A logical partition within an Attester.
+The term "Target Environment" refers to the group of system security metrics that are reported through Evidence.
+The term "Attesting Environment" refers to the entity that collects and cryptographically signs such security metrics.
+See also {{Section 3.1 of -rats-arch}}.
+
+Measurement:
+: A value associated with specific security characteristics of an Attester that influences the trustworthiness of that Attester.
+The object of a Measurement could be the invariant part of a firmware component loaded into memory during startup, a run-time integrity check (RTIC), a file system object, or a CPU register.
+A measured object is part of the Attester's Target Environment.
+Expected, or "golden," Measurements are compiled as Reference Values, which are used by the Verifier to assess the trust state of the Attester.
+See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
+
+Class ID:
+: An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
+See also {{Section 4.2.4 of -eat}}.
+
+Instance ID:
+: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
+See also {{Section 4.2.1 of -eat}}.
+
+Reference Values:
+: A set of values that represent the desired or undesired state of an Attester.
+Reference Values are compared against Evidence to determine the trustworthiness of the Attester.
+Reference Values with matching Evidence produce "acceptable Claims."
+See also {{Section 4.2 of -rats-arch}}, {{Section 8.3 of -rats-arch}}, and {{Section 2 of -rats-endorsements}}.
+
+Triple:
+: A term derived from the Resource Description Framework (RDF) to mean a statement expressing a relationship between a subject and an object resource.
+The nature of the relationship between subject and object is expressed via a predicate.
+In CoRIM, unlike RDF, the predicate of the triple is implicit and is encoded in the triple's name/codepoint.
+CoRIM triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
+See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
 # Verifier Reconciliation {#sec-verifier-rec}
 
@@ -311,8 +368,9 @@ The following describes each child item of this map.
   structures to the `corim-map`.
   Described in {{sec-iana-corim}}.
 
+A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a CoRIM, so it is named `tagged-unsigned-corim-map`.
 ~~~ cddl
-{::include cddl/tagged-corim-map.cddl}
+{::include cddl/tagged-unsigned-corim-map.cddl}
 ~~~
 
 ### Identity {#sec-corim-id}
@@ -2140,7 +2198,7 @@ ECT authority is represented by cryptographic keys. Authority
 is asserted by digitally signing a Claim using the key. Hence, Claims are
 added to the ACS under the authority of a cryptographic key.
 
-Each Claim is encoded as an ECT. The `environment-map` and a
+Each Claim is encoded as an ECT. The `environment-map`, the `mkey` or `element-id`, and a
 key within `measurement-values-map` encode the name of the Claim.
 The value matching that key within `measurement-values-map` is the actual
 state of the Claim.
@@ -2618,7 +2676,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     Tag | Data Item           | Semantics                                                     | Reference |
 |     --- | ---------           | ---------                                                     | --------- |
 |     500 | `tag`               | Reserved for backward compatibility                   | {{&SELF}} |
-|     501 | `map`               | A tagged-corim-map, see {{sec-corim-map}}                     | {{&SELF}} |
+|     501 | `map`               | A tagged-unsigned-corim-map, see {{sec-corim-map}}            | {{&SELF}} |
 | 502-504 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     505 | `bytes`             | A tagged-concise-swid-tag, see {{sec-corim-tags}}             | {{&SELF}} |
 |     506 | `bytes`             | A tagged-concise-mid-tag, see {{sec-corim-tags}}              | {{&SELF}} |
@@ -2645,7 +2703,7 @@ Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advi
 ## CoRIM Map Registry {#sec-iana-corim}
 
 This document defines a new registry titled "CoRIM Map".
-The registry uses integer values as index values for items in 'unsigned-corim-map' CBOR maps.
+The registry uses integer values as index values for items in `corim-map` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
