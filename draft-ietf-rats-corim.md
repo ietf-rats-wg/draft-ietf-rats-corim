@@ -189,7 +189,7 @@ An Attester can consist of multiple components, with each component representing
 See also ({{Section 2 of -rats-endorsements}}).
 
 Appraisal Claims Set (ACS):
-: A structure that holds ECTs that have been appraised.
+: A structure that holds Environment-Claim Tuples that have been appraised.
 The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
 
 Appraisal Policy:
