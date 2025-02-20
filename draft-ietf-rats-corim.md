@@ -306,7 +306,6 @@ The set of tags is extensible so that future specifications can add new kinds of
 For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
 
 Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
-[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73
 
 CoRIM can also carry the following optional metadata:
 
@@ -2174,8 +2173,6 @@ See {{sec-ir-cm}}.
 Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232
-
 #### ACS Processing Requirements
 
 The ACS contains the actual state of Attester's Target Environments (TEs).
@@ -2289,14 +2286,9 @@ If satisfied, the RVP authority is added to the matching ACS entry.
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302
-
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
-
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
@@ -2380,8 +2372,6 @@ An internal representation of Attestation Results as separate contexts ({{sec-ir
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
@@ -2661,13 +2651,11 @@ These links must reach as deep as possible - possibly terminating within the app
 Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
 
 # IANA Considerations {#sec-iana-cons}
 
 ## New COSE Header Parameters
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12
 
 ## New CBOR Tags {#sec-iana-cbor-tags}
 
