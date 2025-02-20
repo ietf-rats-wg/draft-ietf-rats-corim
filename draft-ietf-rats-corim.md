@@ -1176,6 +1176,22 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
+##### Linear Privilege Level {#sec-comid-linear-privlevel}
+
+A Linear Privilege Level describes an operating privilege for the target environment.
+A privilege level is represented by a signed integer.
+The semantics of the ordering indicate a total inclusion of all higher privilege levels.
+This means that there is no privilege strictly afforded to, e.g., privilege level 3 that isn't also available to privilege level 1.
+
+~~~ cddl
+{::include cddl/linear-privilege-level.cddl}
+~~~
+
+The convention is that 0 is the highest privilege, and higher numbers correspond to fewer privileges.
+For environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.
+The full range if signed integers may be used.
+The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
+
 ##### Domain Types {#sec-comid-domain-type}
 
 A domain is a context for bundling a collection of related environments and their measurements.
@@ -2566,6 +2582,26 @@ If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
 
+##### Comparison for linear-privlevel entries
+
+The ACS entry value stored under `measurement-values-map` codepoint 15 is a linear privilege level, which must have type `linear-privlevel-type-choice`.
+
+If the entry `linear-privlevel-type-choice` is an `int`, name it PRIV and compare as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then an equality comparison is performed on the `int` components.
+The comparison MUST return true if the value of PRIV is equal to the `int` value in the condition ECT.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range inclusion comparison is performed.
+The comparison MUST return true if the value of PRIV is greater than or equal to the `min` value in the condition ECT AND the value of PRIV is less than or equal to than the `max` value in the condition ECT
+
+If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.564, then comparison with the pair of `opt-int` values MINPRIV and MAXPRIV is as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range subsumption comparison is performed.
+The comparison MUST return true if the value of MINPRIV is greater than or equal to the `min` value of the condition ECT and the value of MAXPRIV is less than or equal to the `max` value of the condition ECT.
+In this case, `null` in `min` is less than `null` and any integer, and `null` in `max` is greater than `null` and any integer.
+
 ### Profile-directed Comparison {#sec-compare-profile}
 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
@@ -2696,7 +2732,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
-| 564-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     564 | `[int, int]`        | tagged-int-range, see {{sec-comid-linear-privlevel}}          | {{&SELF}} |
+| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
