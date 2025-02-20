@@ -184,7 +184,7 @@ This document uses the following terms:
 
 actual state:
 : Claims that describe a Target Environment instance at a given point in time.
-Endorsed Values and Evidence typically are Claims about actual state.
+Endorsed Values and Evidence are Claims about actual state.
 An Attester can consist of multiple components, with each component representing a particular scope of appraisal.
 See also ({{Section 2 of -rats-endorsements}}).
 
