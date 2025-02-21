@@ -2271,9 +2271,7 @@ state of the Claim.
 This specification does not assign special meanings to any Claim name,
 it only specifies rules for determining when two Claim names are the same.
 
-If two Claims have the same `environment-map` encoding then this does not
-trigger special encoding in the Verifier. The Verifier follows instructions
-in the CoRIM file which tell it how claims are related.
+The Verifier follows instructions in the CoRIM file which tell it how claims are related.
 
 If Evidence or Endorsements from different sources has the same `environment-map`
 and `authorized-by` then the `measurement-values-map`s are merged.
@@ -2285,7 +2283,7 @@ See {{sec-authority}}.
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
-Equivalence typically means values MUST be binary identical.
+Equivalence means the values MUST be binary identical unless they are from a profile extension that defines its own equivalence relation.
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are not equivalent, then the Verifier SHALL report
@@ -2466,11 +2464,11 @@ If any of the fields does not match, then the condition ECT does not match the A
 The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
 Before performing the binary comparison, the Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical, then the environments match.
+If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are equivalent, then the environments match.
 
 If any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.
 
-If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
+If any field which is present in the condition ECT `environment-map` is not equivalent to the corresponding ACS entry field, then the environments do not match.
 
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
 
@@ -2484,6 +2482,18 @@ The order of the fields in each `authority` field do not affect the result of th
 If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
 
 When comparing two `$crypto-key-type-choice` fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
+
+A Verifier MAY compare keys in different lossless formats `lossless-crypto-key-type-choice`, `lossless-crypto-key-cert-type-choice`, `lossless-crypto-key-cert-path-type-choice` is the following ways:
+
+* A Verifier MAY compare a certificate to a key by means of the certificate's subject public key.
+* A Verifier MAY compare a key across formats by their denoted algorithms and parameters.
+* A Verifier MAY compare a key in the condition ECT to a candidate authority certificate path by finding a matching key in the path.
+
+A Verifier MAY compare keys in lossy formats across representations provided they have a means to look up a corresponding lossless representation it can use for comparison, and the correspondence is documented.
+A Verifier MAY compare a key in lossless format to lossy format if the lossy format correspondence to convert lossless to lossy is well-documented.
+A `tagged-bytes` MUST only be compared with binary equality.
+
+These comparison rules are specific to authorities and not `cryptokeys` measurements.
 
 ### Element list comparison {#sec-compare-element-list}
 
@@ -2501,6 +2511,7 @@ The Verifier SHALL compare each `element-map` within the condition ECT `element-
 
 First, the Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
 Two `element-id` fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.
+A profile MAY define an equivalence relation between its defined extensions to relax the binary identical deterministic encoding condition.
 
 Before performing the binary comparison, the Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
@@ -2511,7 +2522,7 @@ If any condition ECT entry has multiple corresponding `element-id`s then the ele
 Second, the Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
 See {{sec-compare-mvm}}.
 
-### Measurement values map map Comparison {#sec-compare-mvm}
+### Measurement values map Comparison {#sec-compare-mvm}
 
 The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
 Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
@@ -2577,7 +2588,7 @@ The Verifier SHALL treat two algorithm identifiers as equal if they have the sam
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
+The comparison MUST return false if the determisitic encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
 
 The comparison MUST return false if the condition ECT digests entry does not contain any digests.
 
