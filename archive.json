@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-20T01:45:55.746985+00:00",
+  "timestamp": "2025-02-23T01:51:57.475881+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2276,11 +2276,11 @@
         "andrew-draper"
       ],
       "labels": [
-        "mustfix"
+        "For-next-release"
       ],
       "body": "## Verifier matching measurements from a single set of attestation environments\r\n\r\nThis issue uses the term Attestation Transport to describe the transport over which evidence was passed to the Verifier. A SPDM connection is an example of an Attestation Transport, it carries measurements from the SPDM Attestation Environment and from related DICE Attestation Environments within the same entity.\r\n\r\nThe simple use case for a Verifier is where it has received a set of measurements through a single Attestation Transport and it needs to match these against a CoMID tag containing reference values.\r\n\r\nIMHO we should make the simple case easy to encode. I suggest that when matching a Reference Value Triple containing only `environment-map` and `measurement-values-map`, the Verifier must ensure that match them against evidence received from the same Attestation Transport. In some cases there may be multiple Attestation Environment groups which match against the same Reference Value Triple, if this happens then each group would receive an identical Endorsement.\r\n\r\nFor example, a CoMID tag encoding the semantics \"If this device has a measurement identified by OID 1.2.3.4 and SHA-384 hash 0x5678 then the device is an Acme Ethernet Card version 1.0\"\r\n\r\n## Verifier matching measurements from multiple attesters\r\n\r\nHigher level Verifiers, or rather the CoRIMs controlling higher level Verifiers, will want to match against more complicated sets of evidence. For example, a CoRIM might want to encode the semantics _Match against a type A PCIe card in slot 0, with firmware hash B, and against a second identical PCIe card in slot 1_.\r\n\r\nDo we need a way for a CoRIM to indicate that it must match against a set of evidence from one source (eg one Attestation Transport) and a potentially different set of evidence from a different source?\r\n\r\n## An example encoding of reference-values when matching against multiple Attestation Transports\r\n\r\nI suggest that we use the `mkey` field to identify the attestor to be chosen.\r\n\r\nFor example, the following encoding encodes the two PCIe cards case above:\r\nSolution 1:\r\n```\r\n- Reference Value Triples\r\n  - (first card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K1\r\n      - mvalue = B\r\n  - (second card)\r\n    - Environment Map A\r\n    - Measurement Map\r\n      - mkey = K2\r\n      - mvalue = B\r\n\r\n```\r\nThis would be associated with an Endorsement triple or similar providing more information about the combined system.\r\n\r\nThe exact values of K1 and K2 are not important, what is important is that all measurements with the same `mkey` value must come over the same Attestation Transport. Using the integer encoding of `mkey` normally produces the smallest encoding.\r\n\r\nWe might need a profile to enable this behavior.\r\n\r\nI think this can be extended to multiple levels of compound devices, but wanted to get a sense of whether this is going in the right direction first.\r\n\r\n## Question\r\n\r\n**Is it going in the right direction?**\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2023-03-17T11:48:02Z",
-      "updatedAt": "2025-02-12T19:20:18Z",
+      "updatedAt": "2025-02-20T09:44:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -2346,7 +2346,7 @@
       "id": "I_kwDOH6-tI85hHUm1",
       "title": "Need full description of the matching rules in the document",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -2355,8 +2355,8 @@
       ],
       "body": "I plan to add full descriptions of different types of matching rules and provide them in a future pull request.\r\n\r\nI hope this is not controvertial (for example, integers should be compared as integers) but we need to make sure all edge cases are addressed.\r\n\r\nIf you are interested, the draft I will rewrite to fill in these sections is in the [andrew-draper-verifier-processing](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/tree/andrew-draper-verifier-processing) branch",
       "createdAt": "2023-03-17T13:21:21Z",
-      "updatedAt": "2025-01-29T16:45:26Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-20T09:43:19Z",
+      "closedAt": "2025-02-20T09:43:17Z",
       "comments": [
         {
           "author": "andrew-draper",
@@ -2378,6 +2378,13 @@
           "body": "@andrew-draper I think, we can close this? Can you please confirm ?",
           "createdAt": "2025-01-29T16:45:25Z",
           "updatedAt": "2025-01-29T16:45:25Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing this as the rest of the work is addressed using:\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/359",
+          "createdAt": "2025-02-20T09:43:17Z",
+          "updatedAt": "2025-02-20T09:43:17Z"
         }
       ]
     },
@@ -5572,7 +5579,7 @@
       "id": "I_kwDOH6-tI86BvZmy",
       "title": "Use of \"stateful environment\" terminology",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/218",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -5582,8 +5589,8 @@
       ],
       "body": "The term \"stateful environment\" is being used, generally, to refer to the matching condition contained in an EMT. The definition of EMT uses the term \"Target Environment\" to refer to the expression in the ACS to which EMT Claims will be added. It might be better to use more consistent terminology throughout the document when referring to a matching condition. Such as \"TE matching condition\". \r\n\r\nWe may want to tweak the EMT definition to better explain that \"there is a TE matching condition within the EMT that is used to locate target environments within an ACS to which the EMTs Claims may be added. A TE matching condition may be stateful, meaning both environment and measurement Claims can be part of a TE matching condition\".",
       "createdAt": "2024-03-08T19:58:54Z",
-      "updatedAt": "2025-01-29T16:22:50Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-20T09:37:42Z",
+      "closedAt": "2025-02-20T09:37:42Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -5676,9 +5683,17 @@
       ],
       "body": "This issue is getting at the heart of my call for simplification to really whittle down the presentation to separate form from function. It's very easy to get lost in the details otherwise.\r\n\r\nThis will separate out minimum necessary to express reference values from minimum for shared value of the authors of this spec. Endorsements are an extension that are not necessary to verify evidence from an attester, specifically because they are defined as a claim without evidence.\r\n\r\nWe've discussed but have not implemented the convention that every $$ extension should have its own IANA table to assign meaning to extensible maps. We should specify all extensible maps just as their repeated extension points and provide descriptions of the initial table definitions in a later section.\r\n\r\nExtensible type choices are left indeterminate or as a very opinionated minimum selection since they could be parsed as anything. We can provide in a later section some common recommended choices that profile writers could be reasonably confident that their profile could be easily adopted by verifier implementations.",
       "createdAt": "2024-04-03T16:09:02Z",
-      "updatedAt": "2024-05-07T09:22:13Z",
+      "updatedAt": "2025-02-20T15:15:06Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There are a number of missing IANA registry subsections for extensible map sockets.\n\n```\n$$corim-signer-map-extension\n$$triples-map-extension\n$$measurement-values-map-extension\n$$flags-map-extension\n$$corim-entity-map-extension\n$$comid-entity-map-extension\n```\n\nThis raises the question of whether the corim and comid entity map extensions should refer to the same registry or not.",
+          "createdAt": "2025-02-20T15:15:04Z",
+          "updatedAt": "2025-02-20T15:15:04Z"
+        }
+      ]
     },
     {
       "number": 225,
@@ -6912,7 +6927,7 @@
       "id": "I_kwDOH6-tI86XCQzG",
       "title": "Need to explain claims_map better on ECT map description",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/278",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -6923,8 +6938,8 @@
       ],
       "body": "              Line 1583 which describes the claims needs to be:\r\n1. Reworded with a more appropriate name, like a set of claims \r\n2. Needs to explain better, regarding the claims pertaining to each of the measured elements belonging to a target environment\r\n\r\n_Originally posted by @yogeshbdeshpande in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/268#discussion_r1765100087_\r\n            ",
       "createdAt": "2024-09-18T14:46:35Z",
-      "updatedAt": "2025-02-15T22:21:50Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-20T09:38:42Z",
+      "closedAt": "2025-02-20T09:38:40Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -6932,6 +6947,13 @@
           "body": "Is this accounted for with the ECT naming of elements?",
           "createdAt": "2025-02-15T22:21:49Z",
           "updatedAt": "2025-02-15T22:21:49Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "With new ECT alignment, this issue has been addressed!",
+          "createdAt": "2025-02-20T09:38:40Z",
+          "updatedAt": "2025-02-20T09:38:40Z"
         }
       ]
     },
@@ -8212,7 +8234,7 @@
       ],
       "body": "554, 555, 556, 557, etc.",
       "createdAt": "2024-10-16T14:11:22Z",
-      "updatedAt": "2025-02-12T19:05:49Z",
+      "updatedAt": "2025-02-21T03:37:01Z",
       "closedAt": null,
       "comments": [
         {
@@ -8242,6 +8264,13 @@
           "body": "We need Thomas for this one.",
           "createdAt": "2025-01-30T23:16:18Z",
           "updatedAt": "2025-01-30T23:16:18Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is relevant to the conversation in #375.",
+          "createdAt": "2025-02-21T03:36:59Z",
+          "updatedAt": "2025-02-21T03:36:59Z"
         }
       ]
     },
@@ -8394,7 +8423,7 @@
       "id": "I_kwDOH6-tI86bf__A",
       "title": "\"Claim name\" needs to include the mkey",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/334",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -8403,8 +8432,8 @@
       ],
       "body": "PR #329 references the name of a claim but misses the aspect of the mkey.",
       "createdAt": "2024-10-23T14:37:18Z",
-      "updatedAt": "2025-02-12T18:58:08Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-21T03:35:47Z",
+      "closedAt": "2025-02-21T03:35:47Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -8695,7 +8724,7 @@
       ],
       "body": "> Endorsed environments ([Section 5.1.4.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-endval)) membership is conditional upon successful matching of Reference Values ([Section 5.1.4.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-refval)) to Evidence.\r\n\r\nI don't think we have a sense of which reference values an environment is supposed to match before suggesting that its within a particular trust domain. We got rid of the wording of matching reference values for endorsed triples for this reason.",
       "createdAt": "2024-11-13T05:22:46Z",
-      "updatedAt": "2025-02-18T17:43:19Z",
+      "updatedAt": "2025-02-21T03:34:32Z",
       "closedAt": null,
       "comments": [
         {
@@ -8704,6 +8733,13 @@
           "body": "@deeglaze : is this still an issue, now that we have amply described the meaning of RefVal and EndVal and other triples.\n\nIf yes, can you please add more clarity as to where the confusion lies???",
           "createdAt": "2025-02-18T17:43:18Z",
           "updatedAt": "2025-02-18T17:43:18Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's still an issue. We still don't know which reference values are supposed to match. You can have reference values that match but you can still have aspects of evidence that haven't matched.\n\nThe triple is about domain membership in an array of environments. I don't know what this represents. Which environments in this domain membership triple are \"endorsed environments\"? Successful matching of what against which reference values? You can have some parts of evidence have matching reference values and some parts may have nothing.\n\nI don't know what this sentence is trying to convey.",
+          "createdAt": "2025-02-21T03:34:31Z",
+          "updatedAt": "2025-02-21T03:34:31Z"
         }
       ]
     },
@@ -9344,7 +9380,7 @@
       ],
       "body": "When Evidence is included in X.509 certs or when an X.509 cert is the signer of Evidence (other CM), the signer key is in DER/BER. Given the way to map an external representation to internal by copying, there needs to be a DER form of $crypto-key-type-choice. \n\nAlternatively, there needs to be a convention for converting keys to an internal representation. But since the CoRIM internal representation is optional. It isn't pragmatic to rely on the internal representation convention for authoring conditions. \n\nIt may be reasonable for implementations to support key mapping routines and make a best effort attempt at matching based on  this. Does it make sense to make it mandatory for implementations to do best-effort key conversion? \n\nAlternatively, does it make sense for CoRIM to standardize an internal representation for keys independent of the current (optional) internal representation convention? ",
       "createdAt": "2025-02-12T01:39:42Z",
-      "updatedAt": "2025-02-12T19:04:35Z",
+      "updatedAt": "2025-02-21T03:47:27Z",
       "closedAt": null,
       "comments": [
         {
@@ -9360,6 +9396,20 @@
           "body": "I think the key part of this is whether a verifier is allowed to match an authority against an authorized-by using anything other than exact match (which is what the current text says).\n\nConverting DER to cose_key is evidence preserving, but there are other conversions which are more difficult.\n\nFor example, a verifier might choose to store SHA512(cose-key) for efficiency, but if a CoRIM requires authorized-by(SHAKE2(cose_key) then there is no way to perform the comparison.\n\nI am in favour of allowing conversions, but I think we probably need to include a type field (CBOR tag?) with each element of `$crypto-key-type-choice` if we do this.",
           "createdAt": "2025-02-12T15:31:02Z",
           "updatedAt": "2025-02-12T15:31:02Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thinking about this some more, after some discussion with Ned, I think the solution may go in this direction:\n\n1. The spec should put a requirement on a Verifier to perform non-lossy transformations of keys as part of comparisons.\nFor example, comparing a DER encoded ECDSA key against a COSE encoding of the same key involves extracting the keys from both formats and comparing them.\n\n2. Lossy conversions include comparing a public key against a public key which is the subject of a certificate.\nIf we want to allow these then I think we might want to mention them explicitly.\n\n3. We recommend that Evidence and CoMID files should contain the actual key in a form which has a non-lossy conversion to cose_key.\n\n4. If the key is particularly large (eg ML-DSA) then the Verifier may want to store a hash of it instead of the key itself.\nIt is up to the verifier which hash algorithm to use and what exactly it wants to hash.\nSince the Verifier is creating the hash when the key is added to the ACS/ECT and comparing between hashes this is all internal to the Verifier.\n\n5. I think there is a problem with key thumbprints, which are defined like this.\n\n`tagged-thumbprint-type = #6.557(digest)`\n\nThe problem is that we don't specify what was in the digest which was hashed. Was it a cose-key containing a ML-DSA key, or was it a raw key in the same format. Without that information I don't see a way for the verifier to compare a thumbprint against a key.\n\nI suggest this Version of CoRIM should not expect a Verifier to do a format conversion during thumbprint comparison (ie only expect it to compare thumbprint vs another thumbprint of the same type). ",
+          "createdAt": "2025-02-20T13:37:38Z",
+          "updatedAt": "2025-02-20T13:37:38Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Oftentimes certificates and their thumbprints are presented in the same place. The correspondence may exist, just not explicitly in this representation. We should just document that the correspondence is known/documented.",
+          "createdAt": "2025-02-21T03:47:25Z",
+          "updatedAt": "2025-02-21T03:47:25Z"
         }
       ]
     },
@@ -9431,10 +9481,12 @@
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "EAT defines a [`sw-version`](https://www.ietf.org/archive/id/draft-ietf-rats-eat-31.html#section-4.2.7) claim that is semantically equivalent to CoRIM's `version-map`.\n\nThe difference is that EAT uses an array, while CoRIM uses a map.\n\nFor reasons of RATS types uniformity, avoiding useless transformations, reuse in implementations, etc., it'd be nice to align.\n",
       "createdAt": "2025-02-18T18:25:58Z",
-      "updatedAt": "2025-02-19T19:13:27Z",
+      "updatedAt": "2025-02-20T09:33:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -9457,6 +9509,13 @@
           "body": "It ends up being a question of who's ox gets gored. If you're a verifier then the justification makes sense. If you're an attester and you have committed implementations, then the justification seems really thin. ",
           "createdAt": "2025-02-19T19:13:26Z",
           "updatedAt": "2025-02-19T19:13:26Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It ends up being a question of who's ox gets gored. If you're a verifier then the justification makes sense. If you're an attester and you have committed implementations, then the justification seems really thin.\n\nhmm, the case is more that some implementations may have committed a tad too early, IMO.\n\nHence my sad-face emoji above.",
+          "createdAt": "2025-02-20T08:23:25Z",
+          "updatedAt": "2025-02-20T08:23:25Z"
         }
       ]
     },
@@ -9471,28 +9530,46 @@
       "assignees": [
         "thomas-fossati"
       ],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "#383 introduces a top-level glossary.\n\nThe document has a couple more glossaries in different locations (e.g., [Table 1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#table-1), [Section 8.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-8.2)) that should be combined into the main glossary.\n",
       "createdAt": "2025-02-19T15:31:57Z",
-      "updatedAt": "2025-02-19T15:32:07Z",
+      "updatedAt": "2025-02-20T09:33:39Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Awesome! Thank you for creating this, let's close this asap.",
+          "createdAt": "2025-02-20T09:28:48Z",
+          "updatedAt": "2025-02-20T09:28:48Z"
+        }
+      ]
     },
     {
       "number": 387,
       "id": "I_kwDOH6-tI86qsaQf",
       "title": "fix SVN vs MINSVN in \"8.9.6.1.2. Comparison for svn entries\"",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/387",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "jraman567",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Hi @andrew-draper, we discussed about fixing the algorithm for comparing an SVN entry against a MINSVN condition ECT.",
       "createdAt": "2025-02-19T15:58:45Z",
-      "updatedAt": "2025-02-19T16:00:35Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-02-20T09:28:05Z",
+      "closedAt": "2025-02-20T09:28:03Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/386",
+          "createdAt": "2025-02-20T09:28:03Z",
+          "updatedAt": "2025-02-20T09:28:03Z"
+        }
+      ]
     },
     {
       "number": 388,
@@ -9506,9 +9583,64 @@
       "labels": [],
       "body": "Given the appraisal process as currently specified has multiple requirements for comparing CBOR binary encodings, I'm worried we will have a hard time transitioning people to the information model when subtle encoding differences are expected to change verifier behavior.\n\nIn order to follow up application/rim+{cbor,cose} with application/rim+{json,jws} (JoRIM) for JSON-based infrastructure, we need to do something about this. I was told, \"yeah I ain't don' all that\" when suggesting COSE-signed CBOR documents to neighboring teams that will need to produce externally consumable reference values.\n\nThe wording for the encoding is currently\n> Before performing the binary comparison, a Verifier SHOULD convert both environment-map fields into a form which meets CBOR Core Deterministic Encoding Requirements [STD94].\n\nThen we have informative language, not normative since ECT is informative,\n> If any field which is present in the condition ECT environment-map is not binary identical to the corresponding ACS entry field, then the environments do not match.\n\n> When comparing two $crypto-key-type-choice fields for equality, a Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.\n\n> First, a Verifier SHALL locate the entries in the ACS entry element-list which have a matching element-id as the condition ECT element-map\n\n>The comparison MUST return false if the CBOR encoding of the digests entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).\n\nMy recommendation is that since the encoding canonicalization is SHOULD, and comparisons about binary equality of internal representations are SHALL, we need to specify the abstract semantics normatively, not the informative concrete semantics.\n\nGiven the JC feature multiplexing that comes with providing a JSON or CBOR encoding for data in CDDL, we can't really say two values are the same only if they are the same element in the grammar's [free algebra](https://en.wikipedia.org/wiki/Free_algebra) (sorry), since JSON and CBOR are still syntactically distinct.\nI think it might be fair to say that the the translation of values that are used for \"exact matching\" into an internal representation should be \"equivalence preserving\" given an input equivalence class of input values with equal canonical encodings.\n\nWe'd then need to take care to define the equivalence between JSON and CBOR representations :-/",
       "createdAt": "2025-02-19T17:41:19Z",
-      "updatedAt": "2025-02-19T17:41:19Z",
+      "updatedAt": "2025-02-20T21:13:04Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> we can't really say two values are the same only if they are the same element \n\nThe text is carefully written, and does not include the word \"only\"\n\nIt says that they are equal if their deterministic CBOR encodings are the same, which is another way of saying that they are equal if converting each CBOR object into a tree of constituent unencoded parts returns the same tree in both cases.\n\nWho is specifying JoRIM?",
+          "createdAt": "2025-02-20T13:46:17Z",
+          "updatedAt": "2025-02-20T13:46:17Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "WoRIM \"Wordy RIM\" has a much better ring to it than JoRIM. :slightly_trolling:\n\nIn contrast to \"Concise RIM\", that is.",
+          "createdAt": "2025-02-20T14:25:27Z",
+          "updatedAt": "2025-02-20T14:25:27Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Who is specifying JoRIM?\n\nNo one yet. But this won\u2019t stop folks from coming up with their own jsonification of corim because standard library cbor support is so weak.",
+          "createdAt": "2025-02-20T15:54:39Z",
+          "updatedAt": "2025-02-20T15:54:39Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If the proposal is to change \"exact matching\" for internal representation to \"equivalence preserving\", then I think that makes sense.",
+          "createdAt": "2025-02-20T21:13:02Z",
+          "updatedAt": "2025-02-20T21:13:02Z"
+        }
+      ]
+    },
+    {
+      "number": 394,
+      "id": "I_kwDOH6-tI86rO6Hr",
+      "title": "Reference Values definition",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/394",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "question"
+      ],
+      "body": "Reference Values says\n>A set of values that represent the desired or undesired state of an Attester.\n\nTo whom is the state desired or undesired? The Reference Value Provider, the Relying Party, or both? Note that RATS Architecture describes them as\n>A set of values against which values of Claims can be compared as part of applying an Appraisal Policy for Evidence.\n\nand whether values are desired or undesired depends on the Appraisal Policy for Evidence.",
+      "createdAt": "2025-02-23T00:24:33Z",
+      "updatedAt": "2025-02-23T00:27:59Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There does appear to be a strange valence confusion here. You could conceivably use two different keys for signing reference values and have an \u201cundesired\u201d valence assigned to one to override the other. When checking who claimed what in your policy execution ",
+          "createdAt": "2025-02-23T00:27:59Z",
+          "updatedAt": "2025-02-23T00:27:59Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -58909,24 +59041,26 @@
       "id": "PR_kwDOH6-tI86LxZ3X",
       "title": "Fix order problem Jag found.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/386",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-02-19T15:52:27Z",
-      "updatedAt": "2025-02-19T22:31:57Z",
+      "updatedAt": "2025-02-20T09:27:05Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "147887accc3f2e04a563f371c54c09ce7eea6b4d",
+      "baseRefOid": "2a5742c880f384fb3cfe6a5ed2e76eec844f8d20",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "jagmin",
-      "headRefOid": "8853d042ad189364473ac62ad882fcfa929b4157",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "fe6e5ba808f18839baaab1000da9f6095fb77ab5",
+      "closedAt": "2025-02-20T09:27:05Z",
+      "mergedAt": "2025-02-20T09:27:05Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "8a711333e20ae4beaaf0c899a13db4dbb9060640"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -58940,17 +59074,500 @@
         {
           "id": "PRR_kwDOH6-tI86cpftZ",
           "commit": {
-            "abbreviatedOid": "8853d04"
+            "abbreviatedOid": "fe6e5ba"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2025-02-19T22:31:57Z",
-          "updatedAt": "2025-02-19T22:31:57Z",
+          "updatedAt": "2025-02-20T09:24:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cs2M7",
+          "commit": {
+            "abbreviatedOid": "fe6e5ba"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-20T08:05:35Z",
+          "updatedAt": "2025-02-20T09:24:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ctnJw",
+          "commit": {
+            "abbreviatedOid": "fe6e5ba"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-20T09:24:46Z",
+          "updatedAt": "2025-02-20T09:24:56Z",
           "comments": []
         }
       ]
+    },
+    {
+      "number": 389,
+      "id": "PR_kwDOH6-tI86L35C4",
+      "title": "merge glossaries",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/389",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix #385 \r\n\r\nNote: I've only merged \u00a78.2 and left Table 1 as-is.",
+      "createdAt": "2025-02-20T10:07:06Z",
+      "updatedAt": "2025-02-20T21:14:25Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "glossary-part-2",
+      "headRefOid": "65f4fe419b6631349fc48343f2074bbfdcb181ad",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "And thanks for tidying this up!",
+          "createdAt": "2025-02-20T10:16:01Z",
+          "updatedAt": "2025-02-20T10:16:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "do we have reference to this glossary from first acronym use in the document??",
+          "createdAt": "2025-02-20T10:35:48Z",
+          "updatedAt": "2025-02-20T10:35:48Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> do we have reference to this glossary from first acronym use in the document??\r\n\r\ngood catch!  I have expanded ECT in all the entries (except ECT :-)).",
+          "createdAt": "2025-02-20T10:48:35Z",
+          "updatedAt": "2025-02-20T10:48:35Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86cuPuo",
+          "commit": {
+            "abbreviatedOid": "1bdf361"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T10:14:56Z",
+          "updatedAt": "2025-02-20T10:14:56Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\n: A structure that holds ECTs ( for ECTs see below) that have been appraised.\r\n```",
+              "createdAt": "2025-02-20T10:14:56Z",
+              "updatedAt": "2025-02-20T10:14:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cuQHl",
+          "commit": {
+            "abbreviatedOid": "1bdf361"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!, just one minor point!",
+          "createdAt": "2025-02-20T10:15:35Z",
+          "updatedAt": "2025-02-20T10:15:35Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cuUBW",
+          "commit": {
+            "abbreviatedOid": "1bdf361"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T10:21:45Z",
+          "updatedAt": "2025-02-20T10:21:45Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "If you look through the entries, this is not the only one.\r\nThere are constant references between the glossary entries, even 1:n.",
+              "createdAt": "2025-02-20T10:21:45Z",
+              "updatedAt": "2025-02-20T10:21:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cujR8",
+          "commit": {
+            "abbreviatedOid": "1bdf361"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T10:46:18Z",
+          "updatedAt": "2025-02-20T10:46:18Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\n: A structure that holds Environment-Claim Tuples that have been appraised.\r\n```",
+              "createdAt": "2025-02-20T10:46:18Z",
+              "updatedAt": "2025-02-20T10:46:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86cujq6",
+          "commit": {
+            "abbreviatedOid": "5ddeffd"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T10:46:58Z",
+          "updatedAt": "2025-02-20T10:46:59Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n: A structure that holds results of appraisal and Environment-Claim Tuples that are to be conveyed to a Relying Party.\r\n```",
+              "createdAt": "2025-02-20T10:46:59Z",
+              "updatedAt": "2025-02-20T10:46:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86c06BA",
+          "commit": {
+            "abbreviatedOid": "9c05dd1"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see multiple comments",
+          "createdAt": "2025-02-20T20:45:33Z",
+          "updatedAt": "2025-02-20T21:01:44Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\nEndorsed Values and Evidence are Claims about actual state.\r\n```",
+              "createdAt": "2025-02-20T20:45:33Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "Is there a use case for when it isn't actual state?",
+              "createdAt": "2025-02-20T20:46:01Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\n: A description of the conditions that, if met, allow appraisal of Claims.\r\n```",
+              "createdAt": "2025-02-20T20:48:49Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "Acceptance is defined by the appraisal processing as defined in this spec. It isn't to be modified by profiles or policies. The wording could be misinterpreted to mean this, but could also be interpreted to mean the verifier selects which inputs are allowed based on policy.",
+              "createdAt": "2025-02-20T20:50:48Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n: A structure that holds results of appraisal and Environment-Claim Tuples that are used to construct an Attestation Results message that is conveyed to a Relying Party.\r\n```",
+              "createdAt": "2025-02-20T20:52:33Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            },
+            {
+              "originalPosition": 58,
+              "body": "```suggestion\r\n: A structure containing a set of values that typically describe a Target Environment plus a set of Measurement / Claim values that describe properties of the Target Environment.\r\n```",
+              "createdAt": "2025-02-20T20:55:35Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            },
+            {
+              "originalPosition": 58,
+              "body": "ECTs can contain claims about keys which might not be terminology that is intuitive when keys are described. Target Object is more intuitive. Note that Environment-map includes object identifiers, UUID, UEID, ect. that typically identify objects. There isn't perfect naming for this so I think its OK as is, but adding \"typically\" helps avoid nuanced discussions.",
+              "createdAt": "2025-02-20T20:59:22Z",
+              "updatedAt": "2025-02-20T21:01:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86c1H11",
+          "commit": {
+            "abbreviatedOid": "65f4fe4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-02-20T21:14:25Z",
+          "updatedAt": "2025-02-20T21:14:25Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 390,
+      "id": "PR_kwDOH6-tI86L6gLK",
+      "title": "Clarify \"matching\" with reference to comparison section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/390",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes Issue #336.",
+      "createdAt": "2025-02-20T15:07:38Z",
+      "updatedAt": "2025-02-22T22:35:07Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "asper",
+      "headRefOid": "1cbadb60e8e0ff910af34be4f7364d3306ab1e21",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86cxX8b",
+          "commit": {
+            "abbreviatedOid": "5fd0ea0"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-02-20T15:09:46Z",
+          "updatedAt": "2025-02-20T15:09:46Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dBmpF",
+          "commit": {
+            "abbreviatedOid": "5fd0ea0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-21T23:00:31Z",
+          "updatedAt": "2025-02-21T23:00:32Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nCoMID Reference Values will be matched against the ACS following the comparison rules in {{sec-match-condition-ect}}.\r\n```",
+              "createdAt": "2025-02-21T23:00:32Z",
+              "updatedAt": "2025-02-21T23:00:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dFApo",
+          "commit": {
+            "abbreviatedOid": "5fd0ea0"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-22T22:34:09Z",
+          "updatedAt": "2025-02-22T22:34:09Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "yes",
+              "createdAt": "2025-02-22T22:34:09Z",
+              "updatedAt": "2025-02-22T22:34:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dFAsJ",
+          "commit": {
+            "abbreviatedOid": "1cbadb6"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-22T22:35:07Z",
+          "updatedAt": "2025-02-22T22:35:07Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 391,
+      "id": "PR_kwDOH6-tI86L68CL",
+      "title": "Add registries for all map extension sockets",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/391",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The distinction of types for entity map sockets are suspect. Please discuss.\r\n\r\nCloses Issue #223.",
+      "createdAt": "2025-02-20T15:50:28Z",
+      "updatedAt": "2025-02-20T21:07:50Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "tables",
+      "headRefOid": "29a9b3985cb1d354e2d11a0f772124b8b088ad14",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86c1Ern",
+          "commit": {
+            "abbreviatedOid": "29a9b39"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-02-20T21:07:50Z",
+          "updatedAt": "2025-02-20T21:07:50Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 392,
+      "id": "PR_kwDOH6-tI86L8GtT",
+      "title": "Corim cleanup",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/392",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "fixes #347 ",
+      "createdAt": "2025-02-20T18:07:17Z",
+      "updatedAt": "2025-02-20T20:26:12Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "corim-cleanup",
+      "headRefOid": "51af99d2ab65aca5a9eaf6b572a34f18775214e4",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86czpn8",
+          "commit": {
+            "abbreviatedOid": "e05f835"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T18:18:30Z",
+          "updatedAt": "2025-02-20T18:18:31Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "No need for parentheses in this case.\r\n\r\nWe want it to render as:\r\n\r\n> _\"[...] outlined in Section X.Y.Z.\"_\r\n\r\nrather than \r\n\r\n> _\"[...] outlined in (Section X.Y.Z.)\"_\r\n\r\n\r\n```suggestion\r\nTo facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the verification phases outlined in {{sec-appraisal-procedure}}.\r\n```",
+              "createdAt": "2025-02-20T18:18:31Z",
+              "updatedAt": "2025-02-20T18:19:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86czrac",
+          "commit": {
+            "abbreviatedOid": "e05f835"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T18:22:01Z",
+          "updatedAt": "2025-02-20T18:22:01Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "ok, i will change",
+              "createdAt": "2025-02-20T18:22:01Z",
+              "updatedAt": "2025-02-20T18:22:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86c0vLu",
+          "commit": {
+            "abbreviatedOid": "51af99d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-20T20:24:10Z",
+          "updatedAt": "2025-02-20T20:26:12Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "```suggestion\r\n### Internal Representation of Cryptographic Keys {#sec-ir-ext}\r\n```",
+              "createdAt": "2025-02-20T20:24:10Z",
+              "updatedAt": "2025-02-20T20:26:12Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 393,
+      "id": "PR_kwDOH6-tI86L_ErT",
+      "title": "Encoding equality to equivalence, and key equivalence",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/393",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Issues #375, #388.",
+      "createdAt": "2025-02-21T03:12:19Z",
+      "updatedAt": "2025-02-21T03:40:27Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "equiv",
+      "headRefOid": "9ef85f710ad8f1cc6fc695a2f3853ccf74f94a08",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
