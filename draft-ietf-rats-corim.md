@@ -97,6 +97,7 @@ normative:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
+  I-D.ietf-rats-eat-measured-component: rats-eat-mc
 
 informative:
   RFC7942:
@@ -969,6 +970,8 @@ The following describes each member of the `measurement-values-map`.
   Matching is described in {{sec-cryptokeys-matching}}.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
+
+* `measured-component` (index 15): A measured component defined in {{Section 4.2 of -rats-eat-mc}}.
 
 ###### Version {#sec-comid-version}
 
