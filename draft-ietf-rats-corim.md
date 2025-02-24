@@ -569,7 +569,7 @@ It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid
 CoRIMs distributed in a bundle MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
-It is RECOMMENDED for a `corim-locator-map` containing local URI to afterwards list a nonzero amount of reachable URLs as remote references.
+It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
 
 The following example demonstrates these recommendations for bundling CoRIMs that are subject to different profiles.
 
