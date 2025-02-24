@@ -1717,7 +1717,7 @@ The following CDDL describes the ECT structure in more detail.
 
 The Conceptual Message type determines which attributes are mandatory.
 
-### Internal Representation of keys {#sec-ir-ext}
+### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
 The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
 `typed-crypto-key` consists of a `key` and an optional `key-type`.
