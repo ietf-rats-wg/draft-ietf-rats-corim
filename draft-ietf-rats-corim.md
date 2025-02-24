@@ -243,7 +243,7 @@ See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
 
 reference state:
 : Claims that describe various alternative states of a Target Environment.
-Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.
+Reference Values Claims typically describe various possible states due to versioning, manufacturing practices, or supplier configuration options.
 See also {{Section 2 of -rats-endorsements}}.
 
 Reference Values:
