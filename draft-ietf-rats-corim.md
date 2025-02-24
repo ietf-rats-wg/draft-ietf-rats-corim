@@ -571,7 +571,7 @@ It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI 
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
 It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
 
-The following example demonstrates these recommendations for bundling CoRIMs that are subject to different profiles.
+The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
 
 ~~~cbor-diag
 {::include cddl/examples/cmw-corim-bundle.diag}
