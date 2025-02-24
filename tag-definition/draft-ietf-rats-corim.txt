@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 17 August 2025                                           Linaro
+Expires: 28 August 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        13 February 2025
+                                                        24 February 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 August 2025.
+   This Internet-Draft will expire on 28 August 2025.
 
 Copyright Notice
 
@@ -251,6 +251,12 @@ Table of Contents
 
 1.1.  Terminology and Requirements Language
 
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
    This document uses terms and concepts defined by the RATS
    architecture.  For a complete glossary, see Section 4 of [RFC9334].
 
@@ -265,11 +271,64 @@ Table of Contents
    Section 8 of [STD94] and Appendix G of [RFC8610].  Terms and concepts
    are always referenced as proper nouns, i.e., with Capital Letters.
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in
-   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
+   This document uses the following terms:
+
+   Endorsed values:
+      A set of characteristics of an Attester that do not appear in
+      Evidence.  For example, Endorsed Values may include testing or
+      certification data related to a hardware or firmware module.
+      Endorsed Values are said to be "conditional" when they apply if
+      Attester's actual state matches Verifier's accepted Claims.  See
+      also Section 3 of [I-D.ietf-rats-endorsements].
+
+   Environment:
+      A logical partition within an Attester.  The term "Target
+      Environment" refers to the group of system security metrics that
+      are reported through Evidence.  The term "Attesting Environment"
+      refers to the entity that collects and cryptographically signs
+      such security metrics.  See also Section 3.1 of [RFC9334].
+
+   Measurement:
+      A value associated with specific security characteristics of an
+      Attester that influences the trustworthiness of that Attester.
+      The object of a Measurement could be the invariant part of a
+      firmware component loaded into memory during startup, a run-time
+      integrity check (RTIC), a file system object, or a CPU register.
+      A measured object is part of the Attester's Target Environment.
+      Expected, or "golden," Measurements are compiled as Reference
+      Values, which are used by the Verifier to assess the trust state
+      of the Attester.  See also [TNC.Arch], and Section 9.5.5 of
+      [TPM2.Part1].
+
+   Class ID:
+      An identifier for an Environment that is shared among similar
+      Environment instances, such as those with the same hardware
+      assembly.  See also Section 4.2.4 of [I-D.ietf-rats-eat].
+
+   Instance ID:
+      An identifier of an Environment that is unique to that Environment
+      instance, such as the serial number of a hardware module.  See
+      also Section 4.2.1 of [I-D.ietf-rats-eat].
+
+   Reference Values:
+      A set of values that represent the desired or undesired state of
+      an Attester.  Reference Values are compared against Evidence to
+      determine the trustworthiness of the Attester.  Reference Values
+      with matching Evidence produce "acceptable Claims."  See also
+      Section 4.2 of [RFC9334], Section 8.3 of [RFC9334], and Section 2
+      of [I-D.ietf-rats-endorsements].
+
+   Triple:
+      A term derived from the Resource Description Framework (RDF) to
+      mean a statement expressing a relationship between a subject and
+      an object resource.  The nature of the relationship between
+      subject and object is expressed via a predicate.  In CoRIM, unlike
+      RDF, the predicate of the triple is implicit and is encoded in the
+      triple's name/codepoint.  CoRIM triples typically represent
+      assertions made by the CoRIM author regarding Attesting or Target
+      Environments and their security features, such as Measurements and
+      cryptographic key material.  See also Section 3.1 of
+      [W3C.rdf11-primer].
 
 2.  Verifier Reconciliation
 
@@ -490,7 +549,7 @@ Table of Contents
 
    corim = concise-rim-type-choice
 
-   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= tagged-unsigned-corim-map
    concise-rim-type-choice /= signed-corim
 
 4.1.  CoRIM Map
@@ -508,6 +567,7 @@ Table of Contents
      ? &(entities: 5) => [ + corim-entity-map ]
      * $$corim-map-extension
    }
+   unsigned-corim-map = corim-map
 
    The following describes each child item of this map.
 
@@ -536,7 +596,9 @@ Table of Contents
       information structures to the corim-map.  Described in
       Section 11.3.
 
-   tagged-corim-map = #6.501(corim-map)
+   A corim-map is unsigned, and its tagged form is an entrypoint for
+   parsing a CoRIM, so it is named tagged-unsigned-corim-map. ~~~ cddl
+   tagged-unsigned-corim-map = #6.501(unsigned-corim-map) ~~~
 
 4.1.1.  Identity
 
@@ -642,7 +704,7 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map
      signature: bstr
    ]
 
@@ -2931,8 +2993,8 @@ Table of Contents
    (TEs).  The state-triples field contains Evidence (from Attesters)
    and Endorsements (e.g. from endorsed-triple-record).
 
-   CoMID Reference Values will be matched against the ACS, as per the
-   appraisal policy of the Verifier.  This document describes an example
+   CoMID Reference Values will be matched against the ACS following the
+   comparison rules in Section 8.5.  This document describes an example
    evidence structure which can be matched against these Reference
    Values.
 
@@ -2947,10 +3009,10 @@ Table of Contents
    asserted by digitally signing a Claim using the key.  Hence, Claims
    are added to the ACS under the authority of a cryptographic key.
 
-   Each Claim is encoded as an ECT.  The environment-map and a key
-   within measurement-values-map encode the name of the Claim.  The
-   value matching that key within measurement-values-map is the actual
-   state of the Claim.
+   Each Claim is encoded as an ECT.  The environment-map, the mkey or
+   element-id, and a key within measurement-values-map encode the name
+   of the Claim.  The value matching that key within measurement-values-
+   map is the actual state of the Claim.
 
    This specification does not assign special meanings to any Claim
    name, it only specifies rules for determining when two Claim names
@@ -3389,8 +3451,8 @@ Table of Contents
 
    *  If the condition ECT value for measurement-values-map codepoint 1
       is a uint tagged with #6.553 then a minimum comparison is
-      performed.  The comparison MUST return true if the value of SVN is
-      less or equal to than the uint value in the condition ECT.
+      performed.  The comparison MUST return true if the uint value in
+      the condition ECT is less than or equal to the value of SVN.
 
    If the entry svn-type is a uint tagged with #6.553, then comparison
    with the uint named as MINSVN is as follows.
@@ -3675,8 +3737,8 @@ Table of Contents
    | 500     | tag         | Reserved for backward         | RFCthis   |
    |         |             | compatibility                 |           |
    +---------+-------------+-------------------------------+-----------+
-   | 501     | map         | A tagged-corim-map, see       | RFCthis   |
-   |         |             | Section 4.1                   |           |
+   | 501     | map         | A tagged-unsigned-corim-      | RFCthis   |
+   |         |             | map, see Section 4.1          |           |
    +---------+-------------+-------------------------------+-----------+
    | 502-504 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
@@ -3747,8 +3809,8 @@ Table of Contents
 11.3.  CoRIM Map Registry
 
    This document defines a new registry titled "CoRIM Map".  The
-   registry uses integer values as index values for items in 'unsigned-
-   corim-map' CBOR maps.
+   registry uses integer values as index values for items in corim-map
+   CBOR maps.
 
    Future registrations for this registry are to be made based on
    [RFC8126] as follows:
@@ -4127,11 +4189,28 @@ Table of Contents
               RFC 8126, DOI 10.17487/RFC8126, June 2017,
               <https://www.rfc-editor.org/rfc/rfc8126>.
 
+   [TNC.Arch] Trusted Computing Group, "TCG Trusted Network Connect TNC
+              Architecture for Interoperability", Specification Version
+              1.1 Revision 2 , May 2006,
+              <https://trustedcomputinggroup.org/wp-content/uploads/
+              TNC_Architecture_v1_1_r2.pdf>.
+
+   [TPM2.Part1]
+              Trusted Computing Group, "Trusted Platform Module Library,
+              Part 1: Architecture", Family "2.0", Level 00, Revision
+              01.83 , January 2024,
+              <https://trustedcomputinggroup.org/resource/tpm-library-
+              specification/>.
+
+   [W3C.rdf11-primer]
+              "RDF 1.1 Primer", W3C NOTE rdf11-primer, W3C rdf11-primer,
+              <https://www.w3.org/TR/rdf11-primer/>.
+
 Appendix A.  Base CoRIM CDDL
 
    corim = concise-rim-type-choice
 
-   concise-rim-type-choice /= tagged-corim-map
+   concise-rim-type-choice /= tagged-unsigned-corim-map
    concise-rim-type-choice /= signed-corim
 
    concise-tl-tag = {
@@ -4165,6 +4244,7 @@ Appendix A.  Base CoRIM CDDL
      ? &(entities: 5) => [ + corim-entity-map ]
      * $$corim-map-extension
    }
+   unsigned-corim-map = corim-map
 
    corim-meta-map = {
      &(signer: 0) => corim-signer-map
@@ -4182,7 +4262,7 @@ Appendix A.  Base CoRIM CDDL
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map
      signature: bstr
    ]
 
@@ -4199,13 +4279,13 @@ Appendix A.  Base CoRIM CDDL
 
    signed-corim = #6.18(COSE-Sign1-corim)
 
-   tagged-corim-map = #6.501(corim-map)
-
    tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
 
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
 
    tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
+
+   tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
