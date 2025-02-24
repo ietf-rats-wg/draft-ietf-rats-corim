@@ -2861,7 +2861,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 9     | (reserved)                            | {{&SELF}}     |
 | 10    | conditional-endorsement-triples       | {{&SELF}}     |
 | 11-18446744073709551616 | Unassigned | |
-{: #tbl-iana-triples-map-items title="CoMID Triples Map Item Initial Registrations"}
+{: #tbl-iana-triples-map-items title="CoMID Triples Map Items Initial Registrations"}
 
 ## CoMID Measurement Values Map Registry {#sec-iana-comid-measurement-values-map}
 
@@ -2899,7 +2899,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 13    | cryptokeys          | {{&SELF}}     |
 | 14    | integrity-registers | {{&SELF}}     |
 | 15-18446744073709551616 | Unassigned | |
-{: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Item Initial Registrations"}
+{: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
 
@@ -2912,7 +2912,7 @@ Future registrations for this registry are to be made based on {{?RFC8126}} as f
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
-{: #tbl-iana-comid-measurement-values-map-items-reg-procedures title="CoMID Measurement Values Map Items Registration Procedures"}
+{: #tbl-iana-comid-flags-map-items-reg-procedures title="CoMID Flags Map Items Registration Procedures"}
 
 All negative values are reserved for Private Use.
 
@@ -2932,7 +2932,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 8     | is-tcb                       | {{&SELF}}     |
 | 9     | is-confidentiality-protected | {{&SELF}}     |
 | 10-18446744073709551616 | Unassigned | |
-{: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Item Initial Registrations"}
+{: #tbl-iana-comid-flags-map-items title="Flags Map Items Initial Registrations"}
 
 ## CoTL Map Registry {#sec-iana-cotl}
 
