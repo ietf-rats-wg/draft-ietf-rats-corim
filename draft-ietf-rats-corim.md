@@ -298,7 +298,7 @@ Tags can be of different types:
 
 * Concise Module ID (CoMID) tags ({{sec-comid}}) contain metadata and claims about the hardware and firmware modules.
 
-* Concise Software ID (CoSWID) tags ({{-coswid}}) are used to uniquely identify, describe and manage software components.
+* Concise Software ID (CoSWID) tags ({{-coswid}}) are used to identify, describe and manage software components.
 
 * Concise Tag List (CoTL) tags ({{sec-cotl}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
 
