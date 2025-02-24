@@ -2180,8 +2180,7 @@ The ACS contains the actual state of Attester's Target Environments (TEs).
 The ACS contains Evidence ECTs (from Attesters) and Endorsements ECTs
 (e.g. from `endorsed-triple-record`).
 
-CoMID Reference Values will be matched against the ACS, as per
-the appraisal policy of the Verifier.
+CoMID Reference Values will be matched against the ACS following the comparison rules in {{sec-match-condition-ect}}.
 This document describes an example evidence structure which can be
 matched against these Reference Values.
 
