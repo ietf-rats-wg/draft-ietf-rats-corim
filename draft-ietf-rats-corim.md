@@ -565,7 +565,7 @@ The `corim-meta` statement ensures that each CoRIM in the bundle has an identifi
 
 The CMW MAY use any label for its CoRIMs.
 If there is a hierarchical structure to the CoRIM bundle, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
-It is RECOMMENDED to use to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by [RFC4122].
+It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by [RFC4122].
 CoRIMs distributed in a bundle MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
