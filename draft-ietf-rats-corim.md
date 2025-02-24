@@ -545,8 +545,8 @@ Described in {{sec-common-validity}}.
 
 An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
 An unsigned CoRIM may be a payload within a secure channel.
-In both cases, there is a method of integrity protection that relies on some authentication.
-The role of "the CoRIM signer" MUST be specified in both cases, with the same constraint on the signed CoRIM that there is a single signer.
+The CoRIM signer authority is taken from the authenticated credential of the same entity that originates the CoRIM.
+A CoRIM role entry that contains the `manifest-signer` role MUST be added to `corim-entity-map`.
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
