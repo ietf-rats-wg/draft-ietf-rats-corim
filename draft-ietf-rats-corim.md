@@ -1337,7 +1337,7 @@ The existence of these keys is asserted in Evidence, Reference Values, or Endors
 
 The attestation keys may have been used to sign Evidence or may be held in reserve for later use.
 
-Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -2631,7 +2631,7 @@ groups to use this information as they see fit".
 
 Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
 The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
-Any mistake in the appraisal process could have security implications.
+Any mistake in the appraisal procedure conducted by the Verifier could have security implications.
 For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
 
 Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
@@ -2648,16 +2648,17 @@ This includes the following aspects:
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
 - Failing securely in the event of errors to avoid compromising the security of the system.
 
-The appraisal process should be auditable and reproducible.
-The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).
+It is critical that appraisal procedures are auditable and reproducible.
+The integrity of code and data during execution is an explicit objective, for example, ensuring that the appraisal functions are executed in an attestable trusted execution environment (TEE).
 
 The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
 For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
+As it is possible to use the public part of an asymmetric key pair for Evidence generation to be used to identify an Attesting Environment, this method of potentially identifying unique instances of Attesting Environments (and profiling their respective owners) can come with privacy considerations that have to be carefully weighed.
 
 The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
-Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
+Minimizing the use of intermediaries is also vital: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
