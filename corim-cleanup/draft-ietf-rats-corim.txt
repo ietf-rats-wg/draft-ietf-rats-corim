@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 28 August 2025                                           Linaro
+Expires: 29 August 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        24 February 2025
+                                                        25 February 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 August 2025.
+   This Internet-Draft will expire on 29 August 2025.
 
 Copyright Notice
 
@@ -208,12 +208,18 @@ Table of Contents
      12.1.  New COSE Header Parameters
      12.2.  New CBOR Tags
      12.3.  CoRIM Map Registry
-     12.4.  CoMID Map Registry
-     12.5.  CoTL Map Registry
-     12.6.  New Media Types
-       12.6.1.  rim+cbor
-       12.6.2.  rim+cose
-     12.7.  CoAP Content-Formats Registration
+     12.4.  CoRIM Entity Map Registry
+     12.5.  CoRIM Signer Map Registry
+     12.6.  CoMID Map Registry
+     12.7.  CoMID Entity Map Registry
+     12.8.  CoMID Triples Map Registry
+     12.9.  CoMID Measurement Values Map Registry
+     12.10. CoMID Flags Map Registry
+     12.11. CoTL Map Registry
+     12.12. New Media Types
+       12.12.1.  rim+cbor
+       12.12.2.  rim+cose
+     12.13. CoAP Content-Formats Registration
    13. References
      13.1.  Normative References
      13.2.  Informative References
@@ -656,7 +662,7 @@ Table of Contents
    CoRIM profiles SHOULD be specified in a publicly available document.
 
    A CoRIM profile can use one of the base CoRIM media type defined in
-   Section 12.6.1 with the profile parameter set to the appropriate
+   Section 12.12.1 with the profile parameter set to the appropriate
    value.  Alternatively, it MAY define and register its own media type.
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
@@ -2008,7 +2014,7 @@ Table of Contents
       Described in Section 7.3.
 
    *  $$concise-tl-tag-extension: This CDDL socket is used to add new
-      information structures to the concise-tl-tag.  See Section 12.5.
+      information structures to the concise-tl-tag.  See Section 12.11.
       The $$concise-tl-tag-extension extension socket is empty in this
       specification.
 
@@ -2050,7 +2056,7 @@ Table of Contents
    *  entity-name (index 0): The name of entity which is responsible for
       the action(s) as defined by the role. $entity-name-type-choice can
       only be text.  Other specifications can extend the $entity-name-
-      type-choice.  See Section 12.4.
+      type-choice.  See Section 12.6.
 
    *  reg-id (index 1): A URI associated with the organization that owns
       the entity name.
@@ -3832,11 +3838,11 @@ Table of Contents
                     Table 10: CoRIM Map Items Initial
                               Registrations
 
-12.4.  CoMID Map Registry
+12.4.  CoRIM Entity Map Registry
 
-   This document defines a new registry titled "CoMID Map".  The
-   registry uses integer values as index values for items in 'concise-
-   mid-tag' CBOR maps.
+   This document defines a new registry titled "CoRIM Entity Map".  The
+   registry uses integer values as index values for items in corim-
+   entity-map CBOR maps.
 
    Future registrations for this registry are to be made based on
    [RFC8126] as follows:
@@ -3849,7 +3855,81 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 11: CoMID Map Items
+                      Table 11: CoRIM Entity Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoRIM Entity Map" registry are
+   provided below.  Assignments consist of an integer index value, the
+   item name, and a reference to the defining specification.
+
+                  +=======+============+===============+
+                  | Index | Item Name  | Specification |
+                  +=======+============+===============+
+                  | 0-255 | Unassigned |               |
+                  +-------+------------+---------------+
+
+                     Table 12: CoRIM Entity Map Items
+                          Initial Registrations
+
+12.5.  CoRIM Signer Map Registry
+
+   This document defines a new registry titled "CoRIM Signer Map".  The
+   registry uses integer values as index values for items in corim-
+   signer-map CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                      Table 13: CoRIM Signer Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoRIM Signer Map" registry are
+   provided below.  Assignments consist of an integer index value, the
+   item name, and a reference to the defining specification.
+
+                  +=======+=============+===============+
+                  | Index | Item Name   | Specification |
+                  +=======+=============+===============+
+                  | 0     | signer-name | RFCthis       |
+                  +-------+-------------+---------------+
+                  | 1     | signer-uri  | RFCthis       |
+                  +-------+-------------+---------------+
+                  | 2-255 | Unassigned  |               |
+                  +-------+-------------+---------------+
+
+                      Table 14: CoRIM Signer Map Items
+                           Initial Registrations
+
+12.6.  CoMID Map Registry
+
+   This document defines a new registry titled "CoMID Map".  The
+   registry uses integer values as index values for items in concise-
+   mid-tag CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                         Table 15: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -3874,10 +3954,233 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 12: CoMID Map Items Initial
+                    Table 16: CoMID Map Items Initial
                               Registrations
 
-12.5.  CoTL Map Registry
+12.7.  CoMID Entity Map Registry
+
+   This document defines a new registry titled "CoRIM Entity Map".  The
+   registry uses integer values as index values for items in corim-
+   entity-map CBOR maps.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+                   +=========+=========================+
+                   | Range   | Registration Procedures |
+                   +=========+=========================+
+                   | 0-127   | Standards Action        |
+                   +---------+-------------------------+
+                   | 128-255 | Specification Required  |
+                   +---------+-------------------------+
+
+                      Table 17: CoMID Entity Map Items
+                          Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoMID Entity Map" registry are
+   provided below.  Assignments consist of an integer index value, the
+   item name, and a reference to the defining specification.
+
+                  +=======+============+===============+
+                  | Index | Item Name  | Specification |
+                  +=======+============+===============+
+                  | 0-255 | Unassigned |               |
+                  +-------+------------+---------------+
+
+                     Table 18: CoMID Entity Map Items
+                          Initial Registrations
+
+12.8.  CoMID Triples Map Registry
+
+   This document defines a new registry titled "CoMID Triples Map".  The
+   registry uses integer values as index values for items in the
+   triples-map CBOR maps in concise-mid-tag codepoint 4.
+
+Future registrations for this registry are to be made based on {{RFC8126}} as follows:
+
+         +============================+=========================+
+         | Range                      | Registration Procedures |
+         +============================+=========================+
+         | 0-1023                     | Standards Action        |
+         +----------------------------+-------------------------+
+         | 1024-65535                 | Specification Required  |
+         +----------------------------+-------------------------+
+         | 65536-18446744073709551616 | First come first served |
+         +----------------------------+-------------------------+
+
+              Table 19: CoMID Triples Map Items Registration
+                                Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoMID Triples Map" registry are
+   provided below.  Assignments consist of an integer index value, the
+   item name, and a reference to the defining specification.
+
+   +=========================+=========================+===============+
+   | Index                   | Item Name               | Specification |
+   +=========================+=========================+===============+
+   | 0                       | reference-              | RFCthis       |
+   |                         | triples                 |               |
+   +-------------------------+-------------------------+---------------+
+   | 1                       | endorsed-               | RFCthis       |
+   |                         | triples                 |               |
+   +-------------------------+-------------------------+---------------+
+   | 2                       | identity-               | RFCthis       |
+   |                         | triples                 |               |
+   +-------------------------+-------------------------+---------------+
+   | 3                       | attest-key-             | RFCthis       |
+   |                         | triples                 |               |
+   +-------------------------+-------------------------+---------------+
+   | 4                       | dependency-             | RFCthis       |
+   |                         | triples                 |               |
+   +-------------------------+-------------------------+---------------+
+   | 5                       | membership-             | RFCthis       |
+   |                         | trples                  |               |
+   +-------------------------+-------------------------+---------------+
+   | 6                       | coswid-triples          | RFCthis       |
+   +-------------------------+-------------------------+---------------+
+   | 7                       | (reserved)              | RFCthis       |
+   +-------------------------+-------------------------+---------------+
+   | 8                       | conditional-            | RFCthis       |
+   |                         | endorsment-             |               |
+   |                         | series-triples          |               |
+   +-------------------------+-------------------------+---------------+
+   | 9                       | (reserved)              | RFCthis       |
+   +-------------------------+-------------------------+---------------+
+   | 10                      | conditional-            | RFCthis       |
+   |                         | endorsement-            |               |
+   |                         | triples                 |               |
+   +-------------------------+-------------------------+---------------+
+   | 11-18446744073709551616 | Unassigned              |               |
+   +-------------------------+-------------------------+---------------+
+
+          Table 20: CoMID Triples Map Items Initial Registrations
+
+12.9.  CoMID Measurement Values Map Registry
+
+   This document defines a new registry titled "CoMID Measurement Values
+   Map".  The registry uses integer values as index values for items in
+   multiple triples' representations.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+         +============================+=========================+
+         | Range                      | Registration Procedures |
+         +============================+=========================+
+         | 0-1023                     | Standards Action        |
+         +----------------------------+-------------------------+
+         | 1024-65535                 | Specification Required  |
+         +----------------------------+-------------------------+
+         | 65536-18446744073709551616 | First come first served |
+         +----------------------------+-------------------------+
+
+               Table 21: CoMID Measurement Values Map Items
+                         Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoMID Measurement Values Map" registry
+   are provided below.  Assignments consist of an integer index value,
+   the item name, and a reference to the defining specification.
+
+     +=========================+=====================+===============+
+     | Index                   | Item Name           | Specification |
+     +=========================+=====================+===============+
+     | 0                       | version             | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 1                       | svn                 | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 2                       | digests             | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 3                       | flags               | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 4                       | raw-value           | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 5                       | raw-value-mask      | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 6                       | mac-addr            | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 7                       | ip-addr             | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 8                       | serial-number       | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 9                       | ueid                | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 10                      | uuid                | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 11                      | name                | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 12                      | (reserved)          | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 13                      | cryptokeys          | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 14                      | integrity-registers | RFCthis       |
+     +-------------------------+---------------------+---------------+
+     | 15-18446744073709551616 | Unassigned          |               |
+     +-------------------------+---------------------+---------------+
+
+        Table 22: Measurement Values Map Items Initial Registrations
+
+12.10.  CoMID Flags Map Registry
+
+   This document defines a new registry titled "CoMID Flags Map".  The
+   registry uses integer values as index values for items in
+   measurement-values-map codepoint 3.
+
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
+
+         +============================+=========================+
+         | Range                      | Registration Procedures |
+         +============================+=========================+
+         | 0-1023                     | Standards Action        |
+         +----------------------------+-------------------------+
+         | 1024-65535                 | Specification Required  |
+         +----------------------------+-------------------------+
+         | 65536-18446744073709551616 | First come first served |
+         +----------------------------+-------------------------+
+
+         Table 23: CoMID Flags Map Items Registration Procedures
+
+   All negative values are reserved for Private Use.
+
+   Initial registrations for the "CoMID Measurement Values Map" registry
+   are provided below.  Assignments consist of an integer index value,
+   the item name, and a reference to the defining specification.
+
+   +=======================+============================+=============+
+   |Index                  |Item Name                   |Specification|
+   +=======================+============================+=============+
+   |0                      |is-configured               |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |1                      |is-secure                   |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |2                      |is-recovery                 |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |3                      |is-debug                    |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |4                      |is-replay-protected         |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |5                      |is-integrity-protected      |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |6                      |is-runtime-meas             |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |7                      |is-immutable                |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |8                      |is-tcb                      |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |9                      |is-confidentiality-protected|RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |10-18446744073709551616|Unassigned                  |             |
+   +-----------------------+----------------------------+-------------+
+
+             Table 24: Flags Map Items Initial Registrations
+
+12.11.  CoTL Map Registry
 
    This document defines a new registry titled "CoTL Map".  The registry
    uses integer values as index values for items in 'concise-tl-tag'
@@ -3894,7 +4197,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 13: CoTL Map Items
+                          Table 25: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -3912,28 +4215,28 @@ Table of Contents
                  +-------+--------------+---------------+
                  | 2     | tl-validity  | RFCthis       |
                  +-------+--------------+---------------+
-                 | 5-255 | Unassigned   |               |
+                 | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 14: CoTL Map Items Initial
+                     Table 26: CoTL Map Items Initial
                               Registrations
 
-12.6.  New Media Types
+12.12.  New Media Types
 
    IANA is requested to add the following media types to the "Media
    Types" registry [IANA.media-types].
 
-   +==========+======================+===========================+
-   | Name     | Template             | Reference                 |
-   +==========+======================+===========================+
-   | rim+cbor | application/rim+cbor | RFCthis, (Section 12.6.1) |
-   +----------+----------------------+---------------------------+
-   | rim+cose | application/rim+cose | RFCthis, (Section 12.6.2) |
-   +----------+----------------------+---------------------------+
+   +==========+======================+============================+
+   | Name     | Template             | Reference                  |
+   +==========+======================+============================+
+   | rim+cbor | application/rim+cbor | RFCthis, (Section 12.12.1) |
+   +----------+----------------------+----------------------------+
+   | rim+cose | application/rim+cose | RFCthis, (Section 12.12.2) |
+   +----------+----------------------+----------------------------+
 
-                      Table 15: New Media Types
+                      Table 27: New Media Types
 
-12.6.1.  rim+cbor
+12.12.1.  rim+cbor
 
    Type name:  application
    Subtype name:  rim+cbor
@@ -3959,7 +4262,7 @@ Table of Contents
    Author/Change controller:  IETF
    Provisional registration?  Maybe
 
-12.6.2.  rim+cose
+12.12.2.  rim+cose
 
    Type name:  application
    Subtype name:  rim+cose
@@ -3986,7 +4289,7 @@ Table of Contents
    Author/Change controller:  IETF
    Provisional registration?  Maybe
 
-12.7.  CoAP Content-Formats Registration
+12.13.  CoAP Content-Formats Registration
 
    IANA is requested to register the two following Content-Format
    numbers in the "CoAP Content-Formats" sub-registry, within the
@@ -4001,7 +4304,7 @@ Table of Contents
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 16: New Content-Formats
+                  Table 28: New Content-Formats
 
 13.  References
 
