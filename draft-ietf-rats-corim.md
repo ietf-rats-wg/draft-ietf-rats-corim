@@ -1651,7 +1651,7 @@ The Claims in the output staging area and other Verifier related metadata are tr
 # Example Verifier Algorithm {#sec-verifier-abstraction}
 
 This document assumes that Verifier implementations may differ.
-To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the verification phases outlined in {{sec-appraisal-procedure}}.
+To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.
 
 The following terms are used:
 
