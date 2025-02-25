@@ -151,16 +151,21 @@ This document specifies the information elements for representing Endorsements a
 
 # Introduction {#sec-intro}
 
-In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) associated with the Attester.
-Endorsements and Reference Values are obtained from relevant supply chain actors, such as manufacturers, distributors, or device owners.
+RATS Architecture {{Section 4 of -rats-arch}}., specifies two important roles, Endorsers and Reference Value Providers.
+These roles are typically fulfilled by relevant supply chain actors, such as manufacturers, distributors, or device owners.
+They provide the required trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) about the Attester. This information is fundamental for correct operation of a Verifier (i.e. appraising Evidence received from the Attester).
+
 In a complex supply chain, multiple actors will likely produce these values over several points in time.
-As such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module that is measured amongst a long chain of measurements.
+As such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module
+that is measured amongst a long chain of measurements.
+
 Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
-This document specifies Concise Reference Integrity Manifests (CoRIM) - a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
+In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values, and to aid the supply chain eco-system, this document specifies a standards based data model known as Concise Reference Integrity Manifests (CoRIM). CoRIM is a CBOR {{-cbor}} based data structure that addresses the above challenges by using an extensible format common to all supply chain actors and Verifiers.
 CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view.
 See {{sec-verifier-rec}}.
+
 
 ## Terminology and Requirements Language
 
