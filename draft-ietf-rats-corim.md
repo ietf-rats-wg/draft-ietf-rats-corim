@@ -193,7 +193,7 @@ Appraisal Claims Set (ACS):
 The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
 
 Appraisal Policy:
-: A description of the conditions that, if met, allow acceptance of Claims.
+: A description of the conditions that, if met, allow appraisal of Claims.
 Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion.
 Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
