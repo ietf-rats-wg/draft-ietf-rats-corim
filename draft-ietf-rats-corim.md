@@ -1688,8 +1688,6 @@ To facilitate the description of normative Verifier behavior, this document uses
 The terms
 Claim,
 Environment-Claim Tuple (ECT),
-reference state,
-actual state,
 Authority,
 Appraisal Claims Set (ACS),
 Appraisal Policy, and
