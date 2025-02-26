@@ -2177,7 +2177,7 @@ For the purposes of this document, appraisal is described in terms of the above 
 #### ACS Processing Requirements
 
 The ACS contains the actual state of Attester's Target Environments (TEs).
-The ACS contains Evidence ECTs (from Attesters) and Endorsements ECTs
+The ACS contains Evidence ECTs (from Attesters) and Endorsement ECTs
 (e.g. from `endorsed-triple-record`).
 
 CoMID Reference Values will be matched against the ACS following the comparison rules in {{sec-match-condition-ect}}.
