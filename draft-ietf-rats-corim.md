@@ -99,6 +99,7 @@ normative:
   IANA.named-information: named-info
 
 informative:
+  RFC7519: jwt
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
@@ -169,15 +170,45 @@ See {{sec-verifier-rec}}.
 This document uses terms and concepts defined by the RATS architecture.
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
+This document uses the terms _"actual state"_ and _"reference state"_ as defined in {{Section 2 of -rats-endorsements}}.
+
 In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.
 
 The terminology from CBOR {{-cbor}}, CDDL {{-cddl}} and COSE {{-cose}} applies;
 in particular, CBOR diagnostic notation is defined in {{Section 8 of -cbor}}
 and {{Section G of -cddl}}. Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.
 
+### Glossary {#sec-glossary}
+
 This document uses the following terms:
 
 {: vspace="0"}
+Appraisal Claims Set (ACS):
+: A structure that holds Environment-Claim Tuples that have been appraised.
+The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
+
+Appraisal Policy:
+: A description of the conditions that, if met, allow appraisal of Claims.
+Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion.
+Appraisal Policy resolves which entities are credible and under what conditions.
+See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
+
+Attestation Results Set (ARS):
+: A structure that holds results of appraisal and Environment-Claim Tuples that are used to construct an Attestation Results message that is conveyed to a Relying Party.
+
+Authority:
+: The entity asserting that a Claim is true.
+Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
+A cryptographic key can be a proxy for a human or organizational entity.
+
+Claim:
+: A piece of information, in the form of a key-value pair.
+See also {{Section 4.2 of -rats-arch}} and {{Section 2 of -jwt}}.
+
+Class ID:
+: An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
+See also {{Section 4.2.4 of -eat}}.
+
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
@@ -190,6 +221,14 @@ The term "Target Environment" refers to the group of system security metrics tha
 The term "Attesting Environment" refers to the entity that collects and cryptographically signs such security metrics.
 See also {{Section 3.1 of -rats-arch}}.
 
+Environment-Claim Tuple (ECT):
+: A structure containing a set of values that describe a Target Environment plus a set of Measurement / Claim values that describe properties of the Target Environment.
+The ECT also contains Authority which identifies the entity that authored the ECT.
+
+Instance ID:
+: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
+See also {{Section 4.2.1 of -eat}}.
+
 Measurement:
 : A value associated with specific security characteristics of an Attester that influences the trustworthiness of that Attester.
 The object of a Measurement could be the invariant part of a firmware component loaded into memory during startup, a run-time integrity check (RTIC), a file system object, or a CPU register.
@@ -197,17 +236,9 @@ A measured object is part of the Attester's Target Environment.
 Expected, or "golden," Measurements are compiled as Reference Values, which are used by the Verifier to assess the trust state of the Attester.
 See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
 
-Class ID:
-: An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
-See also {{Section 4.2.4 of -eat}}.
-
-Instance ID:
-: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
-See also {{Section 4.2.1 of -eat}}.
-
 Reference Values:
 : A set of values that represent the desired or undesired state of an Attester.
-Reference Values are compared against Evidence to determine the trustworthiness of the Attester.
+Reference Values are compared against Evidence to determine whether Attester state is corroborated by a Reference Value Provider.
 Reference Values with matching Evidence produce "acceptable Claims."
 See also {{Section 4.2 of -rats-arch}}, {{Section 8.3 of -rats-arch}}, and {{Section 2 of -rats-endorsements}}.
 
@@ -1653,37 +1684,14 @@ The Claims in the output staging area and other Verifier related metadata are tr
 This document assumes that Verifier implementations may differ.
 To facilitate the description of normative Verifier behavior, this document uses an abstract representation of Verifier internals.
 
-The following terms are used:
-
-{: vspace="0"}
-Claim:
-: A piece of information, in the form of a key-value pair.
-
-Environment-Claim Tuple (ECT):
-
-: A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
-The ECT also contains authority which identifies the entity that authored the ECT.
-
-reference state:
-: Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
-
-actual state:
-: Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.
-See also ({{Section 2 of -rats-endorsements}}).
-
-Authority:
-: The entity asserting that a claim is true.
-Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
-
-Appraisal Claims Set (ACS):
-: A structure that holds ECTs that have been appraised.
-The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
-
-Appraisal Policy:
-: A description of the conditions that, if met, allow acceptance of Claims. Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion. Appraisal Policy resolves which entities are credible and under what conditions.  See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
-
-Attestation Results Set (ARS):
-: A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
+The terms
+Claim,
+Environment-Claim Tuple (ECT),
+Authority,
+Appraisal Claims Set (ACS),
+Appraisal Policy, and
+Attestation Results Set (ARS)
+are used with the meaning defined in {{sec-glossary}}.
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
