@@ -550,23 +550,25 @@ A CoRIM role entry that contains the `manifest-signer` role MUST be added to `co
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
-### CoRIM bundles
+### CoRIM collections
 
-A method of signing a bundle of CoRIMs together is through a signed RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
-The COSE_Sign1 signature format can be used with a Collection CMW.
-The COSE protected header can include a Collection CMW type name.
-The collection type name SHALL be of the form: `tag:{{&SELF}}:bundle`.
+Several CoRIMs may share the same signer and use locally-resolvable references to each other by using a signed RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
+The CMW collection type is similar to a profile in its way of restricting the shape of the CMW collection.
+The collection type for a CoRIM a collection SHALL be `tag:{{&SELF}}:corim`.
+
+A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
-The `corim-meta` statement ensures that each CoRIM in the bundle has an identified signer.
+The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
+The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
 
 ~~~ cddl
-{::include cddl/cmw-corim-bundle.cddl}
+{::include cddl/cmw-corim-collection.cddl}
 ~~~
 
 The Collection CMW MAY use any label for its CoRIMs.
-If there is a hierarchical structure to the CoRIM bundle, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
+If there is a hierarchical structure to the CoRIM Collection CMW, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
 It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by [RFC4122].
-CoRIMs distributed in a bundle MAY declare their interdependence `dependent-rims` with local resource indicators.
+CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
 It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
@@ -574,7 +576,7 @@ It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards 
 The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
 
 ~~~cbor-diag
-{::include cddl/examples/cmw-corim-bundle.diag}
+{::include cddl/examples/cmw-corim-collection.diag}
 ~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
