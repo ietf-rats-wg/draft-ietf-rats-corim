@@ -554,7 +554,7 @@ It is out of scope of this document to specify a method of delegating the signer
 
 A method of signing a bundle of CoRIMs together is through a signed RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
 The COSE_Sign1 signature format can be used with a Collection CMW.
-The COSE protected header can include a CMW collection type name.
+The COSE protected header can include a Collection CMW type name.
 The collection type name SHALL be of the form: `tag:{{&SELF}}:bundle`.
 The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
 The `corim-meta` statement ensures that each CoRIM in the bundle has an identified signer.
