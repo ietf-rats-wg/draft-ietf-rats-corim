@@ -323,21 +323,20 @@ The CDDL definitions in this document follows the naming conventions illustrated
 
 A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
 A CoRIM can be digitally signed with a COSE {{-cose}} signature.
-A tag identifies and describes properties of modules or components of a system.
+A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.
 
 Tags can be of different types:
 
 * Concise Module ID (CoMID) tags ({{sec-comid}}) contain metadata and claims about the hardware and firmware modules.
 
-* Concise Software ID (CoSWID) tags ({{-coswid}}) describe software components.
+* Concise Software ID (CoSWID) tags ({{-coswid}}) are used to identify, describe and manage software components.
 
 * Concise Tag List (CoTL) tags ({{sec-cotl}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
 
-The set of tags is extensible so that future specifications can add new kinds of information.
+CoRIM allows for new types of tags to be added in future specifications.
 For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
 
 Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
-[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73
 
 CoRIM can also carry the following optional metadata:
 
