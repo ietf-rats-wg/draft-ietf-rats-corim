@@ -170,6 +170,8 @@ See {{sec-verifier-rec}}.
 This document uses terms and concepts defined by the RATS architecture.
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
+This document uses the terms _"actual state"_ and _"reference state"_ as defined in {{Section 2 of -rats-endorsements}}.
+
 In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.
 
 The terminology from CBOR {{-cbor}}, CDDL {{-cddl}} and COSE {{-cose}} applies;
@@ -181,13 +183,6 @@ and {{Section G of -cddl}}. Terms and concepts are always referenced as proper n
 This document uses the following terms:
 
 {: vspace="0"}
-
-actual state:
-: Claims that describe a Target Environment instance at a given point in time.
-Endorsed Values and Evidence are Claims about actual state.
-An Attester can consist of multiple components, with each component representing a particular scope of appraisal.
-See also ({{Section 2 of -rats-endorsements}}).
-
 Appraisal Claims Set (ACS):
 : A structure that holds Environment-Claim Tuples that have been appraised.
 The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
@@ -240,11 +235,6 @@ The object of a Measurement could be the invariant part of a firmware component 
 A measured object is part of the Attester's Target Environment.
 Expected, or "golden," Measurements are compiled as Reference Values, which are used by the Verifier to assess the trust state of the Attester.
 See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
-
-reference state:
-: Claims that describe various alternative states of a Target Environment.
-Reference Values Claims typically describe various possible states due to versioning, manufacturing practices, or supplier configuration options.
-See also {{Section 2 of -rats-endorsements}}.
 
 Reference Values:
 : A set of values that represent the desired or undesired state of an Attester.
