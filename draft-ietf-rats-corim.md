@@ -2738,10 +2738,59 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 3-255 | Unassigned
 {: #tbl-iana-corim-map-items title="CoRIM Map Items Initial Registrations"}
 
+## CoRIM Entity Map Registry {#sec-iana-corim-entity-map}
+
+This document defines a new registry titled "CoRIM Entity Map".
+The registry uses integer values as index values for items in `corim-entity-map` CBOR maps.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range             | Registration Procedures
+|---
+| 0-127    | Standards Action
+| 128-255  | Specification Required
+{: #tbl-iana-corim-entity-map-items-reg-procedures title="CoRIM Entity Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoRIM Entity Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name | Specification
+|---
+| 0-255 | Unassigned
+{: #tbl-iana-corim-entity-map-items title="CoRIM Entity Map Items Initial Registrations"}
+
+## CoRIM Signer Map Registry {#sec-iana-corim-signer-map}
+
+This document defines a new registry titled "CoRIM Signer Map".
+The registry uses integer values as index values for items in `corim-signer-map` CBOR maps.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range             | Registration Procedures
+|---
+| 0-127    | Standards Action
+| 128-255  | Specification Required
+{: #tbl-iana-corim-signer-map-items-reg-procedures title="CoRIM Signer Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoRIM Signer Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name | Specification
+|---
+| 0 | signer-name   | {{&SELF}}
+| 1 | signer-uri    | {{&SELF}}
+| 2-255             | Unassigned
+{: #tbl-iana-corim-signer-map-items title="CoRIM Signer Map Items Initial Registrations"}
+
+
 ## CoMID Map Registry {#sec-iana-comid}
 
 This document defines a new registry titled "CoMID Map".
-The registry uses integer values as index values for items in 'concise-mid-tag' CBOR maps.
+The registry uses integer values as index values for items in `concise-mid-tag` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
@@ -2766,6 +2815,134 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 5-255 | Unassigned
 {: #tbl-iana-comid-map-items title="CoMID Map Items Initial Registrations"}
 
+## CoMID Entity Map Registry {#sec-iana-comid-entity-map}
+
+This document defines a new registry titled "CoRIM Entity Map".
+The registry uses integer values as index values for items in `corim-entity-map` CBOR maps.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range             | Registration Procedures
+|---
+| 0-127    | Standards Action
+| 128-255  | Specification Required
+{: #tbl-iana-comid-entity-map-items-reg-procedures title="CoMID Entity Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoMID Entity Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name | Specification
+|---
+| 0-255 | Unassigned
+{: #tbl-iana-comid-entity-map-items title="CoMID Entity Map Items Initial Registrations"}
+
+## CoMID Triples Map Registry {#sec-iana-triples-map}
+
+This document defines a new registry titled "CoMID Triples Map".
+The registry uses integer values as index values for items in the `triples-map` CBOR maps in `concise-mid-tag` codepoint 4.
+
+    Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range                      | Registration Procedures
+| 0-1023                     | Standards Action
+| 1024-65535                 | Specification Required
+| 65536-18446744073709551616 | First come first served
+{: #tbl-iana-comid-triples-map-items-reg-procedures title="CoMID Triples Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoMID Triples Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name           | Specification |
+|---
+| 0     | reference-triples                     | {{&SELF}}     |
+| 1     | endorsed-triples                      | {{&SELF}}     |
+| 2     | identity-triples                      | {{&SELF}}     |
+| 3     | attest-key-triples                    | {{&SELF}}     |
+| 4     | dependency-triples                    | {{&SELF}}     |
+| 5     | membership-trples                     | {{&SELF}}     |
+| 6     | coswid-triples                        | {{&SELF}}     |
+| 7     | (reserved)                            | {{&SELF}}     |
+| 8     | conditional-endorsment-series-triples | {{&SELF}}     |
+| 9     | (reserved)                            | {{&SELF}}     |
+| 10    | conditional-endorsement-triples       | {{&SELF}}     |
+| 11-18446744073709551616 | Unassigned | |
+{: #tbl-iana-triples-map-items title="CoMID Triples Map Items Initial Registrations"}
+
+## CoMID Measurement Values Map Registry {#sec-iana-comid-measurement-values-map}
+
+This document defines a new registry titled "CoMID Measurement Values Map".
+The registry uses integer values as index values for items in multiple triples' representations.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range                      | Registration Procedures
+| 0-1023                     | Standards Action
+| 1024-65535                 | Specification Required
+| 65536-18446744073709551616 | First come first served
+{: #tbl-iana-comid-measurement-values-map-items-reg-procedures title="CoMID Measurement Values Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name           | Specification |
+|---
+| 0     | version             | {{&SELF}}     |
+| 1     | svn                 | {{&SELF}}     |
+| 2     | digests             | {{&SELF}}     |
+| 3     | flags               | {{&SELF}}     |
+| 4     | raw-value           | {{&SELF}}     |
+| 5     | raw-value-mask      | {{&SELF}}     |
+| 6     | mac-addr            | {{&SELF}}     |
+| 7     | ip-addr             | {{&SELF}}     |
+| 8     | serial-number       | {{&SELF}}     |
+| 9     | ueid                | {{&SELF}}     |
+| 10    | uuid                | {{&SELF}}     |
+| 11    | name                | {{&SELF}}     |
+| 12    | (reserved)          | {{&SELF}}     |
+| 13    | cryptokeys          | {{&SELF}}     |
+| 14    | integrity-registers | {{&SELF}}     |
+| 15-18446744073709551616 | Unassigned | |
+{: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
+
+## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
+
+This document defines a new registry titled "CoMID Flags Map".
+The registry uses integer values as index values for items in `measurement-values-map` codepoint 3.
+
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+
+| Range                      | Registration Procedures
+| 0-1023                     | Standards Action
+| 1024-65535                 | Specification Required
+| 65536-18446744073709551616 | First come first served
+{: #tbl-iana-comid-flags-map-items-reg-procedures title="CoMID Flags Map Items Registration Procedures"}
+
+All negative values are reserved for Private Use.
+
+Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
+Assignments consist of an integer index value, the item name, and a reference to the defining specification.
+
+| Index | Item Name                    | Specification |
+|---
+| 0     | is-configured                | {{&SELF}}     |
+| 1     | is-secure                    | {{&SELF}}     |
+| 2     | is-recovery                  | {{&SELF}}     |
+| 3     | is-debug                     | {{&SELF}}     |
+| 4     | is-replay-protected          | {{&SELF}}     |
+| 5     | is-integrity-protected       | {{&SELF}}     |
+| 6     | is-runtime-meas              | {{&SELF}}     |
+| 7     | is-immutable                 | {{&SELF}}     |
+| 8     | is-tcb                       | {{&SELF}}     |
+| 9     | is-confidentiality-protected | {{&SELF}}     |
+| 10-18446744073709551616 | Unassigned | |
+{: #tbl-iana-comid-flags-map-items title="Flags Map Items Initial Registrations"}
+
 ## CoTL Map Registry {#sec-iana-cotl}
 
 This document defines a new registry titled "CoTL Map".
@@ -2789,7 +2966,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 0 | tag-identity | {{&SELF}}
 | 1 | tags-list | {{&SELF}}
 | 2 | tl-validity | {{&SELF}}
-| 5-255 | Unassigned
+| 3-255 | Unassigned
 {: #tbl-iana-tl-map-items title="CoTL Map Items Initial Registrations"}
 
 ## New Media Types {#sec-iana-media-types}
