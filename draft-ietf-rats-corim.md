@@ -541,7 +541,7 @@ Described in {{sec-common-validity}}.
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
-A CoMID tag contains claims and metadata about hardware, firmware, or module composition.
+A CoMID tag contains information about hardware, firmware, or module composition.
 
 Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
 
