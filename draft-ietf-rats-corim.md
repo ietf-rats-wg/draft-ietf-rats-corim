@@ -238,7 +238,7 @@ See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
 
 Reference Values:
 : A set of values that represent the desired or undesired state of an Attester.
-Reference Values are compared against Evidence to determine the trustworthiness of the Attester.
+Reference Values are compared against Evidence to determine whether Attester state is corroborated by a Reference Value Provider.
 Reference Values with matching Evidence produce "acceptable Claims."
 See also {{Section 4.2 of -rats-arch}}, {{Section 8.3 of -rats-arch}}, and {{Section 2 of -rats-endorsements}}.
 
