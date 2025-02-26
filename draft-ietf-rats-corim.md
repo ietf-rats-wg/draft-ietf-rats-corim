@@ -2184,7 +2184,7 @@ CoMID Reference Values will be matched against the ACS following the comparison 
 This document describes an example evidence structure which can be
 matched against these Reference Values.
 
-Each entry within Endorsements ECTs uses the syntax of `endorsed-triple-record`.
+Each Endorsement ECT contains the environment and internal representation of `measurement-map`s as extracted from an `endorsed-triple-record`.
 When an `endorsed-triple-record` is transformed to Endorsements ECTs it
 indicates that the authority named by `measurement-map`.`authorized-by`
 asserts that the actual state of one or more Claims within the
