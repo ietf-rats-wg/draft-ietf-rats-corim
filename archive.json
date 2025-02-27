@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-25T01:48:08.435182+00:00",
+  "timestamp": "2025-02-27T01:47:58.971184+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3945,7 +3945,7 @@
       ],
       "body": "Ned writes:\r\n> \"authorities\" is ambiguous given a cert chain has multiple CAs and given multiple Endorsers/RVPs could have asserted the same claim (each potentially having a their specific cert chains)\r\n\r\nCurrently the algorithm for authorized-by requires that the key in a reference value authorized-by must match the root key in the certificate chain associated with the Evidence or Endorsement.\r\n\r\nDo we want to allow a reference value authorized-by to match against a key lower down in the chain?",
       "createdAt": "2023-09-29T13:58:07Z",
-      "updatedAt": "2024-05-07T09:24:31Z",
+      "updatedAt": "2025-02-26T15:15:33Z",
       "closedAt": null,
       "comments": [
         {
@@ -3968,6 +3968,13 @@
           "body": "> I am hoping that we can write something definitive in the document describing which key the CoRIM author should put in the `authorized-by` field.\r\n> \r\n> The question I was asking is whether a stateful environment which requires authorization by key A will match against an ACS entry which is authorized by key B, if a certificate chain exists where A authorizes key B. There are also questions about what the properties of the certificate chain should be (for example what must be in the extKeyUsage field of the certificates).\r\n\r\nIn the context of an endorsement condition (aka `stateful-environment-map`), inclusion of authority in the condition means the condition doesn't match unless the claims were asserted by the right entity. If the authority is identified by a cert chain, then there is some flexibility in specifying the entity scope (in terms of CA hierarchy - which could include embedded CA use cases). The matching rules are similar to path validation where the authority used (signer of claims in the stateful env) could match if the condition authority is at same path location or higher (where root CA is at the top). \r\n\r\nIn the context of a reference value containing authority (other than the authority that signed the claim), this means the first authority delegates to a second authority. Possibly, one company acquired another company and centralized RVP RIMs under one company's key such that newer RVs for the device are now issued under the other key hierarchy (and there isn't a new common root and the TA policies across the ecosystem haven't yet been updated to reflect the merger). Alternatively, supplier-A wants to delegate to supplier-B the claims that were originally supplied by supplier-A but were modified by supplier-B (and subsequently signed by supplier-B).\r\n\r\nNevertheless, these variations apply to Reference Value State (RVS) which is fodder for doing overlap matching involving ACS claims (aka actual state).  The overlap matching algorithm might be adjusted (given the suppler-A/B use case as follows:\r\n- The claim X in ACS is found RVS in two places, one under supplier-A and another under supplier-B. However, the claim value doesn't match supplier-A but does match supplier-B.\r\n- The appraisal policy expects claim X authority to be supplier-A. But given the supplier-A RVS includes an authorized-by that names supplier-B, the verifier accepts claim X into ACS.\r\n\r\nSince acceptance of claim X was according to 'delegate' processing semantics it isn't correct to represent the authority as either supplier-A or supplier-B. Rather, the authority for claim X should be a representation of the delegation from A to B. (I think `accepted-claims-set` CDDL is insufficient currently to represent this form of authority.\r\n\r\nThe happy path, otherwise, doesn't require use of authorized-by for Reference Values. ",
           "createdAt": "2024-01-09T21:53:49Z",
           "updatedAt": "2024-01-09T21:53:49Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Since this issue was raised there have been changes to the CDDL to allow multiple entries in `authorized-by`.\n\nIf an evidence import document specifies that all keys from a keychain are added to the ACS as part of the import process then the exact matching authorized-by matching specified in rats-corim will match against any of the keys in the chain. I think that is enough to close this issue.\n\nThe DICE/SPDM evidence transformation document [draft-smith-rats-evidence-trans](https://github.com/ietf-rats-wg/draft-smith-rats-evidence-trans) adds multiple keys to each ACS entry so will behave similarly to this issue.\n\nA related topic is discussed in issue #375, which considers how to match different encodings of the same key (for example whether a verifier needs to match a DER encoding of a key against a cose_key encoding of the same key).\n\nIs it ok to close this issue and do the remaining work in #375?",
+          "createdAt": "2025-02-26T15:15:32Z",
+          "updatedAt": "2025-02-26T15:15:32Z"
         }
       ]
     },
@@ -4930,7 +4937,7 @@
       "id": "I_kwDOH6-tI858pjtd",
       "title": "Revisit doc structure and headings",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/194",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -4939,9 +4946,24 @@
       ],
       "body": "Taking a step back, the document structure may need some tweaking:\r\n- Section 5 heading should be \"CoRIM-based Appraisal\" or something similar since it isn't exclusive to Evidence.\r\n    -  Section 5.4.5 Adding CoMID Endorsed values to ACS : should be removed or integrated with Section 5.4.3 Processing Endorsed Value Triple since these appear to be synonymous.\r\n    -   There should be a section between Section 5.4.1 and 5.4.2 that describes \"Adding Evidence to ACS\".\r\n    - There should be a section (5.4.5?) that describes processing of CoSWID tags and `coswid-triples` that also closes issue #165.\r\n\r\n- Section 5.5 should be \"Transforming Evidence\" or something similar since other sections in 5 (see previous bullets) describe initialization and population of ACS with Evidence and 5.5 focuses on schema mapping issues.\r\n     - There should be a section 5.5.3 \"Transforming EAT Evidence\" (and the other similarly named subsections can be shortened so the heading is less wordy. (e.g.: \"Transforming DICE Evidence\", and \"Transforming SPDM Evidence\",...)\r\n     - Similarly, Section 5.5.4 \"Transforming Concise Evidence\" for https://trustedcomputinggroup.org/wp-content/uploads/TCG-DICE-Concise-Evidence-Binding-for-SPDM-Version-1.0-Revision-54_pub.pdf\r\n\r\n- There should be a new Section 6 that focuses on processing updates e.g., \"Update Processing\". The resolution to PR #170 should be documented here. Subsections might be:\r\n    - Section 6.1 Updates Can Take Multiple Forms : This section describes the various possible ways the ecosystem might update RIMs (e.g.: x-triples, x-corims, refreshed corims, x-tags?...)\r\n    - Section 6.2 Staging Updates : This section describes a staging area for applying updates and results in an internal representation of RVPs and Endorsements suitable for use by appraisal (section 5). \r\n    - If there is a need to describe in more detail a particular update mechanism (e.g. x-triple) then subsections here can describe semantics and CDDL expressions.",
       "createdAt": "2024-01-19T19:50:41Z",
-      "updatedAt": "2024-05-07T08:48:07Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-02-26T22:48:50Z",
+      "closedAt": "2025-02-26T22:48:50Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Shall we close this year old issue  now?",
+          "createdAt": "2025-02-25T11:53:20Z",
+          "updatedAt": "2025-02-25T11:53:20Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK to close",
+          "createdAt": "2025-02-25T23:54:13Z",
+          "updatedAt": "2025-02-25T23:54:13Z"
+        }
+      ]
     },
     {
       "number": 195,
@@ -5184,18 +5206,17 @@
       "id": "I_kwDOH6-tI859zhnM",
       "title": "CoRIM simplification structure",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/197",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "mustfix",
         "For-next-release"
       ],
       "body": "We discussed in today's meeting that next time we will go over a PR or slides about simplification to CoRIM as a standard to a Core and some other bits.\r\n\r\nHere's what I think ought to be addressed:\r\n\r\n1. CoRIM is a closed CDDL without extension points.\r\n2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n3. Profiles for standard attestation technologies may choose to go through IETF standardization to allocate CBOR tags through IANA, but this is not required for profiles.\r\n4. The CoRIM working group may define reference value types with \"matching\" semantics that can be reused by other profile definitions. This should help extend the composability of the initially standardized notions of reference values. The policy should be, but still at the WG's discretion, that reference values are not given privileged CBOR representation through tag allocation without being applicable to at least 2 standard profiles. The applicability of the generalization must be concrete to give clear motivation behind the representation and semantics.\r\n5. The ACS discussion should not use CDDL because it confuses the conceptual with the serializable. It should use an ABNF to describe an algebra of claims and sets of claims. All reference value and endorsement types must have a defined operation to reflect into the algebra. Claims can be partially ordered in order to define simplification through subsumption. A set of claims must therefore contain pairwise incomparable claims. By defining this algebra, the standard may give a clear definition to word \"match\" for composition and reuse, but it does not limit what profiles are definable\u2013it is merely scaffolding. The algebraic notion of Claim is extensible by any profile, but each type of Claim is defined and owned by the standard/profile that defines it.\r\n6. A CoRIM either fails to \"match\" an accepted claim set, or it augments individual claims in the ACS with \"authorized-by\" tags.\r\n7. Evidence Appraisal should be defined explicitly as an operation to translate an octet string into a claim set.\r\n\r\nFor all of this, we've boiled the representation down to profile * profile-defined octet string. The algebra is a communication tool for specifying the semantics for composable standardized profile components.\r\n\r\nAll of the schema that is specified in the current document can be interpreted as, \"if your profile's representation structurally matches profiles defined in RFCs, then it must semantically mean the same\". You can keep TPM, PSA, and DICE following the same schema if you'd like as a way to provide a baseline for expected expressiveness.\r\n\r\nBut by doing this, you need to have reserved indices for the standard to grow and safe regions that custom profiles are allowed to define themselves. For example, `* $$corim-map-extension` allows for anyone to define index 6 or higher, but that is not desirable unless this type really should be considered \"closed\" from the standards body's perspective. If it's open, then say 0-1000 and [2^31, 2^32) are reserved for the specification to allow for custom profiles to use small indices without giving up a value space for the standard.\r\n\r\nThe reserved indices should be assigned by IANA for each following RFC, but the core CoRIM spec defines the value space for standard extension.\r\n\r\nDo folks find this reasonable? ",
       "createdAt": "2024-01-31T17:55:01Z",
-      "updatedAt": "2024-10-14T17:20:46Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-25T23:22:32Z",
+      "closedAt": "2025-02-25T18:00:35Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -5287,6 +5308,55 @@
           "body": "> > 1. CoRIM is a closed CDDL without extension points.\r\n> > 2. All extensibility of representation and interpretation is relegated to the CoRIM profile.\r\n> \r\n> I am trying to align these two requirements and this seems to break with any CDDL convention introduced in IETF specification text introduced in the recent past.\r\n> \r\n\r\nWhich text would that be? I'm saying that CoRIM is an envelope for providing information to a Verifier, where information is interpreted according to the profile. This allows for maximum flexibility for the profile definer to use the envelope format. I should clarify that I still intend for the pair of profile and payload to be within a COSE_Sign1 envelope. With that, you have the absolute bare minimum for authentication, semantic interpretation, and information.\r\n\r\n> In order to enable profiles to the \"core CoRIM spec\" we will add CDDL extension points to the base CoRIM spec. How would you integrate IANA registrations for well-known extensions and create standardized global interoperability otherwise? It seems to me that I am missing a vital piece of concept here. What am I missing?\r\n\r\nWith the more open envelope type structure, the rest of the document could then start to stand as it currently is, but I have an issue with its presentation. I think every addition on the envelope should be justified with standard profiles that illustrate the concept, if not completely relegated to the profile spec that introduces the concept. The culmination of all the specs can be a supplemental appendix with references to the RFCs that define a concept.\r\n\r\nIf there are no uses, they should be relegated to an extension RFC for when they are used. Examples then become case studies. I'm not saying any specific piece of the spec is contrived, I'm saying a lot feels unjustified as generalizations over an unknown set of profiles.\r\n\r\nWhen the spec says \"base schema\" it's talking about core profile elements that ought to be easily adopted by a Verifier's implementation of a profile that follows the core. The points about extensibility should be higher up in the document and stand out more typographically. I didn't now about the negative integer map extension convention, and I felt it was buried in section 3.2.1.\r\n\r\nI find it hard to determine why some pieces are extensible while others aren't. That's maps and type choices. Why are some type choices are so spoiled for choice when the type is extensible for other profiles? Why use a closed map when you can use a struct?\r\n\r\nFor specific presentational choices, I'd recommend to\r\n\r\n* move all the optional keys in an extensible map out of the initial CDDL and into their own sections as extensions of the $$MAP-NAME-extensions code point. This allows every addition to get specifically justified with prose to explain what concept it embodies, and how it solves a particular problem.\r\n* pick _one_ preferred alternative to present in the introduction of any $NAME-type-choice. Move the others to a Standard Extensions Library section.\r\n* Even with the typographical convention of $ or $$ prefix, do say in prose that a particular type is extensible or not.\r\n\r\nThis keeps the spec more digestible and lets me know that this schema is more of a menu than a requirement. When there are large selections of optional representations, you're making life harder both for the Verifier implementors and the profile authors that don't know what representation to pick.\r\n\r\nClosed types that don't make sense to me to stay closed:\r\n\r\n* corim-locator-map: A uri is one way to reference something, but as I noted in another issue, we may want to reference specific UEFI variables like in the TCG PFP Rev 1.06 for the SP800-155 event's rimLocatorType.\r\n* svn-type-choice: X or >=X aren't the only conditions an endorser may want to express.\r\n* role-type-choice: Not actually closed, but a variable in a CDDL generic that is typographically confusing given the NAME-type-choice, $NAME-type-choice notational convention called out at the beginning of the document. Since no instantiation in the document uses a closed type, please change to the $NAME-type-choice naming for the generic variable.\r\n* class-map: The class-id is allowed to be a tagged-bytes to encode something as its own notion of extension to class, so I'd say allow this map to be extensible. Again the vendor/model/layer/index options should be in their own section to introduce the concept they represent (clearly a DICE thing).\r\n\r\nRequired map keys that aren't justified as to why they're required:\r\n\r\n* corim-map's id and tags keys are the only required pieces, but the type is extensible. What is the \"tag\" concept that makes it a requirement? Why does a RIM /require/ a document identity? Can the CoSWID and CoBOM type choices be left to a separate document or much farther down?\r\n* entity-map's role\r\n\r\nThe spec should explain why any closed type is closed.\r\n* ip-addr-type-choice: Supports ipv4 and ipv6. No other IP address standards exist today, and it's not vendor-extensible concept.\r\n* mac-addr-type-choice: Similar to ip-addr.\r\n* tagged-concise-rim-type-choice: Sort of obvious that an open type allows a corim to mean absolutely anything, but given the call to justify all types, this still should be explained.\r\n* environment-map: This needs hard justification to stick to just the class/instance/group breakdown, since you severely limit what concepts express what environments you're describing. Every value is an extensible type (except class-map, which should be extensible), so just like class-map, why keep it closed? You could still recommend sticking to the existing concepts by giving ample examples of their use in the standard extension library sections.\r\n\r\nThen there are types that aren't named -type-choice but are also required representational choice in a concept (actually I only see the one)\r\n\r\n* tag-version-type: The optional version as the only other component and only as a uint makes different kinds of versioning schemes unusable. What is the property you need on the version type for its semantic interpretation? Can we spec a type choice required property like \"has a partial order\" or \"has a total order\"?\r\n* version-map's version value is text only, but has an extensible scheme type? \r\n* entity-map's reg-id uri type: so many extensible identity types elsewhere, but this is only a URI?\r\n\r\nTypes that I just don't understand the implied concept for\r\n\r\n* tag-identity-map: Probably I'm just missing the concept explanation for this. $tag-id-type-choice is extensible but the text says it's a universally unique identifier. An extensible choice doesn't just mean different ways of representing a UUID. If you don't mean a UUID, then say an identifier type that should be universally unique.  What is the purpose? The linked-tag-map concept is not well-justified.\r\n\r\nI'll leave it at that for now.",
           "createdAt": "2024-02-01T21:45:03Z",
           "updatedAt": "2024-02-01T21:45:03Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Basic Simplification structure is accomplished so removing the `mustfix` label. @deeglaze to check, and verify, what other improvements to be done now!",
+          "createdAt": "2025-02-25T15:40:01Z",
+          "updatedAt": "2025-02-25T15:40:01Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think the emptiness of the entity map is an issue. Are there initial values folks have been using and want to propose? Okay to close otherwise",
+          "createdAt": "2025-02-25T17:04:35Z",
+          "updatedAt": "2025-02-25T17:04:35Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we have specified what `entity-map` implies  and gave examples in diag files.\n\n`corim-design-cd.diag` has an example of CoMID Entity.?\nand here is \nhttps://github.com/veraison/cocli/blob/main/data/corim/templates/corim-full.json\nfor CoRIM Entity! Though these are just examples!\n\nIs this what you are looking for or something else?",
+          "createdAt": "2025-02-25T17:35:43Z",
+          "updatedAt": "2025-02-25T17:44:02Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I mean the extension socket, but I suppose I just missed adding name, regid, and roles to the initial registries.",
+          "createdAt": "2025-02-25T18:00:27Z",
+          "updatedAt": "2025-02-25T18:00:27Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The description in the slides says that different verifiers can share partial ACSes, which makes me wonder if the CDDL that's used for explanation purposes only might actually be specifying an interchange format between verifiers?\n\nIt is in the context of a Verifier that is distributed. If the internal representation is used for interchange, it is still within the internal representation caveat. If the WG writes I-D for interoperable distributed verifiers, the interchange format will be appropriate for those I-D(s) to specify.",
+          "createdAt": "2025-02-25T23:08:06Z",
+          "updatedAt": "2025-02-25T23:08:06Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> When the spec says \"base schema\" it's talking about core profile elements \n\nI'm confused by this use of profile here. I think of the \"base\" schema as THIS spec. It isn't a profile of THIS spec it IS this spec. ",
+          "createdAt": "2025-02-25T23:15:48Z",
+          "updatedAt": "2025-02-25T23:15:48Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I find it hard to determine why some pieces are extensible while others aren't.\n\nA concisely stated policy for how extensibility is managed would be great. A general rule might be that changes not involving an extensibility mechanism are reserved for standards actions (e.g., RFCs) while changes defined by profiles must use an extensibility mechanism. If there are structures that do not have extensibility it is because changes must be made through a standards action. \n\nGiven this statement of policy (or one everyone agrees to), each statement in corim can be tested to see if there are use cases for when it makes sense for a profile to apply an extension (and what the potential consequences might be).",
+          "createdAt": "2025-02-25T23:22:31Z",
+          "updatedAt": "2025-02-25T23:22:31Z"
         }
       ]
     },
@@ -6477,7 +6547,7 @@
       ],
       "body": "I don't think it's appropriate at all for X to sign a document that Y is the one that actually authorized the claims. There is no signature by Y. This is a clear spoofing problem. Even if the Verifier is supposedly forwarding an authorization that it had previously seen by including it in the CoRIM, I don't think that Y has delegated that authority to the Verifier. The Verifier would need to use a \"hearsay\" claim that it had already shown that Y authorized the claim.",
       "createdAt": "2024-06-19T17:25:35Z",
-      "updatedAt": "2025-02-12T19:00:51Z",
+      "updatedAt": "2025-02-25T09:54:27Z",
       "closedAt": null,
       "comments": [
         {
@@ -6556,6 +6626,13 @@
           "body": "We should keep the use cases around. Maybe tag it as \"won't fix\" or something just to keep it open but not list it as blockers to WGLC.",
           "createdAt": "2025-01-30T23:56:50Z",
           "updatedAt": "2025-01-30T23:56:50Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "yes",
+          "createdAt": "2025-02-25T09:54:25Z",
+          "updatedAt": "2025-02-25T09:54:25Z"
         }
       ]
     },
@@ -6627,9 +6704,17 @@
       ],
       "body": "              Should we say how? Or, if we do already, reference the place(s) that contain the relevant text.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/135#discussion_r1666725465_\r\n            ",
       "createdAt": "2024-07-06T08:43:31Z",
-      "updatedAt": "2025-02-12T18:54:43Z",
+      "updatedAt": "2025-02-25T15:42:27Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is this addressed by PR #399 ",
+          "createdAt": "2025-02-25T15:42:25Z",
+          "updatedAt": "2025-02-25T15:42:25Z"
+        }
+      ]
     },
     {
       "number": 251,
@@ -8735,11 +8820,11 @@
         "yogeshbdeshpande"
       ],
       "labels": [
-        "mustfix"
+        "For-next-release"
       ],
       "body": "> Endorsed environments ([Section 5.1.4.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-endval)) membership is conditional upon successful matching of Reference Values ([Section 5.1.4.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-refval)) to Evidence.\r\n\r\nI don't think we have a sense of which reference values an environment is supposed to match before suggesting that its within a particular trust domain. We got rid of the wording of matching reference values for endorsed triples for this reason.",
       "createdAt": "2024-11-13T05:22:46Z",
-      "updatedAt": "2025-02-25T01:06:18Z",
+      "updatedAt": "2025-02-25T15:36:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -9194,11 +9279,11 @@
         "deeglaze"
       ],
       "labels": [
-        "mustfix"
+        "For-next-release"
       ],
       "body": "The test suite needs to be expanded with complete, signed examples.\r\n\r\nThis requires changes to the cddl build machinery and the CI.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/337#discussion_r1901718526_\r\n            ",
       "createdAt": "2025-01-22T10:39:34Z",
-      "updatedAt": "2025-02-12T19:09:22Z",
+      "updatedAt": "2025-02-25T11:52:02Z",
       "closedAt": null,
       "comments": [
         {
@@ -9420,15 +9505,15 @@
       "id": "I_kwDOH6-tI86o4ZA-",
       "title": "unsigned-corim-map referenced but not defined anymore.",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/374",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "We simplified to corim-map, but now we want to talk explicitly about the case that a corim is unsigned, so let's change the cddl again.",
       "createdAt": "2025-02-05T16:02:14Z",
-      "updatedAt": "2025-02-05T16:39:36Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-26T19:15:47Z",
+      "closedAt": "2025-02-26T19:15:45Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -9436,6 +9521,13 @@
           "body": "We need to add back the `unsigned-corim-map` CDDL as this would be used to bundle CoRIMs using CMW.",
           "createdAt": "2025-02-05T16:39:34Z",
           "updatedAt": "2025-02-05T16:39:34Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #376 ",
+          "createdAt": "2025-02-26T19:15:45Z",
+          "updatedAt": "2025-02-26T19:15:45Z"
         }
       ]
     },
@@ -9604,7 +9696,7 @@
       "id": "I_kwDOH6-tI86qsJkI",
       "title": "Harmonise glossaries",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/385",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -9615,8 +9707,8 @@
       ],
       "body": "#383 introduces a top-level glossary.\n\nThe document has a couple more glossaries in different locations (e.g., [Table 1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#table-1), [Section 8.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-8.2)) that should be combined into the main glossary.\n",
       "createdAt": "2025-02-19T15:31:57Z",
-      "updatedAt": "2025-02-20T09:33:39Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-26T18:16:00Z",
+      "closedAt": "2025-02-26T18:16:00Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -9701,7 +9793,7 @@
       "id": "I_kwDOH6-tI86rO6Hr",
       "title": "Reference Values definition",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/394",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -9711,8 +9803,8 @@
       ],
       "body": "Reference Values says\n>A set of values that represent the desired or undesired state of an Attester.\n\nTo whom is the state desired or undesired? The Reference Value Provider, the Verifier Owner, or both? Note that RATS Architecture describes them as\n>A set of values against which values of Claims can be compared as part of applying an Appraisal Policy for Evidence.\n\nand whether values are desired or undesired depends on the Appraisal Policy for Evidence.",
       "createdAt": "2025-02-23T00:24:33Z",
-      "updatedAt": "2025-02-24T20:16:11Z",
-      "closedAt": null,
+      "updatedAt": "2025-02-26T18:17:37Z",
+      "closedAt": "2025-02-26T18:17:35Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -9790,6 +9882,13 @@
           "body": "@nedmsmith discussion on that is in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/400 now.",
           "createdAt": "2025-02-24T20:16:07Z",
           "updatedAt": "2025-02-24T20:16:07Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "For now we agreed to stick with original definition in RATS Endorsement document! \n\nif any further discussion on the definition needs to be done, it will be on that document.!",
+          "createdAt": "2025-02-26T18:17:36Z",
+          "updatedAt": "2025-02-26T18:17:36Z"
         }
       ]
     },
@@ -9863,10 +9962,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "From https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/394#issuecomment-2677681798.\n\nMINSVN is an example of a RVP implicitly conveying its own Appraisal Policy for Evidence to the Verifier via Reference Values. For example if MINSVN is `4` then the RVP is asserting SVNs less than `4` to be undesirable and the ones greater than or equal to `4` to be desirable. At a minimum the document should make the reader aware of this conveyance, in particular the policy is not coming directly from the Verifier Owner.",
       "createdAt": "2025-02-24T16:15:54Z",
-      "updatedAt": "2025-02-24T21:03:24Z",
+      "updatedAt": "2025-02-25T18:03:52Z",
       "closedAt": null,
       "comments": [
         {
@@ -9940,6 +10041,26 @@
           "updatedAt": "2025-02-24T21:03:24Z"
         }
       ]
+    },
+    {
+      "number": 401,
+      "id": "I_kwDOH6-tI86rnNaj",
+      "title": "Populate entity-map-extension registries",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/401",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "deeglaze"
+      ],
+      "labels": [
+        "For-next-release"
+      ],
+      "body": "I left these empty for corim and comid, but they should have initial values for name, regid, and roles.",
+      "createdAt": "2025-02-25T18:02:02Z",
+      "updatedAt": "2025-02-25T18:02:58Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -58305,13 +58426,13 @@
       "labels": [],
       "body": "With the proposed additions to CMW, this fixes Issue #358.",
       "createdAt": "2025-02-12T05:27:05Z",
-      "updatedAt": "2025-02-25T00:18:06Z",
+      "updatedAt": "2025-02-26T17:57:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "48bce364d51c01144ce27e6c64568befbe5693e5",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "sig-inherit",
-      "headRefOid": "dbf79632aca18c0c76fa20a07e5d1c41ceef39d2",
+      "headRefOid": "259058a5dd80d3df06838c5c896437745e01ebf7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -58851,9 +58972,9 @@
             },
             {
               "originalPosition": 50,
-              "body": "```suggestion\r\nCoRIMs distributed in a bundle SHOULD declare their interdependence using `dependent-rims` with local resource indicators.\r\n```",
+              "body": "```suggestion\r\nCoRIMs distributed in a bundle MAY declare their interdependence using `dependent-rims` with local resource indicators.\r\n```",
               "createdAt": "2025-02-24T23:10:42Z",
-              "updatedAt": "2025-02-24T23:20:10Z"
+              "updatedAt": "2025-02-25T22:57:33Z"
             },
             {
               "originalPosition": 53,
@@ -58926,6 +59047,191 @@
               "updatedAt": "2025-02-24T23:53:05Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dU_nO",
+          "commit": {
+            "abbreviatedOid": "4ff8922"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T06:08:38Z",
+          "updatedAt": "2025-02-25T06:08:38Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "Afterwards just means the local uris come first and the reachable urls come after in the list",
+              "createdAt": "2025-02-25T06:08:38Z",
+              "updatedAt": "2025-02-25T06:08:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86demh_",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "In general LGTM, we can discuss few minor points on Wednesday and close this!",
+          "createdAt": "2025-02-25T18:17:37Z",
+          "updatedAt": "2025-02-25T18:18:37Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "Is line 546 referring to the CoRIM bundle use case ? If yes, could you please add a reference to the CoRIM Bundle subsection as we have two cases, listed here but explanation spreaded across",
+              "createdAt": "2025-02-25T18:17:38Z",
+              "updatedAt": "2025-02-25T18:18:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86deurG",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T18:32:31Z",
+          "updatedAt": "2025-02-25T18:32:31Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "the bundle is described in a subsection a few sentences later. Does it need a link?",
+              "createdAt": "2025-02-25T18:32:31Z",
+              "updatedAt": "2025-02-25T18:32:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dSmqp",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T01:43:16Z",
+          "updatedAt": "2025-02-25T22:57:45Z",
+          "comments": [
+            {
+              "originalPosition": 48,
+              "body": "Should there be a special `dependent-rims` reference that points to the starting point RIM?",
+              "createdAt": "2025-02-25T01:43:16Z",
+              "updatedAt": "2025-02-25T22:57:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dpUS3",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T15:06:03Z",
+          "updatedAt": "2025-02-26T15:06:03Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "this is the way (currently)",
+              "createdAt": "2025-02-26T15:06:03Z",
+              "updatedAt": "2025-02-26T15:06:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dpnC6",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T15:27:39Z",
+          "updatedAt": "2025-02-26T15:27:39Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "CMW contains unsigned-corim-map",
+              "createdAt": "2025-02-26T15:27:39Z",
+              "updatedAt": "2025-02-26T15:27:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dpnX-",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T15:28:02Z",
+          "updatedAt": "2025-02-26T15:28:03Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "We should use the terminology of CMW Collection Profile",
+              "createdAt": "2025-02-26T15:28:03Z",
+              "updatedAt": "2025-02-26T15:28:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dpnyQ",
+          "commit": {
+            "abbreviatedOid": "dbf7963"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Need more text on the CDDL types",
+          "createdAt": "2025-02-26T15:28:36Z",
+          "updatedAt": "2025-02-26T15:28:36Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drIBB",
+          "commit": {
+            "abbreviatedOid": "259058a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T17:45:59Z",
+          "updatedAt": "2025-02-26T17:57:15Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\nThe Collection CMW type (i.e., \"__cmwc_t\") is similar to a profile in its way of restricting the shape of the collection.\r\n```",
+              "createdAt": "2025-02-26T17:45:59Z",
+              "updatedAt": "2025-02-26T17:57:15Z"
+            },
+            {
+              "originalPosition": 11,
+              "body": "Can a Collection CMW be an unsigned payload within a secure session or by some other enveloping technology such as PKIX? If yes, then this language may be too constraining. Does \"signed RATS CMW\" means COSE_Sign1 or could it be interpreted more broadly? For example, it could read: \"Several CoRIMs may share the same signer (e.g., as a payload to a secure session protocol or signature format such as COSE) and use locally-resolvable references to each other by using a RATS Conceptual Message Wrapper (CMW) {{-cmw}}.\" Note reference to COSE is exemplary.",
+              "createdAt": "2025-02-26T17:48:55Z",
+              "updatedAt": "2025-02-26T17:57:15Z"
+            },
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\nThe collection type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.\r\n```",
+              "createdAt": "2025-02-26T17:56:28Z",
+              "updatedAt": "2025-02-26T17:57:15Z"
+            }
+          ]
         }
       ]
     },
@@ -58934,24 +59240,26 @@
       "id": "PR_kwDOH6-tI86LCAW7",
       "title": "Add better description of tag and CoMID/CoSWID tags",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/378",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Addresses part of Issue #195 ",
       "createdAt": "2025-02-13T00:15:24Z",
-      "updatedAt": "2025-02-24T18:52:33Z",
+      "updatedAt": "2025-02-26T22:38:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "70776f726092ac10793f8572f54bc8bad9b66217",
+      "baseRefOid": "dc292424462e501fa3ece9b9c559b88e61793eba",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "tag-definition",
-      "headRefOid": "d9f7a39d352c493adb3fdfe7c45ff53af65c19cd",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "ce1d7ad9672c83de70d8523788324a145cc19a76",
+      "closedAt": "2025-02-26T22:38:34Z",
+      "mergedAt": "2025-02-26T22:38:34Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "200232ffa59256b3b5c44c33f50d71379917b2bc"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -59327,6 +59635,126 @@
           "createdAt": "2025-02-24T18:52:33Z",
           "updatedAt": "2025-02-24T18:52:33Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dZq43",
+          "commit": {
+            "abbreviatedOid": "d9f7a39"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T11:48:55Z",
+          "updatedAt": "2025-02-25T11:48:55Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Also we have claims inside measurement-values-map and mkey can contain some additional information about the claim, like measurement identifier and extensible objects about claims!",
+              "createdAt": "2025-02-25T11:48:55Z",
+              "updatedAt": "2025-02-25T11:48:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dacKg",
+          "commit": {
+            "abbreviatedOid": "09f4f16"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T12:48:34Z",
+          "updatedAt": "2025-02-25T12:48:34Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "I prefer to remain generic at this point in the document.  \"Information\" (as in the original) seems more than appropriate.",
+              "createdAt": "2025-02-25T12:48:34Z",
+              "updatedAt": "2025-02-25T12:48:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dadHi",
+          "commit": {
+            "abbreviatedOid": "09f4f16"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T12:50:00Z",
+          "updatedAt": "2025-02-25T12:50:01Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "i am happy with information as well! Lets change it then!",
+              "createdAt": "2025-02-25T12:50:00Z",
+              "updatedAt": "2025-02-25T12:50:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86daeb3",
+          "commit": {
+            "abbreviatedOid": "d9f7a39"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T12:52:04Z",
+          "updatedAt": "2025-02-25T12:52:04Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "However, let us discuss this in the meeting, as others have already approved this version of definition!",
+              "createdAt": "2025-02-25T12:52:04Z",
+              "updatedAt": "2025-02-25T12:52:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dcPts",
+          "commit": {
+            "abbreviatedOid": "09f4f16"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T15:05:11Z",
+          "updatedAt": "2025-02-25T15:05:11Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Information is fine by me",
+              "createdAt": "2025-02-25T15:05:11Z",
+              "updatedAt": "2025-02-25T15:05:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dlcYk",
+          "commit": {
+            "abbreviatedOid": "d9f7a39"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T09:50:36Z",
+          "updatedAt": "2025-02-26T09:50:36Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nA CoMID tag contains information about hardware, firmware, or module composition.\r\n```",
+              "createdAt": "2025-02-26T09:50:36Z",
+              "updatedAt": "2025-02-26T09:50:36Z"
+            }
+          ]
         }
       ]
     },
@@ -59843,24 +60271,26 @@
       "id": "PR_kwDOH6-tI86L35C4",
       "title": "merge glossaries",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/389",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fix #385 \r\n\r\nNote: I've only merged \u00a78.2 and left Table 1 as-is.",
       "createdAt": "2025-02-20T10:07:06Z",
-      "updatedAt": "2025-02-24T10:02:49Z",
+      "updatedAt": "2025-02-26T19:15:19Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "70776f726092ac10793f8572f54bc8bad9b66217",
+      "baseRefOid": "48bce364d51c01144ce27e6c64568befbe5693e5",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "glossary-part-2",
-      "headRefOid": "5d780597b691458493049f2eeda11a5934fef489",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "09afd40ab0d149a057397d32ff02ac4e75c90f4b",
+      "closedAt": "2025-02-26T18:15:59Z",
+      "mergedAt": "2025-02-26T18:15:59Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "dc292424462e501fa3ece9b9c559b88e61793eba"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -59889,6 +60319,20 @@
           "body": "@deeglaze & @andrew-draper  : Please review it on Monday,(24th Feb), we plan to submit it today!",
           "createdAt": "2025-02-24T09:35:09Z",
           "updatedAt": "2025-02-24T09:35:09Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @thomas-fossati Can you please also add missing clear definition of a `stateful environment` and/or `stateful environment record` please\r\n\r\nIn today's (2/26/2024) call, we decided that this goes in a separate issue.",
+          "createdAt": "2025-02-26T18:09:57Z",
+          "updatedAt": "2025-02-26T18:09:57Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think this may have been closed too early.  We were still debating https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/389/files#r1964325606",
+          "createdAt": "2025-02-26T18:19:58Z",
+          "updatedAt": "2025-02-26T18:19:58Z"
         }
       ],
       "reviews": [
@@ -60029,9 +60473,9 @@
             },
             {
               "originalPosition": 58,
-              "body": "```suggestion\r\n: A structure containing a set of values that typically describe a Target Environment plus a set of Measurement / Claim values that describe properties of the Target Environment.\r\n```",
+              "body": "```suggestion\r\n: A structure containing a set of values that describe a Target Environment or object plus a set of Measurement / Claim values that describe properties of the target.\r\n```",
               "createdAt": "2025-02-20T20:55:35Z",
-              "updatedAt": "2025-02-20T21:01:44Z"
+              "updatedAt": "2025-02-26T17:59:48Z"
             },
             {
               "originalPosition": 58,
@@ -60166,6 +60610,356 @@
           "createdAt": "2025-02-24T10:02:49Z",
           "updatedAt": "2025-02-24T10:02:49Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dlz1X",
+          "commit": {
+            "abbreviatedOid": "5d78059"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "@thomas-fossati  Can you please also add missing clear definition of a `stateful environment` and/or `stateful environment record` please",
+          "createdAt": "2025-02-26T10:19:36Z",
+          "updatedAt": "2025-02-26T10:19:36Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dptv8",
+          "commit": {
+            "abbreviatedOid": "5d78059"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T15:36:13Z",
+          "updatedAt": "2025-02-26T15:36:13Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "```suggestion\r\n: A set of values that represent the desired or undesired state of an Attester.\r\n```",
+              "createdAt": "2025-02-26T15:36:13Z",
+              "updatedAt": "2025-02-26T15:36:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dp72g",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-26T15:55:36Z",
+          "updatedAt": "2025-02-26T17:12:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dp8U7",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-02-26T15:56:16Z",
+          "updatedAt": "2025-02-26T17:12:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dp80k",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-26T15:57:01Z",
+          "updatedAt": "2025-02-26T17:12:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drGOr",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T17:42:24Z",
+          "updatedAt": "2025-02-26T17:42:25Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2025-02-26T17:42:24Z",
+              "updatedAt": "2025-02-26T17:42:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drGkr",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T17:43:07Z",
+          "updatedAt": "2025-02-26T17:43:07Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "Now that we have removed reference state and actual state definition from inside the glossary list, we shall remove this from here as well",
+              "createdAt": "2025-02-26T17:43:07Z",
+              "updatedAt": "2025-02-26T17:43:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drGz4",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Just a suggestion for tidy up!",
+          "createdAt": "2025-02-26T17:43:36Z",
+          "updatedAt": "2025-02-26T17:43:36Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drXQO",
+          "commit": {
+            "abbreviatedOid": "4342ed8"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:04:02Z",
+          "updatedAt": "2025-02-26T18:04:03Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "good catch!",
+              "createdAt": "2025-02-26T18:04:02Z",
+              "updatedAt": "2025-02-26T18:04:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drYk5",
+          "commit": {
+            "abbreviatedOid": "5d78059"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:05:39Z",
+          "updatedAt": "2025-02-26T18:05:39Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "this is gone with the wind now",
+              "createdAt": "2025-02-26T18:05:39Z",
+              "updatedAt": "2025-02-26T18:05:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drT8_",
+          "commit": {
+            "abbreviatedOid": "90ae94d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:00:11Z",
+          "updatedAt": "2025-02-26T18:06:01Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Revised wording. Is this better?",
+              "createdAt": "2025-02-26T18:00:11Z",
+              "updatedAt": "2025-02-26T18:06:01Z"
+            },
+            {
+              "originalPosition": 85,
+              "body": "Would it be better to just point to the definition in the endorsement draft?",
+              "createdAt": "2025-02-26T18:03:01Z",
+              "updatedAt": "2025-02-26T18:06:01Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "```suggestion\r\nReference Values are compared against Evidence to determine whether Attester state is corroborated by a Reference Value Provider.\r\n```",
+              "createdAt": "2025-02-26T18:04:43Z",
+              "updatedAt": "2025-02-26T18:06:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drY6D",
+          "commit": {
+            "abbreviatedOid": "5d78059"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:06:03Z",
+          "updatedAt": "2025-02-26T18:06:03Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "gone",
+              "createdAt": "2025-02-26T18:06:03Z",
+              "updatedAt": "2025-02-26T18:06:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drZCk",
+          "commit": {
+            "abbreviatedOid": "2e41e82"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:06:13Z",
+          "updatedAt": "2025-02-26T18:06:13Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "gone",
+              "createdAt": "2025-02-26T18:06:13Z",
+              "updatedAt": "2025-02-26T18:06:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drZig",
+          "commit": {
+            "abbreviatedOid": "2e41e82"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:06:50Z",
+          "updatedAt": "2025-02-26T18:06:50Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "This is in line with RATS endorsements.",
+              "createdAt": "2025-02-26T18:06:50Z",
+              "updatedAt": "2025-02-26T18:06:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drbGs",
+          "commit": {
+            "abbreviatedOid": "9c05dd1"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:08:44Z",
+          "updatedAt": "2025-02-26T18:08:44Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "@nedmsmith, in your latest suggestion above is \"target\" a synonym of \"Target Environment\"?  Or is it \"Target Environment and object\"?",
+              "createdAt": "2025-02-26T18:08:44Z",
+              "updatedAt": "2025-02-26T18:16:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drff2",
+          "commit": {
+            "abbreviatedOid": "09afd40"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T18:14:04Z",
+          "updatedAt": "2025-02-26T18:14:04Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "I would prefer the original text from Thomas",
+              "createdAt": "2025-02-26T18:14:04Z",
+              "updatedAt": "2025-02-26T18:14:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drg5d",
+          "commit": {
+            "abbreviatedOid": "09afd40"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! Thanks for making the changes!",
+          "createdAt": "2025-02-26T18:15:50Z",
+          "updatedAt": "2025-02-26T18:15:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dsGzu",
+          "commit": {
+            "abbreviatedOid": "9c05dd1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T19:01:51Z",
+          "updatedAt": "2025-02-26T19:01:51Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "I think, target environment is the right term to use here, there is nothing like solo `target` to debate about!\r\n\r\n@nedmsmith do you agree, we can create a github issue otherwise?",
+              "createdAt": "2025-02-26T19:01:51Z",
+              "updatedAt": "2025-02-26T19:01:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dsQZX",
+          "commit": {
+            "abbreviatedOid": "09afd40"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T19:15:07Z",
+          "updatedAt": "2025-02-26T19:15:19Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Yes. I just don't think the wording is as good as it could be. But what's there isn't wrong.",
+              "createdAt": "2025-02-26T19:15:07Z",
+              "updatedAt": "2025-02-26T19:15:19Z"
+            }
+          ]
         }
       ]
     },
@@ -60410,18 +61204,33 @@
       "labels": [],
       "body": "fixes #347 ",
       "createdAt": "2025-02-20T18:07:17Z",
-      "updatedAt": "2025-02-24T12:05:15Z",
+      "updatedAt": "2025-02-26T23:02:22Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "70776f726092ac10793f8572f54bc8bad9b66217",
+      "baseRefOid": "dc292424462e501fa3ece9b9c559b88e61793eba",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "corim-cleanup",
-      "headRefOid": "f008b6de6859c2fcbdf3cba5b1f1b00c9dc59e53",
+      "headRefOid": "5272de40f3a0960ce62e56a5c9d602d96bd9d2a3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have addressed all the comments from @nedmsmith and @thomas-fossati !\r\nAdding @deeglaze and @andrew-draper for review!",
+          "createdAt": "2025-02-25T11:51:03Z",
+          "updatedAt": "2025-02-25T11:51:03Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze please review so that we can move forward!",
+          "createdAt": "2025-02-26T22:40:25Z",
+          "updatedAt": "2025-02-26T22:40:25Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86czpn8",
@@ -60482,6 +61291,163 @@
               "updatedAt": "2025-02-20T20:26:12Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86daJyK",
+          "commit": {
+            "abbreviatedOid": "f9829b3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T12:30:42Z",
+          "updatedAt": "2025-02-25T12:33:31Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\nTo facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.\r\n```",
+              "createdAt": "2025-02-25T12:30:42Z",
+              "updatedAt": "2025-02-25T12:33:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhK5l",
+          "commit": {
+            "abbreviatedOid": "28b2c33"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T23:56:12Z",
+          "updatedAt": "2025-02-25T23:56:29Z",
+          "comments": [
+            {
+              "originalPosition": 163,
+              "body": "```suggestion\r\nWhen an `endorsed-triple-record` is transformed to Endorsements ECTs it\r\n```",
+              "createdAt": "2025-02-25T23:56:12Z",
+              "updatedAt": "2025-02-25T23:56:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhMIq",
+          "commit": {
+            "abbreviatedOid": "df3b950"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "This is coming up nicely, thanks to those who have reviewed",
+          "createdAt": "2025-02-26T00:01:15Z",
+          "updatedAt": "2025-02-26T00:01:15Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhM3r",
+          "commit": {
+            "abbreviatedOid": "df3b950"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-02-26T00:04:18Z",
+          "updatedAt": "2025-02-26T00:04:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dpgMp",
+          "commit": {
+            "abbreviatedOid": "df3b950"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2025-02-26T15:19:07Z",
+          "updatedAt": "2025-02-26T15:24:28Z",
+          "comments": [
+            {
+              "originalPosition": 171,
+              "body": "This issue is not yet addressed.",
+              "createdAt": "2025-02-26T15:19:08Z",
+              "updatedAt": "2025-02-26T15:24:28Z"
+            },
+            {
+              "originalPosition": 162,
+              "body": "```suggestion\r\nEach Endorsement ECT contains the environment and internal representation of `measurement-map`s as extracted from an `endorsed-triple-record`.\r\n```\r\nWhat is an entry in an ECT? I understand an entry as something in the attestation context, like ACS, ae, rv, etc.. This also isn't exactly using the same syntax for environment and element-list as an `endorsed-triple-record`, since we use internal representations.",
+              "createdAt": "2025-02-26T15:23:56Z",
+              "updatedAt": "2025-02-26T15:24:28Z"
+            },
+            {
+              "originalPosition": 153,
+              "body": "```suggestion\r\nThe ACS contains Evidence ECTs (from Attesters) and Endorsement ECTs\r\n```",
+              "createdAt": "2025-02-26T15:24:12Z",
+              "updatedAt": "2025-02-26T15:24:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86drasm",
+          "commit": {
+            "abbreviatedOid": "730211f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-26T18:08:18Z",
+          "updatedAt": "2025-02-26T18:08:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86duEQM",
+          "commit": {
+            "abbreviatedOid": "730211f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T22:29:33Z",
+          "updatedAt": "2025-02-26T22:29:33Z",
+          "comments": [
+            {
+              "originalPosition": 162,
+              "body": "i am ok with this clarity, works for me!",
+              "createdAt": "2025-02-26T22:29:33Z",
+              "updatedAt": "2025-02-26T22:29:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86duIAo",
+          "commit": {
+            "abbreviatedOid": "5272de4"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-02-26T22:38:53Z",
+          "updatedAt": "2025-02-26T22:38:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86duQmc",
+          "commit": {
+            "abbreviatedOid": "5272de4"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-26T23:02:22Z",
+          "updatedAt": "2025-02-26T23:02:22Z",
+          "comments": []
         }
       ]
     },
@@ -60497,7 +61463,7 @@
       "labels": [],
       "body": "Issues #375, #388.",
       "createdAt": "2025-02-21T03:12:19Z",
-      "updatedAt": "2025-02-25T01:11:27Z",
+      "updatedAt": "2025-02-25T18:10:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
@@ -60527,6 +61493,26 @@
               "body": "I don't see how the expanded typing makes a difference wrt lossy/non-lossy properties of each type. We could have just documented them as one or the other.",
               "createdAt": "2025-02-25T01:11:16Z",
               "updatedAt": "2025-02-25T01:11:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86deiCZ",
+          "commit": {
+            "abbreviatedOid": "9ef85f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T18:10:23Z",
+          "updatedAt": "2025-02-25T18:10:23Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Agree with Ned, we do not need to change the types here, we can just state the properties, without been explicit on the type. May be we are missing something, @deeglaze here?",
+              "createdAt": "2025-02-25T18:10:23Z",
+              "updatedAt": "2025-02-25T18:10:24Z"
             }
           ]
         }
@@ -60645,7 +61631,7 @@
       "labels": [],
       "body": "This fixes issue #359",
       "createdAt": "2025-02-23T22:59:24Z",
-      "updatedAt": "2025-02-24T19:07:30Z",
+      "updatedAt": "2025-02-25T13:15:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "72c708669a63fd0f02fe2430ad06b42639d3410d",
@@ -60862,13 +61848,13 @@
       "labels": [],
       "body": "fixes #156",
       "createdAt": "2025-02-24T16:05:20Z",
-      "updatedAt": "2025-02-24T18:43:51Z",
+      "updatedAt": "2025-02-25T23:51:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "72c708669a63fd0f02fe2430ad06b42639d3410d",
+      "baseRefOid": "48bce364d51c01144ce27e6c64568befbe5693e5",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fix-156",
-      "headRefOid": "38f1f5179244f5edd9155f39d7eb6e467a855607",
+      "headRefOid": "52043c11885833ce1d6af0a5bede5254f8b714a3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -60983,6 +61969,224 @@
               "body": "\"might\" because tunnelling can be used to exclude intermediaries from confidential payloads and blinding can be used to excluded intermediaries from privacy sensitive payloads. ",
               "createdAt": "2025-02-24T18:43:41Z",
               "updatedAt": "2025-02-24T18:43:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dYVUG",
+          "commit": {
+            "abbreviatedOid": "38f1f51"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T09:56:13Z",
+          "updatedAt": "2025-02-25T09:56:13Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "> Are we saying:\r\n> \r\n>     Asymmetric Key Pair used to sign the Evidence OR\r\n>     Public Part of Asymmetric Key pair is part of Evidence Claim used to identify the Attesting Env?\r\n\r\nYes. That happens and is a PII issue.\r\n",
+              "createdAt": "2025-02-25T09:56:13Z",
+              "updatedAt": "2025-02-25T09:56:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dYWs4",
+          "commit": {
+            "abbreviatedOid": "38f1f51"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T09:57:08Z",
+          "updatedAt": "2025-02-25T09:57:08Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "> Public keys are PII unless they are for group signing (where the size of the group is privacy preserving).\r\n\r\nYes. Is the DAA scenario relevant here?",
+              "createdAt": "2025-02-25T09:57:08Z",
+              "updatedAt": "2025-02-25T09:57:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhJ3B",
+          "commit": {
+            "abbreviatedOid": "38f1f51"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-25T23:51:48Z",
+          "updatedAt": "2025-02-25T23:51:48Z",
+          "comments": [
+            {
+              "originalPosition": 30,
+              "body": "Yes, except DAA needs to be updated to support PQC.",
+              "createdAt": "2025-02-25T23:51:48Z",
+              "updatedAt": "2025-02-25T23:51:48Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 402,
+      "id": "PR_kwDOH6-tI86MhZze",
+      "title": "Add a better Overall Introduction",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/402",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #238",
+      "createdAt": "2025-02-25T19:25:21Z",
+      "updatedAt": "2025-02-26T00:28:36Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "48bce364d51c01144ce27e6c64568befbe5693e5",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "better-introduction",
+      "headRefOid": "e8d2e4a5e01f3742a30459b9dfacaf0d654c8531",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Introduction provides more clarity and removes duplication from `Abstract` section to Introduction section!",
+          "createdAt": "2025-02-25T19:25:59Z",
+          "updatedAt": "2025-02-25T19:25:59Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86dgxjr",
+          "commit": {
+            "abbreviatedOid": "e8d2e4a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See multiple suggestions",
+          "createdAt": "2025-02-25T22:30:44Z",
+          "updatedAt": "2025-02-25T22:54:38Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nThese roles are typically fulfilled by supply chain actors, such as manufacturers, distributors, or device owners.\r\n```",
+              "createdAt": "2025-02-25T22:30:44Z",
+              "updatedAt": "2025-02-25T22:54:38Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nEndorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., expected version or digest ) relating to an Attester.\r\nThis information is used by a Verifier to appraise Evidence received from an Attester which describes Attester operational state.\r\n```",
+              "createdAt": "2025-02-25T22:37:23Z",
+              "updatedAt": "2025-02-25T22:54:38Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "```suggestion\r\nAs such, one supply chain actor might only supply a portion of the Reference Values or Endorsements that otherwise fully characterizes an Attester.\r\nIdeally, only the supply chain actor who is the most knowledgable entity regarding a particular component will supply Reference Values or Endorsements for that component.\r\n```",
+              "createdAt": "2025-02-25T22:41:49Z",
+              "updatedAt": "2025-02-25T22:54:38Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\nIn order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).\r\nThe CoRIM data model is expressed in CDDL which can be used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.\r\n```",
+              "createdAt": "2025-02-25T22:49:24Z",
+              "updatedAt": "2025-02-25T22:54:38Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "I removed \"CoRIM achieves these goals by using an extensible format common to all supply chain actors and Verifiers.\" because I don't know what format it is referring to and I don't know what it means for it to be common to all supply chain actors.",
+              "createdAt": "2025-02-25T22:50:08Z",
+              "updatedAt": "2025-02-25T22:54:38Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\nCoRIM describes appraisal steps and behaviors that help Verifiers to reconcile a variety of possible inputs from multiple supply chain actors that results in a homogeneious representation of Attester state.\r\nCoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.\r\n```",
+              "createdAt": "2025-02-25T22:54:23Z",
+              "updatedAt": "2025-02-26T00:28:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhM8k",
+          "commit": {
+            "abbreviatedOid": "e8d2e4a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T00:04:39Z",
+          "updatedAt": "2025-02-26T00:04:39Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "We want to highlight that the data format we are proposing here is a IETF Standards based model to be adopted by all supply chain actors!",
+              "createdAt": "2025-02-26T00:04:39Z",
+              "updatedAt": "2025-02-26T00:04:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhNPa",
+          "commit": {
+            "abbreviatedOid": "e8d2e4a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "please see my comments",
+          "createdAt": "2025-02-26T00:05:50Z",
+          "updatedAt": "2025-02-26T00:05:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhPTu",
+          "commit": {
+            "abbreviatedOid": "e8d2e4a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-02-26T00:14:25Z",
+          "updatedAt": "2025-02-26T00:14:25Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I think, the lines you deleted is valid as to `WHY` such a document (i.e. CoRIM Document) is necessary ? It answers `WHY` part,\r\n\r\nWhat you stated is an Additional Note:\r\n\r\n`Additionally, this document describes multiple steps  of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors  to represent a homogeneous representation of Attester state.`",
+              "createdAt": "2025-02-26T00:14:25Z",
+              "updatedAt": "2025-02-26T00:14:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86dhPWC",
+          "commit": {
+            "abbreviatedOid": "e8d2e4a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested text.",
+          "createdAt": "2025-02-26T00:14:35Z",
+          "updatedAt": "2025-02-26T00:28:36Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "Couldn't something to that effect be said by any RFC? Do we need to put it in words?",
+              "createdAt": "2025-02-26T00:14:35Z",
+              "updatedAt": "2025-02-26T00:28:36Z"
             }
           ]
         }
