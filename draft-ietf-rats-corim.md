@@ -151,12 +151,14 @@ This document specifies the information elements for representing Endorsements a
 
 # Introduction {#sec-intro}
 
-RATS Architecture {{Section 4 of -rats-arch}}., specifies two important roles, Endorsers and Reference Value Providers.
-These roles are typically fulfilled by relevant supply chain actors, such as manufacturers, distributors, or device owners.
-They provide the required trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) about the Attester. This information is fundamental for correct operation of a Verifier (i.e. appraising Evidence received from the Attester).
+The RATS Architecture {{Section 4 of -rats-arch}} specifies several roles, including Endorsers and Reference Value Providers.
+These two roles are typically fulfilled by supply chain actors, such as manufacturers, distributors, or device owners.
+Endorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., digest ) relating to an Attester.
+This information is used by a Verifier to appraise Evidence received from an Attester which describes Attester operational state.
 
 In a complex supply chain, multiple actors will likely produce these values over several points in time.
-As such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module
+As such, one supply chain actor might only supply a portion of the Reference Values or Endorsements that otherwise fully characterizes an Attester.
+Ideally, only the supply chain actor who is the most knowledgable entity regarding a particular component will supply Reference Values or Endorsements for that component.
 that is measured amongst a long chain of measurements.
 
 Attesters vary across vendors and even across products from a single vendor.
