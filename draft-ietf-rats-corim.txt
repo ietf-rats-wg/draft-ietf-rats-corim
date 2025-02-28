@@ -1904,9 +1904,9 @@ Table of Contents
    held in reserve for later use.
 
    Attest Key triples instruct a Verifier to perform key validation
-   checks, such as revocation, certificate path construction &
-   verification, or proof of possession.  The Verifier SHOULD verify
-   keys contained in Attest Key triples.
+   checks, such as revocation, certification path construction and
+   validation, or proof of possession.  The Verifier SHOULD verify keys
+   contained in Attest Key triples.
 
    Additional details about how a key was provisioned or is protected
    may be asserted using Endorsements such as endorsed-triples.
@@ -3654,9 +3654,10 @@ Table of Contents
    mediating all interactions between Attesters and their Relying
    Parties.  The Verifier is effectively part of the Attesters' and
    Relying Parties' trusted computing base (TCB).  Any mistake in the
-   appraisal process could have security implications.  For instance, it
-   could lead to the subversion of an access control function, which
-   creates a chance for privilege escalation.
+   appraisal procedure conducted by the Verifier could have security
+   implications.  For instance, it could lead to the subversion of an
+   access control function, which creates a chance for privilege
+   escalation.
 
    Therefore, the Verifier’s code and configuration, especially those of
    the CoRIM processor, are primary security assets that must be built
@@ -3690,10 +3691,11 @@ Table of Contents
    *  Failing securely in the event of errors to avoid compromising the
       security of the system.
 
-   The appraisal process should be auditable and reproducible.  The
-   integrity of the code and data during execution should be made an
-   explicit objective, for example ensuring that the appraisal functions
-   are computed in an attestable trusted execution environment (TEE).
+   It is critical that appraisal procedures are auditable and
+   reproducible.  The integrity of code and data during execution is an
+   explicit objective, for example, ensuring that the appraisal
+   functions are executed in an attestable trusted execution environment
+   (TEE).
 
    The integrity of public and private key material and the secrecy of
    private key material must be ensured at all times.  This includes key
@@ -3701,16 +3703,19 @@ Table of Contents
    verify the authority of triples (such as public keys that identify
    trusted supply chain actors).  For more detailed information on
    protecting Trust Anchors, refer to Section 12.4 of [RFC9334].
+   Utilizing the public part of an asymmetric key pair that is used for
+   Evidence generation to identify an Attesting Environment raises
+   privacy considerations that must be carefully considered.
 
    The Verifier should use cryptographically protected, mutually
    authenticated secure channels to all its trusted input sources
    (Endorsers, RVPs, Verifier Owners).  These links must reach as deep
    as possible - possibly terminating within the appraisal session
-   context - to avoid man-in-the-middle attacks.  Also consider
-   minimizing the use of intermediaries: each intermediary becomes
-   another party that needs to be trusted and therefore factored in the
-   Attesters and Relying Parties' TCBs.  Refer to Section 12.2 of
-   [RFC9334] for information on Conceptual Messages protection.
+   context - to avoid man-in-the-middle attacks.  Minimizing the use of
+   intermediaries is also vital: each intermediary becomes another party
+   that might need to be trusted and therefore factored in the Attesters
+   and Relying Parties' TCBs.  Refer to Section 12.2 of [RFC9334] for
+   information on Conceptual Messages protection.
 
 12.  IANA Considerations
 

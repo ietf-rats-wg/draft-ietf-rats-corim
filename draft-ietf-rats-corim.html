@@ -3591,7 +3591,7 @@ See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.1.4.1</a>
 An Attesting Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.4.7-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-2">The attestation keys may have been used to sign Evidence or may be held in reserve for later use.<a href="#section-5.1.4.7-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.7-3">Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
+<p id="section-5.1.4.7-3">Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#section-5.1.4.7-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
@@ -5861,7 +5861,7 @@ extensions <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D
       </h2>
 <p id="section-11-1">Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
 The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
-Any mistake in the appraisal process could have security implications.
+Any mistake in the appraisal procedure conducted by the Verifier could have security implications.
 For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.<a href="#section-11-1" class="pilcrow">¶</a></p>
 <p id="section-11-2">Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.<a href="#section-11-2" class="pilcrow">¶</a></p>
 <p id="section-11-3">The protection of the Verifier system should be considered throughout its entire lifecycle, from design to operation.
@@ -5892,14 +5892,15 @@ This includes the following aspects:<a href="#section-11-3" class="pilcrow">¶</
           <p id="section-11-4.8.1">Failing securely in the event of errors to avoid compromising the security of the system.<a href="#section-11-4.8.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-11-5">The appraisal process should be auditable and reproducible.
-The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).<a href="#section-11-5" class="pilcrow">¶</a></p>
+<p id="section-11-5">It is critical that appraisal procedures are auditable and reproducible.
+The integrity of code and data during execution is an explicit objective, for example, ensuring that the appraisal functions are executed in an attestable trusted execution environment (TEE).<a href="#section-11-5" class="pilcrow">¶</a></p>
 <p id="section-11-6">The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
-For more detailed information on protecting Trust Anchors, refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.4" class="relref">Section 12.4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-11-6" class="pilcrow">¶</a></p>
+For more detailed information on protecting Trust Anchors, refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.4" class="relref">Section 12.4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.
+Utilizing the public part of an asymmetric key pair that is used for Evidence generation to identify an Attesting Environment raises privacy considerations that must be carefully considered.<a href="#section-11-6" class="pilcrow">¶</a></p>
 <p id="section-11-7">The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
-Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
+Minimizing the use of intermediaries is also vital: each intermediary becomes another party that might need to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="relref">Section 12.2</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span> for information on Conceptual Messages protection.<a href="#section-11-7" class="pilcrow">¶</a></p>
 </section>
 </div>
