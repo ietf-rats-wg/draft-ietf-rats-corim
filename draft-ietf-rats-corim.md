@@ -2657,7 +2657,7 @@ The integrity of code and data during execution is an explicit objective, for ex
 The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
 For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
-Utilizing the public part of an asymmetric key pair for Evidence generation to identify an Attesting Environment raises privacy considerations that must be carefully considered.
+Utilizing the public part of an asymmetric key pair that is used for Evidence generation to identify an Attesting Environment raises privacy considerations that must be carefully considered.
 
 The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
