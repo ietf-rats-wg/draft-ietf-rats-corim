@@ -165,7 +165,8 @@ Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
 In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values, and to aid the supply chain eco-system, this document specifies a standards based data model known as Concise Reference Integrity Manifests (CoRIM). CoRIM is a CBOR {{-cbor}} based data structure that addresses the above challenges by using an extensible format common to all supply chain actors and Verifiers.
-CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view.
+Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors  to represent a homogeneous representation of Attester state.
+CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
 See {{sec-verifier-rec}}.
 
 
