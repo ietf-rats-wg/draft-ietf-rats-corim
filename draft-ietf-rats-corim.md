@@ -1495,10 +1495,6 @@ The following describes each member of the `concise-tl-tag` map.
 * `tl-validity` (index 2): Specifies the validity period of the CoTL.
   Described in {{sec-common-validity}}.
 
-* `$$concise-tl-tag-extension`: This CDDL socket is used to add new information structures to the `concise-tl-tag`.
-  See {{sec-iana-cotl}}.
-  The `$$concise-tl-tag-extension` extension socket is empty in this specification.
-
 # Common Types {#sec-common-types}
 
 The following CDDL types may be shared by CoRIM, CoMID, and CoTL.
