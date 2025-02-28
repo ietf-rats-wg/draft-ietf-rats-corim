@@ -101,9 +101,11 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
+  RFC9562:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
+  I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -578,6 +580,44 @@ Described in {{sec-common-validity}}.
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
 
+## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
+
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
+The CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.
+A CoRIM role entry that contains the `manifest-signer` role MUST be added to `corim-entity-map`.
+
+It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
+
+### CoRIM collections
+
+Several CoRIMs may share the same signer (e.g., as collection payload in a different signed message) and use locally-resolvable references to each other, for example using a RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
+The Collection CMW type is similar to a profile in its way of restricting the shape of the CMW collection.
+The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
+
+A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
+The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
+The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
+The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
+
+If using other signing envelope formats, the CoRIM signing authority MUST be specified, e.g., by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
+
+~~~ cddl
+{::include cddl/cmw-corim-collection.cddl}
+~~~
+
+The Collection CMW MAY use any label for its CoRIMs.
+If there is a hierarchical structure to the CoRIM Collection CMW, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
+It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{RFC9562}}.
+CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
+It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
+It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
+It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
+
+The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
+
+~~~cbor-diag
+{::include cddl/examples/cmw-corim-collection.diag}
+~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
