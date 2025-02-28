@@ -231,30 +231,44 @@ Table of Contents
 
 1.  Introduction
 
-   In order to conduct Evidence appraisal, a Verifier requires not only
-   fresh Evidence from an Attester, but also trusted Endorsements (e.g.,
-   test results or certification data) and Reference Values (e.g., the
-   version or digest of a firmware component) associated with the
-   Attester.  Endorsements and Reference Values are obtained from
-   relevant supply chain actors, such as manufacturers, distributors, or
-   device owners.  In a complex supply chain, multiple actors will
-   likely produce these values over several points in time.  As such,
-   one supply chain actor will only provide the subset of
-   characteristics that they know about the Attester.  A proper subset
-   is typical because a certain supply chain actor will be the
-   responsible authority for only a system component/module that is
-   measured amongst a long chain of measurements.  Attesters vary across
-   vendors and even across products from a single vendor.  Not only
-   Attesters can evolve and therefore new measurement types need to be
-   expressed, but an Endorser may also want to provide new security
-   relevant attributes about an Attester at a future point in time.
+   The RATS Architecture Section 4 of [RFC9334] specifies several roles,
+   including Endorsers and Reference Value Providers.  These two roles
+   are typically fulfilled by supply chain actors, such as
+   manufacturers, distributors, or device owners.  Endorsers and
+   Reference Value Providers supply Endorsements (e.g., test results or
+   certification data) and Reference Values (e.g., digest ) relating to
+   an Attester.  This information is used by a Verifier to appraise
+   Evidence received from an Attester which describes Attester
+   operational state.
 
-   This document specifies Concise Reference Integrity Manifests (CoRIM)
-   - a CBOR [STD94] based data model addressing the above challenges by
-   using an extensible format common to all supply chain actors and
-   Verifiers.  CoRIM enables Verifiers to reconcile a complex
-   distributed supply chain into a single homogeneous view.  See
-   Section 2.
+   In a complex supply chain, multiple actors will likely produce these
+   values over several points in time.  As such, one supply chain actor
+   might only supply a portion of the Reference Values or Endorsements
+   that otherwise fully characterizes an Attester.  Ideally, only the
+   supply chain actor who is the most knowledgable entity regarding a
+   particular component will supply Reference Values or Endorsements for
+   that component. that is measured amongst a long chain of
+   measurements.
+
+   Attesters vary across vendors and even across products from a single
+   vendor.  Not only Attesters can evolve and therefore new measurement
+   types need to be expressed, but an Endorser may also want to provide
+   new security relevant attributes about an Attester at a future point
+   in time.
+
+   In order to promote inter-operability, consistency and accuracy in
+   the representation of Endorsements and Reference Values this document
+   specifies a data model for Endorsements and Reference Values known as
+   Concise Reference Integrity Manifests (CoRIM).  The CoRIM data model
+   is expressed in CDDL which is used to realize a CBOR [STD94] encoding
+   suitable for cryptographic operations (e.g., hashing, signing,
+   encryption) and transmission over computer networks.  Additionally,
+   this document describes multiple phases of a Verifier Appraisal and
+   provides an example of a possible use of CoRIM messages from multiple
+   supply chain actors to represent a homogeneous representation of
+   Attester state.  CoRIM is extensible to accommodate supply chain
+   diversity while supporting a common representation for Endorsement
+   and Reference Value inputs to Verifiers.  See Section 2.
 
 1.1.  Terminology and Requirements Language
 
