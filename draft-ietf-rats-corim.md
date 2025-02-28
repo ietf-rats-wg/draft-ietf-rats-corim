@@ -325,7 +325,7 @@ For more detail, see {{sec-corim-profile-types}}.
 
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, an unsigned CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel where the CoRIM signer authority is inherited from the secure channel credential. See {{sec-conveyed-signer}}.
+Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
 
 The following CDDL describes the top-level CoRIM.
 
@@ -544,7 +544,6 @@ Described in {{sec-common-validity}}.
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
 An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
-An unsigned CoRIM may be a payload within a secure channel.
 The CoRIM signer authority is taken from the authenticated credential of the same entity that originates the CoRIM.
 A CoRIM role entry that contains the `manifest-signer` role MUST be added to `corim-entity-map`.
 
@@ -552,7 +551,7 @@ It is out of scope of this document to specify a method of delegating the signer
 
 ### CoRIM collections
 
-Several CoRIMs may share the same signer and use locally-resolvable references to each other by using a signed RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
+Several CoRIMs may share the same signer (e.g., as payload in a different COSE-signed message) and use locally-resolvable references to each other by using a RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
 The CMW collection type is similar to a profile in its way of restricting the shape of the CMW collection.
 The collection type for a CoRIM a collection SHALL be `tag:{{&SELF}}:corim`.
 
@@ -560,6 +559,8 @@ A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed C
 The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
 The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
+
+If using other signing envelope formats, the CoRIM signing authority MUST be specified, e.g., by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
 ~~~ cddl
 {::include cddl/cmw-corim-collection.cddl}
