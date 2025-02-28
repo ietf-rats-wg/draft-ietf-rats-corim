@@ -1267,7 +1267,7 @@ This means that there is no privilege strictly afforded to, e.g., privilege leve
 
 The convention is that 0 is the highest privilege, and higher numbers correspond to fewer privileges.
 For environments that count privilege in the opposite order, it is recommended to represent the privilege levels with non-positive numbers, where 0 is the lowest privilege, and some negative integer is the highest.
-The full range if signed integers may be used.
+The full range of signed integers may be used.
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
 ##### Domain Types {#sec-comid-domain-type}
