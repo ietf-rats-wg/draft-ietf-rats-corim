@@ -2627,21 +2627,27 @@ Note that it is not required for all the entries in the candidate entry to be us
 
 The ACS entry value stored under `measurement-values-map` codepoint 15 is a linear privilege level, which must have type `linear-privlevel-type-choice`.
 
-If the entry `linear-privlevel-type-choice` is an `int`, name it PRIV and compare as follows.
+The comparison semantics is the same as for `int` and `int-range`.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then an equality comparison is performed on the `int` components.
-The comparison MUST return true if the value of PRIV is equal to the `int` value in the condition ECT.
+##### Comparison of `int` and `int-range` types
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range inclusion comparison is performed.
-The comparison MUST return true if the value of PRIV is greater than or equal to the `min` value in the condition ECT AND the value of PRIV is less than or equal to than the `max` value in the condition ECT
+Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
-If the entry `linear-privilege-type-choice` is an `int-range` or `int-range` tagged with #6.564, then comparison with the pair of `opt-int` values MINPRIV and MAXPRIV is as follows.
+*  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int` then the comparison MUST return true if and only if MINPRIV and MAXPRIV are equal and finite.
+*  If CONDITION is an `int-range` tagged with #6.564, then a range inclusion comparison is performed.
+The comparison MUST return true if and only if all the following conditions are true:
+    + CONDITION.min is `null` or ENTRY is greater than or equal to the CONDITION.min.
+    + CONDITION.max is `null` or ENTRY is less than or equal to CONDITION.max.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 15 is an `int-range` tagged with #6.564 then a range subsumption comparison is performed.
-The comparison MUST return true if the value of MINPRIV is greater than or equal to the `min` value of the condition ECT and the value of MAXPRIV is less than or equal to the `max` value of the condition ECT.
-In this case, `null` in `min` is less than `null` and any integer, and `null` in `max` is greater than `null` and any integer.
+Consider an `int-range` or `int-range` tagged with #6.564 value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing an `int-range` against either another `int-range` or an `int` named CONDITION.
+
+*  If CONDITION is an `int`, then the comparison MUST return true if and only if ENTRY.min and ENTRY.max are both equal to CONDITION.
+
+*  If CONDITION is an `int-range` tagged with #6.564, then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).
+The comparison MUST return true if and only if all the following conditions are true:
+    + CONDITION.min is `null` or ENTRY.min is an `int` that is greater than or equal to CONDITION.min
+    + CONDITION.max is `null` or ENTRY.max is an `int` that is less than or equal to CONDITION.max.
 
 ### Profile-directed Comparison {#sec-compare-profile}
 
