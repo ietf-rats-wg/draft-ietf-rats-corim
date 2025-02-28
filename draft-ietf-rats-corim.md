@@ -99,6 +99,7 @@ normative:
   IANA.named-information: named-info
 
 informative:
+  RFC7519: jwt
   RFC7942:
   RFC9277:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
@@ -153,16 +154,25 @@ This document specifies the information elements for representing Endorsements a
 
 # Introduction {#sec-intro}
 
-In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements (e.g., test results or certification data) and Reference Values (e.g., the version or digest of a firmware component) associated with the Attester.
-Endorsements and Reference Values are obtained from relevant supply chain actors, such as manufacturers, distributors, or device owners.
+The RATS Architecture {{Section 4 of -rats-arch}} specifies several roles, including Endorsers and Reference Value Providers.
+These two roles are typically fulfilled by supply chain actors, such as manufacturers, distributors, or device owners.
+Endorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., digest ) relating to an Attester.
+This information is used by a Verifier to appraise Evidence received from an Attester which describes Attester operational state.
+
 In a complex supply chain, multiple actors will likely produce these values over several points in time.
-As such, one supply chain actor will only provide the subset of characteristics that they know about the Attester. A proper subset is typical because a certain supply chain actor will be the responsible authority for only a system component/module that is measured amongst a long chain of measurements.
+As such, one supply chain actor might only supply a portion of the Reference Values or Endorsements that otherwise fully characterizes an Attester.
+Ideally, only the supply chain actor who is the most knowledgable entity regarding a particular component will supply Reference Values or Endorsements for that component.
+that is measured amongst a long chain of measurements.
+
 Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
-This document specifies Concise Reference Integrity Manifests (CoRIM) - a CBOR {{-cbor}} based data model addressing the above challenges by using an extensible format common to all supply chain actors and Verifiers.
-CoRIM enables Verifiers to reconcile a complex distributed supply chain into a single homogeneous view.
+In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
+The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
+Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors  to represent a homogeneous representation of Attester state.
+CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
 See {{sec-verifier-rec}}.
+
 
 ## Terminology and Requirements Language
 
@@ -171,15 +181,45 @@ See {{sec-verifier-rec}}.
 This document uses terms and concepts defined by the RATS architecture.
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
+This document uses the terms _"actual state"_ and _"reference state"_ as defined in {{Section 2 of -rats-endorsements}}.
+
 In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.
 
 The terminology from CBOR {{-cbor}}, CDDL {{-cddl}} and COSE {{-cose}} applies;
 in particular, CBOR diagnostic notation is defined in {{Section 8 of -cbor}}
 and {{Section G of -cddl}}. Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.
 
+### Glossary {#sec-glossary}
+
 This document uses the following terms:
 
 {: vspace="0"}
+Appraisal Claims Set (ACS):
+: A structure that holds Environment-Claim Tuples that have been appraised.
+The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
+
+Appraisal Policy:
+: A description of the conditions that, if met, allow appraisal of Claims.
+Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion.
+Appraisal Policy resolves which entities are credible and under what conditions.
+See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
+
+Attestation Results Set (ARS):
+: A structure that holds results of appraisal and Environment-Claim Tuples that are used to construct an Attestation Results message that is conveyed to a Relying Party.
+
+Authority:
+: The entity asserting that a Claim is true.
+Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
+A cryptographic key can be a proxy for a human or organizational entity.
+
+Claim:
+: A piece of information, in the form of a key-value pair.
+See also {{Section 4.2 of -rats-arch}} and {{Section 2 of -jwt}}.
+
+Class ID:
+: An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
+See also {{Section 4.2.4 of -eat}}.
+
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
@@ -192,6 +232,14 @@ The term "Target Environment" refers to the group of system security metrics tha
 The term "Attesting Environment" refers to the entity that collects and cryptographically signs such security metrics.
 See also {{Section 3.1 of -rats-arch}}.
 
+Environment-Claim Tuple (ECT):
+: A structure containing a set of values that describe a Target Environment plus a set of Measurement / Claim values that describe properties of the Target Environment.
+The ECT also contains Authority which identifies the entity that authored the ECT.
+
+Instance ID:
+: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
+See also {{Section 4.2.1 of -eat}}.
+
 Measurement:
 : A value associated with specific security characteristics of an Attester that influences the trustworthiness of that Attester.
 The object of a Measurement could be the invariant part of a firmware component loaded into memory during startup, a run-time integrity check (RTIC), a file system object, or a CPU register.
@@ -199,17 +247,9 @@ A measured object is part of the Attester's Target Environment.
 Expected, or "golden," Measurements are compiled as Reference Values, which are used by the Verifier to assess the trust state of the Attester.
 See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
 
-Class ID:
-: An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
-See also {{Section 4.2.4 of -eat}}.
-
-Instance ID:
-: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
-See also {{Section 4.2.1 of -eat}}.
-
 Reference Values:
 : A set of values that represent the desired or undesired state of an Attester.
-Reference Values are compared against Evidence to determine the trustworthiness of the Attester.
+Reference Values are compared against Evidence to determine whether Attester state is corroborated by a Reference Value Provider.
 Reference Values with matching Evidence produce "acceptable Claims."
 See also {{Section 4.2 of -rats-arch}}, {{Section 8.3 of -rats-arch}}, and {{Section 2 of -rats-endorsements}}.
 
@@ -294,21 +334,20 @@ The CDDL definitions in this document follows the naming conventions illustrated
 
 A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
 A CoRIM can be digitally signed with a COSE {{-cose}} signature.
-A tag identifies and describes properties of modules or components of a system.
+A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.
 
 Tags can be of different types:
 
 * Concise Module ID (CoMID) tags ({{sec-comid}}) contain metadata and claims about the hardware and firmware modules.
 
-* Concise Software ID (CoSWID) tags ({{-coswid}}) describe software components.
+* Concise Software ID (CoSWID) tags ({{-coswid}}) are used to identify, describe and manage software components.
 
 * Concise Tag List (CoTL) tags ({{sec-cotl}}) contain the list of CoMID and CoSWID tags that the Verifier should consider as "active" at a certain point in time.
 
-The set of tags is extensible so that future specifications can add new kinds of information.
+CoRIM allows for new types of tags to be added in future specifications.
 For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
 
 Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
-[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73
 
 CoRIM can also carry the following optional metadata:
 
@@ -1505,10 +1544,6 @@ The following describes each member of the `concise-tl-tag` map.
 * `tl-validity` (index 2): Specifies the validity period of the CoTL.
   Described in {{sec-common-validity}}.
 
-* `$$concise-tl-tag-extension`: This CDDL socket is used to add new information structures to the `concise-tl-tag`.
-  See {{sec-iana-cotl}}.
-  The `$$concise-tl-tag-extension` extension socket is empty in this specification.
-
 # Common Types {#sec-common-types}
 
 The following CDDL types may be shared by CoRIM, CoMID, and CoTL.
@@ -1689,42 +1724,20 @@ These Claims are added with the policy author's authority.
 During Phase 7, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
 The Claims in the output staging area and other Verifier related metadata are transformed into an external representation suitable for consumption by a Relying Party.
 
-## Verifier Abstraction {#sec-verifier-abstraction}
+# Example Verifier Algorithm {#sec-verifier-abstraction}
 
 This document assumes that Verifier implementations may differ.
-To facilitate the description of normative Verifier behavior, this document uses an abstract representation of Verifier internals.
+To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.
 
-The following terms are used:
 
-{: vspace="0"}
-Claim:
-: A piece of information, in the form of a key-value pair.
-
-Environment-Claim Tuple (ECT):
-
-: A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
-The ECT also contains authority which identifies the entity that authored the ECT.
-
-reference state:
-: Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
-
-actual state:
-: Claims that describe a Target Environment instance at a given point in time.  Endorsed Values and Evidence typically are Claims about actual state.  An Attester may be composed of multiple components, where each component may represent a scope of appraisal.
-See also ({{Section 2 of -rats-endorsements}}).
-
-Authority:
-: The entity asserting that a claim is true.
-Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim. A cryptographic key can be a proxy for a human or organizational entity.
-
-Appraisal Claims Set (ACS):
-: A structure that holds ECTs that have been appraised.
-The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
-
-Appraisal Policy:
-: A description of the conditions that, if met, allow acceptance of Claims. Typically, the entity asserting a Claim should have knowledge, expertise, or context that gives credibility to the assertion. Appraisal Policy resolves which entities are credible and under what conditions.  See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
-
-Attestation Results Set (ARS):
-: A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
+The terms
+Claim,
+Environment-Claim Tuple (ECT),
+Authority,
+Appraisal Claims Set (ACS),
+Appraisal Policy, and
+Attestation Results Set (ARS)
+are used with the meaning defined in {{sec-glossary}}.
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
@@ -1732,7 +1745,7 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
-#### Internal Representation of Environment Claims Tuple {#sec-ir-ect}
+### Internal structure of ECT {#sec-ir-ect}
 
 Environment-Claims Tuples (ECT) have five attributes:
 
@@ -1757,9 +1770,9 @@ The following CDDL describes the ECT structure in more detail.
 
 The Conceptual Message type determines which attributes are mandatory.
 
-#### Internal Representation Extensions {#sec-ir-ext}
+### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
-The internal representation extends `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
+The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
 `typed-crypto-key` consists of a `key` and an optional `key-type`.
 There are two types of keys `attest-key` and `identity-key`.
 
@@ -1767,7 +1780,7 @@ There are two types of keys `attest-key` and `identity-key`.
 {::include cddl/intrep-key.cddl}
 ~~~
 
-#### Internal Representation of Evidence {#sec-ir-evidence}
+### Internal Representation of Evidence {#sec-ir-evidence}
 
 An internal representation of attestation Evidence uses the `ae` relation.
 
@@ -1792,7 +1805,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `profile`       | Optional    |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
-#### Internal Representation of Reference Values {#sec-ir-ref-val}
+### Internal Representation of Reference Values {#sec-ir-ref-val}
 
 An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
 
@@ -1822,7 +1835,7 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 |           | `profile`       | Optional    |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
-#### Internal Representation of Endorsed Values {#sec-ir-end-val}
+### Internal Representation of Endorsed Values {#sec-ir-end-val}
 
 An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
 
@@ -1857,7 +1870,7 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `profile`       | Optional    |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
-#### Internal Representation of Policy Statements {#sec-ir-policy}
+### Internal Representation of Policy Statements {#sec-ir-policy}
 
 The `policy` relation compares the `condition` ECTs to the ACS.
 
@@ -1883,7 +1896,7 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `profile`       | Optional    |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
-#### Internal Representation of Attestation Results {#sec-ir-ar}
+### Internal Representation of Attestation Results {#sec-ir-ar}
 
 The `ar` relation compares the `acs-condition` to the ACS.
 
@@ -1947,7 +1960,6 @@ Any CoRIM that has been secured by a cryptographic mechanism, such as a signatur
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
-
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### Tags Extraction and Validation
@@ -2008,7 +2020,7 @@ Regardless of the specific integrity protection method used, the Verifier MUST N
 
 ### Input Transformation {#sec-phase1-trans}
 
-Input Conceptual Messages, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
+Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
 
 The following mapping conventions apply to all forms of input transformation:
 
@@ -2023,6 +2035,15 @@ The following mapping conventions apply to all forms of input transformation:
 All of the extracted and validated tags are loaded into an *appraisal context*.
 The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
 The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
+
+#### Evidence Tranformation
+
+Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
+The Evidence is mapped into one or more `addition` ECTs.
+If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
+
+Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
+The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 #### Reference Triples Transformation {#sec-ref-trans}
 
@@ -2188,14 +2209,6 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-#### Evidence Tranformation
-
-Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
-The Evidence is mapped into one or more `addition` ECTs.
-If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
-
-Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
-The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2214,20 +2227,18 @@ See {{sec-ir-cm}}.
 Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/232
-
 #### ACS Processing Requirements
 
 The ACS contains the actual state of Attester's Target Environments (TEs).
-The `state-triples` field contains Evidence (from Attesters) and Endorsements
+The ACS contains Evidence ECTs (from Attesters) and Endorsement ECTs
 (e.g. from `endorsed-triple-record`).
 
 CoMID Reference Values will be matched against the ACS following the comparison rules in {{sec-match-condition-ect}}.
 This document describes an example evidence structure which can be
 matched against these Reference Values.
 
-Each entry within `state-triples` uses the syntax of `endorsed-triple-record`.
-When an `endorsed-triple-record` appears within `state-triples` it
+Each Endorsement ECT contains the environment and internal representation of `measurement-map`s as extracted from an `endorsed-triple-record`.
+When an `endorsed-triple-record` is transformed to Endorsements ECTs it
 indicates that the authority named by `measurement-map`.`authorized-by`
 asserts that the actual state of one or more Claims within the
 Target Environment, as identified by `environment-map`, have the
@@ -2328,14 +2339,9 @@ If satisfied, the RVP authority is added to the matching ACS entry.
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302
-
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
-
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
@@ -2419,8 +2425,6 @@ An internal representation of Attestation Results as separate contexts ({{sec-ir
 Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
 A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
 A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
@@ -2591,7 +2595,6 @@ If, for every bit position in the mask whose value is 1, the corresponding bits 
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
-
 The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
 If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
 If the byte strings match, and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
@@ -2700,13 +2703,11 @@ These links must reach as deep as possible - possibly terminating within the app
 Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
 
 # IANA Considerations {#sec-iana-cons}
 
 ## New COSE Header Parameters
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/12
 
 ## New CBOR Tags {#sec-iana-cbor-tags}
 
