@@ -553,7 +553,7 @@ It is out of scope of this document to specify a method of delegating the signer
 
 Several CoRIMs may share the same signer (e.g., as payload in a different COSE-signed message) and use locally-resolvable references to each other by using a RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
 The CMW collection type is similar to a profile in its way of restricting the shape of the CMW collection.
-The collection type for a CoRIM a collection SHALL be `tag:{{&SELF}}:corim`.
+The collection type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
