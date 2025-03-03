@@ -46,6 +46,7 @@ COMID_FRAGS += uuid.cddl
 COMID_FRAGS += version-map.cddl
 COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
+COMID_FRAGS += measured-component.cddl
 COMID_FRAGS += concise-swid-tag.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
@@ -114,6 +115,7 @@ INTREP_FRAGS += ip-addr-type-choice.cddl
 INTREP_FRAGS += ueid.cddl
 INTREP_FRAGS += uuid.cddl
 INTREP_FRAGS += integrity-registers.cddl
+INTREP_FRAGS += measured-component.cddl
 INTREP_FRAGS += crypto-key-type-choice.cddl
 INTREP_FRAGS += profile-type-choice.cddl
 INTREP_FRAGS += cose-key.cddl
