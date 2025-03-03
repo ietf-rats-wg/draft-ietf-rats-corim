@@ -101,9 +101,11 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
+  RFC9562:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
+  I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -578,6 +580,44 @@ Described in {{sec-common-validity}}.
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
 
+## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
+
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
+The CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.
+A CoRIM role entry that contains the `manifest-signer` role MUST be added to `corim-entity-map`.
+
+It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
+
+### CoRIM collections
+
+Several CoRIMs may share the same signer (e.g., as collection payload in a different signed message) and use locally-resolvable references to each other, for example using a RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
+The Collection CMW type is similar to a profile in its way of restricting the shape of the CMW collection.
+The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
+
+A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
+The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
+The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
+The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
+
+If using other signing envelope formats, the CoRIM signing authority MUST be specified, e.g., by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
+
+~~~ cddl
+{::include cddl/cmw-corim-collection.cddl}
+~~~
+
+The Collection CMW MAY use any label for its CoRIMs.
+If there is a hierarchical structure to the CoRIM Collection CMW, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
+It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{RFC9562}}.
+CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
+It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
+It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
+It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
+
+The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
+
+~~~cbor-diag
+{::include cddl/examples/cmw-corim-collection.diag}
+~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
 
@@ -1376,7 +1416,7 @@ The existence of these keys is asserted in Evidence, Reference Values, or Endors
 
 The attestation keys may have been used to sign Evidence or may be held in reserve for later use.
 
-Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -2634,7 +2674,7 @@ groups to use this information as they see fit".
 
 Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
 The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
-Any mistake in the appraisal process could have security implications.
+Any mistake in the appraisal procedure conducted by the Verifier could have security implications.
 For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
 
 Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
@@ -2651,16 +2691,17 @@ This includes the following aspects:
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
 - Failing securely in the event of errors to avoid compromising the security of the system.
 
-The appraisal process should be auditable and reproducible.
-The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).
+It is critical that appraisal procedures are auditable and reproducible.
+The integrity of code and data during execution is an explicit objective, for example, ensuring that the appraisal functions are executed in an attestable trusted execution environment (TEE).
 
 The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
 This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
 For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
+Utilizing the public part of an asymmetric key pair that is used for Evidence generation to identify an Attesting Environment raises privacy considerations that must be carefully considered.
 
 The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
 These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
-Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
+Minimizing the use of intermediaries is also vital: each intermediary becomes another party that might need to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
 
