@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T01:53:19.129506+00:00",
+  "timestamp": "2025-03-04T01:49:40.173330+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10133,6 +10133,47 @@
           "body": "Add better description for the use case where Unsigned CoRIM is transported on a secure channel, how authority is expressed!",
           "createdAt": "2025-02-28T18:39:51Z",
           "updatedAt": "2025-02-28T18:39:51Z"
+        }
+      ]
+    },
+    {
+      "number": 406,
+      "id": "I_kwDOH6-tI86sQAIb",
+      "title": "Normative statements in section 9",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/406",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "wontfix",
+        "more discussion needed"
+      ],
+      "body": "For the first time I realized that the entirety of section 9 is titled (emphasis mine) \"**Example** Verifier Algorithm\" and states\n>This document assumes that Verifier implementations may differ. To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in [Section 8.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-appraisal-procedure).\n\nNormative text should not be used in an example, however section 9 has many `MUST`s. Am I correct in thinking that\n>To facilitate the description of normative Verifier behavior\n\nmeans that section 9 is a non-normative guide to another to-be-written specification that will specify normative Verifier behavior?",
+      "createdAt": "2025-03-03T00:10:03Z",
+      "updatedAt": "2025-03-03T18:33:12Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we intend for this section to be conditional normative, that is, if you choose to implement it, you must do certain things. But if you choose a different approach the result should be equivalent to this approach (given the same set of inputs). ",
+          "createdAt": "2025-03-03T16:17:51Z",
+          "updatedAt": "2025-03-03T16:17:51Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agree, it is hard to set rules within an Example, but one MUST understand the rules are within the Examples context.\n\nThe intention is to purely aid the community from Implementation Perspective!",
+          "createdAt": "2025-03-03T17:40:14Z",
+          "updatedAt": "2025-03-03T17:40:14Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "In that case a simple fix would be to rename `Example Verifier` to `Reference Verifier`. ",
+          "createdAt": "2025-03-03T18:33:12Z",
+          "updatedAt": "2025-03-03T18:33:12Z"
         }
       ]
     }
@@ -62066,7 +62107,7 @@
       "labels": [],
       "body": "Fix #381",
       "createdAt": "2025-02-23T16:25:41Z",
-      "updatedAt": "2025-02-24T22:53:13Z",
+      "updatedAt": "2025-03-03T17:40:41Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
@@ -62152,6 +62193,86 @@
           "createdAt": "2025-02-24T09:36:34Z",
           "updatedAt": "2025-02-24T09:36:34Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86eHBga",
+          "commit": {
+            "abbreviatedOid": "5464758"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2025-03-02T06:32:31Z",
+          "updatedAt": "2025-03-02T06:45:02Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "What is the matching semantics for this component? If I want to write a conditional endorsement over a piece of your measured component, what are those rules?\r\n\r\nIf you don't want to have to compose with conditional endorsements, I would recommend just making eat-measured-component triples their own thing.\r\nIf you do want composition, I think you'll need to do some transformation so component-id is split into the name and version measurements, measurement promoted to digest measurement value, flags promoted to raw-value, and signers promoted to a new measurement-value-map codepoint that has defined matching semantics.\r\n\r\nI can appreciate not wanting to have to transform it for the endorsement. I do think you still need to define the matching semantics, and this may even be something you could specify as a request to the IANA to include the codepoint in the new measurement-values-map registry form the rats-eat-mc RFC.\r\nAdding more matching rules to the base document for what's mostly a rejiggering of existing measurements seems a little wasteful of reviewer attention, but you have more experience with RFCs than I do.",
+              "createdAt": "2025-03-02T06:32:31Z",
+              "updatedAt": "2025-03-02T06:45:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86eKC1g",
+          "commit": {
+            "abbreviatedOid": "5464758"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T08:49:07Z",
+          "updatedAt": "2025-03-03T08:49:07Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "> What is the matching semantics for this component?\r\n\r\nExact match.",
+              "createdAt": "2025-03-03T08:49:07Z",
+              "updatedAt": "2025-03-03T08:49:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ePN0B",
+          "commit": {
+            "abbreviatedOid": "5464758"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T17:29:25Z",
+          "updatedAt": "2025-03-03T17:29:26Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Even for signers? Seems rough, but okay.",
+              "createdAt": "2025-03-03T17:29:25Z",
+              "updatedAt": "2025-03-03T17:29:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ePTsS",
+          "commit": {
+            "abbreviatedOid": "5464758"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-03T17:40:41Z",
+          "updatedAt": "2025-03-03T17:40:41Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Brutal but honest ;-)",
+              "createdAt": "2025-03-03T17:40:41Z",
+              "updatedAt": "2025-03-03T17:40:41Z"
+            }
+          ]
         }
       ]
     },
@@ -62864,37 +62985,128 @@
       "id": "PR_kwDOH6-tI86M-KtP",
       "title": "Populate entity map registries",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/405",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The entries 0..2 are claimed by the entity-map macro. Closes Issue #401.",
       "createdAt": "2025-02-28T17:47:01Z",
-      "updatedAt": "2025-02-28T17:51:24Z",
+      "updatedAt": "2025-03-03T14:39:49Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d7fd67ad68b77b5fce0e46a34e8ac8fe8fe7c23f",
+      "baseRefOid": "6fa97f60aa5cc573c58921bfcde1f0037d72849a",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "entityreg",
-      "headRefOid": "2a838796f28193b4f785f708adedb801d6d9b8b8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "9851763d9ce36d4a5b131385df962a25c8250e1f",
+      "closedAt": "2025-03-03T14:39:49Z",
+      "mergedAt": "2025-03-03T14:39:49Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "2693315635390cda0629a94c2931868f050e1717"
+      },
       "comments": [],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86eCdoa",
           "commit": {
-            "abbreviatedOid": "2a83879"
+            "abbreviatedOid": "9851763"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-02-28T17:51:24Z",
-          "updatedAt": "2025-02-28T17:51:24Z",
+          "updatedAt": "2025-03-03T13:39:28Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86eMzY0",
+          "commit": {
+            "abbreviatedOid": "9851763"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-03-03T13:39:09Z",
+          "updatedAt": "2025-03-03T13:39:28Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86eNYVe",
+          "commit": {
+            "abbreviatedOid": "9851763"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "thanks!",
+          "createdAt": "2025-03-03T14:34:30Z",
+          "updatedAt": "2025-03-03T14:34:30Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 407,
+      "id": "PR_kwDOH6-tI86NKzf2",
+      "title": "Introduction tidy up!",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/407",
+      "state": "MERGED",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Tidy up a minor change",
+      "createdAt": "2025-03-03T15:20:25Z",
+      "updatedAt": "2025-03-03T16:09:45Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "2693315635390cda0629a94c2931868f050e1717",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "intro-fix",
+      "headRefOid": "b022b13eda6c2c5a9132f9a0f4260dfb481236fd",
+      "closedAt": "2025-03-03T16:09:41Z",
+      "mergedAt": "2025-03-03T16:09:41Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "50cc39a0ed430ed0ecceb9b310da0d39af5d7fb7"
+      },
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith @thomas-fossati @henkbirkholz Lets make this change before we release CoRIM today!",
+          "createdAt": "2025-03-03T15:21:14Z",
+          "updatedAt": "2025-03-03T15:21:14Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86eN9ft",
+          "commit": {
+            "abbreviatedOid": "b022b13"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-03-03T15:22:57Z",
+          "updatedAt": "2025-03-03T15:22:57Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86eOaBd",
+          "commit": {
+            "abbreviatedOid": "b022b13"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-03-03T16:05:54Z",
+          "updatedAt": "2025-03-03T16:05:54Z",
           "comments": []
         }
       ]
