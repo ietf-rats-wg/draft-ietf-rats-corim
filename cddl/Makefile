@@ -11,6 +11,7 @@ check:: cbor-tags-unique
 check:: check-intrep check-intrep-examples
 check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
+check:: check-cotl check-cotl-examples
 
 # $1: label
 # $2: cddl fragments
@@ -63,6 +64,7 @@ endef # cddl_check_template
 include corim-frags.mk
 
 $(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES)))
+$(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES)))
 $(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES)))
 
