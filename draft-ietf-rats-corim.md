@@ -2483,7 +2483,7 @@ If any entry in the condition ECT `authority` does not have a matching entry in 
 
 When comparing two `$crypto-key-type-choice` fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
 
-A Verifier MAY compare keys in different lossless formats `lossless-crypto-key-type-choice`, `lossless-crypto-key-cert-type-choice`, `lossless-crypto-key-cert-path-type-choice` is the following ways:
+A Verifier MAY compare keys in different lossless formats in the following ways:
 
 * A Verifier MAY compare a certificate to a key by means of the certificate's subject public key.
 * A Verifier MAY compare a key across formats by their denoted algorithms and parameters.
