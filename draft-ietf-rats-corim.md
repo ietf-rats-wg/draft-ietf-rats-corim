@@ -1260,7 +1260,7 @@ A raw integral describes an integral value that can be compared with linear orde
 A raw integral is represented with either major type 0 or major type 1 ints, or even tagged bignums.
 
 ~~~ cddl
-{::include cddl/raw-integral.cddl}
+{::include cddl/raw-integral-type-choice.cddl}
 ~~~
 
 The signed integral range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
