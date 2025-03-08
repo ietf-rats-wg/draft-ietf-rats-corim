@@ -2528,7 +2528,7 @@ A Verifier SHALL treat two algorithm identifiers as equal if they have the same 
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
-The comparison MUST return false if the determisitic encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).
+The comparison MUST return false if the deterministic encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).
 
 The comparison MUST return false if the condition ECT digests entry does not contain any digests.
 
