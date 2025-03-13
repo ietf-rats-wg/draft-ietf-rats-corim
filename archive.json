@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-11T01:50:45.758332+00:00",
+  "timestamp": "2025-03-13T01:51:13.344098+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8354,7 +8354,7 @@
       ],
       "body": "554, 555, 556, 557, etc.",
       "createdAt": "2024-10-16T14:11:22Z",
-      "updatedAt": "2025-02-21T03:37:01Z",
+      "updatedAt": "2025-03-12T19:18:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -8391,6 +8391,41 @@
           "body": "This is relevant to the conversation in #375.",
           "createdAt": "2025-02-21T03:36:59Z",
           "updatedAt": "2025-02-21T03:36:59Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati if we're to allow key comparison I think we really need to specify the thumbprinting mechanism for the tag, and not leave it unspecified.",
+          "createdAt": "2025-03-12T15:11:40Z",
+          "updatedAt": "2025-03-12T15:11:40Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [@thomas-fossati](https://github.com/thomas-fossati) if we're to allow key comparison I think we really need to specify the thumbprinting mechanism for the tag, and not leave it unspecified.\n\n* For `559` we can reuse [`x5t` semantics](https://www.rfc-editor.org/rfc/rfc9360.html#section-2-5.6.1).\n* For `561`, the existence of a deterministic thumbprinting algorithm seems to be predicated on the ability to uniquely sort the objects within the \"cert-path\".  Since certificate paths are _complicated_ (see the awesome pics in [RFC4158](https://www.rfc-editor.org/rfc/rfc4158) and [this interesting post by Riaan Sleevi](https://medium.com/@sleevi_/path-building-vs-path-verifying-the-chain-of-pain-9fbab861d7d6)), I am not sure that\u2019s a realistic goal.  (BTW, why do we need \"cert-path\u201d thumbprints in the first place? It seem a bit odd...)\n* `557` seems slightly underspecified.  We say \u201craw key\u201d, but what format: SPKI/COSE_Key/Other?  If it\u2019s SPKI we can say `hash-xyz(SPKI.der_encode())`.  If it\u2019s COSE_Key, we could use [RFC9679](https://www.ietf.org/rfc/rfc9679.html).  If we allow \u201cother\u201d, hic sunt leones!\n",
+          "createdAt": "2025-03-12T16:58:27Z",
+          "updatedAt": "2025-03-12T16:58:27Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am not sure that\u2019s a realistic goal. (BTW, why do we need \"cert-path\u201d thumbprints in the first place?\n\nIt was added in response to the addition of cert-path so that there would be a small footprint equivalent. In light of PQC key sizes, it seems appropriate to include a small footprint option for cert path. Possibly, the direction should be a list of cert thumbprints (reusing the singleton cert thumbprint) for each member in the list?. Then the question would be whether or not the members were ordered (chain) or not (bag).",
+          "createdAt": "2025-03-12T17:52:23Z",
+          "updatedAt": "2025-03-12T17:52:23Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We could do something like:\n```go\n  for c in certs:\n    a = append(a, hash.Sha256(c))\n\n  a = sort.Sort(a)\n\n  return hash.Sha256(detSerialize(a))\n```\nbut the trouble is these chains/bags are fuzzy: cert chain A could be different from cert chain B and still be equivalent from the perspective of a certain EE cert.  ISTM that their thumbprints can aim at having local scope, at best.",
+          "createdAt": "2025-03-12T18:06:08Z",
+          "updatedAt": "2025-03-12T18:06:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> cert chain A could be different from cert chain B and still be equivalent from the perspective of a certain EE cert.\n\nThe use case context is that a condition (expressed using authorized-by) can be effective at matching an authority representation. If the Endorser's context isn't fuzzy (for example due to a common profile or due to the Attester and Endorser having a common manufacturer), then it's reasonable for the condition to be expressed using a digested cert. If the above sorting algorithm is applied by Verifiers, then that will need to be taken into consideration by the condition authors.\n\nThe case that is problematic for condition authors is dynamically issued certs (such as DICE embedded CAs) where the dynamic certs can't be predicted by condition authors. If the ECT authority includes the EE key/cert and the cert chain walked by the Verifier as part of path verification, then a condition match based on cert chain might specify only the non-dynamic elements of the cert path. The Verifier logic should anticipate this and allow successful matching on a subset of the cert path elements. This would allow matching logic that pins the authority down to the Device ID and its CA issuers but not require pinning to the exact component / environment within the device named in the condition. The condition might include other conditions such as class-id to ensure the addition is scoped properly.\n\nAs an example, given a cert path with 4 certs where cert 1 is the root ca, cert 2 is a sub-ca, cert 3 is a device ID, and cert 4 is a DICE EE (dynamically issued). Given the authority for an Evidence claim is  (a) from the algorithm above. If the Endorsement contains a condition that matches based on Device ID cert, but also include certs 1 and 2. The Verifier would need to compute a digest for reach of the cert paths possible while walking the path to the root. The path containing cert 4 as EE has digest d1, the path with cert 3 as EE has digest d2, the path containing cert 2 as EE has digest d3 and the path containing the root ca cert 1 has digest d4. If the Evidence authority is expressed as d1 but the condition is expressed as d2, the Verifier can check that both d1 and d2 are members of the set (d1, d2, d3, d4). If so, it considers these a matching. \n\nNote that the Verifier had to be in possession of the actual certs / cert chain in order to do key verification checks.\nNote also that the problem isn't uniqe to dynamically issued X.509 certs as the authority for dynamically issued tokens (e.g. EAT) would have an authority value not anticipated by the Endorser authors. ",
+          "createdAt": "2025-03-12T18:58:46Z",
+          "updatedAt": "2025-03-12T19:18:29Z"
         }
       ]
     },
@@ -10110,7 +10145,7 @@
       "id": "I_kwDOH6-tI86rnNaj",
       "title": "Populate entity-map-extension registries",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/401",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10121,8 +10156,8 @@
       ],
       "body": "I left these empty for corim and comid, but they should have initial values for name, regid, and roles.",
       "createdAt": "2025-02-25T18:02:02Z",
-      "updatedAt": "2025-02-25T18:02:58Z",
-      "closedAt": null,
+      "updatedAt": "2025-03-11T18:27:18Z",
+      "closedAt": "2025-03-11T18:27:18Z",
       "comments": []
     },
     {
@@ -10130,7 +10165,7 @@
       "id": "I_kwDOH6-tI86sHEON",
       "title": "Unsigned CoRIM transported over a secure channel has no defined authority",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/403",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10141,9 +10176,17 @@
       ],
       "body": "Shall we cross-reference UCCS to describe authority assignment?",
       "createdAt": "2025-02-28T16:01:13Z",
-      "updatedAt": "2025-02-28T18:41:02Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-03-11T19:10:59Z",
+      "closedAt": "2025-03-11T19:10:59Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze Is this still needed, I recollect we added the required text",
+          "createdAt": "2025-03-11T18:26:43Z",
+          "updatedAt": "2025-03-11T18:26:43Z"
+        }
+      ]
     },
     {
       "number": 404,
@@ -10237,6 +10280,46 @@
           "body": ">If we don't like \"Reference Algorithm\" we may consider \"Reference Model\" / \"Reference Representation\" so the quasi-normative language can have meaningful implications.\n\nAny of those work for me.",
           "createdAt": "2025-03-06T00:38:47Z",
           "updatedAt": "2025-03-06T00:38:47Z"
+        }
+      ]
+    },
+    {
+      "number": 408,
+      "id": "I_kwDOH6-tI86tprad",
+      "title": "Early IANA review",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/408",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Amanda\u2019s early review comments:\n\n> 1) Please provide the name of the registry group that each of the new registries should belong to. (An example of a registry group name: \"CBOR Object Signing and Encryption (COSE)\" at https://www.iana.org/assignments/cose.)\n>\n> 2) The title of Section 12.7 refers to \u201cCoMID,\u201d but the first sentence of the section refers to CoRIM.\n>\n> 3) In Section 12.13, please specify the range the CoAP Content-Format values should be taken from. See https://www.iana.org/assignments/core-parameters for a list of ranges and procedures.\n",
+      "createdAt": "2025-03-12T09:57:15Z",
+      "updatedAt": "2025-03-12T09:57:15Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 409,
+      "id": "I_kwDOH6-tI86tqHo0",
+      "title": "Add Definition of Tag to the Glossary section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/409",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "PR #378 improved the definition of tag.\n\nTag should be moved to Glossary. However CoSWID is also Tag.\n\nSo which document is the right place for defining tag?\n\nIf in CoRIM should it be in Glossary or in the place where it is in the current V7 Version of draft?",
+      "createdAt": "2025-03-12T10:36:53Z",
+      "updatedAt": "2025-03-12T16:09:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We decided to make processing of coswids out of scope meaning we won't define an internal representation or matching functions. But we will document that the coswid.reference structure is compared with a coswid.payload (evidence) and that the other information in a coswid could be ignored or asserted as endorsement (it is up to the spec that defines the internal representation and processing rules to define).",
+          "createdAt": "2025-03-12T16:09:44Z",
+          "updatedAt": "2025-03-12T16:09:44Z"
         }
       ]
     }
@@ -50899,21 +50982,21 @@
       "id": "PR_kwDOH6-tI85-XCzX",
       "title": "Cryptographic validation of Evidence with attest-key-triple",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/318",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Validation is specific to a method. This reorganizes example methods into subsections and adds a new example based on attest-key-triple and CoTS.\r\n\r\nThis is an attempt to make actionable \"key lookup\" normative language as marked in Issue #317.\r\n\r\nThis is an attempt to resolve the ae verification concern in Issue #314.",
       "createdAt": "2024-10-11T16:02:46Z",
-      "updatedAt": "2025-01-29T15:12:52Z",
+      "updatedAt": "2025-03-11T21:03:00Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "attest-key-process",
       "headRefOid": "7ce756572837bed69da80a0589594daee3462336",
-      "closedAt": null,
+      "closedAt": "2025-03-11T21:03:00Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
