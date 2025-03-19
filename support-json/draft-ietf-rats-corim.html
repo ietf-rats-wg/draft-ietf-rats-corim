@@ -2057,7 +2057,7 @@ Internal representations of Conceptual Messages, ACS, and Attestation Results Se
       <h2 id="name-concise-reference-integrity">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-concise-reference-integrity" class="section-name selfRef">Concise Reference Integrity Manifest (CoRIM)</a>
       </h2>
-<p id="section-4-1">A CoRIM is a collection of tags and related metadata in a concise CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span> encoding.
+<p id="section-4-1">A CoRIM is a collection of tags and related metadata in a concise CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span> encoding. However JSON <a href="#json-compatibility" class="auto internal xref">Appendix B</a> can be used to construct CoRIM.
 A CoRIM can be digitally signed with a COSE <span>[<a href="#STD96" class="cite xref">STD96</a>]</span> signature.
 A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">Tags can be of different types:<a href="#section-4-2" class="pilcrow">¶</a></p>
@@ -8206,7 +8206,14 @@ recommended=3
 <section id="appendix-B">
       <h2 id="name-compatibility-with-json">
 <a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-compatibility-with-json" class="section-name selfRef">Compatibility with JSON</a>
-    </h2>
+      </h2>
+<p id="appendix-B-1">CORIM supports encoding of Endorsements and Reference Values in a CBOR format. Thus only CBOR can appear on the wire.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">In order to produce meaningful CBOR, the supply chain actors (such as Endorsers) must supply the required data that needs to be encoded as CoRIM. Some of the example inputs include CoRIM Meta Information, such as CoRIM Entity Name, Role, etc. The CoMID needs Endorsers to provide Environment Identifiers such as Vendor, Model, Class Identifier, in addition to various Measurement Claims such a digests, version etc. The specification supports using JSON as data format for providing required information (as inputs) to the CoRIM library.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<p id="appendix-B-3">Below are some examples of expressing the CoRIM and CoMIDs in JSON format.<a href="#appendix-B-3" class="pilcrow">¶</a></p>
+<p id="appendix-B-4"><a href="cddl/examples/json/comid-psa-refval.json">CoMID JSON</a><a href="#appendix-B-4" class="pilcrow">¶</a></p>
+<p id="appendix-B-5"><a href="cddl/examples/json/corim-psa.json">CoRIM JSON</a><a href="#appendix-B-5" class="pilcrow">¶</a></p>
+<p id="appendix-B-6">More example can be located under:
+<a href="https://github.com/veraison/cocli/tree/main/data/corim/templates">CoRIM Templates</a> and <a href="https://github.com/veraison/cocli/tree/main/data/comid/templates">CoMID Templates</a><a href="#appendix-B-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="acknowledgments">

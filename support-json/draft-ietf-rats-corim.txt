@@ -557,10 +557,11 @@ Table of Contents
 4.  Concise Reference Integrity Manifest (CoRIM)
 
    A CoRIM is a collection of tags and related metadata in a concise
-   CBOR [STD94] encoding.  A CoRIM can be digitally signed with a COSE
-   [STD96] signature.  A tag is a structured, machine-readable data
-   format used to uniquely identify, describe, and manage modules or
-   components of a system.
+   CBOR [STD94] encoding.  However JSON Appendix B can be used to
+   construct CoRIM.  A CoRIM can be digitally signed with a COSE [STD96]
+   signature.  A tag is a structured, machine-readable data format used
+   to uniquely identify, describe, and manage modules or components of a
+   system.
 
    Tags can be of different types:
 
@@ -5299,6 +5300,30 @@ Appendix A.  Base CoRIM CDDL
    recommended=3
 
 Appendix B.  Compatibility with JSON
+
+   CORIM supports encoding of Endorsements and Reference Values in a
+   CBOR format.  Thus only CBOR can appear on the wire.
+
+   In order to produce meaningful CBOR, the supply chain actors (such as
+   Endorsers) must supply the required data that needs to be encoded as
+   CoRIM.  Some of the example inputs include CoRIM Meta Information,
+   such as CoRIM Entity Name, Role, etc.  The CoMID needs Endorsers to
+   provide Environment Identifiers such as Vendor, Model, Class
+   Identifier, in addition to various Measurement Claims such a digests,
+   version etc.  The specification supports using JSON as data format
+   for providing required information (as inputs) to the CoRIM library.
+
+   Below are some examples of expressing the CoRIM and CoMIDs in JSON
+   format.
+
+   CoMID JSON (cddl/examples/json/comid-psa-refval.json)
+
+   CoRIM JSON (cddl/examples/json/corim-psa.json)
+
+   More example can be located under: CoRIM Templates
+   (https://github.com/veraison/cocli/tree/main/data/corim/templates)
+   and CoMID Templates
+   (https://github.com/veraison/cocli/tree/main/data/comid/templates)
 
 Acknowledgments
 
