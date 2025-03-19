@@ -331,7 +331,7 @@ The CDDL definitions in this document follows the naming conventions illustrated
 
 # Concise Reference Integrity Manifest (CoRIM) {#sec-corim}
 
-A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
+A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding. However JSON {{json-compatibility}} can be used to construct CoRIM.
 A CoRIM can be digitally signed with a COSE {{-cose}} signature.
 A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.
 
@@ -3155,6 +3155,24 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
 ~~~
+
+--- back
+
+# Compatibility with JSON {#json-compatibility}
+
+CORIM supports encoding of Endorsements and Reference Values in a CBOR format. Thus only CBOR can appear on the wire.
+
+In order to produce meaningful CBOR, the supply chain actors (such as Endorsers) must supply the required data that needs to be encoded as CoRIM. Some of the example inputs include CoRIM Meta Information, such as CoRIM Entity Name, Role, etc. The CoMID needs Endorsers to provide Environment Identifiers such as Vendor, Model, Class Identifier, in addition to various Measurement Claims such a digests, version etc. The specification supports using JSON as data format for providing required information (as inputs) to the CoRIM library.
+
+Below are some examples of expressing the CoRIM and CoMIDs in JSON format.
+
+[CoMID JSON](cddl/examples/json/comid-psa-refval.json)
+
+
+[CoRIM JSON](cddl/examples/json/corim-psa.json)
+
+More example can be located under:
+[CoRIM Templates](https://github.com/veraison/cocli/tree/main/data/corim/templates) and [CoMID Templates](https://github.com/veraison/cocli/tree/main/data/comid/templates)
 
 # Acknowledgments
 {:unnumbered}
