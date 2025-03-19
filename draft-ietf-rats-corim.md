@@ -3166,9 +3166,13 @@ In order to produce meaningful CBOR, the supply chain actors (such as Endorsers)
 
 Below are some examples of expressing the CoRIM and CoMIDs in JSON format.
 
+## CoMID Example
+
 ~~~~
 {::include cddl/examples/json/comid-psa-refval.json}
 ~~~~
+
+## CoRIM Example
 
 ~~~~
 {::include cddl/examples/json/corim-psa.json}
