@@ -8210,10 +8210,31 @@ recommended=3
 <p id="appendix-B-1">CORIM supports encoding of Endorsements and Reference Values in a CBOR format. Thus only CBOR can appear on the wire.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 <p id="appendix-B-2">In order to produce meaningful CBOR, the supply chain actors (such as Endorsers) must supply the required data that needs to be encoded as CoRIM. Some of the example inputs include CoRIM Meta Information, such as CoRIM Entity Name, Role, etc. The CoMID needs Endorsers to provide Environment Identifiers such as Vendor, Model, Class Identifier, in addition to various Measurement Claims such a digests, version etc. The specification supports using JSON as data format for providing required information (as inputs) to the CoRIM library.<a href="#appendix-B-2" class="pilcrow">¶</a></p>
 <p id="appendix-B-3">Below are some examples of expressing the CoRIM and CoMIDs in JSON format.<a href="#appendix-B-3" class="pilcrow">¶</a></p>
-<p id="appendix-B-4"><a href="cddl/examples/json/comid-psa-refval.json">CoMID JSON</a><a href="#appendix-B-4" class="pilcrow">¶</a></p>
-<p id="appendix-B-5"><a href="cddl/examples/json/corim-psa.json">CoRIM JSON</a><a href="#appendix-B-5" class="pilcrow">¶</a></p>
-<p id="appendix-B-6">More example can be located under:
-<a href="https://github.com/veraison/cocli/tree/main/data/corim/templates">CoRIM Templates</a> and <a href="https://github.com/veraison/cocli/tree/main/data/comid/templates">CoMID Templates</a><a href="#appendix-B-6" class="pilcrow">¶</a></p>
+<p id="appendix-B-4">{
+    "corim-id": "5c57e8f4-46cd-421b-91c9-08cf93e13cfc",
+    "dependent-rims": [
+      {
+        "href": "https://parent.example/rims/ccb3aa85-61b4-40f1-848e-02ad6e8a254b",
+        "thumbprint": "sha-256:5Fty9cDAtXLbTY06t+l/No/3TmI0eoJN7LZ6hOUiTXU="
+      }
+    ],
+    "profile": "http://arm.com/psa/iot/1",
+    "validity": {
+      "not-before": "2021-12-31T00:00:00Z",
+      "not-after": "2025-12-31T00:00:00Z"
+    },
+    "entities": [
+      {
+        "name": "ACME Ltd.",
+        "regid": "acme.example",
+        "roles": [
+          "manifestCreator"
+        ]
+      }
+    ]
+  }<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+<p id="appendix-B-5">More example can be located under:
+<a href="https://github.com/veraison/cocli/tree/main/data/corim/templates">CoRIM Templates</a> and <a href="https://github.com/veraison/cocli/tree/main/data/comid/templates">CoMID Templates</a><a href="#appendix-B-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="acknowledgments">
