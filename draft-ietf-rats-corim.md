@@ -1254,16 +1254,16 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
-##### Raw Integral {#sec-comid-raw-integral}
+##### Raw Int {#sec-comid-raw-int}
 
-A raw integral describes an integral value that can be compared with linear order in the target environment.
-A raw integral is represented with either major type 0 or major type 1 ints, or even tagged bignums.
+A raw int describes an integer value that can be compared with linear order in the target environment.
+A raw int is represented with either major type 0 or major type 1 ints.
 
 ~~~ cddl
-{::include cddl/raw-integral-type-choice.cddl}
+{::include cddl/raw-int-type-choice.cddl}
 ~~~
 
-The signed integral range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
+The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
 ##### Domain Types {#sec-comid-domain-type}
 
@@ -2618,27 +2618,27 @@ If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
 
-##### Comparison for raw-integral entries
+##### Comparison for raw-int entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw integral value, which must have type `raw-integral-type-choice`.
+The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which must have type `raw-int-type-choice`.
 
-Consider an `integral` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `integral` against a either another `integral` or an `integral-range` named CONDITION.
+Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
-*  If CONDITION is an `integral` then an equality comparison is performed with ENTRY. Equality between major type 0 and unsigned bignum or conversely major type 1 and negative bignum first requires translation of small ints to bignum to compare.
+*  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
 
-*  If CONDITION is an `integral-range` tagged with #6.564, then a range inclusion comparison is performed.
+*  If CONDITION is an `int-range` tagged with #6.564, then a range inclusion comparison is performed.
 The comparison MUST return true if and only if all the following conditions are true:
-    + CONDITION.min is `null` or ENTRY is greater than or equal to the CONDITION.min.
+    + CONDITION.min is `null` or ENTRY is greater than or equal to CONDITION.min.
     + CONDITION.max is `null` or ENTRY is less than or equal to CONDITION.max.
 
-Consider an `integral-range` or `integral-range` tagged with #6.564 value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing an `int-range` against either another `int-range` or an `int` named CONDITION.
+Consider an `int-range` or `int-range` (CBOR tag 564) value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing an `int-range` against either another `int-range` or an `int` named CONDITION.
 
-*  If CONDITION is an `integral`, then the comparison MUST return true if and only if ENTRY.min and ENTRY.max are both equal to CONDITION.
+*  If CONDITION is an `int`, then the comparison MUST return true if and only if ENTRY.min and ENTRY.max are both equal to CONDITION.
 
-*  If CONDITION is an `integral-range` tagged with #6.564, then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).
+*  If CONDITION is an `int-range` (CBOR tag 564), then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).
 The comparison MUST return true if and only if all the following conditions are true:
-    + CONDITION.min is `null` or ENTRY.min is an `integral` that is greater than or equal to CONDITION.min
-    + CONDITION.max is `null` or ENTRY.max is an `integral` that is less than or equal to CONDITION.max.
+    + CONDITION.min is `null` or ENTRY.min is an `int` that is greater than or equal to CONDITION.min
+    + CONDITION.max is `null` or ENTRY.max is an `int` that is less than or equal to CONDITION.max.
 
 ### Profile-directed Comparison {#sec-compare-profile}
 
@@ -2769,7 +2769,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
-|     564 | `array`             | tagged-integral-range, see {{sec-comid-raw-integral}}         | {{&SELF}} |
+|     564 | `array`             | tagged-int-range, see {{sec-comid-raw-int}}                   | {{&SELF}} |
 | 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
