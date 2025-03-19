@@ -2626,7 +2626,7 @@ Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` code
 
 *  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
 
-*  If CONDITION is an `int-range` tagged with #6.564, then a range inclusion comparison is performed.
+*  If CONDITION is an `int-range` (CBOR tag 564), then a range inclusion comparison is performed.
 The comparison MUST return true if and only if all the following conditions are true:
     + CONDITION.min is `null` or ENTRY is greater than or equal to CONDITION.min.
     + CONDITION.max is `null` or ENTRY is less than or equal to CONDITION.max.
