@@ -3168,13 +3168,13 @@ Below are some examples of expressing the CoRIM and CoMIDs in JSON format.
 
 ## CoMID Example
 
-~~~~
+~~~~ json
 {::include cddl/examples/json/comid-psa-refval.json}
 ~~~~
 
 ## CoRIM Example
 
-~~~~
+~~~~ json
 {::include cddl/examples/json/corim-psa.json}
 ~~~~
 
