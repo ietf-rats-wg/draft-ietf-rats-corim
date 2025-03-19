@@ -3162,7 +3162,11 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 CORIM supports encoding of Endorsements and Reference Values in a CBOR format. Thus only CBOR can appear on the wire.
 
-In order to produce meaningful CBOR, the supply chain actors (such as Endorsers) must supply the required data that needs to be encoded as CoRIM. Some of the example inputs include CoRIM Meta Information, such as CoRIM Entity Name, Role, etc. The CoMID needs Endorsers to provide Environment Identifiers such as Vendor, Model, Class Identifier, in addition to various Measurement Claims such a digests, version etc. The specification supports using JSON as data format for providing required information (as inputs) to the CoRIM library.
+Please note that JSON Encoding is out of scope for this specification.
+
+However, in order to produce meaningful CBOR, the supply chain actors (such as Endorsers) must supply the required data that needs to be encoded as CoRIM. Some of the example inputs include CoRIM Meta Information, such as CoRIM Entity Name, Role, etc. The CoMID needs Endorsers to provide Environment Identifiers such as Vendor, Model, Class Identifier, in addition to various Measurement Claims such a digests, version etc. It can be quite cumbersome to provide these values in CBOR Diag or equivalned CBOR formats.
+
+As a result, the supplied information can be encoded as JSON (as inputs) to a CoRIM Encoder(library).
 
 Below are some examples of expressing the CoRIM and CoMIDs in JSON format.
 
