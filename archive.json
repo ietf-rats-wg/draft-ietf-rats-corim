@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-18T01:51:57.056086+00:00",
+  "timestamp": "2025-03-20T01:50:52.017513+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10320,6 +10320,86 @@
           "body": "We decided to make processing of coswids out of scope meaning we won't define an internal representation or matching functions. But we will document that the coswid.reference structure is compared with a coswid.payload (evidence) and that the other information in a coswid could be ignored or asserted as endorsement (it is up to the spec that defines the internal representation and processing rules to define).",
           "createdAt": "2025-03-12T16:09:44Z",
           "updatedAt": "2025-03-12T16:09:44Z"
+        }
+      ]
+    },
+    {
+      "number": 410,
+      "id": "I_kwDOH6-tI86uwwRC",
+      "title": "nit: tagged-masked-raw-value does not itself contain a tagged-masked-raw-value",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/410",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "andrew-draper"
+      ],
+      "labels": [],
+      "body": "The New CBOR tag registry section has this entry\n\n```\n|     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} | \n```\n\nThe data item should be the untagged value, but the CDDL does not define `masked-raw-value` to name as the data item.",
+      "createdAt": "2025-03-19T14:29:28Z",
+      "updatedAt": "2025-03-19T18:47:39Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "You can use: `~tagged-masked-raw-value` to remove the CBOR tag.",
+          "createdAt": "2025-03-19T18:47:38Z",
+          "updatedAt": "2025-03-19T18:47:38Z"
+        }
+      ]
+    },
+    {
+      "number": 412,
+      "id": "I_kwDOH6-tI86uz2bp",
+      "title": "Add JSON Clarifications to CoRIM document",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/412",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
+      "labels": [],
+      "body": "> Recapping:\n_Need to clearly highlight that JSON is also supported as encoding format for Triples and one should provide Examples as to how JSON Encoding will look like? (Focus on CBOR only to avoid scope creep and move more quickly to WGLC)_\n> \n> \n> \n> Maybe the next step is to create separate issues for each and someone volunteers to do the work? \n\n _Originally posted by @nedmsmith in [#195](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/195#issuecomment-2099059870)_",
+      "createdAt": "2025-03-19T18:55:02Z",
+      "updatedAt": "2025-03-19T20:04:03Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "JSON can be supported in two ways, (a) as a CoRIM authoring language (which realizes as CBOR wire formate) and (b) JSON as a wire format. \n\nIf (b) is never intended, then the wording in support of (a) should make it clear that (b) is a non-goal of CoRIM.\n\n",
+          "createdAt": "2025-03-19T19:00:06Z",
+          "updatedAt": "2025-03-19T19:00:06Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The wire format support will make adoption much easier for in-toto",
+          "createdAt": "2025-03-19T19:35:11Z",
+          "updatedAt": "2025-03-19T19:35:11Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Let's focus on clarifying the unclear parts and trimming the cruft, rather than spending cycles on adding new functionality.\n\nIf someone wants to specify an authoring language based on JSON, YAML or XML they can do so in a separate document.\n\nI recommend closing this with WONTFIX.",
+          "createdAt": "2025-03-19T19:38:15Z",
+          "updatedAt": "2025-03-19T19:38:15Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Its my bad, I did not mean adding JSON support as Wire Format to CoRIM, but CoRIM Authoring using JSON and it is clear in my recent commit.",
+          "createdAt": "2025-03-19T20:02:43Z",
+          "updatedAt": "2025-03-19T20:02:43Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "However, at the same time, we need to mention how one can use JSON for authoring otherwise, we hide something which can be beneficial to the community and this was the original intent on which Hannes reported..",
+          "createdAt": "2025-03-19T20:04:02Z",
+          "updatedAt": "2025-03-19T20:04:02Z"
         }
       ]
     }
@@ -56241,13 +56321,13 @@
       "labels": [],
       "body": "As a means of representing a CPL or VMPL, this provides some extra semantic understanding of the importance of order.",
       "createdAt": "2024-12-18T16:46:55Z",
-      "updatedAt": "2025-03-17T19:33:57Z",
+      "updatedAt": "2025-03-19T21:08:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "50cc39a0ed430ed0ecceb9b310da0d39af5d7fb7",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "privlevel",
-      "headRefOid": "5d838307636acc0e7dde867b7bf83bf817fee443",
+      "headRefOid": "4e85db67a8e5794aeae5343f9047f6c35232006d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -56998,6 +57078,179 @@
           "body": "LGTM",
           "createdAt": "2025-03-07T16:27:53Z",
           "updatedAt": "2025-03-07T16:27:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86gjIQH",
+          "commit": {
+            "abbreviatedOid": "5d83830"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-18T09:02:41Z",
+          "updatedAt": "2025-03-18T09:47:34Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "maybe, to make the CDDL more transparent to the readers:\r\n```suggestion\r\nbiguint = #6.2(bytes)\r\nbignint = #6.3(bytes)\r\nbigint = biguint / bignint\r\ninteger = int / bigint\r\n```\r\nor (more condensed):\r\n```suggestion\r\nbigint = #6.2(bytes) / #6.3(bytes)\r\ninteger = int / bigint\r\n```",
+              "createdAt": "2025-03-18T09:02:41Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "What is the use case for bignums?",
+              "createdAt": "2025-03-18T09:07:02Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "we are defining `raw-integral-type-choice` here for good:\r\n```suggestion\r\nraw-integral-type-choice = integral / tagged-integral-range\r\n```",
+              "createdAt": "2025-03-18T09:17:56Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "What does \u201copt\u201d stand for?  Optional?  If so, it sounds a bit odd.\r\n\r\nWhat about a bit more expressively:\r\n\r\n```\r\ninteger-range = [min: integer / negative-inf, max: integer / positive-inf]\r\n\r\nnegative-inf = null\r\npositive-inf = null\r\n```",
+              "createdAt": "2025-03-18T09:37:52Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "This probably needs regenerating - it\u2019s called `integral-range` below.",
+              "createdAt": "2025-03-18T09:42:00Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nConsider an `integral` ACS entry value named ENTRY in a `measurement-values-map` codepoint (i.e., 15) that allows comparing `integral` against either another `integral` or an `integral-range` named CONDITION.\r\n```",
+              "createdAt": "2025-03-18T09:42:58Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\n*  If CONDITION is an `integral-range` (CBOR tag 564), then a range inclusion comparison is performed.\r\n```",
+              "createdAt": "2025-03-18T09:44:18Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\n    + CONDITION.min is `null` or ENTRY is greater than or equal to CONDITION.min.\r\n```",
+              "createdAt": "2025-03-18T09:44:54Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nConsider an `integral` or `integral-range` (CBOR tag 564) value named ENTRY in a `measurement-values-map` codepoint (i.e., 15) that allows comparing an `integral-range` against either another `integral-range` or an `integral` named CONDITION.\r\n```",
+              "createdAt": "2025-03-18T09:46:25Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\n*  If CONDITION is an `integral-range` (CBOR tag 564), then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).\r\n```",
+              "createdAt": "2025-03-18T09:46:56Z",
+              "updatedAt": "2025-03-18T09:47:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86grwoU",
+          "commit": {
+            "abbreviatedOid": "5d83830"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-03-18T18:33:30Z",
+          "updatedAt": "2025-03-18T18:36:45Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Is the justification for changing 'int' to 'integral' because the numeric is defined in terms of int, uint, and big integers?",
+              "createdAt": "2025-03-18T18:33:31Z",
+              "updatedAt": "2025-03-18T18:36:45Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "I have this question also. For example, when would someone use bigint vs. raw-value (which is bytes also) assuming a future version of raw-value could introduce a range of raw-value?",
+              "createdAt": "2025-03-18T18:35:36Z",
+              "updatedAt": "2025-03-18T18:36:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86g2hCq",
+          "commit": {
+            "abbreviatedOid": "5d83830"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-19T14:16:58Z",
+          "updatedAt": "2025-03-19T14:16:59Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I'll remove it for the YAGNI smell. ",
+              "createdAt": "2025-03-19T14:16:58Z",
+              "updatedAt": "2025-03-19T14:16:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86g2pW6",
+          "commit": {
+            "abbreviatedOid": "5d83830"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-19T14:24:04Z",
+          "updatedAt": "2025-03-19T14:24:04Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "This is not the intention for int-range. Any entry that chooses to use tagged-int-range (i.e., \"allows comparing\") is to use these comparison rules.",
+              "createdAt": "2025-03-19T14:24:04Z",
+              "updatedAt": "2025-03-19T14:24:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86g2r2a",
+          "commit": {
+            "abbreviatedOid": "5d83830"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-19T14:25:29Z",
+          "updatedAt": "2025-03-19T14:25:30Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Will remove bigint and just say raw-int for simplicity.",
+              "createdAt": "2025-03-19T14:25:30Z",
+              "updatedAt": "2025-03-19T14:25:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86g6gy7",
+          "commit": {
+            "abbreviatedOid": "4e85db6"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM - assuming the build issues get resolved.",
+          "createdAt": "2025-03-19T18:46:14Z",
+          "updatedAt": "2025-03-19T21:08:03Z",
           "comments": []
         }
       ]
@@ -63374,6 +63627,113 @@
           "createdAt": "2025-03-03T16:05:54Z",
           "updatedAt": "2025-03-03T16:05:54Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 411,
+      "id": "PR_kwDOH6-tI86PVC0T",
+      "title": "Add relevance of JSON for CoRIM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/411",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #412 ",
+      "createdAt": "2025-03-19T18:26:13Z",
+      "updatedAt": "2025-03-19T20:52:21Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "50cc39a0ed430ed0ecceb9b310da0d39af5d7fb7",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "support-json",
+      "headRefOid": "fe713c0d1185867335952739ea69885f2a770f96",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Do we want to include something that is defined by a profile of CoRIM in the base spec? Why not let the profile make the JSON compatibility statement?",
+          "createdAt": "2025-03-19T18:50:55Z",
+          "updatedAt": "2025-03-19T18:50:55Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "What issue is this PR addressing so there is motivation and context discussion?",
+          "createdAt": "2025-03-19T18:51:34Z",
+          "updatedAt": "2025-03-19T18:51:34Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, this should be the part of base spec!\r\n\r\nThis is in response to the `JSON Compatibility` Feedback we received from last IETF",
+          "createdAt": "2025-03-19T18:52:57Z",
+          "updatedAt": "2025-03-19T18:52:57Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Yes, this should be the part of base spec!\r\n> \r\n> This is in response to the `JSON Compatibility` Feedback we received from last IETF\r\n\r\nCan we create an issue that captures that feedback and discusses options for how to address it?",
+          "createdAt": "2025-03-19T18:55:12Z",
+          "updatedAt": "2025-03-19T18:55:12Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Yes, this should be the part of base spec!\r\n> > This is in response to the `JSON Compatibility` Feedback we received from last IETF\r\n> \r\n> Can we create an issue that captures that feedback and discusses options for how to address it?\r\n\r\nDone: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/412\r\n",
+          "createdAt": "2025-03-19T18:55:40Z",
+          "updatedAt": "2025-03-19T18:55:40Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86g8MyX",
+          "commit": {
+            "abbreviatedOid": "fe713c0"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see comments inline.",
+          "createdAt": "2025-03-19T20:38:22Z",
+          "updatedAt": "2025-03-19T20:52:21Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\nPlease note that JSON Encoding as a wire format is out of scope for this specification.\r\n```",
+              "createdAt": "2025-03-19T20:38:23Z",
+              "updatedAt": "2025-03-19T20:52:22Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\nHowever, in order to produce meaningful CBOR, the supply chain actors (such as Endorsers) must supply the required data that needs to be encoded as CoRIM.\r\nSome of the example inputs include CoRIM Meta Information, such as CoRIM Entity Name, Role, etc.\r\nThe CoMID needs Endorsers to provide Environment Identifiers such as Vendor, Model, Class Identifier, in addition to various Measurement Claims such a digests, version etc. It can be quite cumbersome to provide these values in CBOR Diag or equivalned CBOR formats.\r\n```",
+              "createdAt": "2025-03-19T20:40:28Z",
+              "updatedAt": "2025-03-19T20:52:22Z"
+            },
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nCoRIM authoring tools can utilize a variety of techniques to represent manifest content (e.g., JSON TBD_REF, CBOR Diagnostic TBD_REF, XML TBD_REF etc...). Such tooling will, ultimately, render a CBOR formatted CoRIM before it is conveyed to a Verifier.\r\n```",
+              "createdAt": "2025-03-19T20:49:02Z",
+              "updatedAt": "2025-03-19T20:52:22Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\nAdditional examples can be found here:\r\n```",
+              "createdAt": "2025-03-19T20:49:49Z",
+              "updatedAt": "2025-03-19T20:52:22Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Should thise links be treated as informative references? That might be an easier way to ensure they are active / accessible. If they become stale the references automation will help detect that.",
+              "createdAt": "2025-03-19T20:51:23Z",
+              "updatedAt": "2025-03-19T20:52:22Z"
+            }
+          ]
         }
       ]
     }
