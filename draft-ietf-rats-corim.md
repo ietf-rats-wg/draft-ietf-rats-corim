@@ -1620,7 +1620,7 @@ Defined in {{Section 4.1.2. of -uuid}}.
 
 ## UEID {#sec-common-ueid}
 
-Used to tag a byte string as Universal Entity ID Claim (UUID).
+Used to tag a byte string as Universal Entity ID Claim (UEID).
 Defined in {{Section 4.2.1 of -eat}}.
 
 ~~~ cddl
