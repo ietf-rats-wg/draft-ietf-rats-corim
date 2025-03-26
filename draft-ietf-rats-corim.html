@@ -1318,7 +1318,10 @@ This document specifies the information elements for representing Endorsements a
                             <p id="section-toc.1-1.5.2.1.2.4.2.1.2.6.1"><a href="#section-5.1.4.1.6" class="auto internal xref">5.1.4.1.6</a>.  <a href="#name-integrity-registers" class="internal xref">Integrity Registers</a></p>
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.1.2.7">
-                            <p id="section-toc.1-1.5.2.1.2.4.2.1.2.7.1"><a href="#section-5.1.4.1.7" class="auto internal xref">5.1.4.1.7</a>.  <a href="#name-domain-types" class="internal xref">Domain Types</a></p>
+                            <p id="section-toc.1-1.5.2.1.2.4.2.1.2.7.1"><a href="#section-5.1.4.1.7" class="auto internal xref">5.1.4.1.7</a>.  <a href="#name-raw-int" class="internal xref">Raw Int</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.1.2.8">
+                            <p id="section-toc.1-1.5.2.1.2.4.2.1.2.8.1"><a href="#section-5.1.4.1.8" class="auto internal xref">5.1.4.1.8</a>.  <a href="#name-domain-types" class="internal xref">Domain Types</a></p>
 </li>
                         </ul>
 </li>
@@ -1603,6 +1606,9 @@ This document specifies the information elements for representing Endorsements a
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4.2.6.2.1.2.6">
                             <p id="section-toc.1-1.9.2.4.2.6.2.1.2.6.1"><a href="#section-9.4.6.1.6" class="auto internal xref">9.4.6.1.6</a>.  <a href="#name-comparison-for-integrity-re" class="internal xref">Comparison for Integrity Registers</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4.2.6.2.1.2.7">
+                            <p id="section-toc.1-1.9.2.4.2.6.2.1.2.7.1"><a href="#section-9.4.6.1.7" class="auto internal xref">9.4.6.1.7</a>.  <a href="#name-comparison-for-raw-int-entr" class="internal xref">Comparison for raw-int entries</a></p>
 </li>
                         </ul>
 </li>
@@ -3081,6 +3087,7 @@ measurement-values-map = non-empty&lt;{
   ? &amp;(name: 11) =&gt; text
   ? &amp;(cryptokeys: 13) =&gt; [ + $crypto-key-type-choice ]
   ? &amp;(integrity-registers: 14) =&gt; integrity-registers
+  ? &amp;(raw-int: 15) =&gt; raw-int-type-choice
   * $$measurement-values-map-extension
 }&gt;
 </pre><a href="#section-5.1.4.1.4.2-3" class="pilcrow">¶</a>
@@ -3461,22 +3468,41 @@ For example, given the following Integrity Registers:<a href="#section-5.1.4.1.6
 <p id="section-5.1.4.1.6-10">Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.<a href="#section-5.1.4.1.6-10" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sec-comid-domain-type">
+<div id="sec-comid-raw-int">
 <section id="section-5.1.4.1.7">
-              <h6 id="name-domain-types">
-<a href="#section-5.1.4.1.7" class="section-number selfRef">5.1.4.1.7. </a><a href="#name-domain-types" class="section-name selfRef">Domain Types</a>
+              <h6 id="name-raw-int">
+<a href="#section-5.1.4.1.7" class="section-number selfRef">5.1.4.1.7. </a><a href="#name-raw-int" class="section-name selfRef">Raw Int</a>
               </h6>
-<p id="section-5.1.4.1.7-1">A domain is a context for bundling a collection of related environments and their measurements.<a href="#section-5.1.4.1.7-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.7-2">The following CDDL describes domain type choices.<a href="#section-5.1.4.1.7-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.7-3">
+<p id="section-5.1.4.1.7-1">A raw int describes an integer value that can be compared with linear order in the target environment.
+A raw int is represented with either major type 0 or major type 1 ints.<a href="#section-5.1.4.1.7-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.7-2">
+<pre>
+raw-int-type-choice = int / tagged-int-range
+int-range = [min: int / negative-inf, max: int / positive-inf]
+tagged-int-range = #6.564(int-range)
+positive-inf = null
+negative-inf = null
+</pre><a href="#section-5.1.4.1.7-2" class="pilcrow">¶</a>
+</div>
+<p id="section-5.1.4.1.7-3">The signed integer range representation is an inclusive range unless either <code>min</code> or <code>max</code> are infinite as represented by <code>null</code>, in which case, each infinity is necessarily exclusive.<a href="#section-5.1.4.1.7-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-comid-domain-type">
+<section id="section-5.1.4.1.8">
+              <h6 id="name-domain-types">
+<a href="#section-5.1.4.1.8" class="section-number selfRef">5.1.4.1.8. </a><a href="#name-domain-types" class="section-name selfRef">Domain Types</a>
+              </h6>
+<p id="section-5.1.4.1.8-1">A domain is a context for bundling a collection of related environments and their measurements.<a href="#section-5.1.4.1.8-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.8-2">The following CDDL describes domain type choices.<a href="#section-5.1.4.1.8-2" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.8-3">
 <pre>
 $domain-type-choice /= uint
 $domain-type-choice /= text
 $domain-type-choice /= tagged-uuid-type
 $domain-type-choice /= tagged-oid-type
-</pre><a href="#section-5.1.4.1.7-3" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.1.8-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.1.7-4">The <code>uint</code> and <code>text</code> types MUST NOT be interpreted in a global scope.<a href="#section-5.1.4.1.7-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.8-4">The <code>uint</code> and <code>text</code> types MUST NOT be interpreted in a global scope.<a href="#section-5.1.4.1.8-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3718,7 +3744,7 @@ attest-key-triple-record = [
 <a href="#section-5.1.4.8" class="section-number selfRef">5.1.4.8. </a><a href="#name-domain-dependency-triple" class="section-name selfRef">Domain Dependency Triple</a>
             </h5>
 <p id="section-5.1.4.8-1">A Domain Dependency triple defines trust dependencies between measurement
-sources.  The subject identifies a domain (<a href="#sec-comid-domain-type" class="auto internal xref">Section 5.1.4.1.7</a>) that has
+sources.  The subject identifies a domain (<a href="#sec-comid-domain-type" class="auto internal xref">Section 5.1.4.1.8</a>) that has
 a predicate relationship to the object containing one or more dependent
 domains.  Dependency means the subject domain’s trustworthiness properties rely
 on the object domain(s) trustworthiness having been established before the
@@ -3739,7 +3765,7 @@ domain-dependency-triple-record = [
 <a href="#section-5.1.4.9" class="section-number selfRef">5.1.4.9. </a><a href="#name-domain-membership-triple" class="section-name selfRef">Domain Membership Triple</a>
             </h5>
 <p id="section-5.1.4.9-1">A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain (<a href="#sec-comid-domain-type" class="auto internal xref">Section 5.1.4.1.7</a>) that has a predicate
+subject identifies a domain (<a href="#sec-comid-domain-type" class="auto internal xref">Section 5.1.4.1.8</a>) that has a predicate
 relationship to the object containing one or more environments.  Endorsed
 environments (<a href="#sec-comid-triple-endval" class="auto internal xref">Section 5.1.4.3</a>) membership is conditional upon
 successful matching of Reference Values (<a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>) to
@@ -5858,6 +5884,50 @@ Instead, if an entry is found, the digest comparison proceeds as defined in <a h
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.<a href="#section-9.4.6.1.6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="comparison-for-raw-int-entries">
+<section id="section-9.4.6.1.7">
+              <h6 id="name-comparison-for-raw-int-entr">
+<a href="#section-9.4.6.1.7" class="section-number selfRef">9.4.6.1.7. </a><a href="#name-comparison-for-raw-int-entr" class="section-name selfRef">Comparison for raw-int entries</a>
+              </h6>
+<p id="section-9.4.6.1.7-1">The ACS entry value stored under <code>measurement-values-map</code> codepoint 15 is a raw int value, which must have type <code>raw-int-type-choice</code>.<a href="#section-9.4.6.1.7-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1.7-2">Consider an <code>int</code> ACS entry value named ENTRY in a <code>measurement-values-map</code> codepoint (e.g., 15) that allows comparing <code>int</code> against a either another <code>int</code> or an <code>int-range</code> named CONDITION.<a href="#section-9.4.6.1.7-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9.4.6.1.7-3.1">
+                  <p id="section-9.4.6.1.7-3.1.1">If CONDITION is an <code>int</code> then an equality comparison is performed with ENTRY.<a href="#section-9.4.6.1.7-3.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-9.4.6.1.7-3.2">
+                  <p id="section-9.4.6.1.7-3.2.1">If CONDITION is an <code>int-range</code> (CBOR tag 564), then a range inclusion comparison is performed.
+The comparison MUST return true if and only if all the following conditions are true:<a href="#section-9.4.6.1.7-3.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9.4.6.1.7-3.2.2.1">
+                      <p id="section-9.4.6.1.7-3.2.2.1.1">CONDITION.min is <code>null</code> or ENTRY is greater than or equal to CONDITION.min.<a href="#section-9.4.6.1.7-3.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                    <li class="normal" id="section-9.4.6.1.7-3.2.2.2">
+                      <p id="section-9.4.6.1.7-3.2.2.2.1">CONDITION.max is <code>null</code> or ENTRY is less than or equal to CONDITION.max.<a href="#section-9.4.6.1.7-3.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<p id="section-9.4.6.1.7-4">Consider an <code>int-range</code> or <code>int-range</code> (CBOR tag 564) value named ENTRY in a <code>measurement-values-map</code> codepoint (e.g., 15) that allows comparing an <code>int-range</code> against either another <code>int-range</code> or an <code>int</code> named CONDITION.<a href="#section-9.4.6.1.7-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9.4.6.1.7-5.1">
+                  <p id="section-9.4.6.1.7-5.1.1">If CONDITION is an <code>int</code>, then the comparison MUST return true if and only if ENTRY.min and ENTRY.max are both equal to CONDITION.<a href="#section-9.4.6.1.7-5.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-9.4.6.1.7-5.2">
+                  <p id="section-9.4.6.1.7-5.2.1">If CONDITION is an <code>int-range</code> (CBOR tag 564), then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).
+The comparison MUST return true if and only if all the following conditions are true:<a href="#section-9.4.6.1.7-5.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9.4.6.1.7-5.2.2.1">
+                      <p id="section-9.4.6.1.7-5.2.2.1.1">CONDITION.min is <code>null</code> or ENTRY.min is an <code>int</code> that is greater than or equal to CONDITION.min<a href="#section-9.4.6.1.7-5.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                    <li class="normal" id="section-9.4.6.1.7-5.2.2.2">
+                      <p id="section-9.4.6.1.7-5.2.2.2.1">CONDITION.max is <code>null</code> or ENTRY.max is an <code>int</code> that is less than or equal to CONDITION.max.<a href="#section-9.4.6.1.7-5.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+</section>
+</div>
 </section>
 </div>
 </section>
@@ -6216,7 +6286,16 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">564-599</td>
+              <td class="text-left" rowspan="1" colspan="1">564</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>array</code>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">tagged-int-range, see <a href="#sec-comid-raw-int" class="auto internal xref">Section 5.1.4.1.7</a>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">565-599</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <code>any</code>
 </td>
@@ -7789,6 +7868,12 @@ ip-addr-type-choice = ip4-addr-type / ip6-addr-type
 ip4-addr-type = bytes .size 4
 ip6-addr-type = bytes .size 16
 
+raw-int-type-choice = int / tagged-int-range
+int-range = [min: int / negative-inf, max: int / positive-inf]
+tagged-int-range = #6.564(int-range)
+positive-inf = null
+negative-inf = null
+
 linked-tag-map = {
   &amp;(linked-tag-id: 0) =&gt; $tag-id-type-choice
   &amp;(tag-rel: 1) =&gt; $tag-rel-type-choice
@@ -7826,6 +7911,7 @@ measurement-values-map = non-empty&lt;{
   ? &amp;(name: 11) =&gt; text
   ? &amp;(cryptokeys: 13) =&gt; [ + $crypto-key-type-choice ]
   ? &amp;(integrity-registers: 14) =&gt; integrity-registers
+  ? &amp;(raw-int: 15) =&gt; raw-int-type-choice
   * $$measurement-values-map-extension
 }&gt;
 
