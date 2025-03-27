@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-25T01:53:24.307363+00:00",
+  "timestamp": "2025-03-27T01:52:24.869659+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10354,7 +10354,7 @@
       "id": "I_kwDOH6-tI86uz2bp",
       "title": "Add JSON Clarifications to CoRIM document",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/412",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10363,8 +10363,8 @@
       "labels": [],
       "body": "> Recapping:\n_Need to clearly highlight that JSON is also supported as encoding format for Triples and one should provide Examples as to how JSON Encoding will look like? (Focus on CBOR only to avoid scope creep and move more quickly to WGLC)_\n> \n> \n> \n> Maybe the next step is to create separate issues for each and someone volunteers to do the work? \n\n _Originally posted by @nedmsmith in [#195](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/195#issuecomment-2099059870)_",
       "createdAt": "2025-03-19T18:55:02Z",
-      "updatedAt": "2025-03-19T20:04:03Z",
-      "closedAt": null,
+      "updatedAt": "2025-03-26T15:10:22Z",
+      "closedAt": "2025-03-26T15:10:21Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -10400,6 +10400,72 @@
           "body": "However, at the same time, we need to mention how one can use JSON for authoring otherwise, we hide something which can be beneficial to the community and this was the original intent on which Hannes reported..",
           "createdAt": "2025-03-19T20:04:02Z",
           "updatedAt": "2025-03-19T20:04:02Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "All this reads either like an \"implementation detail\" (inflationary use of term, typically euphemism for wontfix or dontwant, I think) or a separate document to me. At this stage, I cannot stress enough that we must focus on consistency, readability, and polish.",
+          "createdAt": "2025-03-26T12:34:01Z",
+          "updatedAt": "2025-03-26T12:34:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Will not address",
+          "createdAt": "2025-03-26T15:10:21Z",
+          "updatedAt": "2025-03-26T15:10:21Z"
+        }
+      ]
+    },
+    {
+      "number": 414,
+      "id": "I_kwDOH6-tI86v2C9I",
+      "title": "uncertainty on the authority of an unsigned CoRIM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/414",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "If the reference value provider/endorser uses a mutually authenticated channel (e.g., mTLS or server-authenticated HTTPS with one HTTP authentication scheme) to supply _unsigned_ CoRIMs to the verifier, the spec doesn\u2019t clarify the authority to use for the related ACS entries.\n\n[\u00a74.3](https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-4.3) covers some cases, but not this one.\n\n----\n\ncc @setrofim ",
+      "createdAt": "2025-03-26T16:24:22Z",
+      "updatedAt": "2025-03-26T17:53:01Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Isn't this the new manifest-signer entity role?",
+          "createdAt": "2025-03-26T16:53:30Z",
+          "updatedAt": "2025-03-26T16:53:30Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Isn't this the new manifest-signer entity role?\n\nmaybe.  The way \u00a74.3 is currently phrased doesn\u2019t make that obvious.",
+          "createdAt": "2025-03-26T16:55:44Z",
+          "updatedAt": "2025-03-26T16:55:44Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > Isn't this the new manifest-signer entity role?\n> \n> maybe. The way \u00a74.3 is currently phrased doesn\u2019t make that obvious.\n\n`A CoRIM role entry that contains the manifest-signer role MUST be added to corim-entity-map.`\n\nIs this not clear?",
+          "createdAt": "2025-03-26T17:26:00Z",
+          "updatedAt": "2025-03-26T17:26:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > Isn't this the new manifest-signer entity role?\n> > \n> > \n> > maybe. The way \u00a74.3 is currently phrased doesn\u2019t make that obvious.\n> \n> `A CoRIM role entry that contains the manifest-signer role MUST be added to corim-entity-map.`\n> \n> Is this not clear?\n\nNo, because of the surrounding context.\n\nIn the preamble:\n\n> _\"An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document. The CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.\u201d_\n\nthe _\u201centity that originates the CoRIM\u201d_ seems to identify the signer of the _\"enveloping signed document\u201d_ (i.e., some object security primitive, which is not the case for secure channels).\n\n\nThe following paragraph:\n\n> _\"It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.\u201d_\n\nseems to declare secure channels not part of the equation.\n\n\n",
+          "createdAt": "2025-03-26T17:34:49Z",
+          "updatedAt": "2025-03-26T17:34:49Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> the \u201centity that originates the CoRIM\u201d\n\nThis can also refer to the entity that authored the CoRIM `manifest-creator`. These can be used in combination where the manifest-creator can also be the manifest-signer. In the case where the manifest-signer differs, the verifier is trusting the signer to specify the manifest-creator role correctly. But this is also the case when both roles point to the same entity.\n\nThe intent is that CoRIMs are signed. Unsigned CoRIMs should be the exception. Normative text that says \"CoRIMs SHOULD be signed by the entity that vouches for its contents\" might do it.",
+          "createdAt": "2025-03-26T17:46:12Z",
+          "updatedAt": "2025-03-26T17:53:00Z"
         }
       ]
     }
@@ -56312,26 +56378,28 @@
     {
       "number": 354,
       "id": "PR_kwDOH6-tI86FrMSz",
-      "title": "Add raw integral measurement value type",
+      "title": "Add raw int measurement value type",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/354",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "As a means of representing a CPL or VMPL, this provides some extra semantic understanding of the importance of order.",
       "createdAt": "2024-12-18T16:46:55Z",
-      "updatedAt": "2025-03-20T03:08:51Z",
+      "updatedAt": "2025-03-26T15:12:41Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "50cc39a0ed430ed0ecceb9b310da0d39af5d7fb7",
+      "baseRefOid": "43cd4078cf89f157ce637ca2fbfbeacf907a7bf3",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "privlevel",
-      "headRefOid": "4e85db67a8e5794aeae5343f9047f6c35232006d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0626e7280a5457d639c9aabe0338daa0a5232b16",
+      "closedAt": "2025-03-26T15:12:41Z",
+      "mergedAt": "2025-03-26T15:12:41Z",
+      "mergedBy": "deeglaze",
+      "mergeCommit": {
+        "oid": "961cbe8af49ef677998c996d005569b13e6a8914"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -60901,19 +60969,66 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-02-15T22:46:36Z",
-      "updatedAt": "2025-02-15T22:46:36Z",
+      "updatedAt": "2025-03-26T17:22:53Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "592fc963e488d41af109f8011524bc1fbc5497c9",
+      "baseRefOid": "961cbe8af49ef677998c996d005569b13e6a8914",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "signed-examples",
-      "headRefOid": "183745ce2de9754467e60c727571894c4084c1bc",
+      "headRefOid": "60799616371e276306cdac0cf4c41871b8a37c29",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86h_lIV",
+          "commit": {
+            "abbreviatedOid": "6079961"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Seems like a good idea providing that it does not significantly increase the time taken to run the check in tests",
+          "createdAt": "2025-03-26T15:57:41Z",
+          "updatedAt": "2025-03-26T15:57:41Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86iAOFO",
+          "commit": {
+            "abbreviatedOid": "6079961"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-03-26T16:52:56Z",
+          "updatedAt": "2025-03-26T16:53:01Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "Shouldn't we add this to the build / check rules?  Otherwise the whole thing remains inert.",
+              "createdAt": "2025-03-26T16:52:57Z",
+              "updatedAt": "2025-03-26T17:37:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86iAjyd",
+          "commit": {
+            "abbreviatedOid": "6079961"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-03-26T17:22:53Z",
+          "updatedAt": "2025-03-26T17:22:53Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 382,
@@ -62646,7 +62761,7 @@
       "labels": [],
       "body": "Fix #381",
       "createdAt": "2025-02-23T16:25:41Z",
-      "updatedAt": "2025-03-03T17:40:41Z",
+      "updatedAt": "2025-03-26T15:15:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
@@ -62812,6 +62927,19 @@
               "updatedAt": "2025-03-03T17:40:41Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86h--KD",
+          "commit": {
+            "abbreviatedOid": "5464758"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I don't think we should approve this PR in its current form.\r\nI agree with comments above that there are no matching rules, writing those matching rules will I think expose some gaps in the PR which need to be fixed.\r\nThe gap I am most concerned about is that the `measured-component` object contains both a name and a value, but this object has been added to `mval` which is  for values only.",
+          "createdAt": "2025-03-26T15:15:39Z",
+          "updatedAt": "2025-03-26T15:15:39Z",
+          "comments": []
         }
       ]
     },
@@ -63655,21 +63783,21 @@
       "id": "PR_kwDOH6-tI86PVC0T",
       "title": "Add relevance of JSON for CoRIM",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/411",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #412 ",
       "createdAt": "2025-03-19T18:26:13Z",
-      "updatedAt": "2025-03-19T20:52:21Z",
+      "updatedAt": "2025-03-26T15:10:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "50cc39a0ed430ed0ecceb9b310da0d39af5d7fb7",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "support-json",
       "headRefOid": "fe713c0d1185867335952739ea69885f2a770f96",
-      "closedAt": null,
+      "closedAt": "2025-03-26T15:10:01Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -63708,6 +63836,13 @@
           "body": "> > Yes, this should be the part of base spec!\r\n> > This is in response to the `JSON Compatibility` Feedback we received from last IETF\r\n> \r\n> Can we create an issue that captures that feedback and discusses options for how to address it?\r\n\r\nDone: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/412\r\n",
           "createdAt": "2025-03-19T18:55:40Z",
           "updatedAt": "2025-03-19T18:55:40Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Will not address his PR!",
+          "createdAt": "2025-03-26T15:10:01Z",
+          "updatedAt": "2025-03-26T15:10:01Z"
         }
       ],
       "reviews": [
@@ -63762,24 +63897,26 @@
       "id": "PR_kwDOH6-tI86P3uQp",
       "title": "Fix EAT ueid definition",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/413",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "See \u00a74.2.1 of EAT",
       "createdAt": "2025-03-24T13:24:00Z",
-      "updatedAt": "2025-03-24T19:23:06Z",
+      "updatedAt": "2025-03-26T15:04:46Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "50cc39a0ed430ed0ecceb9b310da0d39af5d7fb7",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fix-ueid",
       "headRefOid": "fe145329362cf5515a0bf282c1ed155e050f6e10",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-03-26T15:04:45Z",
+      "mergedAt": "2025-03-26T15:04:45Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "43cd4078cf89f157ce637ca2fbfbeacf907a7bf3"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
