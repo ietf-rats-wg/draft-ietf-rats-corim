@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-27T01:52:24.869659+00:00",
+  "timestamp": "2025-03-30T02:00:38.771472+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10429,7 +10429,7 @@
       "labels": [],
       "body": "If the reference value provider/endorser uses a mutually authenticated channel (e.g., mTLS or server-authenticated HTTPS with one HTTP authentication scheme) to supply _unsigned_ CoRIMs to the verifier, the spec doesn\u2019t clarify the authority to use for the related ACS entries.\n\n[\u00a74.3](https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-4.3) covers some cases, but not this one.\n\n----\n\ncc @setrofim ",
       "createdAt": "2025-03-26T16:24:22Z",
-      "updatedAt": "2025-03-26T17:53:01Z",
+      "updatedAt": "2025-03-28T16:56:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -10466,8 +10466,52 @@
           "body": "> the \u201centity that originates the CoRIM\u201d\n\nThis can also refer to the entity that authored the CoRIM `manifest-creator`. These can be used in combination where the manifest-creator can also be the manifest-signer. In the case where the manifest-signer differs, the verifier is trusting the signer to specify the manifest-creator role correctly. But this is also the case when both roles point to the same entity.\n\nThe intent is that CoRIMs are signed. Unsigned CoRIMs should be the exception. Normative text that says \"CoRIMs SHOULD be signed by the entity that vouches for its contents\" might do it.",
           "createdAt": "2025-03-26T17:46:12Z",
           "updatedAt": "2025-03-26T17:53:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The original question was: which RVP authority should be used in the ACS for RVs that come from unsigned CoRIMs?",
+          "createdAt": "2025-03-27T11:35:01Z",
+          "updatedAt": "2025-03-27T11:35:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Maybe it comes down to Verifier policy that decides whether to use the secure session credential, chase down the corim role info, or to capture it as no authority supplied.",
+          "createdAt": "2025-03-27T19:18:13Z",
+          "updatedAt": "2025-03-27T19:18:13Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Maybe it comes down to Verifier policy that decides whether to use the secure session credential, chase down the corim role info, or to capture it as no authority supplied.\n\nNote that we don\u2019t have an authority type for token-based client authentication with user/password, which is one of the provisioning modes allowed in Veraison.\n\n",
+          "createdAt": "2025-03-28T08:45:20Z",
+          "updatedAt": "2025-03-28T08:45:20Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Would it make sense to avoid all the hassle and make signed CMW / CoRIM bundle a MUST requirement?",
+          "createdAt": "2025-03-28T16:55:54Z",
+          "updatedAt": "2025-03-28T16:56:21Z"
         }
       ]
+    },
+    {
+      "number": 415,
+      "id": "I_kwDOH6-tI86wRhOD",
+      "title": "Handling of conditional endorsement when there are multiple identical devices",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/415",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Consider an compound system using two attestation environments and two target environments.\n\nIn the example, the AEs and TEs use identical hardware, but may be running different firmware.\n\nThis diagram shows a simplified view of the system.\n```mermaid\ngraph TD\n    Verifier[\"Verifier\"]\n\n    subgraph Compound[\"Compound system\"]\n\n    subgraph DICE1[\"Component #1\"]\n        TE1z[\"SPDM TE\"]\n        TE1y[\"SPDM AE\"]\n    end\n    TE1y ==> TE1z\n\n    subgraph DICE2[\"Component #2\"]\n        TE2y[\"SPDM AE\"]\n        TE2z[\"SPDM TE\"]\n    end\n    TE2y ==> TE2z\n\n    end\n\n    style Compound fill:#CCC,stroke:#CCC\n\n    Verifier -...-> TE1y\n    Verifier -...-> TE2y\n```\nThe Verifier communicates directly with an attestation environment within each component.\n\nThe attestation environments return measurements of each TE, for example AE#1 might return a hash indicating the firmware running in TE#1:\n```cbor-diag\n  [\n    / environment-map / {\n      / class / 0 : {\n        / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n        / vendor / 1 : \"example.com\"\n      },\n      / instance / 1 : 560(h'12345678')\n    },\n    / measurement-map / [ {\n      / mval / 1 : {\n        / digests / 2 : [\n          [\n            / sha-384 / 7,\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n          ]\n        ]\n      }\n    } ]\n  ]\n```\n\nThe measurements of TE#2 are similar, except for the instance ID and the digest in the measurement-values-map.\n\nThe evidence import phase will add the measurements for TE#1 and TE#2 to the ACS.\n\nThe CoRIM author has published several CoRIMs, each of which maps one hash to a version number, for example:\n\n```comid\n  / triples / 4 : {\n    / conditional-endorsement-triples / 10 : [\n      / conditions: / [ \n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / digests / 2 : [\n                [\n                  / sha-384 / 7,\n                  h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n                ]\n              ]\n            }\n          } ]\n        ],\n  / endorsements: / [\n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n            / WHAT GOES HERE? /\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / ver / 0 : {\n                / version / 0 : \"1.0\",\n                / version-scheme / 1 : / alphanumeric / 3\n              }\n            }\n          } ]\n        ],\n      ]\n    ]\n  }\n```\n\nThe goal of this CoMID fragment is to add a version number to the environment which contains the hash.\nI expect that the Conditional Endorser (perhaps the device manufacturer) will release many CoMID fragments, one for each released version of firmware.\n\nAssuming that the firmware is genuine, one of the CoMID fragments will match against the ACS entry for TE#1, and one will match against the ACS entry for TE#2.\n\nThe CoMID fragments don't include an `instance` field within their environment, so they will match against any ACS entry which contains the same `class-id`, regardless of instance.\n\n# How to get expected results?\n\nI would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class` and `instance` fields.\n\nHow do we tell the Verifier to copy the `instance` field from the `stateful-environment` part of `conditional-endorsement-triple-record` to the new ACS entry created by `endorsed-triple-record`?\n\nI think a similar issue is raised if the Conditional Endorser wants the Verifier to match against two `stateful-environments`, both of them having the same value in the `instance` field.\n\n# Possible solution\n\nOne solution I can imagine is to create special syntax which is inserted into the example conditional endorsement above in the location marked `/ What goes here? /`.\n\nThis syntax tells the Verifier to copy the instance value which was matched against the first `stateful-environment` into the newly created endorsed ACS entry.\n\nIs there a better solution?",
+      "createdAt": "2025-03-28T22:19:44Z",
+      "updatedAt": "2025-03-28T22:19:44Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
