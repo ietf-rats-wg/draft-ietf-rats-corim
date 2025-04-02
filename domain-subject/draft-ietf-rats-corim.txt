@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 1 September 2025                                         Linaro
+Expires: 4 October 2025                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        28 February 2025
+                                                            2 April 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 September 2025.
+   This Internet-Draft will expire on 4 October 2025.
 
 Copyright Notice
 
@@ -93,6 +93,8 @@ Table of Contents
        4.2.2.  Meta Map
          4.2.2.1.  Signer Map
        4.2.3.  Unprotected CoRIM Header Map
+     4.3.  Signer authority of securely conveyed unsigned CoRIM
+       4.3.1.  CoRIM collections
    5.  Concise Module Identifier (CoMID)
      5.1.  Structure
        5.1.1.  Tag Identity
@@ -115,7 +117,8 @@ Table of Contents
              5.1.4.1.4.7.  Address Types
            5.1.4.1.5.  Crypto Keys
            5.1.4.1.6.  Integrity Registers
-           5.1.4.1.7.  Domain Types
+           5.1.4.1.7.  Raw Int
+           5.1.4.1.8.  Domain Types
          5.1.4.2.  Reference Values Triple
          5.1.4.3.  Endorsed Values Triple
          5.1.4.4.  Conditional Endorsement Triple
@@ -201,6 +204,7 @@ Table of Contents
            9.4.6.1.4.  Comparison for raw-value entries
            9.4.6.1.5.  Comparison for cryptokeys entries
            9.4.6.1.6.  Comparison for Integrity Registers
+           9.4.6.1.7.  Comparison for raw-int entries
        9.4.7.  Profile-directed Comparison
    10. Implementation Status
      10.1.  Veraison
@@ -247,8 +251,7 @@ Table of Contents
    that otherwise fully characterizes an Attester.  Ideally, only the
    supply chain actor who is the most knowledgable entity regarding a
    particular component will supply Reference Values or Endorsements for
-   that component. that is measured amongst a long chain of
-   measurements.
+   that component.
 
    Attesters vary across vendors and even across products from a single
    vendor.  Not only Attesters can evolve and therefore new measurement
@@ -331,6 +334,18 @@ Table of Contents
       An identifier for an Environment that is shared among similar
       Environment instances, such as those with the same hardware
       assembly.  See also Section 4.2.4 of [I-D.ietf-rats-eat].
+
+   Domain:
+      A context to represent a collection of Environments that are
+      grouped togther to represent an entity, for example a Composite
+      Device Section 3.3 of [RFC9334]
+
+   Stateful Domain:
+      A context to represent a Domain in a particular state.  It
+      represents a collection of Environments and their associated
+      measurements (i.e. a collection of a stateful environments) that
+      identifies a particular state of a Domain.  Note that, both domain
+      and stateful domain are represented using $domain-type-choice.
 
    Endorsed values:
       A set of characteristics of an Attester that do not appear in
@@ -748,6 +763,7 @@ Table of Contents
      entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
 
    $corim-role-type-choice /= &(manifest-creator: 1)
+   $corim-role-type-choice /= &(manifest-signer: 2)
 
 4.2.  Signed CoRIM
 
@@ -850,6 +866,107 @@ Table of Contents
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
+   }
+
+4.3.  Signer authority of securely conveyed unsigned CoRIM
+
+   An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping
+   signed document.  The CoRIM signer authority is taken from the
+   authenticated credential of the entity that originates the CoRIM.  A
+   CoRIM role entry that contains the manifest-signer role MUST be added
+   to corim-entity-map.
+
+   It is out of scope of this document to specify a method of delegating
+   the signer role in the case that an unsigned CoRIM is conveyed
+   through multiple secured links with different notions of authenticity
+   without end-to-end integrity protection.
+
+4.3.1.  CoRIM collections
+
+   Several CoRIMs may share the same signer (e.g., as collection payload
+   in a different signed message) and use locally-resolvable references
+   to each other, for example using a RATS Conceptual Message Wrapper
+   (CMW) [I-D.ietf-rats-msg-wrap].  The Collection CMW type is similar
+   to a profile in its way of restricting the shape of the CMW
+   collection.  The Collection CMW type for a CoRIM collection SHALL be
+   tag:{{&SELF}}:corim.
+
+   A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to
+   a signed CoRIM.  The signing operation MUST include the corim-meta in
+   the COSE_Sign1 protected-header parameter.  The corim-meta statement
+   ensures that each CoRIM in the collection has an identified signer.
+   The COSE protected header can include a Collection CMW type name by
+   using the cmwc_t content type parameter for the &(content-type: 3)
+   COSE header.
+
+   If using other signing envelope formats, the CoRIM signing authority
+   MUST be specified, e.g., by adding the manifest-signer role to every
+   CoRIM, or by using a protected header analogous to corim-meta.
+
+   corim-cbor-collection = {
+     "__cmwc_t" => "tag:{{&SELF}}:bundle",
+     + cmw-label => [TBD1, bytes .cbor tagged-corim-map]
+   }
+   cmw-label = text / int
+
+   The Collection CMW MAY use any label for its CoRIMs.  If there is a
+   hierarchical structure to the CoRIM Collection CMW, the base entry
+   point SHOULD be labeled 0 in CBOR or "base" in JSON.  It is
+   RECOMMENDED to label a CoRIM with its tag-id in string format, where
+   uuid-type string format is specified by [RFC9562].  CoRIMs
+   distributed in a CoRIM Collection CMW MAY declare their
+   interdependence dependent-rims with local resource indicators.  It is
+   RECOMMENDED that a CoRIM with a uuid-type tag-id be referenced with
+   URI urn:uuid:_tag-id-uuid-string_. It is RECOMMENDED that a CoRIM
+   with a tstr tag-id be referenced with tag:{{&SELF}}:local,_tag-id-
+   tstr_. It is RECOMMENDED for a corim-locator-map containing local
+   URIs to afterwards list a nonzero number of reachable URLs as remote
+   references.
+
+   The following example demonstrates these recommendations for bundling
+   CoRIMs with a common signer but have different profiles.
+
+   / cbor-collection / {
+     "__cmwc_t": "tag:{{&SELF}}:bundle",
+     "adee8cd4-4e47-461f-b341-2aba3ae4cbda":
+       / cbor-cmw / [TBD1, << / tagged-corim-map / 501({
+         / id / 0: h'adee8cd44e47461fb3412aba3ae4cbda',
+         / tags / 1: [/ tagged-concise-mid-tag / 506(<<{
+           / tag-identity / 1: {
+             / tag-id / 0: h'315cfc0208d548ee9c89906df96e7fb8'
+           },
+           / triples / 4: {
+             / reference-triples / 0: [[
+               / ref-env / {/ class / 0: {/ class-id / 0: 560(h'c0de')}},
+               / ref-claims / {
+                 / mval / 1: {
+                   / profile-foo / -404:
+                     h'6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc'
+                 }}]],
+             / coswid-triples / 6: [[
+               {/ class / 0: {/ class-id / 0: 560(h'c0de')}},
+               [h'369a6688451240b9b74905b1dd5fae9f']]]}}>>)],
+         / profile / 3: "tag:example.com,2025/example-profile",
+         / dependent-rims / 2: [{
+           / href / 0: [
+             "urn:uuid:51a5f633-71c0-45f5-855e-43e8254c1806",
+             "https://example.com/369a6688451240b9b74905b1dd5fae9f.corim"
+           ]}]}) >>],
+     "51a5f633-71c0-45f5-855e-43e8254c1806":
+       / cbor-cmw / [TBD1, << / tagged-corim-map / 501({
+         / id: / 0: h'51a5f63371c045f5855e43e8254c1806',
+         / tags / 1: [/ tagged-concise-swid-tag / 505(<<{
+             / tag-id / 0: h'369a6688451240b9b74905b1dd5fae9f',
+             / tag-version / 12: 2,
+             / software-name / 1: "Gadget Firmware",
+             / entity / 2: {
+               / entity-name / 31: "ACME Firmware",
+               / role / 33: / software-creator / 2
+             },
+             / profile-bar / 4294967295: {
+              / profile-baz / 0: 5,
+              / profile-qux / 1: h'f76e41f3462a62e8'}}>>)],
+         / profile / 3: "tag:example.com,2025/software-profile"})>>]
    }
 
 5.  Concise Module Identifier (CoMID)
@@ -1335,6 +1452,7 @@ Table of Contents
      ? &(name: 11) => text
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
+     ? &(raw-int: 15) => raw-int-type-choice
      * $$measurement-values-map-extension
    }>
 
@@ -1655,17 +1773,31 @@ Table of Contents
    in which case the identifier is the register index, or other kinds of
    vendor-specific measured objects.
 
-5.1.4.1.7.  Domain Types
+5.1.4.1.7.  Raw Int
+
+   A raw int describes an integer value that can be compared with linear
+   order in the target environment.  A raw int is represented with
+   either major type 0 or major type 1 ints.
+
+   raw-int-type-choice = int / tagged-int-range
+   int-range = [min: int / negative-inf, max: int / positive-inf]
+   tagged-int-range = #6.564(int-range)
+   positive-inf = null
+   negative-inf = null
+
+   The signed integer range representation is an inclusive range unless
+   either min or max are infinite as represented by null, in which case,
+   each infinity is necessarily exclusive.
+
+5.1.4.1.8.  Domain Types
 
    A domain is a context for bundling a collection of related
    environments and their measurements.
 
    The following CDDL describes domain type choices.
 
-   $domain-type-choice /= uint
-   $domain-type-choice /= text
-   $domain-type-choice /= tagged-uuid-type
-   $domain-type-choice /= tagged-oid-type
+   $domain-type-choice /= environment-map
+   $domain-type-choice /= stateful-environment-record
 
    The uint and text types MUST NOT be interpreted in a global scope.
 
@@ -1938,7 +2070,7 @@ Table of Contents
 
    A Domain Dependency triple defines trust dependencies between
    measurement sources.  The subject identifies a domain
-   (Section 5.1.4.1.7) that has a predicate relationship to the object
+   (Section 5.1.4.1.8) that has a predicate relationship to the object
    containing one or more dependent domains.  Dependency means the
    subject domain’s trustworthiness properties rely on the object
    domain(s) trustworthiness having been established before the
@@ -1952,15 +2084,18 @@ Table of Contents
 5.1.4.9.  Domain Membership Triple
 
    A Domain Membership triple assigns domain membership to environments.
-   The subject identifies a domain (Section 5.1.4.1.7) that has a
+   The subject identifies a domain (Section 5.1.4.1.8) that has a
    predicate relationship to the object containing one or more
-   environments.  Endorsed environments (Section 5.1.4.3) membership is
-   conditional upon successful matching of Reference Values
-   (Section 5.1.4.2) to Evidence.
+   environments or one of more domains.  When predicates are domains, it
+   allows Endorsers to construct a hierarchical model where a domain can
+   be represented using a collection of well defined domains.  Endorsed
+   environments (Section 5.1.4.4) membership is conditional upon
+   successful matching of Reference Values (Section 5.1.4.2) to
+   Evidence.
 
    domain-membership-triple-record = [
      $domain-type-choice
-     [ + environment-map ]
+     [ +  $domain-type-choice ]
    ]
 
 5.1.4.10.  CoMID-CoSWID Linking Triple
@@ -2151,10 +2286,10 @@ Table of Contents
 
 7.5.  UEID
 
-   Used to tag a byte string as Universal Entity ID Claim (UUID).
+   Used to tag a byte string as Universal Entity ID Claim (UEID).
    Defined in Section 4.2.1 of [I-D.ietf-rats-eat].
 
-   ueid-type = bytes .size 33
+   ueid-type = bytes .size (7..33)
    tagged-ueid-type = #6.550(ueid-type)
 
 7.6.  OID
@@ -3578,6 +3713,47 @@ Table of Contents
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a condition ECT could describe a subset of PCRs.
 
+9.4.6.1.7.  Comparison for raw-int entries
+
+   The ACS entry value stored under measurement-values-map codepoint 15
+   is a raw int value, which must have type raw-int-type-choice.
+
+   Consider an int ACS entry value named ENTRY in a measurement-values-
+   map codepoint (e.g., 15) that allows comparing int against a either
+   another int or an int-range named CONDITION.
+
+   *  If CONDITION is an int then an equality comparison is performed
+      with ENTRY.
+
+   *  If CONDITION is an int-range (CBOR tag 564), then a range
+      inclusion comparison is performed.  The comparison MUST return
+      true if and only if all the following conditions are true:
+
+      -  CONDITION.min is null or ENTRY is greater than or equal to
+         CONDITION.min.
+
+      -  CONDITION.max is null or ENTRY is less than or equal to
+         CONDITION.max.
+
+   Consider an int-range or int-range (CBOR tag 564) value named ENTRY
+   in a measurement-values-map codepoint (e.g., 15) that allows
+   comparing an int-range against either another int-range or an int
+   named CONDITION.
+
+   *  If CONDITION is an int, then the comparison MUST return true if
+      and only if ENTRY.min and ENTRY.max are both equal to CONDITION.
+
+   *  If CONDITION is an int-range (CBOR tag 564), then a range
+      subsumption comparison is performed (i.e., the condition range
+      includes all values of the entry range).  The comparison MUST
+      return true if and only if all the following conditions are true:
+
+      -  CONDITION.min is null or ENTRY.min is an int that is greater
+         than or equal to CONDITION.min
+
+      -  CONDITION.max is null or ENTRY.max is an int that is less than
+         or equal to CONDITION.max.
+
 9.4.7.  Profile-directed Comparison
 
    A profile MUST specify comparison algorithms for its additions to
@@ -3752,7 +3928,7 @@ Table of Contents
    | 509-549 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
    | 550     | bytes .size | tagged-ueid-type, see         | RFCthis   |
-   |         | 33          | Section 7.5                   |           |
+   |         | (7..33)     | Section 7.5                   |           |
    +---------+-------------+-------------------------------+-----------+
    | 552     | uint        | tagged-svn, see               | RFCthis   |
    |         |             | Section 5.1.4.1.4.4           |           |
@@ -3793,7 +3969,10 @@ Table of Contents
    |         | masked-raw- | see Section 5.1.4.1.4.6       |           |
    |         | value       |                               |           |
    +---------+-------------+-------------------------------+-----------+
-   | 564-599 | any         | Earmarked for CoRIM           | RFCthis   |
+   | 564     | array       | tagged-int-range, see         | RFCthis   |
+   |         |             | Section 5.1.4.1.7             |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
                                   Table 8
@@ -3875,14 +4054,25 @@ Table of Contents
    provided below.  Assignments consist of an integer index value, the
    item name, and a reference to the defining specification.
 
-                  +=======+============+===============+
-                  | Index | Item Name  | Specification |
-                  +=======+============+===============+
-                  | 0-255 | Unassigned |               |
-                  +-------+------------+---------------+
+    +=======+=============+==================+========================+
+    | Index | Item Name   | Value Type       | Specification          |
+    +=======+=============+==================+========================+
+    | 0     | entity-name | text             | Name of the entity     |
+    |       |             |                  | responsible for the    |
+    |       |             |                  | actions of the role.   |
+    +-------+-------------+------------------+------------------------+
+    | 1     | reg-id      | uri              | A URI associated with  |
+    |       |             |                  | the organization that  |
+    |       |             |                  | owns the entity name.  |
+    +-------+-------------+------------------+------------------------+
+    | 2     | role        | [ + role-type-   | A type choice defining |
+    |       |             | choice ]         | the roles that the     |
+    |       |             |                  | entity is claiming.    |
+    +-------+-------------+------------------+------------------------+
+    | 3-255 | Unassigned  |                  |                        |
+    +-------+-------------+------------------+------------------------+
 
-                     Table 12: CoRIM Entity Map Items
-                          Initial Registrations
+           Table 12: CoRIM Entity Map Items Initial Registrations
 
 12.5.  CoRIM Signer Map Registry
 
@@ -3994,14 +4184,25 @@ Table of Contents
    provided below.  Assignments consist of an integer index value, the
    item name, and a reference to the defining specification.
 
-                  +=======+============+===============+
-                  | Index | Item Name  | Specification |
-                  +=======+============+===============+
-                  | 0-255 | Unassigned |               |
-                  +-------+------------+---------------+
+    +=======+=============+==================+========================+
+    | Index | Item Name   | Value Type       | Specification          |
+    +=======+=============+==================+========================+
+    | 0     | entity-name | text             | Name of the entity     |
+    |       |             |                  | responsible for the    |
+    |       |             |                  | actions of the role.   |
+    +-------+-------------+------------------+------------------------+
+    | 1     | reg-id      | uri              | A URI associated with  |
+    |       |             |                  | the organization that  |
+    |       |             |                  | owns the entity name.  |
+    +-------+-------------+------------------+------------------------+
+    | 2     | role        | [ + role-type-   | A type choice defining |
+    |       |             | choice ]         | the roles that the     |
+    |       |             |                  | entity is claiming.    |
+    +-------+-------------+------------------+------------------------+
+    | 3-255 | Unassigned  |                  |                        |
+    +-------+-------------+------------------+------------------------+
 
-                     Table 18: CoMID Entity Map Items
-                          Initial Registrations
+           Table 18: CoMID Entity Map Items Initial Registrations
 
 12.8.  CoMID Triples Map Registry
 
@@ -4424,12 +4625,12 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               DICE-Layering-Architecture-r19_pub.pdf>.
 
    [I-D.fdb-rats-psa-endorsements]
-              Fossati, T., Deshpande, Y., and H. Birkholz, "Arm's
-              Platform Security Architecture (PSA) Attestation Verifier
-              Endorsements", Work in Progress, Internet-Draft, draft-
-              fdb-rats-psa-endorsements-05, 30 August 2024,
+              Fossati, T., Deshpande, Y., and H. Birkholz, "A CoRIM
+              Profile for Arm's Platform Security Architecture (PSA)",
+              Work in Progress, Internet-Draft, draft-fdb-rats-psa-
+              endorsements-06, 3 March 2025,
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
-              endorsements-05>.
+              endorsements-06>.
 
    [I-D.ietf-rats-ar4si]
               Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
@@ -4456,9 +4657,16 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
               Endorsements", Work in Progress, Internet-Draft, draft-
-              ietf-rats-endorsements-05, 8 November 2024,
+              ietf-rats-endorsements-06, 3 March 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              endorsements-05>.
+              endorsements-06>.
+
+   [I-D.ietf-rats-msg-wrap]
+              Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
+              D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-12,
+              28 February 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-12>.
 
    [I-D.tschofenig-rats-psa-token]
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
@@ -4485,6 +4693,10 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               Writing an IANA Considerations Section in RFCs", BCP 26,
               RFC 8126, DOI 10.17487/RFC8126, June 2017,
               <https://www.rfc-editor.org/rfc/rfc8126>.
+
+   [RFC9562]  Davis, K., Peabody, B., and P. Leach, "Universally Unique
+              IDentifiers (UUIDs)", RFC 9562, DOI 10.17487/RFC9562, May
+              2024, <https://www.rfc-editor.org/rfc/rfc9562>.
 
    [TNC.Arch] Trusted Computing Group, "TCG Trusted Network Connect TNC
               Architecture for Interoperability", Specification Version
@@ -4548,6 +4760,7 @@ Appendix A.  Base CoRIM CDDL
    }
 
    $corim-role-type-choice /= &(manifest-creator: 1)
+   $corim-role-type-choice /= &(manifest-signer: 2)
 
    corim-signer-map = {
      &(signer-name: 0) => $entity-name-type-choice
@@ -4686,7 +4899,7 @@ Appendix A.  Base CoRIM CDDL
 
    domain-membership-triple-record = [
      $domain-type-choice
-     [ + environment-map ]
+     [ +  $domain-type-choice ]
    ]
 
    conditional-endorsement-triple-record = [
@@ -4694,10 +4907,8 @@ Appendix A.  Base CoRIM CDDL
      endorsements: [ + endorsed-triple-record ]
    ]
 
-   $domain-type-choice /= uint
-   $domain-type-choice /= text
-   $domain-type-choice /= tagged-uuid-type
-   $domain-type-choice /= tagged-oid-type
+   $domain-type-choice /= environment-map
+   $domain-type-choice /= stateful-environment-record
 
    endorsed-triple-record = [
      condition: environment-map
@@ -4754,6 +4965,12 @@ Appendix A.  Base CoRIM CDDL
    ip4-addr-type = bytes .size 4
    ip6-addr-type = bytes .size 16
 
+   raw-int-type-choice = int / tagged-int-range
+   int-range = [min: int / negative-inf, max: int / positive-inf]
+   tagged-int-range = #6.564(int-range)
+   positive-inf = null
+   negative-inf = null
+
    linked-tag-map = {
      &(linked-tag-id: 0) => $tag-id-type-choice
      &(tag-rel: 1) => $tag-rel-type-choice
@@ -4791,6 +5008,7 @@ Appendix A.  Base CoRIM CDDL
      ? &(name: 11) => text
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
+     ? &(raw-int: 15) => raw-int-type-choice
      * $$measurement-values-map-extension
    }>
 
@@ -4863,7 +5081,7 @@ Appendix A.  Base CoRIM CDDL
      * $$triples-map-extension
    }>
 
-   ueid-type = bytes .size 33
+   ueid-type = bytes .size (7..33)
    tagged-ueid-type = #6.550(ueid-type)
 
    uuid-type = bytes .size 16
