@@ -219,6 +219,14 @@ Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
+Domain:
+: A context to represent a collection of Environments that are grouped togther to represent an entity, for example a Composite Device {{Section 3.3 of -rats-arch}}
+
+Stateful Domain:
+: A context to represent a Domain in a particular state. It represents a collection of Environments and their associated measurements
+(i.e. a collection of a stateful environments) that identifies a particular state of a Domain. Note that, both domain and stateful domain
+are represented using $domain-type-choice.
+
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
@@ -1462,8 +1470,10 @@ trustworthiness properties of the subject domain exists.
 
 A Domain Membership triple assigns domain membership to environments.  The
 subject identifies a domain ({{sec-comid-domain-type}}) that has a predicate
-relationship to the object containing one or more environments.  Endorsed
-environments ({{sec-comid-triple-endval}}) membership is conditional upon
+relationship to the object containing one or more environments or one of more domains.
+When predicates are domains, it allows Endorsers to construct a hierarchical model
+where a domain can be represented using a collection of well defined domains.
+Endorsed environments ({{sec-comid-triple-cond-endors}}) membership is conditional upon
 successful matching of Reference Values ({{sec-comid-triple-refval}}) to
 Evidence.
 
