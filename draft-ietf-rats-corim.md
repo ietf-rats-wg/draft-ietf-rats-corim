@@ -374,7 +374,7 @@ The following CDDL describes the top-level CoRIM.
 ## CoRIM Map {#sec-corim-map}
 
 The CDDL specification for the `corim-map` is as follows and this rule and its
-constraints must be followed when creating or validating a CoRIM map.
+constraints MUST be followed when creating or validating a CoRIM map.
 
 ~~~ cddl
 {::include cddl/corim-map.cddl}
@@ -851,7 +851,7 @@ An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
 An environment MUST be globally unique.
-The combination of values within `class-map` must combine to form a globally unique identifier.
+The combination of values within `class-map` MUST combine to form a globally unique identifier.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
@@ -1021,7 +1021,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   The vendor determines the encoding of `raw-value`.
-  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field must be compared.
+  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field are compared.
   Described in {{sec-comid-raw-value-types}}
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
@@ -2273,7 +2273,7 @@ in the CoRIM file which tell it how claims are related.
 If Evidence or Endorsements from different sources has the same `environment-map`
 and `authorized-by` then the `measurement-values-map`s are merged.
 
-The ACS must maintain the authority information for each ECT. There can be
+The ACS MUST maintain the authority information for each ECT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
 and a different authority.
 See {{sec-authority}}.
@@ -2492,7 +2492,7 @@ If any entry in the condition ECT `element-list` does not have a matching entry 
 
 ### Element map comparison {#sec-compare-element-map}
 
-A Verifier shall compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
+A Verifier SHALL compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
 
 First, a Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
 Two `element-id` fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.
@@ -2534,12 +2534,12 @@ The following subsections define the comparison algorithms for the `measurement-
 
 ##### Comparison for version entries
 
-The value stored under `measurement-values-map` codepoint 0 is an version label, which must have type `version-map`.
+The value stored under `measurement-values-map` codepoint 0 is an version label, which MUST have type `version-map`.
 Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
 
 ##### Comparison for svn entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which must have type `svn-type`.
+The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which MUST have type `svn-type`.
 
 If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
 
@@ -2566,7 +2566,7 @@ When multiple digests are provided, each represents a different algorithm accept
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
 
-To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms must be equal.
+To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
 A Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
@@ -2586,7 +2586,7 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 A `raw-value` entry contains binary data.
 
-The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must be tagged and have type `bytes`.
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry MUST be a `raw-value` entry, which MUST be tagged and have type `bytes`.
 
 The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
 
@@ -2620,7 +2620,7 @@ Note that it is not required for all the entries in the candidate entry to be us
 
 ##### Comparison for raw-int entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which must have type `raw-int-type-choice`.
+The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which MUST have type `raw-int-type-choice`.
 
 Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
@@ -2643,7 +2643,7 @@ The comparison MUST return true if and only if all the following conditions are 
 ### Profile-directed Comparison {#sec-compare-profile}
 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
-The profile must specify how to compare the CBOR tagged Reference Value against the ACS.
+The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.
 
 Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
 
