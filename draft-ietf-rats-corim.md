@@ -168,7 +168,7 @@ Not only Attesters can evolve and therefore new measurement types need to be exp
 
 In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
-Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors  to represent a homogeneous representation of Attester state.
+Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
 See {{sec-verifier-rec}}.
 
@@ -598,7 +598,7 @@ The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected
 The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
 
-If using other signing envelope formats, the CoRIM signing authority MUST be specified, e.g., by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
+If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
 ~~~ cddl
 {::include cddl/cmw-corim-collection.cddl}
@@ -1145,7 +1145,7 @@ A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 
-Additional value types can be added to `$raw-value-type-choice`, these additional values MUST be CBOR tagged `bstr`s.
+Additional value types can be added to `$raw-value-type-choice`. These additional values MUST be CBOR tagged `bstr`s.
 Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
 
 A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
@@ -1345,7 +1345,7 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
-Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each `conditional-series-record`.
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points MUST be the same across each `conditional-series-record`.
 For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
 
 These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
@@ -1401,7 +1401,7 @@ If a key has usage restrictions that limit its use to device identity challenges
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
-Additionally, Verifiers MAY report key verification results as part of an error reporting function.
+Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
 {::include cddl/identity-triple-record.cddl}
@@ -1437,7 +1437,7 @@ Verifiers SHOULD enforce key use restrictions.
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
-Additionally, Verifiers MAY report key verification results as part of an error reporting function.
+Verifiers MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
 {::include cddl/attest-key-triple-record.cddl}
@@ -1548,7 +1548,7 @@ The following describes each member of the `concise-tl-tag` map.
   a complete set of verification-related information.  The `tags-list` behaves
   like a signaling mechanism from the supply chain (e.g., a product vendor) to
   a Verifier that activates the tags in `tags-list` for use in the Evidence
-  appraisal process. The activation is atomic: all tags listed in `tags-list`
+  appraisal process, and the activation is atomic. All tags listed in `tags-list`
   MUST be activated or no tags are activated.
 
 * `tl-validity` (index 2): Specifies the validity period of the CoTL.
@@ -1965,7 +1965,8 @@ All available CoRIMs are collected.
 
 CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
 
-Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
+Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
+An example of such a mechanism is a digital signature.
 
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
@@ -2445,7 +2446,7 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 ### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
-If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
+If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then a Verifier MUST use the algorithm defined by the profile, or it MUST use a standard algorithm if the profile defines that.
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
 
 A Verifier SHALL perform all of the comparisons defined in {{sec-compare-environment}}, {{sec-compare-authority}}, and {{sec-compare-element-list}}.
@@ -2524,7 +2525,7 @@ The comparison algorithms for these are defined in this document (in the section
 For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
 
 Negative codepoints represent profile defined data representations.
-A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and the tag value (if present) to select the comparison algorithm.
+A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and, if present, the tag value to select the comparison algorithm.
 
 If a Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
 
@@ -2566,18 +2567,19 @@ When multiple digests are provided, each represents a different algorithm accept
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
 
-To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
-A Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
+If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
+This is to prevent downgrade attacks.
+The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).
+The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
 
 The comparison MUST return false if the condition ECT digests entry does not contain any digests.
 
 The comparison MUST return false if either digests entry contains multiple values for the same hash algorithm.
 
-The Verifier MUST iterate over the condition ECT `digests` array, locating common hash algorithm identifiers (which are present in the condition ECT and in the candidate entry).
+The Verifier MUST iterate over the condition ECT `digests` array, locating common hash algorithm identifiers. Identifiers are present in the condition ECT and in the candidate entry.
 If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
 
 The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.
