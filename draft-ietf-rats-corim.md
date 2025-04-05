@@ -297,7 +297,7 @@ The internal representations used by this document are defined in {{sec-ir-cm}}.
 ## Interacting with an ACS {#sec-interact-acs}
 
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) should satisfy the following requirements for Verifier reconciliation and appraisal processing:
+Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
 
 | CM Type | Structure | Description |
 |---
@@ -457,7 +457,7 @@ A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this 
 
 A profile MAY constrain the values of a given CoRIM type to a subset of the values.
 A profile MAY extend the set of a given CoRIM type using the defined extension points ({{sec-extensibility}}).
-Exercised extension points should preserve the intent of the original semantics.
+Exercised extension points SHOULD preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
 
@@ -2645,7 +2645,7 @@ The comparison MUST return true if and only if all the following conditions are 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
 The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.
 
-Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
+Note that a Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
 # Implementation Status
 
