@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-06T01:59:24.506396+00:00",
+  "timestamp": "2025-04-08T01:54:07.854358+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10558,9 +10558,150 @@
       "labels": [],
       "body": "Since `raw-int` is intended to support ranged comparsions (and whos value can be two integers, representing the bounds of the range), it does not behave as an ordinary \"raw integer\", which is what the name implies. \n\nSuggested replacement: `ranged-int`.",
       "createdAt": "2025-04-04T18:20:35Z",
-      "updatedAt": "2025-04-04T18:20:35Z",
+      "updatedAt": "2025-04-07T21:48:49Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "\ud83d\udc4d though I'd prefer to \u201cpromote\u201d the already existing `int-range` rather than inventing a new but very similar name.\n\nIf we are doing this (which I strongly support), we could also trim some stuff: the type choice - in fact, the `int` variant can be represented as the zero-size range `[min, min]` or `[max, max]` -, and consequently the tag.\n\nThat would give us:\n\n```\nint-range = [min: int / negative-inf, max: int / positive-inf]\npositive-inf = null\nnegative-inf = null\n```",
+          "createdAt": "2025-04-06T18:21:44Z",
+          "updatedAt": "2025-04-06T18:21:44Z"
+        },
+        {
+          "author": "setrofim",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The agument against just using `int-range`  is that this is supposed to represent a integer value on evidince side that needs to be \"matched\" againt a range on the provisioning side (I believe, the immediate use case for this is privilege levels). See the discussion in \"general chat\" on Zulip.",
+          "createdAt": "2025-04-06T20:26:15Z",
+          "updatedAt": "2025-04-06T20:27:03Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The agument against just using `int-range` is that this is supposed to represent a integer value on evidince side that needs to be \"matched\" againt a range on the provisioning side (I believe, the immediate use case for this is privilege levels). \n\nI don\u2019t understand the argument though.  It mixes evidence with ref-value formats, which should be treated separately.\n\n> See the discussion in \"general chat\" on Zulip.\n\nFor reference: https://veraison.zulipchat.com/#narrow/channel/264037-general/topic//with/510576674\n\n",
+          "createdAt": "2025-04-07T08:23:38Z",
+          "updatedAt": "2025-04-07T08:23:38Z"
+        },
+        {
+          "author": "setrofim",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I don\u2019t understand the argument though. It mixes evidence with ref-value formats, which should be treated separately.\n\nWell both evidence claims and ref-values are to be expressed as ECTS. My understanding (and to be clear, this is not _my_ arguement) is that the goal is to make the corroboration between the two simply \"field A in refval ECT 'matches' field B in evidence ECT\", where all the heavy lifting is done by how 'matches' is defined for the field's type. (FWIW, IMO it's a bad idea to do it this way...)\n\n@deeglaze could you elaborate on the  rationale? I'm not sure if I'm accurately representing it.\n",
+          "createdAt": "2025-04-07T09:22:33Z",
+          "updatedAt": "2025-04-07T09:22:33Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Concise evidence choses this measurement-values-map representation. Reference values reuse that representation for the simplest way of representing expected values. Then SVN needed a minimum, and then we needed conditions. And then we needed a series of conditions. And then we disliked using raw-value for everything. I stated before that a Value, Pattern, Expression separate classification for semantics is much cleaner and understandable than using the same representation for all of them.\nI dislike the format for many reasons, yet this is what the working group is promoting everywhere for OEMs and ISVs to use, so I'm trying desperately to make it work for my use case.\nSo yes, Sergey, I agree with you on your points. I do still want to represent a number and a range condition so that I can state express a privilege level measurement from SEV-SNP attestation reports and expect a measurement from higher than VMPL 0 without needing to choose 1, 2, or 3.\nI have colleagues that want to comply with the standard while designing new devices that attest to values that are best expressed as numbers (e.g., how many times has the state been cleared) without requiring the extra detail of endianness of bit width if using raw-value.\n\nMicrosoft has decided to just sign Rego scripts it generates with verification conditions and call it a day, and honestly it's much cleaner, but the working group doesn't see CoRIM as a programming language (it is), so it has this bizarre representation that mixes condition with value.",
+          "createdAt": "2025-04-07T15:25:06Z",
+          "updatedAt": "2025-04-07T15:25:06Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have use cases for `raw-uint`. Does it make sense to mirror the raw-int claim with a uint variation or do an implicit type cast to `rat-int`? \nIt would seem uint can fit within the constraints of int. The possibly oddball condition is `negative-infinity` is meaningless but pemitted by the type structure. It would be weird to overload `null` to mean `0` when it is a use case for uint. ",
+          "createdAt": "2025-04-07T16:26:46Z",
+          "updatedAt": "2025-04-07T16:26:46Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> the goal is to make the corroboration between the two simply \"field A in refval ECT 'matches' field B in evidence ECT\",\n\nCorroboration means that given evidence which has been mapped to an internal representation (e.g., ECT); which represents an assertion about the current state of the attester, is within the range of possible states defined by an RVP. Reference values also are mapped to an internal representation (e.g., ECT) so that the Verifier is comparing apples-apples in terms of syntax and semantics. \n\nThe result is a value that represents the current state (as opposed to possible states) of the Attester (that is affirmed by the RVP). This allows the ACS to contain only values that are actual state of the Attester. \n\nThe CDDL needs to represent both current state and possible state in a way that makes corroboration appraisal deterministically result in actual state representations in the ACS.\n\nThe internal representation makes it clear which information is used as conditional when which is the assertion to be added. The original triples defined in corim optimized the condition and addition (I think for compactness of representation). This seemed reasonable for reference values because the condition is largely a duplication of the addition. In exact-match scenarios it is an exact duplication with the exception of the authority of entity making the assertion. ",
+          "createdAt": "2025-04-07T17:26:48Z",
+          "updatedAt": "2025-04-07T17:27:16Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "raw-int is a strict superset of raw-uint, so I don't see why you'd need a different measurement values map key.",
+          "createdAt": "2025-04-07T17:38:35Z",
+          "updatedAt": "2025-04-07T17:38:35Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Rego scripts it generates with verification conditions\n\nRego scripts still need to follow the constraints of reference (possible) state vs. actual state. A rego script that expresses possible states in excess of actual state used in Evidence would not be a valid Evidence statement. To ensure rego script isn't misused, there would need to be a form that expresses actual state and a form for possible state, and a method for relating them so that the result is only actual state. \n\nConcise evidence is patterned after corim triples, but they are different triples. A verifier can distinguish an evidence triple from a reference triple and apply constraints appropriately. The fact that they have cddl in common doesn't remove the fact that verifiers will treat them as different conceptual messages / triples. The data typing nevertheless needs to have overlapping semantics so that actual state is a subset of possible (reference) state.\n\nIn the case of raw-int, the actual state is expressed as `int` and the possible state is expressed as `int-range`. If we argue that there should be different code points for actual state than for reference state, then we are encoding the conceptual message semantic into the code point. But since the cm-type is already understood, it might not make sense to redundantly place it in the code points as well.",
+          "createdAt": "2025-04-07T17:44:41Z",
+          "updatedAt": "2025-04-07T17:44:41Z"
+        },
+        {
+          "author": "setrofim",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This seemed reasonable for reference values because the condition is largely a duplication of the addition. In exact-match scenarios it is an exact duplication with the exception of the authority of entity making the assertion.\n\nFor exact-match scenarios this works fine. Issues arrise when corroboration requires something more complicated that simple matching. E.g. whe you have to deal with ranges or matching against a set of possible values, or when the condition involves relations between multiple value (e.g. the valid minium SVN depends on the value of the model fields). In such cases, the requirement to express condition as an ECT (i.e. an enviroment and an element list) becomes taxing, and pretty much necessitates pushing increasing amounts of logic behind type definitions. This bloats the type system and make implementations more complicated, as well as well as defining conditions less intuitive (one needs to understand the behaviors of varying types).\n\nAs @deeglaze  said:\n\n> I stated before that a Value, Pattern, Expression separate classification for semantics is much cleaner and understandable than using the same representation for all of them.\n",
+          "createdAt": "2025-04-07T17:45:04Z",
+          "updatedAt": "2025-04-07T17:45:04Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> raw-int is a strict superset of raw-uint, so I don't see why you'd need a different measurement values map key.\n\nThe question is whether the typing should enforce the subset constraint or whether prose in a document is sufficient. For example, `negative-infinity` isn't defined for uint, but it is defined for the cddl.",
+          "createdAt": "2025-04-07T17:47:24Z",
+          "updatedAt": "2025-04-07T17:47:24Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> (e.g. the valid minium SVN depends on the value of the model fields)\n\nDo you mean that the SVN depends on the chosen environment-map (assuming \"model fields\" refers to values in environment-map that distinguishes which component is managed using an SVN process)? \n\nCan you explain how VPE changes this expectation?",
+          "createdAt": "2025-04-07T17:53:12Z",
+          "updatedAt": "2025-04-07T18:09:38Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > (e.g. the valid minium SVN depends on the value of the model fields)\n> \n> My this you mean that the SVN depends on the chosen environment-map (assuming \"model fields\" refers to values in environment-map that distinguishes which component is managed using an SVN process)?\n> \n> Can you explain how VPE changes this expectation?\n\nAn SVN is a number. A value. Something that will appear in evidence. We do not expect to see a loader measure \"at least SVN 5\". We expect SVN 5.\n\nA Pattern is a means of matching, which can be something more involved like passing a predicate or a boolean combination of patterns. A pattern can also bind values to variables that can be used in expressions. For instance, to solve Andy's problem with associating endorsements only to specific instances.\nSay we have a conditional endorsement (made up syntax) that is\n\n```\n #:environment [class-id: (and c h'...'), instance: x] #:measurements [{0: \"bootloader\", 1: {2: [[7, h'...']]}}]\nadd-endorsement(#:environment [class-id: c, instance: x] #:measurements [{0: \"bootloader\", 1: {32000: \"all good\"}}])\n```\n\nSo now our conditional endorsement triple has a pattern that matches against values in the ACS to then evaluate an expression that extends the ACS, which is always a concrete set collection of values.\n\nThis removes the possibility of making conditional endorsements on pattern-like values, such as, \"I will say X is good if Y said Z must be at least 8\", which I have no application for, nor do I particularly know why you'd make statements like that.",
+          "createdAt": "2025-04-07T18:09:07Z",
+          "updatedAt": "2025-04-07T18:09:07Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> conditional endorsement triple\n\nDid you mean to say \"reference value triple\" otherwise I'm confused as to which conversation we're having.",
+          "createdAt": "2025-04-07T18:12:38Z",
+          "updatedAt": "2025-04-07T18:12:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> We do not expect to see a loader measure \"at least SVN 5\". We expect SVN 5.\n\nCorrect. In the case of a concise-evidence triple, the svn code point expects a uint. The Verifier knows this because it knows the difference between an evidence triple and a reference value triple.",
+          "createdAt": "2025-04-07T18:20:04Z",
+          "updatedAt": "2025-04-07T18:20:04Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > conditional endorsement triple\n> \n> Did you mean to say \"reference value triple\" otherwise I'm confused as to which conversation we're having.\n\nA reference value triple is a form of conditional endorsement triple. We disregarded that as a means of having simpler representation of simpler cases. For SVN specifically\n\n```\n#:environment [class-id: (and c h'...'), instance: x] \n#:measurements [{0: \"bootloader\", 1: {1: (and svn (>= 5))} }]\nadd-endorsement(#:environment [class-id: c, instance: x] \n#:measurements [{0: \"bootloader\", 1: svn}])\n```\n\nYou can use a pattern like (>= 5) to require the value in that position to be at least 5. You can use the variable pattern to bind the value for use in the expression. This is a way of expressing an endorsement of a non-literal reference value.",
+          "createdAt": "2025-04-07T18:20:49Z",
+          "updatedAt": "2025-04-07T18:24:57Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> is a form of conditional endorsement triple.\n\nTrue. But the appraisal processing semantics differ. I don't think it makes sense to conflate these for the purpose of having this conversation.",
+          "createdAt": "2025-04-07T18:22:36Z",
+          "updatedAt": "2025-04-07T18:22:36Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I assume this is reference values triple/statement?\n>#:environment [class-id: (and c h'...'), instance: x] \n>#:measurements [{0: \"bootloader\", 1: {1: (and svn (>= 5))} }]\n\nI assume this is an ACS entry?\n>add-endorsement(#:environment [class-id: c, instance: x] \n>#:measurements [{0: \"bootloader\", 1: svn}])\n\nI not sure what the Evidence entry is supposed to look like.\n\nI have questions about these statements.\n> (and c h'...')\n>(and svn (>= 5))\n\nDoes `and` in the groups above have special meaning (i.e., is it a logical operator)?\nWhat does `c` and `svn` refer to? \n\nThe Intel profile suggested something like this (I think), where a  CBOR tagged group contained an expression that, for example, includes an operator (ge) and a numeric value that is the min value in a range check with no upper bound. The Evidence SVN completes the equation:\n - evidence.svn CBOR_TAG([ge , 5])\n\nmin-svn is an abbreviated version of an expression in that for SVN comparisons, the operator is always \">=\". Hence, `552(5)` is logically equivalent to: `evidence.svn \">=\" 5`.  \n\n`int-range` is also a specialization of an expression where evidence is both >= and <= the respective min max values. I assume the above example would need to be tweaked to be able to express ranges ? e.g.: ((and svn (>= 5), and svn (<= 10)) ???\nBTW: I'm unsure of what information `and` is bringing, but I'm using it anyway.\n\nNote that the environment `#:environment [class-id: c, instance: x]` identifies the component to which the particular SVN reference and actual values pertain. (Which seems to be the case regardless of which approach is used - SVP or current).\n\n",
+          "createdAt": "2025-04-07T19:14:36Z",
+          "updatedAt": "2025-04-07T19:14:36Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Short-hand representations are not a bug.\nI should be able to say 5.\nI shouldn't have to say >= 5 and <= 5.\n\n> I assume this is reference values triple/statement?\n> \n> > #:environment [class-id: (and c h'...'), instance: x]\n> > #:measurements [{0: \"bootloader\", 1: {1: (and svn (>= 5))} }]\n> \n> I assume this is an ACS entry?\n> \n> > add-endorsement(#:environment [class-id: c, instance: x]\n> > #:measurements [{0: \"bootloader\", 1: svn}])\n> \n\nNo, the former is the pattern and the latter is the expression that represents the directive to amend the ACS. The whole thing together is a triple of some sort.\n\n> I not sure what the Evidence entry is supposed to look like.\n\nI'm still conceptualizing it as added to the ACS before appraising against CoRIMs.\n\n> \n> I have questions about these statements.\n> \n> > (and c h'...')\n> > (and svn (>= 5))\n> \n> Does `and` in the groups above have special meaning (i.e., is it a logical operator)? What does `c` and `svn` refer to?\n\nThis is borrowed syntax from the `match` expression in Racket https://docs.racket-lang.org/reference/match.html#%28form._%28%28lib._racket%2Fmatch..rkt%29._match%29%29 where a variable is a \"pattern variable\" and binds to whatever value it's matched against. The h'...' is a byte string literal that is implicitly treated as an equality predicate. The `and` means both patterns must match against the value. The (>= 5) is a predicate that is evaluated against the value it's matched against.\n\nBy binding values to variables, they can be used in the expression without needing to enumerate the entire value space.\n\n> \n> The Intel profile suggested something like this (I think), where a CBOR tagged group contained an expression that, for example, includes an operator (ge) and a numeric value that is the min value in a range check with no upper bound. The Evidence SVN completes the equation:\n> \n> * evidence.svn CBOR_TAG([ge , 5])\n\nSure, though instead of using a simple type system for expressions and allowing expressions to be what you sign, you've special-cased which expressions can be used on which profile-specific measurements, which makes all that work non-portable to anything else.\n\nIn the base profile we have extremely limited forms of expression to keep the format from becoming a policy engine programming language. In the Intel TDX profile, there's no restraint for against that urge to express complex policy-not-policy.\n\nThere's the view that CoRIMs should be ingested and evaluated against directly in policy engines so that evidence can be augmented with what has been learned about the environment for policy to then make judgments about.\n\nThere's the view that CoRIMs should be ingested to compile into policies that are rolled out.\n\nThere's the view that CoRIMs should be the way that any attestation verifier should be initialized to appraise evidence full stop (e.g., with CoTS as a means to say who's allowed to say what, and the policy that every field of evidence must be authorized by some trust anchor).\n\nForget my pattern/value/expression comment. It's just not helpful for finishing this specification.\n\n> \n> min-svn is an abbreviated version of an expression in that for SVN comparisons, the operator is always \">=\". Hence, `552(5)` is logically equivalent to: `evidence.svn \">=\" 5`.\n> \n> `int-range` is also a specialization of an expression where evidence is both >= and <= the respective min max values. I assume the above example would need to be tweaked to be able to express ranges ? e.g.: ((and svn (>= 5), and svn (<= 10)) ??? BTW: I'm unsure of what information `and` is bringing, but I'm using it anyway.\n> \n> Note that the environment `#:environment [class-id: c, instance: x]` identifies the component to which the particular SVN reference and actual values pertain. (Which seems to be the case regardless of which approach is used - SVP or current).\n\n",
+          "createdAt": "2025-04-07T19:48:23Z",
+          "updatedAt": "2025-04-07T19:48:23Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ok. So to summarize, it seems everyone is still OK with int-range (or whatever we're calling it) as is. \nIn some future version of CoRIM it might make sense to find better pattern matching primitives that can be integrated into triples expressions, but more exploration is needed. I will add that the complexity of Racket seems large (as it also includes regex) and some implementations of Verifiers will want to be provably correct.\n\nThere are use cases for measurement types that can use ranges, dates, and sets of measurements, but the current CoRIM only addresses them piecmeal. Profiles and future revisions of the draft may be used to fill the gaps - possibly in a piecemeal approach until something more universal (e.g., Racket) is fleshed out. \n\nIf I try to answer my original question of whether a uint-range is paletable given int-range. I heard from Dionna but nobody else. \n\nIf my main objective is to direct implementation teams toward corim that is the most stable range-based matching semantics, building on min-svn and casting uint-ranges into int-ranges is the best direction for right now? ",
+          "createdAt": "2025-04-07T21:48:48Z",
+          "updatedAt": "2025-04-07T21:48:48Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -64216,19 +64357,53 @@
       "labels": [],
       "body": "These commits do not address all the \"may\"s and \"can\"s, which is a whole other can of worms.",
       "createdAt": "2025-04-05T17:35:37Z",
-      "updatedAt": "2025-04-05T17:36:04Z",
+      "updatedAt": "2025-04-06T21:37:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "normative-language",
-      "headRefOid": "679e55e0896c19aadc255ae24ee15d448bd8e928",
+      "headRefOid": "2b322dd161b950a7cb1ee1bd24076eab2beaf5b6",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86joTnR",
+          "commit": {
+            "abbreviatedOid": "8867a3d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-06T20:08:01Z",
+          "updatedAt": "2025-04-06T20:08:02Z",
+          "comments": [
+            {
+              "originalPosition": 307,
+              "body": "```suggestion\r\nThe Verifier MUST iterate over the condition ECT `digests` array, locating the common hash algorithm identifiers which are present in both the condition ECT and in the candidate entry.\r\n```",
+              "createdAt": "2025-04-06T20:08:01Z",
+              "updatedAt": "2025-04-06T20:08:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86joToH",
+          "commit": {
+            "abbreviatedOid": "8867a3d"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-06T20:08:15Z",
+          "updatedAt": "2025-04-06T20:08:15Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
