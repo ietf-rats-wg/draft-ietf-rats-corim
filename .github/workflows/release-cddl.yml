@@ -1,0 +1,42 @@
+name: "Upload CDDL assets"
+
+on:
+  push:
+    tags:
+      - "cddl-*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v4
+
+    - name: "Setup"
+      id: setup
+      run: date -u "+date=%FT%T" >>"$GITHUB_OUTPUT"
+
+    - name: "Caching"
+      uses: actions/cache@v4
+      with:
+        path: |
+          .refcache
+          .venv
+          .gems
+          node_modules
+          .targets.mk
+        key: i-d-${{ steps.setup.outputs.date }}
+        restore-keys: i-d-
+
+    - name: "Build and check CDDL"
+      uses: martinthomson/i-d-template@v1
+      with:
+        token: ${{ github.token }}
+
+    - name: "Create Release"
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          ./cddl/*-autogen.cddl
