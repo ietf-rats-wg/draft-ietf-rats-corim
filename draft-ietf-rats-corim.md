@@ -222,11 +222,6 @@ See also {{Section 4.2.4 of -eat}}.
 Domain:
 : A context to represent a collection of Environments that are grouped togther to represent an entity, for example a Composite Device {{Section 3.3 of -rats-arch}}
 
-Stateful Domain:
-: A context to represent a Domain in a particular state. It represents a collection of Environments and their associated measurements
-(i.e. a collection of a stateful environments) that identifies a particular state of a Domain. Note that, both domain and stateful domain
-are represented using $domain-type-choice.
-
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
@@ -1275,7 +1270,7 @@ The signed integer range representation is an inclusive range unless either `min
 
 ##### Domain Types {#sec-comid-domain-type}
 
-A domain is a context for bundling a collection of related environments and their measurements.
+A domain is a context for bundling a collection of related environments.
 
 The following CDDL describes domain type choices.
 
