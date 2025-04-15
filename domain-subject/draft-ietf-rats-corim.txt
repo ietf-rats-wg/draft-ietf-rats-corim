@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 11 October 2025                                          Linaro
+Expires: 17 October 2025                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            9 April 2025
+                                                           15 April 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 October 2025.
+   This Internet-Draft will expire on 17 October 2025.
 
 Copyright Notice
 
@@ -151,10 +151,11 @@ Table of Contents
        9.1.3.  Internal Representation of Evidence
        9.1.4.  Internal Representation of Reference Values
        9.1.5.  Internal Representation of Endorsed Values
-       9.1.6.  Internal Representation of Policy Statements
-       9.1.7.  Internal Representation of Attestation Results
-       9.1.8.  Internal Representation of Appraisal Claims Set (ACS)
-       9.1.9.  Internal Representation of Attestation Results Set
+       9.1.6.  Internal Representation of Domain Membership
+       9.1.7.  Internal Representation of Policy Statements
+       9.1.8.  Internal Representation of Attestation Results
+       9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
+       9.1.10. Internal Representation of Attestation Results Set
                (ARS)
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
@@ -172,6 +173,7 @@ Table of Contents
            9.2.3.4.2.  Conditional Endorsement Triple Transformation
            9.2.3.4.3.  Conditional Endorsement Triple Transformation
            9.2.3.4.4.  Key Verification Triples Transformation
+         9.2.3.5.  Domain Membership Triples Transformation
      9.3.  ACS Augmentation - Phases 2, 3, and 4
        9.3.1.  ACS Requirements
          9.3.1.1.  ACS Processing Requirements
@@ -515,7 +517,7 @@ Table of Contents
    | Results      | actual state       | claims are in the ACS, then  |
    |              | claims, List of    | copy the list of Attestation |
    |              | expected           | Results claims into the ARS. |
-   |              | Attestation        | See Section 9.1.9            |
+   |              | Attestation        | See Section 9.1.10           |
    |              | Results claims     |                              |
    +--------------+--------------------+------------------------------+
 
@@ -2086,8 +2088,8 @@ Table of Contents
    Evidence.
 
    domain-membership-triple-record = [
-     $domain-type-choice
-     [ +  $domain-type-choice ]
+    identity: $domain-type-choice
+    members: [ +  $domain-type-choice ]
    ]
 
 5.1.4.10.  CoMID-CoSWID Linking Triple
@@ -2430,7 +2432,7 @@ Table of Contents
    Attestation Results.
 
    The internal representation of Conceptual Messages, as well as the
-   ACS (Section 9.1.8) and ARS (Section 9.1.9), are constructed from a
+   ACS (Section 9.1.9) and ARS (Section 9.1.10), are constructed from a
    common building block structure called Environment-Claims Tuple
    (ECT).
 
@@ -2466,6 +2468,7 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
      cmtype: cm-type
      ? profile: $profile-type-choice
+     ? domain-id: environment-map
    }
 
    element-map = {
@@ -2480,6 +2483,7 @@ Table of Contents
      attestation-results: 3
      verifier: 4
      policy: 5
+     domain-member: 6
    )
 
    The Conceptual Message type determines which attributes are
@@ -2663,7 +2667,55 @@ Table of Contents
                   Table 5: Endorsed Values and Endorsed
                     Values Series tuples requirements
 
-9.1.6.  Internal Representation of Policy Statements
+9.1.6.  Internal Representation of Domain Membership
+
+   An internal representation of Domain Membership uses the dm relation,
+   which is a list of ECTs that describes the composition of an Attester
+   with an identity of the domain specified in the identity ECT.
+
+   dm = [ + {
+     identity: ECT
+     members:  [ +ECT ]
+   } ]
+
+   The domain member Environments are compared with the Environments
+   specified in the list of ECTs in ACS whose cmtype matches Evidence.
+   If the environment for every entry of the members of dm matches an
+   entry in the ACS ECTs then the domain identity is copied to every
+   member ECT.  The members are added to the ACS with authority
+   specified in the identity.
+
+   Table 4 contains the requirements for the ECT fields of the Domain
+   Membership tuple:
+
+                 +==========+==============+=============+
+                 | ECT type | ECT Field    | Requirement |
+                 +==========+==============+=============+
+                 | identity | environment  | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | element-list | Optional    |
+                 +----------+--------------+-------------+
+                 |          | authority    | Optional    |
+                 +----------+--------------+-------------+
+                 |          | cmtype       | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | profile      | n/a         |
+                 +----------+--------------+-------------+
+                 | members  | environment  | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | element-list | Optional    |
+                 +----------+--------------+-------------+
+                 |          | authority    | Optional    |
+                 +----------+--------------+-------------+
+                 |          | cmtype       | n/a         |
+                 +----------+--------------+-------------+
+                 |          | profile      | n/a         |
+                 +----------+--------------+-------------+
+
+                      Table 6: Domain Membership tuple
+                                requirements
+
+9.1.7.  Internal Representation of Policy Statements
 
    The policy relation compares the condition ECTs to the ACS.
 
@@ -2675,7 +2727,7 @@ Table of Contents
    If all of the ECTs are found in the ACS then the addition ECTs are
    added to the ACS with the policy author's authority.
 
-   Table 6 contains the requirements for the ECT fields of the Policy
+   Table 7 contains the requirements for the ECT fields of the Policy
    tuple:
 
                 +===========+==============+=============+
@@ -2702,9 +2754,9 @@ Table of Contents
                 |           | profile      | Optional    |
                 +-----------+--------------+-------------+
 
-                    Table 6: Policy tuple requirements
+                    Table 7: Policy tuple requirements
 
-9.1.7.  Internal Representation of Attestation Results
+9.1.8.  Internal Representation of Attestation Results
 
    The ar relation compares the acs-condition to the ACS.
 
@@ -2717,7 +2769,7 @@ Table of Contents
    ACS to the ARS.  If any of the ars-additions are not found in the ACS
    then these ACS entries are not copied to the ARS.
 
-   Table 7 contains the requirements for the ECT fields of the
+   Table 8 contains the requirements for the ECT fields of the
    Attestation Results tuple:
 
               +===============+==============+=============+
@@ -2744,16 +2796,16 @@ Table of Contents
               |               | profile      | Optional    |
               +---------------+--------------+-------------+
 
-                    Table 7: Attestation Results tuple
+                    Table 8: Attestation Results tuple
                                requirements
 
-9.1.8.  Internal Representation of Appraisal Claims Set (ACS)
+9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
 
    An ACS is a list of ECTs that describe an Attester's actual state.
 
    ACS = [ + ECT ]
 
-9.1.9.  Internal Representation of Attestation Results Set (ARS)
+9.1.10.  Internal Representation of Attestation Results Set (ARS)
 
    An ARS is a list of ECTs that describe ACS entries that are selected
    for use as Attestation Results.
@@ -3101,6 +3153,28 @@ Table of Contents
    Step 5.  If the Endorsement conceptual message has a profile, the
             profile is copied to the ev.addition.profile field.
 
+9.2.3.5.  Domain Membership Triples Transformation
+
+   Step 6.  An dm list entry (Section 9.1.6) is allocated.
+
+   Step 7.  The cmtype of the members ECT in the dm entry is set to
+            domain-member.
+
+   Step 8.  The Domain Membership Triple (DMT) (Section 5.1.4.9)
+            populates the dm ECTs.
+
+   i  DMT.identity, $domain-identity-type-choice environment-map as
+      under:
+
+      *copy*(environment-map, dm.identity.environment-map)
+
+   ii For each e in DMT.members:
+
+      *copy*(e.environment-map, dm.identity.environment-map)
+
+   *  If the Endorsement conceptual message has a profile, the profile
+      identifier is copied to the dm.members.profile field.
+
 9.3.  ACS Augmentation - Phases 2, 3, and 4
 
    In the ACS augmentation phase, a CoRIM Appraisal Context and an
@@ -3117,7 +3191,7 @@ Table of Contents
 9.3.1.  ACS Requirements
 
    At the end of the Evidence collection process Evidence has been
-   converted into an internal represenetation suitable for appraisal.
+   converted into an internal representation suitable for appraisal.
    See Section 9.1.
 
    Verifiers are not required to use this as their internal
@@ -3372,7 +3446,7 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the applied
    policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 9.1.6,
+   details, based on the policy ECT, as described in Section 9.1.7,
    contains the environments affected by the policy with policy
    identifiers as Claims.
 
@@ -3385,7 +3459,7 @@ Table of Contents
    Claims may be specific to a particular Relying Party.  Hence, the
    Verifier may need to maintain multiple Attestation Results contexts.
    An internal representation of Attestation Results as separate
-   contexts (Section 9.1.9) ensures Relying Party–specific processing
+   contexts (Section 9.1.10) ensures Relying Party–specific processing
    does not modify the ACS, which is common to all Relying Parties.
    Attestation Results contexts are the inputs to Attestation Results
    procedures that produce external representations.
@@ -3967,7 +4041,7 @@ Table of Contents
    | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
-                                  Table 8
+                                  Table 9
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -3990,7 +4064,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 9: CoRIM Map Items
+                         Table 10: CoRIM Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4017,7 +4091,7 @@ Table of Contents
                 | 3-255 | Unassigned     |               |
                 +-------+----------------+---------------+
 
-                    Table 10: CoRIM Map Items Initial
+                    Table 11: CoRIM Map Items Initial
                               Registrations
 
 12.4.  CoRIM Entity Map Registry
@@ -4037,7 +4111,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 11: CoRIM Entity Map Items
+                      Table 12: CoRIM Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4064,7 +4138,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 12: CoRIM Entity Map Items Initial Registrations
+           Table 13: CoRIM Entity Map Items Initial Registrations
 
 12.5.  CoRIM Signer Map Registry
 
@@ -4083,7 +4157,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 13: CoRIM Signer Map Items
+                      Table 14: CoRIM Signer Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4102,7 +4176,7 @@ Table of Contents
                   | 2-255 | Unassigned  |               |
                   +-------+-------------+---------------+
 
-                      Table 14: CoRIM Signer Map Items
+                      Table 15: CoRIM Signer Map Items
                            Initial Registrations
 
 12.6.  CoMID Map Registry
@@ -4122,7 +4196,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 15: CoMID Map Items
+                         Table 16: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4147,7 +4221,7 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 16: CoMID Map Items Initial
+                    Table 17: CoMID Map Items Initial
                               Registrations
 
 12.7.  CoMID Entity Map Registry
@@ -4167,7 +4241,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 17: CoMID Entity Map Items
+                      Table 18: CoMID Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4194,7 +4268,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 18: CoMID Entity Map Items Initial Registrations
+           Table 19: CoMID Entity Map Items Initial Registrations
 
 12.8.  CoMID Triples Map Registry
 
@@ -4214,7 +4288,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-              Table 19: CoMID Triples Map Items Registration
+              Table 20: CoMID Triples Map Items Registration
                                 Procedures
 
    All negative values are reserved for Private Use.
@@ -4261,7 +4335,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    | 11-18446744073709551616 | Unassigned              |               |
    +-------------------------+-------------------------+---------------+
 
-          Table 20: CoMID Triples Map Items Initial Registrations
+          Table 21: CoMID Triples Map Items Initial Registrations
 
 12.9.  CoMID Measurement Values Map Registry
 
@@ -4282,7 +4356,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-               Table 21: CoMID Measurement Values Map Items
+               Table 22: CoMID Measurement Values Map Items
                          Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4327,7 +4401,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
      | 15-18446744073709551616 | Unassigned          |               |
      +-------------------------+---------------------+---------------+
 
-        Table 22: Measurement Values Map Items Initial Registrations
+        Table 23: Measurement Values Map Items Initial Registrations
 
 12.10.  CoMID Flags Map Registry
 
@@ -4348,7 +4422,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-         Table 23: CoMID Flags Map Items Registration Procedures
+         Table 24: CoMID Flags Map Items Registration Procedures
 
    All negative values are reserved for Private Use.
 
@@ -4382,7 +4456,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    |10-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
-             Table 24: Flags Map Items Initial Registrations
+             Table 25: Flags Map Items Initial Registrations
 
 12.11.  CoTL Map Registry
 
@@ -4401,7 +4475,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 25: CoTL Map Items
+                          Table 26: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4422,7 +4496,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
                  | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 26: CoTL Map Items Initial
+                     Table 27: CoTL Map Items Initial
                               Registrations
 
 12.12.  New Media Types
@@ -4438,7 +4512,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    | rim+cose | application/rim+cose | RFCthis, (Section 12.12.2) |
    +----------+----------------------+----------------------------+
 
-                      Table 27: New Media Types
+                      Table 28: New Media Types
 
 12.12.1.  rim+cbor
 
@@ -4508,7 +4582,7 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 28: New Content-Formats
+                  Table 29: New Content-Formats
 
 13.  References
 
@@ -4656,9 +4730,9 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-12,
-              28 February 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-msg-wrap-12>.
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-13,
+              15 April 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-13>.
 
    [I-D.tschofenig-rats-psa-token]
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
@@ -4890,8 +4964,8 @@ Appendix A.  Base CoRIM CDDL
    ]
 
    domain-membership-triple-record = [
-     $domain-type-choice
-     [ +  $domain-type-choice ]
+    identity: $domain-type-choice
+    members: [ +  $domain-type-choice ]
    ]
 
    conditional-endorsement-triple-record = [
