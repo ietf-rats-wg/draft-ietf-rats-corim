@@ -2275,7 +2275,7 @@ The following transformation steps are applied for both the `identity-triples` a
 {: dmt2-enum}
 * For each e in DMT.`members`:
 
-> > **copy**(e.`environment-map`, `dm`.`identity`.`environment-map`)
+> > **copy**(e.`environment-map`, `dm`.`members`.`environment-map`)
 
 
 * If the Endorsement conceptual message has a profile, the profile identifier is copied to the `dm`.`members`.`profile` field.
