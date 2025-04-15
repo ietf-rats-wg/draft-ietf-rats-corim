@@ -1885,6 +1885,36 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `profile`       | Optional    |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
+### Internal Representation of Domain Membership {#sec-dm-membership}
+
+An internal representation of Domain Membership uses the `dm` relation, which is a list of ECTs that describes the composition of an Attester with an identity of the domain specified in the `identity` ECT.
+
+~~~ cddl
+{::include cddl/intrep-domain-mem.cddl}
+~~~
+
+The domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose `cmtype` matches Evidence.
+If the `environment` for every entry of the members of `dm` matches an entry in the ACS ECTs then the domain identity is copied to every member
+ECT. The `members` are added to the ACS with authority specified in the identity.
+
+{{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| identity  | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | n/a         |
+| members   | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+{: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
+
+
+
 ### Internal Representation of Policy Statements {#sec-ir-policy}
 
 The `policy` relation compares the `condition` ECTs to the ACS.
@@ -2224,6 +2254,32 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
+#### Domain Membership Triples Transformation {#sec-dm-trans}
+
+{:dmt-enum: counter="foo" style="format Step %d."}
+
+{: dmt-enum}
+* An `dm` list entry ({{sec-dm-membership}}) is allocated.
+
+* The `cmtype` of the `members` ECT in the `dm` entry is set to `domain-member`.
+
+* The Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) populates the `dm` ECTs.
+
+{:dmt2-enum: counter="dmt2" style="format %i"}
+
+{: dmt2-enum}
+* DMT.`identity`, $domain-identity-type-choice `environment-map` as under:
+
+> > **copy**(`environment-map`, `dm`.`identity`.`environment-map`)
+
+{: dmt2-enum}
+* For each e in DMT.`members`:
+
+> > **copy**(e.`environment-map`, `dm`.`identity`.`environment-map`)
+
+
+* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `dm`.`members`.`profile` field.
+
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2236,7 +2292,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 
 ### ACS Requirements {#sec-acs-reqs}
 
-At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
+At the end of the Evidence collection process Evidence has been converted into an internal representation suitable for appraisal.
 See {{sec-ir-cm}}.
 
 Verifiers are not required to use this as their internal representation.
