@@ -492,6 +492,8 @@ specification.
 {::include cddl/corim-role-type-choice.cddl}
 ~~~
 
+The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` role.
+
 ## Signed CoRIM {#sec-corim-signed}
 
 ~~~ cddl
