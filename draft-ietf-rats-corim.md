@@ -168,7 +168,7 @@ Not only Attesters can evolve and therefore new measurement types need to be exp
 
 In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
-Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors  to represent a homogeneous representation of Attester state.
+Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
 See {{sec-verifier-rec}}.
 
@@ -297,7 +297,7 @@ The internal representations used by this document are defined in {{sec-ir-cm}}.
 ## Interacting with an ACS {#sec-interact-acs}
 
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) should satisfy the following requirements for Verifier reconciliation and appraisal processing:
+Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
 
 | CM Type | Structure | Description |
 |---
@@ -374,7 +374,7 @@ The following CDDL describes the top-level CoRIM.
 ## CoRIM Map {#sec-corim-map}
 
 The CDDL specification for the `corim-map` is as follows and this rule and its
-constraints must be followed when creating or validating a CoRIM map.
+constraints MUST be followed when creating or validating a CoRIM map.
 
 ~~~ cddl
 {::include cddl/corim-map.cddl}
@@ -457,7 +457,7 @@ A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this 
 
 A profile MAY constrain the values of a given CoRIM type to a subset of the values.
 A profile MAY extend the set of a given CoRIM type using the defined extension points ({{sec-extensibility}}).
-Exercised extension points should preserve the intent of the original semantics.
+Exercised extension points SHOULD preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
 
@@ -598,7 +598,7 @@ The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected
 The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
 
-If using other signing envelope formats, the CoRIM signing authority MUST be specified, e.g., by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
+If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
 ~~~ cddl
 {::include cddl/cmw-corim-collection.cddl}
@@ -851,7 +851,7 @@ An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
 An environment MUST be globally unique.
-The combination of values within `class-map` must combine to form a globally unique identifier.
+The combination of values within `class-map` MUST combine to form a globally unique identifier.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
@@ -1021,7 +1021,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   The vendor determines the encoding of `raw-value`.
-  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field must be compared.
+  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field are compared.
   Described in {{sec-comid-raw-value-types}}
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
@@ -1145,7 +1145,7 @@ A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
 The default raw value measurement is of type `tagged-bytes` ({{sec-common-tagged-bytes}}).
 
-Additional value types can be added to `$raw-value-type-choice`, these additional values MUST be CBOR tagged `bstr`s.
+Additional value types can be added to `$raw-value-type-choice`. These additional values MUST be CBOR tagged `bstr`s.
 Constraining all raw value types to be `bstr` lets Verifiers compare raw values without understanding their contents.
 
 A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
@@ -1345,7 +1345,7 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
-Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each `conditional-series-record`.
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
 For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
 
 These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
@@ -1397,11 +1397,11 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
-If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD enforce key use restrictions.
+If a key has usage restrictions that limit its use to device identity challenges, the Verifier SHOULD enforce key use restrictions.
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
-Additionally, Verifiers MAY report key verification results as part of an error reporting function.
+The Verifier MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
 {::include cddl/identity-triple-record.cddl}
@@ -1433,11 +1433,11 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in {{DICE.cert}}).
-Verifiers SHOULD enforce key use restrictions.
+The Verifier SHOULD enforce key use restrictions.
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
-Additionally, Verifiers MAY report key verification results as part of an error reporting function.
+The Verifier MAY report key verification results as part of an error reporting function.
 
 ~~~ cddl
 {::include cddl/attest-key-triple-record.cddl}
@@ -1548,7 +1548,7 @@ The following describes each member of the `concise-tl-tag` map.
   a complete set of verification-related information.  The `tags-list` behaves
   like a signaling mechanism from the supply chain (e.g., a product vendor) to
   a Verifier that activates the tags in `tags-list` for use in the Evidence
-  appraisal process. The activation is atomic: all tags listed in `tags-list`
+  appraisal process, and the activation is atomic. All tags listed in `tags-list`
   MUST be activated or no tags are activated.
 
 * `tl-validity` (index 2): Specifies the validity period of the CoTL.
@@ -1965,7 +1965,8 @@ All available CoRIMs are collected.
 
 CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
 
-Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
+Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
+An example of such a mechanism is a digital signature.
 
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
@@ -1987,7 +1988,7 @@ CoTLs which are not within their validity period MUST be discarded.
 
 The Verifier processes all CoTLs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.
 
-A Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
+The Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
 Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
 In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoTLs that are not also activated by the trusted integrator.
@@ -2273,7 +2274,7 @@ in the CoRIM file which tell it how claims are related.
 If Evidence or Endorsements from different sources has the same `environment-map`
 and `authorized-by` then the `measurement-values-map`s are merged.
 
-The ACS must maintain the authority information for each ECT. There can be
+The ACS MUST maintain the authority information for each ECT. There can be
 multiple entries in `state-triples` which have the same `environment-map`
 and a different authority.
 See {{sec-authority}}.
@@ -2283,7 +2284,7 @@ measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.
 
 If the merged `measurement-values-map` contains duplicate codepoints and the
-measurement values are not equivalent, then a Verifier SHALL report
+measurement values are not equivalent, then the Verifier SHALL report
 an error and stop validation processing.
 
 ##### Ordering of triple processing
@@ -2323,8 +2324,8 @@ When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority`
 
 If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
 
-When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing.
-The Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
+When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing,
+the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
 
 When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
@@ -2436,8 +2437,8 @@ Attestation Results contexts are the inputs to Attestation Results procedures th
 
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
 
-A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
-A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
+The Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
+The Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
 
 If the matched entries array is not empty, then the condition ECT matches the ACS.
 
@@ -2445,10 +2446,10 @@ If the matched entries array is empty, then the condition ECT does not match the
 
 ### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
-If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
+If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then the Verifier MUST use the algorithm defined by the profile, or it MUST use a standard algorithm if the profile defines that.
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
 
-A Verifier SHALL perform all of the comparisons defined in {{sec-compare-environment}}, {{sec-compare-authority}}, and {{sec-compare-element-list}}.
+The Verifier SHALL perform all of the comparisons defined in {{sec-compare-environment}}, {{sec-compare-authority}}, and {{sec-compare-element-list}}.
 
 Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
 
@@ -2458,8 +2459,8 @@ If any of the fields does not match, then the condition ECT does not match the A
 
 ### Environment Comparison {#sec-compare-environment}
 
-A Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
-Before performing the binary comparison, a Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
+Before performing the binary comparison, the Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
 If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical, then the environments match.
 
@@ -2471,18 +2472,18 @@ If a field is not present in the condition ECT `environment-map` then the presen
 
 ### Authority comparison {#sec-compare-authority}
 
-A Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.
+The Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.
 
 If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field, then the authorities match.
 The order of the fields in each `authority` field do not affect the result of the comparison.
 
 If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
 
-When comparing two `$crypto-key-type-choice` fields for equality, a Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
+When comparing two `$crypto-key-type-choice` fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
 
 ### Element list comparison {#sec-compare-element-list}
 
-A Verifier SHALL iterate over all the entries in the condition ECT `element-list` and compare each one against the corresponding entry in the ACS entry `element-list`.
+The Verifier SHALL iterate over all the entries in the condition ECT `element-list` and compare each one against the corresponding entry in the ACS entry `element-list`.
 
 If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field then the element lists match.
 
@@ -2492,23 +2493,23 @@ If any entry in the condition ECT `element-list` does not have a matching entry 
 
 ### Element map comparison {#sec-compare-element-map}
 
-A Verifier shall compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
+The Verifier SHALL compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
 
-First, a Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
+First, the Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
 Two `element-id` fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.
 
-Before performing the binary comparison, a Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+Before performing the binary comparison, the Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
 If any condition ECT entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.
 
 If any condition ECT entry has multiple corresponding `element-id`s then the element map does not match.
 
-Second, a Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
+Second, the Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
 See {{sec-compare-mvm}}.
 
 ### Measurement values map map Comparison {#sec-compare-mvm}
 
-A Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
+The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
 Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
 
 If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
@@ -2517,16 +2518,16 @@ If any codepoint present in the condition ECT `measurement-values-map` does not 
 
 #### Comparison of a single measurement-values-map codepoint {#sec-match-one-codepoint}
 
-A Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
+The Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
 
 Non-negative codepoints represent standard data representations.
 The comparison algorithms for these are defined in this document (in the sections below) or in other specifications.
 For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
 
 Negative codepoints represent profile defined data representations.
-A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and the tag value (if present) to select the comparison algorithm.
+The Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and, if present, the tag value to select the comparison algorithm.
 
-If a Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
+If the Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
 
 Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
 
@@ -2534,12 +2535,12 @@ The following subsections define the comparison algorithms for the `measurement-
 
 ##### Comparison for version entries
 
-The value stored under `measurement-values-map` codepoint 0 is an version label, which must have type `version-map`.
+The value stored under `measurement-values-map` codepoint 0 is an version label, which MUST have type `version-map`.
 Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
 
 ##### Comparison for svn entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which must have type `svn-type`.
+The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which MUST have type `svn-type`.
 
 If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
 
@@ -2566,18 +2567,19 @@ When multiple digests are provided, each represents a different algorithm accept
 
 In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
 
-To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms must be equal.
-A Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
+If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
+This is to prevent downgrade attacks.
+The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).
+The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
 
 The comparison MUST return false if the condition ECT digests entry does not contain any digests.
 
 The comparison MUST return false if either digests entry contains multiple values for the same hash algorithm.
 
-The Verifier MUST iterate over the condition ECT `digests` array, locating common hash algorithm identifiers (which are present in the condition ECT and in the candidate entry).
+The Verifier MUST iterate over the condition ECT `digests` array, locating the common hash algorithm identifiers which are present in both the condition ECT and in the candidate entry.
 If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
 
 The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.
@@ -2586,7 +2588,7 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 A `raw-value` entry contains binary data.
 
-The value stored under `measurement-values-map` codepoint 4 in an ACS entry must be a `raw-value` entry, which must be tagged and have type `bytes`.
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry MUST be a `raw-value` entry, which MUST be tagged and have type `bytes`.
 
 The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
 
@@ -2620,7 +2622,7 @@ Note that it is not required for all the entries in the candidate entry to be us
 
 ##### Comparison for raw-int entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which must have type `raw-int-type-choice`.
+The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which MUST have type `raw-int-type-choice`.
 
 Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
@@ -2643,9 +2645,9 @@ The comparison MUST return true if and only if all the following conditions are 
 ### Profile-directed Comparison {#sec-compare-profile}
 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
-The profile must specify how to compare the CBOR tagged Reference Value against the ACS.
+The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.
 
-Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.
+Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
 # Implementation Status
 
