@@ -2420,7 +2420,7 @@ Domain Membership Triples are first transformed into an internal representation 
 
 For each `ECT` entry in the list of `members`, the environment elements (example Class ID) is compared with the equivalent environment elements in ACS Entry with `cmtype` as `evidence`. The process continues, till every environment in the member list matches the entry in ACS. If all the members match then the `environment` from the domain-id field, is copied to `domain-id` field for each of the member ECT. All the member entries are then added in the ACS, with `authority` specified in the  `domain-id` field.
 
-If the match fails, then the process is repeated using next Domain Membership entry in the Verifier. If none of the entries match, then the Verification has failed. 
+If the match fails, then the process is repeated using next Domain Membership entry in the Verifier. If none of the entries match, then the Verification has failed.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
