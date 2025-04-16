@@ -2275,7 +2275,7 @@ The following transformation steps are applied for both the `identity-triples` a
 {: dmt2-enum}
 * For each e in DMT.`members`:
 
-> > **copy**(e.`environment-map`, `dm`.`members`.`environment-map`)
+> > **copy**(e.`environment-map`, `dm`.`identity`.`environment-map`)
 
 
 * If the Endorsement conceptual message has a profile, the profile identifier is copied to the `dm`.`members`.`profile` field.
@@ -2411,6 +2411,16 @@ Reference Values are matched with ACS entries by iterating through the `rv` list
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
+
+#### Processing Domain Membership {#sec-process-dm}
+
+Domain Membership Triples are OTI triples that allow an Endorser (for example an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments. If the Verifier Appraisal policy requires Domain Membership, then membership triple sets a reference composition of an Attester in a Verifier database. At the time of Verification, the reference is then matched with actual composition as reported by an Attester in the Evidence.
+
+Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-dm-trans}} leading to a representation as as specified in {{sec-dm-membership}}.
+
+For each `ECT` entry in the list of `members`, the environment elements (example Class ID) is compared with the equivalent environment elements in ACS Entry with `cmtype` as `evidence`. The process continues, till every environment in the member list matches the entry in ACS. If all the members match then the `environment` from the domain-id field, is copied to `domain-id` field for each of the member ECT. All the member entries are then added in the ACS, with `authority` specified in the  `domain-id` field.
+
+If the match fails, then the process is repeated using next Domain Membership entry in the Verifier. If none of the entries match, then the Verification has failed. 
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
