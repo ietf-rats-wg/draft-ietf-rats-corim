@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-13T03:20:36.285229+00:00",
+  "timestamp": "2025-04-17T01:55:42.704789+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2786,7 +2786,7 @@
       ],
       "body": "Current domain triples don't allow device composition using domain namespaces and current tag semantics only imply device composition. CoBOM describes tag activation, meaning the set of tags containing information that is related to a device can be specified, but it doesn't define hierarchical relationships between tags. Some tags, such as ta-stores, do not imply device composition. Comid and coswid tags have linked-tags relationships that help manage tag lifecycles, but tag-ids are not long lived. Hence, they are not ideal for representing device composition.\r\n\r\nDomain namespaces have long lived identifiers, but the current `domain-membership-triple-record` only allows multiple `environment-map` entities to be members of a domain namespace. The `domain-dependency-triple-record` has semantics that traces trust dependencies which shouldn't be overloaded with domain membership semantics. \r\n\r\nThis issue proposes extending `domain-membership-triple-record` to include `$domain-type-choice` objects. This will allow it to be used to construct a device composition hierarchy using long lived identifiers. \r\n\r\nA comid tag could be defined to implicitly contain a domain namespace that is unnamed. A domain membership triple that uses the same domain name for the subject and the object could be used to assign a long lived domain name to a comid tag. \r\n\r\nE.g.,:\r\nTag-1 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [ \"X\" ]\r\n      ]\r\n]\r\n```\r\nMultiple domains could exist within a tag if a second domain name appears within the same triple object as the triple subject. \r\nE.g.,\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [ \"X\",  \"Y\" ]\r\n      ]\r\n]\r\n```\r\nMultiple tags can be related by composition using membership triple where both have self-asserted namespace names and a membership triple links them together.\r\ne.g.,\r\nTag-2 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"Z\",\r\n         obj: [ \"Z\" ]\r\n      ]\r\n]\r\n```\r\nAnd tag-1 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [  \"X\",  \"Z\" ]\r\n      ]\r\n]\r\n```\r\nThe cddl would be something like:\r\n```\r\ndomain-membership-triple-record = [\r\n  $domain-type-choice\r\n  [ + $domain-member-type-choice  ]\r\n]\r\n$domain-member-type-choice /= environment-map\r\n$domain-member-type-choice /= $domain-type-choice\r\n```\r\n",
       "createdAt": "2023-05-23T23:16:29Z",
-      "updatedAt": "2024-05-07T09:12:54Z",
+      "updatedAt": "2025-04-15T19:29:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -2844,6 +2844,20 @@
           "body": "AEs start out as TEs, but become AEs if they play a role in deciding which sets of measurements belong to which TEs. It seems incorrect to say that TE's may statements about other TEs unless the TE making the statement contains an AE.\r\n\r\nThe \"grouping\" concept is achieved by the AE algorithm that \"collects\" measurements and gives them a name or names (aka environment).\r\n\r\nIf an TE contains an AE, the dependent AE that collects its measurements determines if the AE subset has its own name or if it is named by the bounding TE name. For example, an AE might be composed of AE code and a DPE or TPM module. The combination of the code and the DPE/TPM allows the AE to perform attester tasks that include (a) measurement collection, (b) measurement reporting (signing), and maybe (c) measurement storage. A verifier might care about the security properties of the AE because they are security critical, so it may not be easily absorbed into the bounding TE, especially if the bounding TE has code that is less security relevant (and therefore has a different level of trust / trust policy). It makes sense for the TE to be modeled in terms of its component parts (e.g., bounding TE code, AE code, AE module).  No TE (or AE inside a TE) speaks for itself. There is a lower layer AE (key) that speaks for its trustworthiness properties. In that sense, the lower layer AE creates the 'token' that summarizes it. \r\n\r\nBased on this understanding of AE/TE dynamics, I'd say the correctness of a TE is observed by another AE. Since an AE is also a TE, there is correctness of an AE is observed by another AE until a root AE is reached.\r\n\r\nThe bounding TE is just a namespace that is common to all of its members. If an AE key generates a token that summarizes it, the summary offers information hiding abstraction, but not information elimination, as the AE inside the bounding TE may have trust differential from the non-AE components. \r\n\r\nI agree there are two types of composition, but they are related by AE behavior (implementation) that decides the grouping of the next layer.",
           "createdAt": "2023-06-09T19:55:04Z",
           "updatedAt": "2023-06-09T19:55:04Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416 will allow domain to be domain members, which then permits hierarchical building of richer Attester Compositions! ",
+          "createdAt": "2025-04-15T18:34:41Z",
+          "updatedAt": "2025-04-15T18:34:41Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> For Layering, we need a way for the rim to indicate that another TE must have been validated before this TE can be considered validated.\n\nThis echos the semantics of the dependency triple (maybe trust-dependency is a better name?).\nTrust dependency based on layering has a natural end where there is a TE that doesn't have AE capabilities. This might be a bus (CXL, USB, PCIE) device or network endpoint. The dependency chain goes from the TE to each AE ending with a Root of Trust AE. There can be multiple roots of trust and multple TE paths to a common RoT in the same system. These appear to be fragments of a complete system that might be described by membership triples. https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416 will model an ECT that knows it's parent (domain) ECT. But it doesn't model trust dependency since it is possible for an ECT to describe a TE where the domain reference doesn't also imply reverse trust dependency. It might be sufficient to include an optional field that indicates reverse trust dependency.\nGiven:\n```\nECT = {\n  ? environment: environment-map\n  ? element-list: [ + element-map ]\n  ? authority: [ + $crypto-key-type-choice ]\n  cmtype: cm-type\n  ? profile: $profile-type-choice\n  ? domain-id: environment-map\n}\n```\nRevised to include (reverse) trust dependency:\n```\nECT = {\n  ? environment: environment-map\n  ? element-list: [ + element-map ]\n  ? authority: [ + $crypto-key-type-choice ]\n  cmtype: cm-type\n  ? profile: $profile-type-choice\n  ? parent: composition\n}\ncomposition := {\n   &(domain: 0) => environment-map\n   &(trusted-by-this: 1) => bool .default false\n}\n```\nIn DICE layering, Evidence ECT for layer 0 will populate parent with `{ layer1-env, true }`; Layer 1 will have `{ layer-2-env, true }`, and layer-2, a TE, will not populate `parent`.\n\nA membership triple will create a `dm` that has as one of its members `[layer-2-env, ... ]`.\n\nA top level `dm` domain ECT, `top-domain`, will not populate `parent` and will identify `layer-2-env` as a child. The layer-2 ECT will not identify `top-domain` as it's `parent`.  Part of processing `dm` should include search ACS for evidence ECTs that contains `layer-2-env`. A reference ECT can be populated for layer-2 that contains `{top-domain, false}`. As the other evidence ECTs are corroborated, Reference ECTs will exist that parallel evidence. A search for Layer-0 ECT will be the starting point that allows an unbroken path from layer-0 to `top-domain` by following `parent`.",
+          "createdAt": "2025-04-15T18:52:45Z",
+          "updatedAt": "2025-04-15T19:29:49Z"
         }
       ]
     },
@@ -8887,7 +8901,7 @@
       ],
       "body": "> Endorsed environments ([Section 5.1.4.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-endval)) membership is conditional upon successful matching of Reference Values ([Section 5.1.4.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-refval)) to Evidence.\r\n\r\nI don't think we have a sense of which reference values an environment is supposed to match before suggesting that its within a particular trust domain. We got rid of the wording of matching reference values for endorsed triples for this reason.",
       "createdAt": "2024-11-13T05:22:46Z",
-      "updatedAt": "2025-03-05T21:34:21Z",
+      "updatedAt": "2025-04-15T18:33:24Z",
       "closedAt": null,
       "comments": [
         {
@@ -8924,6 +8938,13 @@
           "body": "> What's an object?\n\nAn object is anything that can be or be in an environment (environment-map / stateful-environment-record). It could be a locally scoped component distingushed by an mkey / element. Thomas's recent proposal to add \"measured component\" seems like another form of a local name space object - but I can imagine a mapping to an element. \n\nI think we're midway into a philisophical conversation as to whether an object could be an environment that contains other environments. We're using \"domain\" as a placeholder for that concept now. If we agree that an environment can be something that contains other environments then we can equate domain with environment.  This would result in comid having recursive (unlimited nesting) composition properties. Right now we can argue that mkey / element is 1-deep nesting. Measured-components could end up being a 2-deep nesting structure. If I apply the 0-1-infinity principle, I have to ask why 2 instead of infinity?\n\n> Is this what we're thinking of describing?\n\nYogesh and I discussed the possibility of merging the membership and dependency triples (by equating domain with environment) and arguing that a nested composition of environments asserted as reference or endorsement is an expression of an intended composition. Evidence can use structures such as tokens, certs, CMWs, or other(?) to assert composition nesting / layering. Given a nested composition thats asserted as intended composition, then a verifier could compare the intended composition with the actual composition and reason about whether there is a security relevant condition.\n\nThe implication to the ACS is ECTs could be linked (to reveal composition logic). \n\nAndy and I discussed a different use case where Attesters can assert instance-id ECTs that need to link to (encapsulate?) class-map ECTs to address a referential integrity problem. These two use cases may be arriving at a common place where we have to think about inter-ECT dependencies. Right now ECTs are unordered.",
           "createdAt": "2025-03-05T21:34:20Z",
           "updatedAt": "2025-03-05T21:34:20Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Some of the discussions and conclusions will reflect in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416",
+          "createdAt": "2025-04-15T18:33:23Z",
+          "updatedAt": "2025-04-15T18:33:23Z"
         }
       ]
     },
@@ -10843,6 +10864,22 @@
           "updatedAt": "2025-04-09T14:12:39Z"
         }
       ]
+    },
+    {
+      "number": 421,
+      "id": "I_kwDOH6-tI86yoNUZ",
+      "title": "Restrict manifest-signer role's value type?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/421",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "If we want to query for CoRIMs signed by a particular entity, we're now in a bind with the manifest-signer role versus the corim-meta-map.\n\nCan we deprecate the corim-meta header in favor of requiring the manifest-signer role for the CoRIM, and require the value type to be the corim-signer-map? It would put another burden on CoTS to express that constraint, but it reduces the ways of expressing the same thing and removes the custom header that a lot of signing services dislike adding support for.",
+      "createdAt": "2025-04-15T15:47:19Z",
+      "updatedAt": "2025-04-15T15:48:28Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -64370,19 +64407,260 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-04-09T13:52:24Z",
+      "updatedAt": "2025-04-16T09:40:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
-      "headRefOid": "f7ca54890440e17e1a2ec5f3c427ff5584bb521a",
+      "headRefOid": "5b6872d493584653f34ac0c7b21f82f66e142e45",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86lDGEH",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See inline comment",
+          "createdAt": "2025-04-15T16:23:24Z",
+          "updatedAt": "2025-04-15T16:24:48Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Shouldn't this be a list of environment-map since an ECT could represent a domain that has as its members other domains or environments? An expectation would be that the domain-id list would be populated with environment-map values that are ECTs in the ACS. If not, that might indicate a consistency problem.",
+              "createdAt": "2025-04-15T16:23:24Z",
+              "updatedAt": "2025-04-15T16:24:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDOMp",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:32:44Z",
+          "updatedAt": "2025-04-15T16:32:44Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "No, in this model, the Domain ECT carries a new cm-type known as domain-member. Note I have only modelled domain membership triples, for now! When the Env-list array of (Env) specified in the Domain Membership Triple internal rep cm-type: `domain-member` matches the ECT list for cm-type Evidence,  then the domain-id is moved to the ACS for each of the ECT list for Domain-Env. the domain-id is the Identifier for the domain for which this ECT is a member!",
+              "createdAt": "2025-04-15T16:32:44Z",
+              "updatedAt": "2025-04-15T16:32:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDSNO",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:37:42Z",
+          "updatedAt": "2025-04-15T16:37:52Z",
+          "comments": [
+            {
+              "originalPosition": 94,
+              "body": "```suggestion\r\n> > **copy**(e.`environment-map`, `dm`.`members`.`environment-map`)\r\n```\r\nOr am I missing something?",
+              "createdAt": "2025-04-15T16:37:42Z",
+              "updatedAt": "2025-04-15T16:37:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDTCu",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:39:13Z",
+          "updatedAt": "2025-04-15T16:39:14Z",
+          "comments": [
+            {
+              "originalPosition": 94,
+              "body": "Well spotted! I agree with the comment!",
+              "createdAt": "2025-04-15T16:39:13Z",
+              "updatedAt": "2025-04-15T16:39:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDTxS",
+          "commit": {
+            "abbreviatedOid": "23d021e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:40:27Z",
+          "updatedAt": "2025-04-15T16:40:56Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "> the domain-id is the Identifier for the domain for which this ECT is a member\r\n\r\nCan a member be a member of multiple domains? The expressiveness of the membership triple allows this.",
+              "createdAt": "2025-04-15T16:40:27Z",
+              "updatedAt": "2025-04-15T16:40:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDWYS",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:45:03Z",
+          "updatedAt": "2025-04-15T16:45:03Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Good question, I am thinking, while I write. !",
+              "createdAt": "2025-04-15T16:45:03Z",
+              "updatedAt": "2025-04-15T16:45:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDYzW",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:48:56Z",
+          "updatedAt": "2025-04-15T16:48:56Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Yes, the statement in general is true, (i.e. an ECT Member can be a member of multiple domains). However if I look this from the prism of ACS which is an Appraisal Context for a Specific Attester, in that Context Data Structure, i.e. ACS, the ECT for Domain members, can ONLY have that specific Domain -Identity which is relevant for that Appraisal Context. So it needs only one domain-identity, unless I am missing something!",
+              "createdAt": "2025-04-15T16:48:56Z",
+              "updatedAt": "2025-04-15T16:48:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDZBb",
+          "commit": {
+            "abbreviatedOid": "23d021e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T16:49:19Z",
+          "updatedAt": "2025-04-15T16:55:27Z",
+          "comments": [
+            {
+              "originalPosition": 98,
+              "body": "Should there be a section in \"ACS augmentation using CoMID triples\" that describes how to process the dm structure so that it results in changes or additions to the ACS entries? For example, for all the members in dm.members, the ACS is searched to find environment-maps that match and the ACS.EMT.domain field is updated to include dm.members.environment-map. If the search returns NULL then what? Should a new EMT be added to the ACS? \r\n\r\nWhat happens if there are multiple matches? Do all of them get their EMT.domain fields updated? \r\n\r\nWhat happens if there is a partial match, for example only class-map, instance-id, or group-id (or combinations of the three) match? ",
+              "createdAt": "2025-04-15T16:49:19Z",
+              "updatedAt": "2025-04-15T16:55:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDjun",
+          "commit": {
+            "abbreviatedOid": "23d021e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T17:04:28Z",
+          "updatedAt": "2025-04-15T17:04:28Z",
+          "comments": [
+            {
+              "originalPosition": 98,
+              "body": "If the match fails, for a DMT, it is not added to ACS.\r\n\r\nIf none of the DMT succeeds in a `complete match` and a Verifier Policy requires DMT then it SHOULD fail Verification!\r\n\r\nFor partial match also, the result is a Failure!\r\n\r\nI was planning to add this, description, once we (CoRIM team) is aligned in general to this concept!",
+              "createdAt": "2025-04-15T17:04:28Z",
+              "updatedAt": "2025-04-15T17:04:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDlT2",
+          "commit": {
+            "abbreviatedOid": "23d021e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T17:06:56Z",
+          "updatedAt": "2025-04-15T17:06:56Z",
+          "comments": [
+            {
+              "originalPosition": 98,
+              "body": "I am assuming that a `profile` will populate `DMT: Environment` structure identical to Evidence ECT's Environment structure.",
+              "createdAt": "2025-04-15T17:06:56Z",
+              "updatedAt": "2025-04-15T17:06:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lDmPs",
+          "commit": {
+            "abbreviatedOid": "23d021e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T17:07:58Z",
+          "updatedAt": "2025-04-15T17:07:58Z",
+          "comments": [
+            {
+              "originalPosition": 98,
+              "body": "I am ok, if you want to add the section! as I am aware further work is indeed needed here, by _no means_ from description point of view the PR is complete!",
+              "createdAt": "2025-04-15T17:07:58Z",
+              "updatedAt": "2025-04-15T17:07:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lEdE1",
+          "commit": {
+            "abbreviatedOid": "b04a154"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-15T18:37:05Z",
+          "updatedAt": "2025-04-15T18:37:05Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Load balancing, redundancy/resiliency are use cases to consider. CXL and other bus architectues support multi-host (multiple bus master) operation where a CXL device can respond to multiple hosts. It likely wouldn't scale if attestation had to be reported for every CXL call. But during operation both hosts will be used. If a CXL device's domain membership is restricted to a single host, which does it pick? Alternatively, a top-down approach would reveal that a VM / TDX TD might allow CXL multi-host mastering and include environment-maps for each in a domain membership triple. If a CXL device also has a domain membership triple that identifies only one, then does that mean the top down statement that identifies both is wrong or that the bottom up statement is wrong? \r\nThere is a difference between Attestation Env \"collection\" of measurements and declaring domain membership to a bus master or a lead Attester (BMC host) that is assembing Evidence for comms over a network vs. actually \"collecting\" measurements. There is a natural end to \"collection\" which is the top of a DICE layering scheme or the end of a PCR sequence. In the case of TDX deep attestation the Quoting TD can describe the full layering in Evidence, but only on a per-tenant basis and only if the tenant requests it. Nevertheless, the tenant can have access to a multi-host CXL bus where each host will collect Evidence from the same device. It isn't clear if the device should attempt to report that it knows it's host(s) or if only the host(s) should describe the reachable device(s).\r\nThe description also should consider whether a class-based reference domain can match an evidence expression that includes instance-based environment (see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/415)",
+              "createdAt": "2025-04-15T18:37:05Z",
+              "updatedAt": "2025-04-15T18:43:15Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 418,
@@ -64506,24 +64784,26 @@
       "id": "PR_kwDOH6-tI86Rgsnx",
       "title": "Clean up normative language",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/420",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "These commits do not address all the \"may\"s and \"can\"s, which is a whole other can of worms.",
       "createdAt": "2025-04-05T17:35:37Z",
-      "updatedAt": "2025-04-09T15:15:24Z",
+      "updatedAt": "2025-04-16T14:35:00Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8c267cd7cb7ad5e789cba5feebb0069b5e2d0b85",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "normative-language",
-      "headRefOid": "8aee09482097bc48004567698ccced358a07ccc2",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6006429dd7c82cf8988dc12bd7692240d3eb245a",
+      "closedAt": "2025-04-16T14:35:00Z",
+      "mergedAt": "2025-04-16T14:35:00Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc"
+      },
       "comments": [],
       "reviews": [
         {
@@ -64573,9 +64853,9 @@
           "comments": [
             {
               "originalPosition": 77,
-              "body": "```suggestion\r\nEvery `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key )MUST be the same across each `conditional-series-record`.\r\n```",
+              "body": "```suggestion\r\nEvery `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.\r\n```",
               "createdAt": "2025-04-09T13:47:56Z",
-              "updatedAt": "2025-04-09T14:14:37Z"
+              "updatedAt": "2025-04-16T14:06:35Z"
             }
           ]
         },
@@ -64657,8 +64937,54 @@
               "updatedAt": "2025-04-09T15:14:48Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86lQ6pK",
+          "commit": {
+            "abbreviatedOid": "8aee094"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-16T14:08:19Z",
+          "updatedAt": "2025-04-16T14:08:19Z",
+          "comments": [
+            {
+              "originalPosition": 77,
+              "body": "```suggestion\r\nEvery `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.\r\n```",
+              "createdAt": "2025-04-16T14:08:19Z",
+              "updatedAt": "2025-04-16T14:08:19Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 422,
+      "id": "PR_kwDOH6-tI86S20P9",
+      "title": "Require at most one signer in corim-entity-map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/422",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The corim-signer-map identifies a single entity as the signer. When only using unsigned CoRIMs and depending on the entities, there isn't a structural limitation to stating multiple entities as signers.\r\n\r\nUnless we're saying that every hop through nodes requires adding oneself to the entities as manifest-signer, then we need to make that clear and change the text that the manifest-signer is the one that originated the CoRIM.",
+      "createdAt": "2025-04-16T15:06:09Z",
+      "updatedAt": "2025-04-16T15:06:10Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "one-signer",
+      "headRefOid": "f4bb13ceeb6a884665ae4cae6b1b2f9b0f368535",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
