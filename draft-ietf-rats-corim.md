@@ -1762,7 +1762,7 @@ The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir
 
 ### Internal structure of ECT {#sec-ir-ect}
 
-Environment-Claims Tuples (ECT) have five attributes:
+Environment-Claims Tuples (ECT) have six attributes:
 
 {:ect-enum: style="format %d."}
 
@@ -1776,6 +1776,8 @@ Environment-Claims Tuples (ECT) have five attributes:
 * Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
 
 * Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.
+
+* Domain Identifier : The Identity of the Domain for this ECT. If no domain is been set, this attribute is omitted.
 
 The following CDDL describes the ECT structure in more detail.
 
@@ -1818,6 +1820,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `domain-id`     | Optional    |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 ### Internal Representation of Reference Values {#sec-ir-ref-val}
@@ -1843,11 +1846,13 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `domain-id`     | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `domain-id`     | n/a         |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 ### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1873,16 +1878,19 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `domain-id`     | n/a         |
 | selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `domain-id`     | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `domain-d`      | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 ### Internal Representation of Domain Membership {#sec-dm-membership}
@@ -1939,6 +1947,7 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `domain-id`     | Optional    |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -1961,11 +1970,13 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `authority`     | Optional    |
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
+|               | `domain-id`     | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
 |               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
+|               | `domain-id`     | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
@@ -2414,7 +2425,7 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 
 #### Processing Domain Membership {#sec-process-dm}
 
-Domain Membership Triples are OTI triples that allow an Endorser (for example an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments. If the Verifier Appraisal policy requires Domain Membership, then membership triple sets a reference composition of an Attester in a Verifier database. At the time of Verification, the reference is then matched with actual composition as reported by an Attester in the Evidence.
+Domain Membership Triples allow an Endorser (for example an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments. If the Verifier Appraisal policy requires Domain Membership, then membership triple sets a reference composition of an Attester in a Verifier database. At the time of Verification, the reference is then matched with actual composition as reported by an Attester in the Evidence.
 
 Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-dm-trans}} leading to a representation as as specified in {{sec-dm-membership}}.
 
