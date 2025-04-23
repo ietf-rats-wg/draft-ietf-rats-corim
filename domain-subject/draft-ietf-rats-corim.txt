@@ -2076,6 +2076,8 @@ Table of Contents
      [ + $domain-type-choice ]
    ]
 
+   $domain-type-choice /= environment-map
+
 5.1.4.9.  Domain Membership Triple
 
    A Domain Membership triple assigns domain membership to environments.
@@ -2092,6 +2094,8 @@ Table of Contents
     identity: $domain-type-choice
     members: [ +  $domain-type-choice ]
    ]
+
+   $domain-type-choice /= environment-map
 
 5.1.4.10.  CoMID-CoSWID Linking Triple
 
@@ -2677,7 +2681,7 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | profile      | Optional    |
                 +-----------+--------------+-------------+
-                |           | domain-d     | n/a         |
+                |           | domain-id    | n/a         |
                 +-----------+--------------+-------------+
 
                   Table 5: Endorsed Values and Endorsed
@@ -2711,11 +2715,13 @@ Table of Contents
                  +----------+--------------+-------------+
                  |          | element-list | Optional    |
                  +----------+--------------+-------------+
-                 |          | authority    | Optional    |
+                 |          | authority    | Mandatory   |
                  +----------+--------------+-------------+
                  |          | cmtype       | Mandatory   |
                  +----------+--------------+-------------+
                  |          | profile      | n/a         |
+                 +----------+--------------+-------------+
+                 |          | domain-id    | n/a         |
                  +----------+--------------+-------------+
                  | members  | environment  | Mandatory   |
                  +----------+--------------+-------------+
@@ -2726,6 +2732,8 @@ Table of Contents
                  |          | cmtype       | n/a         |
                  +----------+--------------+-------------+
                  |          | profile      | n/a         |
+                 +----------+--------------+-------------+
+                 |          | domain-id    | Mandatory   |
                  +----------+--------------+-------------+
 
                       Table 6: Domain Membership tuple
@@ -2758,6 +2766,8 @@ Table of Contents
                 |           | cmtype       | n/a         |
                 +-----------+--------------+-------------+
                 |           | profile      | n/a         |
+                +-----------+--------------+-------------+
+                |           | domain-id    | Optional    |
                 +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
@@ -2803,7 +2813,7 @@ Table of Contents
               +---------------+--------------+-------------+
               |               | profile      | n/a         |
               +---------------+--------------+-------------+
-              |               | domain-id    | n/a         |
+              |               | domain-id    | Optional    |
               +---------------+--------------+-------------+
               | ars-addition  | environment  | Mandatory   |
               +---------------+--------------+-------------+
@@ -3177,12 +3187,12 @@ Table of Contents
 
 9.2.3.5.  Domain Membership Triples Transformation
 
-   Step 6.  An dm list entry (Section 9.1.6) is allocated.
+   Step 1.  A dm entry (Section 9.1.6) is allocated.
 
-   Step 7.  The cmtype of the members ECT in the dm entry is set to
+   Step 2.  The cmtype of the members ECT in the dm entry is set to
             domain-member.
 
-   Step 8.  The Domain Membership Triple (DMT) (Section 5.1.4.9)
+   Step 3.  The Domain Membership Triple (DMT) (Section 5.1.4.9)
             populates the dm ECTs.
 
    i  DMT.identity, $domain-identity-type-choice environment-map as

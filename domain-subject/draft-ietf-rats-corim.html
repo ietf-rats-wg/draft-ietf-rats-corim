@@ -3770,6 +3770,11 @@ domain-dependency-triple-record = [
 ]
 </pre><a href="#section-5.1.4.8-2" class="pilcrow">¶</a>
 </div>
+<div class="lang-cddl sourcecode" id="section-5.1.4.8-3">
+<pre>
+$domain-type-choice /= environment-map
+</pre><a href="#section-5.1.4.8-3" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="sec-comid-triple-domain-membership">
@@ -3792,6 +3797,11 @@ domain-membership-triple-record = [
  members: [ +  $domain-type-choice ]
 ]
 </pre><a href="#section-5.1.4.9-2" class="pilcrow">¶</a>
+</div>
+<div class="lang-cddl sourcecode" id="section-5.1.4.9-3">
+<pre>
+$domain-type-choice /= environment-map
+</pre><a href="#section-5.1.4.9-3" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -4668,7 +4678,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
               <tr>
                 <td class="text-left" rowspan="1" colspan="1"> </td>
                 <td class="text-left" rowspan="1" colspan="1">
-                  <code>domain-d</code>
+                  <code>domain-id</code>
 </td>
                 <td class="text-left" rowspan="1" colspan="1">n/a</td>
               </tr>
@@ -4728,7 +4738,7 @@ ECT. The <code>members</code> are added to the ACS with authority specified in t
                 <td class="text-left" rowspan="1" colspan="1">
                   <code>authority</code>
 </td>
-                <td class="text-left" rowspan="1" colspan="1">Optional</td>
+                <td class="text-left" rowspan="1" colspan="1">Mandatory</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1"> </td>
@@ -4741,6 +4751,13 @@ ECT. The <code>members</code> are added to the ACS with authority specified in t
                 <td class="text-left" rowspan="1" colspan="1"> </td>
                 <td class="text-left" rowspan="1" colspan="1">
                   <code>profile</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">n/a</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <code>domain-id</code>
 </td>
                 <td class="text-left" rowspan="1" colspan="1">n/a</td>
               </tr>
@@ -4778,6 +4795,13 @@ ECT. The <code>members</code> are added to the ACS with authority specified in t
                   <code>profile</code>
 </td>
                 <td class="text-left" rowspan="1" colspan="1">n/a</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <code>domain-id</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Mandatory</td>
               </tr>
             </tbody>
           </table>
@@ -4848,6 +4872,13 @@ policy = [
                   <code>profile</code>
 </td>
                 <td class="text-left" rowspan="1" colspan="1">n/a</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <code>domain-id</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Optional</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">addition</td>
@@ -4967,7 +4998,7 @@ If any of the <code>ars-additions</code> are not found in the ACS then these ACS
                 <td class="text-left" rowspan="1" colspan="1">
                   <code>domain-id</code>
 </td>
-                <td class="text-left" rowspan="1" colspan="1">n/a</td>
+                <td class="text-left" rowspan="1" colspan="1">Optional</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">ars-addition</td>
@@ -5620,17 +5651,17 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 <a href="#section-9.2.3.5" class="section-number selfRef">9.2.3.5. </a><a href="#name-domain-membership-triples-t" class="section-name selfRef">Domain Membership Triples Transformation</a>
             </h5>
 <span class="break"></span><dl class="olPercent" id="section-9.2.3.5-1">
-<dt>Step 6.</dt>
+<dt>Step 1.</dt>
 <dd id="section-9.2.3.5-1.1">
-                <p id="section-9.2.3.5-1.1.1">An <code>dm</code> list entry (<a href="#sec-dm-membership" class="auto internal xref">Section 9.1.6</a>) is allocated.<a href="#section-9.2.3.5-1.1.1" class="pilcrow">¶</a></p>
+                <p id="section-9.2.3.5-1.1.1">A <code>dm</code> entry (<a href="#sec-dm-membership" class="auto internal xref">Section 9.1.6</a>) is allocated.<a href="#section-9.2.3.5-1.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt>Step 7.</dt>
+<dt>Step 2.</dt>
 <dd id="section-9.2.3.5-1.2">
                 <p id="section-9.2.3.5-1.2.1">The <code>cmtype</code> of the <code>members</code> ECT in the <code>dm</code> entry is set to <code>domain-member</code>.<a href="#section-9.2.3.5-1.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
-<dt>Step 8.</dt>
+<dt>Step 3.</dt>
 <dd id="section-9.2.3.5-1.3">
                 <p id="section-9.2.3.5-1.3.1">The Domain Membership Triple (DMT) (<a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.4.9</a>) populates the <code>dm</code> ECTs.<a href="#section-9.2.3.5-1.3.1" class="pilcrow">¶</a></p>
 </dd>
