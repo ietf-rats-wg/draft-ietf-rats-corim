@@ -1460,6 +1460,9 @@ trustworthiness properties of the subject domain exists.
 ~~~ cddl
 {::include cddl/domain-dependency-triple-record.cddl}
 ~~~
+~~~ cddl
+{::include cddl/domain-type-choice.cddl}
+~~~
 
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
@@ -1474,6 +1477,9 @@ Evidence.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
+~~~
+~~~ cddl
+{::include cddl/domain-type-choice.cddl}
 ~~~
 
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
@@ -1890,7 +1896,7 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `domain-d`      | n/a         |
+|           | `domain-id`     | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 ### Internal Representation of Domain Membership {#sec-dm-membership}
@@ -1911,17 +1917,17 @@ ECT. The `members` are added to the ACS with authority specified in the identity
 |---
 | identity  | `environment`   | Mandatory   |
 |           | `element-list`  | Optional    |
-|           | `authority`     | Optional    |
+|           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | n/a         |
+|           | `domain-id`     | n/a         |
 | members   | `environment`   | Mandatory   |
 |           | `element-list`  | Optional    |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `domain-id`     | Mandatory   |
 {: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
-
-
 
 ### Internal Representation of Policy Statements {#sec-ir-policy}
 
@@ -1942,6 +1948,7 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `domain-id`     | Optional    |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
@@ -1970,7 +1977,7 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `authority`     | Optional    |
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
-|               | `domain-id`     | n/a         |
+|               | `domain-id`     | Optional    |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
@@ -2267,10 +2274,10 @@ The following transformation steps are applied for both the `identity-triples` a
 
 #### Domain Membership Triples Transformation {#sec-dm-trans}
 
-{:dmt-enum: counter="foo" style="format Step %d."}
+{:dmt-enum: counter="dmt1" style="format Step %d."}
 
 {: dmt-enum}
-* An `dm` list entry ({{sec-dm-membership}}) is allocated.
+* A `dm` entry ({{sec-dm-membership}}) is allocated.
 
 * The `cmtype` of the `members` ECT in the `dm` entry is set to `domain-member`.
 
