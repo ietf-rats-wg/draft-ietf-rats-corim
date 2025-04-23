@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 18 October 2025                                          Linaro
+Expires: 25 October 2025                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           16 April 2025
+                                                           23 April 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 October 2025.
+   This Internet-Draft will expire on 25 October 2025.
 
 Copyright Notice
 
@@ -2439,7 +2439,7 @@ Table of Contents
 
 9.1.1.  Internal structure of ECT
 
-   Environment-Claims Tuples (ECT) have five attributes:
+   Environment-Claims Tuples (ECT) have six attributes:
 
    1.  Environment : Identifies the Target Environment.  Environments
        are identified using instance, class, or group identifiers.
@@ -2460,6 +2460,9 @@ Table of Contents
 
    5.  Profile : The profile that defines this tuple.  If no profile is
        used, this attribute is omitted.
+
+   6.  Domain Identifier : The Identity of the Domain for this ECT.  If
+       no domain is been set, this attribute is omitted.
 
    The following CDDL describes the ECT structure in more detail.
 
@@ -2544,6 +2547,8 @@ Table of Contents
                  +----------+--------------+-------------+
                  |          | profile      | Optional    |
                  +----------+--------------+-------------+
+                 |          | domain-id    | Optional    |
+                 +----------+--------------+-------------+
 
                     Table 3: Evidence tuple requirements
 
@@ -2583,6 +2588,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | profile      | n/a         |
                 +-----------+--------------+-------------+
+                |           | domain-id    | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2592,6 +2599,8 @@ Table of Contents
                 |           | cmtype       | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | profile      | Optional    |
+                +-----------+--------------+-------------+
+                |           | domain-id    | n/a         |
                 +-----------+--------------+-------------+
 
                      Table 4: Reference Values tuple
@@ -2644,6 +2653,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | profile      | n/a         |
                 +-----------+--------------+-------------+
+                |           | domain-id    | n/a         |
+                +-----------+--------------+-------------+
                 | selection | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2654,6 +2665,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | profile      | n/a         |
                 +-----------+--------------+-------------+
+                |           | domain-id    | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2663,6 +2676,8 @@ Table of Contents
                 |           | cmtype       | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | profile      | Optional    |
+                +-----------+--------------+-------------+
+                |           | domain-d     | n/a         |
                 +-----------+--------------+-------------+
 
                   Table 5: Endorsed Values and Endorsed
@@ -2754,6 +2769,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | profile      | Optional    |
                 +-----------+--------------+-------------+
+                |           | domain-id    | Optional    |
+                +-----------+--------------+-------------+
 
                     Table 7: Policy tuple requirements
 
@@ -2786,6 +2803,8 @@ Table of Contents
               +---------------+--------------+-------------+
               |               | profile      | n/a         |
               +---------------+--------------+-------------+
+              |               | domain-id    | n/a         |
+              +---------------+--------------+-------------+
               | ars-addition  | environment  | Mandatory   |
               +---------------+--------------+-------------+
               |               | element-list | Mandatory   |
@@ -2795,6 +2814,8 @@ Table of Contents
               |               | cmtype       | Mandatory   |
               +---------------+--------------+-------------+
               |               | profile      | Optional    |
+              +---------------+--------------+-------------+
+              |               | domain-id    | Optional    |
               +---------------+--------------+-------------+
 
                     Table 8: Attestation Results tuple
@@ -3349,13 +3370,13 @@ Table of Contents
 
 9.3.3.1.  Processing Domain Membership
 
-   Domain Membership Triples are OTI triples that allow an Endorser (for
-   example an Integrator) to issue an authoritative statement about the
-   composition of an Attester as a collection of Environments.  If the
-   Verifier Appraisal policy requires Domain Membership, then membership
-   triple sets a reference composition of an Attester in a Verifier
-   database.  At the time of Verification, the reference is then matched
-   with actual composition as reported by an Attester in the Evidence.
+   Domain Membership Triples allow an Endorser (for example an
+   Integrator) to issue an authoritative statement about the composition
+   of an Attester as a collection of Environments.  If the Verifier
+   Appraisal policy requires Domain Membership, then membership triple
+   sets a reference composition of an Attester in a Verifier database.
+   At the time of Verification, the reference is then matched with
+   actual composition as reported by an Attester in the Evidence.
 
    Domain Membership Triples are first transformed into an internal
    representation following the steps mentioned in Section 9.2.3.5
