@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-17T01:55:42.704789+00:00",
+  "timestamp": "2025-04-24T01:57:25.358821+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10880,6 +10880,85 @@
       "updatedAt": "2025-04-15T15:48:28Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 423,
+      "id": "I_kwDOH6-tI86zh56u",
+      "title": "condition matching for derived keys using crypto-key-type-choice",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/423",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "SPDM, DICE and other attester designs dynamically create keys after attester deployment. Since dyncamically generated keys are not known until they are generated, it currently isn't possible to match on those keys using crypto-key-type-choice / exact match semantics. \n\nA certificate chain is a structure that could allow matching on derived keys if the derived keys have a portion of the cert chain in common and the cert chain that is in common is known before the alias (lower layer) keys have been generated. \n\nIf a parent key is supplied in matching criteria, it can be interpreted that a match on a derived key is intended. For example, if the crypto-key-type-choice options for cert chain (tagged-pkix-base64-cert-path-type and tagged-cert-path-thumbprint-type) could be a way to trigger verifier behavior that applies path construction to the intermediate / alias certs to the specified criteria. \n\nThe full cert path could then be used as the condition that matches derived keys as part of processing matching functions. \n\nThis is one possible approach. \n\nThere could be others. For example, if Evidence contains a singleton key, path construction could be applied that results in a full cert path. Matching any part of the cert path in a condition would match the ECT.  The concern is whether the intent was to match a specific key vs. any of the keys in the cert path. ",
+      "createdAt": "2025-04-22T20:07:02Z",
+      "updatedAt": "2025-04-22T20:07:02Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 424,
+      "id": "I_kwDOH6-tI86zh-WH",
+      "title": "Convention for Comparison sections",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/424",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The comparison section for section 9.4.1.7 Comparison for`raw-int` (or whatever we ended up calling it) uses a convention where \"CONDITION\" is used to refer to contents of a condition ECT and \"ENTRY\" is used to refer to the current ACE ECT that is the ECT being matched. \n\nThis seems like a valuable convention for the reader. Does it make sense to consistently apply this convention for all the comparson sections (9.4.6.1.*)?",
+      "createdAt": "2025-04-22T20:16:54Z",
+      "updatedAt": "2025-04-22T20:16:54Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 425,
+      "id": "I_kwDOH6-tI86ziQ9H",
+      "title": "local namespace properties for measurement-map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/425",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Issue #227 considered namespace scope for environment-map. We determined it should have global scope and that measurement-map should have local scope (even though some of the support identifiers are designed with global scope in mind).\n\nThere have been several issues related to understanding the relationship between the miniworld representation of the physical world entity as modelled by measurement-map and the various formats for representing measurements. (#303 #281 #230 #189 #199 #395).\n\nAdditionally, measurement-values-map code points may carry semantics regarding the identity of the component being measured (e.g., #199 and #395) and some code points are themselves values that are used as identifiers e.g., `mac-addr`, `ip-addr`, `ueid`, `uuid`, `serial-number`. \n\nThe only definitive statement corim makes about namespace scoping for measurement-map is that it is local relative to environment-map. However, it doesn't describe the freedoms/restrictions that may be applied when considering ways to translate from one form to another. For example, a serial-number could be encoded using `mkey` = \"serial-number\" where the serial number is supplied as code point 11 `name` which is a tstr. \n\nOther forms of measurement translations can be applied such as mapping from vendor proprietary negative code points to postive integers as `mkey` uint. Or each member of an integrity register list could be represented as `mkey` = uint / tstr with code point 2 : `digests`. \n\nMeasurement conversions are possible if the various namespaces under `measurement-map` are common (shared). That is if an identifier is used by one measurement type then it can't be used by a different measurement type. Otherwise, there would be namespace collision that will confuse Verifiers. \n\nThe corim draft doesn't document the intended scope of the various namespeces that are possible under `measurement-map`. It needs to however to ensure ACS integrity given translation from various external representations to a corim internal representation is a mandatory part of the architecture.",
+      "createdAt": "2025-04-22T20:51:24Z",
+      "updatedAt": "2025-04-23T14:07:56Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 426,
+      "id": "I_kwDOH6-tI86zqvlA",
+      "title": "How should a PCR protected log be represented in the ACS?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/426",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It is common for attesters to record evidence about the boot sequence and protect it using a PCR (eg with a sequence of hashes). The attester typically provides a log containing measurements and a PCR which authenticates those measurements.\n\nCoRIM should provide a way to match reference values and conditional endorsements against evidence collected in this way.\n\nThis means, I think, that we should define a recommended way to import PCR protected measurements into the ACS. I suspect that the log should be verified against the PCR value, and the measurements within the log file should then be transformed into ACS entries.\n\nMost PCR protected logs include a name and a value for each entry. The log name can be translated into an `environment-map`, and the log value can be translated into a `measurement-values-map`.\n\nImporting the individual measurements loses the sequence information which is part of the log. How should that information be represented? How can a CoRIM match against an expected sequence?\n\nFor example, should there be a way to represent something with the semantics \"measurement A was taken before measurement D\"?\n\nShould there be a way for a CoRIM to perform partial matches against the sequence information from the log?\n\nIe, if a log indicates that measurements were added to the log in the order A,B,C,D,E then should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?",
+      "createdAt": "2025-04-23T14:58:58Z",
+      "updatedAt": "2025-04-23T17:33:25Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "A Verifier may also reject a TE based on measurements in the past. For example, even if its current measurement state is considered OK, if at any time it ran some vulnerable firmware then Verifier may reject the attestation results. That may also be part of the appraisal policy. Some Relying Parties may be OK with it as long as the current measurements are OK, others may not be.",
+          "createdAt": "2025-04-23T15:18:06Z",
+          "updatedAt": "2025-04-23T15:18:27Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> if a log indicates that measurements were added to the log in the order A,B,C,D,E then should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?\n\nA single TPM PCR captures the sequence in which objects A, B, C... are extended. However the sequence might not be security relevant. The corresponding log must capture the sequence so that the digest comparison will work. This may add unnecessary brittleness. Given limited PCR resources one option is to overload PCRs by assigning multiple objects (A, B, C...) to a single PCR.\n\nIn some use cases sequence is security relevant. For example, a log that captures a \"journey\" of an object A. PCRs are a good fit for the journey use case. In this use case, it doesn't make sense to omit or reorder a step in the journey. \n\nIf a sequence of objects A -> B is important and the journey of objects A and B are important, then multiple logs can be used where the journey of A is an event in the journey of B. This can be achieved by putting the digest of A in the log of B (and include A digest in B digest computation).\n\nProtection of the log could use digital signatures or a digest of the log can be signed. The latter implies the log is detached from the signed structure. Hence, the CDDL representation of the log should be detached from the CDDL representation of the digest. The name of the object MUST be common between the digest and log representations.\n```\nintegrity-logs = {+ integrity-register-id-type-choice => integrity-log-events ]\nintegrity-log-events = [ + $integrity-event-type-choice ]\n$integrity-event-type-choice /= bstr .cbor TBD-application-specific-format\n\nintegrity-registers = { +\n   integrity-register-id-type-choice => digests-type\n}\n```\nWhile it is possible to represent integrity registers using mkey where `integrity-register-id-type-choice` definition overlaps the mkey definition and integrity register also overlaps the `digest` type.\nApplying the same convention for `integrity-logs` isn't possible unless it is added to `measurement-values-map`.\n\nThe idea is Reference Values RIM contains measurements expressed using `integrity-logs` while Evidence includes values expressed using `integrity-registers`\n\nNote: Given an environment, 111(1.2.3.4), has multiple objects A, B, C... where each has a journey. \n`mkey` might contain the name of the object, \"A\", while `integrity-register-id-type-choice` contains the name of the journey - a.k.a. \"migration-journey\". \n\nIf `mkey` is overloaded for both object name and journey name, it might require concatination - a.k.a. \"A-migration-journey\". Additionally, the multiplicity in `integrity-logs` and `integrity-registers` isn't needed. So, we might want to define `integrity-register` and `integrity-log` instead. \n\nIMHO having concatination requirements on `mkey` seems problematic.",
+          "createdAt": "2025-04-23T17:09:36Z",
+          "updatedAt": "2025-04-23T17:33:24Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -64407,18 +64486,26 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-04-16T09:40:58Z",
+      "updatedAt": "2025-04-23T23:54:06Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
-      "headRefOid": "5b6872d493584653f34ac0c7b21f82f66e142e45",
+      "headRefOid": "031c6e51da4bb43b9e83b0be42e7de1266feadcd",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Not having the description of evidence first means we may not be on the same page wrt the state of the ACS when a DM triple is processed. I expect that the `domain-id` in evidence ECT will be populated by the Attesting Env that reported Evidence for the Target Env (aka the `member`). For example, a DICE layering would be processed such that each layer represents a domain and a domain member where layer n+1 is the domain that contains layer n as a member.  The domain-member triple in evidence isn't necessarily needed IMHO.\r\n\r\nThe dm triple in corim wants to corroborate what is in evidence, but also assert to the ACS when an expected member is missing. Corroboration will add a duplicate ECT as was found in Evidence ECTs but mark it as a RV ECT and authority will be that of the RVP. Applying similar semantics, the dm processing will add a duplicate ECT if found in Evidence but assert it as a DM cmtype with authority of the DM signer. However, if there are additional expected members in the dm, but not in evidence. Adding entries for them in the ACS will falsely appear as if the evidence contained them. An additional check is needed that pairs up the evidence ECTs with the DM ECTs in order to detect unpaired ECTs. The int-rep structure doesn't appear to have a way to represent the pairing result. For example, a real-world implementation might use a pointer that references paired / corroborated records while null pointers represent uncorroborated ECTs. It's unclear how far down an implementation path the draft should go to represent ACS state. Possibly, it is good enough to document the need to do the pairing check and leave it at that? \r\n\r\nNevertheless, there is a concern that for other conditional endorsements, the potential for endorsing something that has a twin in the ACS might result in only one twin being updated. If the ACS can contain multiple instances of ECTs for the same component, are we sure there is a merge routine that reliably relates/combines them such that the result is an accurate representation of the state of the Attester? This may not be unique to dm triples. So maybe it is a separable issue?",
+          "createdAt": "2025-04-23T23:54:05Z",
+          "updatedAt": "2025-04-23T23:54:05Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86lDGEH",
@@ -64657,6 +64744,32 @@
               "body": "Load balancing, redundancy/resiliency are use cases to consider. CXL and other bus architectues support multi-host (multiple bus master) operation where a CXL device can respond to multiple hosts. It likely wouldn't scale if attestation had to be reported for every CXL call. But during operation both hosts will be used. If a CXL device's domain membership is restricted to a single host, which does it pick? Alternatively, a top-down approach would reveal that a VM / TDX TD might allow CXL multi-host mastering and include environment-maps for each in a domain membership triple. If a CXL device also has a domain membership triple that identifies only one, then does that mean the top down statement that identifies both is wrong or that the bottom up statement is wrong? \r\nThere is a difference between Attestation Env \"collection\" of measurements and declaring domain membership to a bus master or a lead Attester (BMC host) that is assembing Evidence for comms over a network vs. actually \"collecting\" measurements. There is a natural end to \"collection\" which is the top of a DICE layering scheme or the end of a PCR sequence. In the case of TDX deep attestation the Quoting TD can describe the full layering in Evidence, but only on a per-tenant basis and only if the tenant requests it. Nevertheless, the tenant can have access to a multi-host CXL bus where each host will collect Evidence from the same device. It isn't clear if the device should attempt to report that it knows it's host(s) or if only the host(s) should describe the reachable device(s).\r\nThe description also should consider whether a class-based reference domain can match an evidence expression that includes instance-based environment (see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/415)",
               "createdAt": "2025-04-15T18:37:05Z",
               "updatedAt": "2025-04-15T18:43:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86mOtXN",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see multiple comments",
+          "createdAt": "2025-04-23T23:00:45Z",
+          "updatedAt": "2025-04-23T23:26:50Z",
+          "comments": [
+            {
+              "originalPosition": 226,
+              "body": "I didn't expect the membership triple would result in new entries into the ACS. Rather, the existing entries would be updated to populate the empty `domain-id` field. ",
+              "createdAt": "2025-04-23T23:00:45Z",
+              "updatedAt": "2025-04-23T23:26:50Z"
+            },
+            {
+              "originalPosition": 225,
+              "body": "The domain-id is a type-choice that includes `environment-map`.  `environment` refers to a field in an ECT. It isn't clear what is intended. It appears the `dm.members` list ECTs are used as conditions to search the ACS. \r\nWhy do all of the ACS entries have to be matched before any of them can be matched? If a member entry is matched (corroborated) then it isn't clear if entry into the ACS is the way to represent that. But one goal of membership triple is to represent the absence of expected members. This can be represented by adding the expected member ECTs using the authority of the dm triples in corim. It is unclear how the ACS should represent corroborated members. \r\n\r\nAdditionally, the domain identity ECT also needs to be added to the ACS with membership triple signer authority.  \r\n\r\nNote: Since ACS evidence entries could have populated the domain-id using a membership triple in evidence, the membership triple in corim that matches should verify that the domain-id in evidence ECT is the same as domain-id in dm ECT. If they disagree then actual state doesn't match expected state. However, it is unclear how the ACS represents corroborated members.",
+              "createdAt": "2025-04-23T23:06:15Z",
+              "updatedAt": "2025-04-23T23:26:50Z"
             }
           ]
         }
