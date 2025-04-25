@@ -5622,7 +5622,7 @@ Series iteration terminates after the first matching series entry is processed o
 <p id="section-9.3.4.4-1">To process key verification inputs, the internal representation of ECTs containing <code>intrep-keys</code> is used to identify ACS entries containing <code>$crypto-key-type-choice</code> values that require additional key verification steps.
 If the <code>key-type</code> field is set, the Verifier will apply the verification steps defined below.
 If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the <code>authority</code> of the Verifier.<a href="#section-9.3.4.4-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.4-2">For each ECT from endorsed value (<code>ev</code>), reference value (<code>rv</code>), or attestation evidence (<code>ae</code>) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
+<p id="section-9.3.4.4-2">For each ECT from endorsed value (<code>ev</code>) or attestation evidence (<code>ae</code>) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT <code>cmtype</code> contains either <code>evidence</code> or <code>endorsements</code>.
 If the C-ECT and ACS-ECT match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), then for each <em>key</em> in the C-ECT.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>, do the following steps:<a href="#section-9.3.4.4-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="olPercent" id="section-9.3.4.4-3">
 <dt>Step 1.</dt>
@@ -5686,7 +5686,7 @@ If the C-ECT and ACS-ECT match (<a href="#sec-match-condition-ect" class="auto i
             <dd class="break"></dd>
 </dl>
 <p id="section-9.3.4.4-6">Otherwise, do not add the ADDITION to the ACS.<a href="#section-9.3.4.4-6" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.4-7">It is possible that a candidate key has been verified during phase-1 processing (<a href="#sec-phase1" class="auto internal xref">Section 9.2</a>) or is replicated across Evidence, Endorsement, or Reference Value ECTs.
+<p id="section-9.3.4.4-7">It is possible that a candidate key has been verified during phase-1 processing (<a href="#sec-phase1" class="auto internal xref">Section 9.2</a>) or is replicated across Evidence or Endorsement ECTs.
 Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.<a href="#section-9.3.4.4-7" class="pilcrow">¶</a></p>
 </section>
 </div>
