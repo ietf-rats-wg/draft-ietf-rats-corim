@@ -2384,7 +2384,7 @@ To process key verification inputs, the internal representation of ECTs containi
 If the `key-type` field is set, the Verifier will apply the verification steps defined below.
 If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
 
-For each ECT from endorsed value (`ev`), reference value (`rv`), or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+For each ECT from endorsed value (`ev`) or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence` or `endorsements`.
 If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key_ in the C-ECT.`element-claims`.`measurement-values-map`.`intrep-keys`, do the following steps:
 
 {:kvp-enum: counter="kvp" style="format Step %d."}
@@ -2421,7 +2421,7 @@ If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key
 
 Otherwise, do not add the ADDITION to the ACS.
 
-It is possible that a candidate key has been verified during phase-1 processing ({{sec-phase1}}) or is replicated across Evidence, Endorsement, or Reference Value ECTs.
+It is possible that a candidate key has been verified during phase-1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
 Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
