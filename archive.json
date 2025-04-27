@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-24T01:57:25.358821+00:00",
+  "timestamp": "2025-04-27T02:03:07.894145+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10893,9 +10893,17 @@
       "labels": [],
       "body": "SPDM, DICE and other attester designs dynamically create keys after attester deployment. Since dyncamically generated keys are not known until they are generated, it currently isn't possible to match on those keys using crypto-key-type-choice / exact match semantics. \n\nA certificate chain is a structure that could allow matching on derived keys if the derived keys have a portion of the cert chain in common and the cert chain that is in common is known before the alias (lower layer) keys have been generated. \n\nIf a parent key is supplied in matching criteria, it can be interpreted that a match on a derived key is intended. For example, if the crypto-key-type-choice options for cert chain (tagged-pkix-base64-cert-path-type and tagged-cert-path-thumbprint-type) could be a way to trigger verifier behavior that applies path construction to the intermediate / alias certs to the specified criteria. \n\nThe full cert path could then be used as the condition that matches derived keys as part of processing matching functions. \n\nThis is one possible approach. \n\nThere could be others. For example, if Evidence contains a singleton key, path construction could be applied that results in a full cert path. Matching any part of the cert path in a condition would match the ECT.  The concern is whether the intent was to match a specific key vs. any of the keys in the cert path. ",
       "createdAt": "2025-04-22T20:07:02Z",
-      "updatedAt": "2025-04-22T20:07:02Z",
+      "updatedAt": "2025-04-24T21:03:40Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another option to consider that is limited to attest-key/identity-triples is for the Verifier to observe ECTs that have crypto-key-type-choice measurements (code point 65534) where `key-type` is populated. If so, this could be enough to trigger the key verification check without needing a separate CoRIM triple that requests it. The rationale is Evidence claims are accepted by the Verifier without corroboration or condition. If Evidence asserts an identity/attest-key triple, then these keys are copied into the intrep automatically. The difference is the optional key-type field is set when asserted via identity/attest-key-triples vs. not set if asserted via measurement-values-map triple. Use of the identity/attest-key-triples essentially is what triggers the verifier verification. The part that isn't describe by CoRIM is the evidence behavior (only behavior for endorsements). Since the decision was made to document Evidence handling in the evidence transformations draft, it isn't clear if the processing sections in corim also apply to evidence processing as they apply to intrep which is common to all cmtypes. One possible solution is to revisit the \"Processing Key Verification Endorsements\" section and write it so that it isn't biased toward endorsements. This way either endorsements or evidence could assert the identity/attest-key-triples and Verifier behavior would be the same. \n\nThis isn't a general solution to the question of how to write conditions for derived keys, but it clarifies the use case for then the identity/attest-key-triples are used with derived keys.",
+          "createdAt": "2025-04-24T21:03:39Z",
+          "updatedAt": "2025-04-24T21:03:39Z"
+        }
+      ]
     },
     {
       "number": 424,
@@ -10941,7 +10949,7 @@
       "labels": [],
       "body": "It is common for attesters to record evidence about the boot sequence and protect it using a PCR (eg with a sequence of hashes). The attester typically provides a log containing measurements and a PCR which authenticates those measurements.\n\nCoRIM should provide a way to match reference values and conditional endorsements against evidence collected in this way.\n\nThis means, I think, that we should define a recommended way to import PCR protected measurements into the ACS. I suspect that the log should be verified against the PCR value, and the measurements within the log file should then be transformed into ACS entries.\n\nMost PCR protected logs include a name and a value for each entry. The log name can be translated into an `environment-map`, and the log value can be translated into a `measurement-values-map`.\n\nImporting the individual measurements loses the sequence information which is part of the log. How should that information be represented? How can a CoRIM match against an expected sequence?\n\nFor example, should there be a way to represent something with the semantics \"measurement A was taken before measurement D\"?\n\nShould there be a way for a CoRIM to perform partial matches against the sequence information from the log?\n\nIe, if a log indicates that measurements were added to the log in the order A,B,C,D,E then should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?",
       "createdAt": "2025-04-23T14:58:58Z",
-      "updatedAt": "2025-04-23T17:33:25Z",
+      "updatedAt": "2025-04-24T03:45:43Z",
       "closedAt": null,
       "comments": [
         {
@@ -10957,6 +10965,13 @@
           "body": "> if a log indicates that measurements were added to the log in the order A,B,C,D,E then should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?\n\nA single TPM PCR captures the sequence in which objects A, B, C... are extended. However the sequence might not be security relevant. The corresponding log must capture the sequence so that the digest comparison will work. This may add unnecessary brittleness. Given limited PCR resources one option is to overload PCRs by assigning multiple objects (A, B, C...) to a single PCR.\n\nIn some use cases sequence is security relevant. For example, a log that captures a \"journey\" of an object A. PCRs are a good fit for the journey use case. In this use case, it doesn't make sense to omit or reorder a step in the journey. \n\nIf a sequence of objects A -> B is important and the journey of objects A and B are important, then multiple logs can be used where the journey of A is an event in the journey of B. This can be achieved by putting the digest of A in the log of B (and include A digest in B digest computation).\n\nProtection of the log could use digital signatures or a digest of the log can be signed. The latter implies the log is detached from the signed structure. Hence, the CDDL representation of the log should be detached from the CDDL representation of the digest. The name of the object MUST be common between the digest and log representations.\n```\nintegrity-logs = {+ integrity-register-id-type-choice => integrity-log-events ]\nintegrity-log-events = [ + $integrity-event-type-choice ]\n$integrity-event-type-choice /= bstr .cbor TBD-application-specific-format\n\nintegrity-registers = { +\n   integrity-register-id-type-choice => digests-type\n}\n```\nWhile it is possible to represent integrity registers using mkey where `integrity-register-id-type-choice` definition overlaps the mkey definition and integrity register also overlaps the `digest` type.\nApplying the same convention for `integrity-logs` isn't possible unless it is added to `measurement-values-map`.\n\nThe idea is Reference Values RIM contains measurements expressed using `integrity-logs` while Evidence includes values expressed using `integrity-registers`\n\nNote: Given an environment, 111(1.2.3.4), has multiple objects A, B, C... where each has a journey. \n`mkey` might contain the name of the object, \"A\", while `integrity-register-id-type-choice` contains the name of the journey - a.k.a. \"migration-journey\". \n\nIf `mkey` is overloaded for both object name and journey name, it might require concatination - a.k.a. \"A-migration-journey\". Additionally, the multiplicity in `integrity-logs` and `integrity-registers` isn't needed. So, we might want to define `integrity-register` and `integrity-log` instead. \n\nIMHO having concatination requirements on `mkey` seems problematic.",
           "createdAt": "2025-04-23T17:09:36Z",
           "updatedAt": "2025-04-23T17:33:24Z"
+        },
+        {
+          "author": "fdamato",
+          "authorAssociation": "NONE",
+          "body": "> The idea is Reference Values RIM contains measurements expressed using integrity-logs\n\nIs it possible for the log to be submitted to the verifier from an \"untrusted source\"?\n\nHere are the key components involved:\n\n- The Evidence will include the integrity-register PCR.\n- The CoRIM(s) will contain valid digest(s).\n- The Log will consist of an ordered list of these digests.\n\nThe verifier will then:\n\n- Verify each entry in the Log against the available CoRIMs to ensure they are valid digests.\n- Extend the Log Digest and utilize it as a reference measurement for corroborating the integrity-register PCR.\n",
+          "createdAt": "2025-04-24T03:45:42Z",
+          "updatedAt": "2025-04-24T03:45:42Z"
         }
       ]
     }
@@ -64486,7 +64501,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-04-23T23:54:06Z",
+      "updatedAt": "2025-04-26T11:22:52Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
@@ -64770,6 +64785,66 @@
               "body": "The domain-id is a type-choice that includes `environment-map`.  `environment` refers to a field in an ECT. It isn't clear what is intended. It appears the `dm.members` list ECTs are used as conditions to search the ACS. \r\nWhy do all of the ACS entries have to be matched before any of them can be matched? If a member entry is matched (corroborated) then it isn't clear if entry into the ACS is the way to represent that. But one goal of membership triple is to represent the absence of expected members. This can be represented by adding the expected member ECTs using the authority of the dm triples in corim. It is unclear how the ACS should represent corroborated members. \r\n\r\nAdditionally, the domain identity ECT also needs to be added to the ACS with membership triple signer authority.  \r\n\r\nNote: Since ACS evidence entries could have populated the domain-id using a membership triple in evidence, the membership triple in corim that matches should verify that the domain-id in evidence ECT is the same as domain-id in dm ECT. If they disagree then actual state doesn't match expected state. However, it is unclear how the ACS represents corroborated members.",
               "createdAt": "2025-04-23T23:06:15Z",
               "updatedAt": "2025-04-23T23:26:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86mppst",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-26T11:17:18Z",
+          "updatedAt": "2025-04-26T11:17:18Z",
+          "comments": [
+            {
+              "originalPosition": 226,
+              "body": "The Domain Membership triple adds ACS Entries which has `cmtype` set to `domain-member`",
+              "createdAt": "2025-04-26T11:17:18Z",
+              "updatedAt": "2025-04-26T11:17:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86mppxu",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-26T11:19:16Z",
+          "updatedAt": "2025-04-26T11:19:16Z",
+          "comments": [
+            {
+              "originalPosition": 226,
+              "body": "This ONLY happens when all the domain members in the Staging area are compared with Evidence ECT and is a perfect match.\r\n\r\nThen the new ACS Entries are added...",
+              "createdAt": "2025-04-26T11:19:16Z",
+              "updatedAt": "2025-04-26T11:19:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86mpp7A",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-26T11:22:52Z",
+          "updatedAt": "2025-04-26T11:22:52Z",
+          "comments": [
+            {
+              "originalPosition": 225,
+              "body": "Why do all of the ACS entries have to be matched before any of them can be matched? \r\n\r\nBasically ECT Entries in the Staging areas from Domain Membership all has to match the ACS Entries with cmtype as Evidence, All has to Match otherwise, the Reported Evidence has few members missing, which should FAIL the Appraisal..",
+              "createdAt": "2025-04-26T11:22:52Z",
+              "updatedAt": "2025-04-26T11:22:52Z"
             }
           ]
         }
@@ -65092,6 +65167,34 @@
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "one-signer",
       "headRefOid": "f4bb13ceeb6a884665ae4cae6b1b2f9b0f368535",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 427,
+      "id": "PR_kwDOH6-tI86T-aJ1",
+      "title": "Processing Key Verifications section re-worded for clarity",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/427",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
+      "createdAt": "2025-04-25T23:17:25Z",
+      "updatedAt": "2025-04-25T23:31:15Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "verify-key-in-ae",
+      "headRefOid": "7bf6291d09dfc92b6e9d489a90d93f237ba6fc54",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
