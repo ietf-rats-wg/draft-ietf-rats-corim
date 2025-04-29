@@ -11,6 +11,7 @@ check:: cbor-tags-unique
 check:: check-intrep check-intrep-examples
 check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
+check:: check-cotl check-cotl-examples
 
 # $1: label
 # $2: cddl fragments
@@ -42,9 +43,28 @@ CLEANFILES += $(3:.diag=.pretty)
 
 endef # cddl_check_template
 
+# Commented since CI doesn't have openssl
+examples/sig-structure.diag: examples/sig-structure.diag.tmpl examples/payload-corim-4.diag examples/protected-header-map.diag
+	payload="$$(cat examples/payload-corim-4.diag)" \
+	protected="$$(cat examples/protected-header-map.diag)" \
+	envsubst < examples/sig-structure.diag.tmpl > examples/sig-structure.diag
+
+examples/testkey.pem:
+	openssl ecparam -name secp384r1 -genkey -noout -out examples/testkey.pem
+
+examples/corim-4.sig: examples/sig-structure.cbor examples/testkey.pem
+	openssl dgst -sha384 -sign examples/testkey.pem -out examples/corim-4.sig examples/sig-structure.cbor
+
+examples/corim-4.diag: examples/corim-4.sig examples/corim-4.diag.tmpl examples/payload-corim-4.diag examples/protected-header-map.diag
+	payload="$$(cat examples/payload-corim-4.diag)" \
+	protected="$$(cat examples/protected-header-map.diag)" \
+	signature="h'$$(cat examples/corim-4.sig | xxd -p -c 128)'" \
+	envsubst < examples/corim-4.diag.tmpl > examples/corim-4.diag
+
 include corim-frags.mk
 
 $(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES)))
+$(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES)))
 $(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES)))
 
