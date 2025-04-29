@@ -1,18 +1,22 @@
 ir-appraisal-session = {
-  &(cms: 0): ir-conceptual-messages
-  &(select: 1): tag-selection
-  &(extra: 2): any
-  &(ctx: 2): ir-appraisal-context
+  &(cms: 0) => ir-conceptual-messages
+  &(select: 1) => tag-selection
+  &(extra: 2) => any
+  &(ctx: 3) => ir-appraisal-context
 }
+
 ir-conceptual-messages = {
-  &(corims: 0): [ + corim ]
-  &(tags: 1): [ $concise-tag-type-choice ]
+  &(corims: 0) => [ + corim ]
+  &(tags: 1) => [ $concise-tag-type-choice ]
 }
+
 tag-selection = { $tag-id-type-choice => tag-state }
+
 tag-state = [
   tag: $concise-tag-type-choice
   activity: tag-activity
 ]
+
 tag-activity = &(
   unknown: 0
   inactive: 1
