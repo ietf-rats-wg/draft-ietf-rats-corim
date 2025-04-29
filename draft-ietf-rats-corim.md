@@ -2152,8 +2152,6 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
-
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
@@ -2166,13 +2164,10 @@ If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is adde
 
 ### Processing Conditional Endorsements
 
-> [Ned] *This section should be identical to the previous section since Endorsement triples and Conditional Endorsement triples are transformed into the same internal representation based on `ev`*
-
-> [Dionna] this is not going to be identical. You will need to run the conditions and additions of `ev` and `evs` possibly multiple times. If a condition does not apply, it has to be set aside to try again. If you get through all conditional endorsements and have relations left, you have to try them again. If none of them match, you're done. If some match and some don't, you go again. This is a fixed point computation.
+Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
+Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
 
 ### Processing Conditional Endorsement Series
-
-> [Ned] *This section should describe augmentation in the context of the `evs` internal representation*
 
 For each Conditional Endorsement Series Triple the Verifier iterates over the `conditional-series-record`s within the triple, stopping if it finds a match.
 
@@ -2181,12 +2176,11 @@ See {{sec-match-condition-ect}}.
 
 If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
 This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
+
 ### Processing Conditional Endorsements {#sec-process-cond-end}
 
 Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
-
-> [Dionna] this is not going to be identical. You will need to run the conditions and additions of `ev` and `evs` possibly multiple times. If a condition does not apply, it has to be set aside to try again. If you get through all conditional endorsements and have relations left, you have to try them again. If none of them match, you're done. If some match and some don't, you go again. This is a fixed point computation.
-
+Conditional endorsements have the same processing steps as shown in {{sec-process-end}}.
 
 ### Processing Conditional Endorsement Series {#sec-process-series}
 
