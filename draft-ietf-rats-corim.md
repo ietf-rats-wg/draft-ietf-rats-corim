@@ -1968,7 +1968,7 @@ The exchange of a request for attestation appraisal for a response of Attestatio
 
 During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
 Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
-Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), Policy, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, certificate revocation data (see {{-ocsp}} or {{Section 4.2.1.13 of -pkix-cert}}), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, Policy, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, certificate revocation data (see {{-ocsp}} or {{Section 4.2.1.13 of -pkix-cert}}), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
 The clock time used for validity judgments and policy evaluation is an input.
 
 How the Verifier collects its inputs is out of scope of this document.
@@ -2252,8 +2252,6 @@ The following transformation steps are applied for both the `identity-triples` a
 
 {: kvt-enum}
 * An `ev` entry ({{sec-ir-end-val}}) is allocated.
-
-## Evidence Augmentation (Phase 2) {#sec-phase2}
 
 * The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
