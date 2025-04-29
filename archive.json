@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-27T02:03:07.894145+00:00",
+  "timestamp": "2025-04-29T01:58:26.608590+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10972,6 +10972,44 @@
           "body": "> The idea is Reference Values RIM contains measurements expressed using integrity-logs\n\nIs it possible for the log to be submitted to the verifier from an \"untrusted source\"?\n\nHere are the key components involved:\n\n- The Evidence will include the integrity-register PCR.\n- The CoRIM(s) will contain valid digest(s).\n- The Log will consist of an ordered list of these digests.\n\nThe verifier will then:\n\n- Verify each entry in the Log against the available CoRIMs to ensure they are valid digests.\n- Extend the Log Digest and utilize it as a reference measurement for corroborating the integrity-register PCR.\n",
           "createdAt": "2025-04-24T03:45:42Z",
           "updatedAt": "2025-04-24T03:45:42Z"
+        }
+      ]
+    },
+    {
+      "number": 428,
+      "id": "I_kwDOH6-tI860SbDm",
+      "title": "Ambiguous `tagged-bytes` inside `instance-id-type-choice`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/428",
+      "state": "OPEN",
+      "author": "setrofim",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "`instance-id-type-choice` has `crypto-key-type-choice` as one of its variants. Both of theses type choices have `tagged-bytes` as a possible variant.\n\nThat means that if you see `tagged-bytes` in the data, it is impossible to know whether they should be interpreted as generic instance ID bytes, or as a crypto key.\n\nThis can lead to the loss information that bytes are meant to be a key. This can also pontentially lead to deviation between  how different implementations process the same input.",
+      "createdAt": "2025-04-28T12:08:33Z",
+      "updatedAt": "2025-04-28T21:31:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks @setrofim for raising this.  It looks like a genuine bug to me.\n\nInstead of importing `$crypto-key-type-choice` wholesale into `$instance-id-type-choice`, we should only pick the actual `$crypto-key-type-choice`s that make sense.\nFor example, while a key thumbprint seems appropriate, since it\u2019s probably unique per instance, a cert chain nearly certainly doesn\u2019t, as it\u2019s typically shared across multiple devices.",
+          "createdAt": "2025-04-28T12:23:11Z",
+          "updatedAt": "2025-04-28T12:27:02Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> This can lead to the loss information that bytes are meant to be a key. This can also pontentially lead to deviation between how different implementations process the same input.\n\nThe rules for environment-map still apply, that is that the identifiers are globally unique. If tagged-bytes is used to represent an opaque but globally unique key while tagged-bytes is used to represent an opaque but globally unique non-key value, the two identifiers would not be confused with one another any more than if two instances of tagged-bytes as keys or two instances of tagged-bytes as non-keys would need to be globally unique. If an author misused the globally unique identifiers they would have a buggy CoRIM regardless.",
+          "createdAt": "2025-04-28T21:21:35Z",
+          "updatedAt": "2025-04-28T21:21:35Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> while a key thumbprint seems appropriate, since it\u2019s probably unique per instance, a cert chain nearly certainly doesn\u2019t, as it\u2019s typically shared across multiple devices.\n\nThe semantics for how crypto-key-type-choice is used in the other parts of the spec describe the actual entity (authority) that is doing the signing. We stopped short of writing rules for matching based on the certification path that omitted the end entity.  Issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/423 draws attention to the challenge where end entity keys are not known apriori (by manufacturers / corim authors). If we decided to address this, then that could lead to the case @setrofim is alluding to above. But currently, the convention (though not documented adequately enough) is that crypto-key-type-choice values involving certification paths terminate at the end-entity that is performing whatever action is implied by the context in which it is used. As an environment instance identifier, crypto-key-type-choices refer to the environment that contains the end-entity key. ",
+          "createdAt": "2025-04-28T21:28:56Z",
+          "updatedAt": "2025-04-28T21:31:42Z"
         }
       ]
     }
@@ -64501,7 +64539,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-04-26T11:22:52Z",
+      "updatedAt": "2025-04-28T18:19:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
@@ -64845,6 +64883,100 @@
               "body": "Why do all of the ACS entries have to be matched before any of them can be matched? \r\n\r\nBasically ECT Entries in the Staging areas from Domain Membership all has to match the ACS Entries with cmtype as Evidence, All has to Match otherwise, the Reported Evidence has few members missing, which should FAIL the Appraisal..",
               "createdAt": "2025-04-26T11:22:52Z",
               "updatedAt": "2025-04-26T11:22:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86m5X2G",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple comments",
+          "createdAt": "2025-04-28T17:08:03Z",
+          "updatedAt": "2025-04-28T18:17:09Z",
+          "comments": [
+            {
+              "originalPosition": 221,
+              "body": "```suggestion\r\nDomain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-dm-trans}} leading to a representation as specified in {{sec-dm-membership}}.\r\n```",
+              "createdAt": "2025-04-28T17:08:03Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 224,
+              "body": "```suggestion\r\nThe process continues, untill every environment in the member list matches the entry in ACS.\r\n```",
+              "createdAt": "2025-04-28T17:08:44Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n domain-id: $domain-type-choice\r\n```",
+              "createdAt": "2025-04-28T17:11:55Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nwhere a domain can be represented using a collection of well defined domain identifiers.\r\n```",
+              "createdAt": "2025-04-28T17:12:36Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nA Domain Membership triple assigns a domain identifier to member environments.\r\nThe triple subject identifies a domain ({{sec-comid-domain-type}}) that has a membership predicate\r\n```",
+              "createdAt": "2025-04-28T17:16:59Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "```suggestion\r\nwhere the object contains one or more members.\r\n```",
+              "createdAt": "2025-04-28T17:18:44Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nDomain identifiers can be `environment-map` values, this allows construction of a hierarchy of domains.\r\n```",
+              "createdAt": "2025-04-28T17:23:59Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 62,
+              "body": "```suggestion\r\n* Domain Identifier : The Identity of the Domain to which a given ECT belongs.\r\n```",
+              "createdAt": "2025-04-28T17:27:19Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 62,
+              "body": "Note: the optionality of Domain ID is defined in subsequent tables.",
+              "createdAt": "2025-04-28T17:29:52Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "Note the CDDL uses `$domain-type-choice` rather than `environment-map` meaning members could be extended to include something other than `environment-map`. The wording would be more correct if it used `members`.",
+              "createdAt": "2025-04-28T17:35:29Z",
+              "updatedAt": "2025-04-28T18:17:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86m6Ixf",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-28T18:19:11Z",
+          "updatedAt": "2025-04-28T18:19:11Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "Agree, we should change this! Thanks for the review!",
+              "createdAt": "2025-04-28T18:19:11Z",
+              "updatedAt": "2025-04-28T18:19:11Z"
             }
           ]
         }
