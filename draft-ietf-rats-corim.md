@@ -1804,6 +1804,7 @@ It is left to Verifier Policy to determine if input sources must use supply chai
 It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
 
 Note: Verifier Policy may be subject to external requirements by organizational or regulatory policy.
+
 ### Internal Representation of Appraisal Session {#sec-ir-asession}
 
 An Appraisal Session includes Verifier-specific session state as well as a collection of inputs to process.
@@ -1815,40 +1816,6 @@ Conceptual Messages are given explicit representation in the session.
 
 The session state is implementation-specific, but conceptual messages defined in this specification are specially represented.
 
-#### CoRIM and tag Selection
-## Appraisal Context Construction (Phase 1) {#sec-phase1}
-
-All available CoRIMs in `cms / corims` and tags in `csm / tags` from the Appraisal Session's inputs are checked for validity.
-In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
-The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
-
-Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded from the session.
-~~~ cddl
-{::include cddl/intrep-actx.cddl}
-~~~
-
-### Input Collection {#sec-phase1-collect}
-
-The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
-
-During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
-Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
-Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), Policy, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, certificate revocation data (see {{-ocsp}} or {{Section 4.2.1.13 of -pkix-cert}}), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
-The clock time used for validity judgments and policy evaluation is an input.
-
-How the Verifier collects its inputs is out of scope of this document.
-There will be some amount of CoRIMs and standalone tags available as inputs that make an `asession`:
-
-~~~ cddl
-{::include cddl/intrep-asession.cddl}`
-~~~
-
-Initially all inputs are in `cms` if interpreted by this specification, or `extra` if not.
-
-It is left to Verifier Policy to determine if input sources must use supply chain transparency constructs (see {{-scitt-arch}}) to track input provenance.
-It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
-
-Note: Verifier Policy may be subject to external requirements by organizational or regulatory policy.
 
 ### Input Validation {#sec-phase1-valid}
 
@@ -2098,17 +2065,6 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 The Appraisal Context at the and of Phase 1 constitutes all inputs to the Appraisal Procedure.
 
 Given the same Appraisol Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
-
-Note: the deterministic constraint applies to profile-defined comparison semantics.
-
-The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
-For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
-
-### Appraisal hermeticity
-
-The Appraisal Context at the end of Phase 1 constitutes all inputs to the Appraisal Procedure.
-
-Given the same Appraisal Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
 
 Note: the deterministic constraint applies to profile-defined comparison semantics.
 
