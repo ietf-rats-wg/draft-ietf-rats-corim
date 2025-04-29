@@ -54,6 +54,18 @@ contributor:
     email: cabo@tzi.org
     contribution: >
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
+  - ins: A. Draper
+    name: Andrew Draper
+    org: Intel Corporation
+    email: andrew.draper@intel.com
+    contribution: >
+      Andrew contributed the concept, description, and semantics of conditional endorsements as well as consistent contribution to weekly reviews of others' edits.
+  - ins: D. Glaze
+    name: Dionna Glaze
+    org: Google LLC
+    email: dionnaglaze@google.com
+    contribution: >
+      Dionna contributed many clarifying questions and disambiguations to the semantics of attestation appraisal as well as consistent contribution to weekly reviews of others' edits.
 
 normative:
   RFC4122: uuid
@@ -88,10 +100,12 @@ normative:
 
 informative:
   RFC6960: ocsp
+  RFC6960: ocsp
   RFC7942:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
+  I-D.ietf-scitt-architecture: scitt-arch
   I-D.ietf-scitt-architecture: scitt-arch
   DICE.Layer:
     title: DICE Layering Architecture
@@ -104,8 +118,9 @@ informative:
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
-  SLSA: slsa
-    title: Supply-chain Levels for Software Artifacts
+  SLSA:
+    title: >
+      Supply-chain Levels for Software Artifacts
     target: https://slsa.dev
 
 entity:
@@ -741,7 +756,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Environment Group {#sec-comid-group}
+##### Environment Group {#sec-comid-group}
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -788,6 +803,7 @@ The following describes each member of the `measurement-map`:
 
 * `mkey` (index 0): An optional measurement key.
  Described in {{sec-comid-mkey}}.
+ A `measurement-map` without an `mkey` is said to be anonymous.
 
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
@@ -802,6 +818,8 @@ The following describes each member of the `measurement-map`:
 Measurement keys are locally scoped extensible identifiers.
 The initial types defined are OID, UUID, and uint.
 `mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
+A single anonymous `measurement-map` is allowed within the same environment.
+Two or more measurement-map entries within the same environment MUST populate `mkey`.
 
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
@@ -1011,10 +1029,13 @@ A cryptographic key can be one of the following formats:
 * `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
   Defined in {{Section 7 of -cose}}.
 
+* `tagged-pkix-asn1der-cert-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
+  Defined in {{Section 4 of -pkix-cert}}.
+
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-thumbprint-type`: a `digest` of a raw public key. The digest value may
-  be used to find the public key if contained in a lookup table.
+* `tagged-thumbprint-type`: a `digest` of a raw public key.
+  The digest value may be used to find the public key if contained in a lookup table.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
   The digest value may be used to find the certificate if contained in a lookup table.
@@ -1022,8 +1043,7 @@ A cryptographic key digest can be one of the following formats:
 * `tagged-cert-path-thumbprint-type`: a `digest` of a certification path.
   The digest value may be used to find the certificate path if contained in a lookup table.
 
-* `tagged-pkix-asn1der-key-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
-  Defined in {{Section 4 of -pkix-cert}}.
+* `tagged-bytes`: a key identifier with no prescribed construction method.
 
 ~~~ cddl
 {::include cddl/crypto-key-type-choice.cddl}
@@ -1089,23 +1109,95 @@ The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
-A Reference Values triple relates reference measurements to a Target
-Environment. For Reference Value Claims, the subject identifies a Target
-Environment, the object contains measurements, and the predicate asserts that
-these are the expected (i.e., reference) measurements for the Target
-Environment.
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Reference Values Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/reference-triple-record.cddl}
 ~~~
 
+The `reference-triple-record` has the following parameters:
+
+* `ref-env`: Search criterion that locates an Evidence environment that matches the reference environment.
+* `ref-claims`: Search criteria that locates the Evidence measurements that match the reference Claims.
+
+To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
+By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
+See {{-rats-endorsements}}.
+Re-asserted Evidence using RVP authority is said to be "corroborated".
+
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple declares additional measurements to add to the ACS.
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Endorsed Values Triple has the following structure:
 
 ~~~ cddl
 {::include cddl/endorsed-triple-record.cddl}
 ~~~
+
+The `endorsed-triple-record` has the following parameters:
+
+* `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
+* `endorsement`: Additional Endorsement Claims.
+
+To process a `endorsed-triple-record` the `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
+The new entry is added to the existing set of entries using the Endorser's authority.
+
+#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Conditional Endorsement Triple has the following structure:
+
+~~~ cddl
+{::include cddl/conditional-endorsement-triple-record.cddl}
+
+{::include cddl/stateful-environment-record.cddl}
+~~~
+
+The `conditional-endorsement-triple-record` has the following parameters:
+
+* `conditions`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
+* `endorsements`: Additional Endorsements.
+
+To process a `conditional-endorsement-triple-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the `endorsements` entries are asserted with the Endorser's authority as new Endorsements.
+
+#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/310
+
+The Conditional Endorsement Series Triple has the following structure:
+
+~~~ cddl
+{::include cddl/conditional-endorsement-series-triple-record.cddl}
+
+{::include cddl/conditional-series-record.cddl}
+~~~
+
+The `conditional-endorsement-series-triple-record` has the following parameters:
+
+* `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
+* `series`: A set of selection-addition tuples.
+
+The `conditional-series-record` has the following parameters:
+
+* `selection`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the `condition` result.
+* `addition`: Additional Endorsements if the `selection` criteria are satisfied.
+
+To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criteria are satisfied, the `series` tuples are processed.
+
+The `series` array contains a list of `conditional-series-record` entries.
+
+For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.
+
+The first `series` entry that successfully matches the `selection` criteria terminates `series` processing.
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
@@ -1190,67 +1282,6 @@ measurements for the Target Environment.
 ~~~ cddl
 {::include cddl/coswid-triple-record.cddl}
 ~~~
-
-#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
-
-A Conditional Endorsement Series triple uses a stateful environment, (i.e., `stateful-environment-record`),
-that identifies a Target Environment based on an `environment-map` plus one or more `measurement-map` measurements
-that have matching Evidence.
-
-The stateful Target Environment is a triple subject that MUST be satisfied before the series triple object is
-matched.
-
-~~~ cddl
-{::include cddl/stateful-environment-record.cddl}
-~~~
-
-The series is an array of `conditional-series-record` that has a `selection` and an `addition`, both expressed as a list of `measurement-map`.
-The `selection` and `addition` operate within the scope of the `environment-map` found in the `conditional-endorsement-series-triple-record`'s `condition`.
-
-For each `conditional-series-record` entry, if the `selection` matches the ACS entry, the `addition` is added to the ACS.
-
-The first `conditional-series-record` entry that successfully matches the ACS entry terminates the series.
-For a `conditional-series-record` to match, every measurement in the `measurement-map` list MUST match a measurement in the ACS entry.
-
-If none of the `selection` values match in the ACS entry, the triple is not matched, and no `addition` values are accepted.
-
-If the `authorized-by` value is present in the triple `condition` (i.e., in the `measurement-map` of the `stateful-environment-record`), all authority entries of the `condition` MUST be present in the ACS entry, otherwise the ACS entry does not match.
-If the series `selection` populates `authorized-by`, the ACS MUST contain the same measurements and authority as contained in the `selection` entry.
-If the series `addition` entry contains `authorized-by` values, they are ignored.
-
-~~~ cddl
-{::include cddl/conditional-endorsement-series-triple-record.cddl}
-~~~
-
-~~~ cddl
-{::include cddl/conditional-series-record.cddl}
-~~~
-
-#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
-
-The semantics of the Conditional Endorsement Triple is as follows:
-
-> "IF accepted state matches all `conds` values, THEN every entry in the `endorsements` is added to the accepted state"
-
-~~~ cddl
-{::include cddl/conditional-endorsement-triple-record.cddl}
-~~~
-
-A `conditional-endorsement-triple-record` has the following parameters:
-
-* `conditions`: all target environments, along with a specific state, that need to match `state-triples` entries in the ACS for the endorsement(s) to apply
-* `endorsements`: endorsements that are added to the ACS `state-triples` if all `conds` match.
-
-The order in which Conditional Endorsement triples are evaluated is important: different sorting may produce different end-results in the computed ACS.
-
-Therefore, the set of applicable Conditional Endorsement triples MUST be topologically sorted based on the criterion that a Conditional Endorsement triple is evaluated before another if its Target Environment and Endorsement pair is found in any of the stateful environments of the subsequent triple.
-
-Notes:
-
-* In order to give the expected result, the condition must describe the expected context completely.
-* The scope of a single Conditional Endorsement triple encompasses an arbitrary amount of environments across all layers in an Attester.
-
-There are scope-related questions that need to be answered.  ([^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/176)
 
 ## Extensibility {#sec-extensibility}
 
@@ -1468,6 +1499,7 @@ The appraisal procedure is divided into several logical phases for clarity.
 + **Phase 1**: Appraisal Context construction
 
 During Phase 1, Conceptual Message inputs are collected and cryptographically validated, such as checking digital signatures.
+During Phase 1, Conceptual Message inputs are collected and cryptographically validated, such as checking digital signatures.
 Inputs are transformed from their external representations to an internal representation.
 Internal representations are staged for appraisal processing, such as populating an input queue.
 
@@ -1523,8 +1555,6 @@ Environment-Claim Tuple (ECT):
 : A structure containing a set of values that describe a Target Environment plus a set of measurement / Claim values that describe properties of the Target Environment.
 The ECT also contains authority which identifies the entity that authored the ECT.
 
-> *[Ned] Suggest we use Environment-Properties Tuple (EPT) since the use of claim here is more focused than what is possible given the definition above.*
-
 reference state:
 : Claims that describe various alternative states of a Target Environment.  Reference Values Claims typically describe various possible states due to versioning, manufactruing practices, or supplier configuration options.  See also {{Section 2 of -rats-endorsements}}.
 
@@ -1541,6 +1571,9 @@ Appraisal Claims Set (ACS):
 The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy.
 
 Appraisal Context:
+: A structure that contains all validated state needed for performing the Appraisal Procedure.
+
+Appraisal Context:
 : A structure that contains all state needed for performing the Appraisal Procedure.
 
 Appraisal Policy:
@@ -1548,6 +1581,10 @@ Appraisal Policy:
 
 Attestation Results Set (ARS):
 : A structure that holds results of Appraisal and ECTs that are to be conveyed to a Relying Party.
+
+Appraisal Session:
+: A structure that tracks all state that corresponds to a single request for attestation appraisal.
+This includes the inputs prior to validation as well as the Appraisal Context.
 
 Appraisal Session:
 : A structure that tracks all state that corresponds to a single request for attestation appraisal.
@@ -1741,6 +1778,32 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 {::include cddl/intrep-ars.cddl}
 ~~~
 
+## Appraisal Context Construction (Phase 1) {#sec-phase1}
+
+In Phase 1 the Verifier constructs an Appraisal Context that contains valid inputs to the Appraisal Procedure.
+The Appraisal Context is available to the Appraisal Procedure throughout the various phases.
+
+~~~ cddl
+{::include cddl/intrep-actx.cddl}
+~~~
+
+### Input Collection {#sec-phase1-collect}
+
+The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
+
+During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
+Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
+Conceptual messages may include Attestation Evidence, CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoBOM tags ({{sec-cobom}}), Policy, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains, certificate revocation data (see {{-ocsp}} or {{Section 4.2.1.13 of -pkix-cert}}), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+The clock time used for validity judgments and policy evaluation is an input.
+
+How the Verifier collects its inputs is out of scope of this document.
+
+Initially all inputs are in `cms` if interpreted by this specification, or `extra` if not.
+
+It is left to Verifier Policy to determine if input sources must use supply chain transparency constructs (see {{-scitt-arch}}) to track input provenance.
+It is left to Verifier Policy to determine if or how to log the inputs used for a given Appraisal Session for optional use in Attestation Results.
+
+Note: Verifier Policy may be subject to external requirements by organizational or regulatory policy.
 ### Internal Representation of Appraisal Session {#sec-ir-asession}
 
 An Appraisal Session includes Verifier-specific session state as well as a collection of inputs to process.
@@ -1752,11 +1815,14 @@ Conceptual Messages are given explicit representation in the session.
 
 The session state is implementation-specific, but conceptual messages defined in this specification are specially represented.
 
+#### CoRIM and tag Selection
 ## Appraisal Context Construction (Phase 1) {#sec-phase1}
 
+All available CoRIMs in `cms / corims` and tags in `csm / tags` from the Appraisal Session's inputs are checked for validity.
 In Phase 1 the Verifier constructs an Appraisal Context that will serve as the set of valid sources of information for the Appraisal Procedure.
 The primary goal of this phase is to ensure that all necessary information is valid and available for subsequent processing.
 
+Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded from the session.
 ~~~ cddl
 {::include cddl/intrep-actx.cddl}
 ~~~
@@ -1801,9 +1867,18 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 Selection policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
 In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
+Any input that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded from the session.
+
+Selected tags are added to `/ select /` by mapping their tag identifier to a `tag-state` that is a pair of the tag and `activity: unknown`.
+
+Other selection criteria MAY be applied.
+For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier for that Evidence format MAY be discarded.
+Selection policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
+For example, a composite device ({{Section 3.3 of -rats-arch}}) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
+In such case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoBOMs that are not also activated by the trusted integrator.
 
 > The selection process MUST yield at least one usable conceptual message.
-> Dionna: I don't think this should be a requirement since the evidence combined with Verifier policy should be enough.
+> *Dionna*: I don't think this should be a requirement since the evidence combined with Verifier policy should be enough.
 
 
 #### Tag Extraction and Validation
@@ -1819,21 +1894,11 @@ Unless otherwise specified by a profile that extends `$tag-rel-type-choice`, all
 
 #### Tag activation by CoBOM
 
-A tag's activity is determined by the flowchart in figure {{#fig-tag-activity}}
-
-flowchart TD
-    A[unknown] --> C{use_cobom}
-    C -->|true| D{is_listed}
-    C -->|false| E[active]
-    D -->|true| F[active]
-    D -->|false| G[inactive]
-{: #fig-tag-activity title="Tag activity state decision tree"}
-
 If the Verifier does not use CoBOM, then all selected tags have their `activity` state set to `active`.
 
 If the Verifier does use CoBOM, then only tags listed by CoBOM tags remaining in `/ select /` in the Appraisal Context are set to `active`, and all others are set to `inactive`.
 
-The selected tags which are active are transformed into their internal representation and loaded into the Appraisal Context following the description in {{sec-phase1-trans}}.
+The selected tags which are `active` are transformed into their internal representation and loaded into the Appraisal Context following the description in {{sec-phase1-trans}}.
 
 #### Evidence Selection
 
@@ -1872,62 +1937,160 @@ Regardless of the specific integrity protection method used, the Evidence's inte
 
 ### Input Transformation {#sec-phase1-trans}
 
-Inputs, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs.
+Input Conceptual Messages, whether Endorsements, Reference Values, Evidence, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
 
 The following mapping conventions apply to all forms of input transformation:
-The `e` field is populated with a Target Environment identifier.
-The `c` field is populated with the measurements collected by an Attesting Environment.
-The `a` field is populated with the identity of the entity that asserted (e.g., signed) the Evidence.
-The `ns` field is populated with the namespace context if supplied. For example, the Attester's manufacturer may have a URI that identifies the manufacturing series, family or architecture.
-The `cm` field is set based on the type of Conceptual Message inputted or to be outputed.
+
+> * The `environment` field is populated with a Target Environment identifier.
+> * The `element-list` field is populated with the measurements collected by an Attesting Environment.
+> * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
+> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
+> * The `profile` field is set based on the `corim-map` `profile` value.
+
+#### Appraisal Context Construction
+
+All of the extracted and validated tags are loaded into an *appraisal context*.
+The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
+The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
 
 #### Reference Triples Transformation {#sec-ref-trans}
 
 {:rtt-enum: counter="foo" style="format Step %d."}
 
 {: rtt-enum}
-* An available `rv` list entry ({{sec-ir-ref-val}}) is allocated.
-The Reference Values Triple ({{sec-comid-triple-refval}}) `environment-map` is copied to the `environment-map` for both the `rv` `condition` and `rv` `addition` ECTs.
+* An `rv` list entry ({{sec-ir-ref-val}}) is allocated.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` is copied to the i<sup>th</sup> `element-map` in the `elements` list of the `rv` `addition` ECT.
+* The `cmtype` of the `addition` ECT in the `rv` entry is set to `reference-values`.
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* The Reference Values Triple (RVT) ({{sec-comid-triple-refval}}) populates the `rv` ECTs.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+{:rtt2-enum: counter="rtt2" style="format %i"}
+
+{: rtt2-enum}
+* RVT.`ref-env`
+
+> > **copy**(`environment-map`, `rv`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(`environment-map`, `rv`.`addition`.`environment`.`environment-map`)
+
+{: rtt2-enum}
+* For each e in RVT.`ref-claims`:
+
+> > **copy**(e.`measurement-map`, `rv`.`addition`.`element-list`.`element-map`)
+
+{: rtt-enum}
+* The signer of the Endorsement conceptual message is copied to the `rv`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
-Endorsement Triple Transformation :
+Endorsed Values Triple Transformation :
 
-{:ett-enum: counter="bar" style="format Step %d."}
+{:ett-enum: counter="ett" style="format Step %d."}
 
 {: ett-enum}
-* An available `ev` entry ({{sec-ir-end-val}}) is allocated.
-The Endorsement Triple ({{sec-comid-triple-endval}}) `environment-map` is copied to the `environment-map` for both the `ev` `condition` and `ev` `addition` ECTs.
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
 
-* For each `measurement-map` entry in the measurements list, the i<sup>th</sup> `measurement-map` entry is copied to the i<sup>th</sup> entry in the `addition` ECT `elements` list.
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
 
-* The issuer of the Endorsement conceptual message is copied to the `ev` `addition` ECT authority field.
+* The Endorsed Values Triple (EVT) ({{sec-comid-triple-endval}}) populates the `ev` ECTs.
 
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev` `addition` ECT profile field.
+{:ett2-enum: counter="ett2" style="format %i"}
+
+{: ett2-enum}
+* EVT.`condition`
+
+> > **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
+
+{: ett2-enum}
+* For each e in EVT.`endorsement`:
+
+> > **copy**(e.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
+
+{: ett-enum}
+* The signer of the Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 Conditional Endorsement Triple Transformation :
 
-> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+{:cett-enum: counter="cett" style="format Step %d."}
+
+{: cett-enum}
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+
+* Entries in the Conditional Endorsement Triple (CET) ({{sec-comid-triple-cond-endors}}) `conditions` list are copied to a suitable ECT in the internal representation.
+
+{:cett2-enum: counter="cett2" style="format %i"}
+
+{: cett2-enum}
+
+ * For each e in CET.`conditions`:
+
+> > **copy**(e.`stateful-environment-record`.`environment`.`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(e.`stateful-environment-record`.`claims-list`.`measurement-map`, `ev`.`condition`.`element-list`.`element-map`)
+
+{: cett2-enum}
+* For each e in CET.`endorsements`:
+
+> > **copy**(e.`endorsed-triple-record`.`condition`.`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
+
+> > **copy**(e.`endorsed-triple-record`.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
+
+{: cett-enum}
+* The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
 Conditional Endorsement Series Triple Transformation :
 
-> [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/285
+{:cestt-enum: counter="cestt" style="format Step %d."}
+
+{: cestt-enum}
+* An `evs` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
+
+* Populate the `evs` ECTs using the Conditional Endorsement Series Triple (CEST) ({{sec-comid-triple-cond-series}}).
+
+{:cestt2-enum: counter="cestt2" style="format %i."}
+
+{: cestt2-enum}
+* CEST.`condition`:
+
+> > **copy**(`stateful-environment-record`.`environment`.`environment-map`, `evs`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(`stateful-environment-record`.`claims-list`.`measurement-map`, `evs`.`condition`.`element-list`.`element-map`)
+
+{: cestt2-enum}
+* For each e in CEST.`series`:
+
+> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`selection`.`environment`.`environment-map`)
+
+> > **copy**(e.`conditional-series-record`.`selection`.`measurement`.`measurement-map`, `evs`.`series`.`selection`.`element-list`.`element-map`)
+
+> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`addition`.`environment`.`environment-map`)
+
+> > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
+
+{: cestt-enum}
+* The signer of the Conditional Endorsement conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
 
 #### Evidence Tranformation
 
-Evidence is divided up into one or more `ev` relations where the `condition` ECT identifies the Attester from which Evidence was collected. If the Verifier maintains multiple Attester sessions, the Verifier session may be identified using an ECT.
+Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
+The Evidence is mapped into one or more `addition` ECTs.
+If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
 
-Evidence information is mapped to an `addition` ECT that populates each of the ECT fields. If the Evidence does not have a value for the mandatory fields, the Verifier MUST NOT process the Evidence.
-
-The Evidence ECT fields are populated as described in {{sec-phase1-trans}} and {{sec-ir-evidence}}.
-
-Evidence transformation algorithms may be well-known, may be defined by a CoRIM profile ({{sec-corim-profile-types}}), or may be supplied dynamically.
+Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
 The handling of dynamic Evidence transformation algorithms is out of scope for this document.
 
 ### Appraisal hermeticity
@@ -1941,10 +2104,22 @@ Note: the deterministic constraint applies to profile-defined comparison semanti
 The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
 For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
 
+### Appraisal hermeticity
+
+The Appraisal Context at the end of Phase 1 constitutes all inputs to the Appraisal Procedure.
+
+Given the same Appraisal Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
+
+Note: the deterministic constraint applies to profile-defined comparison semantics.
+
+The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
+For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
+
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
 ### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
+The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `ir-appraisal-context / ae ` to the ACS.
 The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `ir-appraisal-context / ae ` to the ACS.
 See {{sec-add-to-acs}}.
 
@@ -2006,29 +2181,32 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 ## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
-Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations.
+Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations of `rv` relations.
 Reference Values may describe multiple possible Attester states.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 If satisfied, the RVP authority is added to the matching ACS entry.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
-For each `rv` entry, the `condition` ECT is compared with an ACS ECT.
+For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
+
+[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302
+
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
 ## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
 
-### Processing Endorsements
-
-Endorsers publish Endorsements using the endorsed values triple ({{sec-comid-triple-endval}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
+Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 
-Endorsed Values are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT.
-If the ECTs match, the `ev` `addition` ECT is added to the ACS.
+### Processing Endorsements {#sec-process-end}
+
+Endorsements are matched with ACS entries by iterating through the `ev` list.
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
 
 ### Processing Conditional Endorsements
 
@@ -2047,6 +2225,22 @@ See {{sec-match-condition-ect}}.
 
 If one of the temporary records matches then the Verifier MUST add the `endv` Endorsement entry to the ACS.
 This Endorsement includes the authority which signed the Conditional Endorsement Series Triple.
+### Processing Conditional Endorsements {#sec-process-cond-end}
+
+Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
+
+> [Dionna] this is not going to be identical. You will need to run the conditions and additions of `ev` and `evs` possibly multiple times. If a condition does not apply, it has to be set aside to try again. If you get through all conditional endorsements and have relations left, you have to try them again. If none of them match, you're done. If some match and some don't, you go again. This is a fixed point computation.
+
+
+### Processing Conditional Endorsement Series {#sec-process-series}
+
+Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
+Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
+where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
+where for each `series` entry, if the `selection` ECT matches an ACS ECT,
+the `addition` ECT is added to the ACS.
+Series processing terminates when the first series entry matches.
 
 ## Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
@@ -2247,15 +2441,32 @@ Profile writers SHOULD use CBOR tags for widely applicable comparison methods to
 
 The following subsections define the comparison algorithms for the `measurement-values-map` codepoints defined by this specification.
 
+##### Comparison for version entries
+
+The value stored under `measurement-values-map` codepoint 0 is an version label, which must have type `version-map`.
+Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
+
 ##### Comparison for svn entries
 
-The value stored under `measurement-values-map` codepoint 1 is an SVN, which must have type `uint`.
+The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which must have type `svn-type`.
 
-If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed.
-The comparison MUST return true if the value of the SVN in the candidate entry is equal to the value in the condition ECT.
+If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
 
-If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
-The comparison MUST return true if the value of the SVN in the candidate entry is less than the value in the condition ECT.
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed on the `uint` components.
+The comparison MUST return true if the value of SVN is equal to the `uint` value in the condition ECT.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
+The comparison MUST return true if the value of SVN is less or equal to than the `uint` value in the condition ECT.
+
+If the entry `svn-type` is a `uint` tagged with #6.553, then comparison with the `uint` named as MINSVN is as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then the comparison MUST return false.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then an equality comparison is performed.
+The comparison MUST return true if the value of MINSVN is equal to the `uint` value in the condition ECT.
+
+The meaning of a minimum SVN as an entry value is only meaningful as an endorsed value that has been added to the ACS.
+The condition therefore treats the minimum SVN as an exact state and not one to compare with inequality.
 
 ##### Comparison for digests entries {#sec-cmp-digests}
 
@@ -2282,9 +2493,6 @@ The comparison MUST return false if there are no hash algorithms from the condit
 
 ##### Comparison for raw-value entries
 
-> [Andy] *I think this comparison method only works if the entry is at key 4 (because
-there needs to be a mask at key 5). Should we have a Reference Value of this
-which stores `[expect-raw-value raw-value-mask]` in an array?*
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/71
 
@@ -2367,6 +2575,37 @@ groups to use this information as they see fit".
   [https://github.com/veraison/corim/commits/main](https://github.com/veraison/corim/commits/main)
 
 # Security and Privacy Considerations {#sec-sec}
+
+Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
+The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
+Any mistake in the appraisal process could have security implications.
+For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
+
+Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
+
+The protection of the Verifier system should be considered throughout its entire lifecycle, from design to operation.
+This includes the following aspects:
+
+- Minimizing implementation complexity (see also {{Section 6.1 of -rats-endorsements}});
+- Using memory-safe programming languages;
+- Using secure defaults;
+- Minimizing the attack surface by avoiding unnecessary features that could be exploited by attackers;
+- Applying the principle of least privilege to the system's users;
+- Minimizing the potential impact of security breaches by implementing separation of duties in both the software and operational architecture;
+- Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
+- Failing securely in the event of errors to avoid compromising the security of the system.
+
+The appraisal process should be auditable and reproducible.
+The integrity of the code and data during execution should be made an explicit objective, for example ensuring that the appraisal functions are computed in an attestable trusted execution environment (TEE).
+
+The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
+This includes key material carried in attestation key triples and key material used to verify the authority of triples (such as public keys that identify trusted supply chain actors).
+For more detailed information on protecting Trust Anchors, refer to {{Section 12.4 of -rats-arch}}.
+
+The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
+These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
+Also consider minimizing the use of intermediaries: each intermediary becomes another party that needs to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
+Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
 [^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/11
 
@@ -2580,7 +2819,7 @@ Encoding considerations:
 : binary
 
 Security considerations:
-: {{{sec-sec}}) of {{&SELF}}
+: {{sec-sec}} of {{&SELF}}
 
 Interoperability considerations:
 : n/a
@@ -2639,16 +2878,6 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
 ~~~
-# Contributors
-The authors would like to thank the following members for their valuable contributions to the specification.
-
-Andrew Draper
-
-Email: andrew.draper@intel.com
-
-Dionna Glaze
-
-Email: dionnaglaze@google.com
 
 # Acknowledgments
 {:unnumbered}
