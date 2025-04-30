@@ -1466,14 +1466,11 @@ trustworthiness properties of the subject domain exists.
 
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
-A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain ({{sec-comid-domain-type}}) that has a predicate
+A Domain Membership triple assigns a domain identifier to member environments. The
+triple subject identifies a domain ({{sec-comid-domain-type}}) that has a membership predicate
 relationship to the object where the object contains one or more members.
 When predicates are domains, it allows Endorsers to construct a hierarchical model
 where a domain can be represented using a collection of well defined domain identifiers.
-Endorsed environments ({{sec-comid-triple-cond-endors}}) membership is conditional upon
-successful matching of Reference Values ({{sec-comid-triple-refval}}) to
-Evidence.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
