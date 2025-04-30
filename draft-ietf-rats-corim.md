@@ -2398,7 +2398,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
-Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations of `rv` relations.
+Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations.
 Reference Values may describe multiple possible Attester states.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
