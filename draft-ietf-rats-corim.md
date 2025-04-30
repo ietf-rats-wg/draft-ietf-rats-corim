@@ -1780,7 +1780,7 @@ Environment-Claims Tuples (ECT) have six attributes:
 
 * Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
-* Domain Identifier : The Identity of the Domain for this ECT. If no domain is been set, this attribute is omitted.
+* Domain Identifier : The Identity of the Domain to which a given ECT belongs.
 
 The following CDDL describes the ECT structure in more detail.
 
@@ -2436,7 +2436,7 @@ At the time of Verification, the reference is then matched with actual compositi
 Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-dm-trans}} leading to a representation as as specified in {{sec-dm-membership}}.
 
 For each `ECT` entry in the list of `members`, the environment elements (example Class ID) is compared with the equivalent environment elements in ACS Entry with `cmtype` as `evidence`.
-The process continues, till every environment in the member list matches the entry in ACS.
+The process continues, untill every environment in the member list matches the entry in ACS.
 If all the members match then the `environment` from the domain-id field, is copied to `domain-id` field for each of the member ECT.
 All the member entries are then added in the ACS, with `authority` specified in the  `domain-id` field.
 
