@@ -1468,7 +1468,7 @@ trustworthiness properties of the subject domain exists.
 
 A Domain Membership triple assigns domain membership to environments.  The
 subject identifies a domain ({{sec-comid-domain-type}}) that has a predicate
-relationship to the object containing one or more environments or one of more domains.
+relationship to the object where the object contains one or more members.
 When predicates are domains, it allows Endorsers to construct a hierarchical model
 where a domain can be represented using a collection of well defined domains.
 Endorsed environments ({{sec-comid-triple-cond-endors}}) membership is conditional upon
