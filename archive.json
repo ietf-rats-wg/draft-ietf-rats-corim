@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-29T01:58:26.608590+00:00",
+  "timestamp": "2025-05-01T02:07:26.050290+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10457,7 +10457,7 @@
       "labels": [],
       "body": "If the reference value provider/endorser uses a mutually authenticated channel (e.g., mTLS or server-authenticated HTTPS with one HTTP authentication scheme) to supply _unsigned_ CoRIMs to the verifier, the spec doesn\u2019t clarify the authority to use for the related ACS entries.\n\n[\u00a74.3](https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-4.3) covers some cases, but not this one.\n\n----\n\ncc @setrofim ",
       "createdAt": "2025-03-26T16:24:22Z",
-      "updatedAt": "2025-03-31T13:13:51Z",
+      "updatedAt": "2025-04-30T14:48:16Z",
       "closedAt": null,
       "comments": [
         {
@@ -10529,6 +10529,13 @@
           "body": "> Would it make sense to avoid all the hassle and make signed CMW / CoRIM bundle a MUST requirement?\n\nThat would be a nice simplification.\n",
           "createdAt": "2025-03-31T13:13:50Z",
           "updatedAt": "2025-03-31T13:13:50Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We need a sentence saying that if the authority can\u2019t be directly expressed as one of the existing authority types (for example, if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based), the receiver, after successfully authenticating the sender (i.e., the CoRIM \u201csigner\u201d) shall establish a local authority in one of the supported authority formats.",
+          "createdAt": "2025-04-30T14:48:15Z",
+          "updatedAt": "2025-04-30T14:48:15Z"
         }
       ]
     },
@@ -10559,19 +10566,21 @@
     {
       "number": 417,
       "id": "I_kwDOH6-tI86w0hVk",
-      "title": "Shouldn't we add this to the build / check rules?  Otherwise the whole thing remains inert.",
+      "title": "Should all examples for COSE_Sign1 use real signing keys?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/417",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
         "thomas-fossati"
       ],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "              Shouldn't we add this to the build / check rules?  Otherwise the whole thing remains inert.\r\n\r\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/380#discussion_r2014603113_\r\n            ",
       "createdAt": "2025-04-02T14:24:07Z",
-      "updatedAt": "2025-04-02T14:24:27Z",
-      "closedAt": null,
+      "updatedAt": "2025-04-30T14:47:42Z",
+      "closedAt": "2025-04-30T14:47:41Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -10579,6 +10588,20 @@
           "body": "@thomas-fossati to add this ",
           "createdAt": "2025-04-02T14:24:20Z",
           "updatedAt": "2025-04-02T14:24:20Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Edited issue title to clarify the ask.\nThere should be some examples that test actual signatures, but examples that are focused on other fields don't need actual signatures IMO.",
+          "createdAt": "2025-04-29T18:17:22Z",
+          "updatedAt": "2025-04-29T18:17:22Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "closing as PR #380 addresses this",
+          "createdAt": "2025-04-30T14:47:41Z",
+          "updatedAt": "2025-04-30T14:47:41Z"
         }
       ]
     },
@@ -10877,9 +10900,31 @@
       "labels": [],
       "body": "If we want to query for CoRIMs signed by a particular entity, we're now in a bind with the manifest-signer role versus the corim-meta-map.\n\nCan we deprecate the corim-meta header in favor of requiring the manifest-signer role for the CoRIM, and require the value type to be the corim-signer-map? It would put another burden on CoTS to express that constraint, but it reduces the ways of expressing the same thing and removes the custom header that a lot of signing services dislike adding support for.",
       "createdAt": "2025-04-15T15:47:19Z",
-      "updatedAt": "2025-04-15T15:48:28Z",
+      "updatedAt": "2025-04-29T23:50:19Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There needs to be guidance for how to select values for `entity-map`.`entity-name`/`reg-id` when the corim signature from a key with an X.509 cert. E.g., the certificate issuer & serial-no could be encoded in `entity-name` and URI for the CRLDistributionPoint could be encoded in `reg-id`.",
+          "createdAt": "2025-04-29T18:38:13Z",
+          "updatedAt": "2025-04-29T18:38:13Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Can you give an example and what problem you're trying to solve?",
+          "createdAt": "2025-04-29T20:08:42Z",
+          "updatedAt": "2025-04-29T20:08:42Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Can you give an example and what problem you're trying to solve?\n\nWhen a corim is signed the signer populates `5 => [ + corim-entity-map ] ` to point back to the signer. If the signer key is certified by an X.509 certificate, then there may be values in the certificate that can be copied into the corim so that the Verifier can locate the signer entity `manifest-signer`.  `entity-map` has two other code points besides `role`; `entity-name` and `reg-id`. Possibly, fields in the certificate could be leveraged to fill these out? Without corim-meta-map the only way to identify the signer key is via COSE `kid` header. If the corim protection is a TLS session then there's no key-id that can be used to identify the intended signer. It would fall to corim-entity-map to point to the expected TLS cert or possibly a cert in the certification path for the TLS cert.",
+          "createdAt": "2025-04-29T23:50:18Z",
+          "updatedAt": "2025-04-29T23:50:18Z"
+        }
+      ]
     },
     {
       "number": 423,
@@ -10893,7 +10938,7 @@
       "labels": [],
       "body": "SPDM, DICE and other attester designs dynamically create keys after attester deployment. Since dyncamically generated keys are not known until they are generated, it currently isn't possible to match on those keys using crypto-key-type-choice / exact match semantics. \n\nA certificate chain is a structure that could allow matching on derived keys if the derived keys have a portion of the cert chain in common and the cert chain that is in common is known before the alias (lower layer) keys have been generated. \n\nIf a parent key is supplied in matching criteria, it can be interpreted that a match on a derived key is intended. For example, if the crypto-key-type-choice options for cert chain (tagged-pkix-base64-cert-path-type and tagged-cert-path-thumbprint-type) could be a way to trigger verifier behavior that applies path construction to the intermediate / alias certs to the specified criteria. \n\nThe full cert path could then be used as the condition that matches derived keys as part of processing matching functions. \n\nThis is one possible approach. \n\nThere could be others. For example, if Evidence contains a singleton key, path construction could be applied that results in a full cert path. Matching any part of the cert path in a condition would match the ECT.  The concern is whether the intent was to match a specific key vs. any of the keys in the cert path. ",
       "createdAt": "2025-04-22T20:07:02Z",
-      "updatedAt": "2025-04-24T21:03:40Z",
+      "updatedAt": "2025-04-29T18:43:49Z",
       "closedAt": null,
       "comments": [
         {
@@ -10902,6 +10947,13 @@
           "body": "Another option to consider that is limited to attest-key/identity-triples is for the Verifier to observe ECTs that have crypto-key-type-choice measurements (code point 65534) where `key-type` is populated. If so, this could be enough to trigger the key verification check without needing a separate CoRIM triple that requests it. The rationale is Evidence claims are accepted by the Verifier without corroboration or condition. If Evidence asserts an identity/attest-key triple, then these keys are copied into the intrep automatically. The difference is the optional key-type field is set when asserted via identity/attest-key-triples vs. not set if asserted via measurement-values-map triple. Use of the identity/attest-key-triples essentially is what triggers the verifier verification. The part that isn't describe by CoRIM is the evidence behavior (only behavior for endorsements). Since the decision was made to document Evidence handling in the evidence transformations draft, it isn't clear if the processing sections in corim also apply to evidence processing as they apply to intrep which is common to all cmtypes. One possible solution is to revisit the \"Processing Key Verification Endorsements\" section and write it so that it isn't biased toward endorsements. This way either endorsements or evidence could assert the identity/attest-key-triples and Verifier behavior would be the same. \n\nThis isn't a general solution to the question of how to write conditions for derived keys, but it clarifies the use case for then the identity/attest-key-triples are used with derived keys.",
           "createdAt": "2025-04-24T21:03:39Z",
           "updatedAt": "2025-04-24T21:03:39Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #393 relates to this issue.",
+          "createdAt": "2025-04-29T18:43:48Z",
+          "updatedAt": "2025-04-29T18:43:48Z"
         }
       ]
     },
@@ -10949,7 +11001,7 @@
       "labels": [],
       "body": "It is common for attesters to record evidence about the boot sequence and protect it using a PCR (eg with a sequence of hashes). The attester typically provides a log containing measurements and a PCR which authenticates those measurements.\n\nCoRIM should provide a way to match reference values and conditional endorsements against evidence collected in this way.\n\nThis means, I think, that we should define a recommended way to import PCR protected measurements into the ACS. I suspect that the log should be verified against the PCR value, and the measurements within the log file should then be transformed into ACS entries.\n\nMost PCR protected logs include a name and a value for each entry. The log name can be translated into an `environment-map`, and the log value can be translated into a `measurement-values-map`.\n\nImporting the individual measurements loses the sequence information which is part of the log. How should that information be represented? How can a CoRIM match against an expected sequence?\n\nFor example, should there be a way to represent something with the semantics \"measurement A was taken before measurement D\"?\n\nShould there be a way for a CoRIM to perform partial matches against the sequence information from the log?\n\nIe, if a log indicates that measurements were added to the log in the order A,B,C,D,E then should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?",
       "createdAt": "2025-04-23T14:58:58Z",
-      "updatedAt": "2025-04-24T03:45:43Z",
+      "updatedAt": "2025-04-29T18:09:16Z",
       "closedAt": null,
       "comments": [
         {
@@ -10972,6 +11024,13 @@
           "body": "> The idea is Reference Values RIM contains measurements expressed using integrity-logs\n\nIs it possible for the log to be submitted to the verifier from an \"untrusted source\"?\n\nHere are the key components involved:\n\n- The Evidence will include the integrity-register PCR.\n- The CoRIM(s) will contain valid digest(s).\n- The Log will consist of an ordered list of these digests.\n\nThe verifier will then:\n\n- Verify each entry in the Log against the available CoRIMs to ensure they are valid digests.\n- Extend the Log Digest and utilize it as a reference measurement for corroborating the integrity-register PCR.\n",
           "createdAt": "2025-04-24T03:45:42Z",
           "updatedAt": "2025-04-24T03:45:42Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?\n\nNote that if the integrity-log is available to the Verifier, it can observe A, B, C, and D independently. Appraisal policy might be used to answer the question whether the order of A - D is security significant or if only the existence of A - D is significant. \n\nReference values that describes A - D in CoMID triples doesn't today place significance in the ordering. However, a reference value that is a digest of  power sets of A - D would require work on behalf of RVP to produce interesting power sets. It seems not desriable for Verifier to compute power sets and digest them to find possible matches as some of the power sets might not be security relevant.",
+          "createdAt": "2025-04-29T18:09:16Z",
+          "updatedAt": "2025-04-29T18:09:16Z"
         }
       ]
     },
@@ -10987,7 +11046,7 @@
       "labels": [],
       "body": "`instance-id-type-choice` has `crypto-key-type-choice` as one of its variants. Both of theses type choices have `tagged-bytes` as a possible variant.\n\nThat means that if you see `tagged-bytes` in the data, it is impossible to know whether they should be interpreted as generic instance ID bytes, or as a crypto key.\n\nThis can lead to the loss information that bytes are meant to be a key. This can also pontentially lead to deviation between  how different implementations process the same input.",
       "createdAt": "2025-04-28T12:08:33Z",
-      "updatedAt": "2025-04-28T21:31:43Z",
+      "updatedAt": "2025-04-30T15:05:11Z",
       "closedAt": null,
       "comments": [
         {
@@ -11010,8 +11069,113 @@
           "body": "> while a key thumbprint seems appropriate, since it\u2019s probably unique per instance, a cert chain nearly certainly doesn\u2019t, as it\u2019s typically shared across multiple devices.\n\nThe semantics for how crypto-key-type-choice is used in the other parts of the spec describe the actual entity (authority) that is doing the signing. We stopped short of writing rules for matching based on the certification path that omitted the end entity.  Issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/423 draws attention to the challenge where end entity keys are not known apriori (by manufacturers / corim authors). If we decided to address this, then that could lead to the case @setrofim is alluding to above. But currently, the convention (though not documented adequately enough) is that crypto-key-type-choice values involving certification paths terminate at the end-entity that is performing whatever action is implied by the context in which it is used. As an environment instance identifier, crypto-key-type-choices refer to the environment that contains the end-entity key. ",
           "createdAt": "2025-04-28T21:28:56Z",
           "updatedAt": "2025-04-28T21:31:42Z"
+        },
+        {
+          "author": "setrofim",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The rules for environment-map still apply, that is that the identifiers are globally unique. If tagged-bytes is used to represent an opaque but globally unique key while tagged-bytes is used to represent an opaque but globally unique non-key value, the two identifiers would not be confused with one another any more than if two instances of tagged-bytes as keys or two instances of tagged-bytes as non-keys would need to be globally unique. If an author misused the globally unique identifiers they would have a buggy CoRIM regardless.\n\nAs long as they are treated purely as opaque identifiers, this is fine. My point was that if the code makes distinction on how it handles keys vs non-keys, this can cause problems. E.g. if keys are matched against database A and non-keys are matched against database B; or if one side (e.g. provisioned endrosements) has is as a crypto key, but the other side (e.g. evidence) parases is as just tagged-bytes, and they fail to match because the values are of different types.",
+          "createdAt": "2025-04-29T08:01:18Z",
+          "updatedAt": "2025-04-29T08:01:18Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">  My point was that if the code makes distinction on how it handles keys vs non-keys, this can cause problems. E.g. if keys are matched against database A and non-keys are matched against database B; or if one side (e.g. provisioned endrosements) has is as a crypto key, but the other side (e.g. evidence) parases is as just tagged-bytes, and they fail to match because the values are of different types.\n\nExactly.\nThe current situation introduces ambiguity in the type system.\nAnd this can have security implications.\n\n\n",
+          "createdAt": "2025-04-29T14:06:13Z",
+          "updatedAt": "2025-04-29T14:06:13Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The current situation introduces ambiguity in the type system.\n\nNote that similar ambiguity exists between class-id, instance-id, and group-id as well. ",
+          "createdAt": "2025-04-29T16:03:21Z",
+          "updatedAt": "2025-04-29T16:03:21Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> As long as they are treated purely as opaque identifiers, this is fine.\n\nNote that for identity/attest-key-triples an opaque crypto-key won't work as the Verifier has to verify the key. This could be accommodated using a profile, but if so, it would make more sense for the key type to be defined behind a vendor-specific CBOR tag.\n\nWe are still discussing whether `conditions` should have special behavior for crypto-keys/paths as suggested by issue #423. If so, opaque keys would not be supported.\n\nI'm not opposed to removing tagged-bytes from crypto-key-type-choice, assuming there isn't a use case for it that can't be met otherwise.",
+          "createdAt": "2025-04-29T16:06:48Z",
+          "updatedAt": "2025-04-29T16:37:49Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The current situation introduces ambiguity in the type system.\n> \n> Note that similar ambiguity exists between class-id, instance-id, and group-id as well.\n\nI don\u2019t think so.  In that case, the three types are well segregated behind their respective codepoints.\n",
+          "createdAt": "2025-04-29T16:43:23Z",
+          "updatedAt": "2025-04-29T16:43:23Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that a key isn't necessarily an instance identifier if it is a group key (e.g., DAA/EPID). However, `$crypto-key-type-choice` isn't defined for `group-id`. \n\nAlso, a key could be a class / group identifier if it is assiciated with a CA certificate. A similar argument can be applied if crypto-key-type-choice was added to group-id.  Possibly, the group-id is  best regarded as a class identifier for anonymity sets - meaning the class members have greater assurance of anonymity implying other privacy preserving techniques should be used for other measurements that are privacy revealing such as limited disclosure attributes? In general, corim attention to privacy is lacking IMHO.",
+          "createdAt": "2025-04-29T17:05:16Z",
+          "updatedAt": "2025-04-29T17:05:16Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "In todays meeting, unanimous resolution to Identify which of the crypto key types are applicable for Instance ID and selectively insert them rather than full import! @nedmsmith to start investigating, with support from other members of CoRIM Team.",
+          "createdAt": "2025-04-30T15:05:09Z",
+          "updatedAt": "2025-04-30T15:05:09Z"
         }
       ]
+    },
+    {
+      "number": 429,
+      "id": "I_kwDOH6-tI860hA70",
+      "title": "Clarify `raw-value` definition",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/429",
+      "state": "OPEN",
+      "author": "setrofim",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "andrew-draper"
+      ],
+      "labels": [],
+      "body": "[Section 5.1.4.1.2][1] allocates index `4` inside `measurement-values-map` to `raw-value-type-choice`, and, optionally, associated index `5` to `raw-value-mask-type`. The explanation text that follows states that `raw-value` contains the value whos format is vendor-determined, and that a mask _may_ be provided to indicates which bits within the value should be comparable. No explantion is given for index 5 in the text.\n\n[Section 5.1.4.1.6][2] then provides the definition of `raw-value-type-choice` which may be either `tagged-bytes` or `tagged-masked-raw-value`, which assoicateds bytes with a mask. And it also, in its final paragraph, states that `raw-value-mask` inside `measurement-values-map` is depricated.\n\nSection 5.1.4.1.2. should be updated to provide explantion of index 5 (`raw-value-mask`), along with the deprication statement that says to use `tagged-masked-raw-value` variant instead. The way things are structured at the moment, it is not immediately obivous what is the correct way of representing raw value masks (and why they are two different ways of doing so).\n\n\n[1]: https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-5.1.4.1.4.2\n[2]: https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-5.1.4.1.4.6",
+      "createdAt": "2025-04-29T14:21:57Z",
+      "updatedAt": "2025-04-30T14:53:22Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I suggest we explicitly call out the deprecation of index 5 in the claim name, e.g.: `&(raw-value-mask-DEPRECATED: 5)`",
+          "createdAt": "2025-04-29T14:30:00Z",
+          "updatedAt": "2025-04-29T14:30:00Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Deprecate as in it exists and folks should not use it? Why not just get rid of it?",
+          "createdAt": "2025-04-29T14:34:48Z",
+          "updatedAt": "2025-04-29T14:34:48Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Deprecate as in it exists and folks should not use it? Why not just get rid of it?\n\nIt is defined by the TCG corim spec. If the IETF corim deprecates it the code point remains allocated for use by the TCG corim spec. A future version of the TCG spec can also deprecate code point 5, but the code point needs to remain allocated for legacy implementations that still use it.",
+          "createdAt": "2025-04-29T16:42:45Z",
+          "updatedAt": "2025-04-29T16:42:45Z"
+        }
+      ]
+    },
+    {
+      "number": 431,
+      "id": "I_kwDOH6-tI860xewG",
+      "title": "thumbprint types can be ambiguous",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/431",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "`$crypto-key-type-choice` and `$instance-id-type-choice` use digest types where the source of the type of object being digested is ambiguously defined. \n\nFor example, `tagged-key-thumbprint` could be a 5280 keyIdentifier, a COSE `kid`, a digest of a PEM key, a digest of X and Y values, etc...\n`tagged-cert-thumbprint-type` could be a 5280 cert or a digest of a CWT / JWT etc...\n`tagged-cert-path-thumbprint-type` could be a 5280 certification path or possibly a serialization of an x5bag etc...\n\nThe issue is that if these (digest) values are used to find an actual public key, certificate or as part of certification path construction, there needs to be a way to related the digest to the actual value. If the digest is known but the actual value is not, the algorithm to find the value is guess-and-check. This algorithm may be  appropriate for Bitcoin mining, but not ideal for attestation. \n\nIf the thumbprint types identified the type of object digested and the verifier had the key already (aka via certificate) then guess-and-check is constrained to the type of object that was digested and the algorithm used to computed the digest (e.g., 5280 keyIdentifier).  ",
+      "createdAt": "2025-05-01T00:34:53Z",
+      "updatedAt": "2025-05-01T00:34:53Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -49238,13 +49402,13 @@
       "labels": [],
       "body": "Closes Issue #242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2025-01-29T14:52:22Z",
+      "updatedAt": "2025-04-30T14:16:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "42bd6ae7e85bcee5da53f1ee91fc824e958836a6",
+      "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "quant",
-      "headRefOid": "d257e509ff114417731d7a589211142750b3b353",
+      "headRefOid": "ecac8f185087beb58428106cb8e6c42d0fec3019",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -49256,6 +49420,20 @@
           "body": "I tried to build on local environment after installing mermaid-cli but still get errors. \r\nAlso, the branch seems to be significantly behind main - getting build warnings that have been fixed in main.",
           "createdAt": "2024-10-11T20:12:54Z",
           "updatedAt": "2024-10-11T20:12:54Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed build issues with this PR which included merging from main.\r\nHowever, there are still issues with this PR having a different heading structure from the current main. Possibly, it makes sense to re-apply the changes starting from a current snapshot of main?",
+          "createdAt": "2025-04-29T23:24:55Z",
+          "updatedAt": "2025-04-29T23:24:55Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Some examples should be developed that test the new CDDL this PR introduces.",
+          "createdAt": "2025-04-29T23:25:58Z",
+          "updatedAt": "2025-04-29T23:25:58Z"
         }
       ],
       "reviews": [
@@ -50462,6 +50640,26 @@
               "body": "Need to discuss this..",
               "createdAt": "2025-01-29T14:52:22Z",
               "updatedAt": "2025-01-29T14:52:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nNFjm",
+          "commit": {
+            "abbreviatedOid": "f019084"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-29T22:39:59Z",
+          "updatedAt": "2025-04-29T22:40:16Z",
+          "comments": [
+            {
+              "originalPosition": 201,
+              "body": "```suggestion\r\nReference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations.\r\n```",
+              "createdAt": "2025-04-29T22:39:59Z",
+              "updatedAt": "2025-04-29T22:40:16Z"
             }
           ]
         }
@@ -64539,13 +64737,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-04-28T18:19:11Z",
+      "updatedAt": "2025-04-30T13:58:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
-      "headRefOid": "031c6e51da4bb43b9e83b0be42e7de1266feadcd",
+      "headRefOid": "9ec4c0f652e66872a8a70aeb8d782444f30e4116",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -64979,6 +65177,266 @@
               "updatedAt": "2025-04-28T18:19:11Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nSgxX",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T10:47:15Z",
+          "updatedAt": "2025-04-30T10:47:15Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "```suggestion\r\n  domain-id: ECT\r\n```",
+              "createdAt": "2025-04-30T10:47:15Z",
+              "updatedAt": "2025-04-30T10:47:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nSibf",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T10:50:06Z",
+          "updatedAt": "2025-04-30T10:50:07Z",
+          "comments": [
+            {
+              "originalPosition": 98,
+              "body": "Added a separate section, hence resolving the comment now!",
+              "createdAt": "2025-04-30T10:50:06Z",
+              "updatedAt": "2025-04-30T10:50:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nSlbw",
+          "commit": {
+            "abbreviatedOid": "031c6e5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T10:54:34Z",
+          "updatedAt": "2025-04-30T10:54:34Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "```suggestion\r\nrelationship to the object where the object contains one or more members.\r\n```",
+              "createdAt": "2025-04-30T10:54:34Z",
+              "updatedAt": "2025-04-30T10:54:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nTWHI",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T12:21:31Z",
+          "updatedAt": "2025-04-30T12:21:32Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n: A context to represent a collection of Environments that are grouped togther to represent an entity, for example a product that is a Composite Device {{Section 3.3 of -rats-arch}}\r\n```",
+              "createdAt": "2025-04-30T12:21:31Z",
+              "updatedAt": "2025-04-30T12:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nTWpd",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T12:22:26Z",
+          "updatedAt": "2025-04-30T12:22:26Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\nA Domain Membership triple associates a domain identifier with corresponding member environments. The\r\n```",
+              "createdAt": "2025-04-30T12:22:26Z",
+              "updatedAt": "2025-04-30T12:22:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nTYB4",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T12:24:44Z",
+          "updatedAt": "2025-04-30T12:24:44Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nA Domain is a context for bundling a collection of related environments.\r\n```",
+              "createdAt": "2025-04-30T12:24:44Z",
+              "updatedAt": "2025-04-30T12:24:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nTY4q",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T12:26:04Z",
+          "updatedAt": "2025-04-30T12:26:05Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\ntriple subject identifies a Domain ({{sec-comid-domain-type}}) that has a membership predicate relationship to the object where the object contains one or more members.\r\nWhen predicates are Domains, it allows Endorsers to construct a hierarchical model\r\nwhere a Domain can be represented using a collection of well defined domain identifiers.\r\n```",
+              "createdAt": "2025-04-30T12:26:05Z",
+              "updatedAt": "2025-04-30T12:26:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nTZjr",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-04-30T12:27:07Z",
+          "updatedAt": "2025-04-30T12:27:08Z",
+          "comments": [
+            {
+              "originalPosition": 118,
+              "body": "```suggestion\r\nAn internal representation of Domain Membership uses the `dm` relation, which is a list of ECTs that describes the composition of an Attester with an identity of the Domain specified in the `identity` ECT.\r\n\r\n~~~ cddl\r\n{::include cddl/intrep-domain-mem.cddl}\r\n~~~\r\n\r\nThe Domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose `cmtype` matches Evidence.\r\nIf the `environment` for every entry of the members of `dm` matches an entry in the ACS ECTs then the Domain identity is copied to every member\r\n```",
+              "createdAt": "2025-04-30T12:27:07Z",
+              "updatedAt": "2025-04-30T12:27:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nTXUb",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "partial review\r\n",
+          "createdAt": "2025-04-30T12:23:33Z",
+          "updatedAt": "2025-04-30T13:05:09Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "indent\r\n```suggestion\r\n  domain-id: $domain-type-choice\r\n  members: [ +  $domain-type-choice ]\r\n```",
+              "createdAt": "2025-04-30T12:23:34Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "If there is only one possible choice, and the type is not extensible, why add a possibly confusing layer of indirection?\r\n\r\nCan\u2019t `domain-id` just be `environment-map`?",
+              "createdAt": "2025-04-30T12:26:14Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "Unsure why we need to make it 1st class rather than using the existing `endorsements` category.",
+              "createdAt": "2025-04-30T12:28:18Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "Using \u201ccontext\u201d to describe \u201cdomain\u201d is not very informative :-)\r\n\r\nI\u2019d say:\r\n\r\n> _\u201cThe topological description of a Composite Device in terms of its constituent Environments and their compositional relationships.\u201d_\r\n",
+              "createdAt": "2025-04-30T12:33:21Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "Again, using the very generic term \u201ccontext\u201d to explain the generic term \u201cdomain\u201d is not helping.\r\n\r\nSee the suggestion I made abvoe.",
+              "createdAt": "2025-04-30T12:40:33Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Please use the established editorial convention: new sentence = new line.",
+              "createdAt": "2025-04-30T12:44:06Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "missing parentheses:\r\n\r\n```suggestion\r\n: A context to represent a collection of Environments that are grouped togther to represent an entity, for example a Composite Device ({{Section 3.3 of -rats-arch}})\r\n```",
+              "createdAt": "2025-04-30T12:44:50Z",
+              "updatedAt": "2025-04-30T13:05:09Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Not very clear, I suggest the following rewrite:\r\n```suggestion\r\nA Domain Membership triple links a domain identifier to its member Environments.\r\nThe triple\u2019s object lists all the Environments in the domain, and the domain is identified by the Environment in the triple\u2019s subject.\r\nThis allows the recursive construction of the topology of a Composite Device, where multiple lower-level domains can be aggregated into a higher-level domain.\r\n```",
+              "createdAt": "2025-04-30T13:04:06Z",
+              "updatedAt": "2025-04-30T13:46:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nUYz1",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "soem more comments",
+          "createdAt": "2025-04-30T13:48:52Z",
+          "updatedAt": "2025-04-30T13:58:24Z",
+          "comments": [
+            {
+              "originalPosition": 63,
+              "body": "```suggestion\r\n* Domain Identifier : The Domain to which a given ECT belongs.\r\n```",
+              "createdAt": "2025-04-30T13:48:52Z",
+              "updatedAt": "2025-04-30T13:58:24Z"
+            },
+            {
+              "originalPosition": 109,
+              "body": "In the internal representation \u201cblock\u201d, the anchor convention is `sec-ir-...` \r\n\r\n```suggestion\r\n### Internal Representation of Domain Membership {#sec-ir-dm}\r\n```",
+              "createdAt": "2025-04-30T13:49:32Z",
+              "updatedAt": "2025-04-30T13:58:24Z"
+            },
+            {
+              "originalPosition": 174,
+              "body": "ditto\r\n\r\n```suggestion\r\n#### Domain Membership Triples Transformation {#sec-ir-dm-trans}\r\n```",
+              "createdAt": "2025-04-30T13:51:43Z",
+              "updatedAt": "2025-04-30T13:58:24Z"
+            },
+            {
+              "originalPosition": 181,
+              "body": "```suggestion\r\n* The `cmtype` of the `members` ECT in the `dm` entry is set to 6 (`domain-member`).\r\n```",
+              "createdAt": "2025-04-30T13:53:30Z",
+              "updatedAt": "2025-04-30T13:58:24Z"
+            }
+          ]
         }
       ]
     },
@@ -65285,26 +65743,63 @@
       "id": "PR_kwDOH6-tI86S20P9",
       "title": "Require at most one signer in corim-entity-map",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/422",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The corim-signer-map identifies a single entity as the signer. When only using unsigned CoRIMs and depending on the entities, there isn't a structural limitation to stating multiple entities as signers.\r\n\r\nUnless we're saying that every hop through nodes requires adding oneself to the entities as manifest-signer, then we need to make that clear and change the text that the manifest-signer is the one that originated the CoRIM.",
       "createdAt": "2025-04-16T15:06:09Z",
-      "updatedAt": "2025-04-16T15:06:10Z",
+      "updatedAt": "2025-04-30T14:07:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "one-signer",
       "headRefOid": "f4bb13ceeb6a884665ae4cae6b1b2f9b0f368535",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "closedAt": "2025-04-30T14:06:24Z",
+      "mergedAt": "2025-04-30T14:06:24Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e"
+      },
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I retrospectively approve it.",
+          "createdAt": "2025-04-30T14:07:24Z",
+          "updatedAt": "2025-04-30T14:07:24Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86nK2R9",
+          "commit": {
+            "abbreviatedOid": "f4bb13c"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-29T18:41:16Z",
+          "updatedAt": "2025-04-29T18:41:16Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nSgGC",
+          "commit": {
+            "abbreviatedOid": "f4bb13c"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "lgtm!",
+          "createdAt": "2025-04-30T10:45:56Z",
+          "updatedAt": "2025-04-30T10:45:56Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 427,
@@ -65320,7 +65815,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-04-25T23:31:15Z",
+      "updatedAt": "2025-04-30T14:13:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
@@ -65331,7 +65826,72 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Considering Key Verification comes with some \"result\" that is generated by \"joint authority of the Endorser (CoRIM signer) and the Verifier\", Key Verification is never really introduced and only appears at the sidelines in [Device Identity Triple](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-device-identity-triple) and [Attest Key Triple](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-attest-key-triple) and then is elaborated on in [Key Verification Triples Transformation](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-key-verification-triples-tr) and [Processing Key Verification Endorsements](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-processing-key-verification).",
+          "createdAt": "2025-04-30T12:36:46Z",
+          "updatedAt": "2025-04-30T12:36:46Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86nUshv",
+          "commit": {
+            "abbreviatedOid": "7bf6291"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-30T14:13:01Z",
+          "updatedAt": "2025-04-30T14:13:01Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 430,
+      "id": "PR_kwDOH6-tI86UlldA",
+      "title": "Fixes ambiguity of instance-id",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/430",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Crypto-key-typ-choice values that are suitable as instance-ids are added to instance-id-type-choice.\r\n\r\nSee Issue #428 ",
+      "createdAt": "2025-04-30T23:56:33Z",
+      "updatedAt": "2025-05-01T00:51:38Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "nms/fix-428",
+      "headRefOid": "f1163f18925f5337b187ec3480fc7c02e5594e23",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Notes: \r\nI included two examples designed to highlight the identifier to target binding property. \r\nHowever, in doing so it suggests the current crypto-key-type-choice values have room for some ambiguity in terms of how the identifier could be computed from keys. If `instance-id` is a raw key, then 2 values are defined `tagged-cose-key-type` and `tagged-pkix-base64-key-type`. However, if the raw key is an RFC5280 subjectPublicKey it is the x and y values in a BIT STRING format. But there isn't a crypto-key-type-choice for this. \r\nIf the `instance-id` is a digest of a public key, it could be an RFC528 keyIdentifier or a COSE `keyid`. The `tagged-thumbprint-type` (now changed to `tagged-key-thumbprint-type`) could be used for either. \r\nThe examples don't necessarily need to be implementable using the current spec, but that would be nice.\r\nThe ambiguity in `tagged-key-thumbprint-type` doesn't necessarily need to be disambiguated for the purposes of `instance-id`, but other uses that involve making the opaque `tagged-key-thumbprint-type` non-opaque would be at a disadvantage when trying to locate the certificate using the thumbprint.  I plan to submit a new issue for the non-opaque key thumbprint/identifer types.",
+          "createdAt": "2025-05-01T00:11:06Z",
+          "updatedAt": "2025-05-01T00:11:06Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note: \r\nThe forms involving cert paths were omitted because the path could be a partial path that didn't include the public key that identifies the Target. However, if the path did include that key, then it meets the constraints for instance-id identifiers. Hence, all of the crypto-key-type-choice values could be included (except for tagged-bytes) which is already included.\r\n\r\nPlease describe which properties of cert paths that result in a property that doesn't satsify the constraints of `instance-id`. ",
+          "createdAt": "2025-05-01T00:51:11Z",
+          "updatedAt": "2025-05-01T00:51:37Z"
+        }
+      ],
       "reviews": []
     }
   ]
