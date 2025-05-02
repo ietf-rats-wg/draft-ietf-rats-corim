@@ -1964,7 +1964,7 @@ The primary goal of this phase is to ensure that all necessary information is av
 
 ### Input Collection {#sec-phase1-collect}
 
-The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
+A single attestation session is a period when attestation appraisal process is initiated upon Verifier receiving Evidence from Attester or Relying Party and generating the results of the Appraisal.
 
 During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
 Inputs are various conceptual messages collected from Reference Value Providers, Endorsers, Verifier Owners, and Attesters.
