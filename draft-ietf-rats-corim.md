@@ -2314,7 +2314,7 @@ For a comparable notion of process fidelity and provenance tracking, see the dif
 
 ### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
-The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `ir-appraisal-context / ae ` to the ACS.
+The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `ir-appraisal-context`.`ae` to the ACS.
 See {{sec-add-to-acs}}.
 
 #### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
@@ -2351,117 +2351,13 @@ The Verifier SHOULD set the `authorized-by` field in ACS entries
 to a format which contains only a key, for example the `tagged-cose-key-type`
 format. Using a common format makes it easier to compare the field.
 
-## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
-
-In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
-Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
-
-Each triple is processed independently of other triples.
-However, the ACS state may change as a result of processing a triple.
-If a triple condition does not match, then the Verifier continues to process other triples.
-
-#### Ordering of triple processing
-
-Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
-Most triples use an `environment-map` field to select the ACS entries to match or modify.
-This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
-
-The order of triples processing is important.
-Processing a triple may result in ACS modifications that affect matching behavior of other triples.
-
-The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
-
-This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
-
-## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
-
-Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations.
-Reference Values may describe multiple possible Attester states.
-
-Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
-If satisfied, the RVP authority is added to the matching ACS entry.
-
-Reference Values are matched with ACS entries by iterating through the `rv` list.
-For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/302
-
-If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
-
-## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
-
-[^issue] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/179
-
-Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
-Endorsements describe actual Attester state.
-Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
-
-### Processing Endorsements {#sec-process-end}
-
-Endorsements are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
-
-### Processing Conditional Endorsements {#sec-process-cond-end}
-
-Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
-
-> [Dionna] this is not going to be identical. You will need to run the conditions and additions of `ev` and `evs` possibly multiple times. If a condition does not apply, it has to be set aside to try again. If you get through all conditional endorsements and have relations left, you have to try them again. If none of them match, you're done. If some match and some don't, you go again. This is a fixed point computation.
-
-
-### Processing Conditional Endorsement Series {#sec-process-series}
-
-Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
-Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
-where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence` or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
-where for each `series` entry, if the `selection` ECT matches an ACS ECT,
-the `addition` ECT is added to the ACS.
-Series processing terminates when the first series entry matches.
-
-## Examples for optional phases 5, 6, and 7 {#sec-phases567}
-
-Phases 5, 6, and 7 are optional depending on implementation design.
-Verifier implementations that apply consistency, integrity, or validity checks could be represented as Claims that augment the ACS or could be handled by application specific interfaces.
-Processing appraisal policies may result in augmentation or modification of the ACS, but techniques for tracking the application of policies during appraisal need not result in ACS augmentation.
-Additionally, the creation of Attestation Results is out-of-scope for this document, nevertheless internal staging may facilitate processing of Attestation Results.
-
-Phase 5: Verifier Augmentation
-
-Claims related to Verifier-applied consistency checks are asserted under the authority of the Verifier.
-For example, the `attest-key-triple-record` may contain a cryptographic key to which the Verifier applies certificate path construction and validation.
-Validation may reveal an expired certificate.
-The Verifier implementation might generate a certificate path validation exception that is handled externally, or it could generate a Claim that the certificate path is invalid.
-
-Phase 6: Policy Augmentation
-
-Appraisal policy inputs could result in Claims that augment the ACS.
-For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
-The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
-Details about the policy applied may also augment the ACS.
-An internal representation of policy details, based on the policy ECT, as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
-
-Phase 7: Attestation Results Production and Transformation
-
-Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
-For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
-Generated Attestation Results Claims may be specific to a particular Relying Party.
-Hence, the Verifier may need to maintain multiple Attestation Results contexts.
-An internal representation of Attestation Results as separate contexts ({{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
-Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
-
-## Adding to the Appraisal Claims Set {#sec-add-to-acs}
-
-### Appraisal Claims Set Requirements {#sec-acs-reqs}
-
+#### ACS Requirements {#sec-acs-reqs}
 
 At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
 See {{sec-ir-cm}}.
 
 Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.
-
-#### ACS Processing Requirements
 
 The ACS contains the actual state of Attester's Target Environments (TEs).
 The ACS contains Evidence ECTs (from Attesters) and Endorsement ECTs
@@ -2553,7 +2449,7 @@ the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` 
 When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 
-#### ACS augmentation using CoMID triples
+#### ACS augmentation using CoMID triples {#sec-acs-aug}
 
 In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
 Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
@@ -2570,10 +2466,12 @@ Reference Values may describe multiple possible Attester states.
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 If satisfied, the RVP authority is added to the matching ACS entry.
 
-Reference Values are matched with ACS entries by iterating through the `rv` list.
+Reference Values are matched with ACS entries by iterating through the `ir-appraisal-context`.`rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
+
+After the iteration, no other `rv` will match, so `ir-appraisal-context`.`rv` MAY be cleared.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
@@ -2583,9 +2481,10 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
-Endorsements are matched with ACS entries by iterating through the `ev` list.
+Endorsements are matched with ACS entries by iterating through the `ir-appraisal-context`.`ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+An `ev` entry that matches is removed from the `ir-appraisal-context`.`ev` list.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
@@ -2595,12 +2494,13 @@ Conditional endorsements have the same processing steps as shown in ({{sec-proce
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
 Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
-Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
+Conditional series endorsements are matched with ACS entries first by iterating through the `ir-appraisal-context`.`evs` list,
 where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series iteration terminates after the first matching series entry is processed or when no series entries match.
+An `evs` entry that matches is removed from the `ir-appraisal-context`.`evs` list.
 
 #### Processing Key Verification Endorsements {#sec-process-keys}
 
