@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-01T02:07:26.050290+00:00",
+  "timestamp": "2025-05-04T02:08:39.183690+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10617,7 +10617,7 @@
       "labels": [],
       "body": "Since `raw-int` is intended to support ranged comparsions (and whos value can be two integers, representing the bounds of the range), it does not behave as an ordinary \"raw integer\", which is what the name implies. \n\nSuggested replacement: `ranged-int`.",
       "createdAt": "2025-04-04T18:20:35Z",
-      "updatedAt": "2025-04-09T14:12:41Z",
+      "updatedAt": "2025-05-02T16:24:21Z",
       "closedAt": null,
       "comments": [
         {
@@ -10885,6 +10885,27 @@
           "body": "> &(coev-version: 123456\n\nshouldn't the code point be the same as in CoMID for version? I'm not sure I fully understand .feature, but relating 123456 to code point 11 doesn't make sense to me.",
           "createdAt": "2025-04-09T14:12:39Z",
           "updatedAt": "2025-04-09T14:12:39Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > &(coev-version: 123456\n> \n> shouldn't the code point be the same as in CoMID for version? I'm not sure I fully understand .feature, but relating 123456 to code point 11 doesn't make sense to me.\n\nNot sure I get your point.  Isn\u2019t that part of the usual evidence translation?",
+          "createdAt": "2025-05-02T07:44:57Z",
+          "updatedAt": "2025-05-02T07:44:57Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > shouldn't the code point be the same as in CoMID for version? I'm not sure I fully understand .feature, but relating 123456 to code point 11 doesn't make sense to me.\n\n> Not sure I get your point. Isn\u2019t that part of the usual evidence translation?\n\nIf two schemas have a map structure in common, they shouldn't have to translate them.\nCoEV doesn't currently do:\n```\n$$measurement-values-map-extension //= (\n  ? (&(coev-version: 123456 )) => version-map\n)\n```\nIt uses the existing code point\n```\n? &(version: 0) => version-map\n```\n\nIf you are saying the mapping function to an internal representation could extend MVP and assign evidence specific code points that is possible, but the ECT already has a cmtype field that stereotypes it as evidence. \n\nIf .feature can be used to extend / modify typing for an existing code point because the code point is within a particular CMTYPE-ed ECT then that seems to make sense. The example above doesn't seem to fit this case exactly. Maybe it is a case of experimenting with .feature to see what it will allow?",
+          "createdAt": "2025-05-02T16:02:37Z",
+          "updatedAt": "2025-05-02T16:02:37Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Going back to the original thread, since exact match is still reasonable having raw int support both `int` and `int-range` seems reasonable.",
+          "createdAt": "2025-05-02T16:24:20Z",
+          "updatedAt": "2025-05-02T16:24:20Z"
         }
       ]
     },
@@ -49402,13 +49423,13 @@
       "labels": [],
       "body": "Closes Issue #242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2025-04-30T14:16:21Z",
+      "updatedAt": "2025-05-03T19:53:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
+      "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "quant",
-      "headRefOid": "ecac8f185087beb58428106cb8e6c42d0fec3019",
+      "headRefOid": "4a9fc16dca62d01236857e7b7b4489593d9fd3eb",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -50660,6 +50681,26 @@
               "body": "```suggestion\r\nReference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}) of `rv` relations.\r\n```",
               "createdAt": "2025-04-29T22:39:59Z",
               "updatedAt": "2025-04-29T22:40:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nrywW",
+          "commit": {
+            "abbreviatedOid": "a6a25d0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-03T17:37:54Z",
+          "updatedAt": "2025-05-03T17:37:55Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "I lost track of what this line used to refer to.",
+              "createdAt": "2025-05-03T17:37:54Z",
+              "updatedAt": "2025-05-03T17:37:55Z"
             }
           ]
         }
@@ -64737,7 +64778,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-04-30T13:58:24Z",
+      "updatedAt": "2025-05-01T22:57:00Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
@@ -65272,9 +65313,9 @@
           "comments": [
             {
               "originalPosition": 35,
-              "body": "```suggestion\r\nA Domain Membership triple associates a domain identifier with corresponding member environments. The\r\n```",
+              "body": "```suggestion\r\nA Domain Membership triple associates a domain identifier with corresponding member environments.\r\n```",
               "createdAt": "2025-04-30T12:22:26Z",
-              "updatedAt": "2025-04-30T12:22:26Z"
+              "updatedAt": "2025-05-01T20:56:53Z"
             }
           ]
         },
@@ -65312,9 +65353,9 @@
           "comments": [
             {
               "originalPosition": 39,
-              "body": "```suggestion\r\ntriple subject identifies a Domain ({{sec-comid-domain-type}}) that has a membership predicate relationship to the object where the object contains one or more members.\r\nWhen predicates are Domains, it allows Endorsers to construct a hierarchical model\r\nwhere a Domain can be represented using a collection of well defined domain identifiers.\r\n```",
+              "body": "```suggestion\r\nThe triple subject identifies a Domain ({{sec-comid-domain-type}}) that has a membership predicate relationship to the object where the object contains one or more members.\r\nWhen predicates are Domains, it allows Endorsers to construct a hierarchical model\r\nwhere a Domain can be represented using a collection of well defined domain identifiers.\r\n```",
               "createdAt": "2025-04-30T12:26:05Z",
-              "updatedAt": "2025-04-30T12:26:05Z"
+              "updatedAt": "2025-05-01T20:56:19Z"
             }
           ]
         },
@@ -65435,6 +65476,76 @@
               "body": "```suggestion\r\n* The `cmtype` of the `members` ECT in the `dm` entry is set to 6 (`domain-member`).\r\n```",
               "createdAt": "2025-04-30T13:53:30Z",
               "updatedAt": "2025-04-30T13:58:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nh8Mc",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple comments",
+          "createdAt": "2025-05-01T20:46:39Z",
+          "updatedAt": "2025-05-01T21:12:42Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "> and the type is not extensible\r\n\r\nDoesn't the `$` make it extensible?\r\n",
+              "createdAt": "2025-05-01T20:46:39Z",
+              "updatedAt": "2025-05-01T21:12:42Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n: A collection of Environments that are grouped togther, for example a Composite Device ({{Section 3.3 of -rats-arch}}) might be composed of multiple environments.\r\n```",
+              "createdAt": "2025-05-01T20:51:48Z",
+              "updatedAt": "2025-05-01T21:12:42Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nA Domain is a collection of related environments.\r\n```",
+              "createdAt": "2025-05-01T20:52:54Z",
+              "updatedAt": "2025-05-01T21:12:42Z"
+            },
+            {
+              "originalPosition": 225,
+              "body": "Domain shouldn't take the place of Reference Value triples. This description should consider the case where the RV triples processing has completed already. That means there are `reference` ECTs in the ACS when membership triples are evaluated.\r\nIt is also reasonable for membership triples processing to be done before evidence processing since membership assertions are not conditional.",
+              "createdAt": "2025-05-01T21:12:30Z",
+              "updatedAt": "2025-05-01T23:02:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86nilDq",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-01T22:22:00Z",
+          "updatedAt": "2025-05-01T22:57:00Z",
+          "comments": [
+            {
+              "originalPosition": 226,
+              "body": "> Membership triple adds ACS Entries\r\n\r\nIt might help to separate the steps that track who said what from enforcement steps that detect a bad conversation. \r\n\r\nMembership triple is an unconditional endorsement meaning the endorser can say what the topology of the device is without being censored / influenced by what the Attester says. There are 3 ways to originate new claims, evidence, conditional endorsement (where the addition environment is not part of the condition), and domain triples. Membership can assert a composition even if the Attester doesn't attest. Example: a laptop vendor VZ asserts that model-Z has an IO controller, keyboard, trackpad, and fingerprint sensor. VZ can produce a rim for model-Z that relates the collection of components. If the Verifier authenticates the Attester using a device credential that identifies it as model-Z, the verifier can find corims for model-Z which say \"There is a collection of io-ctlr, kbd, tp, fp-rdr with a domain named DZ\". This could be the first set of ECTs in the ACS as the composition isn't conditional on Evidence. \r\n\r\nLets say the Attester does produce Evidence that has a measurement for io-ctlr, kbd, and tp but not fp-rdr. The domain composition from VZ is still correct. However, the inferred domain composition from Evidence is dissimilar. This difference can be detected using the right combination of queries and comparisons. The enforcement action might be policy driven where the absense of fp-rdr isn't a security issue (maybe fp-rdrs are flakey). Afterall, trying to infer a collection from Evidence is \"reading in\" more than was intended.\r\n\r\nLets say the Attester (IO-ctlr) wants to be explicit about the domain and includes membership triples in Evidence. Assume the fp-rdr is flakey and fails to return evidence. The IO ctlr membership assertion won't agree with the Evidence set (which lacks fp-rdr). This shows internal inconsistency but doesn't signal an attack since fp-rdr is known to be flakey. We assume an experienced attacker would cause the IO-ctlr to lie about the missing fp-rdr. \r\n\r\nA policy might expect fp-rdr to be missing from Evidence and conclude that IO-ctlr expected fp-rdr, but that's because the fp-rdr is flakey.\r\n\r\nLets say another policy is more sophisticated where if the VZ asserts presence of fp-rdr then override the policy where the IO-ctlr says there should be a fp-rdr but lack of fp-rdr is due to it being flakey. Now it makes sense to flag the missing fp-rdr as a security flaw. \r\n\r\nBut in all these cases, there is never a reason to remove entries from the \"who said what\" record or for the processing of the ACS to fail. ",
+              "createdAt": "2025-05-01T22:22:00Z",
+              "updatedAt": "2025-05-01T22:57:00Z"
+            },
+            {
+              "originalPosition": 226,
+              "body": "> Rather, the existing entries would be updated to populate the empty domain-id field.\r\n\r\nNote that merging of records in the ACS falls under ACS optimization strategies. The comment above assumed some sort of optimization is being made to minimize the set of ECTs that make claims about any particular environment (component). ",
+              "createdAt": "2025-05-01T22:31:12Z",
+              "updatedAt": "2025-05-01T22:57:00Z"
+            },
+            {
+              "originalPosition": 226,
+              "body": "I think it would be OK if the membership processing algorithm simply added the membership ECTs to the ACS unconditionally. \r\n\r\nIf we think there is an ACS consistency algorithm that is universal, that considers membership, evidence and possibly reference ECTs, then maybe it makes sense for a later phase (phase 5?) to apply the analysis / optimization.",
+              "createdAt": "2025-05-01T22:53:16Z",
+              "updatedAt": "2025-05-01T22:57:01Z"
             }
           ]
         }
