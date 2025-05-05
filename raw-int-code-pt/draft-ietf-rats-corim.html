@@ -17,18 +17,18 @@ Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
 This document specifies the information elements for representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.28.0" name="generator">
+<meta content="xml2rfc 3.28.1" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.0
-    Python 3.12.9
+  xml2rfc 3.28.1
+    Python 3.12.10
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
     lxml 5.3.0
-    platformdirs 4.3.6
+    platformdirs 4.3.7
     pycountry 24.6.1
     PyYAML 6.0.2
     requests 2.32.3
@@ -1052,11 +1052,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">CoRIM</td>
-<td class="right">April 2025</td>
+<td class="right">May 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 4 October 2025</td>
+<td class="center">Expires 6 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-04-02" class="published">2 April 2025</time>
+<time datetime="2025-05-05" class="published">5 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-10-04">4 October 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-06">6 November 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 October 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 6 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1727,7 +1727,7 @@ Ideally, only the supply chain actor who is the most knowledgable entity regardi
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span> encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
-Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors  to represent a homogeneous representation of Attester state.
+Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
 See <a href="#sec-verifier-rec" class="auto internal xref">Section 2</a>.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <div id="terminology-and-requirements-language">
@@ -1896,7 +1896,7 @@ The internal representations used by this document are defined in <a href="#sec-
 <a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-interacting-with-an-acs" class="section-name selfRef">Interacting with an ACS</a>
         </h3>
 <p id="section-2.2-1">Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) should satisfy the following requirements for Verifier reconciliation and appraisal processing:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <span id="name-conceptual-message-represen"></span><div id="tbl-cmrr">
 <table class="center" id="table-1">
           <caption>
@@ -2114,7 +2114,7 @@ concise-rim-type-choice /= signed-corim
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-corim-map" class="section-name selfRef">CoRIM Map</a>
         </h3>
 <p id="section-4.1-1">The CDDL specification for the <code>corim-map</code> is as follows and this rule and its
-constraints must be followed when creating or validating a CoRIM map.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+constraints MUST be followed when creating or validating a CoRIM map.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.1-2">
 <pre>
 corim-map = {
@@ -2238,7 +2238,7 @@ See sec-common-hash-entry}}.<a href="#section-4.1.3-4.2.1" class="pilcrow">¶</a
 A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this document.<a href="#section-4.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-3">A profile MAY constrain the values of a given CoRIM type to a subset of the values.
 A profile MAY extend the set of a given CoRIM type using the defined extension points (<a href="#sec-extensibility" class="auto internal xref">Section 5.2</a>).
-Exercised extension points should preserve the intent of the original semantics.<a href="#section-4.1.4-3" class="pilcrow">¶</a></p>
+Exercised extension points SHOULD preserve the intent of the original semantics.<a href="#section-4.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-4">CoRIM profiles SHOULD be specified in a publicly available document.<a href="#section-4.1.4-4" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media type defined in <a href="#sec-mt-rim-cbor" class="auto internal xref">Section 12.12.1</a> with the <code>profile</code> parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.<a href="#section-4.1.4-5" class="pilcrow">¶</a></p>
@@ -2274,6 +2274,7 @@ $corim-role-type-choice /= &amp;(manifest-creator: 1)
 $corim-role-type-choice /= &amp;(manifest-signer: 2)
 </pre><a href="#section-4.1.5-4" class="pilcrow">¶</a>
 </div>
+<p id="section-4.1.5-5">The <code>corim-entity-map</code> MUST NOT contain two entities with the <code>manifest-signer</code> role.<a href="#section-4.1.5-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2451,7 +2452,7 @@ The Collection CMW type for a CoRIM collection SHALL be <code>tag:{{&amp;SELF}}:
 The signing operation MUST include the <code>corim-meta</code> in the COSE_Sign1 <code>protected-header</code> parameter.
 The <code>corim-meta</code> statement ensures that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the <code>cmwc_t</code> content type parameter for the <code>&amp;(content-type: 3)</code> COSE header.<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.3.1-3">If using other signing envelope formats, the CoRIM signing authority MUST be specified, e.g., by adding the <code>manifest-signer</code> role to every CoRIM, or by using a protected header analogous to <code>corim-meta</code>.<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.3.1-3">If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the <code>manifest-signer</code> role to every CoRIM, or by using a protected header analogous to <code>corim-meta</code>.<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.3.1-4">
 <pre>
 corim-cbor-collection = {
@@ -2869,7 +2870,7 @@ context (triple) in which the environment is used.<a href="#section-5.1.4.1-1" c
 <p id="section-5.1.4.1-2">An environment is named after a class, instance or group identifier (or a
 combination thereof).<a href="#section-5.1.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1-3">An environment MUST be globally unique.
-The combination of values within <code>class-map</code> must combine to form a globally unique identifier.<a href="#section-5.1.4.1-3" class="pilcrow">¶</a></p>
+The combination of values within <code>class-map</code> MUST combine to form a globally unique identifier.<a href="#section-5.1.4.1-3" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1-4">
 <pre>
 environment-map = non-empty&lt;{
@@ -3118,7 +3119,7 @@ Described in <a href="#sec-comid-flags" class="auto internal xref">Section 5.1.4
                   <li class="normal" id="section-5.1.4.1.4.2-5.5">
                     <p id="section-5.1.4.1.4.2-5.5.1"><code>raw-value</code> (index 4): Contains the actual (not hashed) value of the element.
 The vendor determines the encoding of <code>raw-value</code>.
-When used for comparison, a mask may be provided indicating which bits in the <code>raw-value</code> field must be compared.
+When used for comparison, a mask may be provided indicating which bits in the <code>raw-value</code> field are compared.
 Described in <a href="#sec-comid-raw-value-types" class="auto internal xref">Section 5.1.4.1.4.6</a><a href="#section-5.1.4.1.4.2-5.5.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.6">
@@ -3302,7 +3303,7 @@ for consistency only, since the security relevance is opaque to Verifiers.<a hre
 <p id="section-5.1.4.1.4.6-2">A <code>raw-value</code> measurement, or an Endorsement, is a tagged value of type <code>bytes</code>.
 This specification defines tag #6.560.
 The default raw value measurement is of type <code>tagged-bytes</code> (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>).<a href="#section-5.1.4.1.4.6-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4.6-3">Additional value types can be added to <code>$raw-value-type-choice</code>, these additional values MUST be CBOR tagged <code>bstr</code>s.
+<p id="section-5.1.4.1.4.6-3">Additional value types can be added to <code>$raw-value-type-choice</code>. These additional values MUST be CBOR tagged <code>bstr</code>s.
 Constraining all raw value types to be <code>bstr</code> lets Verifiers compare raw values without understanding their contents.<a href="#section-5.1.4.1.4.6-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1.4.6-4">A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
 The mask is applied by the Verifier as part of appraisal.
@@ -3611,7 +3612,7 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
 <a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
             </h5>
 <p id="section-5.1.4.5-1">The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in <code>condition:</code>) followed by a series condition match (specified in <code>selection:</code> inside <code>conditional-series-record</code>).
-Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points (i.e., mval.key) MUST be the same across each <code>conditional-series-record</code>.
+Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each <code>conditional-series-record</code>.
 For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.5-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
@@ -3670,10 +3671,10 @@ The existence of these keys is asserted in Evidence, Reference Values, or Endors
 The Verifier SHOULD verify keys contained in Device Identity triples.<a href="#section-5.1.4.6-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.6-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-5.1.4.6-5" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.6-6">If a key has usage restrictions that limit its use to device identity challenges, Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.6-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.6-6">If a key has usage restrictions that limit its use to device identity challenges, the Verifier SHOULD enforce key use restrictions.<a href="#section-5.1.4.6-6" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.6-7">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
-Additionally, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.6-7" class="pilcrow">¶</a></p>
+The Verifier MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.6-7" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.6-8">
 <pre>
 identity-triple-record = [
@@ -3719,10 +3720,10 @@ The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#sectio
 <p id="section-5.1.4.7-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.4.7-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in <span>[<a href="#DICE.cert" class="cite xref">DICE.cert</a>]</span>).
-Verifiers SHOULD enforce key use restrictions.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
+The Verifier SHOULD enforce key use restrictions.<a href="#section-5.1.4.7-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.7-6">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
-Additionally, Verifiers MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.7-6" class="pilcrow">¶</a></p>
+The Verifier MAY report key verification results as part of an error reporting function.<a href="#section-5.1.4.7-6" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.7-7">
 <pre>
 attest-key-triple-record = [
@@ -3889,7 +3890,7 @@ the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
 a complete set of verification-related information.  The <code>tags-list</code> behaves
 like a signaling mechanism from the supply chain (e.g., a product vendor) to
 a Verifier that activates the tags in <code>tags-list</code> for use in the Evidence
-appraisal process. The activation is atomic: all tags listed in <code>tags-list</code>
+appraisal process, and the activation is atomic. All tags listed in <code>tags-list</code>
 MUST be activated or no tags are activated.<a href="#section-6.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-4.3">
@@ -4873,7 +4874,8 @@ The primary goal of this phase is to ensure that all necessary information is av
             </h5>
 <p id="section-9.2.1.1-1">All available CoRIMs are collected.<a href="#section-9.2.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.1-2">CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.<a href="#section-9.2.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.1-3">Any CoRIM that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.<a href="#section-9.2.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.1-3">Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
+An example of such a mechanism is a digital signature.<a href="#section-9.2.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.1-4">Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.<a href="#section-9.2.1.1-4" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.1-5">Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.<a href="#section-9.2.1.1-5" class="pilcrow">¶</a></p>
@@ -4897,7 +4899,7 @@ Cross-referenced triples MUST be successfully resolved. An example of a cross-re
 <p id="section-9.2.1.3-1">This section is not applicable if the Verifier appraisal policy does not require CoTLs.<a href="#section-9.2.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.3-2">CoTLs which are not within their validity period MUST be discarded.<a href="#section-9.2.1.3-2" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.3-3">The Verifier processes all CoTLs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.<a href="#section-9.2.1.3-3" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.3-4">A Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
+<p id="section-9.2.1.3-4">The Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
 Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
 In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoTLs that are not also activated by the trusted integrator.<a href="#section-9.2.1.3-4" class="pilcrow">¶</a></p>
@@ -5476,7 +5478,7 @@ trigger special encoding in the Verifier. The Verifier follows instructions
 in the CoRIM file which tell it how claims are related.<a href="#section-9.3.1.1-7" class="pilcrow">¶</a></p>
 <p id="section-9.3.1.1-8">If Evidence or Endorsements from different sources has the same <code>environment-map</code>
 and <code>authorized-by</code> then the <code>measurement-values-map</code>s are merged.<a href="#section-9.3.1.1-8" class="pilcrow">¶</a></p>
-<p id="section-9.3.1.1-9">The ACS must maintain the authority information for each ECT. There can be
+<p id="section-9.3.1.1-9">The ACS MUST maintain the authority information for each ECT. There can be
 multiple entries in <code>state-triples</code> which have the same <code>environment-map</code>
 and a different authority.
 See <a href="#sec-authority" class="auto internal xref">Section 9.3.2.2</a>.<a href="#section-9.3.1.1-9" class="pilcrow">¶</a></p>
@@ -5484,7 +5486,7 @@ See <a href="#sec-authority" class="auto internal xref">Section 9.3.2.2</a>.<a h
 measurement values are equivalent, then duplicate claims SHOULD be omitted.
 Equivalence typically means values MUST be binary identical.<a href="#section-9.3.1.1-10" class="pilcrow">¶</a></p>
 <p id="section-9.3.1.1-11">If the merged <code>measurement-values-map</code> contains duplicate codepoints and the
-measurement values are not equivalent, then a Verifier SHALL report
+measurement values are not equivalent, then the Verifier SHALL report
 an error and stop validation processing.<a href="#section-9.3.1.1-11" class="pilcrow">¶</a></p>
 <div id="ordering-of-triple-processing">
 <section id="section-9.3.1.1.1">
@@ -5538,8 +5540,8 @@ See <a href="#sec-acs-aug" class="auto internal xref">Section 9.3</a>.<a href="#
 <p id="section-9.3.2.2-2">The Verifier keeps track of authority so that it can satisfy appraisal policy that specifies authority.<a href="#section-9.3.2.2-2" class="pilcrow">¶</a></p>
 <p id="section-9.3.2.2-3">When adding an Evidence entry to the ACS, the Verifier SHALL set the <code>authority</code> field using a <code>$crypto-keys-type-choice</code> representation of the entity that signed the Evidence.<a href="#section-9.3.2.2-3" class="pilcrow">¶</a></p>
 <p id="section-9.3.2.2-4">If multiple authorities approve the same Claim, for example if multiple key chains are available, then the <code>authority</code> field SHALL be set to include the <code>$crypto-keys-type-choice</code> representation for each key chain.<a href="#section-9.3.2.2-4" class="pilcrow">¶</a></p>
-<p id="section-9.3.2.2-5">When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing.
-The Verifier SHALL set the <code>authority</code> field using a <code>$crypto-keys-type-choice</code> representation of the entity that signed the CoRIM.<a href="#section-9.3.2.2-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.2.2-5">When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing,
+the Verifier SHALL set the <code>authority</code> field using a <code>$crypto-keys-type-choice</code> representation of the entity that signed the CoRIM.<a href="#section-9.3.2.2-5" class="pilcrow">¶</a></p>
 <p id="section-9.3.2.2-6">When searching the ACS for an entry which matches a triple condition containing an <code>authorized-by</code> field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition <code>authorized-by</code> field are present in the ACS <code>authority</code> field.
 The Verifier SHALL match ACS entries if all of the entries present in the condition <code>authorized-by</code> field are present in the ACS <code>authority</code> field.<a href="#section-9.3.2.2-6" class="pilcrow">¶</a></p>
 </section>
@@ -5692,8 +5694,8 @@ Attestation Results contexts are the inputs to Attestation Results procedures th
         <h3 id="name-comparing-a-condition-ect-a">
 <a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-comparing-a-condition-ect-a" class="section-name selfRef">Comparing a condition ECT against the ACS</a>
         </h3>
-<p id="section-9.4-1">A Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See <a href="#sec-match-one-condition-ect" class="auto internal xref">Section 9.4.1</a>.
-A Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4-1">The Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See <a href="#sec-match-one-condition-ect" class="auto internal xref">Section 9.4.1</a>.
+The Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.<a href="#section-9.4-1" class="pilcrow">¶</a></p>
 <p id="section-9.4-2">If the matched entries array is not empty, then the condition ECT matches the ACS.<a href="#section-9.4-2" class="pilcrow">¶</a></p>
 <p id="section-9.4-3">If the matched entries array is empty, then the condition ECT does not match the ACS.<a href="#section-9.4-3" class="pilcrow">¶</a></p>
 <div id="sec-match-one-condition-ect">
@@ -5701,9 +5703,9 @@ A Verifier SHALL create a "matched entries" set, and SHALL populate it with all 
           <h4 id="name-comparing-a-condition-ect-ag">
 <a href="#section-9.4.1" class="section-number selfRef">9.4.1. </a><a href="#name-comparing-a-condition-ect-ag" class="section-name selfRef">Comparing a condition ECT against a single ACS entry</a>
           </h4>
-<p id="section-9.4.1-1">If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and <code>environment-map</code> then a Verifier MUST use the algorithm defined by the profile (or a standard algorithm if the profile defines that).
+<p id="section-9.4.1-1">If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and <code>environment-map</code> then the Verifier MUST use the algorithm defined by the profile, or it MUST use a standard algorithm if the profile defines that.
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and <code>environment-map</code> then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.<a href="#section-9.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.1-2">A Verifier SHALL perform all of the comparisons defined in <a href="#sec-compare-environment" class="auto internal xref">Section 9.4.2</a>, <a href="#sec-compare-authority" class="auto internal xref">Section 9.4.3</a>, and <a href="#sec-compare-element-list" class="auto internal xref">Section 9.4.4</a>.<a href="#section-9.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-2">The Verifier SHALL perform all of the comparisons defined in <a href="#sec-compare-environment" class="auto internal xref">Section 9.4.2</a>, <a href="#sec-compare-authority" class="auto internal xref">Section 9.4.3</a>, and <a href="#sec-compare-element-list" class="auto internal xref">Section 9.4.4</a>.<a href="#section-9.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.1-3">Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.<a href="#section-9.4.1-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.1-4">If all of the fields match, then the condition ECT matches the ACS entry.<a href="#section-9.4.1-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.1-5">If any of the fields does not match, then the condition ECT does not match the ACS entry.<a href="#section-9.4.1-5" class="pilcrow">¶</a></p>
@@ -5714,8 +5716,8 @@ If the condition ECT contains a profile, but the profile does not define an algo
           <h4 id="name-environment-comparison">
 <a href="#section-9.4.2" class="section-number selfRef">9.4.2. </a><a href="#name-environment-comparison" class="section-name selfRef">Environment Comparison</a>
           </h4>
-<p id="section-9.4.2-1">A Verifier SHALL compare each field which is present in the condition ECT <code>environment-map</code> against the corresponding field in the ACS entry <code>environment-map</code> using binary comparison.
-Before performing the binary comparison, a Verifier SHOULD convert both <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-1">The Verifier SHALL compare each field which is present in the condition ECT <code>environment-map</code> against the corresponding field in the ACS entry <code>environment-map</code> using binary comparison.
+Before performing the binary comparison, the Verifier SHOULD convert both <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-2">If all fields which are present in the condition ECT <code>environment-map</code> are present in the ACS entry and are binary identical, then the environments match.<a href="#section-9.4.2-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-3">If any field which is present in the condition ECT <code>environment-map</code> is not present in the ACS entry, then the environments do not match.<a href="#section-9.4.2-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-4">If any field which is present in the condition ECT <code>environment-map</code> is not binary identical to the corresponding ACS entry field, then the environments do not match.<a href="#section-9.4.2-4" class="pilcrow">¶</a></p>
@@ -5727,11 +5729,11 @@ Before performing the binary comparison, a Verifier SHOULD convert both <code>en
           <h4 id="name-authority-comparison">
 <a href="#section-9.4.3" class="section-number selfRef">9.4.3. </a><a href="#name-authority-comparison" class="section-name selfRef">Authority comparison</a>
           </h4>
-<p id="section-9.4.3-1">A Verifier SHALL compare the condition ECT's <code>authority</code> value to the candidate entry's <code>authority</code> value.<a href="#section-9.4.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.3-1">The Verifier SHALL compare the condition ECT's <code>authority</code> value to the candidate entry's <code>authority</code> value.<a href="#section-9.4.3-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.3-2">If every entry in the condition ECT <code>authority</code> has a matching entry in the ACS entry <code>authority</code> field, then the authorities match.
 The order of the fields in each <code>authority</code> field do not affect the result of the comparison.<a href="#section-9.4.3-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.3-3">If any entry in the condition ECT <code>authority</code> does not have a matching entry in the ACS entry <code>authority</code> field then the authorities do not match.<a href="#section-9.4.3-3" class="pilcrow">¶</a></p>
-<p id="section-9.4.3-4">When comparing two <code>$crypto-key-type-choice</code> fields for equality, a Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.<a href="#section-9.4.3-4" class="pilcrow">¶</a></p>
+<p id="section-9.4.3-4">When comparing two <code>$crypto-key-type-choice</code> fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.<a href="#section-9.4.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-compare-element-list">
@@ -5739,7 +5741,7 @@ The order of the fields in each <code>authority</code> field do not affect the r
           <h4 id="name-element-list-comparison">
 <a href="#section-9.4.4" class="section-number selfRef">9.4.4. </a><a href="#name-element-list-comparison" class="section-name selfRef">Element list comparison</a>
           </h4>
-<p id="section-9.4.4-1">A Verifier SHALL iterate over all the entries in the condition ECT <code>element-list</code> and compare each one against the corresponding entry in the ACS entry <code>element-list</code>.<a href="#section-9.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.4-1">The Verifier SHALL iterate over all the entries in the condition ECT <code>element-list</code> and compare each one against the corresponding entry in the ACS entry <code>element-list</code>.<a href="#section-9.4.4-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.4-2">If every entry in the condition ECT <code>element-list</code> has a matching entry in the ACS entry <code>element-list</code> field then the element lists match.<a href="#section-9.4.4-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.4-3">The order of the fields in each <code>element-list</code> field do not affect the result of the comparison.<a href="#section-9.4.4-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.4-4">If any entry in the condition ECT <code>element-list</code> does not have a matching entry in the ACS entry <code>element-list</code> field then the <code>element-list</code> do not match.<a href="#section-9.4.4-4" class="pilcrow">¶</a></p>
@@ -5750,13 +5752,13 @@ The order of the fields in each <code>authority</code> field do not affect the r
           <h4 id="name-element-map-comparison">
 <a href="#section-9.4.5" class="section-number selfRef">9.4.5. </a><a href="#name-element-map-comparison" class="section-name selfRef">Element map comparison</a>
           </h4>
-<p id="section-9.4.5-1">A Verifier shall compare each <code>element-map</code> within the condition ECT <code>element-list</code> against the ACS entry <code>element-list</code>.<a href="#section-9.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.5-2">First, a Verifier SHALL locate the entries in the ACS entry <code>element-list</code> which have a matching <code>element-id</code> as the condition ECT <code>element-map</code>.
+<p id="section-9.4.5-1">The Verifier SHALL compare each <code>element-map</code> within the condition ECT <code>element-list</code> against the ACS entry <code>element-list</code>.<a href="#section-9.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.5-2">First, the Verifier SHALL locate the entries in the ACS entry <code>element-list</code> which have a matching <code>element-id</code> as the condition ECT <code>element-map</code>.
 Two <code>element-id</code> fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.<a href="#section-9.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.4.5-3">Before performing the binary comparison, a Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-9.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.4.5-3">Before performing the binary comparison, the Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-9.4.5-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.5-4">If any condition ECT entry <code>element-id</code> does not have a corresponding <code>element-id</code> in the ACS entry then the element map does not match.<a href="#section-9.4.5-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.5-5">If any condition ECT entry has multiple corresponding <code>element-id</code>s then the element map does not match.<a href="#section-9.4.5-5" class="pilcrow">¶</a></p>
-<p id="section-9.4.5-6">Second, a Verifier SHALL compare the <code>element-claims</code> field within the condition ECT <code>element-list</code> and the corresponding field from the ACS entry.
+<p id="section-9.4.5-6">Second, the Verifier SHALL compare the <code>element-claims</code> field within the condition ECT <code>element-list</code> and the corresponding field from the ACS entry.
 See <a href="#sec-compare-mvm" class="auto internal xref">Section 9.4.6</a>.<a href="#section-9.4.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -5765,7 +5767,7 @@ See <a href="#sec-compare-mvm" class="auto internal xref">Section 9.4.6</a>.<a h
           <h4 id="name-measurement-values-map-map-">
 <a href="#section-9.4.6" class="section-number selfRef">9.4.6. </a><a href="#name-measurement-values-map-map-" class="section-name selfRef">Measurement values map map Comparison</a>
           </h4>
-<p id="section-9.4.6-1">A Verifier SHALL iterate over the codepoints which are present in the condition ECT element's <code>measurement-values-map</code>.
+<p id="section-9.4.6-1">The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's <code>measurement-values-map</code>.
 Each of the codepoints present in the condition ECT <code>measurement-values-map</code> is compared against the same codepoint in the candidate entry <code>measurement-values-map</code>.<a href="#section-9.4.6-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.6-2">If any codepoint present in the condition ECT <code>measurement-values-map</code> does not have a corresponding codepoint within the candidate entry <code>measurement-values-map</code> then Verifier SHALL remove that candidate entry from the candidate entries array.<a href="#section-9.4.6-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.6-3">If any codepoint present in the condition ECT <code>measurement-values-map</code> does not match the same codepoint within the candidate entry <code>measurement-values-map</code> then Verifier SHALL remove that candidate entry from the candidate entries array.<a href="#section-9.4.6-3" class="pilcrow">¶</a></p>
@@ -5774,13 +5776,13 @@ Each of the codepoints present in the condition ECT <code>measurement-values-map
             <h5 id="name-comparison-of-a-single-meas">
 <a href="#section-9.4.6.1" class="section-number selfRef">9.4.6.1. </a><a href="#name-comparison-of-a-single-meas" class="section-name selfRef">Comparison of a single measurement-values-map codepoint</a>
             </h5>
-<p id="section-9.4.6.1-1">A Verifier SHALL compare each condition ECT <code>measurement-values-map</code> value against the corresponding ACS entry value using the appropriate algorithm.<a href="#section-9.4.6.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1-1">The Verifier SHALL compare each condition ECT <code>measurement-values-map</code> value against the corresponding ACS entry value using the appropriate algorithm.<a href="#section-9.4.6.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1-2">Non-negative codepoints represent standard data representations.
 The comparison algorithms for these are defined in this document (in the sections below) or in other specifications.
 For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT <code>measurement-values-map</code> value.<a href="#section-9.4.6.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1-3">Negative codepoints represent profile defined data representations.
-A Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and the tag value (if present) to select the comparison algorithm.<a href="#section-9.4.6.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.4.6.1-4">If a Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.<a href="#section-9.4.6.1-4" class="pilcrow">¶</a></p>
+The Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and, if present, the tag value to select the comparison algorithm.<a href="#section-9.4.6.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1-4">If the Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.<a href="#section-9.4.6.1-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1-5">Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.<a href="#section-9.4.6.1-5" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1-6">The following subsections define the comparison algorithms for the <code>measurement-values-map</code> codepoints defined by this specification.<a href="#section-9.4.6.1-6" class="pilcrow">¶</a></p>
 <div id="comparison-for-version-entries">
@@ -5788,7 +5790,7 @@ A Verifier SHALL use the codepoint number, the profile associated with the condi
               <h6 id="name-comparison-for-version-entr">
 <a href="#section-9.4.6.1.1" class="section-number selfRef">9.4.6.1.1. </a><a href="#name-comparison-for-version-entr" class="section-name selfRef">Comparison for version entries</a>
               </h6>
-<p id="section-9.4.6.1.1-1">The value stored under <code>measurement-values-map</code> codepoint 0 is an version label, which must have type <code>version-map</code>.
+<p id="section-9.4.6.1.1-1">The value stored under <code>measurement-values-map</code> codepoint 0 is an version label, which MUST have type <code>version-map</code>.
 Two <code>version-map</code> values can only be compared for equality, as they are colloquial versions that cannot specify ordering.<a href="#section-9.4.6.1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -5797,7 +5799,7 @@ Two <code>version-map</code> values can only be compared for equality, as they a
               <h6 id="name-comparison-for-svn-entries">
 <a href="#section-9.4.6.1.2" class="section-number selfRef">9.4.6.1.2. </a><a href="#name-comparison-for-svn-entries" class="section-name selfRef">Comparison for svn entries</a>
               </h6>
-<p id="section-9.4.6.1.2-1">The ACS entry value stored under <code>measurement-values-map</code> codepoint 1 is a security version number, which must have type <code>svn-type</code>.<a href="#section-9.4.6.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1.2-1">The ACS entry value stored under <code>measurement-values-map</code> codepoint 1 is a security version number, which MUST have type <code>svn-type</code>.<a href="#section-9.4.6.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.2-2">If the entry <code>svn-type</code> is a <code>uint</code> or a <code>uint</code> tagged with #6.552, then comparison with the <code>uint</code> named as SVN is as follows.<a href="#section-9.4.6.1.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-9.4.6.1.2-3.1">
@@ -5831,14 +5833,15 @@ The condition therefore treats the minimum SVN as an exact state and not one to 
 <p id="section-9.4.6.1.3-1">A <code>digests</code> entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.<a href="#section-9.4.6.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.3-2">In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.<a href="#section-9.4.6.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-9.4.6.1.3-3">To prevent downgrade attacks, if there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms must be equal.
-A Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
+<p id="section-9.4.6.1.3-3">If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
+This is to prevent downgrade attacks.
+The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
 If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.<a href="#section-9.4.6.1.3-3" class="pilcrow">¶</a></p>
-<p id="section-9.4.6.1.3-4">The comparison MUST return false if the CBOR encoding of the <code>digests</code> entry in the condition ECT or the ACS value with the same codepoint is incorrect (for example if fields are missing or the wrong type).<a href="#section-9.4.6.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1.3-4">The comparison MUST return false if the CBOR encoding of the <code>digests</code> entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.<a href="#section-9.4.6.1.3-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.3-5">The comparison MUST return false if the condition ECT digests entry does not contain any digests.<a href="#section-9.4.6.1.3-5" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.3-6">The comparison MUST return false if either digests entry contains multiple values for the same hash algorithm.<a href="#section-9.4.6.1.3-6" class="pilcrow">¶</a></p>
-<p id="section-9.4.6.1.3-7">The Verifier MUST iterate over the condition ECT <code>digests</code> array, locating common hash algorithm identifiers (which are present in the condition ECT and in the candidate entry).
+<p id="section-9.4.6.1.3-7">The Verifier MUST iterate over the condition ECT <code>digests</code> array, locating the common hash algorithm identifiers which are present in both the condition ECT and in the candidate entry.
 If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.<a href="#section-9.4.6.1.3-7" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.3-8">The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.<a href="#section-9.4.6.1.3-8" class="pilcrow">¶</a></p>
 </section>
@@ -5849,7 +5852,7 @@ If the value associated with any common hash algorithm identifier in the conditi
 <a href="#section-9.4.6.1.4" class="section-number selfRef">9.4.6.1.4. </a><a href="#name-comparison-for-raw-value-en" class="section-name selfRef">Comparison for raw-value entries</a>
               </h6>
 <p id="section-9.4.6.1.4-1">A <code>raw-value</code> entry contains binary data.<a href="#section-9.4.6.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.6.1.4-2">The value stored under <code>measurement-values-map</code> codepoint 4 in an ACS entry must be a <code>raw-value</code> entry, which must be tagged and have type <code>bytes</code>.<a href="#section-9.4.6.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1.4-2">The value stored under <code>measurement-values-map</code> codepoint 4 in an ACS entry MUST be a <code>raw-value</code> entry, which MUST be tagged and have type <code>bytes</code>.<a href="#section-9.4.6.1.4-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.4-3">The value stored under the condition ECT <code>measurement-values-map</code> codepoint 4 may additionally be a <code>tagged-masked-raw-value</code> entry, which specifies an expected value and a mask.<a href="#section-9.4.6.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.4-4">If the condition ECT <code>measurement-value-map</code> codepoint 4 is of <code>tagged-bytes</code>, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a <code>tagged-masked-raw-value</code> with the <code>value</code> field holding the same contents and a <code>mask</code> of the same length as the value with all bits set.
 The standard comparison function defined in this document removes the tag before performing the comparison.<a href="#section-9.4.6.1.4-4" class="pilcrow">¶</a></p>
@@ -5889,7 +5892,7 @@ Note that it is not required for all the entries in the candidate entry to be us
               <h6 id="name-comparison-for-raw-int-entr">
 <a href="#section-9.4.6.1.7" class="section-number selfRef">9.4.6.1.7. </a><a href="#name-comparison-for-raw-int-entr" class="section-name selfRef">Comparison for raw-int entries</a>
               </h6>
-<p id="section-9.4.6.1.7-1">The ACS entry value stored under <code>measurement-values-map</code> codepoint 15 is a raw int value, which must have type <code>raw-int-type-choice</code>.<a href="#section-9.4.6.1.7-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1.7-1">The ACS entry value stored under <code>measurement-values-map</code> codepoint 15 is a raw int value, which MUST have type <code>raw-int-type-choice</code>.<a href="#section-9.4.6.1.7-1" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.7-2">Consider an <code>int</code> ACS entry value named ENTRY in a <code>measurement-values-map</code> codepoint (e.g., 15) that allows comparing <code>int</code> against a either another <code>int</code> or an <code>int-range</code> named CONDITION.<a href="#section-9.4.6.1.7-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-9.4.6.1.7-3.1">
@@ -5938,8 +5941,8 @@ The comparison MUST return true if and only if all the following conditions are 
 <a href="#section-9.4.7" class="section-number selfRef">9.4.7. </a><a href="#name-profile-directed-comparison" class="section-name selfRef">Profile-directed Comparison</a>
           </h4>
 <p id="section-9.4.7-1">A profile MUST specify comparison algorithms for its additions to <code>$</code>-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
-The profile must specify how to compare the CBOR tagged Reference Value against the ACS.<a href="#section-9.4.7-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.7-2">Note that a Verifier may compare Reference Values in any order, so the comparison should not be stateful.<a href="#section-9.4.7-2" class="pilcrow">¶</a></p>
+The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.<a href="#section-9.4.7-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.7-2">Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.<a href="#section-9.4.7-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -6970,7 +6973,12 @@ Assignments consist of an integer index value, the item name, and a reference to
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">15-18446744073709551616</td>
+              <td class="text-left" rowspan="1" colspan="1">15</td>
+              <td class="text-left" rowspan="1" colspan="1">raw-int</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">16-18446744073709551616</td>
               <td class="text-left" rowspan="1" colspan="1">Unassigned</td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
@@ -7568,7 +7576,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-msg-wrap">[I-D.ietf-rats-msg-wrap]</dt>
         <dd>
-<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Smith, N.</span>, <span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">D. Glaze</span>, <span class="refTitle">"RATS Conceptual Messages Wrapper (CMW)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-msg-wrap-12</span>, <time datetime="2025-02-28" class="refDate">28 February 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-12">https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-12</a>&gt;</span>. </dd>
+<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Smith, N.</span>, <span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">D. Glaze</span>, <span class="refTitle">"RATS Conceptual Messages Wrapper (CMW)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-msg-wrap-13</span>, <time datetime="2025-04-15" class="refDate">15 April 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-13">https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-13</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.tschofenig-rats-psa-token">[I-D.tschofenig-rats-psa-token]</dt>
         <dd>
