@@ -1026,6 +1026,8 @@ The following describes each member of the `measurement-values-map`.
   When used for comparison, the `tagged-masked-raw-value` variant includes a mask indicating which bits in the value to compare.
   Described in {{sec-comid-raw-value-types}}
 
+* `raw-value-mask-DEPRECATED` (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the `tagged-masked-raw-value` on index 4 instead of using index 5.
+
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
   Described in {{sec-comid-address-types}}.
 
