@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 1 November 2025                                          Linaro
+Expires: 8 November 2025                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           30 April 2025
+                                                              7 May 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 November 2025.
+   This Internet-Draft will expire on 8 November 2025.
 
 Copyright Notice
 
@@ -339,9 +339,9 @@ Table of Contents
       assembly.  See also Section 4.2.4 of [I-D.ietf-rats-eat].
 
    Domain:
-      A context to represent a collection of Environments that are
-      grouped togther to represent an entity, for example a Composite
-      Device Section 3.3 of [RFC9334]
+      A topological description to represent an entity, for example a
+      Composite Device (Section 3.3 of [RFC9334]), in terms of its
+      constituent Environments.
 
    Endorsed values:
       A set of characteristics of an Attester that do not appear in
@@ -2080,8 +2080,8 @@ Table of Contents
 
 5.1.4.9.  Domain Membership Triple
 
-   A Domain Membership triple assigns a domain identifier to member
-   environments.  The triple subject identifies a domain
+   A Domain Membership triple associates a domain identifier with
+   corresponding member environments. triple subject identifies a domain
    (Section 5.1.4.1.8) that has a membership predicate relationship to
    the object where the object contains one or more members.  When
    predicates are domains, it allows Endorsers to construct a
@@ -2463,8 +2463,7 @@ Table of Contents
    5.  Profile : The profile that defines this tuple.  If no profile is
        used, this attribute is omitted.
 
-   6.  Domain Identifier : The Identity of the Domain to which a given
-       ECT belongs.
+   6.  Domain Identifier : The Domain to which a given ECT belongs.
 
    The following CDDL describes the ECT structure in more detail.
 
@@ -2689,17 +2688,17 @@ Table of Contents
 
    An internal representation of Domain Membership uses the dm relation,
    which is a list of ECTs that describes the composition of an Attester
-   with an identity of the domain specified in the identity ECT.
+   with an identity of the Domain specified in the identity ECT.
 
    dm = [ + {
      domain-id: ECT
      members:  [ + ECT ]
    } ]
 
-   The domain member Environments are compared with the Environments
+   The Domain member Environments are compared with the Environments
    specified in the list of ECTs in ACS whose cmtype matches Evidence.
    If the environment for every entry of the members of dm matches an
-   entry in the ACS ECTs then the domain identity is copied to every
+   entry in the ACS ECTs then the Domain identity is copied to every
    member ECT.  The members are added to the ACS with authority
    specified in the identity.
 
@@ -3187,8 +3186,8 @@ Table of Contents
 
    Step 1.  A dm entry (Section 9.1.6) is allocated.
 
-   Step 2.  The cmtype of the members ECT in the dm entry is set to
-            domain-member.
+   Step 2.  The cmtype of the members ECT in the dm entry is set to 6
+            (domain-member).
 
    Step 3.  The Domain Membership Triple (DMT) (Section 5.1.4.9)
             populates the dm ECTs.
