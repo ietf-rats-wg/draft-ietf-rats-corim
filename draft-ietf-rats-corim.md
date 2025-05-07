@@ -1023,8 +1023,10 @@ The following describes each member of the `measurement-values-map`.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   The vendor determines the encoding of `raw-value`.
-  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field are compared.
+  When used for comparison, the `tagged-masked-raw-value` variant includes a mask indicating which bits in the value to compare.
   Described in {{sec-comid-raw-value-types}}
+
+* `raw-value-mask-DEPRECATED` (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the `tagged-masked-raw-value` on index 4 instead of using index 5.
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
   Described in {{sec-comid-address-types}}.
@@ -1154,7 +1156,7 @@ A raw value intended for comparison can include a mask value, which selects the 
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
 
-The `raw-value-mask` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
+The `raw-value-mask-DEPRECATED` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
 This code point may be removed in a future revision of this specification.
 
 ~~~ cddl
@@ -2965,24 +2967,24 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name           | Specification |
+| Index | Item Name                 | Specification |
 |---
-| 0     | version             | {{&SELF}}     |
-| 1     | svn                 | {{&SELF}}     |
-| 2     | digests             | {{&SELF}}     |
-| 3     | flags               | {{&SELF}}     |
-| 4     | raw-value           | {{&SELF}}     |
-| 5     | raw-value-mask      | {{&SELF}}     |
-| 6     | mac-addr            | {{&SELF}}     |
-| 7     | ip-addr             | {{&SELF}}     |
-| 8     | serial-number       | {{&SELF}}     |
-| 9     | ueid                | {{&SELF}}     |
-| 10    | uuid                | {{&SELF}}     |
-| 11    | name                | {{&SELF}}     |
-| 12    | (reserved)          | {{&SELF}}     |
-| 13    | cryptokeys          | {{&SELF}}     |
-| 14    | integrity-registers | {{&SELF}}     |
-| 15    | raw-int             | {{&SELF}}     |
+| 0     | version                   | {{&SELF}}     |
+| 1     | svn                       | {{&SELF}}     |
+| 2     | digests                   | {{&SELF}}     |
+| 3     | flags                     | {{&SELF}}     |
+| 4     | raw-value                 | {{&SELF}}     |
+| 5     | raw-value-mask-DEPRECATED | {{&SELF}}     |
+| 6     | mac-addr                  | {{&SELF}}     |
+| 7     | ip-addr                   | {{&SELF}}     |
+| 8     | serial-number             | {{&SELF}}     |
+| 9     | ueid                      | {{&SELF}}     |
+| 10    | uuid                      | {{&SELF}}     |
+| 11    | name                      | {{&SELF}}     |
+| 12    | (reserved)                | {{&SELF}}     |
+| 13    | cryptokeys                | {{&SELF}}     |
+| 14    | integrity-registers       | {{&SELF}}     |
+| 15    | raw-int                   | {{&SELF}}     |
 | 16-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
