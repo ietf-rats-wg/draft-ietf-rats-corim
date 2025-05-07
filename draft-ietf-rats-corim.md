@@ -916,6 +916,8 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
+
+{::include cddl/instance-copy-type.cddl}
 ~~~
 
 ##### Environment Group {#sec-comid-group}
@@ -2407,6 +2409,21 @@ If key verification succeeds for any _key_:
 
 Otherwise, do not add the `addition` ECT to the ACS.
 
+#### Copying instance field from a condition
+
+A CoRIM author may need to create a conditional endorsement which applies to all devices of a particular type, regardless of their instance field.
+If the first `stateless-environment` in the `conditions` field does not contain an `instance` codepoint then it will match against any environment with the same `class`.
+
+If the endorsement `environment-map` does not contain an `instance` field then the endorsements will be added without an instance field.
+This may cause problems if the ACS contains evidence from multiple target environments of the same type.
+
+The endorsement `enviromnent-map`/`instance` can be tagged to indicate that it is an `instance-copy`, with an integer argument.
+This type instructs the verifier to copy the `instance` field from the referenced condition to the endorsement.
+
+The integer argument is used to select which instance field to copy.
+The value 0 indicates that the `instance` field from the ACS entry which matched the first `environment-map` in the same triple as the `instance-copy` environment should be copied;
+1 indicates the ACS entry which matched the second `environment-map` etc.
+
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
 Phases 5, 6, and 7 are optional depending on implementation design.
@@ -2774,7 +2791,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-raw-int}}                   | {{&SELF}} |
-| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     565 | `instance-copy`     | instance-copy, see {{sec-comid-instance-copy}}                | {{&SELF}} |
+| 566-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
