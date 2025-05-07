@@ -1466,11 +1466,9 @@ trustworthiness properties of the subject domain exists.
 
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
-A Domain Membership triple associates a domain identifier with corresponding member environments.
-triple subject identifies a domain ({{sec-comid-domain-type}}) that has a membership predicate
-relationship to the object where the object contains one or more members.
-When predicates are domains, it allows Endorsers to construct a hierarchical model
-where a domain can be represented using a collection of well defined domain identifiers.
+A Domain Membership triple links a domain identifier to its member Environments.
+The triple’s object lists all the Environments in the domain, and the domain is identified by the Environment in the triple’s subject.
+This allows the recursive construction of the topology of an entity such as Composite Device ({{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
