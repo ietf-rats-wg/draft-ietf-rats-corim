@@ -2409,7 +2409,7 @@ If key verification succeeds for any _key_:
 
 Otherwise, do not add the `addition` ECT to the ACS.
 
-#### Copying instance field from a condition
+#### Copying instance field from a condition {#sec-comid-instance-copy}
 
 A CoRIM author may need to create a conditional endorsement which applies to all devices of a particular type, regardless of their instance field.
 If the first `stateless-environment` in the `conditions` field does not contain an `instance` codepoint then it will match against any environment with the same `class`.
