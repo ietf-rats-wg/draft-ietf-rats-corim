@@ -3078,7 +3078,7 @@ measurement-values-map = non-empty&lt;{
   ? &amp;(flags: 3) =&gt; flags-map
   ? (
       &amp;(raw-value: 4) =&gt; $raw-value-type-choice,
-      ? &amp;(raw-value-mask: 5) =&gt; raw-value-mask-type
+      ? &amp;(raw-value-mask-DEPRECATED: 5) =&gt; raw-value-mask-type
     )
   ? &amp;(mac-addr: 6) =&gt; mac-addr-type-choice
   ? &amp;(ip-addr: 7) =&gt;  ip-addr-type-choice
@@ -3119,40 +3119,43 @@ Described in <a href="#sec-comid-flags" class="auto internal xref">Section 5.1.4
                   <li class="normal" id="section-5.1.4.1.4.2-5.5">
                     <p id="section-5.1.4.1.4.2-5.5.1"><code>raw-value</code> (index 4): Contains the actual (not hashed) value of the element.
 The vendor determines the encoding of <code>raw-value</code>.
-When used for comparison, a mask may be provided indicating which bits in the <code>raw-value</code> field are compared.
+When used for comparison, the <code>tagged-masked-raw-value</code> variant includes a mask indicating which bits in the value to compare.
 Described in <a href="#sec-comid-raw-value-types" class="auto internal xref">Section 5.1.4.1.4.6</a><a href="#section-5.1.4.1.4.2-5.5.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.6">
-                    <p id="section-5.1.4.1.4.2-5.6.1"><code>mac-addr</code> (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
-Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.6.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.6.1"><code>raw-value-mask-DEPRECATED</code> (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the <code>tagged-masked-raw-value</code> on index 4 instead of using index 5.<a href="#section-5.1.4.1.4.2-5.6.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.7">
-                    <p id="section-5.1.4.1.4.2-5.7.1"><code>ip-addr</code> (index 7): An IPv4 or IPv6 address associated with the measured environment.
+                    <p id="section-5.1.4.1.4.2-5.7.1"><code>mac-addr</code> (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
 Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.7.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.8">
-                    <p id="section-5.1.4.1.4.2-5.8.1"><code>serial-number</code> (index 8): A text string representing the product serial number.<a href="#section-5.1.4.1.4.2-5.8.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.8.1"><code>ip-addr</code> (index 7): An IPv4 or IPv6 address associated with the measured environment.
+Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.1.4.7</a>.<a href="#section-5.1.4.1.4.2-5.8.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.9">
-                    <p id="section-5.1.4.1.4.2-5.9.1"><code>ueid</code> (index 9): UEID associated with the measured environment.
-Described in <a href="#sec-common-ueid" class="auto internal xref">Section 7.5</a>.<a href="#section-5.1.4.1.4.2-5.9.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.9.1"><code>serial-number</code> (index 8): A text string representing the product serial number.<a href="#section-5.1.4.1.4.2-5.9.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.10">
-                    <p id="section-5.1.4.1.4.2-5.10.1"><code>uuid</code> (index 10): UUID associated with the measured environment.
-Described in <a href="#sec-common-uuid" class="auto internal xref">Section 7.4</a>.<a href="#section-5.1.4.1.4.2-5.10.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.10.1"><code>ueid</code> (index 9): UEID associated with the measured environment.
+Described in <a href="#sec-common-ueid" class="auto internal xref">Section 7.5</a>.<a href="#section-5.1.4.1.4.2-5.10.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.11">
-                    <p id="section-5.1.4.1.4.2-5.11.1"><code>name</code> (index 11): a name associated with the measured environment.<a href="#section-5.1.4.1.4.2-5.11.1" class="pilcrow">¶</a></p>
+                    <p id="section-5.1.4.1.4.2-5.11.1"><code>uuid</code> (index 10): UUID associated with the measured environment.
+Described in <a href="#sec-common-uuid" class="auto internal xref">Section 7.4</a>.<a href="#section-5.1.4.1.4.2-5.11.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.2-5.12">
-                    <p id="section-5.1.4.1.4.2-5.12.1"><code>cryptokeys</code> (index 13): identifies cryptographic keys that are protected by the Target Environment
+                    <p id="section-5.1.4.1.4.2-5.12.1"><code>name</code> (index 11): a name associated with the measured environment.<a href="#section-5.1.4.1.4.2-5.12.1" class="pilcrow">¶</a></p>
+</li>
+                  <li class="normal" id="section-5.1.4.1.4.2-5.13">
+                    <p id="section-5.1.4.1.4.2-5.13.1"><code>cryptokeys</code> (index 13): identifies cryptographic keys that are protected by the Target Environment
 See <a href="#sec-crypto-keys" class="auto internal xref">Section 5.1.4.1.5</a> for the supported formats.
 An Attesting Environment determines that keys are protected as part of Claims collection.
 Appraisal verifies that, for each value in <code>cryptokeys</code>, there is a matching Reference Value entry.
-Matching is described in <a href="#sec-cryptokeys-matching" class="auto internal xref">Section 9.4.6.1.5</a>.<a href="#section-5.1.4.1.4.2-5.12.1" class="pilcrow">¶</a></p>
+Matching is described in <a href="#sec-cryptokeys-matching" class="auto internal xref">Section 9.4.6.1.5</a>.<a href="#section-5.1.4.1.4.2-5.13.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="normal" id="section-5.1.4.1.4.2-5.13">
-                    <p id="section-5.1.4.1.4.2-5.13.1"><code>integrity-registers</code> (index 14): A group of one or more named measurements associated with the environment.  Described in <a href="#sec-comid-integrity-registers" class="auto internal xref">Section 5.1.4.1.6</a>.<a href="#section-5.1.4.1.4.2-5.13.1" class="pilcrow">¶</a></p>
+                  <li class="normal" id="section-5.1.4.1.4.2-5.14">
+                    <p id="section-5.1.4.1.4.2-5.14.1"><code>integrity-registers</code> (index 14): A group of one or more named measurements associated with the environment.  Described in <a href="#sec-comid-integrity-registers" class="auto internal xref">Section 5.1.4.1.6</a>.<a href="#section-5.1.4.1.4.2-5.14.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </section>
@@ -3308,7 +3311,7 @@ Constraining all raw value types to be <code>bstr</code> lets Verifiers compare 
 <p id="section-5.1.4.1.4.6-4">A raw value intended for comparison can include a mask value, which selects the bits to compare during appraisal.
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.<a href="#section-5.1.4.1.4.6-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4.6-5">The <code>raw-value-mask</code> in <code>measurement-values-map</code> is deprecated, but retained for backwards compatibility.
+<p id="section-5.1.4.1.4.6-5">The <code>raw-value-mask-DEPRECATED</code> in <code>measurement-values-map</code> is deprecated, but retained for backwards compatibility.
 This code point may be removed in a future revision of this specification.<a href="#section-5.1.4.1.4.6-5" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.4.6-6">
 <pre>
@@ -6924,7 +6927,7 @@ Assignments consist of an integer index value, the item name, and a reference to
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">5</td>
-              <td class="text-left" rowspan="1" colspan="1">raw-value-mask</td>
+              <td class="text-left" rowspan="1" colspan="1">raw-value-mask-DEPRECATED</td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
@@ -7909,7 +7912,7 @@ measurement-values-map = non-empty&lt;{
   ? &amp;(flags: 3) =&gt; flags-map
   ? (
       &amp;(raw-value: 4) =&gt; $raw-value-type-choice,
-      ? &amp;(raw-value-mask: 5) =&gt; raw-value-mask-type
+      ? &amp;(raw-value-mask-DEPRECATED: 5) =&gt; raw-value-mask-type
     )
   ? &amp;(mac-addr: 6) =&gt; mac-addr-type-choice
   ? &amp;(ip-addr: 7) =&gt;  ip-addr-type-choice
