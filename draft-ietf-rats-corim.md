@@ -2274,7 +2274,7 @@ The following transformation steps are applied for both the `identity-triples` a
 {:dmt-enum: counter="dmt1" style="format Step %d."}
 
 {: dmt-enum}
-* A `dm` entry ({{sec-dm-membership}}) is allocated.
+* A `dm` entry ({{sec-ir-dm}}) is allocated.
 
 * The `cmtype` of the `members` ECT in the `dm` entry is set to 6 (`domain-member`).
 
@@ -2433,7 +2433,7 @@ Domain Membership Triples allow an Endorser (for example an Integrator) to issue
 If the Verifier Appraisal policy requires Domain Membership, then membership triple sets a reference composition of an Attester in a Verifier database.
 At the time of Verification, the reference is then matched with actual composition as reported by an Attester in the Evidence.
 
-Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-dm-trans}} leading to a representation as specified in {{sec-dm-membership}}.
+Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-ir-dm-trans}} leading to a representation as specified in {{sec-ir-dm}}.
 
 For each `ECT` entry in the list of `members`, the environment elements (example Class ID) is compared with the equivalent environment elements in ACS Entry with `cmtype` as `evidence`.
 The process continues, untill every environment in the member list matches the entry in ACS.
