@@ -220,7 +220,7 @@ Class ID:
 See also {{Section 4.2.4 of -eat}}.
 
 Domain:
-: A context to represent a collection of Environments that are grouped togther to represent an entity, for example a Composite Device {{Section 3.3 of -rats-arch}}
+: A topological description to represent an entity, for example a Composite Device ({{Section 3.3 of -rats-arch}}), in terms of its constituent Environments.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -1466,7 +1466,7 @@ trustworthiness properties of the subject domain exists.
 
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
-A Domain Membership triple assigns a domain identifier to member environments. The
+A Domain Membership triple associates a domain identifier with corresponding member environments.
 triple subject identifies a domain ({{sec-comid-domain-type}}) that has a membership predicate
 relationship to the object where the object contains one or more members.
 When predicates are domains, it allows Endorsers to construct a hierarchical model
@@ -1780,7 +1780,7 @@ Environment-Claims Tuples (ECT) have six attributes:
 
 * Profile : The profile that defines this tuple. If no profile is used, this attribute is omitted.
 
-* Domain Identifier : The Identity of the Domain to which a given ECT belongs.
+* Domain Identifier : The Domain to which a given ECT belongs.
 
 The following CDDL describes the ECT structure in more detail.
 
@@ -1896,16 +1896,16 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `domain-id`     | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
-### Internal Representation of Domain Membership {#sec-dm-membership}
+### Internal Representation of Domain Membership {#sec-ir-dm}
 
-An internal representation of Domain Membership uses the `dm` relation, which is a list of ECTs that describes the composition of an Attester with an identity of the domain specified in the `identity` ECT.
+An internal representation of Domain Membership uses the `dm` relation, which is a list of ECTs that describes the composition of an Attester with an identity of the Domain specified in the `identity` ECT.
 
 ~~~ cddl
 {::include cddl/intrep-domain-mem.cddl}
 ~~~
 
-The domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose `cmtype` matches Evidence.
-If the `environment` for every entry of the members of `dm` matches an entry in the ACS ECTs then the domain identity is copied to every member
+The Domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose `cmtype` matches Evidence.
+If the `environment` for every entry of the members of `dm` matches an entry in the ACS ECTs then the Domain identity is copied to every member
 ECT. The `members` are added to the ACS with authority specified in the identity.
 
 {{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
@@ -2269,14 +2269,14 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-#### Domain Membership Triples Transformation {#sec-dm-trans}
+#### Domain Membership Triples Transformation {#sec-ir-dm-trans}
 
 {:dmt-enum: counter="dmt1" style="format Step %d."}
 
 {: dmt-enum}
 * A `dm` entry ({{sec-dm-membership}}) is allocated.
 
-* The `cmtype` of the `members` ECT in the `dm` entry is set to `domain-member`.
+* The `cmtype` of the `members` ECT in the `dm` entry is set to 6 (`domain-member`).
 
 * The Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) populates the `dm` ECTs.
 
