@@ -2982,7 +2982,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 12    | (reserved)                | {{&SELF}}     |
 | 13    | cryptokeys                | {{&SELF}}     |
 | 14    | integrity-registers       | {{&SELF}}     |
-| 15-18446744073709551616 | Unassigned | |
+| 15    | raw-int                   | {{&SELF}}     |
+| 16-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
