@@ -908,11 +908,17 @@ The following describes each member of the `class-map`:
 
 ##### Environment Instance {#sec-comid-instance}
 
-An instance carries a unique identifier that is reliably bound to a Target Environment
-that is an instance of the Attester.
+An `instance-id` is a globally unique value that identifies a Target Environment instance.
+The identifier is reliably bound to the Target Environment.
+For example, if the Target Environment is a DICE layer {{DICE.Layer}} the `instance-id` might be an X.509 subjectPublicKey.
+See ({{Section 4.1 of -pkix-cert}}).
+The subjectPublicKey is reliably bound to the DICE layer because the key generation is tied to a measurement of the Target Environment.
+Alternatively, if the Target Environment is an X.509 subjectPublicKey the `instance-id` might be a key identifier that is a digest of the public key.
+See {{Section 4.2.1.2 of -pkix-cert}}.
+The keyIdentifier is reliably bound to the subjectPublicKey because the identifier is a digest of the key.
 
 The types defined for an instance identifier are CBOR tagged expressions of
-UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or cryptographic key identifier.
+UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cryptographic keys, or cryptographic key identifiers.
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
@@ -1195,7 +1201,7 @@ A cryptographic key can be one of the following formats:
 
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-thumbprint-type`: a `digest` of a raw public key.
+* `tagged-key-thumbprint-type`: a `digest` of a raw public key.
   The digest value may be used to find the public key if contained in a lookup table.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
@@ -2766,7 +2772,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}         | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}    | {{&SELF}} |
-|     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}         | {{&SELF}} |
+|     557 | `[int/text, bytes]` | tagged-key-thumbprint-type, see {{sec-common-hash-entry}}     | {{&SELF}} |
 |     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}           | {{&SELF}} |
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
