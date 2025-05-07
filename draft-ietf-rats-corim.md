@@ -1270,7 +1270,7 @@ The signed integer range representation is an inclusive range unless either `min
 
 ##### Domain Types {#sec-comid-domain-type}
 
-A domain is a context for bundling a collection of related environments.
+A Domain is a topological description to represent an entity, in terms of its constituent Environments.
 
 The following CDDL describes domain type choices.
 
