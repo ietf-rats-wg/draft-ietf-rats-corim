@@ -17,8 +17,9 @@
               / class-id / 0 : / tagged-oid-type / 111(h'5502C000'),	
               / vendor / 1 : "ACME Inc.",	
               / model / 2 : "ACME RoadRunner Bootloader",
-              / comid.layer / 3 : 0
-            }	
+              / layer / 3 : 0
+            }
+            / *** instance not present, so matches against any instance *** /
           }, 
           [         	
             { / *** measurement-map *** /	
@@ -39,7 +40,7 @@
               / model / 2 : "ACME RoadRunner Firmware",
               / layer / 3 : 1
             },
-            / *** Match against ACS entry with instance which stateful-environment-record #0 matched ***/ 565(0)
+            / instance / 1 : 565(0) / *** Match against ACS entry with instance which stateful-environment-record #0 matched *** /
           },
           [
             / *** measurement-map *** / {
@@ -53,30 +54,31 @@
           ]
         ]
       ], /*** end stateful-environment-record ***/
-    [  /*** endorsements ***/
-      [ /*** endorsed-triple-record ***/
-        / environment-map #2 / {
-          / class / 0 : {
-            / class-id / 0 : / tagged-oid-type / 111(h'5502C000'),
-            / vendor / 1 : "ACME Inc.",
-            / model / 2 : "ACME RoadRunner Firmware",
-            / layer / 3 : 1
+      [  /*** endorsements ***/
+        [ /*** endorsed-triple-record ***/
+          / environment-map #2 / {
+            / class / 0 : {
+              / class-id / 0 : / tagged-oid-type / 111(h'5502C000'),
+              / vendor / 1 : "ACME Inc.",
+              / model / 2 : "ACME RoadRunner Firmware",
+              / layer / 3 : 1
+            },
+            / instance / 1 : 565(0) / *** Insert instance value which matched against stateful-environment-record #0 *** /
           },
-          / *** Insert instance value which matched against stateful-environment-record #0 ***/ 565(0)
-        },
-        [
-          / measurement-map / {
-            / comid.mval / 1 : {
-              / comid.ver / 0 : {
-                / comid.version / 0 : "1.42.0",
-                / comid.version-scheme / 1 : 1 / multipartnumeric /
+          [
+            / measurement-map / {
+              / comid.mval / 1 : {
+                / comid.ver / 0 : {
+                  / comid.version / 0 : "1.42.0",
+                  / comid.version-scheme / 1 : 1 / multipartnumeric /
+                }
               }
             }
-          }
+          ]
         ]
       ]
-     ]
     ]
    ]
   }
 }
+
