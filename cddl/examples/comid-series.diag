@@ -9,8 +9,8 @@
   } ],
   / triples / 4 : {
     / conditional-endorsement-series-triples / 8 : [
-      [
-        [ / *** stateful-environment-record *** /
+      [ / *** first triple *** /
+        [ / *** Condition *** /
           / environment-map / {
             / class / 0 : {
               / class-id / 0 :
@@ -33,10 +33,10 @@
               ]
             } 
           ]
-        ], /*** end stateful-environment-record ***/
-        [ / *** series *** /
+        ], /*** end Condition ***/
+        [ / *** Series *** /
           [ / conditional-series-record #1 / 
-            [
+            [ / *** Selection *** /
               { / *** ref-val measurement-map *** /
                 / mval / 1 : / measurement-values-map / {
                   / ver / 0 : {
@@ -46,7 +46,7 @@
                 }
               }
             ],
-            [
+            [  / *** Addition *** / 
               { / *** endv-measurement-map *** /
                 / mval / 1 : / measurement-values-map / {
                   / name / 11: "-NO_CVE-"
@@ -55,7 +55,7 @@
             ]
           ],
           [ / conditional-series-record #2 /
-            [
+            [ / *** Selection *** /
               { / *** ref-val measurement-map *** /
                 / mval / 1 : / measurement-values-map / {
                   / ver / 0 : {
@@ -65,7 +65,7 @@
                 }
               }
             ],
-            [
+            [  / *** Addition *** / 
               { / *** endv-measurement-map *** /
                 / mval / 1 : / measurement-values-map / {
                   / name / 11: "CVE_WARNING"
@@ -74,7 +74,7 @@
             ]
           ],
           [ / conditional-series-record #3 /
-            [
+            [ / *** Selection *** /
               { / *** ref-val measurement-map *** /
                 / mval / 1 : / measurement-values-map / {
                   / ver / 0 : {
@@ -84,7 +84,83 @@
                 }
               }
             ],
-            [
+            [  / *** Addition *** / 
+              { / *** endv-measurement-map *** /
+                / mval / 1 : / measurement-values-map / {
+                  / name / 11: "CVE_VULNERABLE"
+                }
+              }
+            ]
+          ]
+        ] / *** end series *** /
+      ],
+      [ / *** second triple *** /
+        [ / *** Condition *** /
+          / environment-map / {
+            / class / 0 : {
+              / class-id / 0 :
+                / tagged-oid-type / 111(
+                  h'5502C000'
+                ),
+              / vendor / 1 : "ACME Inc.",
+              / model / 2 : "ACME RoadRunner Firmware"
+            }
+          },
+          / authorized-by / [
+            / tagged-pkix-base64-key-type / 554("base64_key_ACME_signer")
+          ]
+        ], /*** end Condition ***/
+        [ / *** Series *** /
+          [ / conditional-series-record #1 / 
+            [  / *** Selection *** / 
+              { / *** ref-val measurement-map *** /
+                / mval / 1 : / measurement-values-map / {
+                  / ver / 0 : {
+                    / version / 0 : "2.0.0"
+                  },
+                  / comid.svn / 1 : 552(3)
+                }
+              }
+            ],
+            [  / *** Addition *** / 
+              { / *** endv-measurement-map *** /
+                / mval / 1 : / measurement-values-map / {
+                  / name / 11: "-NO_CVE-"
+                }
+              }
+            ]
+          ],
+          [ / conditional-series-record #2 /
+            [  / *** Selection *** / 
+              { / *** ref-val measurement-map *** /
+                / mval / 1 : / measurement-values-map / {
+                  / ver / 0 : {
+                    / version / 0 : "1.0.0"
+                  },
+                  / comid.svn / 1 : 552(2)
+                }
+              }
+            ],
+            [  / *** Addition *** / 
+              { / *** endv-measurement-map *** /
+                / mval / 1 : / measurement-values-map / {
+                  / name / 11: "CVE_WARNING"
+                }
+              }
+            ]
+          ],
+          [ / conditional-series-record #3 /
+            [  / *** Selection *** / 
+              { / *** ref-val measurement-map *** /
+                / mval / 1 : / measurement-values-map / {
+                  / ver / 0 : {
+                    / version / 0 : "1.0.0"
+                  },
+                  / comid.svn / 1 : 552(1)
+                }
+              }
+            ],
+            [ / *** Addition *** / 
               { / *** endv-measurement-map *** /
                 / mval / 1 : / measurement-values-map / {
                   / name / 11: "CVE_VULNERABLE"
