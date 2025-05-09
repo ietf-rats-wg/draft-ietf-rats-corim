@@ -1,0 +1,82 @@
+/ concise-mid-tag / {	
+  / tag-identity / 1 : {	
+    / tag-id / 0 : "my-ns:acme-roadrunner-supplement"	
+  },	
+  / entity / 2 : [ {	
+    / entity-name / 0 : "ACME Inc.",	
+    / reg-id / 1 : 32("https://acme.example"),	
+    / role / 2 : [ 1,0,2 ] / creator, tag-creator, maintainer /	
+  } ],	
+  / triples / 4 : {	
+    / conditional-endorsement-triples / 10 : [	
+    [
+      [
+        [ / *** stateful-environment-record entry #0 *** /	
+          / environment-map / {	
+            / class / 0 : {
+              / class-id / 0 : / tagged-oid-type / 111(h'5502C000'),	
+              / vendor / 1 : "ACME Inc.",	
+              / model / 2 : "ACME RoadRunner Bootloader",
+              / comid.layer / 3 : 0
+            }	
+          }, 
+          [         	
+            { / *** measurement-map *** /	
+              / mval / 1 : / measurement-values-map / {	
+                / comid.digests / 2 : [ [
+                  / hash-alg-id / 1, / sha256 /
+                  / hash-value / h'879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b44aa336af4cb14a'
+                ] ]
+              }	
+            }	
+          ]
+        ], 
+        [ / *** stateful-environment-record entry #1 *** /
+          / environment-map / {
+            / class / 0 : {
+              / class-id / 0 : / tagged-oid-type / 111(h'5502C000'),
+              / vendor / 1 : "ACME Inc.",
+              / model / 2 : "ACME RoadRunner Firmware",
+              / layer / 3 : 1
+            },
+            / *** Match against ACS entry with instance which stateful-environment-record #0 matched ***/ 565(0)
+          },
+          [
+            / *** measurement-map *** / {
+              / comid.mval / 1 : {
+                / comid.digests / 2 : [ [
+                  / hash-alg-id / 1, / sha256 /
+                  / hash-value / h'44aa336af4cb14a879432e53dd6571c7fa9bccafb75f488259262d6ea3a4d91b'
+                ] ]
+              }
+            }
+          ]
+        ]
+      ], /*** end stateful-environment-record ***/
+    [  /*** endorsements ***/
+      [ /*** endorsed-triple-record ***/
+        / environment-map #2 / {
+          / class / 0 : {
+            / class-id / 0 : / tagged-oid-type / 111(h'5502C000'),
+            / vendor / 1 : "ACME Inc.",
+            / model / 2 : "ACME RoadRunner Firmware",
+            / layer / 3 : 1
+          },
+          / *** Insert instance value which matched against stateful-environment-record #0 ***/ 565(0)
+        },
+        [
+          / measurement-map / {
+            / comid.mval / 1 : {
+              / comid.ver / 0 : {
+                / comid.version / 0 : "1.42.0",
+                / comid.version-scheme / 1 : 1 / multipartnumeric /
+              }
+            }
+          }
+        ]
+      ]
+     ]
+    ]
+   ]
+  }
+}
