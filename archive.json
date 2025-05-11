@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-08T02:01:21.477931+00:00",
+  "timestamp": "2025-05-11T02:06:24.714684+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11202,6 +11202,22 @@
       "body": "`$crypto-key-type-choice` and `$instance-id-type-choice` use digest types where the source of the type of object being digested is ambiguously defined. \n\nFor example, `tagged-key-thumbprint` could be a 5280 keyIdentifier, a COSE `kid`, a digest of a PEM key, a digest of X and Y values, etc...\n`tagged-cert-thumbprint-type` could be a 5280 cert or a digest of a CWT / JWT etc...\n`tagged-cert-path-thumbprint-type` could be a 5280 certification path or possibly a serialization of an x5bag etc...\n\nThe issue is that if these (digest) values are used to find an actual public key, certificate or as part of certification path construction, there needs to be a way to related the digest to the actual value. If the digest is known but the actual value is not, the algorithm to find the value is guess-and-check. This algorithm may be  appropriate for Bitcoin mining, but not ideal for attestation. \n\nIf the thumbprint types identified the type of object digested and the verifier had the key already (aka via certificate) then guess-and-check is constrained to the type of object that was digested and the algorithm used to computed the digest (e.g., 5280 keyIdentifier).  ",
       "createdAt": "2025-05-01T00:34:53Z",
       "updatedAt": "2025-05-01T00:34:53Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 435,
+      "id": "I_kwDOH6-tI861-Qf2",
+      "title": "conditional endorsement series can have optional measurement claims in the condition",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/435",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A conditional endorsement series expression doesn't necessarily have to have a stateful condition given the selection state is sufficient. However, the `stateful-environment-record` makes `measurement-map` mandatory. \n\nAllowing the claims-list in stateful-environment-record to be optional would accommodate the class of use cases. \n\nSuch as the following cddl:\n```\nconditional-endorsement-series-triple-record = [\n  condition: [\n    environment: environment-map,\n    ? claims-list: [ + measurement-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n```",
+      "createdAt": "2025-05-09T19:16:33Z",
+      "updatedAt": "2025-05-09T19:17:13Z",
       "closedAt": null,
       "comments": []
     }
@@ -66394,13 +66410,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-05-07T14:33:40Z",
+      "updatedAt": "2025-05-09T22:58:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "3e41767801b8ceba0defe035ec5104035d2b791a",
+      "headRefOid": "9d1e44f38752500ac23c20e33126bf97322bfc77",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -66456,8 +66472,134 @@
               "updatedAt": "2025-05-07T14:33:40Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86opDL-",
+          "commit": {
+            "abbreviatedOid": "ad4863e"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-09T18:20:16Z",
+          "updatedAt": "2025-05-09T18:20:17Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nA CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `global` and/or `class` field within their `environment-map`, regardless of their `instance` field.\r\n```",
+              "createdAt": "2025-05-09T18:20:17Z",
+              "updatedAt": "2025-05-09T18:20:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86opGBP",
+          "commit": {
+            "abbreviatedOid": "ad4863e"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-09T18:23:24Z",
+          "updatedAt": "2025-05-09T18:23:24Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "The text 3 lines ago said that this applies to conditional endorsements. A conditional endorsement can add the endorsement to any `environment-map` + `mkey` location.",
+              "createdAt": "2025-05-09T18:23:24Z",
+              "updatedAt": "2025-05-09T18:23:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86oqEdt",
+          "commit": {
+            "abbreviatedOid": "9d1e44f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-09T20:39:07Z",
+          "updatedAt": "2025-05-09T20:59:36Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "We didn't define `global`. Where is this coming from?",
+              "createdAt": "2025-05-09T20:39:07Z",
+              "updatedAt": "2025-05-09T20:59:36Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "> this applies to conditional endorsements\r\n\r\nI don't think it applies to series endorsements since `conditional-series-record`.`addition` is only `measurement-map`. The ECT(s) updated are those  that satisfy the `condition` and `selection` criteria.\r\n\r\nOnly `conditional-endorsement-triple-record` can create a completely new ECT or update a different ECT from the ones that satisfied the `condition`.",
+              "createdAt": "2025-05-09T20:53:41Z",
+              "updatedAt": "2025-05-09T20:59:36Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "> `stateless-environment`\r\n\r\nThis isn't in the cddl. Possibly it should say \"environment\"?\r\n\r\nIn general, matching applies to all the environment fields. If there is a class, then it will match the class even if there is also an instance or group. The interesting case is if there isn't a class but you want the addition to apply to both a class and instances of ECTs.",
+              "createdAt": "2025-05-09T20:58:42Z",
+              "updatedAt": "2025-05-09T22:57:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86oq1Ra",
+          "commit": {
+            "abbreviatedOid": "9d1e44f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-09T22:32:44Z",
+          "updatedAt": "2025-05-09T22:58:39Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Since record #0 has layer=0, the addition of 565(0) will apply to ECTs with layer=1. Seems to contradict the comment in line 66.",
+              "createdAt": "2025-05-09T22:32:44Z",
+              "updatedAt": "2025-05-09T22:58:39Z"
+            },
+            {
+              "originalPosition": 66,
+              "body": "Since the matching rule for record #0 didn't include an instance-id, the entire class of ECTs was matched. However, that doesn't mean these ECTs didn't also have instance-id (it just wasn't part of the matching criteria). \r\nThe addition creates a new ECT with class-id that's the same as record #1 and instance-id 565(0) that's also the same as record #1 and adds a version claim.\r\n\r\nIt isn't clear what significance record #0 has, but that may be opaque to the Verifier. \r\n\r\nThe ACS now has a couple (at least) record #1 ECTs where one has version and the others presumably don't. These could be merged into a single ECT (assuming authority is the same for all values) without changing the state of the ACS. If they did have version (and the values differed) the merge would be lossy. \r\n\r\nIn general, I don't see how 565() is treated differently from any other instance-id type. \r\n\r\nIf the objective is to create \"update\" semantics for conditional endorsement triple, where the current semantics are \"addition\", then doing that via CBOR tag in a type definition seems like the wrong approach.",
+              "createdAt": "2025-05-09T22:48:09Z",
+              "updatedAt": "2025-05-09T22:58:39Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 436,
+      "id": "PR_kwDOH6-tI86VoxSa",
+      "title": "Allow optional claims-list",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/436",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
+      "createdAt": "2025-05-09T20:26:59Z",
+      "updatedAt": "2025-05-09T20:27:24Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "nms/issue-435",
+      "headRefOid": "dca3ba4ac53f8b1d9ee62ff579543800292513cf",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
