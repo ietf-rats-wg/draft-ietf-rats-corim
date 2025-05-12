@@ -1,8 +1,13 @@
 conditional-endorsement-series-triple-record = [
   condition: [
-    environment: environment-map,
-    ? claims-list: [ + measurement-map ],
-    ? authorized-by: [ + $crypto-key-type-choice ]
+    environment: environment-map
+    ? claims-list: [ + measurement-series-map ]
   ]
   series: [ + conditional-series-record ]
 ]
+
+measurement-series-map = non-empty<{
+  ? &(mkey: 0) => $measured-element-type-choice
+  ? &(mval: 1) => measurement-values-map
+  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+}>
