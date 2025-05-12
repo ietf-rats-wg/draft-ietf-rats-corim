@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 10 November 2025</td>
+<td class="center">Expires 13 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-09" class="published">9 May 2025</time>
+<time datetime="2025-05-12" class="published">12 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-11-10">10 November 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-13">13 November 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 10 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 13 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3625,12 +3625,17 @@ The first series condition that matches terminates series matching and the endor
 <pre>
 conditional-endorsement-series-triple-record = [
   condition: [
-    environment: environment-map,
-    ? claims-list: [ + measurement-map ],
-    ? authorized-by: [ + $crypto-key-type-choice ]
+    environment: environment-map
+    ? claims-list: [ + measurement-series-map ]
   ]
   series: [ + conditional-series-record ]
 ]
+
+measurement-series-map = non-empty&lt;{
+  ? &amp;(mkey: 0) =&gt; $measured-element-type-choice
+  ? &amp;(mval: 1) =&gt; measurement-values-map
+  ? &amp;(authorized-by: 2) =&gt; [ + $crypto-key-type-choice ]
+}&gt;
 
 conditional-series-record = [
   selection: [ + measurement-map]
@@ -7762,12 +7767,17 @@ $comid-role-type-choice /= &amp;(maintainer: 2)
 
 conditional-endorsement-series-triple-record = [
   condition: [
-    environment: environment-map,
-    ? claims-list: [ + measurement-map ],
-    ? authorized-by: [ + $crypto-key-type-choice ]
+    environment: environment-map
+    ? claims-list: [ + measurement-series-map ]
   ]
   series: [ + conditional-series-record ]
 ]
+
+measurement-series-map = non-empty&lt;{
+  ? &amp;(mkey: 0) =&gt; $measured-element-type-choice
+  ? &amp;(mval: 1) =&gt; measurement-values-map
+  ? &amp;(authorized-by: 2) =&gt; [ + $crypto-key-type-choice ]
+}&gt;
 
 conditional-series-record = [
   selection: [ + measurement-map]

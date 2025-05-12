@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 10 November 2025                                         Linaro
+Expires: 13 November 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                              9 May 2025
+                                                             12 May 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 November 2025.
+   This Internet-Draft will expire on 13 November 2025.
 
 Copyright Notice
 
@@ -1927,12 +1927,17 @@ Table of Contents
 
    conditional-endorsement-series-triple-record = [
      condition: [
-       environment: environment-map,
-       ? claims-list: [ + measurement-map ],
-       ? authorized-by: [ + $crypto-key-type-choice ]
+       environment: environment-map
+       ? claims-list: [ + measurement-series-map ]
      ]
      series: [ + conditional-series-record ]
    ]
+
+   measurement-series-map = non-empty<{
+     ? &(mkey: 0) => $measured-element-type-choice
+     ? &(mval: 1) => measurement-values-map
+     ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+   }>
 
    conditional-series-record = [
      selection: [ + measurement-map]
@@ -4852,12 +4857,17 @@ Appendix A.  Base CoRIM CDDL
 
    conditional-endorsement-series-triple-record = [
      condition: [
-       environment: environment-map,
-       ? claims-list: [ + measurement-map ],
-       ? authorized-by: [ + $crypto-key-type-choice ]
+       environment: environment-map
+       ? claims-list: [ + measurement-series-map ]
      ]
      series: [ + conditional-series-record ]
    ]
+
+   measurement-series-map = non-empty<{
+     ? &(mkey: 0) => $measured-element-type-choice
+     ? &(mval: 1) => measurement-values-map
+     ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+   }>
 
    conditional-series-record = [
      selection: [ + measurement-map]
