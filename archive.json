@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-11T02:06:24.714684+00:00",
+  "timestamp": "2025-05-13T02:01:49.888046+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10551,7 +10551,7 @@
       "labels": [],
       "body": "Consider an compound system using two attestation environments and two target environments.\n\nIn the example, the AEs and TEs use identical hardware, but may be running different firmware.\n\nThis diagram shows a simplified view of the system.\n```mermaid\ngraph TD\n    Verifier[\"Verifier\"]\n\n    subgraph Compound[\"Compound system\"]\n\n    subgraph DICE1[\"Component #1\"]\n        TE1z[\"SPDM TE\"]\n        TE1y[\"SPDM AE\"]\n    end\n    TE1y ==> TE1z\n\n    subgraph DICE2[\"Component #2\"]\n        TE2y[\"SPDM AE\"]\n        TE2z[\"SPDM TE\"]\n    end\n    TE2y ==> TE2z\n\n    end\n\n    style Compound fill:#CCC,stroke:#CCC\n\n    Verifier -...-> TE1y\n    Verifier -...-> TE2y\n```\nThe Verifier communicates directly with an attestation environment within each component.\n\nThe attestation environments return measurements of each TE, for example AE#1 might return a hash indicating the firmware running in TE#1:\n```cbor-diag\n  [\n    / environment-map / {\n      / class / 0 : {\n        / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n        / vendor / 1 : \"example.com\"\n      },\n      / instance / 1 : 560(h'12345678')\n    },\n    / measurement-map / [ {\n      / mval / 1 : {\n        / digests / 2 : [\n          [\n            / sha-384 / 7,\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n          ]\n        ]\n      }\n    } ]\n  ]\n```\n\nThe measurements of TE#2 are similar, except for the instance ID and the digest in the measurement-values-map.\n\nThe evidence import phase will add the measurements for TE#1 and TE#2 to the ACS.\n\nThe CoRIM author has published several CoRIMs, each of which maps one hash to a version number, for example:\n\n```comid\n  / triples / 4 : {\n    / conditional-endorsement-triples / 10 : [\n      / conditions: / [ \n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / digests / 2 : [\n                [\n                  / sha-384 / 7,\n                  h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n                ]\n              ]\n            }\n          } ]\n        ],\n  / endorsements: / [\n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n            / WHAT GOES HERE? /\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / ver / 0 : {\n                / version / 0 : \"1.0\",\n                / version-scheme / 1 : / alphanumeric / 3\n              }\n            }\n          } ]\n        ],\n      ]\n    ]\n  }\n```\n\nThe goal of this CoMID fragment is to add a version number to the environment which contains the hash.\nI expect that the Conditional Endorser (perhaps the device manufacturer) will release many CoMID fragments, one for each released version of firmware.\n\nAssuming that the firmware is genuine, one of the CoMID fragments will match against the ACS entry for TE#1, and one will match against the ACS entry for TE#2.\n\nThe CoMID fragments don't include an `instance` field within their environment, so they will match against any ACS entry which contains the same `class-id`, regardless of instance.\n\n# How to get expected results?\n\nI would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class` and `instance` fields.\n\nHow do we tell the Verifier to copy the `instance` field from the `stateful-environment` part of `conditional-endorsement-triple-record` to the new ACS entry created by `endorsed-triple-record`?\n\nI think a similar issue is raised if the Conditional Endorser wants the Verifier to match against two `stateful-environments`, both of them having the same value in the `instance` field.\n\n# Possible solution\n\nOne solution I can imagine is to create special syntax which is inserted into the example conditional endorsement above in the location marked `/ What goes here? /`.\n\nThis syntax tells the Verifier to copy the instance value which was matched against the first `stateful-environment` into the newly created endorsed ACS entry.\n\nIs there a better solution?",
       "createdAt": "2025-03-28T22:19:44Z",
-      "updatedAt": "2025-04-09T20:41:04Z",
+      "updatedAt": "2025-05-13T00:40:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -10560,6 +10560,13 @@
           "body": "There's a couple of ways to think about what it means to endorse a claim (ECT in the ACS). (a) appends to an existing ECT or (b) creates / clones an new ECT. \nProperties of (a):\n- New (Endorsement) claims are appended to an existing ECT; authority applies at granularity of a single claim (e.g., measurement-values-map code point).\n- Endorsement adds a new claim to the ECT (with Endorser authority); which implies authority has have claim-specific granularity.  The claim is appended to the ECT and Endorser authority is added to authority field, but some sort of claim specific linking is needed so that only the claim(s) that were asserted by the Endorser link to the Endorser authority and only the claims asserted by the Attester link to Attester authority (and same goes for RVP asserted claims).\n- Note: Current ECT structure doesn't have claim specific granularity. Creating this ability results in the need for referential integrity guarantees within a singleton ECT.  A.k.a., \"intra-ECT referential integrity\".\n\nProperties of (b):\n- New (Endorsement) claims are added to a new ACS entry; The ECT(s) that were the subject  (environment) portion of the condition are cloned into the new entry.\n- The conditional endorsement triple separates condition ECT from addition ECT. The matching condition doesn't influence the addition.\n- However there is a relationship between the matched ECTs and the added ECT in that they all refer to the same Attester component. \n- Note: Conditional endorsement triple allows for matching of multiple components (ECTs) which creates an undicidability situation when trying to clone a new ECT from something matched by a condition. The cloned ECT implies a semantic binding between multiple ECTs in the ACS. But no mechanism exists to bundle / group ECTs based on common environemnts. \n- Note: membership triple implies the internal representation will accommodate ECT grouping. This implies the need for referential integrity guarantees between ECTs. A.k.a., \"inter-ECT referential integrity\". However, this mechanism is overloaded to group ECTs that belong to the same component. Overloading an ECT grouping mechanism appears to create composition where it didn't originally exist.\n\nAndy's solution seems to be a flavor of option (b) but seems to be constrained to a pathological use case where only one ECT is permitted in the matching condition. The clone operation then copies every field in environment-map of the matched ECT (not just the matching criteria).",
           "createdAt": "2025-04-09T20:35:56Z",
           "updatedAt": "2025-04-09T20:41:03Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class-map` and `instance-id` fields.\n\nThe `conditional-endorsement-triple` has multiple matching `conditions` (which is used to match on both the class-id and instance-id values. Given the `condition` matched two ECTs, but the addition (`endorsements`) needs to add `version` to both the `class-map` and `instance-id`. \n\nThe `addition` can be one of the matched ECTs, a different ECT in the ACS, or can be a novel ECT. \n\nOption-1: By having two ECTs in the `addition` array, one with the matched `class-map` and another for `instance-id`. The `measurement-values-map` for both have the same `version` value. \n\nOption-2: By having one ECT in the `addition`, the union of the ECTs in `condition` results in a new ECT is the combination of measurements from the two condition ECTs plus `version`. \n\nSince the addition could be asserted by a different authority from either of the ECTs that matched, a new ECT is added to the ACS having the authority of the conditional endorser. The ACS now has three ECTs relating to one of the components above (and three for the other component presumably).\n\nOption-1: If a relying party shows interest in a particular environment (say `instance-id`) the interest query returns the correct `version`. If the query shows interest in `class-map` then `version` also is returned. However, if the RP doesn't know both environments (lets choose `instance-id`), a query on `class-map` returns an ECT with just `digest` and another ECT with both `digest` and `version` but not any of the other measurements in the instance ECT.\n\nOption-2: If the RP queries on `class-id`, two ECTs are returned, one with just `digest` and another with `digest`, `version`, and the other measurments listed in the `conditions` ECTs. \n\nHowever, Option-2 isn't equivalent to a database merge because, the other values lurking in the `conditions` ECTs are not blindly copied into the `addition` ECT.  Nevertheless, the RP can stitch together a db merge by showing interest in the `class-map` which will return Evidence ECT containing `instance-id`. Another query on `instance-id` will return the rest of the ECTs for the component. \n\nThe RP may seem to have redundant measurements, but since the different ECTs are asserted by different authorities, each is qualified by that and hence aren't technically redundant. An appraisal policy would distinguish which measurements are invalid due to having the wrong authority.",
+          "createdAt": "2025-05-13T00:39:59Z",
+          "updatedAt": "2025-05-13T00:39:59Z"
         }
       ]
     },
@@ -11217,9 +11224,17 @@
       "labels": [],
       "body": "A conditional endorsement series expression doesn't necessarily have to have a stateful condition given the selection state is sufficient. However, the `stateful-environment-record` makes `measurement-map` mandatory. \n\nAllowing the claims-list in stateful-environment-record to be optional would accommodate the class of use cases. \n\nSuch as the following cddl:\n```\nconditional-endorsement-series-triple-record = [\n  condition: [\n    environment: environment-map,\n    ? claims-list: [ + measurement-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n```",
       "createdAt": "2025-05-09T19:16:33Z",
-      "updatedAt": "2025-05-09T19:17:13Z",
+      "updatedAt": "2025-05-12T19:36:10Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another approach is to make `mval` optional in measurement-map.\n```\nmeasurement-map = {\n  ? &(mkey: 0) => $measured-element-type-choice\n  ? &(mval: 1) => measurement-values-map\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\n}\n```\nThe impact is wider however and there should be a review of each usage to see if it is acceptable.\n\nThe scope can be narrowd to just the series triple as follows:\n\n```\nconditional-endorsement-series-triple-record = [\n  conditions: [ +\n    environment: environment-map\n    ? claims-list: [ + measurement-series-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n\nmeasurement-series-map = non-empty<{\n  ? &(mkey: 0) => $measured-element-type-choice\n  ? &(mval: 1) => measurement-values-map\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\n}>\n```",
+          "createdAt": "2025-05-12T19:19:47Z",
+          "updatedAt": "2025-05-12T19:36:10Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -66129,7 +66144,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-05-07T14:24:48Z",
+      "updatedAt": "2025-05-12T23:39:40Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
@@ -66180,6 +66195,26 @@
               "body": "Everybody okay with introducing the \"variable\" semantics of C-ECT?",
               "createdAt": "2025-05-07T14:24:47Z",
               "updatedAt": "2025-05-07T14:24:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86o-YaV",
+          "commit": {
+            "abbreviatedOid": "7bf6291"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-12T23:39:39Z",
+          "updatedAt": "2025-05-12T23:39:40Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "> Everybody okay with introducing the \"variable\" semantics of C-ECT?\r\n\r\nNote that this convention is applied elswhere already, for example section 9.3.4.4 uses \"key\" to when iterating over a set of crypto-key-type-choice values. Also section 9.2.3.2 uses \"e\" to iterate over a set of reference values. ",
+              "createdAt": "2025-05-12T23:39:40Z",
+              "updatedAt": "2025-05-12T23:39:40Z"
             }
           ]
         }
@@ -66587,19 +66622,93 @@
       "labels": [],
       "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
       "createdAt": "2025-05-09T20:26:59Z",
-      "updatedAt": "2025-05-09T20:27:24Z",
+      "updatedAt": "2025-05-12T19:54:08Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "nms/issue-435",
-      "headRefOid": "dca3ba4ac53f8b1d9ee62ff579543800292513cf",
+      "headRefOid": "a15f3bc035590aab653a518a96695008678c81e5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86o5Go0",
+          "commit": {
+            "abbreviatedOid": "dca3ba4"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-12T14:52:59Z",
+          "updatedAt": "2025-05-12T14:53:00Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "This changes the parsing complexity to at least LL2, and is potentially ambiguous due to the extensibility of $crypto-key-type-choice. Optional elements of a heterogeneous array type are an anti-pattern. If you want claims-list to be optional as well as authorized-by, the way to do it is to make the group of the two optional and allow authorized-by to have an empty list.",
+              "createdAt": "2025-05-12T14:53:00Z",
+              "updatedAt": "2025-05-12T14:53:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86o5HZZ",
+          "commit": {
+            "abbreviatedOid": "dca3ba4"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-12T14:54:01Z",
+          "updatedAt": "2025-05-12T14:54:01Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nIf both `authorized-by` and `claims-list`.`authorized-by` are populated then `claims-list`.`authorized-by` is ignored.\r\n```\r\nI think we weren't using code-face for the projection syntax since it's hypothetical.",
+              "createdAt": "2025-05-12T14:54:01Z",
+              "updatedAt": "2025-05-12T14:54:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86o8Ebx",
+          "commit": {
+            "abbreviatedOid": "a15f3bc"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-12T19:53:45Z",
+          "updatedAt": "2025-05-12T19:53:45Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\n            / measurement-series-map / { \r\n```",
+              "createdAt": "2025-05-12T19:53:45Z",
+              "updatedAt": "2025-05-12T19:53:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86o8EoH",
+          "commit": {
+            "abbreviatedOid": "a15f3bc"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-05-12T19:54:08Z",
+          "updatedAt": "2025-05-12T19:54:08Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
