@@ -89,9 +89,11 @@ CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
 
 INTREP_FRAGS := intrep-start.cddl
 INTREP_FRAGS += intrep-acs.cddl
+INTREP_FRAGS += intrep-actx.cddl
 INTREP_FRAGS += intrep-ae.cddl
 INTREP_FRAGS += intrep-ar.cddl
 INTREP_FRAGS += intrep-ars.cddl
+INTREP_FRAGS += intrep-asession.cddl
 INTREP_FRAGS += intrep-ect.cddl
 INTREP_FRAGS += intrep-ev.cddl
 INTREP_FRAGS += intrep-policy.cddl
