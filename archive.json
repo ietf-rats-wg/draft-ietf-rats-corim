@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-13T02:01:49.888046+00:00",
+  "timestamp": "2025-05-15T01:59:03.483993+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11161,7 +11161,7 @@
       "id": "I_kwDOH6-tI860hA70",
       "title": "Clarify `raw-value` definition",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/429",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "setrofim",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -11170,8 +11170,8 @@
       "labels": [],
       "body": "[Section 5.1.4.1.2][1] allocates index `4` inside `measurement-values-map` to `raw-value-type-choice`, and, optionally, associated index `5` to `raw-value-mask-type`. The explanation text that follows states that `raw-value` contains the value whos format is vendor-determined, and that a mask _may_ be provided to indicates which bits within the value should be comparable. No explantion is given for index 5 in the text.\n\n[Section 5.1.4.1.6][2] then provides the definition of `raw-value-type-choice` which may be either `tagged-bytes` or `tagged-masked-raw-value`, which assoicateds bytes with a mask. And it also, in its final paragraph, states that `raw-value-mask` inside `measurement-values-map` is depricated.\n\nSection 5.1.4.1.2. should be updated to provide explantion of index 5 (`raw-value-mask`), along with the deprication statement that says to use `tagged-masked-raw-value` variant instead. The way things are structured at the moment, it is not immediately obivous what is the correct way of representing raw value masks (and why they are two different ways of doing so).\n\n\n[1]: https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-5.1.4.1.4.2\n[2]: https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-5.1.4.1.4.6",
       "createdAt": "2025-04-29T14:21:57Z",
-      "updatedAt": "2025-04-30T14:53:22Z",
-      "closedAt": null,
+      "updatedAt": "2025-05-14T13:56:32Z",
+      "closedAt": "2025-05-14T13:56:31Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -11193,6 +11193,13 @@
           "body": "> Deprecate as in it exists and folks should not use it? Why not just get rid of it?\n\nIt is defined by the TCG corim spec. If the IETF corim deprecates it the code point remains allocated for use by the TCG corim spec. A future version of the TCG spec can also deprecate code point 5, but the code point needs to remain allocated for legacy implementations that still use it.",
           "createdAt": "2025-04-29T16:42:45Z",
           "updatedAt": "2025-04-29T16:42:45Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by #433",
+          "createdAt": "2025-05-14T13:56:31Z",
+          "updatedAt": "2025-05-14T13:56:31Z"
         }
       ]
     },
@@ -64816,7 +64823,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-05-07T14:58:35Z",
+      "updatedAt": "2025-05-14T14:06:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
@@ -65764,6 +65771,146 @@
               "body": "```suggestion\r\n: A topological description to represent an entity, for example a Composite Device ({{Section 3.3 of -rats-arch}}), in terms of its constituent Environments or Domains.\r\n```",
               "createdAt": "2025-05-07T14:58:35Z",
               "updatedAt": "2025-05-07T14:58:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pLWkR",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-13T23:21:27Z",
+          "updatedAt": "2025-05-13T23:21:27Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "```suggestion\r\nThe Domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose `cmtype` matches `&(evidence: 2)`.\r\n```",
+              "createdAt": "2025-05-13T23:21:27Z",
+              "updatedAt": "2025-05-13T23:21:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pLY94",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-13T23:30:34Z",
+          "updatedAt": "2025-05-13T23:30:35Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "This sentence is quite confusing. What are the environment comparisons supposed to do?\r\n",
+              "createdAt": "2025-05-13T23:30:35Z",
+              "updatedAt": "2025-05-13T23:30:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pLZ7Y",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-13T23:35:07Z",
+          "updatedAt": "2025-05-13T23:35:07Z",
+          "comments": [
+            {
+              "originalPosition": 117,
+              "body": "```suggestion\r\n\r\nIf for all environments `e` in `dm`.`members`, the ACS contains an ECT with environment `e` with `cmtype: &(evidence: 2)`, then copy the `dm`.`domain-id` to each matching ECT.\r\n```\r\n\r\n> The `members` are added to the ACS with authority specified in the identity.\r\n\r\nWhat is \"the identity\"?\r\nWhen you add just the environments to the ACS, you're saying what about them, exactly? What part is the condition what part is the addition? Are you always adding new ECTs with nothing else in them but the environment and authority? No claims or cmtype? ",
+              "createdAt": "2025-05-13T23:35:07Z",
+              "updatedAt": "2025-05-13T23:35:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pLajJ",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-13T23:37:57Z",
+          "updatedAt": "2025-05-13T23:37:57Z",
+          "comments": [
+            {
+              "originalPosition": 217,
+              "body": "What about the policy requiring domain membership has to do with the interpretation of the membership triple? ",
+              "createdAt": "2025-05-13T23:37:57Z",
+              "updatedAt": "2025-05-13T23:37:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pLdVp",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-13T23:50:09Z",
+          "updatedAt": "2025-05-13T23:50:10Z",
+          "comments": [
+            {
+              "originalPosition": 222,
+              "body": "```suggestion\r\nA list of mutable references to matching ACS Entries for a `dm` is constructed in an iterative process over `dm`.`members`.\r\nFor every environment in `dm`.`members`, select ECTs from the ACS where `cmtype: &(evidence: 2)` and whose environment matches.\r\nIf there are no such ECTs, then the `dm` processing fails.\r\nIf there is at least one such ECT, then add all to the list.\r\n\r\nAt the end of list construction, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.\r\nIf the field is already present and denotes a different domain, then this is an error.\r\n```\r\nI think this could be clearer. I don't think I understood from previous texts that an environment could belong to at most one domain.",
+              "createdAt": "2025-05-13T23:50:09Z",
+              "updatedAt": "2025-05-13T23:50:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pLfMZ",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-13T23:59:11Z",
+          "updatedAt": "2025-05-13T23:59:11Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "Why can an environment only belong to one domain? What if I need to change a domain-id naming convention and keep both the old and new around for migration's sake?\r\n\r\nIt seems like you could have a lot of superimposed topologies that are acceptable, such that a single identifier is too restrictive.",
+              "createdAt": "2025-05-13T23:59:11Z",
+              "updatedAt": "2025-05-13T23:59:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pTHuI",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-14T14:06:58Z",
+          "updatedAt": "2025-05-14T14:06:58Z",
+          "comments": [
+            {
+              "originalPosition": 117,
+              "body": "It is unclear to me where the authority comes from. Is it the entity which signed the domain membership triple? Or the entity which signed the evidence? Or something else?\r\n\r\nPlease clarity.",
+              "createdAt": "2025-05-14T14:06:58Z",
+              "updatedAt": "2025-05-14T14:06:58Z"
             }
           ]
         }
