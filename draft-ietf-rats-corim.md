@@ -2312,7 +2312,7 @@ This section describes how the external representation of a Domain Membership Tr
 {: dmt2-enum}
 * For each ECT e in DMT.`members`:
 
-> > **copy**(DMT.`members`[e], `dm`.`members`[e])
+> > **copy**(DMT.`members`[e].`environment-map`, `dm`.`members`[e].`environment-map`)
 
 {: dmt-enum}
 * If the conceptual message containing the DMT has a profile, it is used to populate the profile for each ECT in `dm`.
