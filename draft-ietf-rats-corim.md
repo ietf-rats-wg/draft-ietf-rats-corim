@@ -2281,14 +2281,12 @@ This section describes how the external representation of a Domain Membership Tr
 {:dmt4-enum: counter="dmt4" style="format %i"}
 
 {: dmt4-enum}
-* Populate the `dm`.`domain-id` ECT:
-
-> > **copy**(`domain-member`, `dm`.`domain-id`.`cmtype`)
+* **copy**(`domain-member`, `dm`.`domain-id`.`cmtype`)
 
 {: dmt4-enum}
 * For each ECT e in DMT.`members`:
 
-> > **copy**(`domain-member`, `dm`.`members`[e].`cm-type`)
+> > **copy**(`domain-member`, `dm`.`members`[e].`cmtype`)
 
 {: dmt-enum}
 * Set the authority for the domain-id ECT and each member ECT from the the DMT signer {{sec-corim-signer}}.
@@ -2296,9 +2294,7 @@ This section describes how the external representation of a Domain Membership Tr
 {:dmt5-enum: counter="dmt5" style="format %i"}
 
 {: dmt5-enum}
-* Populate the `dm`.`domain-id` ECT:
-
-> > **copy**(DMT.`signer`, `dm`.`domain-id`.`authority`)
+* **copy**(DMT.`signer`, `dm`.`domain-id`.`authority`)
 
 {: dmt5-enum}
 * For each ECT e in DMT.`members`:
@@ -2311,9 +2307,7 @@ This section describes how the external representation of a Domain Membership Tr
 {:dmt2-enum: counter="dmt2" style="format %i"}
 
 {: dmt2-enum}
-* Populate the `dm`.`domain-id` ECT:
-
-> > **copy**(DMT.`domain-id`, `dm`.`domain-id`)
+* **copy**(DMT.`domain-id`, `dm`.`domain-id`)
 
 {: dmt2-enum}
 * For each ECT e in DMT.`members`:
@@ -2326,9 +2320,7 @@ This section describes how the external representation of a Domain Membership Tr
 {:dmt3-enum: counter="dmt3" style="format %i"}
 
 {: dmt3-enum}
-* Populate the `dm`.`domain-id` ECT:
-
-> > **copy**(DMT.`profile`, `dm`.`domain-id`.`profile`)
+* **copy**(DMT.`profile`, `dm`.`domain-id`.`profile`)
 
 {: dmt3-enum}
 * For each ECT e in DMT.`members`:
