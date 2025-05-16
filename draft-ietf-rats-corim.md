@@ -2269,29 +2269,71 @@ The following transformation steps are applied for both the `identity-triples` a
 
 #### Domain Membership Triples Transformation {#sec-ir-dm-trans}
 
+This section describes how the external representation of a Domain Membership Triple (DMT) {{sec-comid-triple-domain-membership}} is transformed into its CoRIM internal representation {{sec-ir-dm}}.
+
 {:dmt-enum: counter="dmt1" style="format Step %d."}
 
 {: dmt-enum}
-* A `dm` entry ({{sec-ir-dm}}) is allocated.
+* Allocate a `dm` entry.
 
-* The `cmtype` of the `members` ECT in the `dm` entry is set to 6 (`domain-member`).
+* Set the conceptual message type for the domain-id ECT and each member ECT to 6 (`domain-member`).
 
-* The Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) populates the `dm` ECTs.
+{:dmt4-enum: counter="dmt4" style="format %i"}
+
+{: dmt4-enum}
+* Populate the `dm`.`domain-id` ECT:
+
+> > **copy**(`domain-member`, `dm`.`domain-id`.`cmtype`)
+
+{: dmt4-enum}
+* For each ECT e in DMT.`members`:
+
+> > **copy**(`domain-member`, `dm`.`members`[e].`cm-type`)
+
+{: dmt-enum}
+* Set the authority for the domain-id ECT and each member ECT from the the CoRIM signer {{sec-corim-signer}}.
+
+{:dmt5-enum: counter="dmt5" style="format %i"}
+
+{: dmt5-enum}
+* Populate the `dm`.`domain-id` ECT:
+
+> > **copy**(DMT.`signer`, `dm`.`domain-id`.`authority`)
+
+{: dmt5-enum}
+* For each ECT e in DMT.`members`:
+
+> > **copy**(DMT.`signer`, `dm`.`members`[e].`authority`)
+
+{: dmt-enum}
+* Use the DMT to populate the `dm` internal representation.
 
 {:dmt2-enum: counter="dmt2" style="format %i"}
 
 {: dmt2-enum}
-* DMT.`identity`, $domain-identity-type-choice `environment-map` as under:
+* Populate the `dm`.`domain-id` ECT:
 
-> > **copy**(`environment-map`, `dm`.`identity`.`environment-map`)
+> > **copy**(DMT.`domain-id`, `dm`.`domain-id`)
 
 {: dmt2-enum}
-* For each e in DMT.`members`:
+* For each ECT e in DMT.`members`:
 
-> > **copy**(e.`environment-map`, `dm`.`identity`.`environment-map`)
+> > **copy**(DMT.`members`[e], `dm`.`members`[e])
 
+{: dmt-enum}
+* If the Endorsement conceptual message has a profile, the DMT `profile` is copied to the `domain-id` ECT and each member ECT.
 
-* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `dm`.`members`.`profile` field.
+{:dmt3-enum: counter="dmt3" style="format %i"}
+
+{: dmt3-enum}
+* Populate the `dm`.`domain-id` ECT:
+
+> > **copy**(DMT.`profile`, `dm`.`domain-id`.`profile`)
+
+{: dmt3-enum}
+* For each ECT e in DMT.`members`:
+
+> > **copy**(DMT.`profile`, `dm`.`members`[e].`profile`)
 
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
