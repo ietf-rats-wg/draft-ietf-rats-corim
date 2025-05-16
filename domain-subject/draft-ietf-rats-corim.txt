@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 16 November 2025                                         Linaro
+Expires: 17 November 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             15 May 2025
+                                                             16 May 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 November 2025.
+   This Internet-Draft will expire on 17 November 2025.
 
 Copyright Notice
 
@@ -3184,25 +3184,54 @@ Table of Contents
 
 9.2.3.5.  Domain Membership Triples Transformation
 
-   Step 1.  A dm entry (Section 9.1.6) is allocated.
+   This section describes how the external representation of a Domain
+   Membership Triple (DMT) Section 5.1.4.9 is transformed into its CoRIM
+   internal representation Section 9.1.6.
 
-   Step 2.  The cmtype of the members ECT in the dm entry is set to 6
-            (domain-member).
+   Step 1.  Allocate a dm entry.
 
-   Step 3.  The Domain Membership Triple (DMT) (Section 5.1.4.9)
-            populates the dm ECTs.
+   Step 2.  Set the conceptual message type for the domain-id ECT and
+            each member ECT to 6 (domain-member).
 
-   i  DMT.identity, $domain-identity-type-choice environment-map as
-      under:
+   i  Populate the dm.domain-id ECT:
 
-      *copy*(environment-map, dm.identity.environment-map)
+      *copy*(domain-member, dm.domain-id.cmtype)
 
-   ii For each e in DMT.members:
+   ii For each ECT e in DMT.members:
 
-      *copy*(e.environment-map, dm.identity.environment-map)
+      *copy*(domain-member, dm.members[e].cm-type)
 
-   *  If the Endorsement conceptual message has a profile, the profile
-      identifier is copied to the dm.members.profile field.
+   Step 3.  Set the authority for the domain-id ECT and each member ECT
+            from the the CoRIM signer Section 4.2.2.1.
+
+   i  Populate the dm.domain-id ECT:
+
+      *copy*(DMT.signer, dm.domain-id.authority)
+
+   ii For each ECT e in DMT.members:
+
+      *copy*(DMT.signer, dm.members[e].authority)
+
+   Step 4.  Use the DMT to populate the dm internal representation.
+
+   i  Populate the dm.domain-id ECT:
+
+      *copy*(DMT.domain-id, dm.domain-id)
+
+   ii For each ECT e in DMT.members:
+
+      *copy*(DMT.members[e], dm.members[e])
+
+   Step 5.  If the Endorsement conceptual message has a profile, the DMT
+            profile is copied to the domain-id ECT and each member ECT.
+
+   i  Populate the dm.domain-id ECT:
+
+      *copy*(DMT.profile, dm.domain-id.profile)
+
+   ii For each ECT e in DMT.members:
+
+      *copy*(DMT.profile, dm.members[e].profile)
 
 9.3.  ACS Augmentation - Phases 2, 3, and 4
 
