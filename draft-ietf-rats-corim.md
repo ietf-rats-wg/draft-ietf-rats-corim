@@ -2489,6 +2489,15 @@ If any field which is present in the condition ECT `environment-map` is not bina
 
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
 
+#### Instance copy field
+
+If the condition ECT `environment-map` contains an `instance` field of type `instance-copy-type` then the number within this type references an earlier `environment-map` within the same triple.
+The first `environment-map` in the triple is numbered 0, the second is numbered 1 etc.
+
+If the referenced `environment-map` did not match against any ACS entry then the environments do not match.
+
+If the `environment-map`.`instance` of the ACS entry which matched against the referenced `environment-map` and the `instance` field in the ACS entry are not binary identical, then the environments do not match.
+
 ### Authority comparison {#sec-compare-authority}
 
 The Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.
