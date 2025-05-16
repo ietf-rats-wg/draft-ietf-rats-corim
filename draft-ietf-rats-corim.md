@@ -2291,7 +2291,7 @@ This section describes how the external representation of a Domain Membership Tr
 > > **copy**(`domain-member`, `dm`.`members`[e].`cm-type`)
 
 {: dmt-enum}
-* Set the authority for the domain-id ECT and each member ECT from the the CoRIM signer {{sec-corim-signer}}.
+* Set the authority for the domain-id ECT and each member ECT from the the DMT signer {{sec-corim-signer}}.
 
 {:dmt5-enum: counter="dmt5" style="format %i"}
 
@@ -2321,7 +2321,7 @@ This section describes how the external representation of a Domain Membership Tr
 > > **copy**(DMT.`members`[e], `dm`.`members`[e])
 
 {: dmt-enum}
-* If the Endorsement conceptual message has a profile, the DMT `profile` is copied to the `domain-id` ECT and each member ECT.
+* If the conceptual message containing the DMT has a profile, it is used to populate the profile for each ECT in `dm`.
 
 {:dmt3-enum: counter="dmt3" style="format %i"}
 
