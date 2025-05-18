@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-15T01:59:03.483993+00:00",
+  "timestamp": "2025-05-18T02:07:59.875224+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10551,7 +10551,7 @@
       "labels": [],
       "body": "Consider an compound system using two attestation environments and two target environments.\n\nIn the example, the AEs and TEs use identical hardware, but may be running different firmware.\n\nThis diagram shows a simplified view of the system.\n```mermaid\ngraph TD\n    Verifier[\"Verifier\"]\n\n    subgraph Compound[\"Compound system\"]\n\n    subgraph DICE1[\"Component #1\"]\n        TE1z[\"SPDM TE\"]\n        TE1y[\"SPDM AE\"]\n    end\n    TE1y ==> TE1z\n\n    subgraph DICE2[\"Component #2\"]\n        TE2y[\"SPDM AE\"]\n        TE2z[\"SPDM TE\"]\n    end\n    TE2y ==> TE2z\n\n    end\n\n    style Compound fill:#CCC,stroke:#CCC\n\n    Verifier -...-> TE1y\n    Verifier -...-> TE2y\n```\nThe Verifier communicates directly with an attestation environment within each component.\n\nThe attestation environments return measurements of each TE, for example AE#1 might return a hash indicating the firmware running in TE#1:\n```cbor-diag\n  [\n    / environment-map / {\n      / class / 0 : {\n        / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n        / vendor / 1 : \"example.com\"\n      },\n      / instance / 1 : 560(h'12345678')\n    },\n    / measurement-map / [ {\n      / mval / 1 : {\n        / digests / 2 : [\n          [\n            / sha-384 / 7,\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n          ]\n        ]\n      }\n    } ]\n  ]\n```\n\nThe measurements of TE#2 are similar, except for the instance ID and the digest in the measurement-values-map.\n\nThe evidence import phase will add the measurements for TE#1 and TE#2 to the ACS.\n\nThe CoRIM author has published several CoRIMs, each of which maps one hash to a version number, for example:\n\n```comid\n  / triples / 4 : {\n    / conditional-endorsement-triples / 10 : [\n      / conditions: / [ \n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / digests / 2 : [\n                [\n                  / sha-384 / 7,\n                  h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n                ]\n              ]\n            }\n          } ]\n        ],\n  / endorsements: / [\n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n            / WHAT GOES HERE? /\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / ver / 0 : {\n                / version / 0 : \"1.0\",\n                / version-scheme / 1 : / alphanumeric / 3\n              }\n            }\n          } ]\n        ],\n      ]\n    ]\n  }\n```\n\nThe goal of this CoMID fragment is to add a version number to the environment which contains the hash.\nI expect that the Conditional Endorser (perhaps the device manufacturer) will release many CoMID fragments, one for each released version of firmware.\n\nAssuming that the firmware is genuine, one of the CoMID fragments will match against the ACS entry for TE#1, and one will match against the ACS entry for TE#2.\n\nThe CoMID fragments don't include an `instance` field within their environment, so they will match against any ACS entry which contains the same `class-id`, regardless of instance.\n\n# How to get expected results?\n\nI would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class` and `instance` fields.\n\nHow do we tell the Verifier to copy the `instance` field from the `stateful-environment` part of `conditional-endorsement-triple-record` to the new ACS entry created by `endorsed-triple-record`?\n\nI think a similar issue is raised if the Conditional Endorser wants the Verifier to match against two `stateful-environments`, both of them having the same value in the `instance` field.\n\n# Possible solution\n\nOne solution I can imagine is to create special syntax which is inserted into the example conditional endorsement above in the location marked `/ What goes here? /`.\n\nThis syntax tells the Verifier to copy the instance value which was matched against the first `stateful-environment` into the newly created endorsed ACS entry.\n\nIs there a better solution?",
       "createdAt": "2025-03-28T22:19:44Z",
-      "updatedAt": "2025-05-13T00:40:00Z",
+      "updatedAt": "2025-05-17T00:21:24Z",
       "closedAt": null,
       "comments": [
         {
@@ -10567,6 +10567,13 @@
           "body": "> I would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class-map` and `instance-id` fields.\n\nThe `conditional-endorsement-triple` has multiple matching `conditions` (which is used to match on both the class-id and instance-id values. Given the `condition` matched two ECTs, but the addition (`endorsements`) needs to add `version` to both the `class-map` and `instance-id`. \n\nThe `addition` can be one of the matched ECTs, a different ECT in the ACS, or can be a novel ECT. \n\nOption-1: By having two ECTs in the `addition` array, one with the matched `class-map` and another for `instance-id`. The `measurement-values-map` for both have the same `version` value. \n\nOption-2: By having one ECT in the `addition`, the union of the ECTs in `condition` results in a new ECT is the combination of measurements from the two condition ECTs plus `version`. \n\nSince the addition could be asserted by a different authority from either of the ECTs that matched, a new ECT is added to the ACS having the authority of the conditional endorser. The ACS now has three ECTs relating to one of the components above (and three for the other component presumably).\n\nOption-1: If a relying party shows interest in a particular environment (say `instance-id`) the interest query returns the correct `version`. If the query shows interest in `class-map` then `version` also is returned. However, if the RP doesn't know both environments (lets choose `instance-id`), a query on `class-map` returns an ECT with just `digest` and another ECT with both `digest` and `version` but not any of the other measurements in the instance ECT.\n\nOption-2: If the RP queries on `class-id`, two ECTs are returned, one with just `digest` and another with `digest`, `version`, and the other measurments listed in the `conditions` ECTs. \n\nHowever, Option-2 isn't equivalent to a database merge because, the other values lurking in the `conditions` ECTs are not blindly copied into the `addition` ECT.  Nevertheless, the RP can stitch together a db merge by showing interest in the `class-map` which will return Evidence ECT containing `instance-id`. Another query on `instance-id` will return the rest of the ECTs for the component. \n\nThe RP may seem to have redundant measurements, but since the different ECTs are asserted by different authorities, each is qualified by that and hence aren't technically redundant. An appraisal policy would distinguish which measurements are invalid due to having the wrong authority.",
           "createdAt": "2025-05-13T00:39:59Z",
           "updatedAt": "2025-05-13T00:39:59Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "# Example of class-based conditional endorsement:\n[Class-endorsement](https://drive.google.com/file/d/12fMmJ2EnjM3j9aB1aFSZhdxw1WCBPpWV/view?usp=drive_link)\n\n# Example of instance-based conditional endorsement:\n[Instance-endorsement](https://drive.google.com/file/d/1VC-olXfBp7j4Sj-eyEpj6qe4iJiyYFwj/view?usp=drive_link)\n\n# Observations\nThe instance-based example models PR #434. However, they depend on the measurements being different (e.g., digest). Nevertheless, class-based examples produce the same results as instance-based examples. Possibly, there are more assumptions not yet expressed? \n\nOtherwise, the idea of overloading instance-id with verifier processing directives (Pos) seems odd.",
+          "createdAt": "2025-05-17T00:17:15Z",
+          "updatedAt": "2025-05-17T00:21:24Z"
         }
       ]
     },
@@ -64823,13 +64830,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-05-14T14:06:58Z",
+      "updatedAt": "2025-05-16T00:54:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
-      "headRefOid": "c122087f05fcb0b36956fd2d12bb1e367c9ec6d6",
+      "headRefOid": "381781dcaecaa8386e15660ddb0429d245e91d3a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -66592,13 +66599,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-05-09T22:58:39Z",
+      "updatedAt": "2025-05-16T22:11:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "9d1e44f38752500ac23c20e33126bf97322bfc77",
+      "headRefOid": "f26a3257641402ad6e2ee265a5cc5cbbdc4f1449",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -66752,6 +66759,59 @@
               "updatedAt": "2025-05-09T22:58:39Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86puYbx",
+          "commit": {
+            "abbreviatedOid": "f26a325"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-16T19:53:35Z",
+          "updatedAt": "2025-05-16T19:53:45Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "Does instance zero (i.e. 565(0)) have special significance? Otherwise, how does Endorser know the instance id if it was dynamically asserted into the Evidence / ACS?",
+              "createdAt": "2025-05-16T19:53:35Z",
+              "updatedAt": "2025-05-16T19:53:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pulUW",
+          "commit": {
+            "abbreviatedOid": "f26a325"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-16T20:24:24Z",
+          "updatedAt": "2025-05-16T20:24:25Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "Yes, as a condition, this is a binding position for a variable named 0.\r\nAs an endorsement, 565(0) is meant to be replaced with the instance that was bound to that variable during condition matching.\r\n\r\nEdit: no this looks more treacherous than that. It isn't itself a unification variable, it's referring to the instance that did match in the first condition. Yike, I would not recommend that semantics. Please use 565(0) in the first entry as well to mark it as a binding position, and the second usage can be seen as an equality constraint.",
+              "createdAt": "2025-05-16T20:24:24Z",
+              "updatedAt": "2025-05-16T20:28:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86pvHGC",
+          "commit": {
+            "abbreviatedOid": "f26a325"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "multiple",
+          "createdAt": "2025-05-16T22:11:04Z",
+          "updatedAt": "2025-05-16T22:11:04Z",
+          "comments": []
         }
       ]
     },
