@@ -914,7 +914,7 @@ For example, if an X.509 certificate's subject public key is unique for each ins
 See {{Section 4.1 of -pkix-cert}}.
 Alternatively, if the certificate's subject public key is large, the `instance-id` might be a key identifier that is a digest of that public key.
 See {{Section 4.2.1.2 of -pkix-cert}}.
-The keyIdentifier is reliably bound to the subjectPublicKey because the identifier is a digest of the key.
+The key identifier is reliably bound to the subject public key because the identifier is a digest of the key.
 
 The types defined for an instance identifier are CBOR tagged expressions of
 UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cryptographic keys, or cryptographic key identifiers.
