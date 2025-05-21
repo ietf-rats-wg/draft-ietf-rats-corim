@@ -28,7 +28,7 @@ This document specifies the information elements for representing Endorsements a
     intervaltree 3.1.0
     Jinja2 3.1.6
     lxml 5.3.0
-    platformdirs 4.3.7
+    platformdirs 4.3.8
     pycountry 24.6.1
     PyYAML 6.0.2
     requests 2.32.3
@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 17 November 2025</td>
+<td class="center">Expires 22 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-16" class="published">16 May 2025</time>
+<time datetime="2025-05-21" class="published">21 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-11-17">17 November 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-22">22 November 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1805,7 +1805,7 @@ See also <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-ea
             <dd class="break"></dd>
 <dt id="section-1.1.1-2.13">Domain:</dt>
             <dd style="margin-left: 1.5em" id="section-1.1.1-2.14">
-              <p id="section-1.1.1-2.14.1">A topological description to represent an entity, for example a Composite Device (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>), in terms of its constituent Environments.<a href="#section-1.1.1-2.14.1" class="pilcrow">¶</a></p>
+              <p id="section-1.1.1-2.14.1">A topological description to represent an entity, for example a Composite Device (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>), in terms of its constituent Environments or Domains.<a href="#section-1.1.1-2.14.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-1.1.1-2.15">Endorsed values:</dt>
@@ -4696,10 +4696,7 @@ dm = [ + {
 } ]
 </pre><a href="#section-9.1.6-2" class="pilcrow">¶</a>
 </div>
-<p id="section-9.1.6-3">The Domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose <code>cmtype</code> matches Evidence.
-If the <code>environment</code> for every entry of the members of <code>dm</code> matches an entry in the ACS ECTs then the Domain identity is copied to every member
-ECT. The <code>members</code> are added to the ACS with authority specified in the identity.<a href="#section-9.1.6-3" class="pilcrow">¶</a></p>
-<p id="section-9.1.6-4"><a href="#tbl-rv-ect-optionality" class="auto internal xref">Table 4</a> contains the requirements for the ECT fields of the Domain Membership tuple:<a href="#section-9.1.6-4" class="pilcrow">¶</a></p>
+<p id="section-9.1.6-3"><a href="#tbl-rv-ect-optionality" class="auto internal xref">Table 4</a> contains the requirements for the ECT fields of the Domain Membership tuple:<a href="#section-9.1.6-3" class="pilcrow">¶</a></p>
 <span id="name-domain-membership-tuple-req"></span><div id="tbl-dm-ect-optionality">
 <table class="center" id="table-6">
             <caption>
@@ -5930,11 +5927,12 @@ For each <code>rv</code> entry, the <code>condition</code> ECT is compared with 
 If the Verifier Appraisal policy requires Domain Membership, then membership triple sets a reference composition of an Attester in a Verifier database.
 At the time of Verification, the reference is then matched with actual composition as reported by an Attester in the Evidence.<a href="#section-9.3.3.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.3.3.1-2">Domain Membership Triples are first transformed into an internal representation following the steps mentioned in <a href="#sec-ir-dm-trans" class="auto internal xref">Section 9.2.3.5</a> leading to a representation as specified in <a href="#sec-ir-dm" class="auto internal xref">Section 9.1.6</a>.<a href="#section-9.3.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.3.1-3">For each <code>ECT</code> entry in the list of <code>members</code>, the environment elements (example Class ID) is compared with the equivalent environment elements in ACS Entry with <code>cmtype</code> as <code>evidence</code>.
-The process continues, untill every environment in the member list matches the entry in ACS.
-If all the members match then the <code>environment</code> from the domain-id field, is copied to <code>domain-id</code> field for each of the member ECT.
-All the member entries are then added in the ACS, with <code>authority</code> specified in the  <code>domain-id</code> field.<a href="#section-9.3.3.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.3.3.1-4">If the match fails, then the process is repeated using next Domain Membership entry in the Verifier. If none of the entries match, then the Verification has failed.<a href="#section-9.3.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.3.1-3">A list of mutable references to matching ACS Entries for a <code>dm</code> is constructed in an iterative process over <code>dm</code>.<code>members</code>.
+For every environment in <code>dm</code>.<code>members</code>, select ECTs from the ACS where <code>cmtype: &amp;(evidence: 2)</code> and whose environment matches.
+If there are no such ECTs, then the <code>dm</code> processing fails.
+If there is at least one such ECT, then add all the ECTs to the list.
+At the end of list construction, for each ECT in the list of references, copy the <code>dm</code>.<code>domain-id</code> to the ECT's <code>domain-id</code> field.
+If the field is already present and denotes a different domain, then this is an error.<a href="#section-9.3.3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -7935,7 +7933,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-msg-wrap">[I-D.ietf-rats-msg-wrap]</dt>
         <dd>
-<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Smith, N.</span>, <span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">D. Glaze</span>, <span class="refTitle">"RATS Conceptual Messages Wrapper (CMW)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-msg-wrap-13</span>, <time datetime="2025-04-15" class="refDate">15 April 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-13">https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-13</a>&gt;</span>. </dd>
+<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Smith, N.</span>, <span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">D. Glaze</span>, <span class="refTitle">"RATS Conceptual Messages Wrapper (CMW)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-msg-wrap-14</span>, <time datetime="2025-05-21" class="refDate">21 May 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-14">https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-14</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.tschofenig-rats-psa-token">[I-D.tschofenig-rats-psa-token]</dt>
         <dd>
