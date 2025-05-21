@@ -910,10 +910,9 @@ The following describes each member of the `class-map`:
 
 An `instance-id` is a globally unique value that identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
-For example, if the Target Environment is a DICE layer {{DICE.Layer}} the `instance-id` might be an X.509 subjectPublicKey.
+For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the instance-id might be created from that subject public key.
 See ({{Section 4.1 of -pkix-cert}}).
-The subjectPublicKey is reliably bound to the DICE layer because the key generation is tied to a measurement of the Target Environment.
-Alternatively, if the Target Environment is an X.509 subjectPublicKey the `instance-id` might be a key identifier that is a digest of the public key.
+Alternatively, if the certificate's subject public key is large, the `instance-id` might be a key identifier that is a digest of that public key.
 See {{Section 4.2.1.2 of -pkix-cert}}.
 The keyIdentifier is reliably bound to the subjectPublicKey because the identifier is a digest of the key.
 
