@@ -910,7 +910,7 @@ The following describes each member of the `class-map`:
 
 An `instance-id` is a globally unique value that identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
-For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the instance-id might be created from that subject public key.
+For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
 See {{Section 4.1 of -pkix-cert}}.
 Alternatively, if the certificate's subject public key is large, the `instance-id` might be a key identifier that is a digest of that public key.
 See {{Section 4.2.1.2 of -pkix-cert}}.
