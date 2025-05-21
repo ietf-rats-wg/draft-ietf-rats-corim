@@ -220,7 +220,7 @@ Class ID:
 See also {{Section 4.2.4 of -eat}}.
 
 Domain:
-: A topological description to represent an entity, for example a Composite Device ({{Section 3.3 of -rats-arch}}), in terms of its constituent Environments.
+: A topological description to represent an entity, for example a Composite Device ({{Section 3.3 of -rats-arch}}), in terms of its constituent Environments or Domains.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -1902,10 +1902,6 @@ An internal representation of Domain Membership uses the `dm` relation, which is
 {::include cddl/intrep-domain-mem.cddl}
 ~~~
 
-The Domain member Environments are compared with the Environments specified in the list of ECTs in ACS whose `cmtype` matches Evidence.
-If the `environment` for every entry of the members of `dm` matches an entry in the ACS ECTs then the Domain identity is copied to every member
-ECT. The `members` are added to the ACS with authority specified in the identity.
-
 {{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
 
 | ECT type  | ECT Field       | Requirement |
@@ -2467,12 +2463,12 @@ At the time of Verification, the reference is then matched with actual compositi
 
 Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-ir-dm-trans}} leading to a representation as specified in {{sec-ir-dm}}.
 
-For each `ECT` entry in the list of `members`, the environment elements (example Class ID) is compared with the equivalent environment elements in ACS Entry with `cmtype` as `evidence`.
-The process continues, untill every environment in the member list matches the entry in ACS.
-If all the members match then the `environment` from the domain-id field, is copied to `domain-id` field for each of the member ECT.
-All the member entries are then added in the ACS, with `authority` specified in the  `domain-id` field.
-
-If the match fails, then the process is repeated using next Domain Membership entry in the Verifier. If none of the entries match, then the Verification has failed.
+A list of mutable references to matching ACS Entries for a `dm` is constructed in an iterative process over `dm`.`members`.
+For every environment in `dm`.`members`, select ECTs from the ACS where `cmtype: &(evidence: 2)` and whose environment matches.
+If there are no such ECTs, then the `dm` processing fails.
+If there is at least one such ECT, then add all the ECTs to the list.
+At the end of list construction, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.
+If the field is already present and denotes a different domain, then this is an error.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
