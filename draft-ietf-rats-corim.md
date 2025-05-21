@@ -2458,8 +2458,7 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 #### Processing Domain Membership {#sec-process-dm}
 
 Domain Membership Triples allow an Endorser (for example an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
-If the Verifier Appraisal policy requires Domain Membership, then membership triple sets a reference composition of an Attester in a Verifier database.
-At the time of Verification, the reference is then matched with actual composition as reported by an Attester in the Evidence.
+If the Verifier Appraisal policy requires Domain Membership, then membership triple is used to match a reference composition of an Attester, expressed via membership triple with the actual composition represented via Evidence at the time of Appraisal.
 
 Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-ir-dm-trans}} leading to a representation as specified in {{sec-ir-dm}}.
 
