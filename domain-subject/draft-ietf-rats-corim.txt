@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 22 November 2025                                         Linaro
+Expires: 23 November 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             21 May 2025
+                                                             22 May 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 November 2025.
+   This Internet-Draft will expire on 23 November 2025.
 
 Copyright Notice
 
@@ -338,62 +338,61 @@ Table of Contents
       Environment instances, such as those with the same hardware
       assembly.  See also Section 4.2.4 of [I-D.ietf-rats-eat].
 
-   Domain:
-      A topological description to represent an entity, for example a
-      Composite Device (Section 3.3 of [RFC9334]), in terms of its
-      constituent Environments or Domains.
+   Composite Attester: A Composite Attester is either a Composite Device
+   (Section 3.3 of [RFC9334]) or a Layered Attester (Section 3.2 of
+   [RFC9334]) or any composition involving a combination of one or more
+   Composite Devices or Layered Attesters.
 
-   Endorsed values:
-      A set of characteristics of an Attester that do not appear in
-      Evidence.  For example, Endorsed Values may include testing or
-      certification data related to a hardware or firmware module.
-      Endorsed Values are said to be "conditional" when they apply if
-      Attester's actual state matches Verifier's accepted Claims.  See
-      also Section 3 of [I-D.ietf-rats-endorsements].
+   Domain:  A domain is a topological description of a Composite
+      Attester in terms of its constituent Environments and their
+      compositional relationships.
 
-   Environment:
-      A logical partition within an Attester.  The term "Target
-      Environment" refers to the group of system security metrics that
-      are reported through Evidence.  The term "Attesting Environment"
-      refers to the entity that collects and cryptographically signs
-      such security metrics.  See also Section 3.1 of [RFC9334].
+   Endorsed values:  A set of characteristics of an Attester that do not
+      appear in Evidence.  For example, Endorsed Values may include
+      testing or certification data related to a hardware or firmware
+      module.  Endorsed Values are said to be "conditional" when they
+      apply if Attester's actual state matches Verifier's accepted
+      Claims.  See also Section 3 of [I-D.ietf-rats-endorsements].
 
-   Environment-Claim Tuple (ECT):
-      A structure containing a set of values that describe a Target
-      Environment plus a set of Measurement / Claim values that describe
-      properties of the Target Environment.  The ECT also contains
-      Authority which identifies the entity that authored the ECT.
+   Environment:  A logical partition within an Attester.  The term
+      "Target Environment" refers to the group of system security
+      metrics that are reported through Evidence.  The term "Attesting
+      Environment" refers to the entity that collects and
+      cryptographically signs such security metrics.  See also
+      Section 3.1 of [RFC9334].
 
-   Instance ID:
-      An identifier of an Environment that is unique to that Environment
-      instance, such as the serial number of a hardware module.  See
-      also Section 4.2.1 of [I-D.ietf-rats-eat].
+   Environment-Claim Tuple (ECT):  A structure containing a set of
+      values that describe a Target Environment plus a set of
+      Measurement / Claim values that describe properties of the Target
+      Environment.  The ECT also contains Authority which identifies the
+      entity that authored the ECT.
 
-   Measurement:
-      A value associated with specific security characteristics of an
-      Attester that influences the trustworthiness of that Attester.
-      The object of a Measurement could be the invariant part of a
-      firmware component loaded into memory during startup, a run-time
-      integrity check (RTIC), a file system object, or a CPU register.
-      A measured object is part of the Attester's Target Environment.
-      Expected, or "golden," Measurements are compiled as Reference
-      Values, which are used by the Verifier to assess the trust state
-      of the Attester.  See also [TNC.Arch], and Section 9.5.5 of
-      [TPM2.Part1].
+   Instance ID:  An identifier of an Environment that is unique to that
+      Environment instance, such as the serial number of a hardware
+      module.  See also Section 4.2.1 of [I-D.ietf-rats-eat].
 
-   Reference Values:
-      A set of values that represent the desired or undesired state of
-      an Attester.  Reference Values are compared against Evidence to
-      determine whether Attester state is corroborated by a Reference
-      Value Provider.  Reference Values with matching Evidence produce
-      "acceptable Claims."  See also Section 4.2 of [RFC9334],
-      Section 8.3 of [RFC9334], and Section 2 of
-      [I-D.ietf-rats-endorsements].
+   Measurement:  A value associated with specific security
+      characteristics of an Attester that influences the trustworthiness
+      of that Attester.  The object of a Measurement could be the
+      invariant part of a firmware component loaded into memory during
+      startup, a run-time integrity check (RTIC), a file system object,
+      or a CPU register.  A measured object is part of the Attester's
+      Target Environment.  Expected, or "golden," Measurements are
+      compiled as Reference Values, which are used by the Verifier to
+      assess the trust state of the Attester.  See also [TNC.Arch], and
+      Section 9.5.5 of [TPM2.Part1].
 
-   Triple:
-      A term derived from the Resource Description Framework (RDF) to
-      mean a statement expressing a relationship between a subject and
-      an object resource.  The nature of the relationship between
+   Reference Values:  A set of values that represent the desired or
+      undesired state of an Attester.  Reference Values are compared
+      against Evidence to determine whether Attester state is
+      corroborated by a Reference Value Provider.  Reference Values with
+      matching Evidence produce "acceptable Claims."  See also
+      Section 4.2 of [RFC9334], Section 8.3 of [RFC9334], and Section 2
+      of [I-D.ietf-rats-endorsements].
+
+   Triple:  A term derived from the Resource Description Framework (RDF)
+      to mean a statement expressing a relationship between a subject
+      and an object resource.  The nature of the relationship between
       subject and object is expressed via a predicate.  In CoRIM, unlike
       RDF, the predicate of the triple is implicit and is encoded in the
       triple's name/codepoint.  CoRIM triples typically represent
@@ -1787,8 +1786,9 @@ Table of Contents
 
 5.1.4.1.8.  Domain Types
 
-   A Domain is a topological description to represent an entity, in
-   terms of its constituent Environments.
+   A domain is a topological description of a Composite Attester in
+   terms of its constituent Environments and their compositional
+   relationships.
 
    The following CDDL describes domain type choices.
 
@@ -3406,10 +3406,10 @@ Table of Contents
 
    A list of mutable references to matching ACS Entries for a dm is
    constructed in an iterative process over dm.members.  For every
-   environment in dm.members, select ECTs from the ACS where cmtype:
-   &(evidence: 2) and whose environment matches.  If there are no such
-   ECTs, then the dm processing fails.  If there is at least one such
-   ECT, then add all the ECTs to the list.  At the end of list
+   environment in dm.members, select Evidence ECTs from the ACS ( i.e.
+   cmtype: &(evidence: 2)) where environment match.  If there are no
+   such ECTs, then the dm processing fails.  If there is at least one
+   such ECT, then add all the ECTs to the list.  At the end of list
    construction, for each ECT in the list of references, copy the
    dm.domain-id to the ECT's domain-id field.  If the field is already
    present and denotes a different domain, then this is an error.
