@@ -2343,7 +2343,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 
 ### ACS Requirements {#sec-acs-reqs}
 
-At the end of the Evidence collection process Evidence has been converted into an internal representation suitable for appraisal.
+At the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.
 See {{sec-ir-cm}}.
 
 Verifiers are not required to use this as their internal representation.
