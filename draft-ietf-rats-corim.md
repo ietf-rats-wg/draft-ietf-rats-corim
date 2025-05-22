@@ -2468,7 +2468,7 @@ If the ECTs match except for authority, the `rv` `addition` ECT authority is add
 Domain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented by Evidence.
 
-Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-ir-dm-trans}} leading to a representation as specified in {{sec-ir-dm}}.
+Domain Membership Triples are first transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
 A list of mutable references to matching ACS Entries for a `dm` is constructed in an iterative process over `dm`.`members`.
 For every environment in `dm`.`members`, select Evidence ECTs from the ACS ( i.e. `cmtype: &(evidence: 2)`) where environment match.
