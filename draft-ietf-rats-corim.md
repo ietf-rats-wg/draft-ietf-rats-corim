@@ -2273,7 +2273,7 @@ The following transformation steps are applied for both the `identity-triples` a
 
 #### Domain Membership Triples Transformation {#sec-ir-dm-trans}
 
-This section describes how the external representation of a Domain Membership Triple (DMT) {{sec-comid-triple-domain-membership}} is transformed into its CoRIM internal representation {{sec-ir-dm}}.
+This section describes how the external representation of a Domain Membership Triple (DMT) {{sec-comid-triple-domain-membership}} is transformed into its CoRIM internal representation ({{sec-ir-dm}}).
 
 {:dmt-enum: counter="dmt1" style="format Step %d."}
 
