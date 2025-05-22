@@ -2475,7 +2475,7 @@ For every environment in `dm`.`members`, select Evidence ECTs from the ACS ( i.e
 If there are no such ECTs, then the `dm` processing fails.
 Otherwise, add all the matching ECTs to the list.
 After creating the list, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.
-If the field is already present and denotes a different domain, then this is an error.
+If the field is already present and contains a different domain, then this is an error.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
