@@ -2474,7 +2474,7 @@ A list of mutable references to matching ACS Entries for a `dm` is constructed i
 For every environment in `dm`.`members`, select Evidence ECTs from the ACS ( i.e. `cmtype: &(evidence: 2)`) where environment match.
 If there are no such ECTs, then the `dm` processing fails.
 If there is at least one such ECT, then add all the matching ECTs to the list.
-At the end of list construction, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.
+After creating the list, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.
 If the field is already present and denotes a different domain, then this is an error.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
