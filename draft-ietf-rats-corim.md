@@ -219,8 +219,10 @@ Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
+Composite Attester: A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
+
 Domain:
-: A topological description to represent an entity, for example a Composite Device ({{Section 3.3 of -rats-arch}}), in terms of its constituent Environments or Domains.
+: A domain is a topological description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -1270,7 +1272,7 @@ The signed integer range representation is an inclusive range unless either `min
 
 ##### Domain Types {#sec-comid-domain-type}
 
-A Domain is a topological description to represent an entity, in terms of its constituent Environments.
+A domain is a topological description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type choices.
 
@@ -2463,7 +2465,7 @@ If the Verifier Appraisal policy requires Domain Membership, then membership tri
 Domain Membership Triples are first transformed into an internal representation following the steps mentioned in {{sec-ir-dm-trans}} leading to a representation as specified in {{sec-ir-dm}}.
 
 A list of mutable references to matching ACS Entries for a `dm` is constructed in an iterative process over `dm`.`members`.
-For every environment in `dm`.`members`, select ECTs from the ACS where `cmtype: &(evidence: 2)` and whose environment matches.
+For every environment in `dm`.`members`, select Evidence ECTs from the ACS ( i.e. `cmtype: &(evidence: 2)`) where environment match.
 If there are no such ECTs, then the `dm` processing fails.
 If there is at least one such ECT, then add all the ECTs to the list.
 At the end of list construction, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.
