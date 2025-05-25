@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-22T02:01:44.911169+00:00",
+  "timestamp": "2025-05-25T02:10:39.943308+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11085,10 +11085,12 @@
       "author": "setrofim",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "`instance-id-type-choice` has `crypto-key-type-choice` as one of its variants. Both of theses type choices have `tagged-bytes` as a possible variant.\n\nThat means that if you see `tagged-bytes` in the data, it is impossible to know whether they should be interpreted as generic instance ID bytes, or as a crypto key.\n\nThis can lead to the loss information that bytes are meant to be a key. This can also pontentially lead to deviation between  how different implementations process the same input.",
       "createdAt": "2025-04-28T12:08:33Z",
-      "updatedAt": "2025-04-30T15:05:11Z",
+      "updatedAt": "2025-05-22T14:42:50Z",
       "closedAt": null,
       "comments": [
         {
@@ -11265,6 +11267,44 @@
       "updatedAt": "2025-05-21T14:40:41Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 440,
+      "id": "I_kwDOH6-tI8632Dvc",
+      "title": "DMT\u2019s domain-id type extensibility",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/440",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "At present, there is only one possible choice (`environment-map`), so why add a possibly confusing layer of indirection?\r\n\r\nIOW, why can\u2019t `domain-id` just be `environment-map`?\r\n",
+      "createdAt": "2025-05-22T19:49:27Z",
+      "updatedAt": "2025-05-25T01:16:34Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The only consideration would be that that would be a breaking change for TCG corim. \nA reasonable compromise is for TCG corim to keep the extensible type form and add environment-map. It could deprecate the other forms too. But IETF corim could do the same as well. What does the design team want to do?",
+          "createdAt": "2025-05-22T21:35:03Z",
+          "updatedAt": "2025-05-22T21:56:20Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> The only consideration would be that that would be a breaking change for TCG corim. \n\nAFAIR, TCG CoRIM doesn\u2019t have domain triples.",
+          "createdAt": "2025-05-23T04:39:57Z",
+          "updatedAt": "2025-05-23T04:39:57Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "CoEV has it patterned after draft CoRIM.\r\nSent from my iPhone\r\n\r\nOn May 22, 2025, at 11:40\u202fPM, Thomas Fossati ***@***.***> wrote:\r\n\r\n\ufeff\r\n[https://avatars.githubusercontent.com/u/9195842?s=20&v=4]thomas-fossati left a comment (ietf-rats-wg/draft-ietf-rats-corim#440)<https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/440#issuecomment-2903240375>\r\n\r\nThe only consideration would be that that would be a breaking change for TCG corim.\r\n\r\nAFAIR, TCG CoRIM doesn\u2019t have domain triples.\r\n\r\n\u2014\r\nReply to this email directly, view it on GitHub<https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/440#issuecomment-2903240375>, or unsubscribe<https://github.com/notifications/unsubscribe-auth/ABPMCSCLMKGPZVXOI74TS5T272RDHAVCNFSM6AAAAAB5W6RQ2CVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZDSMBTGI2DAMZXGU>.\r\nYou are receiving this because you commented.Message ID: ***@***.***>\r\n",
+          "createdAt": "2025-05-25T01:16:33Z",
+          "updatedAt": "2025-05-25T01:16:33Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -64846,13 +64886,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-05-21T15:32:39Z",
+      "updatedAt": "2025-05-23T08:44:12Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "5ec3a3deb5b98036369c968cadcaff90db9881d8",
+      "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
-      "headRefOid": "5a6d3cbab9ed5cf231567d02e6c90a44696da1dc",
+      "headRefOid": "ddaeee61a1603f021ed54400bb3ccca4598ee397",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -64864,6 +64904,13 @@
           "body": "Not having the description of evidence first means we may not be on the same page wrt the state of the ACS when a DM triple is processed. I expect that the `domain-id` in evidence ECT will be populated by the Attesting Env that reported Evidence for the Target Env (aka the `member`). For example, a DICE layering would be processed such that each layer represents a domain and a domain member where layer n+1 is the domain that contains layer n as a member.  The domain-member triple in evidence isn't necessarily needed IMHO.\r\n\r\nThe dm triple in corim wants to corroborate what is in evidence, but also assert to the ACS when an expected member is missing. Corroboration will add a duplicate ECT as was found in Evidence ECTs but mark it as a RV ECT and authority will be that of the RVP. Applying similar semantics, the dm processing will add a duplicate ECT if found in Evidence but assert it as a DM cmtype with authority of the DM signer. However, if there are additional expected members in the dm, but not in evidence. Adding entries for them in the ACS will falsely appear as if the evidence contained them. An additional check is needed that pairs up the evidence ECTs with the DM ECTs in order to detect unpaired ECTs. The int-rep structure doesn't appear to have a way to represent the pairing result. For example, a real-world implementation might use a pointer that references paired / corroborated records while null pointers represent uncorroborated ECTs. It's unclear how far down an implementation path the draft should go to represent ACS state. Possibly, it is good enough to document the need to do the pairing check and leave it at that? \r\n\r\nNevertheless, there is a concern that for other conditional endorsements, the potential for endorsing something that has a twin in the ACS might result in only one twin being updated. If the ACS can contain multiple instances of ECTs for the same component, are we sure there is a merge routine that reliably relates/combines them such that the result is an accurate representation of the state of the Attester? This may not be unique to dm triples. So maybe it is a separable issue?",
           "createdAt": "2025-04-23T23:54:05Z",
           "updatedAt": "2025-04-23T23:54:05Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati : @henkbirkholz @deeglaze Incorporated your comments. Please approve so that we can make progress!\r\n\r\nIf Needed, any pending issues, we can track via raising small PR's on the main line once commited.",
+          "createdAt": "2025-05-22T17:32:41Z",
+          "updatedAt": "2025-05-22T17:33:30Z"
         }
       ],
       "reviews": [
@@ -66088,6 +66135,445 @@
           "body": "",
           "createdAt": "2025-05-21T15:32:39Z",
           "updatedAt": "2025-05-21T15:32:39Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qjm0h",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T14:23:59Z",
+          "updatedAt": "2025-05-22T14:23:59Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "Removed it  from here and moved it to Processing of DMT section",
+              "createdAt": "2025-05-22T14:23:59Z",
+              "updatedAt": "2025-05-22T14:23:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qjnOl",
+          "commit": {
+            "abbreviatedOid": "5a6d3cb"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T14:24:28Z",
+          "updatedAt": "2025-05-22T14:24:29Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Changes done!",
+              "createdAt": "2025-05-22T14:24:28Z",
+              "updatedAt": "2025-05-22T14:24:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qjwK1",
+          "commit": {
+            "abbreviatedOid": "c122087"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T14:33:55Z",
+          "updatedAt": "2025-05-22T14:33:56Z",
+          "comments": [
+            {
+              "originalPosition": 117,
+              "body": "The authority transformation is now explained under: `Domain Membership Triples Transformation`. Moved from here!",
+              "createdAt": "2025-05-22T14:33:55Z",
+              "updatedAt": "2025-05-22T14:33:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qkWaj",
+          "commit": {
+            "abbreviatedOid": "21cf223"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-05-22T15:18:28Z",
+          "updatedAt": "2025-05-22T15:18:28Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qm2aI",
+          "commit": {
+            "abbreviatedOid": "21cf223"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:09:06Z",
+          "updatedAt": "2025-05-22T19:09:07Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\nComposite Attester:\r\n: A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.\r\n```",
+              "createdAt": "2025-05-22T19:09:06Z",
+              "updatedAt": "2025-05-22T19:09:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qm3c2",
+          "commit": {
+            "abbreviatedOid": "9ec4c0f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:11:13Z",
+          "updatedAt": "2025-05-22T19:11:13Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Unresolving conversation since this comment has not been addressed.",
+              "createdAt": "2025-05-22T19:11:13Z",
+              "updatedAt": "2025-05-22T19:11:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qm7QY",
+          "commit": {
+            "abbreviatedOid": "20c664c"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:18:09Z",
+          "updatedAt": "2025-05-22T19:18:09Z",
+          "comments": [
+            {
+              "originalPosition": 112,
+              "body": "This description does not correspond to the actual structure:\r\n```\r\ndm = [ + {\r\n  domain-id: ECT\r\n  members:  [ + ECT ]\r\n} ]\r\n```",
+              "createdAt": "2025-05-22T19:18:09Z",
+              "updatedAt": "2025-05-22T19:18:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qm8C2",
+          "commit": {
+            "abbreviatedOid": "20c664c"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:19:17Z",
+          "updatedAt": "2025-05-22T19:19:17Z",
+          "comments": [
+            {
+              "originalPosition": 173,
+              "body": "```suggestion\r\nThis section describes how the external representation of a Domain Membership Triple (DMT) {{sec-comid-triple-domain-membership}} is transformed into its CoRIM internal representation ({{sec-ir-dm}}).\r\n```",
+              "createdAt": "2025-05-22T19:19:17Z",
+              "updatedAt": "2025-05-22T19:19:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnDNm",
+          "commit": {
+            "abbreviatedOid": "8d7f024"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:28:08Z",
+          "updatedAt": "2025-05-22T19:28:08Z",
+          "comments": [
+            {
+              "originalPosition": 239,
+              "body": "```suggestion\r\nAt the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.\r\n```",
+              "createdAt": "2025-05-22T19:28:08Z",
+              "updatedAt": "2025-05-22T19:28:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnDma",
+          "commit": {
+            "abbreviatedOid": "af43a03"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:28:52Z",
+          "updatedAt": "2025-05-22T19:28:53Z",
+          "comments": [
+            {
+              "originalPosition": 249,
+              "body": "```suggestion\r\nDomain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.\r\n```",
+              "createdAt": "2025-05-22T19:28:53Z",
+              "updatedAt": "2025-05-22T19:28:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnGoG",
+          "commit": {
+            "abbreviatedOid": "d8915b2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:34:43Z",
+          "updatedAt": "2025-05-22T19:34:43Z",
+          "comments": [
+            {
+              "originalPosition": 250,
+              "body": "```suggestion\r\nIf the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented by Evidence.\r\n```",
+              "createdAt": "2025-05-22T19:34:43Z",
+              "updatedAt": "2025-05-22T19:34:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnHyy",
+          "commit": {
+            "abbreviatedOid": "49e2111"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:37:07Z",
+          "updatedAt": "2025-05-22T19:37:08Z",
+          "comments": [
+            {
+              "originalPosition": 252,
+              "body": "```suggestion\r\nDomain Membership Triples are first transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.\r\n```",
+              "createdAt": "2025-05-22T19:37:08Z",
+              "updatedAt": "2025-05-22T19:37:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnI0f",
+          "commit": {
+            "abbreviatedOid": "a7e342f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:38:42Z",
+          "updatedAt": "2025-05-22T19:38:43Z",
+          "comments": [
+            {
+              "originalPosition": 257,
+              "body": "```suggestion\r\nIf there is at least one such ECT, then add all the matching ECTs to the list.\r\n```",
+              "createdAt": "2025-05-22T19:38:42Z",
+              "updatedAt": "2025-05-22T19:38:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnJ67",
+          "commit": {
+            "abbreviatedOid": "13ed48a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:40:51Z",
+          "updatedAt": "2025-05-22T19:40:51Z",
+          "comments": [
+            {
+              "originalPosition": 258,
+              "body": "```suggestion\r\nAfter creating the list, for each ECT in the list of references, copy the `dm`.`domain-id` to the ECT's `domain-id` field.\r\n```",
+              "createdAt": "2025-05-22T19:40:51Z",
+              "updatedAt": "2025-05-22T19:40:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnLWm",
+          "commit": {
+            "abbreviatedOid": "7e56a69"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:43:49Z",
+          "updatedAt": "2025-05-22T19:43:50Z",
+          "comments": [
+            {
+              "originalPosition": 257,
+              "body": "```suggestion\r\nOtherwise, add all the matching ECTs to the list.\r\n```",
+              "createdAt": "2025-05-22T19:43:50Z",
+              "updatedAt": "2025-05-22T19:43:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnMB9",
+          "commit": {
+            "abbreviatedOid": "ccd160e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:45:15Z",
+          "updatedAt": "2025-05-22T19:45:15Z",
+          "comments": [
+            {
+              "originalPosition": 259,
+              "body": "```suggestion\r\nIf the field is already present and contains a different domain, then this is an error.\r\n```",
+              "createdAt": "2025-05-22T19:45:15Z",
+              "updatedAt": "2025-05-22T19:45:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnPGG",
+          "commit": {
+            "abbreviatedOid": "cd278e8"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-22T19:51:03Z",
+          "updatedAt": "2025-05-22T19:51:03Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Raised #440 to track this.",
+              "createdAt": "2025-05-22T19:51:03Z",
+              "updatedAt": "2025-05-22T19:51:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qnRmp",
+          "commit": {
+            "abbreviatedOid": "cd278e8"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "I have made some minor clarifying/declunkifying cleanup, and raised #440 to track an unresolved comment.\r\n\r\nIMO, the only remaining issue to address before merging is https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416/files#r2103246835, for which I wasn\u2019t able to make a concrete proposal (too late, too tired, sorry!).\r\n",
+          "createdAt": "2025-05-22T19:56:02Z",
+          "updatedAt": "2025-05-22T19:56:02Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qr9Qz",
+          "commit": {
+            "abbreviatedOid": "cd278e8"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-23T08:30:22Z",
+          "updatedAt": "2025-05-23T08:30:23Z",
+          "comments": [
+            {
+              "originalPosition": 173,
+              "body": "```suggestion\r\nThis section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation ({{sec-ir-dm}}).\r\n```",
+              "createdAt": "2025-05-23T08:30:22Z",
+              "updatedAt": "2025-05-23T08:30:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qsBwI",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-23T08:36:51Z",
+          "updatedAt": "2025-05-23T08:36:51Z",
+          "comments": [
+            {
+              "originalPosition": 180,
+              "body": "Not sure I follow: at step 1, we allocate the `dm` entry, which is supposedly empty (since we haven\u2019t explained yet how to populate it).  Therefore, here we instruct on setting the `cm-type` field of ECTs that don\u2019t exist?",
+              "createdAt": "2025-05-23T08:36:51Z",
+              "updatedAt": "2025-05-23T08:36:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qsC4Y",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-23T08:38:34Z",
+          "updatedAt": "2025-05-23T08:38:35Z",
+          "comments": [
+            {
+              "originalPosition": 185,
+              "body": "The types of this assignment are not compatible.",
+              "createdAt": "2025-05-23T08:38:35Z",
+              "updatedAt": "2025-05-23T08:38:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qsDtI",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-23T08:39:50Z",
+          "updatedAt": "2025-05-23T08:39:51Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "ditto",
+              "createdAt": "2025-05-23T08:39:50Z",
+              "updatedAt": "2025-05-23T08:39:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86qsGlR",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Having taken a slightly deeper look into the DMT transformation algorithm, I think it needs some TLC before we can merge this.",
+          "createdAt": "2025-05-23T08:44:12Z",
+          "updatedAt": "2025-05-23T08:44:12Z",
           "comments": []
         }
       ]
