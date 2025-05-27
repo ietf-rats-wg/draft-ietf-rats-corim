@@ -1258,13 +1258,13 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
-##### Raw Int {#sec-comid-raw-int}
+##### Int Range {#sec-comid-int-range}
 
-A raw int describes an integer value that can be compared with linear order in the target environment.
-A raw int is represented with either major type 0 or major type 1 ints.
+An int range describes an integer value that can be compared with linear order in the target environment.
+An int range is represented with either major type 0 or major type 1 ints.
 
 ~~~ cddl
-{::include cddl/raw-int-type-choice.cddl}
+{::include cddl/int-range-type-choice.cddl}
 ~~~
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
@@ -2624,9 +2624,9 @@ If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
 
-##### Comparison for raw-int entries
+##### Comparison for int-range entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which MUST have type `raw-int-type-choice`.
+The ACS entry value stored under `measurement-values-map` codepoint 15 is an int range value, which MUST have type `int-range-type-choice`.
 
 Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
@@ -2775,7 +2775,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
-|     564 | `array`             | tagged-int-range, see {{sec-comid-raw-int}}                   | {{&SELF}} |
+|     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
 | 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
@@ -2984,7 +2984,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 12    | (reserved)                | {{&SELF}}     |
 | 13    | cryptokeys                | {{&SELF}}     |
 | 14    | integrity-registers       | {{&SELF}}     |
-| 15    | raw-int                   | {{&SELF}}     |
+| 15    | int-range                 | {{&SELF}}     |
 | 16-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
