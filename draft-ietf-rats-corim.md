@@ -1369,7 +1369,7 @@ The `conditional-endorsement-series-triple-record` has the following parameters:
 
 * `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
 The condition is a record containing an `environment`, optional `claims-list`, and optional `authorized-by`.
-If both `authorized-by` and `claims-list.authorized-by` are populated then `claims-list.authorized-by` is ignored.
+If both `authorized-by` and `claims-list`.`authorized-by` are populated then `claims-list`.`authorized-by` is ignored.
 
 * `series`: A set of selection-addition tuples.
 
