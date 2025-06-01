@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-05-29T02:02:22.821172+00:00",
+  "timestamp": "2025-06-01T02:27:26.084544+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11310,6 +11310,81 @@
           "body": "> CoEV has it patterned after draft CoRIM.\n\nIIUC, you want to make domain ID an open type in IETF CoRIM, so that CoEV can extend it for its purposes, right?\n\nThe problem is that, at present, IETF CoRIM doesn\u2019t define an extensibility story for domain IDs.\n\nIt is not clear to me whether #416 strictly requires the domain ID to be an `environment-map`.  If not, allowing the non-recursive domain IDs should also be allowed.",
           "createdAt": "2025-05-26T13:14:57Z",
           "updatedAt": "2025-05-26T13:15:40Z"
+        }
+      ]
+    },
+    {
+      "number": 442,
+      "id": "I_kwDOH6-tI8641j2p",
+      "title": "Improve description for reference values triples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/442",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Reference values triples is an array of values where multiple possible values can be included as reference values to be compared (matched) against evidence.\n\nThe processing section seems to document the matching process correctly, but it would help if the reference values triples section clearly explained how to use the array of triples to represent \"possible\" states. \n\nAlso, there is the case where mkey is the same value and there is an array of measurement values. Should this be another way to represent \"possible\" states or should the semantics be that the multiple measurements map to multiple components, each having an expected state(value)?\n\nIf measurement-map multiplicity contains possible state, then the processing section needs to be reworded. \n\nAlternatively, there should be normative language in the Evidence specifications that forbids multiple measurement-map entries where mkey is the same and the measurement-values-map entries are the same code point and type. \n\nNote PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/258 describes a macro any-of<T> which makes an array of T. If used in refererence-values triples, it is reasonable to consider whether the any-of<> semantics means the set can be possible state. \n\n\n",
+      "createdAt": "2025-05-29T17:49:31Z",
+      "updatedAt": "2025-05-29T21:30:31Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> measurement-map multiplicity contains possible state\n\nIt does not. This is strictly an and. The disjunction semantics is at the triple array.\n\n> Also, there is the case where mkey is the same value and there is an array of measurement values.\n\nI thought we said there can be at most one entry with a given mkey value, no? It appears not, which is a flaw.",
+          "createdAt": "2025-05-29T18:42:13Z",
+          "updatedAt": "2025-05-29T18:45:03Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I thought we said there can be at most one entry with a given mkey value\n\nThe current text says: \" mkey may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment. A single anonymous measurement-map is allowed within the same environment. Two or more measurement-map entries within the same environment MUST populate mkey.\"\n\n[1] The CDDL allows `mkey` of the same value to be repeated:\n```\n[ mkey=foo, mval={X=x1} ],\n[ mkey=foo, mval={Y=y1} ],\n...\n```\n\n[2] CDDL also allows `mval` of the same type to be repeated:\n```\n[ mkey=foo, mval={X=x1} ],\n[ mkey=foo, mval={X=x2} ],\n...\n```\nNote that \"anonymous\" mkey has similar sementics as if it was 'foo'. \n\nIt is the latter construction that is potentially useful for modeling reference values. \nThe text: \"Two or more measurement-map entries within the same environment MUST populate mkey.\" is in the context of an ACS (aka Evidence or Endorsement) expression IMHO.   \n\n[3] Given [1] as evidence, it is reasonable for reference values to be expressed as: \n```\n[ mkey=foo, mval={X=x1} ],\n[ mkey=foo, mval={X=x2} ],\n[ mkey=foo, mval={Y=y1} ],\n[ mkey=foo, mval={Y=y2} ]\n```\n\nThis is reasonable (not ambiguous) since [2] appears to be forbidden for ACS / Evidence expressions.\n\n[4] If I wanted to express the same reference values for [3] using reference value triples it would look something like:\n```\n[env=A1, [ mkey=foo, mval={X=x1} ]],\n[env=A1, [ mkey=foo, mval={X=x2} ]],\n[env=A1, [ mkey=foo, mval={Y=y1} ]],\n[env=A1, [ mkey=foo, mval={Y=y2} ]]\n```\n\n[5] If we rewrote [3] with environment info it would be something like:\n```\n[env=A1, [\n   [ mkey=foo, mval={X=x1} ],\n   [ mkey=foo, mval={X=x2} ],\n   [ mkey=foo, mval={Y=y1} ],\n   [ mkey=foo, mval={Y=y2} ]\n]]\n```\nIs [5] more ambiguous than [4]? ",
+          "createdAt": "2025-05-29T20:38:53Z",
+          "updatedAt": "2025-05-29T20:38:53Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> mkey may be necessary to disambiguate multiple measurements of the same type\n> or to distinguish multiple measured elements within the same environment.\n\nI read this as A: name = \"I'm A\", and B: name = \"I'm B\" where mkeys \"A\" and \"B\" are relevant to naming the claim. These are not two possible values for the same measured element.\n\n[2, 3, 4, 5] To me, these are ill-formed because if x1 != x2, then the constraints are inconsistent and can never match. When I have multiplicity in my measurement-map, it's because I want every measured element I list to be matched to the values given. I don't want a subset to be matched and still accept that as a valid application of the reference value triple. It would be beyond confusing to say the multiplicity of measurement-map has a grouping semantics that all measurement-map of the same mkey are considered a group of possibilities for mval, but at least one has to match. I'd much rather have there be no implicit grouping calculation like this.\n\nBecause the AND semantics is preferred for the measurement-map multiplicity, only [1] is conceivably allowable. I still would prefer that it not be, and anyone producing such a triple would have to coalesce all the mval mappings into a single mval.",
+          "createdAt": "2025-05-29T20:42:01Z",
+          "updatedAt": "2025-05-29T20:52:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I read this as A: name = \"I'm A\",\n\n`mkey=foo` is the same as / (shorthand) for `mkey: name = \"I'm foo\"`",
+          "createdAt": "2025-05-29T20:58:05Z",
+          "updatedAt": "2025-05-29T20:58:05Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> These are not two possible values for the same measured element\n\nThe examples above are all in terms of \"I'm foo\".",
+          "createdAt": "2025-05-29T20:59:49Z",
+          "updatedAt": "2025-05-29T20:59:49Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> x1 != x2\n\nThis is true for ECTs, Evidence and Endorsement additions because these describe \"actual\" state. A Target Environment + element cannot be in multiple states at the same time (where CoRIM isn't modeling quantum computers).\n\n\"Reference\" values means more than one measurement value can be valid for the purposes of corroboration (for the same element in the same environment). ",
+          "createdAt": "2025-05-29T21:11:00Z",
+          "updatedAt": "2025-05-29T21:11:00Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It would be beyond confusing to say the multiplicity of measurement-map has a grouping semantics that all measurement-map of the same mkey are considered a group of possibilities for mval, but at least one has to match.\n\nIf the internal representation prefers writing reference values as [4], then is it ambiguous to transform [5] into [4]? Is there any other way to transform [5] (given [4] and [5] are reference values triples] ) that could be misinterpreted? Or are you saying the transform is too complicated and should be thrown out?",
+          "createdAt": "2025-05-29T21:18:37Z",
+          "updatedAt": "2025-05-29T21:19:47Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If the internal representation prefers writing reference values as [4]\n\nI would think [4] is also ill-formed since given the same authorized-by list, there is wording about merging measurements as a requirement:\n\n> If Evidence or Endorsements from different sources has the same environment-map and authorized-by then the measurement-values-maps are merged.\n\nThis also appears to not have been updated with the readdition of measurement multiplicity since I would expect it to say the measurement-values-maps are merged for corresponding mkeys.\n\nFurthermore, I'm not certain you could actually have different values for X when you have different authorized-by, since they're meant to match evidence, which will not have conflicting values. If we're talking about different folks' addition of conflicting values for endorsements, then that's something else that I don't really know what to do with.\n\nUpdate: nevermind [4] being ill-formed. I was thinking in terms of ECT/ACS. Let me get back to this..",
+          "createdAt": "2025-05-29T21:25:29Z",
+          "updatedAt": "2025-05-29T21:30:30Z"
         }
       ]
     }
@@ -64893,7 +64968,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-05-28T14:40:30Z",
+      "updatedAt": "2025-05-30T15:55:32Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
@@ -66602,6 +66677,26 @@
               "updatedAt": "2025-05-28T14:40:31Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86rxFEN",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-05-30T15:55:32Z",
+          "updatedAt": "2025-05-30T15:55:32Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": ":+1: to the extensible\r\n$domain-type-choice /= environment-map\r\nand requesting a registry that then can also be (re-)populated by other specifications.\r\n\r\nWDYT?",
+              "createdAt": "2025-05-30T15:55:32Z",
+              "updatedAt": "2025-05-30T15:55:32Z"
+            }
+          ]
         }
       ]
     },
@@ -67669,13 +67764,13 @@
       "labels": [],
       "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
       "createdAt": "2025-05-09T20:26:59Z",
-      "updatedAt": "2025-05-12T19:54:08Z",
+      "updatedAt": "2025-05-29T17:16:59Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "nms/issue-435",
-      "headRefOid": "a15f3bc035590aab653a518a96695008678c81e5",
+      "headRefOid": "c9772106d5b2c3e623d3b38f3f4b4a4f2d6a52e1",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -67769,7 +67864,7 @@
       "labels": [],
       "body": "fixes #437",
       "createdAt": "2025-05-21T14:44:23Z",
-      "updatedAt": "2025-05-21T19:06:43Z",
+      "updatedAt": "2025-05-29T17:14:18Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
@@ -67822,6 +67917,19 @@
           "createdAt": "2025-05-21T19:06:43Z",
           "updatedAt": "2025-05-21T19:06:43Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86rmn54",
+          "commit": {
+            "abbreviatedOid": "0e51403"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-05-29T17:14:18Z",
+          "updatedAt": "2025-05-29T17:14:18Z",
+          "comments": []
         }
       ]
     },
@@ -67863,7 +67971,7 @@
       "labels": [],
       "body": "Fix #419",
       "createdAt": "2025-05-27T19:36:28Z",
-      "updatedAt": "2025-05-28T15:50:18Z",
+      "updatedAt": "2025-05-29T17:12:30Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
@@ -67928,6 +68036,19 @@
           "body": "This is a better name for the type",
           "createdAt": "2025-05-28T14:06:32Z",
           "updatedAt": "2025-05-28T14:06:32Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86rmm5R",
+          "commit": {
+            "abbreviatedOid": "80d7b23"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-05-29T17:12:30Z",
+          "updatedAt": "2025-05-29T17:12:30Z",
           "comments": []
         }
       ]
