@@ -2382,7 +2382,7 @@ Both instance types contain an integer name for the variable which is set by the
 
 Within each triple, each variable can only be set once, so if there are multiple `environment-map`s using `instance-slot-store-type` then they must each have a different integer name.
 
-If a conditional endorsement containing stateful environments which use `instance-slot-store-type` matches against multiple ECTs then each match is processed independently, with a separate endorsement ECT being added to the ACS for each match. 
+If a conditional endorsement containing stateful environments which use `instance-slot-store-type` matches against multiple ECTs then each match is processed independently, with a separate endorsement ECT being added to the ACS for each match.
 
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
