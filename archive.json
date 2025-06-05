@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-01T02:27:26.084544+00:00",
+  "timestamp": "2025-06-05T02:03:29.100531+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8357,7 +8357,7 @@
       "id": "I_kwDOH6-tI86afytN",
       "title": "Provide syntactically valid examples in the doc for $crypto-key-type-choice variants",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/327",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -8368,8 +8368,8 @@
       ],
       "body": "554, 555, 556, 557, etc.",
       "createdAt": "2024-10-16T14:11:22Z",
-      "updatedAt": "2025-03-12T19:18:30Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-04T14:59:57Z",
+      "closedAt": "2025-06-04T14:59:56Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -8440,6 +8440,13 @@
           "body": "> cert chain A could be different from cert chain B and still be equivalent from the perspective of a certain EE cert.\n\nThe use case context is that a condition (expressed using authorized-by) can be effective at matching an authority representation. If the Endorser's context isn't fuzzy (for example due to a common profile or due to the Attester and Endorser having a common manufacturer), then it's reasonable for the condition to be expressed using a digested cert. If the above sorting algorithm is applied by Verifiers, then that will need to be taken into consideration by the condition authors.\n\nThe case that is problematic for condition authors is dynamically issued certs (such as DICE embedded CAs) where the dynamic certs can't be predicted by condition authors. If the ECT authority includes the EE key/cert and the cert chain walked by the Verifier as part of path verification, then a condition match based on cert chain might specify only the non-dynamic elements of the cert path. The Verifier logic should anticipate this and allow successful matching on a subset of the cert path elements. This would allow matching logic that pins the authority down to the Device ID and its CA issuers but not require pinning to the exact component / environment within the device named in the condition. The condition might include other conditions such as class-id to ensure the addition is scoped properly.\n\nAs an example, given a cert path with 4 certs where cert 1 is the root ca, cert 2 is a sub-ca, cert 3 is a device ID, and cert 4 is a DICE EE (dynamically issued). Given the authority for an Evidence claim is  (a) from the algorithm above. If the Endorsement contains a condition that matches based on Device ID cert, but also include certs 1 and 2. The Verifier would need to compute a digest for reach of the cert paths possible while walking the path to the root. The path containing cert 4 as EE has digest d1, the path with cert 3 as EE has digest d2, the path containing cert 2 as EE has digest d3 and the path containing the root ca cert 1 has digest d4. If the Evidence authority is expressed as d1 but the condition is expressed as d2, the Verifier can check that both d1 and d2 are members of the set (d1, d2, d3, d4). If so, it considers these a matching. \n\nNote that the Verifier had to be in possession of the actual certs / cert chain in order to do key verification checks.\nNote also that the problem isn't uniqe to dynamically issued X.509 certs as the authority for dynamically issued tokens (e.g. EAT) would have an authority value not anticipated by the Endorser authors. ",
           "createdAt": "2025-03-12T18:58:46Z",
           "updatedAt": "2025-03-12T19:18:29Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing is as per request from @deeglaze ",
+          "createdAt": "2025-06-04T14:59:56Z",
+          "updatedAt": "2025-06-04T14:59:56Z"
         }
       ]
     },
@@ -10356,7 +10363,7 @@
       "id": "I_kwDOH6-tI86uwwRC",
       "title": "nit: tagged-masked-raw-value does not itself contain a tagged-masked-raw-value",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/410",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10365,8 +10372,8 @@
       "labels": [],
       "body": "The New CBOR tag registry section has this entry\n\n```\n|     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} | \n```\n\nThe data item should be the untagged value, but the CDDL does not define `masked-raw-value` to name as the data item.",
       "createdAt": "2025-03-19T14:29:28Z",
-      "updatedAt": "2025-03-19T18:47:39Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-04T14:49:07Z",
+      "closedAt": "2025-06-04T14:49:06Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -10374,6 +10381,13 @@
           "body": "You can use: `~tagged-masked-raw-value` to remove the CBOR tag.",
           "createdAt": "2025-03-19T18:47:38Z",
           "updatedAt": "2025-03-19T18:47:38Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Andy's recent change fixes this problem!",
+          "createdAt": "2025-06-04T14:49:06Z",
+          "updatedAt": "2025-06-04T14:49:06Z"
         }
       ]
     },
@@ -10624,15 +10638,15 @@
       "id": "I_kwDOH6-tI86xNbrZ",
       "title": "Rename `raw-int`",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/419",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "setrofim",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Since `raw-int` is intended to support ranged comparsions (and whos value can be two integers, representing the bounds of the range), it does not behave as an ordinary \"raw integer\", which is what the name implies. \n\nSuggested replacement: `ranged-int`.",
       "createdAt": "2025-04-04T18:20:35Z",
-      "updatedAt": "2025-05-05T19:15:49Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-04T14:11:51Z",
+      "closedAt": "2025-06-04T14:11:51Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -11011,9 +11025,17 @@
       "labels": [],
       "body": "The comparison section for section 9.4.1.7 Comparison for`raw-int` (or whatever we ended up calling it) uses a convention where \"CONDITION\" is used to refer to contents of a condition ECT and \"ENTRY\" is used to refer to the current ACE ECT that is the ECT being matched. \n\nThis seems like a valuable convention for the reader. Does it make sense to consistently apply this convention for all the comparson sections (9.4.6.1.*)?",
       "createdAt": "2025-04-22T20:16:54Z",
-      "updatedAt": "2025-04-22T20:16:54Z",
+      "updatedAt": "2025-06-04T14:14:51Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Consistency and clarity belong together :)",
+          "createdAt": "2025-06-04T14:14:50Z",
+          "updatedAt": "2025-06-04T14:14:50Z"
+        }
+      ]
     },
     {
       "number": 425,
@@ -11387,6 +11409,22 @@
           "updatedAt": "2025-05-29T21:30:30Z"
         }
       ]
+    },
+    {
+      "number": 443,
+      "id": "I_kwDOH6-tI8652pmr",
+      "title": "Add an appraisal algorithm introduction",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/443",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The appraisal algorithm has ballooned in its description text to dizzying lengths. We need to have an introduction and stricter organization principles to present the meaning of CoMID triples as they affect the ACS.\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/424 is a smaller plea for organizing principles.",
+      "createdAt": "2025-06-04T14:42:49Z",
+      "updatedAt": "2025-06-04T14:42:49Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -67534,13 +67572,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-05-16T22:11:04Z",
+      "updatedAt": "2025-06-04T20:33:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "f26a3257641402ad6e2ee265a5cc5cbbdc4f1449",
+      "headRefOid": "0898257dad3738ccb2ee393c0b0b639f396ee242",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -67747,6 +67785,26 @@
           "createdAt": "2025-05-16T22:11:04Z",
           "updatedAt": "2025-05-16T22:11:04Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86su6IP",
+          "commit": {
+            "abbreviatedOid": "dd9762b"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-04T20:10:23Z",
+          "updatedAt": "2025-06-04T20:10:23Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\n            },\r\n```",
+              "createdAt": "2025-06-04T20:10:23Z",
+              "updatedAt": "2025-06-04T20:10:24Z"
+            }
+          ]
         }
       ]
     },
@@ -67864,13 +67922,13 @@
       "labels": [],
       "body": "fixes #437",
       "createdAt": "2025-05-21T14:44:23Z",
-      "updatedAt": "2025-05-29T17:14:18Z",
+      "updatedAt": "2025-06-04T14:13:42Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
+      "baseRefOid": "62b79fbbe34cb3e5b4a61e920b537c77ac52f21e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "single-cose-key",
-      "headRefOid": "0e51403bea72d3468d46b65a15a2935c36db1001",
+      "headRefOid": "09c8b3c3ff7fd0330741b1b5843e0057cbed549d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -67895,40 +67953,40 @@
         {
           "id": "PRR_kwDOH6-tI86qZj-y",
           "commit": {
-            "abbreviatedOid": "0e51403"
+            "abbreviatedOid": "09c8b3c"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2025-05-21T19:01:36Z",
-          "updatedAt": "2025-05-21T19:01:36Z",
+          "updatedAt": "2025-06-04T14:13:41Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI86qZmz7",
           "commit": {
-            "abbreviatedOid": "0e51403"
+            "abbreviatedOid": "09c8b3c"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-05-21T19:06:43Z",
-          "updatedAt": "2025-05-21T19:06:43Z",
+          "updatedAt": "2025-06-04T14:13:42Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI86rmn54",
           "commit": {
-            "abbreviatedOid": "0e51403"
+            "abbreviatedOid": "09c8b3c"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2025-05-29T17:14:18Z",
-          "updatedAt": "2025-05-29T17:14:18Z",
+          "updatedAt": "2025-06-04T14:13:41Z",
           "comments": []
         }
       ]
@@ -67945,7 +68003,7 @@
       "labels": [],
       "body": "Newer versions of ruby generate warnings.\r\nShould the repo direct everyone to use version 3.2.2",
       "createdAt": "2025-05-21T17:07:37Z",
-      "updatedAt": "2025-05-21T17:07:37Z",
+      "updatedAt": "2025-06-04T14:58:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
@@ -67956,7 +68014,22 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "May I ask that you add a Gemfile.lock to this so we can understand exactly what the dependencies are that are at least one maintainer can claim works to build the doc?",
+          "createdAt": "2025-06-04T14:50:16Z",
+          "updatedAt": "2025-06-04T14:50:16Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> May I ask that you add a Gemfile.lock to this so we can understand exactly what the dependencies are that are at least one maintainer can claim works to build the doc?\r\n\r\n+1\r\n\r\nI think it\u2019s two packages: base64 and pstore that need to be added to the Gemfile.  See also a similar fix in msg-wrap: https://github.com/ietf-rats-wg/draft-ietf-rats-msg-wrap/pull/223/commits/2d03f03ca2986ad05b071e5a84b2c6d04eae1c6f",
+          "createdAt": "2025-06-04T14:58:02Z",
+          "updatedAt": "2025-06-04T14:58:02Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -67964,24 +68037,26 @@
       "id": "PR_kwDOH6-tI86X1tpp",
       "title": "Rename `raw-int` to `int-range`",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/441",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fix #419",
       "createdAt": "2025-05-27T19:36:28Z",
-      "updatedAt": "2025-05-29T17:12:30Z",
+      "updatedAt": "2025-06-04T14:11:53Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "int-range",
       "headRefOid": "80d7b23821e0841382cf1c518992f2067a4825db",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-06-04T14:11:50Z",
+      "mergedAt": "2025-06-04T14:11:50Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "62b79fbbe34cb3e5b4a61e920b537c77ac52f21e"
+      },
       "comments": [
         {
           "author": "thomas-fossati",
@@ -68049,6 +68124,19 @@
           "body": "LGTM",
           "createdAt": "2025-05-29T17:12:30Z",
           "updatedAt": "2025-05-29T17:12:30Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86sq0Sr",
+          "commit": {
+            "abbreviatedOid": "80d7b23"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-06-04T14:11:14Z",
+          "updatedAt": "2025-06-04T14:11:14Z",
           "comments": []
         }
       ]
