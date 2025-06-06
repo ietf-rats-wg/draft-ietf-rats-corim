@@ -2376,13 +2376,20 @@ Conditional endorsements have the same processing steps as shown in ({{sec-proce
 
 ##### Copying instance field from a condition {#sec-comid-instance-copy}
 
-A CoRIM author may need to create a conditional endorsement which applies to all devices of a particular type, regardless of their instance field.
+A CoRIM author may need to create a conditional endorsement which applies to all all measurements which have the same `class` field within their `environment-map`, regardless of their instance field.
 The `instance-slot-store-type` and `instance-slot-use-type` options in the `instance` field can be used to achieve this.
 
 In the simplest case, the CoRIM sets the `enviroment-map`.`instance` field of a `stateful-environment-record` within the triple to hold an `instance-slot-store-type` and the `enviroment-map`.`instance` field of an `endorsed-triple-record` to hold an `instance-slot-use-type`.
 Both instance types contain an integer name for the variable which is set by the `instance-slot-store-type` and used by the `instance-slot-use-type`.
 
 Within each triple, each variable can only be set once, so if there are multiple `environment-map`s using `instance-slot-store-type` then they must each have a different integer name.
+
+After successfully matching a `stateful-environment-record` containing an `instance-slot-store-type` against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable.
+If the matching ACS entry does not include an instance then the slot variable is marked as initialised, but empty.
+
+When adding a conditional endorsement whose `enviroment-map`.`instance` field is an `instance-slot-use-type` to the ACS, the verifier SHALL set the `enviroment-map`.`instance` field from the corresponding slot variable.
+If the corresponding slot variable is initialised but empty then the verifier SHALL NOT add an `instance` field.
+If the corresponding slot variable is not initialised then this is a syntax error - the verifier SHALL NOT add the conditional endorsement to the ACS.
 
 If a conditional endorsement containing stateful environments which use `instance-slot-store-type` matches against multiple ECTs then each match is processed independently, with a separate endorsement ECT being added to the ACS for each match.
 
