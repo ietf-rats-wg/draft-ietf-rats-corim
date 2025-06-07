@@ -193,7 +193,7 @@ Table of Contents
      9.4.  Comparing a condition ECT against the ACS
        9.4.1.  Comparing a condition ECT against a single ACS entry
        9.4.2.  Environment Comparison
-         9.4.2.1.  Instance slot store and use fields
+         9.4.2.1.  Instance slot bind and reference fields
        9.4.3.  Authority comparison
        9.4.4.  Element list comparison
        9.4.5.  Element map comparison
@@ -1338,12 +1338,12 @@ Table of Contents
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= $crypto-key-type-choice
    $instance-id-type-choice /= tagged-bytes
-   $instance-id-type-choice /= instance-slot-store-type
-   $instance-id-type-choice /= instance-slot-use-type
+   $instance-id-type-choice /= instance-slot-bind-type
+   $instance-id-type-choice /= instance-slot-ref-type
 
-   instance-slot-store-type = #6.565(instance-slot-number)
+   instance-slot-bind-type = #6.565(instance-slot-number)
 
-   instance-slot-use-type = #6.566(instance-slot-number)
+   instance-slot-ref-type = #6.566(instance-slot-number)
 
    instance-slot-number = uint
 
@@ -3316,40 +3316,42 @@ Table of Contents
    A CoRIM author may need to create a conditional endorsement which
    applies to all all measurements which have the same class field
    within their environment-map, regardless of their instance field.
-   The instance-slot-store-type and instance-slot-use-type options in
-   the instance field can be used to achieve this.
+   The instance-slot-bind-type and instance-slot-ref-type options in the
+   instance field can be used to achieve this.
 
    In the simplest case, the CoRIM sets the enviroment-map.instance
    field of a stateful-environment-record within the triple to hold an
-   instance-slot-store-type and the enviroment-map.instance field of an
-   endorsed-triple-record to hold an instance-slot-use-type.  Both
-   instance types contain an integer name for the variable which is set
-   by the instance-slot-store-type and used by the instance-slot-use-
-   type.
+   instance-slot-bind-type and the enviroment-map.instance field of an
+   endorsed-triple-record to hold an instance-slot-ref-type.  Both
+   instance types contain an integer name for the slot variable which is
+   bound by the instance-slot-bind-type and referenced by the instance-
+   slot-ref-type.
 
-   Within each triple, each variable can only be set once, so if there
-   are multiple environment-maps using instance-slot-store-type then
-   they must each have a different integer name.
+   Within each triple, each slot variable can only be bound to one
+   value, so if there are multiple environment-maps using instance-slot-
+   bind-type then subsequent uses introduce a constraint that the value
+   to bind must be equal to the value already bound to the slot.
 
    After successfully matching a stateful-environment-record containing
-   an instance-slot-store-type against an ACS entry, the verifier SHALL
+   an instance-slot-bind-type against an ACS entry, the verifier SHALL
    copy the instance value from that ACS entry to the corresponding slot
    variable.  If the matching ACS entry does not include an instance
-   then the slot variable is marked as initialised, but empty.
+   then the slot variable is marked as bound to the empty value.
 
    When adding a conditional endorsement whose enviroment-map.instance
-   field is an instance-slot-use-type to the ACS, the verifier SHALL set
-   the enviroment-map.instance field from the corresponding slot
-   variable.  If the corresponding slot variable is initialised but
-   empty then the verifier SHALL NOT add an instance field.  If the
-   corresponding slot variable is not initialised then this is a syntax
-   error - the verifier SHALL NOT add the conditional endorsement to the
-   ACS.
+   field is an instance-slot-ref-type to the ACS, the verifier SHALL set
+   the enviroment-map.instance field from the contents of the
+   corresponding slot variable.  If the corresponding slot variable is
+   bound to the empty value then the verifier SHALL NOT add an instance
+   field.  If the corresponding slot variable is not bound then the
+   triple is invalid - the verifier SHALL NOT add the conditional
+   endorsement to the ACS.
 
    If a conditional endorsement containing stateful environments which
-   use instance-slot-store-type matches against multiple ECTs then each
-   match is processed independently, with a separate endorsement ECT
-   being added to the ACS for each match.
+   use instance-slot-bind-type matches against multiple ECTs, then each
+   match is processed independently of the others.  Each match uses its
+   own slot bindings, and each match adds a separate endorsement ECT to
+   the ACS.
 
 9.3.4.3.  Processing Conditional Endorsement Series
 
@@ -3506,33 +3508,30 @@ Table of Contents
    the presence of, and value of, the corresponding ACS entry field
    SHALL NOT affect whether the environments match.
 
-9.4.2.1.  Instance slot store and use fields
+9.4.2.1.  Instance slot bind and reference fields
 
-   These fields are used to ensure that multiple conditions, for example
-   within a conditional endorsement, match against the same instance
-   value.  They are also used to set the instance value in a conditional
-   endorsement ACS entry to match the matched ECTs.
+   These fields are used to ensure that multiple conjoined conditions
+   match against the same instance value.  They are also used to set the
+   instance value in a conditional endorsement ACS entry to match the
+   matched ECTs.
 
    The verifier maintains a small array of instance slots, each slot is
    identified using a non-negative integer.  Before processing each
-   triple, all slots SHALL be set to the unused state.
+   triple, all slots SHALL be set to the unbound state.
 
    If the condition ECT environment-map contains an instance field of
-   type instance-slot-store-type then it matches against any instance
-   value.  The instance field in the ACS entry is copied into the
-   instance slot with the relevant instance-slot-number.
+   type instance-slot-bind-type and that slot is not yet bound then it
+   matches against any instance value.  The instance field in the ACS
+   entry is copied into the instance slot variable with the relevant
+   instance-slot-number.
 
    If the condition ECT environment-map contains an instance field of
-   type instance-slot-use-type and that slot is unused then the
+   type instance-slot-bind-type and that slot is bound to a value which
+   is not binary identical to the value in the condition ECT then the
    environments do not match.
 
-   If the condition ECT environment-map contains an instance field of
-   type instance-slot-use-type and it is not binary identical to the
-   value in that slot then the environments do not match.
-
-   If a triple contains two or more condition ECTs which store values
-   into the same instance slot then it is invalid and the environments
-   do not match.
+   If a condition ECT contains an instance field of type instance-slot-
+   ref-type then it is invalid and the environments do not match.
 
 9.4.3.  Authority comparison
 
@@ -4049,11 +4048,11 @@ Table of Contents
    | 564     | array       | tagged-int-range, see         | RFCthis   |
    |         |             | Section 5.1.4.1.7             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 565     | instance-   | instance-slot-store, see      | RFCthis   |
-   |         | slot-store  | Section 9.3.4.2.1             |           |
+   | 565     | instance-   | instance-slot-bind, see       | RFCthis   |
+   |         | slot-bind   | Section 9.3.4.2.1             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 566     | instance-   | instance-slot-use, see        | RFCthis   |
-   |         | slot-use    | Section 9.3.4.2.1             |           |
+   | 566     | instance-   | instance-slot-ref, see        | RFCthis   |
+   |         | slot-ref    | Section 9.3.4.2.1             |           |
    +---------+-------------+-------------------------------+-----------+
    | 567-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
@@ -5047,12 +5046,12 @@ Appendix A.  Base CoRIM CDDL
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= $crypto-key-type-choice
    $instance-id-type-choice /= tagged-bytes
-   $instance-id-type-choice /= instance-slot-store-type
-   $instance-id-type-choice /= instance-slot-use-type
+   $instance-id-type-choice /= instance-slot-bind-type
+   $instance-id-type-choice /= instance-slot-ref-type
 
-   instance-slot-store-type = #6.565(instance-slot-number)
+   instance-slot-bind-type = #6.565(instance-slot-number)
 
-   instance-slot-use-type = #6.566(instance-slot-number)
+   instance-slot-ref-type = #6.566(instance-slot-number)
 
    instance-slot-number = uint
 
