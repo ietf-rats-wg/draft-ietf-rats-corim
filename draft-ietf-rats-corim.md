@@ -2387,12 +2387,12 @@ Within each triple, each slot variable can only be bound to one value, so if the
 After successfully matching a `stateful-environment-record` containing an `instance-slot-bind-type` against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable.
 If the matching ACS entry does not include an instance then the slot variable is marked as bound to the empty value.
 
-When adding a conditional endorsement whose `enviroment-map`.`instance` field is an `instance-slot-ref-type` to the ACS, the verifier SHALL set the `enviroment-map`.`instance` field from the contents of the corresponding slot variable.
+When adding a conditional endorsement whose `enviroment-map`.`instance` field is an `instance-slot-ref-type` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL set the `enviroment-map`.`instance` field from the contents of the corresponding slot variable.
 If the corresponding slot variable is bound to the empty value then the verifier SHALL NOT add an `instance` field.
 If the corresponding slot variable is not bound then the triple is invalid - the verifier SHALL NOT add the conditional endorsement to the ACS.
 
 If a conditional endorsement containing stateful environments which use `instance-slot-bind-type` matches against multiple ECTs, then each match is processed independently of the others.
-Each match uses its own slot bindings, and  each match adds a separate endorsement ECT to the ACS.
+Each match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.
 
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
