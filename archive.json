@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-05T02:03:29.100531+00:00",
+  "timestamp": "2025-06-08T02:18:53.108947+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -1103,7 +1103,7 @@
       ],
       "body": "We should have a way to indicate whether a CoRIM provides a delta update -- i.e., an entry in the update sequence (e.g., $\\delta_n$ in the chain: $\\delta_{1} \\leftarrow \\delta_{2} \\leftarrow \\ldots \\leftarrow \\delta_{n}$) --, or the full set of deltas in one go, i.e. the whole chain.\r\nThe `updates` link relation should be used to create the linked CoRIMs list in the former case.\r\n\r\n",
       "createdAt": "2022-12-06T14:58:35Z",
-      "updatedAt": "2024-05-07T09:16:36Z",
+      "updatedAt": "2025-06-06T15:29:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -1119,6 +1119,13 @@
           "body": "Noting that we decided that each type of tag should have its own lifecycle model. We also determined that CoRIM has its own lifecycle as well. CoRIM prose should have a section on lifecycles to document these decisions and introduce subsections for tag specific lifecycle documentation.",
           "createdAt": "2023-01-25T16:20:03Z",
           "updatedAt": "2023-01-25T16:20:03Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we ought to note the linked-tag resolution semantics needs to be described in the input validation and transformation phase of the example algorithm, since right now we only have a vibe of what it could mean.",
+          "createdAt": "2025-06-06T15:29:21Z",
+          "updatedAt": "2025-06-06T15:29:21Z"
         }
       ]
     },
@@ -9086,7 +9093,7 @@
       ],
       "body": "The following text was proposed for addition to the description of `$raw-value-type-choice`, but was not added:\n\n`When a new raw value type is defined, a comparison algorithm may also be defined.`\n\nNed wrote a comment regarding this text as follows:\n\n> There are lots of ways to extend the schema. The conventions should be described somewhere in a section that overviews the various extension points and the registries that control them. The $raw-value-type-choice extension point can be a small paragraph there. Writing that section will be the right place to have the discussion about who and how extensions are managed IMO.\n\nI agree that we should write a section about extending different types, and include `$raw-value-type-choice` in that section.",
       "createdAt": "2025-01-17T12:41:27Z",
-      "updatedAt": "2025-02-28T15:16:24Z",
+      "updatedAt": "2025-06-05T10:58:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -9109,6 +9116,13 @@
           "body": "Note: Our explanation should be compatible with RFC 9413, which is a document which defines different types of extensibility.",
           "createdAt": "2025-02-28T15:16:23Z",
           "updatedAt": "2025-02-28T15:16:23Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper Can you please have a look at this issue:\n\n1. I see two conflicts: The title name of the Issue does not match the text description...\n2. The `raw-value-type-choice` work is now complete.\n3. The extension of any Map is documented [here](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-map-extensions)\n\nCan we close this PR?",
+          "createdAt": "2025-06-05T10:58:57Z",
+          "updatedAt": "2025-06-05T10:58:57Z"
         }
       ]
     },
@@ -11049,9 +11063,17 @@
       "labels": [],
       "body": "Issue #227 considered namespace scope for environment-map. We determined it should have global scope and that measurement-map should have local scope (even though some of the support identifiers are designed with global scope in mind).\n\nThere have been several issues related to understanding the relationship between the miniworld representation of the physical world entity as modelled by measurement-map and the various formats for representing measurements. (#303 #281 #230 #189 #199 #395).\n\nAdditionally, measurement-values-map code points may carry semantics regarding the identity of the component being measured (e.g., #199 and #395) and some code points are themselves values that are used as identifiers e.g., `mac-addr`, `ip-addr`, `ueid`, `uuid`, `serial-number`. \n\nThe only definitive statement corim makes about namespace scoping for measurement-map is that it is local relative to environment-map. However, it doesn't describe the freedoms/restrictions that may be applied when considering ways to translate from one form to another. For example, a serial-number could be encoded using `mkey` = \"serial-number\" where the serial number is supplied as code point 11 `name` which is a tstr. \n\nOther forms of measurement translations can be applied such as mapping from vendor proprietary negative code points to postive integers as `mkey` uint. Or each member of an integrity register list could be represented as `mkey` = uint / tstr with code point 2 : `digests`. \n\nMeasurement conversions are possible if the various namespaces under `measurement-map` are common (shared). That is if an identifier is used by one measurement type then it can't be used by a different measurement type. Otherwise, there would be namespace collision that will confuse Verifiers. \n\nThe corim draft doesn't document the intended scope of the various namespeces that are possible under `measurement-map`. It needs to however to ensure ACS integrity given translation from various external representations to a corim internal representation is a mandatory part of the architecture.",
       "createdAt": "2025-04-22T20:51:24Z",
-      "updatedAt": "2025-04-23T14:07:56Z",
+      "updatedAt": "2025-06-05T10:54:18Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Now that we have a clear semantics of internal translation of measurement-map elements, example `mkey` to `element-id`, can we close this PR?",
+          "createdAt": "2025-06-05T10:54:17Z",
+          "updatedAt": "2025-06-05T10:54:17Z"
+        }
+      ]
     },
     {
       "number": 426,
@@ -11062,10 +11084,12 @@
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "It is common for attesters to record evidence about the boot sequence and protect it using a PCR (eg with a sequence of hashes). The attester typically provides a log containing measurements and a PCR which authenticates those measurements.\n\nCoRIM should provide a way to match reference values and conditional endorsements against evidence collected in this way.\n\nThis means, I think, that we should define a recommended way to import PCR protected measurements into the ACS. I suspect that the log should be verified against the PCR value, and the measurements within the log file should then be transformed into ACS entries.\n\nMost PCR protected logs include a name and a value for each entry. The log name can be translated into an `environment-map`, and the log value can be translated into a `measurement-values-map`.\n\nImporting the individual measurements loses the sequence information which is part of the log. How should that information be represented? How can a CoRIM match against an expected sequence?\n\nFor example, should there be a way to represent something with the semantics \"measurement A was taken before measurement D\"?\n\nShould there be a way for a CoRIM to perform partial matches against the sequence information from the log?\n\nIe, if a log indicates that measurements were added to the log in the order A,B,C,D,E then should a CoRIM file be able to test whether A was before D without being affected by the presence or order of measurements B,C and E?",
       "createdAt": "2025-04-23T14:58:58Z",
-      "updatedAt": "2025-04-29T18:09:16Z",
+      "updatedAt": "2025-06-05T11:00:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -65006,7 +65030,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-05-30T15:55:32Z",
+      "updatedAt": "2025-06-06T09:56:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
@@ -66735,6 +66759,66 @@
               "updatedAt": "2025-05-30T15:55:32Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tHgt0",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T09:52:44Z",
+          "updatedAt": "2025-06-06T09:52:45Z",
+          "comments": [
+            {
+              "originalPosition": 112,
+              "body": "```suggestion\r\nAn internal representation of Domain Membership uses the `dm` relation, which is a list of ECTs expressed in `members` that describes the composition of an Attester with an identity of the Domain specified in the `domain-id` ECT.\r\n```",
+              "createdAt": "2025-06-06T09:52:45Z",
+              "updatedAt": "2025-06-06T09:52:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tHiz_",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T09:56:14Z",
+          "updatedAt": "2025-06-06T09:56:14Z",
+          "comments": [
+            {
+              "originalPosition": 185,
+              "body": "Why? Both RHS and LHS are cm-type?",
+              "createdAt": "2025-06-06T09:56:14Z",
+              "updatedAt": "2025-06-06T09:56:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tHi8n",
+          "commit": {
+            "abbreviatedOid": "ddaeee6"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T09:56:28Z",
+          "updatedAt": "2025-06-06T09:56:28Z",
+          "comments": [
+            {
+              "originalPosition": 190,
+              "body": "Why? Both RHS and LHS are cm-type?",
+              "createdAt": "2025-06-06T09:56:28Z",
+              "updatedAt": "2025-06-06T09:56:28Z"
+            }
+          ]
         }
       ]
     },
@@ -67113,7 +67197,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-05-12T23:39:40Z",
+      "updatedAt": "2025-06-06T16:24:55Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
@@ -67186,6 +67270,26 @@
               "updatedAt": "2025-05-12T23:39:40Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLTW9",
+          "commit": {
+            "abbreviatedOid": "7bf6291"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:24:55Z",
+          "updatedAt": "2025-06-06T16:24:55Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "I like the terms C-ECT and A-ECT, but I think they should be defined earlier in the document as they apply to many parts of the processing.",
+              "createdAt": "2025-06-06T16:24:55Z",
+              "updatedAt": "2025-06-06T16:24:55Z"
+            }
+          ]
         }
       ]
     },
@@ -67203,7 +67307,7 @@
       "labels": [],
       "body": "Crypto-key-typ-choice values that are suitable as instance-ids are added to instance-id-type-choice.\r\n\r\nSee Issue #428 ",
       "createdAt": "2025-04-30T23:56:33Z",
-      "updatedAt": "2025-05-21T15:35:45Z",
+      "updatedAt": "2025-06-05T10:55:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
@@ -67228,6 +67332,13 @@
           "body": "Note: \r\nThe forms involving cert paths were omitted because the path could be a partial path that didn't include the public key that identifies the Target. However, if the path did include that key, then it meets the constraints for instance-id identifiers. Hence, all of the crypto-key-type-choice values could be included (except for tagged-bytes) which is already included.\r\n\r\nPlease describe which properties of cert paths that result in a property that doesn't satsify the constraints of `instance-id`. ",
           "createdAt": "2025-05-01T00:51:11Z",
           "updatedAt": "2025-05-01T00:51:37Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Can you please work on the example section to tidy this so that we can progress on this blocking PR?",
+          "createdAt": "2025-06-05T10:55:10Z",
+          "updatedAt": "2025-06-05T10:55:10Z"
         }
       ],
       "reviews": [
@@ -67572,13 +67683,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-04T20:33:28Z",
+      "updatedAt": "2025-06-07T21:21:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
+      "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "0898257dad3738ccb2ee393c0b0b639f396ee242",
+      "headRefOid": "304e86ac7042a2634d0bc681e44a962f8a09ded8",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -67649,9 +67760,9 @@
           "comments": [
             {
               "originalPosition": 15,
-              "body": "```suggestion\r\nA CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `global` and/or `class` field within their `environment-map`, regardless of their `instance` field.\r\n```",
+              "body": "```suggestion\r\nA CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` field.\r\n```",
               "createdAt": "2025-05-09T18:20:17Z",
-              "updatedAt": "2025-05-09T18:20:17Z"
+              "updatedAt": "2025-06-06T12:56:21Z"
             }
           ]
         },
@@ -67803,6 +67914,400 @@
               "body": "```suggestion\r\n            },\r\n```",
               "createdAt": "2025-06-04T20:10:23Z",
               "updatedAt": "2025-06-04T20:10:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tIsXE",
+          "commit": {
+            "abbreviatedOid": "48e20cf"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T12:12:26Z",
+          "updatedAt": "2025-06-06T12:12:26Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "Instance slot usage does not change the class part of `environment-map`",
+              "createdAt": "2025-06-06T12:12:26Z",
+              "updatedAt": "2025-06-06T12:12:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tJHiS",
+          "commit": {
+            "abbreviatedOid": "3e41767"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T12:58:49Z",
+          "updatedAt": "2025-06-06T12:58:50Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "Text has been changed, this comment is included in those changes.",
+              "createdAt": "2025-06-06T12:58:49Z",
+              "updatedAt": "2025-06-06T12:58:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tJIqj",
+          "commit": {
+            "abbreviatedOid": "3e41767"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T13:00:30Z",
+          "updatedAt": "2025-06-06T13:00:30Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "As discussed in previous meeting, I have changed the instance-copy type to instance-slot-store and instance-slot-use types.",
+              "createdAt": "2025-06-06T13:00:30Z",
+              "updatedAt": "2025-06-06T13:00:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tJP4q",
+          "commit": {
+            "abbreviatedOid": "3e41767"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T13:12:10Z",
+          "updatedAt": "2025-06-06T13:12:10Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "Change added.",
+              "createdAt": "2025-06-06T13:12:10Z",
+              "updatedAt": "2025-06-06T13:12:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tJQR-",
+          "commit": {
+            "abbreviatedOid": "3e41767"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T13:12:49Z",
+          "updatedAt": "2025-06-06T13:12:49Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "This section has been rewritten.",
+              "createdAt": "2025-06-06T13:12:49Z",
+              "updatedAt": "2025-06-06T13:12:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tJQvO",
+          "commit": {
+            "abbreviatedOid": "3e41767"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T13:13:30Z",
+          "updatedAt": "2025-06-06T13:13:31Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "This text has been rewritten to use named variables instead of positional references.",
+              "createdAt": "2025-06-06T13:13:30Z",
+              "updatedAt": "2025-06-06T13:13:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLMEd",
+          "commit": {
+            "abbreviatedOid": "5c028a0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:11:47Z",
+          "updatedAt": "2025-06-06T16:12:14Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "Use should not be in the condition. It should only be in the addition.",
+              "createdAt": "2025-06-06T16:11:48Z",
+              "updatedAt": "2025-06-06T16:12:14Z"
+            },
+            {
+              "originalPosition": 22,
+              "body": "```suggestion\r\n            / instance / 1 : / slot-bind / 565(0) / *** Match against any instance, store values from ACS entry in instance slot #0 *** /\r\n```",
+              "createdAt": "2025-06-06T16:11:54Z",
+              "updatedAt": "2025-06-06T16:12:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLM3N",
+          "commit": {
+            "abbreviatedOid": "5c028a0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:13:02Z",
+          "updatedAt": "2025-06-06T16:13:02Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "```suggestion\r\n            / instance / 1 : / slot-reference / 566(0) / *** Use value from instance slot #0 *** /\r\n```",
+              "createdAt": "2025-06-06T16:13:02Z",
+              "updatedAt": "2025-06-06T16:13:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLQ46",
+          "commit": {
+            "abbreviatedOid": "5c028a0"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2025-06-06T16:20:05Z",
+          "updatedAt": "2025-06-06T17:17:16Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "```suggestion\r\nWithin each triple, each variable can only be bound once, so if there are multiple `environment-map`s using `instance-slot-bind-type` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.\r\n```",
+              "createdAt": "2025-06-06T16:20:06Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "```suggestion\r\nThe `instance-slot-bind-type` and `instance-slot-reference-type` options in the `instance` field can be used to achieve this.\r\nAn `instance-slot-reference-type` MUST NOT appear in a condition.\r\n```",
+              "createdAt": "2025-06-06T16:20:58Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\nIn the simplest case, the CoRIM sets the `enviroment-map`.`instance` field of a `stateful-environment-record` within the triple to hold an `instance-slot-bind-type` and the `enviroment-map`.`instance` field of an `endorsed-triple-record` to hold an `instance-slot-reference-type`.\r\n```",
+              "createdAt": "2025-06-06T16:21:32Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\nBoth instance types contain an integer name for the variable which is bound by the `instance-slot-bind-type` and referenced by the `instance-slot-reference-type`.\r\n```",
+              "createdAt": "2025-06-06T16:22:00Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nAfter successfully matching a `stateful-environment-record` containing an `instance-slot-bind-type` against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable.\r\n```",
+              "createdAt": "2025-06-06T16:22:12Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nIf the matching ACS entry does not include an instance, then the slot variable is marked as initialized, but empty.\r\n```\r\nWe use American spelling in this doc.\r\n\r\nAlso I disagree with this, since the verifier doesn't know how many slots to allocate to a triple for it be initialized. We don't want any references to unbound variables to be legal.",
+              "createdAt": "2025-06-06T16:23:08Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nWhen adding a conditional endorsement whose `enviroment-map`.`instance` field is an `instance-slot-reference-type` to the ACS, the verifier SHALL set the `enviroment-map`.`instance` field from the corresponding slot variable's contents.\r\n```",
+              "createdAt": "2025-06-06T16:24:51Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 28,
+              "body": "```suggestion\r\nIf the corresponding slot variable is not initialized, then this is a syntax error\u2014the verifier SHALL NOT add the conditional endorsement to the ACS.\r\n```\r\nRight, I think initialization is irrelevant.",
+              "createdAt": "2025-06-06T16:28:08Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nIf a conditional endorsement containing stateful environments which use `instance-slot-bind-type` matches against multiple ECTs, then each match is processed independently with fresh slot stores, with a separate endorsement ECT being added to the ACS for each match.\r\n```",
+              "createdAt": "2025-06-06T16:28:52Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\n#### Instance slot bind and reference fields\r\n```",
+              "createdAt": "2025-06-06T16:29:08Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nThese fields are used to ensure that multiple conjoined conditions match against the same instance value.\r\n```",
+              "createdAt": "2025-06-06T16:29:46Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 45,
+              "body": "This representation choice is unnecessary. We're just associating integers with values.",
+              "createdAt": "2025-06-06T16:30:58Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 27,
+              "body": "```suggestion\r\nIf the corresponding slot variable is initialized but empty then the verifier SHALL NOT add an `instance` field.\r\n```",
+              "createdAt": "2025-06-06T17:04:34Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 50,
+              "body": "```suggestion\r\nIf the condition ECT `environment-map` contains an `instance` field of type `instance-slot-reference-type` and that slot is unused then the environments do not match.\r\n```",
+              "createdAt": "2025-06-06T17:05:14Z",
+              "updatedAt": "2025-06-06T17:17:16Z"
+            },
+            {
+              "originalPosition": 52,
+              "body": "```suggestion\r\nIf the condition ECT `environment-map` contains an `instance` field of type `instance-slot-reference-type` and it is not binary identical to the value in that slot then the environments do not match.\r\n```",
+              "createdAt": "2025-06-06T17:05:22Z",
+              "updatedAt": "2025-06-06T17:17:17Z"
+            },
+            {
+              "originalPosition": 54,
+              "body": "Delete.",
+              "createdAt": "2025-06-06T17:11:22Z",
+              "updatedAt": "2025-06-06T17:17:17Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "```suggestion\r\n|     566 | `instance-slot-use` | instance-slot-reference, see {{sec-comid-instance-copy}}         | {{&SELF}} |\r\n```",
+              "createdAt": "2025-06-06T17:13:13Z",
+              "updatedAt": "2025-06-06T17:17:17Z"
+            },
+            {
+              "originalPosition": 64,
+              "body": "```suggestion\r\n|     565 | `instance-slot-store` | instance-slot-bind, see {{sec-comid-instance-copy}}    | {{&SELF}} |\r\n```",
+              "createdAt": "2025-06-06T17:13:22Z",
+              "updatedAt": "2025-06-06T17:17:17Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n$instance-id-type-choice /= instance-slot-bind-type\r\n$instance-id-type-choice /= instance-slot-reference-type\r\n```",
+              "createdAt": "2025-06-06T17:15:04Z",
+              "updatedAt": "2025-06-06T17:17:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tUSi_",
+          "commit": {
+            "abbreviatedOid": "6514d01"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-07T21:09:17Z",
+          "updatedAt": "2025-06-07T21:09:17Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nWhen adding a conditional endorsement whose `enviroment-map`.`instance` field is an `instance-slot-ref-type` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL set the `enviroment-map`.`instance` field from the contents of the corresponding slot variable.\r\n```",
+              "createdAt": "2025-06-07T21:09:17Z",
+              "updatedAt": "2025-06-07T21:09:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tUSmM",
+          "commit": {
+            "abbreviatedOid": "6514d01"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-07T21:09:56Z",
+          "updatedAt": "2025-06-07T21:09:56Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "```suggestion\r\nEach match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.\r\n```",
+              "createdAt": "2025-06-07T21:09:56Z",
+              "updatedAt": "2025-06-07T21:09:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tUUQQ",
+          "commit": {
+            "abbreviatedOid": "f26a325"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-07T21:16:24Z",
+          "updatedAt": "2025-06-07T21:16:24Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "Changed to match Dionna's comment",
+              "createdAt": "2025-06-07T21:16:24Z",
+              "updatedAt": "2025-06-07T21:16:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tUVLi",
+          "commit": {
+            "abbreviatedOid": "5c028a0"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-07T21:19:07Z",
+          "updatedAt": "2025-06-07T21:19:07Z",
+          "comments": [
+            {
+              "originalPosition": 54,
+              "body": "Text changed to match new behaviour of slot-ref",
+              "createdAt": "2025-06-07T21:19:07Z",
+              "updatedAt": "2025-06-07T21:19:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tUWLu",
+          "commit": {
+            "abbreviatedOid": "9d1e44f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-07T21:21:15Z",
+          "updatedAt": "2025-06-07T21:21:15Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "Added text to describe processing of 565 and 566 in stateful environments and conditional endorsements.\r\nI hope the text describing the new bind/reference semantics proposed by Dionna is clearer than the original version commented on here.",
+              "createdAt": "2025-06-07T21:21:15Z",
+              "updatedAt": "2025-06-07T21:21:15Z"
             }
           ]
         }
@@ -68137,6 +68642,169 @@
           "body": "LGTM!",
           "createdAt": "2025-06-04T14:11:14Z",
           "updatedAt": "2025-06-04T14:11:14Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 444,
+      "id": "PR_kwDOH6-tI86ZaFVG",
+      "title": "Fix cmwc_t tag that we renamed",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/444",
+      "state": "MERGED",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Some text still calls this bundle.",
+      "createdAt": "2025-06-06T15:13:24Z",
+      "updatedAt": "2025-06-06T16:10:47Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "313f2b48df0a7e748fc5fb09e6272adb1506e454",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "bundle",
+      "headRefOid": "384afcd2200632ca9fc71dff526b6225008aeabe",
+      "closedAt": "2025-06-06T16:10:47Z",
+      "mergedAt": "2025-06-06T16:10:46Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "10b072f2ee086b47b98fb26f939f0c997240bdbf"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86tKuhH",
+          "commit": {
+            "abbreviatedOid": "384afcd"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-06T15:26:15Z",
+          "updatedAt": "2025-06-06T16:08:43Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLLCQ",
+          "commit": {
+            "abbreviatedOid": "384afcd"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-06T16:10:04Z",
+          "updatedAt": "2025-06-06T16:10:04Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 445,
+      "id": "PR_kwDOH6-tI86ZaKH3",
+      "title": "Update Gemfile",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/445",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix broken CI.\r\n\r\nAlternative to #439 ",
+      "createdAt": "2025-06-06T15:22:40Z",
+      "updatedAt": "2025-06-06T16:07:12Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "62b79fbbe34cb3e5b4a61e920b537c77ac52f21e",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "thomas-fossati-patch-1",
+      "headRefOid": "846aab619f523bc52db16ee3435e9bc331413bba",
+      "closedAt": "2025-06-06T16:07:12Z",
+      "mergedAt": "2025-06-06T16:07:12Z",
+      "mergedBy": "andrew-draper",
+      "mergeCommit": {
+        "oid": "313f2b48df0a7e748fc5fb09e6272adb1506e454"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86tK823",
+          "commit": {
+            "abbreviatedOid": "846aab6"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Would be great to get a lock file.",
+          "createdAt": "2025-06-06T15:47:23Z",
+          "updatedAt": "2025-06-06T15:47:23Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLJZx",
+          "commit": {
+            "abbreviatedOid": "846aab6"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-06T16:06:55Z",
+          "updatedAt": "2025-06-06T16:06:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 446,
+      "id": "PR_kwDOH6-tI86Zai5Z",
+      "title": "Move domain type into domain dependency triple section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/446",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The domain-type-choice is not used in measurements. It is only used by the domain membership/dependency triples. Introduce the type choice in membership and order the membership triple above the dependency triple since it's the base case for defining the relationships.",
+      "createdAt": "2025-06-06T16:06:38Z",
+      "updatedAt": "2025-06-06T16:20:00Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "313f2b48df0a7e748fc5fb09e6272adb1506e454",
+      "headRepository": "deeglaze/draft-ietf-rats-corim",
+      "headRefName": "domainorder",
+      "headRefOid": "d4b2600f0a58e25bdbf88917db05a89c0bd3b707",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86tLQyK",
+          "commit": {
+            "abbreviatedOid": "d4b2600"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-06-06T16:19:52Z",
+          "updatedAt": "2025-06-06T16:19:52Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tLQ16",
+          "commit": {
+            "abbreviatedOid": "d4b2600"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-06T16:20:00Z",
+          "updatedAt": "2025-06-06T16:20:00Z",
           "comments": []
         }
       ]
