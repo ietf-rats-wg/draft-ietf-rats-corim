@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 22 November 2025                                         Linaro
+Expires: 13 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             21 May 2025
+                                                            11 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 November 2025.
+   This Internet-Draft will expire on 13 December 2025.
 
 Copyright Notice
 
@@ -117,7 +117,7 @@ Table of Contents
              5.1.4.1.4.7.  Address Types
            5.1.4.1.5.  Crypto Keys
            5.1.4.1.6.  Integrity Registers
-           5.1.4.1.7.  Raw Int
+           5.1.4.1.7.  Int Range
            5.1.4.1.8.  Domain Types
          5.1.4.2.  Reference Values Triple
          5.1.4.3.  Endorsed Values Triple
@@ -204,7 +204,7 @@ Table of Contents
            9.4.6.1.4.  Comparison for raw-value entries
            9.4.6.1.5.  Comparison for cryptokeys entries
            9.4.6.1.6.  Comparison for Integrity Registers
-           9.4.6.1.7.  Comparison for raw-int entries
+           9.4.6.1.7.  Comparison for int-range entries
        9.4.7.  Profile-directed Comparison
    10. Implementation Status
      10.1.  Veraison
@@ -896,7 +896,7 @@ Table of Contents
    header analogous to corim-meta.
 
    corim-cbor-collection = {
-     "__cmwc_t" => "tag:{{&SELF}}:bundle",
+     "__cmwc_t" => "tag:{{&SELF}}:corim",
      + cmw-label => [TBD1, bytes .cbor tagged-corim-map]
    }
    cmw-label = text / int
@@ -919,7 +919,7 @@ Table of Contents
    CoRIMs with a common signer but have different profiles.
 
    / cbor-collection / {
-     "__cmwc_t": "tag:{{&SELF}}:bundle",
+     "__cmwc_t": "tag:{{&SELF}}:corim",
      "adee8cd4-4e47-461f-b341-2aba3ae4cbda":
        / cbor-cmw / [TBD1, << / tagged-corim-map / 501({
          / id / 0: h'adee8cd44e47461fb3412aba3ae4cbda',
@@ -1447,7 +1447,7 @@ Table of Contents
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
-         ? &(raw-value-mask: 5) => raw-value-mask-type
+         ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type
        )
      ? &(mac-addr: 6) => mac-addr-type-choice
      ? &(ip-addr: 7) =>  ip-addr-type-choice
@@ -1457,7 +1457,7 @@ Table of Contents
      ? &(name: 11) => text
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
-     ? &(raw-int: 15) => raw-int-type-choice
+     ? &(int-range: 15) => int-range-type-choice
      * $$measurement-values-map-extension
    }>
 
@@ -1483,9 +1483,14 @@ Table of Contents
 
    *  raw-value (index 4): Contains the actual (not hashed) value of the
       element.  The vendor determines the encoding of raw-value.  When
-      used for comparison, a mask may be provided indicating which bits
-      in the raw-value field are compared.  Described in
-      Section 5.1.4.1.4.6
+      used for comparison, the tagged-masked-raw-value variant includes
+      a mask indicating which bits in the value to compare.  Described
+      in Section 5.1.4.1.4.6
+
+   *  raw-value-mask-DEPRECATED (index 5): Is an obsolete method of
+      indicating which bits in a raw value to compare.  New CoMID files
+      should use the tagged-masked-raw-value on index 4 instead of using
+      index 5.
 
    *  mac-addr (index 6): A EUI-48 or EUI-64 MAC address associated with
       the measured environment.  Described in Section 5.1.4.1.4.7.
@@ -1648,9 +1653,9 @@ Table of Contents
    the Verifier as part of appraisal.  Only the raw value bits with
    corresponding TRUE mask bits are compared during appraisal.
 
-   The raw-value-mask in measurement-values-map is deprecated, but
-   retained for backwards compatibility.  This code point may be removed
-   in a future revision of this specification.
+   The raw-value-mask-DEPRECATED in measurement-values-map is
+   deprecated, but retained for backwards compatibility.  This code
+   point may be removed in a future revision of this specification.
 
    $raw-value-type-choice /= tagged-bytes
    $raw-value-type-choice /= tagged-masked-raw-value
@@ -1778,13 +1783,13 @@ Table of Contents
    in which case the identifier is the register index, or other kinds of
    vendor-specific measured objects.
 
-5.1.4.1.7.  Raw Int
+5.1.4.1.7.  Int Range
 
-   A raw int describes an integer value that can be compared with linear
-   order in the target environment.  A raw int is represented with
-   either major type 0 or major type 1 ints.
+   An int range describes an integer value that can be compared with
+   linear order in the target environment.  An int range is represented
+   with either major type 0 or major type 1 ints.
 
-   raw-int-type-choice = int / tagged-int-range
+   int-range-type-choice = int / tagged-int-range
    int-range = [min: int / negative-inf, max: int / positive-inf]
    tagged-int-range = #6.564(int-range)
    positive-inf = null
@@ -3720,10 +3725,10 @@ Table of Contents
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a condition ECT could describe a subset of PCRs.
 
-9.4.6.1.7.  Comparison for raw-int entries
+9.4.6.1.7.  Comparison for int-range entries
 
    The ACS entry value stored under measurement-values-map codepoint 15
-   is a raw int value, which MUST have type raw-int-type-choice.
+   is an int range value, which MUST have type int-range-type-choice.
 
    Consider an int ACS entry value named ENTRY in a measurement-values-
    map codepoint (e.g., 15) that allows comparing int against a either
@@ -4306,41 +4311,43 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    are provided below.  Assignments consist of an integer index value,
    the item name, and a reference to the defining specification.
 
-     +=========================+=====================+===============+
-     | Index                   | Item Name           | Specification |
-     +=========================+=====================+===============+
-     | 0                       | version             | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 1                       | svn                 | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 2                       | digests             | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 3                       | flags               | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 4                       | raw-value           | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 5                       | raw-value-mask      | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 6                       | mac-addr            | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 7                       | ip-addr             | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 8                       | serial-number       | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 9                       | ueid                | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 10                      | uuid                | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 11                      | name                | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 12                      | (reserved)          | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 13                      | cryptokeys          | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 14                      | integrity-registers | RFCthis       |
-     +-------------------------+---------------------+---------------+
-     | 15-18446744073709551616 | Unassigned          |               |
-     +-------------------------+---------------------+---------------+
+    +=======================+===========================+=============+
+    |Index                  | Item Name                 |Specification|
+    +=======================+===========================+=============+
+    |0                      | version                   |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |1                      | svn                       |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |2                      | digests                   |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |3                      | flags                     |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |4                      | raw-value                 |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |5                      | raw-value-mask-DEPRECATED |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |6                      | mac-addr                  |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |7                      | ip-addr                   |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |8                      | serial-number             |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |9                      | ueid                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |10                     | uuid                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |11                     | name                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |12                     | (reserved)                |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |13                     | cryptokeys                |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |14                     | integrity-registers       |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |15                     | int-range                 |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |16-18446744073709551616| Unassigned                |             |
+    +-----------------------+---------------------------+-------------+
 
         Table 22: Measurement Values Map Items Initial Registrations
 
@@ -4671,9 +4678,9 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-14,
-              21 May 2025, <https://datatracker.ietf.org/doc/html/draft-
-              ietf-rats-msg-wrap-14>.
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-15,
+              30 May 2025, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-rats-msg-wrap-15>.
 
    [I-D.tschofenig-rats-psa-token]
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
@@ -4979,7 +4986,7 @@ Appendix A.  Base CoRIM CDDL
    ip4-addr-type = bytes .size 4
    ip6-addr-type = bytes .size 16
 
-   raw-int-type-choice = int / tagged-int-range
+   int-range-type-choice = int / tagged-int-range
    int-range = [min: int / negative-inf, max: int / positive-inf]
    tagged-int-range = #6.564(int-range)
    positive-inf = null
@@ -5012,7 +5019,7 @@ Appendix A.  Base CoRIM CDDL
      ? &(flags: 3) => flags-map
      ? (
          &(raw-value: 4) => $raw-value-type-choice,
-         ? &(raw-value-mask: 5) => raw-value-mask-type
+         ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type
        )
      ? &(mac-addr: 6) => mac-addr-type-choice
      ? &(ip-addr: 7) =>  ip-addr-type-choice
@@ -5022,7 +5029,7 @@ Appendix A.  Base CoRIM CDDL
      ? &(name: 11) => text
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
-     ? &(raw-int: 15) => raw-int-type-choice
+     ? &(int-range: 15) => int-range-type-choice
      * $$measurement-values-map-extension
    }>
 
