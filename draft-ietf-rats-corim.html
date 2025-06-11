@@ -2955,16 +2955,26 @@ different index value.<a href="#section-5.1.4.1.1-4.5.1" class="pilcrow">¶</a><
               <h6 id="name-environment-instance">
 <a href="#section-5.1.4.1.2" class="section-number selfRef">5.1.4.1.2. </a><a href="#name-environment-instance" class="section-name selfRef">Environment Instance</a>
               </h6>
-<p id="section-5.1.4.1.2-1">An instance carries a unique identifier that is reliably bound to a Target Environment
-that is an instance of the Attester.<a href="#section-5.1.4.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.2-1">An <code>instance-id</code> is a unique value that identifies a Target Environment instance.
+The identifier is reliably bound to the Target Environment.
+For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the <code>instance-id</code> might be created from that subject public key.
+See <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.
+Alternatively, if the certificate's subject public key is large, the <code>instance-id</code> might be a key identifier that is a digest of that public key.
+See <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4.2.1.2" class="relref">Section 4.2.1.2</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.
+The key identifier is reliably bound to the subject public key because the identifier is a digest of the key.<a href="#section-5.1.4.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1.2-2">The types defined for an instance identifier are CBOR tagged expressions of
-UEID, UUID, variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>), or cryptographic key identifier.<a href="#section-5.1.4.1.2-2" class="pilcrow">¶</a></p>
+UEID, UUID, variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>), cryptographic keys, or cryptographic key identifiers.<a href="#section-5.1.4.1.2-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.2-3">
 <pre>
 $instance-id-type-choice /= tagged-ueid-type
 $instance-id-type-choice /= tagged-uuid-type
-$instance-id-type-choice /= $crypto-key-type-choice
 $instance-id-type-choice /= tagged-bytes
+$instance-id-type-choice /= tagged-pkix-base64-key-type
+$instance-id-type-choice /= tagged-pkix-base64-cert-type
+$instance-id-type-choice /= tagged-cose-key-type
+$instance-id-type-choice /= tagged-key-thumbprint-type
+$instance-id-type-choice /= tagged-cert-thumbprint-type
+$instance-id-type-choice /= tagged-pkix-asn1der-cert-type
 </pre><a href="#section-5.1.4.1.2-3" class="pilcrow">¶</a>
 </div>
 </section>
@@ -3381,7 +3391,7 @@ Defined in <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4" class="r
 <p id="section-5.1.4.1.5-3">A cryptographic key digest can be one of the following formats:<a href="#section-5.1.4.1.5-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.1.5-4.1">
-                  <p id="section-5.1.4.1.5-4.1.1"><code>tagged-thumbprint-type</code>: a <code>digest</code> of a raw public key.
+                  <p id="section-5.1.4.1.5-4.1.1"><code>tagged-key-thumbprint-type</code>: a <code>digest</code> of a raw public key.
 The digest value may be used to find the public key if contained in a lookup table.<a href="#section-5.1.4.1.5-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.5-4.2">
@@ -3402,16 +3412,15 @@ $crypto-key-type-choice /= tagged-pkix-base64-key-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
 $crypto-key-type-choice /= tagged-cose-key-type
-$crypto-key-type-choice /= tagged-thumbprint-type
+$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+$crypto-key-type-choice /= tagged-key-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
 $crypto-key-type-choice /= tagged-bytes
-
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
 tagged-pkix-base64-cert-path-type = #6.556(tstr)
-tagged-thumbprint-type = #6.557(digest)
+tagged-key-thumbprint-type = #6.557(digest)
 tagged-cose-key-type = #6.558(COSE_Key)
 tagged-cert-thumbprint-type = #6.559(digest)
 tagged-cert-path-thumbprint-type = #6.561(digest)
@@ -6233,7 +6242,7 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
               <td class="text-left" rowspan="1" colspan="1">
                 <code>[int/text, bytes]</code>
 </td>
-              <td class="text-left" rowspan="1" colspan="1">tagged-thumbprint-type, see <a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>
+              <td class="text-left" rowspan="1" colspan="1">tagged-key-thumbprint-type, see <a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>
 </td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
@@ -7787,16 +7796,15 @@ $crypto-key-type-choice /= tagged-pkix-base64-key-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
 $crypto-key-type-choice /= tagged-cose-key-type
-$crypto-key-type-choice /= tagged-thumbprint-type
+$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+$crypto-key-type-choice /= tagged-key-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-thumbprint-type
 $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
 $crypto-key-type-choice /= tagged-bytes
-
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
 tagged-pkix-base64-cert-path-type = #6.556(tstr)
-tagged-thumbprint-type = #6.557(digest)
+tagged-key-thumbprint-type = #6.557(digest)
 tagged-cose-key-type = #6.558(COSE_Key)
 tagged-cert-thumbprint-type = #6.559(digest)
 tagged-cert-path-thumbprint-type = #6.561(digest)
@@ -7870,8 +7878,13 @@ identity-triple-record = [
 
 $instance-id-type-choice /= tagged-ueid-type
 $instance-id-type-choice /= tagged-uuid-type
-$instance-id-type-choice /= $crypto-key-type-choice
 $instance-id-type-choice /= tagged-bytes
+$instance-id-type-choice /= tagged-pkix-base64-key-type
+$instance-id-type-choice /= tagged-pkix-base64-cert-type
+$instance-id-type-choice /= tagged-cose-key-type
+$instance-id-type-choice /= tagged-key-thumbprint-type
+$instance-id-type-choice /= tagged-cert-thumbprint-type
+$instance-id-type-choice /= tagged-pkix-asn1der-cert-type
 
 ip-addr-type-choice = ip4-addr-type / ip6-addr-type
 ip4-addr-type = bytes .size 4
