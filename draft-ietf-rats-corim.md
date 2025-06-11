@@ -908,11 +908,16 @@ The following describes each member of the `class-map`:
 
 ##### Environment Instance {#sec-comid-instance}
 
-An instance carries a unique identifier that is reliably bound to a Target Environment
-that is an instance of the Attester.
+An `instance-id` is a unique value that identifies a Target Environment instance.
+The identifier is reliably bound to the Target Environment.
+For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
+See {{Section 4.1 of -pkix-cert}}.
+Alternatively, if the certificate's subject public key is large, the `instance-id` might be a key identifier that is a digest of that public key.
+See {{Section 4.2.1.2 of -pkix-cert}}.
+The key identifier is reliably bound to the subject public key because the identifier is a digest of the key.
 
 The types defined for an instance identifier are CBOR tagged expressions of
-UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or cryptographic key identifier.
+UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cryptographic keys, or cryptographic key identifiers.
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
@@ -1197,7 +1202,7 @@ A cryptographic key can be one of the following formats:
 
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-thumbprint-type`: a `digest` of a raw public key.
+* `tagged-key-thumbprint-type`: a `digest` of a raw public key.
   The digest value may be used to find the public key if contained in a lookup table.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
@@ -1258,13 +1263,13 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
-##### Raw Int {#sec-comid-raw-int}
+##### Int Range {#sec-comid-int-range}
 
-A raw int describes an integer value that can be compared with linear order in the target environment.
-A raw int is represented with either major type 0 or major type 1 ints.
+An int range describes an integer value that can be compared with linear order in the target environment.
+An int range is represented with either major type 0 or major type 1 ints.
 
 ~~~ cddl
-{::include cddl/raw-int-type-choice.cddl}
+{::include cddl/int-range-type-choice.cddl}
 ~~~
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
@@ -2629,9 +2634,9 @@ If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
 
-##### Comparison for raw-int entries
+##### Comparison for int-range entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which MUST have type `raw-int-type-choice`.
+The ACS entry value stored under `measurement-values-map` codepoint 15 is an int range value, which MUST have type `int-range-type-choice`.
 
 Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
@@ -2773,14 +2778,14 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}         | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}    | {{&SELF}} |
-|     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}         | {{&SELF}} |
-|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}           | {{&SELF}} |
+|     557 | `[int/text, bytes]` | tagged-key-thumbprint-type, see {{sec-common-hash-entry}}     | {{&SELF}} |
+|     558 | `COSE_Key`          | tagged-cose-key-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
-|     564 | `array`             | tagged-int-range, see {{sec-comid-raw-int}}                   | {{&SELF}} |
+|     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
 | 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
@@ -2989,7 +2994,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 12    | (reserved)                | {{&SELF}}     |
 | 13    | cryptokeys                | {{&SELF}}     |
 | 14    | integrity-registers       | {{&SELF}}     |
-| 15    | raw-int                   | {{&SELF}}     |
+| 15    | int-range                 | {{&SELF}}     |
 | 16-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
