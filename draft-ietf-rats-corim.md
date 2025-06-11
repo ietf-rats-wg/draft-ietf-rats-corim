@@ -908,7 +908,7 @@ The following describes each member of the `class-map`:
 
 ##### Environment Instance {#sec-comid-instance}
 
-An `instance-id` is a globally unique value that identifies a Target Environment instance.
+An `instance-id` is a unique value that identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
 For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
 See {{Section 4.1 of -pkix-cert}}.
