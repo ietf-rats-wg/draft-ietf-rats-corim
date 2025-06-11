@@ -1437,7 +1437,7 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 See {{sec-comid-triple-identity}} for additional details.
 
-#### Domain Membership Triple {#sec-comid-triple-domain-membership}
+#### Triples for domain definitions {#sec-comid-domains}
 
 A domain is a context for bundling a collection of related environments and their measurements.
 
@@ -1448,6 +1448,10 @@ The following CDDL describes domain type choices.
 ~~~
 
 The `uint` and `text` types MUST NOT be interpreted in a global scope.
+
+Domain structure is defined with the following types of triples.
+
+##### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership triple assigns domain membership to environments.  The
 subject identifies a domain ({{sec-comid-triple-domain-dependency}}) that has a predicate
@@ -1460,10 +1464,10 @@ Evidence.
 {::include cddl/domain-membership-triple-record.cddl}
 ~~~
 
-#### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
 A Domain Dependency triple defines trust dependencies between measurement
-sources.  The subject identifies a domain ({{sec-comid-tripl-domain-membership}}) that has
+sources.  The subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has
 a predicate relationship to the object containing one or more dependent
 domains.  Dependency means the subject domain’s trustworthiness properties rely
 on the object domain(s) trustworthiness having been established before the
