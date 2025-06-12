@@ -2380,7 +2380,7 @@ Series iteration terminates after the first matching series entry is processed o
 
 #### Processing Key Verifications {#sec-process-keys}
 
-To process key verification inputs, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
+To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
 If the `key-type` field is set, the Verifier will apply the verification steps defined below.
 If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
 
