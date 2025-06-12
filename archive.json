@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-10T02:06:24.955043+00:00",
+  "timestamp": "2025-06-12T02:03:45.015266+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8160,7 +8160,7 @@
       ],
       "body": ">  The digest value may be used to find the public key if contained in a lookup table.\r\n\r\nWe've decided that crypto-key-type-choice can only be binary-compared, so lookups are not meaningful to appraisal.",
       "createdAt": "2024-10-11T14:28:41Z",
-      "updatedAt": "2025-02-12T19:07:59Z",
+      "updatedAt": "2025-06-11T14:30:11Z",
       "closedAt": null,
       "comments": [
         {
@@ -8169,6 +8169,20 @@
           "body": "Key lookup may still be usable for resolving attest-key-triple keys to construct certificate paths. See proposed text in PR #318.",
           "createdAt": "2024-10-11T16:03:59Z",
           "updatedAt": "2024-10-11T16:03:59Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze Does the comparison of Keys help close this issue?",
+          "createdAt": "2025-06-11T13:17:35Z",
+          "updatedAt": "2025-06-11T13:17:35Z"
+        },
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we need to keep the language that keys are binary-compared. We can rely on the translation to internal representation to add all the representations of a key that may need to be compared.",
+          "createdAt": "2025-06-11T14:30:11Z",
+          "updatedAt": "2025-06-11T14:30:11Z"
         }
       ]
     },
@@ -9082,7 +9096,7 @@
       "id": "I_kwDOH6-tI86mnk8K",
       "title": "Add section describing how to extend types within measurement-values-map",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/357",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -9093,8 +9107,8 @@
       ],
       "body": "The following text was proposed for addition to the description of `$raw-value-type-choice`, but was not added:\n\n`When a new raw value type is defined, a comparison algorithm may also be defined.`\n\nNed wrote a comment regarding this text as follows:\n\n> There are lots of ways to extend the schema. The conventions should be described somewhere in a section that overviews the various extension points and the registries that control them. The $raw-value-type-choice extension point can be a small paragraph there. Writing that section will be the right place to have the discussion about who and how extensions are managed IMO.\n\nI agree that we should write a section about extending different types, and include `$raw-value-type-choice` in that section.",
       "createdAt": "2025-01-17T12:41:27Z",
-      "updatedAt": "2025-06-05T10:58:58Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-11T12:38:26Z",
+      "closedAt": "2025-06-11T12:38:26Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -9123,6 +9137,13 @@
           "body": "@andrew-draper Can you please have a look at this issue:\n\n1. I see two conflicts: The title name of the Issue does not match the text description...\n2. The `raw-value-type-choice` work is now complete.\n3. The extension of any Map is documented [here](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-map-extensions)\n\nCan we close this PR?",
           "createdAt": "2025-06-05T10:58:57Z",
           "updatedAt": "2025-06-05T10:58:57Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree we can close this PR. The current text describes the standard algorithm for comparing raw values types.",
+          "createdAt": "2025-06-11T12:38:26Z",
+          "updatedAt": "2025-06-11T12:38:26Z"
         }
       ]
     },
@@ -10579,7 +10600,7 @@
       "labels": [],
       "body": "Consider an compound system using two attestation environments and two target environments.\n\nIn the example, the AEs and TEs use identical hardware, but may be running different firmware.\n\nThis diagram shows a simplified view of the system.\n```mermaid\ngraph TD\n    Verifier[\"Verifier\"]\n\n    subgraph Compound[\"Compound system\"]\n\n    subgraph DICE1[\"Component #1\"]\n        TE1z[\"SPDM TE\"]\n        TE1y[\"SPDM AE\"]\n    end\n    TE1y ==> TE1z\n\n    subgraph DICE2[\"Component #2\"]\n        TE2y[\"SPDM AE\"]\n        TE2z[\"SPDM TE\"]\n    end\n    TE2y ==> TE2z\n\n    end\n\n    style Compound fill:#CCC,stroke:#CCC\n\n    Verifier -...-> TE1y\n    Verifier -...-> TE2y\n```\nThe Verifier communicates directly with an attestation environment within each component.\n\nThe attestation environments return measurements of each TE, for example AE#1 might return a hash indicating the firmware running in TE#1:\n```cbor-diag\n  [\n    / environment-map / {\n      / class / 0 : {\n        / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n        / vendor / 1 : \"example.com\"\n      },\n      / instance / 1 : 560(h'12345678')\n    },\n    / measurement-map / [ {\n      / mval / 1 : {\n        / digests / 2 : [\n          [\n            / sha-384 / 7,\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n          ]\n        ]\n      }\n    } ]\n  ]\n```\n\nThe measurements of TE#2 are similar, except for the instance ID and the digest in the measurement-values-map.\n\nThe evidence import phase will add the measurements for TE#1 and TE#2 to the ACS.\n\nThe CoRIM author has published several CoRIMs, each of which maps one hash to a version number, for example:\n\n```comid\n  / triples / 4 : {\n    / conditional-endorsement-triples / 10 : [\n      / conditions: / [ \n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / digests / 2 : [\n                [\n                  / sha-384 / 7,\n                  h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n                ]\n              ]\n            }\n          } ]\n        ],\n  / endorsements: / [\n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n            / WHAT GOES HERE? /\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / ver / 0 : {\n                / version / 0 : \"1.0\",\n                / version-scheme / 1 : / alphanumeric / 3\n              }\n            }\n          } ]\n        ],\n      ]\n    ]\n  }\n```\n\nThe goal of this CoMID fragment is to add a version number to the environment which contains the hash.\nI expect that the Conditional Endorser (perhaps the device manufacturer) will release many CoMID fragments, one for each released version of firmware.\n\nAssuming that the firmware is genuine, one of the CoMID fragments will match against the ACS entry for TE#1, and one will match against the ACS entry for TE#2.\n\nThe CoMID fragments don't include an `instance` field within their environment, so they will match against any ACS entry which contains the same `class-id`, regardless of instance.\n\n# How to get expected results?\n\nI would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class` and `instance` fields.\n\nHow do we tell the Verifier to copy the `instance` field from the `stateful-environment` part of `conditional-endorsement-triple-record` to the new ACS entry created by `endorsed-triple-record`?\n\nI think a similar issue is raised if the Conditional Endorser wants the Verifier to match against two `stateful-environments`, both of them having the same value in the `instance` field.\n\n# Possible solution\n\nOne solution I can imagine is to create special syntax which is inserted into the example conditional endorsement above in the location marked `/ What goes here? /`.\n\nThis syntax tells the Verifier to copy the instance value which was matched against the first `stateful-environment` into the newly created endorsed ACS entry.\n\nIs there a better solution?",
       "createdAt": "2025-03-28T22:19:44Z",
-      "updatedAt": "2025-05-17T00:21:24Z",
+      "updatedAt": "2025-06-11T18:06:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -10602,6 +10623,27 @@
           "body": "# Example of class-based conditional endorsement:\n[Class-endorsement](https://drive.google.com/file/d/12fMmJ2EnjM3j9aB1aFSZhdxw1WCBPpWV/view?usp=drive_link)\n\n# Example of instance-based conditional endorsement:\n[Instance-endorsement](https://drive.google.com/file/d/1VC-olXfBp7j4Sj-eyEpj6qe4iJiyYFwj/view?usp=drive_link)\n\n# Observations\nThe instance-based example models PR #434. However, they depend on the measurements being different (e.g., digest). Nevertheless, class-based examples produce the same results as instance-based examples. Possibly, there are more assumptions not yet expressed? \n\nOtherwise, the idea of overloading instance-id with verifier processing directives (Pos) seems odd.",
           "createdAt": "2025-05-17T00:17:15Z",
           "updatedAt": "2025-05-17T00:21:24Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper Please see my comments below:\n\nA Manufacturer is asserting an Endorsement (like Version Number)  Against a FW whose Digest (Measurement) is inside the Conditional Endorsement Triple.\n\nThe Triples from Supply Chain, does not contain Instance ID, but ONLY the Class ID and FW Measurements that belong to the FW.\n\nThis is a Valid use case.\n\nWhen  Condition from ECT (for Cond Endorsement Triples)  is used for Comparison the subject of Condition is \"ClassID+FW Hash \" should be matched with Evidence ECTs (cmtype=Evidence) to see if which Evidence ECT Match \"ClassID + FW Hash\" and one should get the Evidence ECT Details with Class ID, FW Measurement, that matched! One can note the Instance ID for the specific ECT and can move the Instance ID to the Addition ECT of the Endorsement, when moving to ACS. Similar can be done for the other FW Instance ID, so we will have two _Endorsement Addition ECTs with Same Class ID, Different Instance IDs_ and different FW Measurements one in each ECT.\n\nTechnically speaking The FW Revision Endorsement which the Manufacturer is adding is to the two FW's who have different Measurement. Which Instance ID they run on is the Additional Information, the Verifier is assessing, based on where the Class ID and Measurements matched. \n\n\n",
+          "createdAt": "2025-06-11T17:06:22Z",
+          "updatedAt": "2025-06-11T17:06:53Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Also, please note that if two different Instance ID's are reported in Evidence, with the same Class ID then, there should also be TWO Reference Value Triples, with same Class ID -> Each Instance ID and FW Measurements in measurement-map. This will also help resolve the Instance ID ambiguity.",
+          "createdAt": "2025-06-11T17:10:18Z",
+          "updatedAt": "2025-06-11T17:10:18Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> there should also be\n\nI think this might be overstating requirements. It will be best to clarify global uniqueness property of environment-map given the optionality of class, instance and group. I think everyone is on the same page with what that means but to summarize. For any combination of the type of identifier each combination MUST be globally unique. Combinatoric idempotence is also true. If class is globally unique and instance is globally unique then the combination is also globally unique. \n\nThere may be ambiguity in combinatoric uniqueness properties one type (by itself) isn't globally unique but combined. For example if class, instance, and group are not globally unique then is the combination globally unique? (My assumption is yes).\n\nHowever, there can be unintended side effects if uniqueness is not guaranteed without using a combinatoric production. We have said that Evidence containing combinations (class and instance) environment-map will match reference values that are class only. But if the class isn't globally unique, then the reference value expression is invalid. Note that since instance values might not be known at mfg time, requiring RVP to supply a combination environment isn't possible. That would breaks stuff.\n\nIt is safer to require each time of environment (class, instance, or group) to be globally unique regardless of combinatorics. But this also might break stuff. We said that a way to disambiguate multiple instances of the same component in Evidence would be to populate the instance-id (along with class). But we didn't say whether instance-id independently must be globally unique. We left it up to the members. All except tagged-bytes is natively globally unique. That sort of suggests the intention that instance is always globally unique, but those words haven't been captured. \n\nIf the primary use case for wanting non-globally unique instance-ids is the specific use case of reporting multiple instances of the same class of component, then it seems reasonable to have measurement specifically for that. Then we can avoid having subtlety in the definition of environment uniqueness properties. \n\nMy view is RIM / Evidence authors shouldn't have to understand combinatorics. All types should be globally unique regardless if they are used in combination with each other. ",
+          "createdAt": "2025-06-11T18:06:13Z",
+          "updatedAt": "2025-06-11T18:06:13Z"
         }
       ]
     },
@@ -11036,10 +11078,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "The comparison section for section 9.4.1.7 Comparison for`raw-int` (or whatever we ended up calling it) uses a convention where \"CONDITION\" is used to refer to contents of a condition ECT and \"ENTRY\" is used to refer to the current ACE ECT that is the ECT being matched. \n\nThis seems like a valuable convention for the reader. Does it make sense to consistently apply this convention for all the comparson sections (9.4.6.1.*)?",
       "createdAt": "2025-04-22T20:16:54Z",
-      "updatedAt": "2025-06-04T14:14:51Z",
+      "updatedAt": "2025-06-11T13:30:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -11282,11 +11326,15 @@
       "state": "OPEN",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [
+        "mustfix"
+      ],
       "body": "A conditional endorsement series expression doesn't necessarily have to have a stateful condition given the selection state is sufficient. However, the `stateful-environment-record` makes `measurement-map` mandatory. \n\nAllowing the claims-list in stateful-environment-record to be optional would accommodate the class of use cases. \n\nSuch as the following cddl:\n```\nconditional-endorsement-series-triple-record = [\n  condition: [\n    environment: environment-map,\n    ? claims-list: [ + measurement-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n```",
       "createdAt": "2025-05-09T19:16:33Z",
-      "updatedAt": "2025-05-12T19:36:10Z",
+      "updatedAt": "2025-06-11T13:22:07Z",
       "closedAt": null,
       "comments": [
         {
@@ -11303,15 +11351,15 @@
       "id": "I_kwDOH6-tI863nFl3",
       "title": "Quantity of crypto keys in $instance-id-type-choice",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/437",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "$instance-id-type-choice /= tagged-cose-key-type in the only type choice that allows for more than one key.\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/85/ does not actually provide a reasoning for that.\n\nShould be reverted to single key for consistency.",
       "createdAt": "2025-05-21T14:40:41Z",
-      "updatedAt": "2025-05-21T14:40:41Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-11T14:45:59Z",
+      "closedAt": "2025-06-11T14:45:59Z",
       "comments": []
     },
     {
@@ -11443,10 +11491,146 @@
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix"
+      ],
       "body": "The appraisal algorithm has ballooned in its description text to dizzying lengths. We need to have an introduction and stricter organization principles to present the meaning of CoMID triples as they affect the ACS.\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/424 is a smaller plea for organizing principles.",
       "createdAt": "2025-06-04T14:42:49Z",
-      "updatedAt": "2025-06-04T14:42:49Z",
+      "updatedAt": "2025-06-11T13:19:18Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 447,
+      "id": "I_kwDOH6-tI8660sZh",
+      "title": "Verifier Algorithm Gaps-1",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/447",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "[Section 9.2.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-reference-triples-transform)\n\nStates that \n\nONLY Env-Maps are copied in both Condition & Addition\n\n`\ncopy(environment-map, rv.condition.environment.environment-map)\ncopy(environment-map, rv.addition.environment.environment-map)\n`\n\n\nHowever, [Section 9.1.4](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-internal-representation-of-r)\n\nStates that:\n`The rv relation is a list of condition-addition pairings where each pairing is evaluated together. If the condition containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the addition.`\n\nSo effectively the Evidence ECT which includes Claims + Environment should be compared with Ref-Values Condition, but the  Section 9.2.3.3 is out of sync with 9.1.4",
+      "createdAt": "2025-06-10T17:35:26Z",
+      "updatedAt": "2025-06-11T13:47:37Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "9.2.3.3 Step 3 says:\n```\nThe Reference Values Triple (RVT) populates the rv ECTs.\ni\nRVT.ref-env\ncopy(environment-map, rv.condition.environment.environment-map)\ncopy(environment-map, rv.addition.environment.environment-map)\nii\nFor each e in RVT.ref-claims:\ncopy(e.measurement-map, rv.addition.element-list.element-map)\n```\nAre you saying it should be:\n```\nThe Reference Values Triple (RVT) populates the rv ECTs.\ni\nRVT.ref-env\ncopy(environment-map, rv.condition.environment.environment-map)\ncopy(environment-map, rv.addition.environment.environment-map)\nii\nFor each e in RVT.ref-claims:\n     copy(e.measurement-map, rv.condition.element-list.element-map)\n     copy(e.measurement-map, rv.addition.element-list.element-map)\n```",
+          "createdAt": "2025-06-10T20:51:20Z",
+          "updatedAt": "2025-06-10T20:51:20Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The document doesn't state which direction copy() works in - I assume it sets the variable referred to in the first argument to be equal to the variable in the second argument.\nI am not sure what the environment-map variable is for. Is it a temporary local variable?\nIt seems to get assigned to twice, and never used after that. Should the arguments in the second copy be reversed?",
+          "createdAt": "2025-06-11T13:47:14Z",
+          "updatedAt": "2025-06-11T13:47:37Z"
+        }
+      ]
+    },
+    {
+      "number": 448,
+      "id": "I_kwDOH6-tI8660xnw",
+      "title": "Verifier Algorithm  Gap-2",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/448",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "[Section 9.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.3.3) Reference Value Corroboration Needs Clarity!\n\nIt says\n`Reference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.`\n\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\n\nThis text implies that the Evidence ECTs are modified with the Authority of RVP.\n\nHowever, other parts of text indicate that the `reference-value` cmTypes are added into ACS. The Phase 3 explanation does not tie up with addition of ECTs with CmType: Reference Value",
+      "createdAt": "2025-06-10T17:42:43Z",
+      "updatedAt": "2025-06-11T13:18:07Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "True, I honestly don't understand how cmtype in the ACS is supposed to work given how corroboration appears to mean that evidence and reference values appear together signed by attester and RVP.",
+          "createdAt": "2025-06-10T17:51:17Z",
+          "updatedAt": "2025-06-10T17:51:17Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The paragraphs before and after the cited paragragh is helpful:\n\"Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values. If satisfied, the RVP authority is added to the matching ACS entry.\n\nReference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\"\n\nIt says the ACS evidence ETC matches an RV (staged entry) if both the environment and the measurements match. The word \"satisfied\" is helpful because the reference values can be a superset of actual state. That allow for RV expressions to have multiple entries in RV triples where only one of them \"matches\" exactly Evidence ECTs. The int-range is another example where the reference is a superset of evidence. Int-range \"satisfies\" int if the int value is within the int-range values. \n\nThe result of corroboration is the subset of reference values that \"matches\" the evidence values. However, these are not \"evidence\" as they originated from reference values. They are not reference values becuase they are \"actual state\" not \"possible state\". We could create a cmtype for corroborated reference values, but since ACS can only contain actual state, a cmtype of reference value (rv) can only mean \"corroborated reference values\".  Since the corroborated reference value cmtype is only meaningful for internal representation, it doesn't make sense to define it for external representations. ",
+          "createdAt": "2025-06-10T22:25:27Z",
+          "updatedAt": "2025-06-10T22:27:16Z"
+        }
+      ]
+    },
+    {
+      "number": 449,
+      "id": "I_kwDOH6-tI86600Lk",
+      "title": "Verifier Algorithm Gap-3",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/449",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "[Section 9.3.4.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-processing-endorsements)\n\nThis is the first explaination of Processing Endorsements, but the text states as below:\n\n`For each ev entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains either evidence, reference-values, or endorsements.`\n\nHow Endorsement ECT's can appear in the ACS is not explained and one is expected to match ECT with cmType: endorsements??",
+      "createdAt": "2025-06-10T17:46:21Z",
+      "updatedAt": "2025-06-11T13:18:17Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Section 9.3.4 explains how endorsements get added to the ACS. The line \"Set ev.addition.cmtype to endorsements.\" describes how cmtype becomes \"endorsements\" which aligns with the text in 9.3.4.1.\n\n> ECT cmtype contains either evidence, reference-values, or endorsements.\n\n",
+          "createdAt": "2025-06-10T22:37:25Z",
+          "updatedAt": "2025-06-10T22:37:25Z"
+        }
+      ]
+    },
+    {
+      "number": 450,
+      "id": "I_kwDOH6-tI86605TX",
+      "title": "Verifier Algorithm Gap-4",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/450",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "Inconsistency in explaination and usage of ECT Entry : cmtype: cm-type\n\nAs per the CDDL Description:\nThis field (cmtype: cm-type) is Mandatory in ECT.\n\nHowever, in certain Internal Representation ECT's (like Conditional Endorsement Conditions and RVP Conditions) they have been set as n/a.\n\nIf they are n/a then they will have a default value of 0, which means all such cmType will map to:  reference-values: 0\n\nIt is better to have an explicit enum which maps to Invalid value to avoid confusion during Appraisal Processing\n\n",
+      "createdAt": "2025-06-10T17:53:10Z",
+      "updatedAt": "2025-06-11T13:18:35Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It probably makes sense to make cmtype optional so that the ECT structure can be used with conditions.",
+          "createdAt": "2025-06-10T22:42:51Z",
+          "updatedAt": "2025-06-10T22:42:51Z"
+        }
+      ]
+    },
+    {
+      "number": 451,
+      "id": "I_kwDOH6-tI866-gty",
+      "title": "Need to distinguish ECT in ACS vs ECT in triple",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/451",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Previous text distinguished ACS entries from data in triples.\n\nThe current text talks about ECTs in many places.\n\nCan we have different terms for ECTs which have been added to the ACS, and ECTs which have been created from triples. These last ECTs may be matched against ACS or inserted (perhaps with modification), but they work differently from ACS ECTs.\n\nSome parts of the matching rules talk about ACS entries and candidate ECTs, but the phase description uses different terms. We should align these.\n\n",
+      "createdAt": "2025-06-11T13:59:06Z",
+      "updatedAt": "2025-06-11T13:59:06Z",
       "closedAt": null,
       "comments": []
     }
@@ -63691,13 +63875,13 @@
       "labels": [],
       "body": "Issues #375, #388.",
       "createdAt": "2025-02-21T03:12:19Z",
-      "updatedAt": "2025-03-10T17:33:25Z",
+      "updatedAt": "2025-06-11T14:31:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "6fa97f60aa5cc573c58921bfcde1f0037d72849a",
+      "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "equiv",
-      "headRefOid": "03dfc373b8c7ab7da60569e8417cb85ccde4b373",
+      "headRefOid": "a3cbf6a131f60c3497cac6921fafe7c5d9b479bf",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -63796,6 +63980,79 @@
           "createdAt": "2025-03-10T17:33:25Z",
           "updatedAt": "2025-03-10T17:33:25Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t0uGe",
+          "commit": {
+            "abbreviatedOid": "db2ca19"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T09:06:28Z",
+          "updatedAt": "2025-06-11T09:06:28Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "Should we not qualify what equivalent means?",
+              "createdAt": "2025-06-11T09:06:28Z",
+              "updatedAt": "2025-06-11T09:06:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t0ua6",
+          "commit": {
+            "abbreviatedOid": "db2ca19"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM, just check a minor point...",
+          "createdAt": "2025-06-11T09:06:53Z",
+          "updatedAt": "2025-06-11T09:06:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t48Dd",
+          "commit": {
+            "abbreviatedOid": "db2ca19"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:04:56Z",
+          "updatedAt": "2025-06-11T14:04:56Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I think that we can revert the equivalence text for ECTs since there's already a translation to them.",
+              "createdAt": "2025-06-11T14:04:56Z",
+              "updatedAt": "2025-06-11T14:04:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5Y9I",
+          "commit": {
+            "abbreviatedOid": "db2ca19"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:31:15Z",
+          "updatedAt": "2025-06-11T14:31:15Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I've gone back to the original text about equivalence to clarify the \"typically\" wording.",
+              "createdAt": "2025-06-11T14:31:15Z",
+              "updatedAt": "2025-06-11T14:31:15Z"
+            }
+          ]
         }
       ]
     },
@@ -63808,10 +64065,12 @@
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "For-next-release"
+      ],
       "body": "Fix #381",
       "createdAt": "2025-02-23T16:25:41Z",
-      "updatedAt": "2025-03-26T15:15:39Z",
+      "updatedAt": "2025-06-11T16:35:02Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "8a711333e20ae4beaaf0c899a13db4dbb9060640",
@@ -67197,7 +67456,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-06-06T16:24:55Z",
+      "updatedAt": "2025-06-11T14:23:37Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
@@ -67290,6 +67549,46 @@
               "updatedAt": "2025-06-06T16:24:55Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86tw0fV",
+          "commit": {
+            "abbreviatedOid": "7bf6291"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-10T23:29:37Z",
+          "updatedAt": "2025-06-10T23:29:44Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "> I like the terms C-ECT and A-ECT, but I think they should be defined earlier in the document\r\n\r\nSince this PR isn't about terminology, can we approve this and open a different PR aimed at consistent use of C-ETC / A-ECT?",
+              "createdAt": "2025-06-10T23:29:38Z",
+              "updatedAt": "2025-06-10T23:29:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5RYf",
+          "commit": {
+            "abbreviatedOid": "7bf6291"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:23:36Z",
+          "updatedAt": "2025-06-11T14:23:37Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nTo process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.\r\n```",
+              "createdAt": "2025-06-11T14:23:36Z",
+              "updatedAt": "2025-06-11T14:23:37Z"
+            }
+          ]
         }
       ]
     },
@@ -67298,26 +67597,28 @@
       "id": "PR_kwDOH6-tI86UlldA",
       "title": "Fixes ambiguity of instance-id",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/430",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
         "nedmsmith"
       ],
       "labels": [],
-      "body": "Crypto-key-typ-choice values that are suitable as instance-ids are added to instance-id-type-choice.\r\n\r\nSee Issue #428 ",
+      "body": "Crypto-key-type-choice values that are suitable as instance-ids are added to instance-id-type-choice.\r\n\r\nSee Issue #428 ",
       "createdAt": "2025-04-30T23:56:33Z",
-      "updatedAt": "2025-06-05T10:55:11Z",
+      "updatedAt": "2025-06-11T15:57:49Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
+      "baseRefOid": "e75e268fc3a1ed3d0f8fd6189e54ea2a5e0449af",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "nms/fix-428",
-      "headRefOid": "d494882d3ba37d3f6e745a6efa242708ee4f4f16",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6a48a9d9183b14b8ab449401350666ab4aa9c889",
+      "closedAt": "2025-06-11T15:57:28Z",
+      "mergedAt": "2025-06-11T15:57:28Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "978c09cacac5b2b970b360a29719dc660f0a4fd9"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -67339,6 +67640,20 @@
           "body": "@nedmsmith Can you please work on the example section to tidy this so that we can progress on this blocking PR?",
           "createdAt": "2025-06-05T10:55:10Z",
           "updatedAt": "2025-06-05T10:55:10Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @nedmsmith Can you please work on the example section to tidy this so that we can progress on this blocking PR?\r\n\r\nDoes this refer to examples in the examples folder or some part of the markdown file?",
+          "createdAt": "2025-06-10T23:22:10Z",
+          "updatedAt": "2025-06-10T23:22:10Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > @nedmsmith Can you please work on the example section to tidy this so that we can progress on this blocking PR?\r\n> \r\n> Does this refer to examples in the examples folder or some part of the markdown file?\r\nthis is part of Markdown file, where you have exemplified the X.509 use cases. They need to be tidied up as per our CoRIM Meeting discussion two week back!\r\n",
+          "createdAt": "2025-06-11T13:25:42Z",
+          "updatedAt": "2025-06-11T13:25:42Z"
         }
       ],
       "reviews": [
@@ -67512,6 +67827,85 @@
               "updatedAt": "2025-05-21T14:40:49Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5aY5",
+          "commit": {
+            "abbreviatedOid": "625963f"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-11T14:32:42Z",
+          "updatedAt": "2025-06-11T14:33:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5a2t",
+          "commit": {
+            "abbreviatedOid": "625963f"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Looks good",
+          "createdAt": "2025-06-11T14:33:02Z",
+          "updatedAt": "2025-06-11T14:33:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5cVN",
+          "commit": {
+            "abbreviatedOid": "d494882"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:34:25Z",
+          "updatedAt": "2025-06-11T14:34:25Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nAn `instance-id` is a value that identifies a Target Environment instance.\r\n```",
+              "createdAt": "2025-06-11T14:34:25Z",
+              "updatedAt": "2025-06-11T14:42:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5lqZ",
+          "commit": {
+            "abbreviatedOid": "625963f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:44:52Z",
+          "updatedAt": "2025-06-11T14:44:52Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nAn `instance-id` is a unique value that identifies a Target Environment instance.\r\n```",
+              "createdAt": "2025-06-11T14:44:52Z",
+              "updatedAt": "2025-06-11T14:44:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5nkz",
+          "commit": {
+            "abbreviatedOid": "2cd94fa"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-11T14:47:02Z",
+          "updatedAt": "2025-06-11T14:47:02Z",
+          "comments": []
         }
       ]
     },
@@ -67683,7 +68077,7 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-09T15:08:58Z",
+      "updatedAt": "2025-06-11T15:02:37Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
@@ -68330,6 +68724,59 @@
               "updatedAt": "2025-06-09T15:08:58Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t47kD",
+          "commit": {
+            "abbreviatedOid": "304e86a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:04:33Z",
+          "updatedAt": "2025-06-11T14:04:34Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "We could, but I changed from having a single tag to two tags based on discussion last week. I think having two tags is clearer.",
+              "createdAt": "2025-06-11T14:04:33Z",
+              "updatedAt": "2025-06-11T14:05:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5cx7",
+          "commit": {
+            "abbreviatedOid": "304e86a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:34:55Z",
+          "updatedAt": "2025-06-11T14:34:56Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Fair enough.",
+              "createdAt": "2025-06-11T14:34:55Z",
+              "updatedAt": "2025-06-11T14:34:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t53Ih",
+          "commit": {
+            "abbreviatedOid": "304e86a"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-11T15:02:37Z",
+          "updatedAt": "2025-06-11T15:02:37Z",
+          "comments": []
         }
       ]
     },
@@ -68347,18 +68794,26 @@
       "labels": [],
       "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
       "createdAt": "2025-05-09T20:26:59Z",
-      "updatedAt": "2025-05-29T17:16:59Z",
+      "updatedAt": "2025-06-11T20:52:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
+      "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "nms/issue-435",
-      "headRefOid": "c9772106d5b2c3e623d3b38f3f4b4a4f2d6a52e1",
+      "headRefOid": "e62c80ef6d030fc47ee7fea03c8bad1574489253",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith : We want to make progress about this prior to IETF, so please work on this, time permitting, we would like to CLOSE this by next week!!!",
+          "createdAt": "2025-06-11T16:34:28Z",
+          "updatedAt": "2025-06-11T16:34:28Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86o5Go0",
@@ -68432,6 +68887,210 @@
           "createdAt": "2025-05-12T19:54:08Z",
           "updatedAt": "2025-05-12T19:54:08Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t0oi3",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T09:00:25Z",
+          "updatedAt": "2025-06-11T09:00:26Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "@nedmsmith This text is not aligned with what CDDL renders itself to.\r\nIn CDDL each claim is having an Authority which seems incorrect.\r\n\r\nTo me each of the condition: for each of the `environment`should have the authority",
+              "createdAt": "2025-06-11T09:00:26Z",
+              "updatedAt": "2025-06-11T09:00:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t0p9W",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T09:01:38Z",
+          "updatedAt": "2025-06-11T09:01:38Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "Where is the authorized-by on line 5?",
+              "createdAt": "2025-06-11T09:01:38Z",
+              "updatedAt": "2025-06-11T09:01:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t0qfq",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T09:02:08Z",
+          "updatedAt": "2025-06-11T09:02:09Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "Why do you need authorised by on each claim ? This is not clear..",
+              "createdAt": "2025-06-11T09:02:09Z",
+              "updatedAt": "2025-06-11T09:02:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t0q6-",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "please have a look at the comments!",
+          "createdAt": "2025-06-11T09:02:19Z",
+          "updatedAt": "2025-06-11T09:02:19Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5DrC",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:12:22Z",
+          "updatedAt": "2025-06-11T14:12:23Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Isn't this a change in the security behavior of `authorized-by`?",
+              "createdAt": "2025-06-11T14:12:22Z",
+              "updatedAt": "2025-06-11T14:12:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5EUZ",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "I would like to think about the security consequences of this PR before accepting it.",
+          "createdAt": "2025-06-11T14:13:04Z",
+          "updatedAt": "2025-06-11T14:13:04Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t8jdK",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T18:46:21Z",
+          "updatedAt": "2025-06-11T19:05:53Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "Currently, authorized-by is within measurement-map. Measurement-series-map is no different from measurement-map in that regard. The only difference is mval is now optional. This allows authorized-by to be populated even when there are not measurement values (which was the main point of the PR).",
+              "createdAt": "2025-06-11T18:46:21Z",
+              "updatedAt": "2025-06-11T19:05:53Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "In a stateful-environment-record authorized-by is buried inside of measurement-map. In order to specify authorized-by in the query, you also have to query on at least one measurement (mval is not optional). \r\nTherefore I can't form a query like:\r\n`select * where environment=E1 AND authority=A1`\r\nI'm forced into queries like:\r\n`select * where environment=E1 AND authority=A1 AND measurement=M1`",
+              "createdAt": "2025-06-11T18:49:45Z",
+              "updatedAt": "2025-06-11T19:05:53Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "> @nedmsmith This text is not aligned with what CDDL renders itself to. In CDDL each claim is having an Authority\r\n\r\nCan you point to the CDDL that you think is not aligned? ",
+              "createdAt": "2025-06-11T18:54:15Z",
+              "updatedAt": "2025-06-11T19:05:53Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "> Isn't this a change in the security behavior of `authorized-by`?\r\n\r\nNo, because in the previous case it wasn't possible to create a query of the form: \r\nCase A: `select * where environment=E1 AND authority=A1`\r\nHowever, queries of the form:\r\nCase B: `select * where environment=E1 AND authority=A1 AND measurement=M1`\r\nare also possible. However, because the triples are expressed as records/arrays `[ ]` - a decision made early in the lifetime of corim, it is not possible to add authorized-by directly into the triple (it is neither subject or object).\r\n\r\nThe compromise approach is authorized-by appears in multiple places and if both are used (Case B above), then the scope of authorized-by needs to be clarified. Since the previous semantics were that authorized-by in measurement-map applies to environment-map, there was no way to bifurcate authority. The proposed wording preserves that convention by ignoring one of them. The alternative would be a security change which allows bifurcation of authority.",
+              "createdAt": "2025-06-11T19:04:02Z",
+              "updatedAt": "2025-06-11T19:05:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t9TLO",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T20:09:00Z",
+          "updatedAt": "2025-06-11T20:09:00Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "The text here at line 1371 reads:\r\n`The condition is a record containing an `environment`, optional `claims-list`, and optional `authorized-by`.` \r\n\r\nWhile CDDL says\r\n\r\n  condition: [\r\n    environment: environment-map\r\n    ? claims-list: [ + measurement-series-map ]\r\n  ]\r\n\r\n\r\n",
+              "createdAt": "2025-06-11T20:09:00Z",
+              "updatedAt": "2025-06-11T20:10:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t9Uhm",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T20:10:46Z",
+          "updatedAt": "2025-06-11T20:10:46Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "condition record does not contain authorised by, the claims list contains authorized by\r\n\r\nplease correct your wording",
+              "createdAt": "2025-06-11T20:10:46Z",
+              "updatedAt": "2025-06-11T20:10:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t9VET",
+          "commit": {
+            "abbreviatedOid": "c977210"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T20:11:34Z",
+          "updatedAt": "2025-06-11T20:11:34Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "@nedmsmith please see my comments above",
+              "createdAt": "2025-06-11T20:11:34Z",
+              "updatedAt": "2025-06-11T20:11:34Z"
+            }
+          ]
         }
       ]
     },
@@ -68440,24 +69099,26 @@
       "id": "PR_kwDOH6-tI86XE2Tt",
       "title": "Removing COSE_KeySet for single key consistency in the type choice",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/438",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "fixes #437",
       "createdAt": "2025-05-21T14:44:23Z",
-      "updatedAt": "2025-06-04T14:13:42Z",
+      "updatedAt": "2025-06-11T14:45:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "62b79fbbe34cb3e5b4a61e920b537c77ac52f21e",
+      "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "single-cose-key",
-      "headRefOid": "09c8b3c3ff7fd0330741b1b5843e0057cbed549d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6b936a4ab267b22e366495754f8c1a3580bf4fe3",
+      "closedAt": "2025-06-11T14:45:58Z",
+      "mergedAt": "2025-06-11T14:45:58Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e75e268fc3a1ed3d0f8fd6189e54ea2a5e0449af"
+      },
       "comments": [
         {
           "author": "henkbirkholz",
@@ -68472,47 +69133,74 @@
           "body": "> @thomas-fossati this change clashes with the unit tests. Could you check why, please?\r\n\r\ndone in [0e51403](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/438/commits/0e51403bea72d3468d46b65a15a2935c36db1001)",
           "createdAt": "2025-05-21T16:49:47Z",
           "updatedAt": "2025-05-21T16:49:47Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@henkbirkholz:\r\nIn your PR: Why is the concise-tl-tag deleted? It is a valid entry and is required.\r\n\r\nThis is holding this PR? \r\n",
+          "createdAt": "2025-06-11T08:53:34Z",
+          "updatedAt": "2025-06-11T08:53:34Z"
         }
       ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86qZj-y",
           "commit": {
-            "abbreviatedOid": "09c8b3c"
+            "abbreviatedOid": "d32ae39"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2025-05-21T19:01:36Z",
-          "updatedAt": "2025-06-04T14:13:41Z",
+          "updatedAt": "2025-06-10T23:14:50Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI86qZmz7",
           "commit": {
-            "abbreviatedOid": "09c8b3c"
+            "abbreviatedOid": "d32ae39"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-05-21T19:06:43Z",
-          "updatedAt": "2025-06-04T14:13:42Z",
+          "updatedAt": "2025-06-10T23:14:50Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI86rmn54",
           "commit": {
-            "abbreviatedOid": "09c8b3c"
+            "abbreviatedOid": "d32ae39"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2025-05-29T17:14:18Z",
-          "updatedAt": "2025-06-04T14:13:41Z",
+          "updatedAt": "2025-06-10T23:14:50Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86t5AEn",
+          "commit": {
+            "abbreviatedOid": "d32ae39"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-11T14:08:30Z",
+          "updatedAt": "2025-06-11T14:08:31Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "```suggestion\r\ntagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)\r\ntagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)\r\n```",
+              "createdAt": "2025-06-11T14:08:30Z",
+              "updatedAt": "2025-06-11T14:08:31Z"
+            }
+          ]
         }
       ]
     },
@@ -68521,21 +69209,21 @@
       "id": "PR_kwDOH6-tI86XGRXk",
       "title": "Create .ruby-version",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/439",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Newer versions of ruby generate warnings.\r\nShould the repo direct everyone to use version 3.2.2",
       "createdAt": "2025-05-21T17:07:37Z",
-      "updatedAt": "2025-06-09T23:57:59Z",
+      "updatedAt": "2025-06-11T23:27:12Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "specify-ruby-ver",
       "headRefOid": "d54014caf9e13c57782d0d245d5555cd429f242e",
-      "closedAt": null,
+      "closedAt": "2025-06-11T23:27:11Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -68560,6 +69248,55 @@
           "body": "I reinstalled my ruby environment and now I have /.bundle in my .gitignore \r\nBut GithubDesktop wants to push this to the main since it differs from what's in the repo.",
           "createdAt": "2025-06-09T23:53:59Z",
           "updatedAt": "2025-06-09T23:53:59Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "#445 should have solved the problem.\r\n\r\nCan you try and rebase your pending PRs on top of that and see if they switch to green?\r\n\r\nIf so, we can close this.",
+          "createdAt": "2025-06-10T05:39:45Z",
+          "updatedAt": "2025-06-10T05:39:45Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> #445 should have solved the problem.\r\n> \r\n> Can you try and rebase your pending PRs on top of that and see if they switch to green?\r\n> \r\n> If so, we can close this.\r\n\r\nI have applied the PR #445 but still had issues. \r\nI had to add to the .gitignore list. If it is benign to everyone, I'd like to add this to main.",
+          "createdAt": "2025-06-10T15:27:15Z",
+          "updatedAt": "2025-06-10T15:27:43Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Given Thomas's PR #445 has fixed the Ci do we still need this, shall we close this now?",
+          "createdAt": "2025-06-11T16:22:38Z",
+          "updatedAt": "2025-06-11T16:22:38Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> has fixed the Ci do we still need this\r\n\r\nI was getting bad behavior even with Thomas's \"fix\". The resolution for me resulted in an addition to the .gitignore. I've updated the PR to reflect this difference. Since the repo has .gitignore files (not sure why) does it matter that this additional entry is in there? Normally stuff shows up in .gitignore added by various people and it just gets swept up with whatever other stuff is in the PR.\r\nAt the end of the day the question is will having \"/.bundle\" in the .gitignore file adversely affect anyone?",
+          "createdAt": "2025-06-11T19:14:17Z",
+          "updatedAt": "2025-06-11T19:14:17Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > has fixed the Ci do we still need this\r\n> \r\n> I was getting bad behavior even with Thomas's \"fix\". The resolution for me resulted in an addition to the .gitignore. I've updated the PR to reflect this difference. Since the repo has .gitignore files (not sure why) does it matter that this additional entry is in there? Normally stuff shows up in .gitignore added by various people and it just gets swept up with whatever other stuff is in the PR. At the end of the day the question is will having \"/.bundle\" in the .gitignore file adversely affect anyone?\r\n\r\nWhile I don\u2019t think it\u2019s a problem adding `.bundle` to the files that git must ignore, the question is: why does git want to add it?  Did you `git add` it explicitly?  Does it appear in the \u201cChanges to be committed\u201d section if you do `git status`?  If so, could you try to `git rm --cached .bundle` and see if it goes back into the \u201cUntracked files\u201d section?\r\n",
+          "createdAt": "2025-06-11T19:42:37Z",
+          "updatedAt": "2025-06-11T19:42:37Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I did that and discarded the stash. That seems to have resolved the problem so it is OK to close this PR.",
+          "createdAt": "2025-06-11T23:26:47Z",
+          "updatedAt": "2025-06-11T23:26:47Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Not an issue.",
+          "createdAt": "2025-06-11T23:27:11Z",
+          "updatedAt": "2025-06-11T23:27:11Z"
         }
       ],
       "reviews": []
@@ -68795,13 +69532,13 @@
       "labels": [],
       "body": "The domain-type-choice is not used in measurements. It is only used by the domain membership/dependency triples. Introduce the type choice in membership and order the membership triple above the dependency triple since it's the base case for defining the relationships.",
       "createdAt": "2025-06-06T16:06:38Z",
-      "updatedAt": "2025-06-06T16:20:00Z",
+      "updatedAt": "2025-06-11T14:19:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "313f2b48df0a7e748fc5fb09e6272adb1506e454",
+      "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "domainorder",
-      "headRefOid": "d4b2600f0a58e25bdbf88917db05a89c0bd3b707",
+      "headRefOid": "1f930d4bd107e3a5747bb5a18df2b3738210e0f6",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -68811,27 +69548,69 @@
         {
           "id": "PRR_kwDOH6-tI86tLQyK",
           "commit": {
-            "abbreviatedOid": "d4b2600"
+            "abbreviatedOid": "f002185"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM!",
           "createdAt": "2025-06-06T16:19:52Z",
-          "updatedAt": "2025-06-06T16:19:52Z",
+          "updatedAt": "2025-06-11T13:28:22Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI86tLQ16",
           "commit": {
-            "abbreviatedOid": "d4b2600"
+            "abbreviatedOid": "f002185"
           },
           "author": "andrew-draper",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2025-06-06T16:20:00Z",
-          "updatedAt": "2025-06-06T16:20:00Z",
+          "updatedAt": "2025-06-11T13:28:22Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 452,
+      "id": "PR_kwDOH6-tI86aEC-O",
+      "title": "Remove COSE Key Set from table",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/452",
+      "state": "MERGED",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #437",
+      "createdAt": "2025-06-11T16:05:19Z",
+      "updatedAt": "2025-06-11T16:22:56Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "978c09cacac5b2b970b360a29719dc660f0a4fd9",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "minor-tidy-key-set",
+      "headRefOid": "50b52d346dcb829b2b3c80686238991788929770",
+      "closedAt": "2025-06-11T16:22:56Z",
+      "mergedAt": "2025-06-11T16:22:56Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e226e12c40a0627d645db14a31db3b57d3ccef41"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86t6uPD",
+          "commit": {
+            "abbreviatedOid": "50b52d3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-11T16:07:12Z",
+          "updatedAt": "2025-06-11T16:07:12Z",
           "comments": []
         }
       ]
