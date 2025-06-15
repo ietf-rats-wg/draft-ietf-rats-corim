@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-12T02:03:45.015266+00:00",
+  "timestamp": "2025-06-15T02:20:40.995503+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8160,7 +8160,7 @@
       ],
       "body": ">  The digest value may be used to find the public key if contained in a lookup table.\r\n\r\nWe've decided that crypto-key-type-choice can only be binary-compared, so lookups are not meaningful to appraisal.",
       "createdAt": "2024-10-11T14:28:41Z",
-      "updatedAt": "2025-06-11T14:30:11Z",
+      "updatedAt": "2025-06-12T20:57:04Z",
       "closedAt": null,
       "comments": [
         {
@@ -8183,6 +8183,13 @@
           "body": "I think we need to keep the language that keys are binary-compared. We can rely on the translation to internal representation to add all the representations of a key that may need to be compared.",
           "createdAt": "2025-06-11T14:30:11Z",
           "updatedAt": "2025-06-11T14:30:11Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think we need to keep the language that keys are binary-compared. We can rely on the translation to internal representation to add all the representations of a key that may need to be compared.\n\nI think there are three cases where binary-compared keys makes sense; (i) environment-map.instance-id|group-id, (ii) measurement-values-map.cryptokeys, (iii) in conditions containing authorized-by. The cases where translation and lookup make sense are with identity-triples and attest-key-triples. The most compelling use case is when a key is a thumbprint and key verification is needed. The thumbprint can be used as a kid to find a suitable key (typically the cert path - x5chain or x5bag) but the certificate / signature should include a kid so the verifier can just look it up as opposed to having to compute the digest. Nevertheless, the kid computation algorithm has to be common between the kid / thumbprint or they won't match. RFC5280 defines a sha1 for alg and RFC5758 defines one for ECDSA keys with SHA2 variants.",
+          "createdAt": "2025-06-12T20:57:04Z",
+          "updatedAt": "2025-06-12T20:57:04Z"
         }
       ]
     },
@@ -11514,7 +11521,7 @@
       ],
       "body": "[Section 9.2.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-reference-triples-transform)\n\nStates that \n\nONLY Env-Maps are copied in both Condition & Addition\n\n`\ncopy(environment-map, rv.condition.environment.environment-map)\ncopy(environment-map, rv.addition.environment.environment-map)\n`\n\n\nHowever, [Section 9.1.4](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-internal-representation-of-r)\n\nStates that:\n`The rv relation is a list of condition-addition pairings where each pairing is evaluated together. If the condition containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the addition.`\n\nSo effectively the Evidence ECT which includes Claims + Environment should be compared with Ref-Values Condition, but the  Section 9.2.3.3 is out of sync with 9.1.4",
       "createdAt": "2025-06-10T17:35:26Z",
-      "updatedAt": "2025-06-11T13:47:37Z",
+      "updatedAt": "2025-06-12T23:46:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -11530,6 +11537,48 @@
           "body": "The document doesn't state which direction copy() works in - I assume it sets the variable referred to in the first argument to be equal to the variable in the second argument.\nI am not sure what the environment-map variable is for. Is it a temporary local variable?\nIt seems to get assigned to twice, and never used after that. Should the arguments in the second copy be reversed?",
           "createdAt": "2025-06-11T13:47:14Z",
           "updatedAt": "2025-06-11T13:47:37Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> which direction copy() works in\n\nGiven copy(A, B) it assumes A is copied into B.",
+          "createdAt": "2025-06-12T22:13:58Z",
+          "updatedAt": "2025-06-12T22:13:58Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am not sure what the environment-map variable is for\n\nStep 3 describes copying values in the external representation reference-triple-record which uses `ref-env` tag to refer to the environment-map. The target of the copy is the internal representation `rv` that has a condition ECT where the `environment` tag refers to its environment-map. The COPY() arguments switch from using the tag name to using the actual structure (i.e., `environment-map`). \n\nIt might be more readable if only the structure tags are used:\n\ni\ncopy(RVT.`ref-env`, `rv`.`condition`.`environment`)\ncopy(RVT.`ref-env`, `rv`.`addition`.`environment`)\nii\nFor each e in RVT.`ref-claims`:\n     copy(e.`ref-claims`, `rv`.`condition`.`element-list`)\n\nThis assumes the reader won't get hung up on the subtle differences between internal and external representations. For example, the `measurement-map` in `reference-triple-record`.`ref-claims` has `authorized-by` but the internal representation  uses ECT.`authority`.  \n\nAssuming Yogesh is saying there should be a second copy() statement for evidence, namely:\n     copy(e.`ref-claims`, `rv`.`addition`.`element-list`) \nSince we said processing authorized-by in additions is out of scope the pseudo code doesn't need to describe that authorized-by would be ignored by the copy().",
+          "createdAt": "2025-06-12T22:43:11Z",
+          "updatedAt": "2025-06-12T22:58:23Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Is it a temporary local variable?\n\n\"e\" is a temporary local variable.",
+          "createdAt": "2025-06-12T22:44:13Z",
+          "updatedAt": "2025-06-12T22:44:13Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It seems to get assigned to twice,\n\nI'm not sure what \"It\" is in the quoted text.\n\nI'm not convinced the second copy is appropriate, namely:\n     copy(e.`ref-claims`, `rv`.`addition`.`element-list`) \nBecause ref-claims is possible state and additions have to be actual state.\n\nSection 9.3.3 describes how corroborated values are added to the ACS (rather than using an `addition` ECT).\n\"Reference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\"\n\nThe last line seems to assume the mapping from possible state to actual state has been completed already.\nBut doing a copy() of `ref-claims` to the `addition` might still include possible state depending on whether the measurement type is multivalued such as int-range. ",
+          "createdAt": "2025-06-12T22:46:36Z",
+          "updatedAt": "2025-06-12T23:12:30Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Should the arguments in the second copy be reversed?\n\nNo. The basic flow is a candidate ACS entry is compared with the various possible states expressed in reference values and staged for addition into the ACS with RVP authority. \n\nAnother possible way to describe it is by saying the ACS entry that matches one of the possible RV states remains unchanged and the ECT authority is updated to include the RVP authority. However, the cmtype is still EVIDENCE and it isn't clear which of the two authorities was the evidence authority and which was the RVP. Having a new ECT of type REFERENCE prevents conflation of authorities at the cost of replicating the ACS environment and element-list values. \nAnother possible approach is to pair the authority with cmtype and allow multiple of them. Then the ACS entry doesn't need to be replicated, just updated with the RVP authority and its role - cmtype without clobbering the existing authority in the evidence role.",
+          "createdAt": "2025-06-12T22:47:27Z",
+          "updatedAt": "2025-06-12T23:46:44Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> and never used after that\n\nThe purpose of the transformations sections is to stage internal representations for processing involving the ACS (Section 9.3). This is where things get used.\n\nThere appears to be two gaps in section 9.2.3.3. (a) there can be multiple reference values triples describing possible state but Step 1 doesn't define an iterator that creates `rv` ECTs for each. (b) multivalued measurement types (e.g., int-range) logically implies there are reference triples for each possibility. \n\n(a) can be solved by adding an iterator for each RVT triple that generates an `rv` entry for each possibility. Each is a condition applied to the ACS. If there is a match (assuming exact match semantics) then the ACS entry should be copied into the addition staging ECT. (This is an omission in the current description).\n\n(b) can be solved by describing behavior for each multivalued measurement type that iterates through the possible values and stops when an exact match is found. This is copied into an addition staging ECT. This technique is applied for every multivalued measurement type of the condition ECT. \n\nAfter (a) and (b) processing has completed and every measurement in the candidate ACS matched a candidate reference measurement, then the staged addition ECT can be added to the ACS as a \"corroborated reference value\" (which describes actual state).\n\n",
+          "createdAt": "2025-06-12T23:44:27Z",
+          "updatedAt": "2025-06-12T23:44:27Z"
         }
       ]
     },
@@ -11547,7 +11596,7 @@
       ],
       "body": "[Section 9.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.3.3) Reference Value Corroboration Needs Clarity!\n\nIt says\n`Reference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.`\n\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\n\nThis text implies that the Evidence ECTs are modified with the Authority of RVP.\n\nHowever, other parts of text indicate that the `reference-value` cmTypes are added into ACS. The Phase 3 explanation does not tie up with addition of ECTs with CmType: Reference Value",
       "createdAt": "2025-06-10T17:42:43Z",
-      "updatedAt": "2025-06-11T13:18:07Z",
+      "updatedAt": "2025-06-13T13:40:07Z",
       "closedAt": null,
       "comments": [
         {
@@ -11563,6 +11612,13 @@
           "body": "The paragraphs before and after the cited paragragh is helpful:\n\"Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values. If satisfied, the RVP authority is added to the matching ACS entry.\n\nReference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\"\n\nIt says the ACS evidence ETC matches an RV (staged entry) if both the environment and the measurements match. The word \"satisfied\" is helpful because the reference values can be a superset of actual state. That allow for RV expressions to have multiple entries in RV triples where only one of them \"matches\" exactly Evidence ECTs. The int-range is another example where the reference is a superset of evidence. Int-range \"satisfies\" int if the int value is within the int-range values. \n\nThe result of corroboration is the subset of reference values that \"matches\" the evidence values. However, these are not \"evidence\" as they originated from reference values. They are not reference values becuase they are \"actual state\" not \"possible state\". We could create a cmtype for corroborated reference values, but since ACS can only contain actual state, a cmtype of reference value (rv) can only mean \"corroborated reference values\".  Since the corroborated reference value cmtype is only meaningful for internal representation, it doesn't make sense to define it for external representations. ",
           "createdAt": "2025-06-10T22:25:27Z",
           "updatedAt": "2025-06-10T22:27:16Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think there could may be a security problem with one of the statements highlighted in your reply Ned:\n\nIn section 9.3.3:\n> If the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\n\nI much prefer the text in section 5.1.4.2 which does not mention that authority is ignored when processing the reference value triple.\n\nThe authority of the reference value provides can't replace the authority of the attester (which provides authorized evidence) because they are authorizing different things:\n* The attester states that the evidence is a true measurement of the target environment (not faked)\n* The reference value provider states that the measurement indicates that the target environment is in a valid state\n\nI can see two ways to make this work:\n1. The reference value provider includes an authority field indicating the authority of the attestor, and later stages of attestation believe this trust\n2. The reference value provider adds an authority to the A-ECT and later stages of attestation check for both authorizers\n\nCurrently we don't have a way to do #2, and the statement in section 9.3.3 prevents doing #1.\n\nIf we remove the phrase \"except for authority\" then I don't think it breaks anything. Reference value providers who want the section 9.3.3 described behavior can omit the authority field, reference value providers who want the section 5.1.4.2 behavior can include an authority field.\n\n\n\n\n",
+          "createdAt": "2025-06-13T13:40:07Z",
+          "updatedAt": "2025-06-13T13:40:07Z"
         }
       ]
     },
@@ -67456,13 +67512,13 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-06-11T14:23:37Z",
+      "updatedAt": "2025-06-12T21:00:29Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "91efb2519ae9f33460e2212f020eb9a0ebfff5bc",
+      "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "verify-key-in-ae",
-      "headRefOid": "7bf6291d09dfc92b6e9d489a90d93f237ba6fc54",
+      "headRefOid": "909dcfb1a0acfcfe112e0565263c070ae133a3db",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -68077,7 +68133,7 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-11T15:02:37Z",
+      "updatedAt": "2025-06-13T19:35:52Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
@@ -68088,7 +68144,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "After working through Andy's use case together several observations emerged. \r\n(a) the conditions that determine when it is appropriate to add the `addition` claims exist in the claims that were matched by the `condition` independent of whether `instance-id` is present. In the particular case where instance-id is not known at the time the condition is authored helps appreciate that instance-id is truly independent in terms of a consistency model.\r\n(b) the normal behavior for endorsement is the addition ECT is constructed exactly as specified in the triple. That is to say, if you want the addition to contain anything that is expressed in the condition, then the author has to explicitly add it to the addition.\r\n(c) the instance-id is being used as a placeholder or macro for all the measurement values that resulted from condition matching. Either the combination of the measurement values or the instance-id will disambiguate which ACS ECTs to include in the match cursor.\r\n \r\nThe problem arises when trying to do (b) a'priori (e.g., at manufacturing time) without knowing exactly what claims will result from doing (a).  There are two possible solution paths described in (c) and this PR focuses on overloading instance-id as a way of grouping the relevant measurements. \r\n\r\nPossibly, a more general approach instructs the verifier to populate the addition ECT with the values matched by the condition? The claims in the `addition` then only need to be the new claims not already found in the ACS, but the conditions that existed at the time the match occurred would also be preserved in the addition ECT.\r\n\r\nSince the database consistency principles of our internal representation allow for replication of data. It would be fine if the default behavior for addition is to always copy the measurements found in the match cursor into the addition ECT. \r\n\r\nThere would be no need to overload instance-id type structure.\r\n\r\nThe way we anticipate replicated measurement values are handled currently is they are idempotent, meaning replicated values are reduced to a singleton as part of a merge operation (the definition of which is out of scope for the draft).\r\n\r\nCan anyone see a reason why this wouldn't work? \r\n\r\nConditional endorsement allows the author to specify an environment that doesn't already exist in the ACS. If that were the case, then:\r\nOption-1) the addition would contain an environment that is mismatched with the environments found in the match cursor. If the default action is to copy both the environment and the measurement values into the addition ECT then that would clobber the new ECT environment which seems like a problem. \r\n\r\nHowever, it is an easy check to make before applying the default copy behavior. In which case, if there are mismatched environment-map values then revert to what is now the current behavior of only adding what is in the `addition`. \r\n\r\nIf the Option-1 verifier consistency check is too powerful, we might consider:\r\nOption-2: Revisit the decision to allow condition endorsement the power to instantiate new ECTs (are we sure there are use cases for that aspect of conditional endorsement?). We could rely on domain membership triples as the best way to introduce new ECTs that are asserted by RVPs/Endorsers?  If there are use cases for instantiating new ECTs based on measurement state, then domain membership triples could accommodate that by allowing stateful-environment-record as a possible $domain-id-type-choice.  The semantics would be, that not only does the environment of the domain members have to exist in the ACS, but the environment with specific measurement values also have to exist in the ACS. This approach would be more general as domain triples need to apply for both RVP and Endorser roles (this has yet to be addressed but is straight forward).  The domain triple semantics is essentially, if the membership ECTs exist in ACS then \"CREATE\" a new ECT. If you reorder the triple, you could say the `member-list` is the `condition` and `domain-id` is the `addition`.  The reason conditional endorsement triple can't be used to solve domain membership uses cases is you can't only use environment-map (you HAVE to use stateful-environment-map) and you can't use it for reference values meaning there's no way to ensure corroboration is applied. It would be good to not have multiple ways to do the same thing and be able to do everything that needs to be done. ",
+          "createdAt": "2025-06-13T19:20:57Z",
+          "updatedAt": "2025-06-13T19:35:52Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI86oM5tM",
@@ -68777,6 +68841,26 @@
           "createdAt": "2025-06-11T15:02:37Z",
           "updatedAt": "2025-06-11T15:02:37Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86uVhsz",
+          "commit": {
+            "abbreviatedOid": "304e86a"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-13T13:41:34Z",
+          "updatedAt": "2025-06-13T13:41:35Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Thanks, I will leave it as is then.",
+              "createdAt": "2025-06-13T13:41:34Z",
+              "updatedAt": "2025-06-13T13:41:35Z"
+            }
+          ]
         }
       ]
     },
