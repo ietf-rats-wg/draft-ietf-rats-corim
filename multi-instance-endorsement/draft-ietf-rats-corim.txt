@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 9 December 2025                                          Linaro
+Expires: 20 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             7 June 2025
+                                                            18 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 December 2025.
+   This Internet-Draft will expire on 20 December 2025.
 
 Copyright Notice
 
@@ -1327,17 +1327,30 @@ Table of Contents
 
 5.1.4.1.2.  Environment Instance
 
-   An instance carries a unique identifier that is reliably bound to a
-   Target Environment that is an instance of the Attester.
+   An instance-id is a unique value that identifies a Target Environment
+   instance.  The identifier is reliably bound to the Target
+   Environment.  For example, if an X.509 certificate's subject public
+   key is unique for each instance of a target environment, the
+   instance-id might be created from that subject public key.  See
+   Section 4.1 of [RFC5280].  Alternatively, if the certificate's
+   subject public key is large, the instance-id might be a key
+   identifier that is a digest of that public key.  See Section 4.2.1.2
+   of [RFC5280].  The key identifier is reliably bound to the subject
+   public key because the identifier is a digest of the key.
 
    The types defined for an instance identifier are CBOR tagged
    expressions of UEID, UUID, variable-length opaque byte string
-   (Section 7.8), or cryptographic key identifier.
+   (Section 7.8), cryptographic keys, or cryptographic key identifiers.
 
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
-   $instance-id-type-choice /= $crypto-key-type-choice
    $instance-id-type-choice /= tagged-bytes
+   $instance-id-type-choice /= tagged-pkix-base64-key-type
+   $instance-id-type-choice /= tagged-pkix-base64-cert-type
+   $instance-id-type-choice /= tagged-cose-key-type
+   $instance-id-type-choice /= tagged-key-thumbprint-type
+   $instance-id-type-choice /= tagged-cert-thumbprint-type
+   $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
    $instance-id-type-choice /= instance-slot-bind-type
    $instance-id-type-choice /= instance-slot-ref-type
 
@@ -1699,9 +1712,9 @@ Table of Contents
 
    A cryptographic key digest can be one of the following formats:
 
-   *  tagged-thumbprint-type: a digest of a raw public key.  The digest
-      value may be used to find the public key if contained in a lookup
-      table.
+   *  tagged-key-thumbprint-type: a digest of a raw public key.  The
+      digest value may be used to find the public key if contained in a
+      lookup table.
 
    *  tagged-cert-thumbprint-type: a digest of a certificate.  The
       digest value may be used to find the certificate if contained in a
@@ -1718,17 +1731,16 @@ Table of Contents
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
    $crypto-key-type-choice /= tagged-cose-key-type
-   $crypto-key-type-choice /= tagged-thumbprint-type
+   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+   $crypto-key-type-choice /= tagged-key-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
    $crypto-key-type-choice /= tagged-bytes
-
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-thumbprint-type = #6.557(digest)
-   tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
+   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-cose-key-type = #6.558(COSE_Key)
    tagged-cert-thumbprint-type = #6.559(digest)
    tagged-cert-path-thumbprint-type = #6.561(digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
@@ -4023,11 +4035,11 @@ Table of Contents
    |         |             | path-type, see                |           |
    |         |             | Section 5.1.4.1.5             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 557     | [int/text,  | tagged-thumbprint-type, see   | RFCthis   |
-   |         | bytes]      | Section 7.7                   |           |
+   | 557     | [int/text,  | tagged-key-thumbprint-type,   | RFCthis   |
+   |         | bytes]      | see Section 7.7               |           |
    +---------+-------------+-------------------------------+-----------+
-   | 558     | COSE_Key/   | tagged-cose-key-type, see     | RFCthis   |
-   |         | COSE_KeySet | Section 5.1.4.1.5             |           |
+   | 558     | COSE_Key    | tagged-cose-key-type, see     | RFCthis   |
+   |         |             | Section 5.1.4.1.5             |           |
    +---------+-------------+-------------------------------+-----------+
    | 559     | digest      | tagged-cert-thumbprint-       | RFCthis   |
    |         |             | type, see Section 5.1.4.1.5   |           |
@@ -4937,8 +4949,6 @@ Appendix A.  Base CoRIM CDDL
      addition: [ + measurement-map ]
    ]
 
-   COSE_KeySet = [ + COSE_Key ]
-
    COSE_Key = {
        1 => tstr / int
        ? 2 => bstr
@@ -4962,17 +4972,16 @@ Appendix A.  Base CoRIM CDDL
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
    $crypto-key-type-choice /= tagged-cose-key-type
-   $crypto-key-type-choice /= tagged-thumbprint-type
+   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
+   $crypto-key-type-choice /= tagged-key-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-thumbprint-type
    $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
    $crypto-key-type-choice /= tagged-bytes
-
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-thumbprint-type = #6.557(digest)
-   tagged-cose-key-type = #6.558(COSE_KeySet / COSE_Key)
+   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-cose-key-type = #6.558(COSE_Key)
    tagged-cert-thumbprint-type = #6.559(digest)
    tagged-cert-path-thumbprint-type = #6.561(digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
@@ -5045,8 +5054,13 @@ Appendix A.  Base CoRIM CDDL
 
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
-   $instance-id-type-choice /= $crypto-key-type-choice
    $instance-id-type-choice /= tagged-bytes
+   $instance-id-type-choice /= tagged-pkix-base64-key-type
+   $instance-id-type-choice /= tagged-pkix-base64-cert-type
+   $instance-id-type-choice /= tagged-cose-key-type
+   $instance-id-type-choice /= tagged-key-thumbprint-type
+   $instance-id-type-choice /= tagged-cert-thumbprint-type
+   $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
    $instance-id-type-choice /= instance-slot-bind-type
    $instance-id-type-choice /= instance-slot-ref-type
 
