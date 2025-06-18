@@ -22,6 +22,7 @@ COMID_FRAGS += flags-map.cddl
 COMID_FRAGS += group-id-type-choice.cddl
 COMID_FRAGS += identity-triple-record.cddl
 COMID_FRAGS += instance-id-type-choice.cddl
+COMID_FRAGS += instance-bind-ref-type.cddl
 COMID_FRAGS += ip-addr-type-choice.cddl
 COMID_FRAGS += int-range-type-choice.cddl
 COMID_FRAGS += linked-tag-map.cddl
