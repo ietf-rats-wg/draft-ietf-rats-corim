@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-15T02:20:40.995503+00:00",
+  "timestamp": "2025-06-19T02:05:36.569461+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11686,9 +11686,17 @@
       "labels": [],
       "body": "Previous text distinguished ACS entries from data in triples.\n\nThe current text talks about ECTs in many places.\n\nCan we have different terms for ECTs which have been added to the ACS, and ECTs which have been created from triples. These last ECTs may be matched against ACS or inserted (perhaps with modification), but they work differently from ACS ECTs.\n\nSome parts of the matching rules talk about ACS entries and candidate ECTs, but the phase description uses different terms. We should align these.\n\n",
       "createdAt": "2025-06-11T13:59:06Z",
-      "updatedAt": "2025-06-11T13:59:06Z",
+      "updatedAt": "2025-06-18T13:03:51Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Following up on this...\n\nECT is first defined on line 234 as a structure describing measurements of the target environment.\n\nIt is then defined in line 1761 as being a representation of conceptual messages (evidence, reference values, endorsed values, appraisal policy and attestation results).\n\nWould it be better to say that an ECT is created as a result of processing conceptual messages, rather than that a conceptual message is an ECT?\n\nI would agree with a statement such as:\n> As a result of processing a `reference-triple-record`, the verifier adds a _reference value ECT_ to the ACS.\n\nBut instead we get statements such as:\n> If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.\n\nI find it difficult to parse this statement, as it doesn't make it clear that in the statement above, the **reference ECTs** came from a CoRIM file; the **Evidence ECTs** came from the ACS; and that re-asserted **Evidence ECTs** will be put back into the ACS.\n\nIf we can decide on what language to use then I am happy to build a PR which uses consistent terms.\n\n\n",
+          "createdAt": "2025-06-18T13:03:51Z",
+          "updatedAt": "2025-06-18T13:03:51Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -63931,7 +63939,7 @@
       "labels": [],
       "body": "Issues #375, #388.",
       "createdAt": "2025-02-21T03:12:19Z",
-      "updatedAt": "2025-06-11T14:31:15Z",
+      "updatedAt": "2025-06-18T14:26:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
@@ -64107,6 +64115,26 @@
               "body": "I've gone back to the original text about equivalence to clarify the \"typically\" wording.",
               "createdAt": "2025-06-11T14:31:15Z",
               "updatedAt": "2025-06-11T14:31:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vNLsI",
+          "commit": {
+            "abbreviatedOid": "a3cbf6a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-18T14:26:26Z",
+          "updatedAt": "2025-06-18T14:26:26Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "Move this to a top level Equivalence definition, and check, whether it is applicable in all sections!",
+              "createdAt": "2025-06-18T14:26:26Z",
+              "updatedAt": "2025-06-18T14:26:26Z"
             }
           ]
         }
@@ -67512,7 +67540,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-06-12T21:00:29Z",
+      "updatedAt": "2025-06-18T14:40:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
@@ -67645,6 +67673,52 @@
               "updatedAt": "2025-06-11T14:23:37Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vNZ0U",
+          "commit": {
+            "abbreviatedOid": "7bf6291"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-18T14:40:08Z",
+          "updatedAt": "2025-06-18T14:40:08Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "> sue\r\n\r\n\r\n\r\n> Everybody okay with introducing the \"variable\" semantics of C-ECT?\r\n\r\nissue #451 , is required to clarify terminologies from this PR to apply it globally!",
+              "createdAt": "2025-06-18T14:40:08Z",
+              "updatedAt": "2025-06-18T14:40:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vNaW_",
+          "commit": {
+            "abbreviatedOid": "909dcfb"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-06-18T14:40:41Z",
+          "updatedAt": "2025-06-18T14:40:41Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vNauq",
+          "commit": {
+            "abbreviatedOid": "909dcfb"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-18T14:40:58Z",
+          "updatedAt": "2025-06-18T14:40:58Z",
+          "comments": []
         }
       ]
     },
@@ -68133,13 +68207,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-13T19:35:52Z",
+      "updatedAt": "2025-06-18T13:48:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
+      "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "304e86ac7042a2634d0bc681e44a962f8a09ded8",
+      "headRefOid": "1743c071a454528cf6b405ac486eb3b7231aaedc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
