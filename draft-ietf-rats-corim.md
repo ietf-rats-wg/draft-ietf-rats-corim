@@ -1466,12 +1466,9 @@ Evidence.
 
 ##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
-A Domain Dependency triple defines trust dependencies between measurement
-sources.  The subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has
-a predicate relationship to the object containing one or more dependent
-domains.  Dependency means the subject domain’s trustworthiness properties rely
-on the object domain(s) trustworthiness having been established before the
-trustworthiness properties of the subject domain exists.
+A Domain Dependency triple defines trust dependencies between measurement sources.
+The subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has a predicate relationship to the object containing one or more dependent domains.
+Dependency means the subject domain’s trustworthiness properties rely on the object domain(s) trustworthiness having been established before the trustworthiness properties of the subject domain exist.
 
 ~~~ cddl
 {::include cddl/domain-dependency-triple-record.cddl}
