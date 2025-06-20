@@ -1439,7 +1439,7 @@ See {{sec-comid-triple-identity}} for additional details.
 
 #### Triples for domain definitions {#sec-comid-domains}
 
-A domain is a context for bundling a collection of related environments and their measurements.
+A domain is a context for bundling a collection of related environments.
 
 The following CDDL describes domain type choices.
 
