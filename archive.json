@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-19T02:05:36.569461+00:00",
+  "timestamp": "2025-06-22T02:20:31.118274+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11630,13 +11630,15 @@
       "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "andrew-draper"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "[Section 9.3.4.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-processing-endorsements)\n\nThis is the first explaination of Processing Endorsements, but the text states as below:\n\n`For each ev entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains either evidence, reference-values, or endorsements.`\n\nHow Endorsement ECT's can appear in the ACS is not explained and one is expected to match ECT with cmType: endorsements??",
       "createdAt": "2025-06-10T17:46:21Z",
-      "updatedAt": "2025-06-11T13:18:17Z",
+      "updatedAt": "2025-06-20T15:30:35Z",
       "closedAt": null,
       "comments": [
         {
@@ -11656,13 +11658,15 @@
       "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "Inconsistency in explaination and usage of ECT Entry : cmtype: cm-type\n\nAs per the CDDL Description:\nThis field (cmtype: cm-type) is Mandatory in ECT.\n\nHowever, in certain Internal Representation ECT's (like Conditional Endorsement Conditions and RVP Conditions) they have been set as n/a.\n\nIf they are n/a then they will have a default value of 0, which means all such cmType will map to:  reference-values: 0\n\nIt is better to have an explicit enum which maps to Invalid value to avoid confusion during Appraisal Processing\n\n",
       "createdAt": "2025-06-10T17:53:10Z",
-      "updatedAt": "2025-06-11T13:18:35Z",
+      "updatedAt": "2025-06-20T15:33:59Z",
       "closedAt": null,
       "comments": [
         {
@@ -67540,7 +67544,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-06-18T14:40:58Z",
+      "updatedAt": "2025-06-20T12:55:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
@@ -67719,6 +67723,38 @@
           "createdAt": "2025-06-18T14:40:58Z",
           "updatedAt": "2025-06-18T14:40:58Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vl5vv",
+          "commit": {
+            "abbreviatedOid": "909dcfb"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-20T12:32:51Z",
+          "updatedAt": "2025-06-20T12:55:45Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "This statement seems problematic.  In \u00a78.1, we say that in phase 4 (i.e., this one) _\"inputs are added with the Endorser's authority\u201d_.  Verifier\u2019s authority is added in phase 5 and is, AFAIU, out of scope of CoRIM proper.",
+              "createdAt": "2025-06-20T12:32:51Z",
+              "updatedAt": "2025-06-20T12:55:45Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "This list of checks seems to have a couple of problems:\r\n1. It\u2019s underspecified \u2014 e.g., what about name constraints?  What about policy OID checks?  Allowed algorithms?  Path length constraints?  Etc.\r\n2. It\u2019s unclear who is responsible for defining the validation policy parameters and the trust anchors.\r\n\r\nThe preceding text (L2407) seems to suggest it\u2019s the Verifier\u2019s job, but that\u2019s not consistent with appraisal phase four.",
+              "createdAt": "2025-06-20T12:49:02Z",
+              "updatedAt": "2025-06-20T12:55:45Z"
+            },
+            {
+              "originalPosition": 61,
+              "body": "typo consistnecy\r\n```suggestion\r\nIt is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.\r\n```",
+              "createdAt": "2025-06-20T12:55:16Z",
+              "updatedAt": "2025-06-20T12:55:45Z"
+            }
+          ]
         }
       ]
     },
@@ -69683,24 +69719,26 @@
       "id": "PR_kwDOH6-tI86Zai5Z",
       "title": "Move domain type into domain dependency triple section",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/446",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The domain-type-choice is not used in measurements. It is only used by the domain membership/dependency triples. Introduce the type choice in membership and order the membership triple above the dependency triple since it's the base case for defining the relationships.",
       "createdAt": "2025-06-06T16:06:38Z",
-      "updatedAt": "2025-06-11T14:19:04Z",
+      "updatedAt": "2025-06-20T17:13:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "10b072f2ee086b47b98fb26f939f0c997240bdbf",
+      "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "domainorder",
-      "headRefOid": "1f930d4bd107e3a5747bb5a18df2b3738210e0f6",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0da8bf108b63299d4f043ea50155e8383801067e",
+      "closedAt": "2025-06-20T17:13:27Z",
+      "mergedAt": "2025-06-20T17:13:27Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "86465925cced64930e6222cca57d24ca03005612"
+      },
       "comments": [],
       "reviews": [
         {
@@ -69727,6 +69765,111 @@
           "body": "",
           "createdAt": "2025-06-06T16:20:00Z",
           "updatedAt": "2025-06-11T13:28:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vkY9y",
+          "commit": {
+            "abbreviatedOid": "1f930d4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-20T10:40:27Z",
+          "updatedAt": "2025-06-20T10:40:27Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "Please note: inside `triples-map`\r\nDomain Dependency is Index 4\r\nDomain Membership is Index 5\r\n\r\nSo please retain the order of Triples here!",
+              "createdAt": "2025-06-20T10:40:27Z",
+              "updatedAt": "2025-06-20T10:40:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vkZoj",
+          "commit": {
+            "abbreviatedOid": "1f930d4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Please see a minor re-shuffle otherwise LGTM!",
+          "createdAt": "2025-06-20T10:41:05Z",
+          "updatedAt": "2025-06-20T10:41:05Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vmUMa",
+          "commit": {
+            "abbreviatedOid": "1f930d4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "LGTM, just a couple of nits",
+          "createdAt": "2025-06-20T13:03:52Z",
+          "updatedAt": "2025-06-20T13:10:35Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "The relationships are only expressed in terms of environments.  ISTM that _\u201ctheir measurements\u201d_ is spurious in this sentence.\r\n\r\nI understand this is just shuffled around, but we could take this chance to fix it :-)\r\n",
+              "createdAt": "2025-06-20T13:03:52Z",
+              "updatedAt": "2025-06-20T13:10:35Z"
+            },
+            {
+              "originalPosition": 65,
+              "body": "while we are at it, let\u2019s NSNL\r\n```suggestion\r\nA Domain Dependency triple defines trust dependencies between measurement sources.\r\nThe subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has a predicate relationship to the object containing one or more dependent domains.\r\nDependency means the subject domain\u2019s trustworthiness properties rely on the object domain(s) trustworthiness having been established before the trustworthiness properties of the subject domain exist.\r\n```",
+              "createdAt": "2025-06-20T13:08:45Z",
+              "updatedAt": "2025-06-20T13:10:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vmcIa",
+          "commit": {
+            "abbreviatedOid": "1f930d4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-20T13:10:54Z",
+          "updatedAt": "2025-06-20T13:10:54Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vojdD",
+          "commit": {
+            "abbreviatedOid": "1f930d4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-20T15:38:31Z",
+          "updatedAt": "2025-06-20T15:38:32Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nA domain is a context for bundling a collection of related environments.\r\n```",
+              "createdAt": "2025-06-20T15:38:32Z",
+              "updatedAt": "2025-06-20T15:38:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vomeQ",
+          "commit": {
+            "abbreviatedOid": "0da8bf1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-06-20T15:43:57Z",
+          "updatedAt": "2025-06-20T15:44:05Z",
           "comments": []
         }
       ]
@@ -69770,6 +69913,159 @@
           "createdAt": "2025-06-11T16:07:12Z",
           "updatedAt": "2025-06-11T16:07:12Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 453,
+      "id": "PR_kwDOH6-tI86bhhJO",
+      "title": "Address issue reported in Gap-1",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/453",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #447",
+      "createdAt": "2025-06-21T19:53:26Z",
+      "updatedAt": "2025-06-22T02:03:51Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "gap-1",
+      "headRefOid": "253be20474c6a9f65faa255bf5ee87354da4bad9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86vtu3o",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-21T22:19:39Z",
+          "updatedAt": "2025-06-21T22:21:01Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nRefer to ({{sec-phase3}}) for how the `rv` entries are processed.\r\n```",
+              "createdAt": "2025-06-21T22:19:39Z",
+              "updatedAt": "2025-06-21T22:21:01Z"
+            },
+            {
+              "originalPosition": 30,
+              "body": "```suggestion\r\nFor each `rv` entry, the `condition` ECT is compared, as per the Appraisal Policy for Evidence, with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.\r\n```",
+              "createdAt": "2025-06-21T22:20:08Z",
+              "updatedAt": "2025-06-21T22:21:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vt3eD",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-22T01:52:40Z",
+          "updatedAt": "2025-06-22T01:52:40Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nIf the `condition` containing reference ECTs match Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype: &(reference-values: 0)`.\r\n```\r\nI think this is what we've been discussing.",
+              "createdAt": "2025-06-22T01:52:40Z",
+              "updatedAt": "2025-06-22T01:53:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vt3kQ",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-22T01:56:25Z",
+          "updatedAt": "2025-06-22T01:56:25Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "Isn't it both addition and condition for `rv`?",
+              "createdAt": "2025-06-22T01:56:25Z",
+              "updatedAt": "2025-06-22T01:56:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vt3uI",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-22T02:02:54Z",
+          "updatedAt": "2025-06-22T02:02:54Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\n\r\n1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`\r\n```\r\n\r\nI'm actually kind of confused why `rv` is a list as a way to represent multiple triples, but `ev` and `evs` are not written in a way to represent multiple triples. I think we want the internal relation to be 1-to-1 with an individual triple, right?\r\n\r\nAdditionally, the pair is written as a map instead of a length 2 array. I don't think that was intentional.",
+              "createdAt": "2025-06-22T02:02:54Z",
+              "updatedAt": "2025-06-22T02:02:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vt3u7",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-22T02:03:29Z",
+          "updatedAt": "2025-06-22T02:03:30Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\r\n2. The claims, i.e. `element-list` from ACS ECT with `cmtype: &(evidence: 2)` is copied to `element-list` of `addition` ECT\r\n```",
+              "createdAt": "2025-06-22T02:03:29Z",
+              "updatedAt": "2025-06-22T02:03:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vt3vW",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-22T02:03:51Z",
+          "updatedAt": "2025-06-22T02:03:51Z",
+          "comments": [
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\n3. It is verified that the `authority` field of the `addition` ECT is indeed set correctly to the RVP authority\r\n```",
+              "createdAt": "2025-06-22T02:03:51Z",
+              "updatedAt": "2025-06-22T02:03:51Z"
+            }
+          ]
         }
       ]
     }
