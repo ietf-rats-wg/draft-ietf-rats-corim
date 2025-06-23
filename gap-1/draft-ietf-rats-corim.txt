@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 23 December 2025                                         Linaro
+Expires: 25 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            21 June 2025
+                                                            23 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 December 2025.
+   This Internet-Draft will expire on 25 December 2025.
 
 Copyright Notice
 
@@ -2575,12 +2575,13 @@ Table of Contents
    The rv relation is a list of condition-addition pairings where each
    pairing is evaluated together.  If the condition containing reference
    ECTs match Evidence ECTs then the Evidence ECTs are re-asserted, but
-   with RVP authority as contained in the addition.
+   with RVP authority as contained in the addition and cmtype:
+   &(reference-values: 0).
 
    The reference ECTs define the matching conditions that are applied to
    Evidence ECTs.  If the matching condition is satisfied, then the re-
-   asserted ECTs are added to the ACS.  Please refer to (Section 9.3.3)
-   how the rv entries are processed.
+   asserted ECTs are added to the ACS.  Refer to (Section 9.3.3) for how
+   the rv entries are processed.
 
    Table 4 contains the requirements for the ECT fields of the Reference
    Values tuple:
@@ -3287,16 +3288,16 @@ Table of Contents
    state (as contained in the ACS) can be satisfied by Reference Values.
 
    Reference Values are matched with ACS entries by iterating through
-   the rv list.  For each rv entry, the condition ECT is compared as per
-   the Appraisal policy of Evidence, with an ACS ECT, where the ACS ECT
-   cmtype contains evidence.
+   the rv list.  For each rv entry, the condition ECT is compared, as
+   per the Appraisal Policy for Evidence, with an ACS ECT, where the ACS
+   ECT cmtype contains evidence.
 
    If satisfied, for the rv entry, the following three steps are
    performed. 1.  The addition ECT is moved to the ACS, with cm-type set
    to reference-values 2.  The claims, i.e. element-list from ACS ECT
-   with cmtype evidence is copied to element-list of addition ECT 3.  It
-   is verified that the authority field of the addition ECT ` is indeed
-   set correctly to the RVP authority
+   with cmtype: &(evidence: 2) is copied to element-list of addition ECT
+   3.  It is verified that the authority field of the addition ECT is
+   indeed set correctly to the RVP authority
 
 9.3.4.  Endorsed Values Augmentation (Phase 4)
 
