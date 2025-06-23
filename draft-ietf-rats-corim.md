@@ -1828,7 +1828,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `domain-id`     | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 ### Internal Representation of Reference Values {#sec-ir-ref-val}
@@ -1854,13 +1854,13 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
-|           | `domain-id`     | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `domain-id`     | n/a         |
+|           | `members`       | n/a         |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 ### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1886,24 +1886,24 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
-|           | `domain-id`     | n/a         |
+|           | `members`       | n/a         |
 | selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
-|           | `domain-id`     | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `domain-id`     | n/a         |
+|           | `members`       | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 ### Internal Representation of Domain Membership {#sec-ir-dm}
 
-An internal representation of Domain Membership uses the `dm` relation, which is a list of ECTs that describes the composition of an Attester with an identity of the Domain specified in the `identity` ECT.
+An internal representation of Domain Membership use a single ECT whose fields are set as below.
 
 ~~~ cddl
 {::include cddl/intrep-domain-mem.cddl}
@@ -1913,18 +1913,12 @@ An internal representation of Domain Membership uses the `dm` relation, which is
 
 | ECT type  | ECT Field       | Requirement |
 |---
-| identity  | `environment`   | Mandatory   |
+| domain    | `environment`   | Mandatory   |
 |           | `element-list`  | Optional    |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | n/a         |
-|           | `domain-id`     | n/a         |
-| members   | `environment`   | Mandatory   |
-|           | `element-list`  | Optional    |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `domain-id`     | Mandatory   |
+|           | `members`       | Mandatory   |
 {: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
 
 ### Internal Representation of Policy Statements {#sec-ir-policy}
@@ -1946,13 +1940,13 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
-|           | `domain-id`     | Optional    |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `domain-id`     | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -1975,13 +1969,13 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `authority`     | Optional    |
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
-|               | `domain-id`     | Optional    |
+|               | `members`       | Optional    |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
 |               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
-|               | `domain-id`     | Optional    |
+|               | `members`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
@@ -2278,32 +2272,22 @@ This section describes how the external representation of a Domain Membership Tr
 {:dmt-enum: counter="dmt1" style="format Step %d."}
 
 {: dmt-enum}
-* Allocate a `dm` entry.
+* Allocate a `domain` ECT entry.
 
-* Set the conceptual message type for the domain-id ECT and each member ECT to 6 (`domain-member`).
+* Set the conceptual message type for the `domain` ECT to 6 (`domain-member`).
 
 {:dmt4-enum: counter="dmt4" style="format %i"}
 
 {: dmt4-enum}
-* **copy**(`domain-member`, `dm`.`domain-id`.`cmtype`)
-
-{: dmt4-enum}
-* For each ECT e in DMT.`members`:
-
-> > **copy**(`domain-member`, `dm`.`members`[e].`cmtype`)
+* **copy**(`domain-member`, `domain`.`cmtype`)
 
 {: dmt-enum}
-* Set the authority for the domain-id ECT and each member ECT from the the DMT signer {{sec-corim-signer}}.
+* Set the authority for the domain ECT to the DMT signer {{sec-corim-signer}}.
 
 {:dmt5-enum: counter="dmt5" style="format %i"}
 
 {: dmt5-enum}
-* **copy**(DMT.`signer`, `dm`.`domain-id`.`authority`)
-
-{: dmt5-enum}
-* For each ECT e in DMT.`members`:
-
-> > **copy**(DMT.`signer`, `dm`.`members`[e].`authority`)
+* **copy**(DMT.`signer`, `domain`.`authority`)
 
 {: dmt-enum}
 * Use the DMT to populate the `dm` internal representation.
@@ -2311,26 +2295,20 @@ This section describes how the external representation of a Domain Membership Tr
 {:dmt2-enum: counter="dmt2" style="format %i"}
 
 {: dmt2-enum}
-* **copy**(DMT.`domain-id`, `dm`.`domain-id`)
+* **copy**(DMT.`domain-id`, `domain`.`environment`)
 
 {: dmt2-enum}
 * For each ECT e in DMT.`members`:
 
-> > **copy**(DMT.`members`[e].`environment-map`, `dm`.`members`[e].`environment-map`)
+> > **copy**(DMT.`members`[e].`environment-map`, `domain`.`members`[e].`environment-map`)
 
 {: dmt-enum}
-* If the conceptual message containing the DMT has a profile, it is used to populate the profile for each ECT in `dm`.
+* If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
 
 {:dmt3-enum: counter="dmt3" style="format %i"}
 
 {: dmt3-enum}
-* **copy**(DMT.`profile`, `dm`.`domain-id`.`profile`)
-
-{: dmt3-enum}
-* For each ECT e in DMT.`members`:
-
-> > **copy**(DMT.`profile`, `dm`.`members`[e].`profile`)
-
+* **copy**(DMT.`profile`, `domain`.`profile`)
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
