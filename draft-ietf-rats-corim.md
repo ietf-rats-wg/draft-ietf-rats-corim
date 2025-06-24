@@ -1276,18 +1276,6 @@ An int range is represented with either major type 0 or major type 1 ints.
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
-##### Domain Types {#sec-comid-domain-type}
-
-A domain is a context for bundling a collection of related environments and their measurements.
-
-The following CDDL describes domain type choices.
-
-~~~ cddl
-{::include cddl/domain-type-choice.cddl}
-~~~
-
-The `uint` and `text` types MUST NOT be interpreted in a global scope.
-
 #### Reference Values Triple {#sec-comid-triple-refval}
 
 A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
@@ -1456,23 +1444,24 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 See {{sec-comid-triple-identity}} for additional details.
 
-#### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+#### Triples for domain definitions {#sec-comid-domains}
 
-A Domain Dependency triple defines trust dependencies between measurement
-sources.  The subject identifies a domain ({{sec-comid-domain-type}}) that has
-a predicate relationship to the object containing one or more dependent
-domains.  Dependency means the subject domain’s trustworthiness properties rely
-on the object domain(s) trustworthiness having been established before the
-trustworthiness properties of the subject domain exists.
+A domain is a context for bundling a collection of related environments.
+
+The following CDDL describes domain type choices.
 
 ~~~ cddl
-{::include cddl/domain-dependency-triple-record.cddl}
+{::include cddl/domain-type-choice.cddl}
 ~~~
 
-#### Domain Membership Triple {#sec-comid-triple-domain-membership}
+The `uint` and `text` types MUST NOT be interpreted in a global scope.
+
+Domain structure is defined with the following types of triples.
+
+##### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain ({{sec-comid-domain-type}}) that has a predicate
+subject identifies a domain ({{sec-comid-triple-domain-dependency}}) that has a predicate
 relationship to the object containing one or more environments.  Endorsed
 environments ({{sec-comid-triple-endval}}) membership is conditional upon
 successful matching of Reference Values ({{sec-comid-triple-refval}}) to
@@ -1480,6 +1469,16 @@ Evidence.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
+~~~
+
+##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+
+A Domain Dependency triple defines trust dependencies between measurement sources.
+The subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has a predicate relationship to the object containing one or more dependent domains.
+Dependency means the subject domain’s trustworthiness properties rely on the object domain(s) trustworthiness having been established before the trustworthiness properties of the subject domain exist.
+
+~~~ cddl
+{::include cddl/domain-dependency-triple-record.cddl}
 ~~~
 
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
