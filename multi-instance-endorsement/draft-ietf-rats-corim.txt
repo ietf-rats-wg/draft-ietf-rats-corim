@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 20 December 2025                                         Linaro
+Expires: 26 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            18 June 2025
+                                                            24 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 December 2025.
+   This Internet-Draft will expire on 26 December 2025.
 
 Copyright Notice
 
@@ -118,16 +118,16 @@ Table of Contents
            5.1.4.1.5.  Crypto Keys
            5.1.4.1.6.  Integrity Registers
            5.1.4.1.7.  Int Range
-           5.1.4.1.8.  Domain Types
          5.1.4.2.  Reference Values Triple
          5.1.4.3.  Endorsed Values Triple
          5.1.4.4.  Conditional Endorsement Triple
          5.1.4.5.  Conditional Endorsement Series Triple
          5.1.4.6.  Device Identity Triple
          5.1.4.7.  Attest Key Triple
-         5.1.4.8.  Domain Dependency Triple
-         5.1.4.9.  Domain Membership Triple
-         5.1.4.10. CoMID-CoSWID Linking Triple
+         5.1.4.8.  Triples for domain definitions
+           5.1.4.8.1.  Domain Membership Triple
+           5.1.4.8.2.  Domain Dependency Triple
+         5.1.4.9.  CoMID-CoSWID Linking Triple
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
@@ -1022,16 +1022,16 @@ Table of Contents
 
    *  Domain dependency triples: describing trust relationships between
       domains, i.e., collection of related environments and their
-      measurements (Section 5.1.4.8).
+      measurements (Section 5.1.4.8.2).
 
    *  Domain membership triples: describing topological relationships
       between (sub-)modules.  For example, in a composite Attester
       comprising multiple sub-Attesters (sub-modules), this triple can
       be used to define the topological relationship between lead- and
-      sub- Attester environments (Section 5.1.4.9).
+      sub- Attester environments (Section 5.1.4.8.1).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID Payload tags (Section 5.1.4.10).
+      with existing CoSWID Payload tags (Section 5.1.4.9).
 
    CoMID triples are extensible (Section 5.1.4).  Triples added via the
    extensibility feature MUST be OTI class triples.  This document
@@ -1235,14 +1235,14 @@ Table of Contents
       Section 5.1.4.7.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in Section 5.1.4.8.
+      relationships between domains.  Described in Section 5.1.4.8.2.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      Section 5.1.4.9.
+      Section 5.1.4.8.1.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in Section 5.1.4.10.
+      existing CoSWID tags.  Described in Section 5.1.4.9.
 
    *  conditional-endorsement-series-triples (index 8): Triples
       describing a series of Endorsement that are applicable based on
@@ -1808,20 +1808,6 @@ Table of Contents
    either min or max are infinite as represented by null, in which case,
    each infinity is necessarily exclusive.
 
-5.1.4.1.8.  Domain Types
-
-   A domain is a context for bundling a collection of related
-   environments and their measurements.
-
-   The following CDDL describes domain type choices.
-
-   $domain-type-choice /= uint
-   $domain-type-choice /= text
-   $domain-type-choice /= tagged-uuid-type
-   $domain-type-choice /= tagged-oid-type
-
-   The uint and text types MUST NOT be interpreted in a global scope.
-
 5.1.4.2.  Reference Values Triple
 
    A Reference Values Triple provides reference measurements or
@@ -2088,25 +2074,26 @@ Table of Contents
 
    See Section 5.1.4.6 for additional details.
 
-5.1.4.8.  Domain Dependency Triple
+5.1.4.8.  Triples for domain definitions
 
-   A Domain Dependency triple defines trust dependencies between
-   measurement sources.  The subject identifies a domain
-   (Section 5.1.4.1.8) that has a predicate relationship to the object
-   containing one or more dependent domains.  Dependency means the
-   subject domain’s trustworthiness properties rely on the object
-   domain(s) trustworthiness having been established before the
-   trustworthiness properties of the subject domain exists.
+   A domain is a context for bundling a collection of related
+   environments.
 
-   domain-dependency-triple-record = [
-     $domain-type-choice
-     [ + $domain-type-choice ]
-   ]
+   The following CDDL describes domain type choices.
 
-5.1.4.9.  Domain Membership Triple
+   $domain-type-choice /= uint
+   $domain-type-choice /= text
+   $domain-type-choice /= tagged-uuid-type
+   $domain-type-choice /= tagged-oid-type
+
+   The uint and text types MUST NOT be interpreted in a global scope.
+
+   Domain structure is defined with the following types of triples.
+
+5.1.4.8.1.  Domain Membership Triple
 
    A Domain Membership triple assigns domain membership to environments.
-   The subject identifies a domain (Section 5.1.4.1.8) that has a
+   The subject identifies a domain (Section 5.1.4.8.2) that has a
    predicate relationship to the object containing one or more
    environments.  Endorsed environments (Section 5.1.4.3) membership is
    conditional upon successful matching of Reference Values
@@ -2117,7 +2104,22 @@ Table of Contents
      [ + environment-map ]
    ]
 
-5.1.4.10.  CoMID-CoSWID Linking Triple
+5.1.4.8.2.  Domain Dependency Triple
+
+   A Domain Dependency triple defines trust dependencies between
+   measurement sources.  The subject identifies a domain
+   (Section 5.1.4.8.1) that has a predicate relationship to the object
+   containing one or more dependent domains.  Dependency means the
+   subject domain’s trustworthiness properties rely on the object
+   domain(s) trustworthiness having been established before the
+   trustworthiness properties of the subject domain exist.
+
+   domain-dependency-triple-record = [
+     $domain-type-choice
+     [ + $domain-type-choice ]
+   ]
+
+5.1.4.9.  CoMID-CoSWID Linking Triple
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
