@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-22T02:20:31.118274+00:00",
+  "timestamp": "2025-06-24T02:06:28.213841+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11596,7 +11596,7 @@
       ],
       "body": "[Section 9.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.3.3) Reference Value Corroboration Needs Clarity!\n\nIt says\n`Reference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.`\n\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\n\nThis text implies that the Evidence ECTs are modified with the Authority of RVP.\n\nHowever, other parts of text indicate that the `reference-value` cmTypes are added into ACS. The Phase 3 explanation does not tie up with addition of ECTs with CmType: Reference Value",
       "createdAt": "2025-06-10T17:42:43Z",
-      "updatedAt": "2025-06-13T13:40:07Z",
+      "updatedAt": "2025-06-23T12:47:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -11619,6 +11619,13 @@
           "body": "I think there could may be a security problem with one of the statements highlighted in your reply Ned:\n\nIn section 9.3.3:\n> If the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\n\nI much prefer the text in section 5.1.4.2 which does not mention that authority is ignored when processing the reference value triple.\n\nThe authority of the reference value provides can't replace the authority of the attester (which provides authorized evidence) because they are authorizing different things:\n* The attester states that the evidence is a true measurement of the target environment (not faked)\n* The reference value provider states that the measurement indicates that the target environment is in a valid state\n\nI can see two ways to make this work:\n1. The reference value provider includes an authority field indicating the authority of the attestor, and later stages of attestation believe this trust\n2. The reference value provider adds an authority to the A-ECT and later stages of attestation check for both authorizers\n\nCurrently we don't have a way to do #2, and the statement in section 9.3.3 prevents doing #1.\n\nIf we remove the phrase \"except for authority\" then I don't think it breaks anything. Reference value providers who want the section 9.3.3 described behavior can omit the authority field, reference value providers who want the section 5.1.4.2 behavior can include an authority field.\n\n\n\n\n",
           "createdAt": "2025-06-13T13:40:07Z",
           "updatedAt": "2025-06-13T13:40:07Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #453 also clarifies the gaps as reported in this issue!",
+          "createdAt": "2025-06-23T12:47:47Z",
+          "updatedAt": "2025-06-23T12:47:47Z"
         }
       ]
     },
@@ -65377,13 +65384,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-06-06T09:56:28Z",
+      "updatedAt": "2025-06-23T16:17:25Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "ca6857c48f860f741d828d0743499c801557e2d1",
+      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
-      "headRefOid": "ddaeee61a1603f021ed54400bb3ccca4598ee397",
+      "headRefOid": "31adab75a1b290c008b91bad70d2efb4cc117b4d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -69928,13 +69935,13 @@
       "labels": [],
       "body": "Fixes #447",
       "createdAt": "2025-06-21T19:53:26Z",
-      "updatedAt": "2025-06-22T02:03:51Z",
+      "updatedAt": "2025-06-24T00:01:18Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "gap-1",
-      "headRefOid": "253be20474c6a9f65faa255bf5ee87354da4bad9",
+      "headRefOid": "7329f149be2a05e610c0541137ecfc7d2f2b0ef0",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -70064,6 +70071,106 @@
               "body": "```suggestion\r\n3. It is verified that the `authority` field of the `addition` ECT is indeed set correctly to the RVP authority\r\n```",
               "createdAt": "2025-06-22T02:03:51Z",
               "updatedAt": "2025-06-22T02:03:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vyZJO",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T08:49:47Z",
+          "updatedAt": "2025-06-23T08:49:47Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I deliberately omitted the `addition`, as upon matching `evidence` ECTs the claims from `evidence` gets moved to `addition` section of the RVP ECTs. So double movement risks adding confusion to the reader!",
+              "createdAt": "2025-06-23T08:49:47Z",
+              "updatedAt": "2025-06-23T08:49:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vyiF2",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T09:01:21Z",
+          "updatedAt": "2025-06-23T09:01:22Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "The Evidence ECTs whether coming from a EAT token or any other format are flattened as ECT structure. Regardless of how we structure RVs outside of ACS when they enter ACS they will also be flattened out, the way Evidence appears inside the ACS, so in that sense they are identically aligned inside ACS.",
+              "createdAt": "2025-06-23T09:01:22Z",
+              "updatedAt": "2025-06-23T09:01:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86vyi3C",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T09:02:27Z",
+          "updatedAt": "2025-06-23T09:02:27Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "for your comment, `Additionally, the pair is written as a map instead of a length 2 array. I don't think that was intentional.` let us discuss this apsect in CoRIM meeting!",
+              "createdAt": "2025-06-23T09:02:27Z",
+              "updatedAt": "2025-06-23T09:02:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86v8Ns1",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-23T23:53:24Z",
+          "updatedAt": "2025-06-23T23:53:25Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "> I think we want the internal relation to be 1-to-1 with an individual triple, right?\r\n\r\nThere can be multiple reference triples representing the various possible states of the target environment. Corroboration identifies which of the many possibilities matches the actual state found in the ACS. The matched value is what's placed in the cursor as the candidate for becoming the addition. We talked about rewording to make this behavior clearer.",
+              "createdAt": "2025-06-23T23:53:24Z",
+              "updatedAt": "2025-06-23T23:53:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86v8RMh",
+          "commit": {
+            "abbreviatedOid": "253be20"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T00:01:18Z",
+          "updatedAt": "2025-06-24T00:01:18Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "> the pair is written as a map instead of a length 2 array. I don't think that was intentional\r\n\r\nPossibly the record is superfluous. The intent was to make it a list of condition-addition pairs. ",
+              "createdAt": "2025-06-24T00:01:18Z",
+              "updatedAt": "2025-06-24T00:01:18Z"
             }
           ]
         }
