@@ -922,11 +922,16 @@ The following describes each member of the `class-map`:
 
 ##### Environment Instance {#sec-comid-instance}
 
-An instance carries a unique identifier that is reliably bound to a Target Environment
-that is an instance of the Attester.
+An `instance-id` is a unique value that identifies a Target Environment instance.
+The identifier is reliably bound to the Target Environment.
+For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
+See {{Section 4.1 of -pkix-cert}}.
+Alternatively, if the certificate's subject public key is large, the `instance-id` might be a key identifier that is a digest of that public key.
+See {{Section 4.2.1.2 of -pkix-cert}}.
+The key identifier is reliably bound to the subject public key because the identifier is a digest of the key.
 
 The types defined for an instance identifier are CBOR tagged expressions of
-UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), or cryptographic key identifier.
+UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cryptographic keys, or cryptographic key identifiers.
 
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
@@ -1037,8 +1042,10 @@ The following describes each member of the `measurement-values-map`.
 
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   The vendor determines the encoding of `raw-value`.
-  When used for comparison, a mask may be provided indicating which bits in the `raw-value` field are compared.
+  When used for comparison, the `tagged-masked-raw-value` variant includes a mask indicating which bits in the value to compare.
   Described in {{sec-comid-raw-value-types}}
+
+* `raw-value-mask-DEPRECATED` (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the `tagged-masked-raw-value` on index 4 instead of using index 5.
 
 * `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
   Described in {{sec-comid-address-types}}.
@@ -1168,7 +1175,7 @@ A raw value intended for comparison can include a mask value, which selects the 
 The mask is applied by the Verifier as part of appraisal.
 Only the raw value bits with corresponding TRUE mask bits are compared during appraisal.
 
-The `raw-value-mask` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
+The `raw-value-mask-DEPRECATED` in `measurement-values-map` is deprecated, but retained for backwards compatibility.
 This code point may be removed in a future revision of this specification.
 
 ~~~ cddl
@@ -1209,7 +1216,7 @@ A cryptographic key can be one of the following formats:
 
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-thumbprint-type`: a `digest` of a raw public key.
+* `tagged-key-thumbprint-type`: a `digest` of a raw public key.
   The digest value may be used to find the public key if contained in a lookup table.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
@@ -1270,28 +1277,16 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
-##### Raw Int {#sec-comid-raw-int}
+##### Int Range {#sec-comid-int-range}
 
-A raw int describes an integer value that can be compared with linear order in the target environment.
-A raw int is represented with either major type 0 or major type 1 ints.
+An int range describes an integer value that can be compared with linear order in the target environment.
+An int range is represented with either major type 0 or major type 1 ints.
 
 ~~~ cddl
-{::include cddl/raw-int-type-choice.cddl}
+{::include cddl/int-range-type-choice.cddl}
 ~~~
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
-
-##### Domain Types {#sec-comid-domain-type}
-
-A domain is a context for bundling a collection of related environments and their measurements.
-
-The following CDDL describes domain type choices.
-
-~~~ cddl
-{::include cddl/domain-type-choice.cddl}
-~~~
-
-The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
@@ -1461,23 +1456,24 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 See {{sec-comid-triple-identity}} for additional details.
 
-#### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+#### Triples for domain definitions {#sec-comid-domains}
 
-A Domain Dependency triple defines trust dependencies between measurement
-sources.  The subject identifies a domain ({{sec-comid-domain-type}}) that has
-a predicate relationship to the object containing one or more dependent
-domains.  Dependency means the subject domain’s trustworthiness properties rely
-on the object domain(s) trustworthiness having been established before the
-trustworthiness properties of the subject domain exists.
+A domain is a context for bundling a collection of related environments.
+
+The following CDDL describes domain type choices.
 
 ~~~ cddl
-{::include cddl/domain-dependency-triple-record.cddl}
+{::include cddl/domain-type-choice.cddl}
 ~~~
 
-#### Domain Membership Triple {#sec-comid-triple-domain-membership}
+The `uint` and `text` types MUST NOT be interpreted in a global scope.
+
+Domain structure is defined with the following types of triples.
+
+##### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain ({{sec-comid-domain-type}}) that has a predicate
+subject identifies a domain ({{sec-comid-triple-domain-dependency}}) that has a predicate
 relationship to the object containing one or more environments.  Endorsed
 environments ({{sec-comid-triple-endval}}) membership is conditional upon
 successful matching of Reference Values ({{sec-comid-triple-refval}}) to
@@ -1485,6 +1481,16 @@ Evidence.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
+~~~
+
+##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+
+A Domain Dependency triple defines trust dependencies between measurement sources.
+The subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has a predicate relationship to the object containing one or more dependent domains.
+Dependency means the subject domain’s trustworthiness properties rely on the object domain(s) trustworthiness having been established before the trustworthiness properties of the subject domain exist.
+
+~~~ cddl
+{::include cddl/domain-dependency-triple-record.cddl}
 ~~~
 
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
@@ -2744,9 +2750,9 @@ If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
 Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
 
-##### Comparison for raw-int entries
+##### Comparison for int-range entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 15 is a raw int value, which MUST have type `raw-int-type-choice`.
+The ACS entry value stored under `measurement-values-map` codepoint 15 is an int range value, which MUST have type `int-range-type-choice`.
 
 Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
 
@@ -2888,14 +2894,14 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     555 | `text`              | tagged-pkix-base64-cert-type, see {{sec-crypto-keys}}         | {{&SELF}} |
 |     556 | `text`              | tagged-pkix-base64-cert-path-type, see {{sec-crypto-keys}}    | {{&SELF}} |
-|     557 | `[int/text, bytes]` | tagged-thumbprint-type, see {{sec-common-hash-entry}}         | {{&SELF}} |
-|     558 | `COSE_Key/ COSE_KeySet`   | tagged-cose-key-type, see {{sec-crypto-keys}}           | {{&SELF}} |
+|     557 | `[int/text, bytes]` | tagged-key-thumbprint-type, see {{sec-common-hash-entry}}     | {{&SELF}} |
+|     558 | `COSE_Key`          | tagged-cose-key-type, see {{sec-crypto-keys}}                 | {{&SELF}} |
 |     559 | `digest`            | tagged-cert-thumbprint-type, see {{sec-crypto-keys}}          | {{&SELF}} |
 |     560 | `bytes`             | tagged-bytes, see {{sec-common-tagged-bytes}}                 | {{&SELF}} |
 |     561 | `digest`            | tagged-cert-path-thumbprint-type, see {{sec-crypto-keys}}     | {{&SELF}} |
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
-|     564 | `array`             | tagged-int-range, see {{sec-comid-raw-int}}                   | {{&SELF}} |
+|     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
 | 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
@@ -3087,24 +3093,25 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name           | Specification |
+| Index | Item Name                 | Specification |
 |---
-| 0     | version             | {{&SELF}}     |
-| 1     | svn                 | {{&SELF}}     |
-| 2     | digests             | {{&SELF}}     |
-| 3     | flags               | {{&SELF}}     |
-| 4     | raw-value           | {{&SELF}}     |
-| 5     | raw-value-mask      | {{&SELF}}     |
-| 6     | mac-addr            | {{&SELF}}     |
-| 7     | ip-addr             | {{&SELF}}     |
-| 8     | serial-number       | {{&SELF}}     |
-| 9     | ueid                | {{&SELF}}     |
-| 10    | uuid                | {{&SELF}}     |
-| 11    | name                | {{&SELF}}     |
-| 12    | (reserved)          | {{&SELF}}     |
-| 13    | cryptokeys          | {{&SELF}}     |
-| 14    | integrity-registers | {{&SELF}}     |
-| 15-18446744073709551616 | Unassigned | |
+| 0     | version                   | {{&SELF}}     |
+| 1     | svn                       | {{&SELF}}     |
+| 2     | digests                   | {{&SELF}}     |
+| 3     | flags                     | {{&SELF}}     |
+| 4     | raw-value                 | {{&SELF}}     |
+| 5     | raw-value-mask-DEPRECATED | {{&SELF}}     |
+| 6     | mac-addr                  | {{&SELF}}     |
+| 7     | ip-addr                   | {{&SELF}}     |
+| 8     | serial-number             | {{&SELF}}     |
+| 9     | ueid                      | {{&SELF}}     |
+| 10    | uuid                      | {{&SELF}}     |
+| 11    | name                      | {{&SELF}}     |
+| 12    | (reserved)                | {{&SELF}}     |
+| 13    | cryptokeys                | {{&SELF}}     |
+| 14    | integrity-registers       | {{&SELF}}     |
+| 15    | int-range                 | {{&SELF}}     |
+| 16-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
