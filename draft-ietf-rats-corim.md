@@ -2359,6 +2359,7 @@ Reference Values are matched with ACS entries by iterating through the `rv` list
 For each `rv` entry, the `condition` ECT is compared, as per the Appraisal Policy for Evidence, with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
 If satisfied, for the `rv` entry, the following three steps are performed.
+
 1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
 2. The claims, i.e. `element-list` from ACS ECT with `cmtype: &(evidence: 2)` is copied to `element-list` of `addition` ECT
 3. It is verified that the `authority` field of the `addition` ECT is indeed set correctly to the RVP authority
