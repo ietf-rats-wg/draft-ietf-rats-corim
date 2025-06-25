@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 26 December 2025                                         Linaro
+Expires: 27 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            24 June 2025
+                                                            25 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 December 2025.
+   This Internet-Draft will expire on 27 December 2025.
 
 Copyright Notice
 
@@ -3477,7 +3477,7 @@ Table of Contents
    resulting in the representation specified in Section 9.1.6.
 
    Domain Membership ECTs (cmtype: domain-member) are matched with ACS
-   entries (of cmtype set to evidence) using the following algorithm:
+   entries (of cmtype: evidence) using the following algorithm:
 
    *  For every domain entry compare:
 
@@ -3486,8 +3486,25 @@ Table of Contents
       -  If all entries match add the domain ECT to ACS If none of the
          members match, proceed to next domain ECT in the list
 
-   If none of the domain entries match the Verification is failed and
-   terminated.
+   *  When there is a partial match of member environments to ACS ECT
+      environment, the following cases, may apply: ACS ECT contains N
+      environments while Domain ECT members reports M Environments: 1.
+      N >= M and some entries of M match.  This is a case of a Composite
+      Attester, where other entries of M, may itself be domain
+      identifiers for other domains.  In such case, upon complete
+      appraisal, they MUST appear in other domain ECTs.  Otherwise, the
+      Appraisal is failed.
+
+   1.  If N >= M and all entries of M match.  If the Evidence reports
+       extra environments, it may be upto Verifier policy to allow/dis-
+       allow such Evidence.
+
+   2.  N < M and all N or some of N ACS ECT environments match some of
+       the M members of the domain ECT.  The Appraisal is terminated
+       with Attestation Results set as Verification Failure.
+
+   If none of the domain entries match, the Appraisal is terminated with
+   Attestation Results set as Verification Failure.
 
 9.3.5.  Examples for optional phases 5, 6, and 7
 
