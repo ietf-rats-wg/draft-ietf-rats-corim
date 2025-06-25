@@ -2296,14 +2296,14 @@ This section describes how the external representation of a Domain Membership Tr
 * **copy**(DMT.`domain-id`, `domain`.`environment`)
 
 {: dmt2-enum}
-* For each ECT e in DMT.`members`:
+* For each `environment` `e` in DMT.`members`:
 
 > > **copy**(DMT.`members`[e].`environment-map`, `domain`.`members`[e].`environment-map`)
 
 {: dmt-enum}
 * If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
 
-{:dmt3-enum: counter="dmt3" style="format %i"}Add commentMore actions
+{:dmt3-enum: counter="dmt3" style="format %i"}
 
 {: dmt3-enum}
 * **copy**(DMT.`profile`, `domain`.`profile`)
@@ -2503,21 +2503,22 @@ Domain Membership ECTs (`cmtype`: `domain-member`) are matched with ACS entries 
 
 * For every `domain` entry compare:
   * Each entry of `members`, i.e. `environment` to ACS ECT `environment`
-  * If all entries match add the `domain` ECT to ACS
-If none of the `members` match, proceed to next `domain` ECT in the list
+  * If all entries match, add the `domain` ECT to ACS
 
-* When there is a partial match of `member` environments to ACS ECT `environment`, the following cases, may apply:
-ACS ECT contains `N` environments while Domain ECT `members` reports `M` Environments:
-1. `N` >= `M` and some entries of `M` match.
-This is a case of a Composite Attester, where other entries of `M`, may itself be domain identifiers for other `domains`.
-In such case, upon complete appraisal, they MUST appear in other `domain` ECTs.
-Otherwise, the Appraisal is failed.
+  * When there is a partial match of `member` environments to ACS ECT `environment`, the following cases, may apply:
+  ACS ECT contains `N` environments while Domain ECT `members` reports `M` Environments:
+  1. `N` >= `M` and some entries of `M` match.
+  This is a case of a Composite Attester, where other entries of `M`, may itself be domain identifiers for other `domains`.
+  In such case, upon complete appraisal, they MUST appear in other `domain` ECTs.
+  Otherwise, the Appraisal is failed.
 
-2. If `N` >= `M` and all entries of `M` match.
-If the Evidence reports extra environments, it may be upto Verifier policy to allow/dis-allow such Evidence.
+  2. If `N` >= `M` and all entries of `M` match.
+  If the Evidence reports extra environments, it may be upto Verifier policy to allow/dis-allow such Evidence.
 
-3. `N` < `M` and all `N` or some of `N` ACS ECT environments match some of the `M` members of the `domain` ECT.
-The Appraisal is terminated with Attestation Results set as Verification Failure.
+  3. `N` < `M` and all `N` or some of `N` ACS ECT environments match some of the `M` members of the `domain` ECT.
+  The Appraisal is terminated with Attestation Results set as Verification Failure.
+
+If none of the `members` match, proceed to next `domain` ECT in the list.
 
 If none of the `domain` entries match, the Appraisal is terminated with Attestation Results set as Verification Failure.
 
