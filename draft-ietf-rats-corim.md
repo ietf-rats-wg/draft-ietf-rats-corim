@@ -2430,7 +2430,7 @@ If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key
 
 Otherwise, do not add the ADDITION to the ACS.
 
-It is possible that a candidate key has been verified during phase-1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
+It is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
 Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
