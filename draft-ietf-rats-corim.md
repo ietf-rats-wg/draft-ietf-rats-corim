@@ -1361,9 +1361,9 @@ The Conditional Endorsement Series Triple has the following structure:
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
 * `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
-The condition is a record containing an `environment`, optional `claims-list`.
+The condition is a `stateful-environment-record` consisting of an `environment` and `claims-list`.
 
-* `series`: A set of selection-addition tuples.
+* `series`: A sequence of selection-addition tuples.
 
 The `conditional-series-record` has the following parameters:
 
