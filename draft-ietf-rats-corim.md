@@ -2506,7 +2506,9 @@ Domain Membership ECTs (`cmtype`: `domain-member`) are matched with ACS entries 
   * If all entries match, add the `domain` ECT to ACS
 
   * When there is a partial match of `member` environments to ACS ECT `environment`, the following cases, may apply:
+
   ACS ECT contains `N` environments while Domain ECT `members` reports `M` Environments:
+
   1. `N` >= `M` and some entries of `M` match.
   This is a case of a Composite Attester, where other entries of `M`, may itself be domain identifiers for other `domains`.
   In such case, upon complete appraisal, they MUST appear in other `domain` ECTs.
