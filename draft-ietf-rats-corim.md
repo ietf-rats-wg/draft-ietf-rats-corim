@@ -1832,7 +1832,7 @@ An internal representation of Reference Values uses the `rv` relation, which is 
 ~~~
 
 The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
-If the `condition` containing reference ECTs match Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype: &(reference-values: 0)`.
+If the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype: &(reference-values: 0)`.
 
 The reference ECTs define the matching conditions that are applied to Evidence ECTs.
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
@@ -2351,7 +2351,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
-Reference Values may describe multiple possible Attester states.
+Each Reference Value Triple describes a single possible Attester state.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 
