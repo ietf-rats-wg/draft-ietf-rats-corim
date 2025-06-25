@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 26 December 2025                                         Linaro
+Expires: 27 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            24 June 2025
+                                                            25 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 December 2025.
+   This Internet-Draft will expire on 27 December 2025.
 
 Copyright Notice
 
@@ -185,10 +185,9 @@ Table of Contents
                3)
        9.3.4.  Endorsed Values Augmentation (Phase 4)
          9.3.4.1.  Processing Endorsements
-         9.3.4.2.  Processing Conditional Endorsements
-           9.3.4.2.1.  Copying instance field from a condition
-         9.3.4.3.  Processing Conditional Endorsement Series
-         9.3.4.4.  Processing Key Verification Endorsements
+           9.3.4.1.1.  Copying instance field from a condition
+         9.3.4.2.  Processing Conditional Endorsement Series
+         9.3.4.3.  Processing Key Verification Endorsements
        9.3.5.  Examples for optional phases 5, 6, and 7
      9.4.  Comparing a condition ECT against the ACS
        9.4.1.  Comparing a condition ECT against a single ACS entry
@@ -3313,19 +3312,30 @@ Table of Contents
 
 9.3.4.1.  Processing Endorsements
 
-   Endorsements are matched with ACS entries by iterating through the ev
-   list.  For each ev entry, the condition ECT is compared with an ACS
-   ECT, where the ACS ECT cmtype contains either evidence, reference-
-   values, or endorsements.  If the ECTs match (Section 9.4), the ev
-   addition ECT is added to the ACS.
+   Endorsed Value Triple and Conditional Endorsement Triple share the
+   same internal representation.  Both types of triple are transformed
+   into an internal representation based on ev, but the CBOR encoding of
+   Endorsed Value Triple can only represent a subset of the CBOR
+   encoding of Conditional Endorsement Triple.  The Endorsed Values
+   Triple contains a single environment-map, which means it can only
+   match against one environment in the ACS; it can only add a single
+   Endorsement ECT; and it uses the same enviromnent for condition and
+   addition.
 
-9.3.4.2.  Processing Conditional Endorsements
+   After transformation into an ev entry, the processing steps of both
+   triples are the same, as described below.  Each ev entry is processed
+   independently of other evs.
 
-   Conditional Endorsement Triples are transformed into an internal
-   representation based on ev.  Conditional endorsements have the same
-   processing steps as shown in (Section 9.3.4.1).
+   The Verifier SHALL find all sets of ACS-ECTs which match all the
+   ev.conditions, where the ACS-ECT cmtype contains either evidence,
+   reference-values, or endorsements.  For each match (Section 9.4), all
+   the ev.addition ECTs are added to the ACS.
 
-9.3.4.2.1.  Copying instance field from a condition
+   Note that some condition values are able to match against multiple
+   ACS-ECTs, or sets of ACS-ECTs.  If there are multiple matches then
+   each match is processed independently from the others.
+
+9.3.4.1.1.  Copying instance field from a condition
 
    A CoRIM author may need to create a conditional endorsement which
    applies to all all measurements which have the same class field
@@ -3368,7 +3378,7 @@ Table of Contents
    own slot bindings, and each match adds a separate endorsement ECT to
    the ACS.
 
-9.3.4.3.  Processing Conditional Endorsement Series
+9.3.4.2.  Processing Conditional Endorsement Series
 
    Conditional Endorsement Series Triples are transformed into an
    internal representation based on evs.  Conditional series
@@ -3381,7 +3391,7 @@ Table of Contents
    ACS.  Series iteration terminates after the first matching series
    entry is processed or when no series entries match.
 
-9.3.4.4.  Processing Key Verification Endorsements
+9.3.4.3.  Processing Key Verification Endorsements
 
    For each ev entry, the condition ECT is compared with an ACS ECT,
    where the ACS ECT cmtype contains either evidence, reference-values,
@@ -4064,10 +4074,10 @@ Table of Contents
    |         |             | Section 5.1.4.1.7             |           |
    +---------+-------------+-------------------------------+-----------+
    | 565     | instance-   | instance-slot-bind, see       | RFCthis   |
-   |         | slot-bind   | Section 9.3.4.2.1             |           |
+   |         | slot-bind   | Section 9.3.4.1.1             |           |
    +---------+-------------+-------------------------------+-----------+
    | 566     | instance-   | instance-slot-ref, see        | RFCthis   |
-   |         | slot-ref    | Section 9.3.4.2.1             |           |
+   |         | slot-ref    | Section 9.3.4.1.1             |           |
    +---------+-------------+-------------------------------+-----------+
    | 567-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
