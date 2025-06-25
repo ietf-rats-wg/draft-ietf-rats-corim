@@ -2369,14 +2369,18 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
-Endorsements are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+Endorsed Value Triple and Conditional Endorsement Triple share the same internal representation.
+Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Value Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
+The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; it can only add a single Endorsement ECT; and it uses the same enviromnent for `condition` and `addition`.
 
-#### Processing Conditional Endorsements {#sec-process-cond-end}
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
 
-Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
-Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
+The Verifier SHALL find all sets of ACS-ECTs which match all the `ev`.`condition`s, where the ACS-ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+For each match ({{sec-match-condition-ect}}), all the `ev`.`addition` ECTs are added to the ACS.
+
+Note that some condition values are able to match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches then each match is processed independently from the others.
 
 ##### Copying instance field from a condition {#sec-comid-instance-copy}
 
