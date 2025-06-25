@@ -3211,7 +3211,7 @@ Table of Contents
 
    i  *copy*(DMT.domain-id, domain.environment)
 
-   ii For each ECT e in DMT.members:
+   ii For each environment e in DMT.members:
 
       *copy*(DMT.members[e].environment-map,
          domain.members[e].environment-map)
@@ -3219,9 +3219,7 @@ Table of Contents
    Step 5.  If the conceptual message containing the DMT has a profile,
             it is used to populate the profile for the domain ECT.
 
-   {:dmt3-enum: counter="dmt3" style="format %i"}Add commentMore actions
-
-   *  *copy*(DMT.profile, domain.profile)
+   i  *copy*(DMT.profile, domain.profile)
 
 9.3.  ACS Augmentation - Phases 2, 3, and 4
 
@@ -3483,25 +3481,27 @@ Table of Contents
 
       -  Each entry of members, i.e. environment to ACS ECT environment
 
-      -  If all entries match add the domain ECT to ACS If none of the
-         members match, proceed to next domain ECT in the list
+      -  If all entries match, add the domain ECT to ACS
 
-   *  When there is a partial match of member environments to ACS ECT
-      environment, the following cases, may apply: ACS ECT contains N
-      environments while Domain ECT members reports M Environments: 1.
-      N >= M and some entries of M match.  This is a case of a Composite
-      Attester, where other entries of M, may itself be domain
-      identifiers for other domains.  In such case, upon complete
-      appraisal, they MUST appear in other domain ECTs.  Otherwise, the
-      Appraisal is failed.
+      -  When there is a partial match of member environments to ACS ECT
+         environment, the following cases, may apply: ACS ECT contains N
+         environments while Domain ECT members reports M Environments:
+         1.  N >= M and some entries of M match.  This is a case of a
+         Composite Attester, where other entries of M, may itself be
+         domain identifiers for other domains.  In such case, upon
+         complete appraisal, they MUST appear in other domain ECTs.
+         Otherwise, the Appraisal is failed.
 
-   1.  If N >= M and all entries of M match.  If the Evidence reports
-       extra environments, it may be upto Verifier policy to allow/dis-
-       allow such Evidence.
+      1.  If N >= M and all entries of M match.  If the Evidence reports
+          extra environments, it may be upto Verifier policy to allow/
+          dis-allow such Evidence.
 
-   2.  N < M and all N or some of N ACS ECT environments match some of
-       the M members of the domain ECT.  The Appraisal is terminated
-       with Attestation Results set as Verification Failure.
+      2.  N < M and all N or some of N ACS ECT environments match some
+          of the M members of the domain ECT.  The Appraisal is
+          terminated with Attestation Results set as Verification
+          Failure.
+
+   If none of the members match, proceed to next domain ECT in the list.
 
    If none of the domain entries match, the Appraisal is terminated with
    Attestation Results set as Verification Failure.
