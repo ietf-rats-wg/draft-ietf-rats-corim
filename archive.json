@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-24T02:06:28.213841+00:00",
+  "timestamp": "2025-06-26T02:05:36.900471+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -10607,7 +10607,7 @@
       "labels": [],
       "body": "Consider an compound system using two attestation environments and two target environments.\n\nIn the example, the AEs and TEs use identical hardware, but may be running different firmware.\n\nThis diagram shows a simplified view of the system.\n```mermaid\ngraph TD\n    Verifier[\"Verifier\"]\n\n    subgraph Compound[\"Compound system\"]\n\n    subgraph DICE1[\"Component #1\"]\n        TE1z[\"SPDM TE\"]\n        TE1y[\"SPDM AE\"]\n    end\n    TE1y ==> TE1z\n\n    subgraph DICE2[\"Component #2\"]\n        TE2y[\"SPDM AE\"]\n        TE2z[\"SPDM TE\"]\n    end\n    TE2y ==> TE2z\n\n    end\n\n    style Compound fill:#CCC,stroke:#CCC\n\n    Verifier -...-> TE1y\n    Verifier -...-> TE2y\n```\nThe Verifier communicates directly with an attestation environment within each component.\n\nThe attestation environments return measurements of each TE, for example AE#1 might return a hash indicating the firmware running in TE#1:\n```cbor-diag\n  [\n    / environment-map / {\n      / class / 0 : {\n        / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n        / vendor / 1 : \"example.com\"\n      },\n      / instance / 1 : 560(h'12345678')\n    },\n    / measurement-map / [ {\n      / mval / 1 : {\n        / digests / 2 : [\n          [\n            / sha-384 / 7,\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n          ]\n        ]\n      }\n    } ]\n  ]\n```\n\nThe measurements of TE#2 are similar, except for the instance ID and the digest in the measurement-values-map.\n\nThe evidence import phase will add the measurements for TE#1 and TE#2 to the ACS.\n\nThe CoRIM author has published several CoRIMs, each of which maps one hash to a version number, for example:\n\n```comid\n  / triples / 4 : {\n    / conditional-endorsement-triples / 10 : [\n      / conditions: / [ \n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / digests / 2 : [\n                [\n                  / sha-384 / 7,\n                  h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n                ]\n              ]\n            }\n          } ]\n        ],\n  / endorsements: / [\n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n            / WHAT GOES HERE? /\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / ver / 0 : {\n                / version / 0 : \"1.0\",\n                / version-scheme / 1 : / alphanumeric / 3\n              }\n            }\n          } ]\n        ],\n      ]\n    ]\n  }\n```\n\nThe goal of this CoMID fragment is to add a version number to the environment which contains the hash.\nI expect that the Conditional Endorser (perhaps the device manufacturer) will release many CoMID fragments, one for each released version of firmware.\n\nAssuming that the firmware is genuine, one of the CoMID fragments will match against the ACS entry for TE#1, and one will match against the ACS entry for TE#2.\n\nThe CoMID fragments don't include an `instance` field within their environment, so they will match against any ACS entry which contains the same `class-id`, regardless of instance.\n\n# How to get expected results?\n\nI would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class` and `instance` fields.\n\nHow do we tell the Verifier to copy the `instance` field from the `stateful-environment` part of `conditional-endorsement-triple-record` to the new ACS entry created by `endorsed-triple-record`?\n\nI think a similar issue is raised if the Conditional Endorser wants the Verifier to match against two `stateful-environments`, both of them having the same value in the `instance` field.\n\n# Possible solution\n\nOne solution I can imagine is to create special syntax which is inserted into the example conditional endorsement above in the location marked `/ What goes here? /`.\n\nThis syntax tells the Verifier to copy the instance value which was matched against the first `stateful-environment` into the newly created endorsed ACS entry.\n\nIs there a better solution?",
       "createdAt": "2025-03-28T22:19:44Z",
-      "updatedAt": "2025-06-11T18:06:13Z",
+      "updatedAt": "2025-06-24T16:12:05Z",
       "closedAt": null,
       "comments": [
         {
@@ -10651,6 +10651,13 @@
           "body": "> there should also be\n\nI think this might be overstating requirements. It will be best to clarify global uniqueness property of environment-map given the optionality of class, instance and group. I think everyone is on the same page with what that means but to summarize. For any combination of the type of identifier each combination MUST be globally unique. Combinatoric idempotence is also true. If class is globally unique and instance is globally unique then the combination is also globally unique. \n\nThere may be ambiguity in combinatoric uniqueness properties one type (by itself) isn't globally unique but combined. For example if class, instance, and group are not globally unique then is the combination globally unique? (My assumption is yes).\n\nHowever, there can be unintended side effects if uniqueness is not guaranteed without using a combinatoric production. We have said that Evidence containing combinations (class and instance) environment-map will match reference values that are class only. But if the class isn't globally unique, then the reference value expression is invalid. Note that since instance values might not be known at mfg time, requiring RVP to supply a combination environment isn't possible. That would breaks stuff.\n\nIt is safer to require each time of environment (class, instance, or group) to be globally unique regardless of combinatorics. But this also might break stuff. We said that a way to disambiguate multiple instances of the same component in Evidence would be to populate the instance-id (along with class). But we didn't say whether instance-id independently must be globally unique. We left it up to the members. All except tagged-bytes is natively globally unique. That sort of suggests the intention that instance is always globally unique, but those words haven't been captured. \n\nIf the primary use case for wanting non-globally unique instance-ids is the specific use case of reporting multiple instances of the same class of component, then it seems reasonable to have measurement specifically for that. Then we can avoid having subtlety in the definition of environment uniqueness properties. \n\nMy view is RIM / Evidence authors shouldn't have to understand combinatorics. All types should be globally unique regardless if they are used in combination with each other. ",
           "createdAt": "2025-06-11T18:06:13Z",
           "updatedAt": "2025-06-11T18:06:13Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "IMHO some of the text above is not entirely on topic for this issue, but I'll answer some of the points so we can try to reach agreement.\n\nThe current text says that environment-map must be unique, I agree with this and I think most of the participants in recent meetings agree with that too.\n\nI don't agree that it is beneficial to require that class, instance etc. fields within environment-map must be globally unique. For example, if an attestor (eg a manufacturer) can encode its identity within `environment-map`.`global` then they do not have to co-ordinate with other manufacturers when allocating values to `environment-map`.`instance`.\n\n**The requirement I have is that the supply chain can issue a CoRIM file which applies to all products of the same type.**\n\nA secondary requirement is that it should be able to do this in a way which scales, for example to issue a CoRIM which applies to all products which have identical hardware.",
+          "createdAt": "2025-06-24T16:12:05Z",
+          "updatedAt": "2025-06-24T16:12:05Z"
         }
       ]
     },
@@ -11341,7 +11348,7 @@
       ],
       "body": "A conditional endorsement series expression doesn't necessarily have to have a stateful condition given the selection state is sufficient. However, the `stateful-environment-record` makes `measurement-map` mandatory. \n\nAllowing the claims-list in stateful-environment-record to be optional would accommodate the class of use cases. \n\nSuch as the following cddl:\n```\nconditional-endorsement-series-triple-record = [\n  condition: [\n    environment: environment-map,\n    ? claims-list: [ + measurement-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n```",
       "createdAt": "2025-05-09T19:16:33Z",
-      "updatedAt": "2025-06-11T13:22:07Z",
+      "updatedAt": "2025-06-25T19:37:09Z",
       "closedAt": null,
       "comments": [
         {
@@ -11350,6 +11357,13 @@
           "body": "Another approach is to make `mval` optional in measurement-map.\n```\nmeasurement-map = {\n  ? &(mkey: 0) => $measured-element-type-choice\n  ? &(mval: 1) => measurement-values-map\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\n}\n```\nThe impact is wider however and there should be a review of each usage to see if it is acceptable.\n\nThe scope can be narrowd to just the series triple as follows:\n\n```\nconditional-endorsement-series-triple-record = [\n  conditions: [ +\n    environment: environment-map\n    ? claims-list: [ + measurement-series-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n\nmeasurement-series-map = non-empty<{\n  ? &(mkey: 0) => $measured-element-type-choice\n  ? &(mval: 1) => measurement-values-map\n  ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]\n}>\n```",
           "createdAt": "2025-05-12T19:19:47Z",
           "updatedAt": "2025-05-12T19:36:10Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Addressed by PR #436 ",
+          "createdAt": "2025-06-25T19:37:09Z",
+          "updatedAt": "2025-06-25T19:37:09Z"
         }
       ]
     },
@@ -11645,7 +11659,7 @@
       ],
       "body": "[Section 9.3.4.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-processing-endorsements)\n\nThis is the first explaination of Processing Endorsements, but the text states as below:\n\n`For each ev entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains either evidence, reference-values, or endorsements.`\n\nHow Endorsement ECT's can appear in the ACS is not explained and one is expected to match ECT with cmType: endorsements??",
       "createdAt": "2025-06-10T17:46:21Z",
-      "updatedAt": "2025-06-20T15:30:35Z",
+      "updatedAt": "2025-06-25T13:34:45Z",
       "closedAt": null,
       "comments": [
         {
@@ -11654,6 +11668,27 @@
           "body": "Section 9.3.4 explains how endorsements get added to the ACS. The line \"Set ev.addition.cmtype to endorsements.\" describes how cmtype becomes \"endorsements\" which aligns with the text in 9.3.4.1.\n\n> ECT cmtype contains either evidence, reference-values, or endorsements.\n\n",
           "createdAt": "2025-06-10T22:37:25Z",
           "updatedAt": "2025-06-10T22:37:25Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I am adding text to #434 to tidy up some of the edge cases which are discussed in this issue",
+          "createdAt": "2025-06-25T13:14:17Z",
+          "updatedAt": "2025-06-25T13:14:40Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I am adding text to [#434](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/434) to tidy up some of the edge cases which are discussed in this issue\n\n@andrew-draper : Could you please keep the two PRs seperate?\n\nThis issue can be fixed in a clean text which can be independent of un-related issue about instance item you had on the table...\n",
+          "createdAt": "2025-06-25T13:21:51Z",
+          "updatedAt": "2025-06-25T13:21:51Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [@andrew-draper](https://github.com/andrew-draper) : Could you please keep the two PRs seperate?\n\nNed has answered your original question and pointed to the text which results in the addition of cmtype=endorsement ACS-ECTs.\n\nIf we want to close this issue (as not-a-bug) and fix the related problems with the text with #434 then I would be ok with that.\n",
+          "createdAt": "2025-06-25T13:33:00Z",
+          "updatedAt": "2025-06-25T13:34:45Z"
         }
       ]
     },
@@ -49934,13 +49969,13 @@
       "labels": [],
       "body": "Closes Issue #242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2025-05-03T19:53:07Z",
+      "updatedAt": "2025-06-26T01:40:10Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "11cffa319f75f624395da36f6d6d7f8c6a3e079e",
+      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "quant",
-      "headRefOid": "4a9fc16dca62d01236857e7b7b4489593d9fd3eb",
+      "headRefOid": "c807e3d08d8c5643826aee087c9a72b4e96fb4fa",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -65377,21 +65412,21 @@
       "id": "PR_kwDOH6-tI86RGA1Z",
       "title": "Domain edits",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-04-02T13:53:10Z",
-      "updatedAt": "2025-06-23T16:17:25Z",
+      "updatedAt": "2025-06-25T09:35:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-subject",
       "headRefOid": "31adab75a1b290c008b91bad70d2efb4cc117b4d",
-      "closedAt": null,
+      "closedAt": "2025-06-25T09:35:38Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -65409,6 +65444,13 @@
           "body": "@thomas-fossati : @henkbirkholz @deeglaze Incorporated your comments. Please approve so that we can make progress!\r\n\r\nIf Needed, any pending issues, we can track via raising small PR's on the main line once commited.",
           "createdAt": "2025-05-22T17:32:41Z",
           "updatedAt": "2025-05-22T17:33:30Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Will be addressed using: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/454",
+          "createdAt": "2025-06-25T09:35:38Z",
+          "updatedAt": "2025-06-25T09:35:38Z"
         }
       ],
       "reviews": [
@@ -67551,13 +67593,13 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-06-20T12:55:45Z",
+      "updatedAt": "2025-06-25T19:18:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "verify-key-in-ae",
-      "headRefOid": "909dcfb1a0acfcfe112e0565263c070ae133a3db",
+      "headRefOid": "4f01cb5c49787b4836e8451a50051290e0e1346e",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -67760,6 +67802,38 @@
               "body": "typo consistnecy\r\n```suggestion\r\nIt is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.\r\n```",
               "createdAt": "2025-06-20T12:55:16Z",
               "updatedAt": "2025-06-20T12:55:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wY5LM",
+          "commit": {
+            "abbreviatedOid": "4f01cb5"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-25T19:00:04Z",
+          "updatedAt": "2025-06-25T19:18:21Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Phase 1 does key verification processing already. If a key found in this triple was one that was verified in phase 1 then verifier considers it already checked. The context used to do phase 1 checking is the same context used to do checking here as well. \r\nWhen the verifier completes processing phases it asserts an attestation result based on it's key. The Verifier makes a claim regarding what's in the ACS. If the verifier wants to assert that keys verified in phase 1 are valid it could do so by creating an ECT that explicity names the key. If the ECT authority says \"Verifier\" and the Attestation Result is signed by the Verifier they are making the same assertion of authority. That is the assertions are idempotent. If the ECT omits authority, (leaves it blank), the assertion is nevertheless made by the Verifier. Hence, it isn't an inconsisitency.\r\n\r\nIf we're saying actions taken by the verifier to assert what it did during appraisal are out of scope, then we have to ask why we think phase 1 actions can't be explicitly described and captured as part of the state of the Attester. Maybe the description of phase 5 is subtly wrong? We can say that for any claim in Evidence that ties to RV / Endorsements, that the keys used to authenticate and trust the claims are also part of Attester state. An auditor would want to check these as they would invalidate the claim if there was a problem with the checks. \r\n\r\nIf a Verifier has an appraisal policy that introduced an entirely new claim not based on an anything evaluated in previous phases, then I can understand how that would be considered out of scope.",
+              "createdAt": "2025-06-25T19:00:04Z",
+              "updatedAt": "2025-06-25T19:18:21Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "> 1. It\u2019s underspecified \u2014 e.g., what about name constraints?  What about policy OID checks?  Allowed algorithms?  Path length constraints?  Etc.\r\n\r\nIt assumes the same context that was used to do phase 1 key verifications.",
+              "createdAt": "2025-06-25T19:00:51Z",
+              "updatedAt": "2025-06-25T19:18:21Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "> 2\\. It\u2019s unclear who is responsible for defining the validation policy parameters and the trust anchors.\r\n\r\nThis is defined in phase 1 (possibly incompletely).",
+              "createdAt": "2025-06-25T19:01:25Z",
+              "updatedAt": "2025-06-25T19:18:21Z"
             }
           ]
         }
@@ -68250,13 +68324,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-18T13:48:39Z",
+      "updatedAt": "2025-06-25T16:11:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
+      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "1743c071a454528cf6b405ac486eb3b7231aaedc",
+      "headRefOid": "d8f167d460a6dbc3e8f1e0ce5c30fa9bf0698fc3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -68268,6 +68342,27 @@
           "body": "After working through Andy's use case together several observations emerged. \r\n(a) the conditions that determine when it is appropriate to add the `addition` claims exist in the claims that were matched by the `condition` independent of whether `instance-id` is present. In the particular case where instance-id is not known at the time the condition is authored helps appreciate that instance-id is truly independent in terms of a consistency model.\r\n(b) the normal behavior for endorsement is the addition ECT is constructed exactly as specified in the triple. That is to say, if you want the addition to contain anything that is expressed in the condition, then the author has to explicitly add it to the addition.\r\n(c) the instance-id is being used as a placeholder or macro for all the measurement values that resulted from condition matching. Either the combination of the measurement values or the instance-id will disambiguate which ACS ECTs to include in the match cursor.\r\n \r\nThe problem arises when trying to do (b) a'priori (e.g., at manufacturing time) without knowing exactly what claims will result from doing (a).  There are two possible solution paths described in (c) and this PR focuses on overloading instance-id as a way of grouping the relevant measurements. \r\n\r\nPossibly, a more general approach instructs the verifier to populate the addition ECT with the values matched by the condition? The claims in the `addition` then only need to be the new claims not already found in the ACS, but the conditions that existed at the time the match occurred would also be preserved in the addition ECT.\r\n\r\nSince the database consistency principles of our internal representation allow for replication of data. It would be fine if the default behavior for addition is to always copy the measurements found in the match cursor into the addition ECT. \r\n\r\nThere would be no need to overload instance-id type structure.\r\n\r\nThe way we anticipate replicated measurement values are handled currently is they are idempotent, meaning replicated values are reduced to a singleton as part of a merge operation (the definition of which is out of scope for the draft).\r\n\r\nCan anyone see a reason why this wouldn't work? \r\n\r\nConditional endorsement allows the author to specify an environment that doesn't already exist in the ACS. If that were the case, then:\r\nOption-1) the addition would contain an environment that is mismatched with the environments found in the match cursor. If the default action is to copy both the environment and the measurement values into the addition ECT then that would clobber the new ECT environment which seems like a problem. \r\n\r\nHowever, it is an easy check to make before applying the default copy behavior. In which case, if there are mismatched environment-map values then revert to what is now the current behavior of only adding what is in the `addition`. \r\n\r\nIf the Option-1 verifier consistency check is too powerful, we might consider:\r\nOption-2: Revisit the decision to allow condition endorsement the power to instantiate new ECTs (are we sure there are use cases for that aspect of conditional endorsement?). We could rely on domain membership triples as the best way to introduce new ECTs that are asserted by RVPs/Endorsers?  If there are use cases for instantiating new ECTs based on measurement state, then domain membership triples could accommodate that by allowing stateful-environment-record as a possible $domain-id-type-choice.  The semantics would be, that not only does the environment of the domain members have to exist in the ACS, but the environment with specific measurement values also have to exist in the ACS. This approach would be more general as domain triples need to apply for both RVP and Endorser roles (this has yet to be addressed but is straight forward).  The domain triple semantics is essentially, if the membership ECTs exist in ACS then \"CREATE\" a new ECT. If you reorder the triple, you could say the `member-list` is the `condition` and `domain-id` is the `addition`.  The reason conditional endorsement triple can't be used to solve domain membership uses cases is you can't only use environment-map (you HAVE to use stateful-environment-map) and you can't use it for reference values meaning there's no way to ensure corroboration is applied. It would be good to not have multiple ways to do the same thing and be able to do everything that needs to be done. ",
           "createdAt": "2025-06-13T19:20:57Z",
           "updatedAt": "2025-06-13T19:35:52Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Possibly, a more general approach instructs the verifier to populate the addition ECT with the values matched by the condition? The claims in the `addition` then only need to be the new claims not already found in the ACS, but the conditions that existed at the time the match occurred would also be preserved in the addition ECT.\r\n\r\nThis PR proposes two changes: a mechanism to check that two conditions match against the same value; and a mechanism to copy that value to an addition.\r\n \r\n> Since the database consistency principles of our internal representation allow for replication of data. It would be fine if the default behavior for addition is to always copy the measurements found in the match cursor into the addition ECT.\r\n>\r\n> There would be no need to overload instance-id type structure.\r\n> \r\n> The way we anticipate replicated measurement values are handled currently is they are idempotent, meaning replicated values are reduced to a singleton as part of a merge operation (the definition of which is out of scope for the draft).\r\n> \r\n> Can anyone see a reason why this wouldn't work?\r\n\r\nI imagine there would be objections to this, because there are currently issued RIMs which don't work like this.\r\n\r\nI think the proposed change is the more general approach. CoRIM authors who don't use it will get the same endorsement rules as the current behaviour.\r\n\r\n> Conditional endorsement allows the author to specify an environment that doesn't already exist in the ACS. If that were the case, then: Option-1) the addition would contain an environment that is mismatched with the environments found in the match cursor. If the default action is to copy both the environment and the measurement values into the addition ECT then that would clobber the new ECT environment which seems like a problem.\r\n> \r\n> However, it is an easy check to make before applying the default copy behavior. In which case, if there are mismatched environment-map values then revert to what is now the current behavior of only adding what is in the `addition`.\r\n> \r\n> If the Option-1 verifier consistency check is too powerful, we might consider: Option-2: Revisit the decision to allow condition endorsement the power to instantiate new ECTs (are we sure there are use cases for that aspect of conditional endorsement?). We could rely on domain membership triples as the best way to introduce new ECTs that are asserted by RVPs/Endorsers? If there are use cases for instantiating new ECTs based on measurement state, then domain membership triples could accommodate that by allowing stateful-environment-record as a possible $domain-id-type-choice. The semantics would be, that not only does the environment of the domain members have to exist in the ACS, but the environment with specific measurement values also have to exist in the ACS. This approach would be more general as domain triples need to apply for both RVP and Endorser roles (this has yet to be addressed but is straight forward). The domain triple semantics is essentially, if the membership ECTs exist in ACS then \"CREATE\" a new ECT. If you reorder the triple, you could say the `member-list` is the `condition` and `domain-id` is the `addition`. The reason conditional endorsement triple can't be used to solve domain membership uses cases is you can't only use environment-map (you HAVE to use stateful-environment-map) and you can't use it for reference values meaning there's no way to ensure corroboration is applied. It would be good to not have multiple ways to do the same thing and be able to do everything that needs to be done.\r\n\r\nCan you explain why restricting a conditional endorsement in some cases is better than following a single set of rules for processing conditional endorsement triples?",
+          "createdAt": "2025-06-24T16:21:58Z",
+          "updatedAt": "2025-06-24T16:21:58Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "TODO: Add discussion of handling of reference values\r\nNew pull request for 9.3.1.1 removing the idea of \"merged\"",
+          "createdAt": "2025-06-25T14:18:15Z",
+          "updatedAt": "2025-06-25T14:25:28Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "My intuition is to keep the matching semantics separate from the identifier semantics. \r\nE.g.:\r\n```\r\n;instance-slot-bind-type = #6.565(instance-slot-number)\r\n;instance-slot-ref-type = #6.566(instance-slot-number)\r\ncursor-slot = uint\r\ntagged-match-instance-id-bind = #6.565(cursor-slot)\r\ntagged-match-instance-id-ref = #6.566(cursor-slot)\r\n$wc-match-type-choice /= tagged-match-instance-id-bind\r\n$wc-match-type-choice /= tagged-match-instance-id-ref\r\n; Add more $wc-match-type-choice entries suitable for wildcard group-id matching\r\n\r\nenvironment-map = non-empty<{\r\n  ? &(class: 0) => class-map\r\n  ? &(instance: 1) => $instance-id-type-choice / $wc-match-type-choice\r\n  ? &(group: 2) => $group-id-type-choice / $wc-match-type-choice\r\n}>\r\n```\r\n\r\nI don't know if it makes sense to look at wild card matching on instance identifiers in measurement-values-map such as mac-address and ip-address etc. Possibly, Dionna's idea for generalized wild card matching on any measurement type is better. If corim goes in that direction, then maybe that is a better way to consider wildcard matching for class-map values? This should be a different PR. But possibly, the $wc-match-type-choice would be a common aspect that keeps wc matching separate from other RHS type structures. ",
+          "createdAt": "2025-06-25T16:11:34Z",
+          "updatedAt": "2025-06-25T16:11:34Z"
         }
       ],
       "reviews": [
@@ -68978,6 +69073,26 @@
               "updatedAt": "2025-06-13T13:41:35Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wV0Dm",
+          "commit": {
+            "abbreviatedOid": "d8f167d"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-25T14:46:15Z",
+          "updatedAt": "2025-06-25T14:46:36Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\r\nThe `instance-slot-bind-type` and `instance-slot-ref-type` options in the `instance` field achieves this.\r\n```",
+              "createdAt": "2025-06-25T14:46:15Z",
+              "updatedAt": "2025-06-25T14:46:36Z"
+            }
+          ]
         }
       ]
     },
@@ -68995,13 +69110,13 @@
       "labels": [],
       "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
       "createdAt": "2025-05-09T20:26:59Z",
-      "updatedAt": "2025-06-11T20:52:04Z",
+      "updatedAt": "2025-06-25T18:45:58Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
+      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "nms/issue-435",
-      "headRefOid": "e62c80ef6d030fc47ee7fea03c8bad1574489253",
+      "headRefOid": "a9d7b19c97f8635dcb8ccc6f1fb95c3642b0a28c",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -69013,6 +69128,13 @@
           "body": "@nedmsmith : We want to make progress about this prior to IETF, so please work on this, time permitting, we would like to CLOSE this by next week!!!",
           "createdAt": "2025-06-11T16:34:28Z",
           "updatedAt": "2025-06-11T16:34:28Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I believe this is ready to merge.",
+          "createdAt": "2025-06-25T18:45:58Z",
+          "updatedAt": "2025-06-25T18:45:58Z"
         }
       ],
       "reviews": [
@@ -69935,13 +70057,13 @@
       "labels": [],
       "body": "Fixes #447",
       "createdAt": "2025-06-21T19:53:26Z",
-      "updatedAt": "2025-06-24T00:01:18Z",
+      "updatedAt": "2025-06-25T19:30:14Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "gap-1",
-      "headRefOid": "7329f149be2a05e610c0541137ecfc7d2f2b0ef0",
+      "headRefOid": "1ebfc2997579901d9d0b526d6c3ac6ecf8342602",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -70173,6 +70295,158 @@
               "updatedAt": "2025-06-24T00:01:18Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wGuTW",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T16:25:10Z",
+          "updatedAt": "2025-06-24T16:25:10Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nIf the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype: &(reference-values: 0)`.\r\n```",
+              "createdAt": "2025-06-24T16:25:10Z",
+              "updatedAt": "2025-06-24T16:25:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wGve4",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T16:27:00Z",
+          "updatedAt": "2025-06-24T16:27:00Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nEach Reference Value Triple describes a single possible Attester state.\r\n```",
+              "createdAt": "2025-06-24T16:27:00Z",
+              "updatedAt": "2025-06-25T14:28:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wI0OG",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-24T19:44:55Z",
+          "updatedAt": "2025-06-24T19:44:56Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "> There can be multiple reference triples representing the various possible states of the target environment. \r\n\r\nI understand that each triple means a possibility. I'm saying that the internal representation of an attestation context contains triples to process. An RV is a representation of multiple triples. An EV is a representation of 1 triple. We should just be consistent, and have a place in internal representation to store these internal representations. Right now the document is letting them dangle. I have a proposed intrep in PR #307.",
+              "createdAt": "2025-06-24T19:44:56Z",
+              "updatedAt": "2025-06-24T19:44:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wVU19",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-25T14:18:55Z",
+          "updatedAt": "2025-06-25T14:20:39Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "> So double movement risks adding confusion to the reader\r\n\r\nWe're trying to be pedantic for consistency so that the spec doesn't have exceptional processing cases. It is a non-goal to make the spec an optized implementation.",
+              "createdAt": "2025-06-25T14:18:55Z",
+              "updatedAt": "2025-06-25T14:20:39Z"
+            },
+            {
+              "originalPosition": 34,
+              "body": "This is the \"staging area\" thread?",
+              "createdAt": "2025-06-25T14:20:32Z",
+              "updatedAt": "2025-06-25T14:20:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wVihn",
+          "commit": {
+            "abbreviatedOid": "7329f14"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM\r\n",
+          "createdAt": "2025-06-25T14:28:29Z",
+          "updatedAt": "2025-06-25T14:28:29Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wZOmY",
+          "commit": {
+            "abbreviatedOid": "1ebfc29"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-06-25T19:30:14Z",
+          "updatedAt": "2025-06-25T19:30:14Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 454,
+      "id": "PR_kwDOH6-tI86cBYdl",
+      "title": "Domain Membership Triples Processing",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/454",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-06-25T09:35:07Z",
+      "updatedAt": "2025-06-25T19:32:20Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "domain-new-proposal",
+      "headRefOid": "0fe571958ab9ea2de9d1704c0b8eed0cd03b471f",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86wZPwW",
+          "commit": {
+            "abbreviatedOid": "0fe5719"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-06-25T19:32:20Z",
+          "updatedAt": "2025-06-25T19:32:20Z",
+          "comments": []
         }
       ]
     }
