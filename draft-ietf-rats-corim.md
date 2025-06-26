@@ -203,9 +203,8 @@ and {{Section G of -cddl}}. Terms and concepts are always referenced as proper n
 This document uses the following terms:
 
 {: vspace="0"}
-Appraisal Session:
-: A structure that tracks all state that corresponds to a single request for attestation appraisal.
-This includes the inputs prior to validation as well as the Appraisal Context.
+Appraisal:
+: A single run of the Appraisal Procedure.
 
 Appraisal Context:
 : A structure that contains all validated state needed for performing the normative phases of the Appraisal Procedure.
@@ -286,7 +285,7 @@ In addition to the external CoRIM documents, the Verifier is expected to create 
 By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
 The origin of the inputs is tracked as *authority*.
 The authority for the Claims in a CoRIM is the CoRIM issuer.
-To this effect, this specification defines one possible internal representation of the attester's actual state for use during the appraisal procedure, known as Appraisal Claims Set (ACS).
+To this effect, this specification defines one possible internal representation of the attester's actual state for use during the Appraisal Procedure, known as Appraisal Claims Set (ACS).
 
 Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
 Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
@@ -298,7 +297,7 @@ In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's C
 A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
 For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
 The Verifier may produce new assertions as a result of an applied appraisal policy.
-For example, if an appraisal procedure finds all of the components of a subsystem are configured correctly, the policy may direct the Verifier to produce new assertions, "Subsystem=X" has the Claim "TRUSTED=TRUE".
+For example, if an Appraisal Procedure finds all of the components of a subsystem are configured correctly, the policy may direct the Verifier to produce new assertions, "Subsystem=X" has the Claim "TRUSTED=TRUE".
 Consequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual Messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion (the authority), and has applied Conceptual Message constraints to the assertion.
 
 The CoRIM data model specified in this document covers the RATS Conceptual Message types, "Reference Values" and "Endorsements".
@@ -306,7 +305,7 @@ Reference values and Endorsements are required for Verifier reconciliation, and 
 
 ## Internal Representation {#sec-internal-rep}
 
-In this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the appraisal procedure.
+In this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the Appraisal Procedure.
 The actual internal representation of a Verifier is implementation-specific and out-of-scope of this document.
 Requirements for an internal representation of Conceptual Messages are defined in {{tbl-cmrr}}, where each Conceptual Message type has a structure as depicted by the *Structure* column.
 The internal representations used by this document are defined in {{sec-ir-cm}}.
@@ -314,7 +313,7 @@ The internal representations used by this document are defined in {{sec-ir-cm}}.
 ## Interacting with an ACS {#sec-interact-acs}
 
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
+Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements:
 
 | CM Type | Structure | Description |
 |---
@@ -646,7 +645,7 @@ At a high level, a triple is a statement that links a subject to an object via a
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
 This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
-The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
+The MTI triples are essential to a basic Appraisal Procedure as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
 Every CoRIM Verifier MUST implement the MTI triples.
 The OTI class of triples are generally useful across profiles.
 A CoRIM Verifier SHOULD implement OTI triples.
@@ -1359,7 +1358,7 @@ The Conditional Endorsement Series Triple is used to assert endorsed values base
 Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
 For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
 
-These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+These restrictions ensure that evaluation order does not change the meaning of the triple during the Appraisal Procedure.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
 The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
 
@@ -1569,8 +1568,8 @@ The following describes each member of the `concise-tl-tag` map.
   the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
   a complete set of verification-related information.  The `tags-list` behaves
   like a signaling mechanism from the supply chain (e.g., a product vendor) to
-  a Verifier that activates the tags in `tags-list` for use in the Evidence
-  appraisal process, and the activation is atomic. All tags listed in `tags-list`
+  a Verifier that activates the tags in `tags-list` for use in the Appraisal
+  Procedure, and the activation is atomic. All tags listed in `tags-list`
   MUST be activated or no tags are activated.
 
 * `tl-validity` (index 2): Specifies the validity period of the CoTL.
@@ -1701,7 +1700,7 @@ Inputs to a Verifier are mapped from their external representation to an interna
 CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
 CoRIM data structures may also be used by Evidence and Attestation Results that wish to describe overlapping structure.
 CoRIM-based data structures define an external representation of Conceptual Messages that are mapped to an internal representation.
-Appraisal processing describes both mapping transformations and Verifier reconciliation ({{sec-verifier-rec}}).
+The Appraisal Procedure describes both mapping transformations and Verifier reconciliation ({{sec-verifier-rec}}).
 Non-CoRIM-based data structures require mapping transformation, but these are out of scope for this document.
 
 If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile.
@@ -1972,7 +1971,7 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 
 ## Appraisal Context Construction (Phase 1) {#sec-phase1}
 
-During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoTL tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
+During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoTL tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}, and the clock time used for validity judgments and policy evaluation.
 These objects will be utilized in the Evidence Appraisal phase that follows.
 The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
 
@@ -1982,29 +1981,13 @@ The primary goal of this phase is to ensure that all necessary information is av
 
 ### Input Collection {#sec-phase1-collect}
 
-The exchange of a request for attestation appraisal for a response of Attestation Results corresponds to a single Attestation Session.
-
-During this setup phase, the Verifier populates its Appraisal Session with a consistent view of all its inputs to the Appraisal Procedure.
-The clock time used for validity judgments and policy evaluation is an input.
-
 How the Verifier collects its inputs is out of scope of this document.
 
-It is RECOMMENDED for a Verifier to log the external inputs used for any given Appraisal Session.
-It is RECOMMENDED for a Verifier's attestation results to include a URI to the Appraisal Session log.
+It is RECOMMENDED for a Verifier to log the external inputs used for any given Appraisal.
+It is RECOMMENDED for a Verifier's attestation results to include a URI to the Appraisal log.
 
-
-### Internal Representation of Appraisal Session {#sec-ir-asession}
-
-An Appraisal Session includes Verifier-specific session state as well as a collection of inputs to process.
-Conceptual Messages are given explicit representation in the session.
-
-~~~ cddl
-{::include cddl/intrep-asession.cddl}
-~~~
-
-Initially all inputs whose interpretation of in scope of this specification are stored in `ir-appraisal-session`.`cms`.
 The ACS is stored in the Appraisal Context, as well as remaining appraisal items.
-The appraisal procedure phases translate CoMID triples into their various internal representations and store them in the appraisal context.
+The Appraisal Procedure phases translate CoMID triples into their various internal representations and store them in the appraisal context.
 
 #### CoRIM and tag Selection
 
@@ -2129,7 +2112,7 @@ The following mapping conventions apply to all forms of input transformation:
 
 All of the extracted and validated tags are loaded into an *appraisal context*.
 The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
-The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
+The selected tags are mapped to an internal representation, making them suitable for processing.
 
 #### Evidence Tranformation
 
@@ -2838,7 +2821,7 @@ groups to use this information as they see fit".
 
 Evidence appraisal is at the core of any RATS protocol flow, mediating all interactions between Attesters and their Relying Parties.
 The Verifier is effectively part of the Attesters' and Relying Parties' trusted computing base (TCB).
-Any mistake in the appraisal procedure conducted by the Verifier could have security implications.
+Any mistake in the Appraisal Procedure conducted by the Verifier could have security implications.
 For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
 
 Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
@@ -2855,7 +2838,7 @@ This includes the following aspects:
 - Conducting regular, automated audits and reviews of the system, such as ensuring that users' privileges are correctly configured and that any new code has been audited and approved by independent parties;
 - Failing securely in the event of errors to avoid compromising the security of the system.
 
-It is critical that appraisal procedures are auditable and reproducible.
+It is critical that the Appraisal Procedure is auditable and reproducible.
 The integrity of code and data during execution is an explicit objective, for example, ensuring that the appraisal functions are executed in an attestable trusted execution environment (TEE).
 
 The integrity of public and private key material and the secrecy of private key material must be ensured at all times.
