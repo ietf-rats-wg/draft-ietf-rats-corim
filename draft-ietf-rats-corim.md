@@ -2358,7 +2358,7 @@ Corroboration is the process of determining whether actual Attester state (as co
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared, as per the Appraisal Policy for Evidence, with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
-If satisfied, for the `rv` entry, the following three steps are performed.
+If satisfied, for the `rv` entry, the following three steps are performed:
 
 1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
 2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
