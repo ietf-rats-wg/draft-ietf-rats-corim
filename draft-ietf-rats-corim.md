@@ -2362,7 +2362,7 @@ If satisfied, for the `rv` entry, the following three steps are performed:
 
 1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
 2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
-3. It is verified that the `authority` field of the `addition` ECT is indeed set correctly to the RVP authority
+3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
