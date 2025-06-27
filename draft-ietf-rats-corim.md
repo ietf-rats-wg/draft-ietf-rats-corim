@@ -1836,7 +1836,7 @@ If the `condition` containing reference ECTs matches Evidence ECTs then the Evid
 
 The reference ECTs define the matching conditions that are applied to Evidence ECTs.
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
-Refer to ({{sec-phase3}}) for how the `rv` entries are processed.
+Refer to {{sec-phase3}} for how the `rv` entries are processed.
 
 {{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
 
