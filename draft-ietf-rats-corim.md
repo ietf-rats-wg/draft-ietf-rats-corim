@@ -1452,10 +1452,10 @@ See {{sec-comid-triple-identity}} for additional details.
 
 A domain is a topological description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
-The following CDDL describes domain type choices.
+The following CDDL describes domain type.
 
 ~~~ cddl
-{::include cddl/domain-type-choice.cddl}
+{::include cddl/domain-type.cddl}
 ~~~
 
 Domain structure is defined with the following types of triples.
