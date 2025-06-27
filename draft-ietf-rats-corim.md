@@ -2361,7 +2361,7 @@ For each `rv` entry, the `condition` ECT is compared, as per the Appraisal Polic
 If satisfied, for the `rv` entry, the following three steps are performed.
 
 1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
-2. The claims, i.e. `element-list` from ACS ECT with `cmtype: &(evidence: 2)` is copied to `element-list` of `addition` ECT
+2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
 3. It is verified that the `authority` field of the `addition` ECT is indeed set correctly to the RVP authority
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
