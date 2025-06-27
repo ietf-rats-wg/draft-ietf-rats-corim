@@ -2356,7 +2356,7 @@ Each Reference Value Triple describes a single possible Attester state.
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
-For each `rv` entry, the `condition` ECT is compared, as per the Appraisal Policy for Evidence, with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
+For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
 If satisfied, for the `rv` entry, the following three steps are performed:
 
