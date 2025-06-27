@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 27 December 2025                                         Linaro
+Expires: 29 December 2025                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            25 June 2025
+                                                            27 June 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 December 2025.
+   This Internet-Draft will expire on 29 December 2025.
 
 Copyright Notice
 
@@ -185,14 +185,15 @@ Table of Contents
                3)
        9.3.4.  Endorsed Values Augmentation (Phase 4)
          9.3.4.1.  Processing Endorsements
-           9.3.4.1.1.  Copying instance field from a condition
+           9.3.4.1.1.  Copying instance and/or group fields from a
+                   condition
          9.3.4.2.  Processing Conditional Endorsement Series
          9.3.4.3.  Processing Key Verification Endorsements
        9.3.5.  Examples for optional phases 5, 6, and 7
      9.4.  Comparing a condition ECT against the ACS
        9.4.1.  Comparing a condition ECT against a single ACS entry
        9.4.2.  Environment Comparison
-         9.4.2.1.  Instance slot bind and reference fields
+         9.4.2.1.  Instance and group slot bind and reference fields
        9.4.3.  Authority comparison
        9.4.4.  Element list comparison
        9.4.5.  Element map comparison
@@ -1341,6 +1342,9 @@ Table of Contents
    expressions of UEID, UUID, variable-length opaque byte string
    (Section 7.8), cryptographic keys, or cryptographic key identifiers.
 
+   The slot-bind and slot-ref types are used for constrained wildcard
+   processing, see Section 9.3.4.1.1
+
    $instance-id-type-choice /= tagged-ueid-type
    $instance-id-type-choice /= tagged-uuid-type
    $instance-id-type-choice /= tagged-bytes
@@ -1350,14 +1354,14 @@ Table of Contents
    $instance-id-type-choice /= tagged-key-thumbprint-type
    $instance-id-type-choice /= tagged-cert-thumbprint-type
    $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-   $instance-id-type-choice /= instance-slot-bind-type
-   $instance-id-type-choice /= instance-slot-ref-type
+   $instance-id-type-choice /= slot-bind-type
+   $instance-id-type-choice /= slot-ref-type
 
-   instance-slot-bind-type = #6.565(instance-slot-number)
+   slot-bind-type = #6.565(slot-number)
 
-   instance-slot-ref-type = #6.566(instance-slot-number)
+   slot-ref-type = #6.566(slot-number)
 
-   instance-slot-number = uint
+   slot-number = uint
 
 5.1.4.1.3.   Environment Group
 
@@ -1368,8 +1372,13 @@ Table of Contents
    The types defined for a group identified are UUID and variable-length
    opaque byte string (Section 7.8).
 
+   Within group, the slot-bind and slot-ref types work in a similar way
+   to the same fields within instance, see Section 9.3.4.1.1
+
    $group-id-type-choice /= tagged-uuid-type
    $group-id-type-choice /= tagged-bytes
+   $group-id-type-choice /= slot-bind-type
+   $group-id-type-choice /= slot-ref-type
 
 5.1.4.1.4.  Measurements
 
@@ -3335,48 +3344,50 @@ Table of Contents
    ACS-ECTs, or sets of ACS-ECTs.  If there are multiple matches then
    each match is processed independently from the others.
 
-9.3.4.1.1.  Copying instance field from a condition
+9.3.4.1.1.  Copying instance and/or group fields from a condition
 
    A CoRIM author may need to create a conditional endorsement which
    applies to all all measurements which have the same class field
-   within their environment-map, regardless of their instance field.
-   The instance-slot-bind-type and instance-slot-ref-type options in the
-   instance field can be used to achieve this.
+   within their environment-map, regardless of their instance and/or
+   group fields.  The slot-bind-type and slot-ref-type options in these
+   fields can be used to achieve this.
 
    In the simplest case, the CoRIM sets the enviroment-map.instance
    field of a stateful-environment-record within the triple to hold an
-   instance-slot-bind-type and the enviroment-map.instance field of an
-   endorsed-triple-record to hold an instance-slot-ref-type.  Both
-   instance types contain an integer name for the slot variable which is
-   bound by the instance-slot-bind-type and referenced by the instance-
-   slot-ref-type.
+   slot-bind-type and the enviroment-map.instance field of an endorsed-
+   triple-record to hold an slot-ref-type.  Both instance types contain
+   an integer name for the slot variable which is bound by the slot-
+   bind-type and referenced by the slot-ref-type.
 
    Within each triple, each slot variable can only be bound to one
-   value, so if there are multiple environment-maps using instance-slot-
-   bind-type then subsequent uses introduce a constraint that the value
-   to bind must be equal to the value already bound to the slot.
+   value, so if there are multiple environment-maps using slot-bind-type
+   then subsequent uses introduce a constraint that the value to bind
+   must be equal to the value already bound to the slot.
 
    After successfully matching a stateful-environment-record containing
-   an instance-slot-bind-type against an ACS entry, the verifier SHALL
-   copy the instance value from that ACS entry to the corresponding slot
+   an slot-bind-type against an ACS entry, the verifier SHALL copy the
+   instance value from that ACS entry to the corresponding slot
    variable.  If the matching ACS entry does not include an instance
    then the slot variable is marked as bound to the empty value.
 
    When adding a conditional endorsement whose enviroment-map.instance
-   field is an instance-slot-ref-type to the ACS, and that variable is
-   bound to a non-empty value, then the verifier SHALL set the
-   enviroment-map.instance field from the contents of the corresponding
-   slot variable.  If the corresponding slot variable is bound to the
-   empty value then the verifier SHALL NOT add an instance field.  If
-   the corresponding slot variable is not bound then the triple is
-   invalid - the verifier SHALL NOT add the conditional endorsement to
-   the ACS.
+   field is an slot-ref-type to the ACS, and that variable is bound to a
+   non-empty value, then the verifier SHALL set the enviroment-
+   map.instance field from the contents of the corresponding slot
+   variable.  If the corresponding slot variable is bound to the empty
+   value then the verifier SHALL NOT add an instance field.  If the
+   corresponding slot variable is not bound then the triple is invalid -
+   the verifier SHALL NOT add the conditional endorsement to the ACS.
 
    If a conditional endorsement containing stateful environments which
-   use instance-slot-bind-type matches against multiple ECTs, then each
-   match is processed independently of the others.  Each match uses its
-   own slot bindings, and each match adds a separate endorsement ECT to
-   the ACS.
+   use slot-bind-type matches against multiple ECTs, then each match is
+   processed independently of the others.  Each match uses its own slot
+   bindings, and each match adds a separate endorsement ECT to the ACS.
+
+   The slot-bind-type and slot-ref-type options in the group field work
+   in the same way as in instance.  The slot variables for instance and
+   group slots are separate, instance slot 0 and group slot 0 may be
+   bound to different values.
 
 9.3.4.2.  Processing Conditional Endorsement Series
 
@@ -3533,30 +3544,33 @@ Table of Contents
    the presence of, and value of, the corresponding ACS entry field
    SHALL NOT affect whether the environments match.
 
-9.4.2.1.  Instance slot bind and reference fields
+9.4.2.1.  Instance and group slot bind and reference fields
 
    These fields are used to ensure that multiple conjoined conditions
-   match against the same instance value.  They are also used to set the
-   instance value in a conditional endorsement ACS entry to match the
-   matched ECTs.
+   match against the same instance or group value.  They are also used
+   to set the instance or group value in a conditional endorsement
+   addition-ECT to match the matched ECTs.
+
+   Processing of slot-bind and slot-ref within the group field operates
+   in the same way as for the instance field.  The instance and group
+   slots are not related.
 
    The verifier maintains a small array of instance slots, each slot is
    identified using a non-negative integer.  Before processing each
    triple, all slots SHALL be set to the unbound state.
 
    If the condition ECT environment-map contains an instance field of
-   type instance-slot-bind-type and that slot is not yet bound then it
-   matches against any instance value.  The instance field in the ACS
-   entry is copied into the instance slot variable with the relevant
-   instance-slot-number.
+   type slot-bind-type and that slot is not yet bound then it matches
+   against any instance value.  The instance field in the ACS entry is
+   copied into the instance slot variable with the relevant slot-number.
 
    If the condition ECT environment-map contains an instance field of
-   type instance-slot-bind-type and that slot is bound to a value which
-   is not binary identical to the value in the condition ECT then the
+   type slot-bind-type and that slot is bound to a value which is not
+   binary identical to the value in the condition ECT then the
    environments do not match.
 
-   If a condition ECT contains an instance field of type instance-slot-
-   ref-type then it is invalid and the environments do not match.
+   If a condition ECT contains an instance field of type slot-ref-type
+   then it is invalid and the environments do not match.
 
 9.4.3.  Authority comparison
 
@@ -4073,11 +4087,11 @@ Table of Contents
    | 564     | array       | tagged-int-range, see         | RFCthis   |
    |         |             | Section 5.1.4.1.7             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 565     | instance-   | instance-slot-bind, see       | RFCthis   |
-   |         | slot-bind   | Section 9.3.4.1.1             |           |
+   | 565     | slot-bind   | slot-bind, see                | RFCthis   |
+   |         |             | Section 9.3.4.1.1             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 566     | instance-   | instance-slot-ref, see        | RFCthis   |
-   |         | slot-ref    | Section 9.3.4.1.1             |           |
+   | 566     | slot-ref    | slot-ref, see                 | RFCthis   |
+   |         |             | Section 9.3.4.1.1             |           |
    +---------+-------------+-------------------------------+-----------+
    | 567-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
@@ -5054,6 +5068,8 @@ Appendix A.  Base CoRIM CDDL
 
    $group-id-type-choice /= tagged-uuid-type
    $group-id-type-choice /= tagged-bytes
+   $group-id-type-choice /= slot-bind-type
+   $group-id-type-choice /= slot-ref-type
 
    identity-triple-record = [
      environment: environment-map
@@ -5073,14 +5089,14 @@ Appendix A.  Base CoRIM CDDL
    $instance-id-type-choice /= tagged-key-thumbprint-type
    $instance-id-type-choice /= tagged-cert-thumbprint-type
    $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-   $instance-id-type-choice /= instance-slot-bind-type
-   $instance-id-type-choice /= instance-slot-ref-type
+   $instance-id-type-choice /= slot-bind-type
+   $instance-id-type-choice /= slot-ref-type
 
-   instance-slot-bind-type = #6.565(instance-slot-number)
+   slot-bind-type = #6.565(slot-number)
 
-   instance-slot-ref-type = #6.566(instance-slot-number)
+   slot-ref-type = #6.566(slot-number)
 
-   instance-slot-number = uint
+   slot-number = uint
 
    ip-addr-type-choice = ip4-addr-type / ip6-addr-type
    ip4-addr-type = bytes .size 4

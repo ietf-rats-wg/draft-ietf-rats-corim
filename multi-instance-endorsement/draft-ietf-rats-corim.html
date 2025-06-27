@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 27 December 2025</td>
+<td class="center">Expires 29 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-25" class="published">25 June 2025</time>
+<time datetime="2025-06-27" class="published">27 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-27">27 December 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-29">29 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 27 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 29 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1552,7 +1552,7 @@ This document specifies the information elements for representing Endorsements a
                         <p id="section-toc.1-1.9.2.3.2.4.2.1.1"><a href="#section-9.3.4.1" class="auto internal xref">9.3.4.1</a>.  <a href="#name-processing-endorsements" class="internal xref">Processing Endorsements</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.1.2.1">
-                            <p id="section-toc.1-1.9.2.3.2.4.2.1.2.1.1"><a href="#section-9.3.4.1.1" class="auto internal xref">9.3.4.1.1</a>.  <a href="#name-copying-instance-field-from" class="internal xref">Copying instance field from a condition</a></p>
+                            <p id="section-toc.1-1.9.2.3.2.4.2.1.2.1.1"><a href="#section-9.3.4.1.1" class="auto internal xref">9.3.4.1.1</a>.  <a href="#name-copying-instance-and-or-gro" class="internal xref">Copying instance and/or group fields from a condition</a></p>
 </li>
                         </ul>
 </li>
@@ -1579,7 +1579,7 @@ This document specifies the information elements for representing Endorsements a
                     <p id="section-toc.1-1.9.2.4.2.2.1"><a href="#section-9.4.2" class="auto internal xref">9.4.2</a>.  <a href="#name-environment-comparison" class="internal xref">Environment Comparison</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4.2.2.2.1">
-                        <p id="section-toc.1-1.9.2.4.2.2.2.1.1"><a href="#section-9.4.2.1" class="auto internal xref">9.4.2.1</a>.  <a href="#name-instance-slot-bind-and-refe" class="internal xref">Instance slot bind and reference fields</a></p>
+                        <p id="section-toc.1-1.9.2.4.2.2.2.1.1"><a href="#section-9.4.2.1" class="auto internal xref">9.4.2.1</a>.  <a href="#name-instance-and-group-slot-bin" class="internal xref">Instance and group slot bind and reference fields</a></p>
 </li>
                     </ul>
 </li>
@@ -2973,7 +2973,8 @@ See <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4.2.1.2" class="re
 The key identifier is reliably bound to the subject public key because the identifier is a digest of the key.<a href="#section-5.1.4.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1.2-2">The types defined for an instance identifier are CBOR tagged expressions of
 UEID, UUID, variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>), cryptographic keys, or cryptographic key identifiers.<a href="#section-5.1.4.1.2-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.2-3">
+<p id="section-5.1.4.1.2-3">The <code>slot-bind</code> and <code>slot-ref</code> types are used for constrained wildcard processing, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a><a href="#section-5.1.4.1.2-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.2-4">
 <pre>
 $instance-id-type-choice /= tagged-ueid-type
 $instance-id-type-choice /= tagged-uuid-type
@@ -2984,15 +2985,15 @@ $instance-id-type-choice /= tagged-cose-key-type
 $instance-id-type-choice /= tagged-key-thumbprint-type
 $instance-id-type-choice /= tagged-cert-thumbprint-type
 $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-$instance-id-type-choice /= instance-slot-bind-type
-$instance-id-type-choice /= instance-slot-ref-type
+$instance-id-type-choice /= slot-bind-type
+$instance-id-type-choice /= slot-ref-type
 
-instance-slot-bind-type = #6.565(instance-slot-number)
+slot-bind-type = #6.565(slot-number)
 
-instance-slot-ref-type = #6.566(instance-slot-number)
+slot-ref-type = #6.566(slot-number)
 
-instance-slot-number = uint
-</pre><a href="#section-5.1.4.1.2-3" class="pilcrow">¶</a>
+slot-number = uint
+</pre><a href="#section-5.1.4.1.2-4" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -3005,11 +3006,14 @@ instance-slot-number = uint
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.<a href="#section-5.1.4.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1.3-2">The types defined for a group identified are UUID and variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>).<a href="#section-5.1.4.1.3-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.1.3-3">
+<p id="section-5.1.4.1.3-3">Within <code>group</code>, the <code>slot-bind</code> and <code>slot-ref</code> types work in a similar way to the same fields within <code>instance</code>, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a><a href="#section-5.1.4.1.3-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.1.3-4">
 <pre>
 $group-id-type-choice /= tagged-uuid-type
 $group-id-type-choice /= tagged-bytes
-</pre><a href="#section-5.1.4.1.3-3" class="pilcrow">¶</a>
+$group-id-type-choice /= slot-bind-type
+$group-id-type-choice /= slot-ref-type
+</pre><a href="#section-5.1.4.1.3-4" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -5623,23 +5627,25 @@ Each <code>ev</code> entry is processed independently of other <code>ev</code>s.
 For each match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), all the <code>ev</code>.<code>addition</code> ECTs are added to the ACS.<a href="#section-9.3.4.1-3" class="pilcrow">¶</a></p>
 <p id="section-9.3.4.1-4">Note that some condition values are able to match against multiple ACS-ECTs, or sets of ACS-ECTs.
 If there are multiple matches then each match is processed independently from the others.<a href="#section-9.3.4.1-4" class="pilcrow">¶</a></p>
-<div id="sec-comid-instance-copy">
+<div id="sec-comid-instance-group-copy">
 <section id="section-9.3.4.1.1">
-              <h6 id="name-copying-instance-field-from">
-<a href="#section-9.3.4.1.1" class="section-number selfRef">9.3.4.1.1. </a><a href="#name-copying-instance-field-from" class="section-name selfRef">Copying instance field from a condition</a>
+              <h6 id="name-copying-instance-and-or-gro">
+<a href="#section-9.3.4.1.1" class="section-number selfRef">9.3.4.1.1. </a><a href="#name-copying-instance-and-or-gro" class="section-name selfRef">Copying instance and/or group fields from a condition</a>
               </h6>
-<p id="section-9.3.4.1.1-1">A CoRIM author may need to create a conditional endorsement which applies to all all measurements which have the same <code>class</code> field within their <code>environment-map</code>, regardless of their instance field.
-The <code>instance-slot-bind-type</code> and <code>instance-slot-ref-type</code> options in the <code>instance</code> field can be used to achieve this.<a href="#section-9.3.4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-2">In the simplest case, the CoRIM sets the <code>enviroment-map</code>.<code>instance</code> field of a <code>stateful-environment-record</code> within the triple to hold an <code>instance-slot-bind-type</code> and the <code>enviroment-map</code>.<code>instance</code> field of an <code>endorsed-triple-record</code> to hold an <code>instance-slot-ref-type</code>.
-Both instance types contain an integer name for the slot variable which is bound by the <code>instance-slot-bind-type</code> and referenced by the <code>instance-slot-ref-type</code>.<a href="#section-9.3.4.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-3">Within each triple, each slot variable can only be bound to one value, so if there are multiple <code>environment-map</code>s using <code>instance-slot-bind-type</code> then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.<a href="#section-9.3.4.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-4">After successfully matching a <code>stateful-environment-record</code> containing an <code>instance-slot-bind-type</code> against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable.
+<p id="section-9.3.4.1.1-1">A CoRIM author may need to create a conditional endorsement which applies to all all measurements which have the same <code>class</code> field within their <code>environment-map</code>, regardless of their <code>instance</code> and/or <code>group</code> fields.
+The <code>slot-bind-type</code> and <code>slot-ref-type</code> options in these fields can be used to achieve this.<a href="#section-9.3.4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-2">In the simplest case, the CoRIM sets the <code>enviroment-map</code>.<code>instance</code> field of a <code>stateful-environment-record</code> within the triple to hold an <code>slot-bind-type</code> and the <code>enviroment-map</code>.<code>instance</code> field of an <code>endorsed-triple-record</code> to hold an <code>slot-ref-type</code>.
+Both instance types contain an integer name for the slot variable which is bound by the <code>slot-bind-type</code> and referenced by the <code>slot-ref-type</code>.<a href="#section-9.3.4.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-3">Within each triple, each slot variable can only be bound to one value, so if there are multiple <code>environment-map</code>s using <code>slot-bind-type</code> then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.<a href="#section-9.3.4.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-4">After successfully matching a <code>stateful-environment-record</code> containing an <code>slot-bind-type</code> against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable.
 If the matching ACS entry does not include an instance then the slot variable is marked as bound to the empty value.<a href="#section-9.3.4.1.1-4" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-5">When adding a conditional endorsement whose <code>enviroment-map</code>.<code>instance</code> field is an <code>instance-slot-ref-type</code> to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL set the <code>enviroment-map</code>.<code>instance</code> field from the contents of the corresponding slot variable.
+<p id="section-9.3.4.1.1-5">When adding a conditional endorsement whose <code>enviroment-map</code>.<code>instance</code> field is an <code>slot-ref-type</code> to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL set the <code>enviroment-map</code>.<code>instance</code> field from the contents of the corresponding slot variable.
 If the corresponding slot variable is bound to the empty value then the verifier SHALL NOT add an <code>instance</code> field.
 If the corresponding slot variable is not bound then the triple is invalid - the verifier SHALL NOT add the conditional endorsement to the ACS.<a href="#section-9.3.4.1.1-5" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-6">If a conditional endorsement containing stateful environments which use <code>instance-slot-bind-type</code> matches against multiple ECTs, then each match is processed independently of the others.
+<p id="section-9.3.4.1.1-6">If a conditional endorsement containing stateful environments which use <code>slot-bind-type</code> matches against multiple ECTs, then each match is processed independently of the others.
 Each match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.<a href="#section-9.3.4.1.1-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-7">The <code>slot-bind-type</code> and <code>slot-ref-type</code> options in the <code>group</code> field work in the same way as in <code>instance</code>.
+The slot variables for instance and group slots are separate, instance slot 0 and group slot 0 may be bound to different values.<a href="#section-9.3.4.1.1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5765,19 +5771,21 @@ Before performing the binary comparison, the Verifier SHOULD convert both <code>
 <p id="section-9.4.2-3">If any field which is present in the condition ECT <code>environment-map</code> is not present in the ACS entry, then the environments do not match.<a href="#section-9.4.2-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-4">If any field which is present in the condition ECT <code>environment-map</code> is not binary identical to the corresponding ACS entry field, then the environments do not match.<a href="#section-9.4.2-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-5">If a field is not present in the condition ECT <code>environment-map</code> then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.<a href="#section-9.4.2-5" class="pilcrow">¶</a></p>
-<div id="instance-slot-bind-and-reference-fields">
+<div id="instance-and-group-slot-bind-and-reference-fields">
 <section id="section-9.4.2.1">
-            <h5 id="name-instance-slot-bind-and-refe">
-<a href="#section-9.4.2.1" class="section-number selfRef">9.4.2.1. </a><a href="#name-instance-slot-bind-and-refe" class="section-name selfRef">Instance slot bind and reference fields</a>
+            <h5 id="name-instance-and-group-slot-bin">
+<a href="#section-9.4.2.1" class="section-number selfRef">9.4.2.1. </a><a href="#name-instance-and-group-slot-bin" class="section-name selfRef">Instance and group slot bind and reference fields</a>
             </h5>
-<p id="section-9.4.2.1-1">These fields are used to ensure that multiple conjoined conditions match against the same instance value.
-They are also used to set the instance value in a conditional endorsement ACS entry to match the matched ECTs.<a href="#section-9.4.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-2">The verifier maintains a small array of instance slots, each slot is identified using a non-negative integer.
-Before processing each triple, all slots SHALL be set to the unbound state.<a href="#section-9.4.2.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-3">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>instance-slot-bind-type</code> and that slot is not yet bound then it matches against any instance value.
-The instance field in the ACS entry is copied into the instance slot variable with the relevant <code>instance-slot-number</code>.<a href="#section-9.4.2.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-4">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>instance-slot-bind-type</code> and that slot is bound to a value which is not binary identical to the value in the condition ECT then the environments do not match.<a href="#section-9.4.2.1-4" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-5">If a condition ECT contains an <code>instance</code> field of type <code>instance-slot-ref-type</code> then it is invalid and the environments do not match.<a href="#section-9.4.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-1">These fields are used to ensure that multiple conjoined conditions match against the same instance or group value.
+They are also used to set the instance or group value in a conditional endorsement addition-ECT to match the matched ECTs.<a href="#section-9.4.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-2">Processing of <code>slot-bind</code> and <code>slot-ref</code> within the <code>group</code> field operates in the same way as for the <code>instance</code> field.
+The instance and group slots are not related.<a href="#section-9.4.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-3">The verifier maintains a small array of instance slots, each slot is identified using a non-negative integer.
+Before processing each triple, all slots SHALL be set to the unbound state.<a href="#section-9.4.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-4">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>slot-bind-type</code> and that slot is not yet bound then it matches against any instance value.
+The instance field in the ACS entry is copied into the instance slot variable with the relevant <code>slot-number</code>.<a href="#section-9.4.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-5">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>slot-bind-type</code> and that slot is bound to a value which is not binary identical to the value in the condition ECT then the environments do not match.<a href="#section-9.4.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-6">If a condition ECT contains an <code>instance</code> field of type <code>slot-ref-type</code> then it is invalid and the environments do not match.<a href="#section-9.4.2.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -6358,18 +6366,18 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
             <tr>
               <td class="text-left" rowspan="1" colspan="1">565</td>
               <td class="text-left" rowspan="1" colspan="1">
-                <code>instance-slot-bind</code>
+                <code>slot-bind</code>
 </td>
-              <td class="text-left" rowspan="1" colspan="1">instance-slot-bind, see <a href="#sec-comid-instance-copy" class="auto internal xref">Section 9.3.4.1.1</a>
+              <td class="text-left" rowspan="1" colspan="1">slot-bind, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a>
 </td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">566</td>
               <td class="text-left" rowspan="1" colspan="1">
-                <code>instance-slot-ref</code>
+                <code>slot-ref</code>
 </td>
-              <td class="text-left" rowspan="1" colspan="1">instance-slot-ref, see <a href="#sec-comid-instance-copy" class="auto internal xref">Section 9.3.4.1.1</a>
+              <td class="text-left" rowspan="1" colspan="1">slot-ref, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a>
 </td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
@@ -7930,6 +7938,8 @@ flags-map = {
 
 $group-id-type-choice /= tagged-uuid-type
 $group-id-type-choice /= tagged-bytes
+$group-id-type-choice /= slot-bind-type
+$group-id-type-choice /= slot-ref-type
 
 identity-triple-record = [
   environment: environment-map
@@ -7949,14 +7959,14 @@ $instance-id-type-choice /= tagged-cose-key-type
 $instance-id-type-choice /= tagged-key-thumbprint-type
 $instance-id-type-choice /= tagged-cert-thumbprint-type
 $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-$instance-id-type-choice /= instance-slot-bind-type
-$instance-id-type-choice /= instance-slot-ref-type
+$instance-id-type-choice /= slot-bind-type
+$instance-id-type-choice /= slot-ref-type
 
-instance-slot-bind-type = #6.565(instance-slot-number)
+slot-bind-type = #6.565(slot-number)
 
-instance-slot-ref-type = #6.566(instance-slot-number)
+slot-ref-type = #6.566(slot-number)
 
-instance-slot-number = uint
+slot-number = uint
 
 ip-addr-type-choice = ip4-addr-type / ip6-addr-type
 ip4-addr-type = bytes .size 4
