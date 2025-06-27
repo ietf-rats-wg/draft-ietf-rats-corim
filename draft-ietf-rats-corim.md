@@ -919,8 +919,12 @@ The key identifier is reliably bound to the subject public key because the ident
 The types defined for an instance identifier are CBOR tagged expressions of
 UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cryptographic keys, or cryptographic key identifiers.
 
+The `slot-bind` and `slot-ref` types are used for constrained wildcard processing, see {{sec-comid-instance-group-copy}}
+
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
+
+{::include cddl/instance-bind-ref-type.cddl}
 ~~~
 
 ##### Environment Group {#sec-comid-group}
@@ -930,6 +934,8 @@ Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
 The types defined for a group identified are UUID and variable-length opaque byte string ({{sec-common-tagged-bytes}}).
+
+Within `group`, the `slot-bind` and `slot-ref` types work in a similar way to the same fields within `instance`, see {{sec-comid-instance-group-copy}}
 
 ~~~ cddl
 {::include cddl/group-id-type-choice.cddl}
@@ -2367,14 +2373,41 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
-Endorsements are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+Endorsed Value Triple and Conditional Endorsement Triple share the same internal representation.
+Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Value Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
+The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; it can only add a single Endorsement ECT; and it uses the same enviromnent for `condition` and `addition`.
 
-#### Processing Conditional Endorsements {#sec-process-cond-end}
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
 
-Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
-Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
+The Verifier SHALL find all sets of ACS-ECTs which match all the `ev`.`condition`s, where the ACS-ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+For each match ({{sec-match-condition-ect}}), all the `ev`.`addition` ECTs are added to the ACS.
+
+Note that some condition values are able to match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches then each match is processed independently from the others.
+
+##### Copying instance and/or group fields from a condition {#sec-comid-instance-group-copy}
+
+A CoRIM author may need to create a conditional endorsement which applies to all all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` and/or `group` fields.
+The `slot-bind-type` and `slot-ref-type` options in these fields can be used to achieve this.
+
+In the simplest case, the CoRIM sets the `enviroment-map`.`instance` field of a `stateful-environment-record` within the triple to hold an `slot-bind-type` and the `enviroment-map`.`instance` field of an `endorsed-triple-record` to hold an `slot-ref-type`.
+Both instance types contain an integer name for the slot variable which is bound by the `slot-bind-type` and referenced by the `slot-ref-type`.
+
+Within each triple, each slot variable can only be bound to one value, so if there are multiple `environment-map`s using `slot-bind-type` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.
+
+After successfully matching a `stateful-environment-record` containing an `slot-bind-type` against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable.
+If the matching ACS entry does not include an instance then the slot variable is marked as bound to the empty value.
+
+When adding a conditional endorsement whose `enviroment-map`.`instance` field is an `slot-ref-type` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL set the `enviroment-map`.`instance` field from the contents of the corresponding slot variable.
+If the corresponding slot variable is bound to the empty value then the verifier SHALL NOT add an `instance` field.
+If the corresponding slot variable is not bound then the triple is invalid - the verifier SHALL NOT add the conditional endorsement to the ACS.
+
+If a conditional endorsement containing stateful environments which use `slot-bind-type` matches against multiple ECTs, then each match is processed independently of the others.
+Each match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.
+
+The `slot-bind-type` and `slot-ref-type` options in the `group` field work in the same way as in `instance`.
+The slot variables for instance and group slots are separate, instance slot 0 and group slot 0 may be bound to different values.
 
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
@@ -2477,6 +2510,24 @@ If any field which is present in the condition ECT `environment-map` is not pres
 If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
 
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
+
+#### Instance and group slot bind and reference fields
+
+These fields are used to ensure that multiple conjoined conditions match against the same instance or group value.
+They are also used to set the instance or group value in a conditional endorsement addition-ECT to match the matched ECTs.
+
+Processing of `slot-bind` and `slot-ref` within the `group` field operates in the same way as for the `instance` field.
+The instance and group slots are not related.
+
+The verifier maintains a small array of instance slots, each slot is identified using a non-negative integer.
+Before processing each triple, all slots SHALL be set to the unbound state.
+
+If the condition ECT `environment-map` contains an `instance` field of type `slot-bind-type` and that slot is not yet bound then it matches against any instance value.
+The instance field in the ACS entry is copied into the instance slot variable with the relevant `slot-number`.
+
+If the condition ECT `environment-map` contains an `instance` field of type `slot-bind-type` and that slot is bound to a value which is not binary identical to the value in the condition ECT then the environments do not match.
+
+If a condition ECT contains an `instance` field of type `slot-ref-type` then it is invalid and the environments do not match.
 
 ### Authority comparison {#sec-compare-authority}
 
@@ -2780,7 +2831,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
-| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     565 | `slot-bind`         | slot-bind, see {{sec-comid-instance-group-copy}}              | {{&SELF}} |
+|     566 | `slot-ref`          | slot-ref, see {{sec-comid-instance-group-copy}}               | {{&SELF}} |
+| 567-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
