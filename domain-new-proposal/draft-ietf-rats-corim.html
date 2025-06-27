@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 27 December 2025</td>
+<td class="center">Expires 29 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-25" class="published">25 June 2025</time>
+<time datetime="2025-06-27" class="published">27 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-27">27 December 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-29">29 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 27 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 29 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3760,10 +3760,10 @@ attest-key-triple-record = [
 <a href="#section-5.1.4.8" class="section-number selfRef">5.1.4.8. </a><a href="#name-triples-for-domain-definiti" class="section-name selfRef">Triples for domain definitions</a>
             </h5>
 <p id="section-5.1.4.8-1">A domain is a topological description of a Composite Attester in terms of its constituent Environments and their compositional relationships.<a href="#section-5.1.4.8-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.8-2">The following CDDL describes domain type choices.<a href="#section-5.1.4.8-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.8-2">The following CDDL describes domain type.<a href="#section-5.1.4.8-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.8-3">
 <pre>
-$domain-type-choice /= environment-map
+domain-type /= environment-map
 </pre><a href="#section-5.1.4.8-3" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.4.8-4">Domain structure is defined with the following types of triples.<a href="#section-5.1.4.8-4" class="pilcrow">¶</a></p>
@@ -3778,8 +3778,8 @@ Expressing the members in a DMT as domains allows the recursive construction of 
 <div class="lang-cddl sourcecode" id="section-5.1.4.8.1-2">
 <pre>
 domain-membership-triple-record = [
-  domain-id: $domain-type-choice
-  members: [ +  $domain-type-choice ]
+  domain-id: domain-type
+  members: [ +  domain-type ]
 ]
 </pre><a href="#section-5.1.4.8.1-2" class="pilcrow">¶</a>
 </div>
@@ -3796,8 +3796,8 @@ Dependency means the subject domain’s trustworthiness properties rely on the o
 <div class="lang-cddl sourcecode" id="section-5.1.4.8.2-2">
 <pre>
 domain-dependency-triple-record = [
-  $domain-type-choice
-  [ + $domain-type-choice ]
+  domain-type
+  [ + domain-type ]
 ]
 </pre><a href="#section-5.1.4.8.2-2" class="pilcrow">¶</a>
 </div>
@@ -8107,13 +8107,13 @@ tagged-cert-path-thumbprint-type = #6.561(digest)
 tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
 domain-dependency-triple-record = [
-  $domain-type-choice
-  [ + $domain-type-choice ]
+  domain-type
+  [ + domain-type ]
 ]
 
 domain-membership-triple-record = [
-  domain-id: $domain-type-choice
-  members: [ +  $domain-type-choice ]
+  domain-id: domain-type
+  members: [ +  domain-type ]
 ]
 
 conditional-endorsement-triple-record = [
@@ -8121,7 +8121,7 @@ conditional-endorsement-triple-record = [
   endorsements: [ + endorsed-triple-record ]
 ]
 
-$domain-type-choice /= environment-map
+domain-type /= environment-map
 
 endorsed-triple-record = [
   condition: environment-map
