@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-06-26T02:05:36.900471+00:00",
+  "timestamp": "2025-06-29T02:23:02.314003+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2793,7 +2793,7 @@
       ],
       "body": "Current domain triples don't allow device composition using domain namespaces and current tag semantics only imply device composition. CoBOM describes tag activation, meaning the set of tags containing information that is related to a device can be specified, but it doesn't define hierarchical relationships between tags. Some tags, such as ta-stores, do not imply device composition. Comid and coswid tags have linked-tags relationships that help manage tag lifecycles, but tag-ids are not long lived. Hence, they are not ideal for representing device composition.\r\n\r\nDomain namespaces have long lived identifiers, but the current `domain-membership-triple-record` only allows multiple `environment-map` entities to be members of a domain namespace. The `domain-dependency-triple-record` has semantics that traces trust dependencies which shouldn't be overloaded with domain membership semantics. \r\n\r\nThis issue proposes extending `domain-membership-triple-record` to include `$domain-type-choice` objects. This will allow it to be used to construct a device composition hierarchy using long lived identifiers. \r\n\r\nA comid tag could be defined to implicitly contain a domain namespace that is unnamed. A domain membership triple that uses the same domain name for the subject and the object could be used to assign a long lived domain name to a comid tag. \r\n\r\nE.g.,:\r\nTag-1 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [ \"X\" ]\r\n      ]\r\n]\r\n```\r\nMultiple domains could exist within a tag if a second domain name appears within the same triple object as the triple subject. \r\nE.g.,\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [ \"X\",  \"Y\" ]\r\n      ]\r\n]\r\n```\r\nMultiple tags can be related by composition using membership triple where both have self-asserted namespace names and a membership triple links them together.\r\ne.g.,\r\nTag-2 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"Z\",\r\n         obj: [ \"Z\" ]\r\n      ]\r\n]\r\n```\r\nAnd tag-1 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [  \"X\",  \"Z\" ]\r\n      ]\r\n]\r\n```\r\nThe cddl would be something like:\r\n```\r\ndomain-membership-triple-record = [\r\n  $domain-type-choice\r\n  [ + $domain-member-type-choice  ]\r\n]\r\n$domain-member-type-choice /= environment-map\r\n$domain-member-type-choice /= $domain-type-choice\r\n```\r\n",
       "createdAt": "2023-05-23T23:16:29Z",
-      "updatedAt": "2025-04-15T19:29:50Z",
+      "updatedAt": "2025-06-27T16:47:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -2865,6 +2865,13 @@
           "body": "> For Layering, we need a way for the rim to indicate that another TE must have been validated before this TE can be considered validated.\n\nThis echos the semantics of the dependency triple (maybe trust-dependency is a better name?).\nTrust dependency based on layering has a natural end where there is a TE that doesn't have AE capabilities. This might be a bus (CXL, USB, PCIE) device or network endpoint. The dependency chain goes from the TE to each AE ending with a Root of Trust AE. There can be multiple roots of trust and multple TE paths to a common RoT in the same system. These appear to be fragments of a complete system that might be described by membership triples. https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416 will model an ECT that knows it's parent (domain) ECT. But it doesn't model trust dependency since it is possible for an ECT to describe a TE where the domain reference doesn't also imply reverse trust dependency. It might be sufficient to include an optional field that indicates reverse trust dependency.\nGiven:\n```\nECT = {\n  ? environment: environment-map\n  ? element-list: [ + element-map ]\n  ? authority: [ + $crypto-key-type-choice ]\n  cmtype: cm-type\n  ? profile: $profile-type-choice\n  ? domain-id: environment-map\n}\n```\nRevised to include (reverse) trust dependency:\n```\nECT = {\n  ? environment: environment-map\n  ? element-list: [ + element-map ]\n  ? authority: [ + $crypto-key-type-choice ]\n  cmtype: cm-type\n  ? profile: $profile-type-choice\n  ? parent: composition\n}\ncomposition := {\n   &(domain: 0) => environment-map\n   &(trusted-by-this: 1) => bool .default false\n}\n```\nIn DICE layering, Evidence ECT for layer 0 will populate parent with `{ layer1-env, true }`; Layer 1 will have `{ layer-2-env, true }`, and layer-2, a TE, will not populate `parent`.\n\nA membership triple will create a `dm` that has as one of its members `[layer-2-env, ... ]`.\n\nA top level `dm` domain ECT, `top-domain`, will not populate `parent` and will identify `layer-2-env` as a child. The layer-2 ECT will not identify `top-domain` as it's `parent`.  Part of processing `dm` should include search ACS for evidence ECTs that contains `layer-2-env`. A reference ECT can be populated for layer-2 that contains `{top-domain, false}`. As the other evidence ECTs are corroborated, Reference ECTs will exist that parallel evidence. A search for Layer-0 ECT will be the starting point that allows an unbroken path from layer-0 to `top-domain` by following `parent`.",
           "createdAt": "2025-04-15T18:52:45Z",
           "updatedAt": "2025-04-15T19:29:49Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #454 will allow domains to be members in a collection, so that hierarchical composition can be documented.. ",
+          "createdAt": "2025-06-27T16:47:06Z",
+          "updatedAt": "2025-06-27T16:47:06Z"
         }
       ]
     },
@@ -8863,7 +8870,7 @@
       ],
       "body": "RFC9277 defines TN function for generating CBOR tags from CF ID. The IANA sections don't clearly identify the corim entry point such that if a CBOR tag is generated, what CDDL/CBOR is the next byte following the tag value.\r\n\r\nFor example, a generated tag might replace #6.502.",
       "createdAt": "2024-11-01T13:58:56Z",
-      "updatedAt": "2025-02-15T22:30:03Z",
+      "updatedAt": "2025-06-27T16:42:29Z",
       "closedAt": null,
       "comments": [
         {
@@ -8872,6 +8879,13 @@
           "body": "Given that we've dropped #6.502 and #6.500, there is still the matter of #6.501. It bugs me a little that TN(CoAPContentFormatLookup(\"application/rim+cbor\")) is redundant with 501, and TN(CoAPContentFormatLookup(\"application/rim+cose\")) is redundant with the combination of 18 and the content-type protected header, but at least the latter solves Thomas's problem.\n\nI would recommend that we specify TN(CoAPContentFormatLookup(\"application/rim+cbor\")) has an entry point of `bytes .cbor corim-map` and TN(CoAPContentFormatLookup(\"application/rim+cose\")) has an entry point of `bytes .cbor signed-corim`.",
           "createdAt": "2025-02-15T22:30:03Z",
           "updatedAt": "2025-02-15T22:30:03Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith : Can you please update this issue, with the required status",
+          "createdAt": "2025-06-27T16:42:29Z",
+          "updatedAt": "2025-06-27T16:42:29Z"
         }
       ]
     },
@@ -8936,7 +8950,7 @@
       ],
       "body": "> Endorsed environments ([Section 5.1.4.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-endval)) membership is conditional upon successful matching of Reference Values ([Section 5.1.4.2](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-comid-triple-refval)) to Evidence.\r\n\r\nI don't think we have a sense of which reference values an environment is supposed to match before suggesting that its within a particular trust domain. We got rid of the wording of matching reference values for endorsed triples for this reason.",
       "createdAt": "2024-11-13T05:22:46Z",
-      "updatedAt": "2025-04-15T18:33:24Z",
+      "updatedAt": "2025-06-27T16:43:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -8977,9 +8991,9 @@
         {
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
-          "body": "Some of the discussions and conclusions will reflect in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/416",
+          "body": "Some of the discussions and conclusions will reflect in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/454",
           "createdAt": "2025-04-15T18:33:23Z",
-          "updatedAt": "2025-04-15T18:33:23Z"
+          "updatedAt": "2025-06-27T16:43:47Z"
         }
       ]
     },
@@ -9706,7 +9720,7 @@
       ],
       "body": "When Evidence is included in X.509 certs or when an X.509 cert is the signer of Evidence (other CM), the signer key is in DER/BER. Given the way to map an external representation to internal by copying, there needs to be a DER form of $crypto-key-type-choice. \n\nAlternatively, there needs to be a convention for converting keys to an internal representation. But since the CoRIM internal representation is optional. It isn't pragmatic to rely on the internal representation convention for authoring conditions. \n\nIt may be reasonable for implementations to support key mapping routines and make a best effort attempt at matching based on  this. Does it make sense to make it mandatory for implementations to do best-effort key conversion? \n\nAlternatively, does it make sense for CoRIM to standardize an internal representation for keys independent of the current (optional) internal representation convention? ",
       "createdAt": "2025-02-12T01:39:42Z",
-      "updatedAt": "2025-02-24T23:31:09Z",
+      "updatedAt": "2025-06-27T17:07:15Z",
       "closedAt": null,
       "comments": [
         {
@@ -9743,6 +9757,13 @@
           "body": "We want to claim that two independently operated verifiers that implement to this spec will arrive at the same result given same inputs. If the attester input has crypto-keys and a endorser inputs a conditional endorsement. Does the above convention mean that attester and endorser must a'priori knowledge as to which key type is used?",
           "createdAt": "2025-02-24T23:31:08Z",
           "updatedAt": "2025-02-24T23:31:08Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze : Can you please check, if the original issue is now addressed? if yes, can you please close this..?",
+          "createdAt": "2025-06-27T17:07:15Z",
+          "updatedAt": "2025-06-27T17:07:15Z"
         }
       ]
     },
@@ -11185,7 +11206,7 @@
       "id": "I_kwDOH6-tI860SbDm",
       "title": "Ambiguous `tagged-bytes` inside `instance-id-type-choice`",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/428",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "setrofim",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -11194,8 +11215,8 @@
       ],
       "body": "`instance-id-type-choice` has `crypto-key-type-choice` as one of its variants. Both of theses type choices have `tagged-bytes` as a possible variant.\n\nThat means that if you see `tagged-bytes` in the data, it is impossible to know whether they should be interpreted as generic instance ID bytes, or as a crypto key.\n\nThis can lead to the loss information that bytes are meant to be a key. This can also pontentially lead to deviation between  how different implementations process the same input.",
       "createdAt": "2025-04-28T12:08:33Z",
-      "updatedAt": "2025-05-22T14:42:50Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-27T16:01:18Z",
+      "closedAt": "2025-06-27T16:01:18Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -11266,6 +11287,13 @@
           "body": "In todays meeting, unanimous resolution to Identify which of the crypto key types are applicable for Instance ID and selectively insert them rather than full import! @nedmsmith to start investigating, with support from other members of CoRIM Team.",
           "createdAt": "2025-04-30T15:05:09Z",
           "updatedAt": "2025-04-30T15:05:09Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed as Completed!",
+          "createdAt": "2025-06-27T16:01:18Z",
+          "updatedAt": "2025-06-27T16:01:18Z"
         }
       ]
     },
@@ -11395,7 +11423,7 @@
       "labels": [],
       "body": "At present, there is only one possible choice (`environment-map`), so why add a possibly confusing layer of indirection?\r\n\r\nIOW, why can\u2019t `domain-id` just be `environment-map`?\r\n",
       "createdAt": "2025-05-22T19:49:27Z",
-      "updatedAt": "2025-05-26T13:15:41Z",
+      "updatedAt": "2025-06-27T16:41:34Z",
       "closedAt": null,
       "comments": [
         {
@@ -11425,6 +11453,13 @@
           "body": "> CoEV has it patterned after draft CoRIM.\n\nIIUC, you want to make domain ID an open type in IETF CoRIM, so that CoEV can extend it for its purposes, right?\n\nThe problem is that, at present, IETF CoRIM doesn\u2019t define an extensibility story for domain IDs.\n\nIt is not clear to me whether #416 strictly requires the domain ID to be an `environment-map`.  If not, allowing the non-recursive domain IDs should also be allowed.",
           "createdAt": "2025-05-26T13:14:57Z",
           "updatedAt": "2025-05-26T13:15:40Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We agreed in CoRIM meeting 27th June 2025 that extensibility of domain is NOT allowed and not required as strictly, it will be encoded as an `environment-map`. Hence PR #454 will address this aspect and once 454 is merged, this issue will be closed",
+          "createdAt": "2025-06-27T16:41:34Z",
+          "updatedAt": "2025-06-27T16:41:34Z"
         }
       ]
     },
@@ -11442,7 +11477,7 @@
       "labels": [],
       "body": "Reference values triples is an array of values where multiple possible values can be included as reference values to be compared (matched) against evidence.\n\nThe processing section seems to document the matching process correctly, but it would help if the reference values triples section clearly explained how to use the array of triples to represent \"possible\" states. \n\nAlso, there is the case where mkey is the same value and there is an array of measurement values. Should this be another way to represent \"possible\" states or should the semantics be that the multiple measurements map to multiple components, each having an expected state(value)?\n\nIf measurement-map multiplicity contains possible state, then the processing section needs to be reworded. \n\nAlternatively, there should be normative language in the Evidence specifications that forbids multiple measurement-map entries where mkey is the same and the measurement-values-map entries are the same code point and type. \n\nNote PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/258 describes a macro any-of<T> which makes an array of T. If used in refererence-values triples, it is reasonable to consider whether the any-of<> semantics means the set can be possible state. \n\n\n",
       "createdAt": "2025-05-29T17:49:31Z",
-      "updatedAt": "2025-05-29T21:30:31Z",
+      "updatedAt": "2025-06-27T17:16:27Z",
       "closedAt": null,
       "comments": [
         {
@@ -11500,6 +11535,13 @@
           "body": "> If the internal representation prefers writing reference values as [4]\n\nI would think [4] is also ill-formed since given the same authorized-by list, there is wording about merging measurements as a requirement:\n\n> If Evidence or Endorsements from different sources has the same environment-map and authorized-by then the measurement-values-maps are merged.\n\nThis also appears to not have been updated with the readdition of measurement multiplicity since I would expect it to say the measurement-values-maps are merged for corresponding mkeys.\n\nFurthermore, I'm not certain you could actually have different values for X when you have different authorized-by, since they're meant to match evidence, which will not have conflicting values. If we're talking about different folks' addition of conflicting values for endorsements, then that's something else that I don't really know what to do with.\n\nUpdate: nevermind [4] being ill-formed. I was thinking in terms of ECT/ACS. Let me get back to this..",
           "createdAt": "2025-05-29T21:25:29Z",
           "updatedAt": "2025-05-29T21:30:30Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith : Could you please check this one ? I think, we have addressed this in the new wording of RV entries",
+          "createdAt": "2025-06-27T17:16:27Z",
+          "updatedAt": "2025-06-27T17:16:27Z"
         }
       ]
     },
@@ -11526,7 +11568,7 @@
       "id": "I_kwDOH6-tI8660sZh",
       "title": "Verifier Algorithm Gaps-1",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/447",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -11535,8 +11577,8 @@
       ],
       "body": "[Section 9.2.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-reference-triples-transform)\n\nStates that \n\nONLY Env-Maps are copied in both Condition & Addition\n\n`\ncopy(environment-map, rv.condition.environment.environment-map)\ncopy(environment-map, rv.addition.environment.environment-map)\n`\n\n\nHowever, [Section 9.1.4](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-internal-representation-of-r)\n\nStates that:\n`The rv relation is a list of condition-addition pairings where each pairing is evaluated together. If the condition containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the addition.`\n\nSo effectively the Evidence ECT which includes Claims + Environment should be compared with Ref-Values Condition, but the  Section 9.2.3.3 is out of sync with 9.1.4",
       "createdAt": "2025-06-10T17:35:26Z",
-      "updatedAt": "2025-06-12T23:46:44Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-27T15:59:12Z",
+      "closedAt": "2025-06-27T15:59:12Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -11601,7 +11643,7 @@
       "id": "I_kwDOH6-tI8660xnw",
       "title": "Verifier Algorithm  Gap-2",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/448",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -11610,8 +11652,8 @@
       ],
       "body": "[Section 9.3.3](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.3.3) Reference Value Corroboration Needs Clarity!\n\nIt says\n`Reference Values are matched with ACS entries by iterating through the rv list. For each rv entry, the condition ECT is compared with an ACS ECT, where the ACS ECT cmtype contains evidence.`\n\n\nIf the ECTs match except for authority, the rv addition ECT authority is added to the ACS ECT authority.\n\nThis text implies that the Evidence ECTs are modified with the Authority of RVP.\n\nHowever, other parts of text indicate that the `reference-value` cmTypes are added into ACS. The Phase 3 explanation does not tie up with addition of ECTs with CmType: Reference Value",
       "createdAt": "2025-06-10T17:42:43Z",
-      "updatedAt": "2025-06-23T12:47:47Z",
-      "closedAt": null,
+      "updatedAt": "2025-06-27T16:38:25Z",
+      "closedAt": "2025-06-27T16:38:25Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -11640,6 +11682,13 @@
           "body": "PR #453 also clarifies the gaps as reported in this issue!",
           "createdAt": "2025-06-23T12:47:47Z",
           "updatedAt": "2025-06-23T12:47:47Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "closing as PR #453 addresses the issue",
+          "createdAt": "2025-06-27T16:38:25Z",
+          "updatedAt": "2025-06-27T16:38:25Z"
         }
       ]
     },
@@ -49969,7 +50018,7 @@
       "labels": [],
       "body": "Closes Issue #242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2025-06-26T01:40:10Z",
+      "updatedAt": "2025-06-27T14:44:23Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
@@ -68324,13 +68373,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-25T16:11:34Z",
+      "updatedAt": "2025-06-27T14:34:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "d8f167d460a6dbc3e8f1e0ce5c30fa9bf0698fc3",
+      "headRefOid": "0a0dade80f5702737b1b2e6d687da2b5b7455512",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -68363,6 +68412,13 @@
           "body": "My intuition is to keep the matching semantics separate from the identifier semantics. \r\nE.g.:\r\n```\r\n;instance-slot-bind-type = #6.565(instance-slot-number)\r\n;instance-slot-ref-type = #6.566(instance-slot-number)\r\ncursor-slot = uint\r\ntagged-match-instance-id-bind = #6.565(cursor-slot)\r\ntagged-match-instance-id-ref = #6.566(cursor-slot)\r\n$wc-match-type-choice /= tagged-match-instance-id-bind\r\n$wc-match-type-choice /= tagged-match-instance-id-ref\r\n; Add more $wc-match-type-choice entries suitable for wildcard group-id matching\r\n\r\nenvironment-map = non-empty<{\r\n  ? &(class: 0) => class-map\r\n  ? &(instance: 1) => $instance-id-type-choice / $wc-match-type-choice\r\n  ? &(group: 2) => $group-id-type-choice / $wc-match-type-choice\r\n}>\r\n```\r\n\r\nI don't know if it makes sense to look at wild card matching on instance identifiers in measurement-values-map such as mac-address and ip-address etc. Possibly, Dionna's idea for generalized wild card matching on any measurement type is better. If corim goes in that direction, then maybe that is a better way to consider wildcard matching for class-map values? This should be a different PR. But possibly, the $wc-match-type-choice would be a common aspect that keeps wc matching separate from other RHS type structures. ",
           "createdAt": "2025-06-25T16:11:34Z",
           "updatedAt": "2025-06-25T16:11:34Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> My intuition is to keep the matching semantics separate from the identifier semantics....\r\n\r\nI like this description of the semantics, and will update to something like this if nobody disagrees.\r\n\r\n> I don't know if it makes sense to look at wild card matching on instance identifiers in measurement-values-map such as mac-address and ip-address etc. Possibly, Dionna's idea for generalized wild card matching on any measurement type is better. If corim goes in that direction, then maybe that is a better way to consider wildcard matching for class-map values? This should be a different PR. But possibly, the $wc-match-type-choice would be a common aspect that keeps wc matching separate from other RHS type structures.\r\n\r\nThis is an interesting idea, but I think it should probably be a different PR. Making the change you propose above will make it easier to implement this second PR.",
+          "createdAt": "2025-06-27T14:34:04Z",
+          "updatedAt": "2025-06-27T14:34:04Z"
         }
       ],
       "reviews": [
@@ -69110,7 +69166,7 @@
       "labels": [],
       "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
       "createdAt": "2025-05-09T20:26:59Z",
-      "updatedAt": "2025-06-25T18:45:58Z",
+      "updatedAt": "2025-06-27T15:11:38Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
@@ -69414,6 +69470,19 @@
               "updatedAt": "2025-06-11T20:11:34Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2Ch6",
+          "commit": {
+            "abbreviatedOid": "a9d7b19"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-06-27T15:11:38Z",
+          "updatedAt": "2025-06-27T15:11:38Z",
+          "comments": []
         }
       ]
     },
@@ -70050,24 +70119,26 @@
       "id": "PR_kwDOH6-tI86bhhJO",
       "title": "Address issue reported in Gap-1",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/453",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #447",
       "createdAt": "2025-06-21T19:53:26Z",
-      "updatedAt": "2025-06-25T19:30:14Z",
+      "updatedAt": "2025-06-27T15:59:16Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "gap-1",
-      "headRefOid": "1ebfc2997579901d9d0b526d6c3ac6ecf8342602",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "95613ed1a76843e631c753380ea8def36d1b6e57",
+      "closedAt": "2025-06-27T15:59:11Z",
+      "mergedAt": "2025-06-27T15:59:11Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e838cc939708b000962f466224a083dbec013f28"
+      },
       "comments": [],
       "reviews": [
         {
@@ -70407,6 +70478,159 @@
           "createdAt": "2025-06-25T19:30:14Z",
           "updatedAt": "2025-06-25T19:30:14Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2A2P",
+          "commit": {
+            "abbreviatedOid": "1ebfc29"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:09:25Z",
+          "updatedAt": "2025-06-27T15:09:25Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nRefer to {{sec-phase3}} for how the `rv` entries are processed.\r\n```",
+              "createdAt": "2025-06-27T15:09:25Z",
+              "updatedAt": "2025-06-27T15:09:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2DtU",
+          "commit": {
+            "abbreviatedOid": "83c48c3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:13:09Z",
+          "updatedAt": "2025-06-27T15:13:09Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "Why was this added?",
+              "createdAt": "2025-06-27T15:13:09Z",
+              "updatedAt": "2025-06-27T15:13:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2GiA",
+          "commit": {
+            "abbreviatedOid": "83c48c3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:17:11Z",
+          "updatedAt": "2025-06-27T15:17:11Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nIf the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype` set to `reference-values`.\r\n```",
+              "createdAt": "2025-06-27T15:17:11Z",
+              "updatedAt": "2025-06-27T15:17:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2HuJ",
+          "commit": {
+            "abbreviatedOid": "9c368b1"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:18:57Z",
+          "updatedAt": "2025-06-27T15:18:57Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\n2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT\r\n```",
+              "createdAt": "2025-06-27T15:18:57Z",
+              "updatedAt": "2025-06-27T15:18:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2IE0",
+          "commit": {
+            "abbreviatedOid": "c360051"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:19:29Z",
+          "updatedAt": "2025-06-27T15:19:30Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\r\nIf satisfied, for the `rv` entry, the following three steps are performed:\r\n```",
+              "createdAt": "2025-06-27T15:19:30Z",
+              "updatedAt": "2025-06-27T15:19:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2Jvz",
+          "commit": {
+            "abbreviatedOid": "2636257"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:21:53Z",
+          "updatedAt": "2025-06-27T15:21:53Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\n3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority\r\n```",
+              "createdAt": "2025-06-27T15:21:53Z",
+              "updatedAt": "2025-06-27T15:21:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2Lb3",
+          "commit": {
+            "abbreviatedOid": "83c48c3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:24:18Z",
+          "updatedAt": "2025-06-27T15:24:18Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\r\nFor each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.\r\n```",
+              "createdAt": "2025-06-27T15:24:18Z",
+              "updatedAt": "2025-06-27T15:24:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2MEu",
+          "commit": {
+            "abbreviatedOid": "95613ed"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-06-27T15:25:17Z",
+          "updatedAt": "2025-06-27T15:25:17Z",
+          "comments": []
         }
       ]
     },
@@ -70422,13 +70646,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-06-25T09:35:07Z",
-      "updatedAt": "2025-06-25T19:32:20Z",
+      "updatedAt": "2025-06-27T17:58:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
+      "baseRefOid": "e838cc939708b000962f466224a083dbec013f28",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-new-proposal",
-      "headRefOid": "0fe571958ab9ea2de9d1704c0b8eed0cd03b471f",
+      "headRefOid": "04a756babbed8a1f88a5a695869904262a3d828b",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -70447,6 +70671,92 @@
           "createdAt": "2025-06-25T19:32:20Z",
           "updatedAt": "2025-06-25T19:32:20Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86wwq6K",
+          "commit": {
+            "abbreviatedOid": "0fe5719"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Just a couple of comments.  I\u2019ll complete the review before our next call.",
+          "createdAt": "2025-06-27T09:03:31Z",
+          "updatedAt": "2025-06-27T09:04:46Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "If there\u2019s only one type, let\u2019s drop the choice.",
+              "createdAt": "2025-06-27T09:03:31Z",
+              "updatedAt": "2025-06-27T09:04:46Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "Curly braces are redundant and can be dropped.",
+              "createdAt": "2025-06-27T09:04:18Z",
+              "updatedAt": "2025-06-27T09:04:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w11sv",
+          "commit": {
+            "abbreviatedOid": "0fe5719"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T14:57:44Z",
+          "updatedAt": "2025-06-27T14:57:45Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "I have seen different descriptions of \"composite attester\".\r\n\r\nDoes a domain have to be a complete composite attester, or can it be just part of it.\r\n\r\nCan we use a more general description, perhaps something like:\r\n\r\n> A domain is a group of environments which are logically connected and should be processed together.",
+              "createdAt": "2025-06-27T14:57:44Z",
+              "updatedAt": "2025-06-27T14:57:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w12KP",
+          "commit": {
+            "abbreviatedOid": "0fe5719"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T14:58:17Z",
+          "updatedAt": "2025-06-27T14:58:17Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\nThe triple's subject is the domain identifier while the triple\u2019s object lists all the member Environments within the domain.\r\n```",
+              "createdAt": "2025-06-27T14:58:17Z",
+              "updatedAt": "2025-06-27T14:58:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86w2dLr",
+          "commit": {
+            "abbreviatedOid": "0fe5719"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-06-27T15:51:04Z",
+          "updatedAt": "2025-06-27T15:51:05Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\r\ndm = [ + ( domain: ECT ) ]\r\n```",
+              "createdAt": "2025-06-27T15:51:05Z",
+              "updatedAt": "2025-06-27T15:52:33Z"
+            }
+          ]
         }
       ]
     }
