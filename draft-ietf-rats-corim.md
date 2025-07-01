@@ -119,10 +119,6 @@ informative:
   I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
-  SLSA:
-    title: >
-      Supply-chain Levels for Software Artifacts
-    target: https://slsa.dev
   DICE.cert:
     title: DICE Certificate Profiles
     author:
@@ -1528,17 +1524,18 @@ CoRIM profiles are best used to document vendor or industry defined extensions.
 
 # CoTL {#sec-cotl}
 
-A Concise Tag List (CoTL) object represents the signal for the
-Verifier to activate the listed tags. Verifier policy determines whether CoTLs are required.
+A Concise Tag List (CoTL) object represents the signal for the Verifier to activate the listed tags.
+A tag is "active" if it is included in inputs to an Appraisal.
+Verifier policy determines whether CoTLs are required.
 
-When CoTLs are required, each tag MUST be activated by a CoTL before being processed.
+When CoTLs are required, each non-CoTL tag MUST be activated by a CoTL before being processed.
 All the tags listed in the CoTL MUST be activated atomically. If any tag activated by a CoTL is not available to the Verifier, the entire CoTL is rejected.
 
 The number of CoTLs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
 
 If a Verifier Owner has a policy that does not require CoTL, tags within a CoRIM received by a Verifier
-are activated immediately and treated valid for appraisal.
+are activated immediately for Appraisals.
 
 There may be cases when Verifier receives CoRIMs from multiple
 Reference Value providers and Endorsers. In such cases, a supplier (or other authorities, such as integrators)
@@ -1972,12 +1969,22 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 ## Appraisal Context Construction (Phase 1) {#sec-phase1}
 
 During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoTL tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}, and the clock time used for validity judgments and policy evaluation.
-These objects will be utilized in the Evidence Appraisal phase that follows.
-The primary goal of this phase is to ensure that all necessary information is available for subsequent processing.
+The validated inputs chosen to use in the Appraisal Procedure are put in a staging area, `intrep-stage`.
+
+~~~ cddl
+{::include cddl/intrep-stage.cddl}
+~~~
+
+The object that represents an entire Appraisal is an Appraisal Context, `stage`, that pairs the staging area and ACS.
 
 ~~~ cddl
 {::include cddl/intrep-actx.cddl}
 ~~~
+
+The primary goal of this phase is to ensure hermeticity for subsequent processing.
+Given the same Appraisal Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
+
+Note: the deterministic constraint applies to profile-defined comparison semantics.
 
 ### Input Collection {#sec-phase1-collect}
 
@@ -1991,43 +1998,18 @@ The Appraisal Procedure phases translate CoMID triples into their various intern
 
 #### CoRIM and tag Selection
 
-All available CoRIMs in `ir-appraisal-session`.`cms`.`corims` and tags in `ir-appraisal-session`.`cms`.`tags` are checked for validity.
-
-
-### Appraisal hermeticity
-
-The Appraisal Context at the and of Phase 1 constitutes all inputs to the Appraisal Procedure.
-
-Given the same Appraisal Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
-
-Note: the deterministic constraint applies to profile-defined comparison semantics.
-
-The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
-For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
-
-### Input Validation {#sec-phase1-valid}
-
-#### CoRIM and tag Selection
-
-All available CoRIMs in `ir-appraisal-session`.`cms`.`corims` and tags in `ir-appraisal-session`.`cms`.`tags` from the Appraisal Session's inputs are checked for validity.
+All available CoRIMs in the Appraisal's inputs are checked for validity.
 
 Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded from the session.
 
-Any input that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded from the session.
+Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
+An example of such a mechanism is a digital signature.
 
-Selected tags are added to `ir-appraisal-session`.`select` by mapping their tag identifier to a `tag-state` that is a pair of the tag and `activity: unknown`.
-
-Other selection criteria MAY be applied.
-For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier for that Evidence format MAY be discarded.
-Selection policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of this document.
-Any input that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded from the session.
-
-Selected tags are added to `ir-appraisal-session`.`select` by mapping their tag identifier to a `tag-state` that is a pair of the tag and `activity: unknown`.
+Other selection criteria MAY be applied provided they are deterministic.
 
 #### Tags Extraction and Validation
 
 The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoTL, and CoTS.
-
 The Verifier MUST discard all tags which are not syntactically and semantically valid.
 Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.
 
@@ -2047,31 +2029,12 @@ In such a case, the Verifier Owner may instruct the Verifier to discard tags act
 
 After the Verifier has processed all CoTLs it MUST discard any tags which have not been activated by a CoTL.
 
-#### Tag Extraction and Validation
+#### Evidence Collection {#sec-ev-coll}
 
-The Verifier chooses tags from the selected CoRIMs—including CoMID, CoSWID, CoTL, and CoTS.
-
-The Verifier MUST discard all tags which are not syntactically and semantically valid.
-Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.
-
-A CoMID's `linked-tags` field is able to express cyclic references, but cyclic references that include `/ tag-rel / 1: / supplements / 0` or `/ tag-rel / 1: / replaces/  1` are invalid.
-Unless otherwise specified by a profile that extends `$tag-rel-type-choice`, all cyclic tag references are invalid.
-
-#### Tag activation by CoTL
-
-If the Verifier does not use CoTL, then all selected tags have their `activity` state set to `active`.
-
-If the Verifier does use CoTL, then only tags listed by CoTL tags remaining in `ir-appraisal-session`.`select` are set to `active`, and all others are set to `inactive`.
-
-The selected tags which are `active` are transformed into their internal representation and loaded into the Appraisal Context following the description in {{sec-phase1-trans}}.
-
-#### Evidence Selection
-
-All available Evidence in the Appraisal Session's inputs are checked for validity.
-
-Evidence that is not within its validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
-Evidence that has been secured by a cryptographic mechanism, such as a signature, that fails validation MUST be discarded.
-Selected Evidence is transformed into an internal representation (see {{sec-phase1-trans}}).
+During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
+The first part of this phase does not require any cryptographic validation.
+This means that Verifiers can use untrusted code to discover Evidence sources.
+Attesters are Evidence sources.
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 
@@ -2287,58 +2250,12 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-
-### Appraisal hermeticity
-
-The Appraisal Context at the end of Phase 1 constitutes all inputs to the Appraisal Procedure.
-
-Given the same Appraisal Context, different Verifier appraisals MUST produce deterministic results for phases 2, 3, and 4.
-
-Note: the deterministic constraint applies to profile-defined comparison semantics.
-
-The reason to lock the inputs before Attestation Appraisal is for all Appraisal Procedure dependencies to be accounted for before interpreting them.
-For a comparable notion of process fidelity and provenance tracking, see the different {{SLSA}} specification for build security.
-
 ## Evidence Augmentation (Phase 2) {#sec-phase2}
 
 ### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
-The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `ir-appraisal-context`.`ae` to the ACS.
+The ACS is initialized by copying all the `addition` ECTs from the array of Evidence claims `stage`.`ae` to the ACS.
 See {{sec-add-to-acs}}.
-
-#### The authorized-by field in Appraisal Claims Set {#sec-authorized-by}
-
-The `a` field in an ECT in the ACS indicates the entity whose authority backs the claim.
-
-An entity is authoritative when it makes Claims that are inside its area of
-competence. The Verifier keeps track of the authorities that assert Claims so
-that it can filter out claims from entities that do not satisfy appraisal
-policies.
-
-When adding an Evidence Claim to the ACS, the
-Verifier SHALL set the `authorized-by` field in that Claim to the trusted
-authority keys at the head of each key chain which signed that Evidence. This
-key is often the subject of a self-signed certificate.
-The Verifier has already verified the certificate chain.
-See {{sec-crypto-validate-evidence}}.
-
-If multiple authorities approve the same Claim, for example if multiple key chains
-are available, then the `authorized-by` field SHALL be set to include the trusted
-authority keys used by each of those authorities.
-
-When adding Endorsement Claims to the ACS that resulted
-from CoRIM processing ({{sec-add-to-acs}}) the Verifier SHALL set the
-`authorized-by` field in that Evidence to the trusted authority key that is
-at the head of the key chain that signed the CoRIM.
-
-When searching the ACS for an entry which matches a Reference
-Value containing an `authorized-by` field, the Verifier SHALL ignore ACS
-entries if none of the keys present in the Reference Value `authorized-by` field
-are also present in the ACS `authorized-by` field.
-
-The Verifier SHOULD set the `authorized-by` field in ACS entries
-to a format which contains only a key, for example the `tagged-cose-key-type`
-format. Using a common format makes it easier to compare the field.
 
 #### ACS Requirements {#sec-acs-reqs}
 
@@ -2415,8 +2332,6 @@ Logically, the ACS represents the conjunction of all claims, so adding an ECT en
 Implementations may optimize ECT order to achieve better performance.
 Additions to the ACS MUST be atomic.
 
-### Evidence Augmentation (Phase 2) {#sec-phase2}
-
 #### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
@@ -2455,12 +2370,12 @@ Reference Values may describe multiple possible Attester states.
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 If satisfied, the RVP authority is added to the matching ACS entry.
 
-Reference Values are matched with ACS entries by iterating through the `ir-appraisal-context`.`rv` list.
+Reference Values are matched with ACS entries by iterating through the `stage`.`rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
 If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
 
-After the iteration, no other `rv` will match, so `ir-appraisal-context`.`rv` MAY be cleared.
+After the iteration, no other `rv` will match, so `stage`.`rv` MAY be cleared.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 
@@ -2470,10 +2385,10 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
-Endorsements are matched with ACS entries by iterating through the `ir-appraisal-context`.`ev` list.
+Endorsements are matched with ACS entries by iterating through the `stage`.`ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
-An `ev` entry that matches is removed from the `ir-appraisal-context`.`ev` list.
+An `ev` entry that matches is removed from the `stage`.`ev` list.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
@@ -2483,13 +2398,13 @@ Conditional endorsements have the same processing steps as shown in ({{sec-proce
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
 Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
-Conditional series endorsements are matched with ACS entries first by iterating through the `ir-appraisal-context`.`evs` list,
+Conditional series endorsements are matched with ACS entries first by iterating through the `stage`.`evs` list,
 where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series iteration terminates after the first matching series entry is processed or when no series entries match.
-An `evs` entry that matches is removed from the `ir-appraisal-context`.`evs` list.
+An `evs` entry that matches is removed from the `stage`.`evs` list.
 
 #### Processing Key Verification Endorsements {#sec-process-keys}
 
@@ -2847,7 +2762,7 @@ For more detailed information on protecting Trust Anchors, refer to {{Section 12
 Utilizing the public part of an asymmetric key pair that is used for Evidence generation to identify an Attesting Environment raises privacy considerations that must be carefully considered.
 
 The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
-These links must reach as deep as possible - possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
+These links must reach as deep as possible—possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
 Minimizing the use of intermediaries is also vital: each intermediary becomes another party that might need to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
