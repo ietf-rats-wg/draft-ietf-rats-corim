@@ -2763,7 +2763,7 @@ For more detailed information on protecting Trust Anchors, refer to {{Section 12
 Utilizing the public part of an asymmetric key pair that is used for Evidence generation to identify an Attesting Environment raises privacy considerations that must be carefully considered.
 
 The Verifier should use cryptographically protected, mutually authenticated secure channels to all its trusted input sources (Endorsers, RVPs, Verifier Owners).
-These links must reach as deep as possible—possibly terminating within the appraisal session context - to avoid man-in-the-middle attacks.
+These links must reach as deep as possible—possibly terminating within the appraisal session context—to avoid man-in-the-middle attacks.
 Minimizing the use of intermediaries is also vital: each intermediary becomes another party that might need to be trusted and therefore factored in the Attesters and Relying Parties' TCBs.
 Refer to {{Section 12.2 of -rats-arch}} for information on Conceptual Messages protection.
 
