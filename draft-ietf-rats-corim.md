@@ -99,14 +99,12 @@ normative:
   IANA.named-information: named-info
 
 informative:
-  RFC6960: ocsp
   RFC7519: jwt
   RFC7942:
   RFC9562:
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   I-D.tschofenig-rats-psa-token: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
-  I-D.ietf-scitt-architecture: scitt-arch
   I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
@@ -126,10 +124,6 @@ informative:
     seriesinfo: Version 1.0, Revision 0.01
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
-  SLSA:
-    title: >
-      Supply-chain Levels for Software Artifacts
-    target: https://slsa.dev
   TNC.Arch:
     title: "TCG Trusted Network Connect TNC Architecture for Interoperability"
     author:
@@ -2000,12 +1994,15 @@ The Appraisal Procedure phases translate CoMID triples into their various intern
 
 All available CoRIMs in the Appraisal's inputs are checked for validity.
 
-Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded from the session.
+Inputs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
 
 Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
 An example of such a mechanism is a digital signature.
 
 Other selection criteria MAY be applied provided they are deterministic.
+For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
+
+Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### Tags Extraction and Validation
 
@@ -2035,6 +2032,10 @@ During the Evidence collection phase, the Verifier communicates with Attesters t
 The first part of this phase does not require any cryptographic validation.
 This means that Verifiers can use untrusted code to discover Evidence sources.
 Attesters are Evidence sources.
+
+Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
+
+The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 

@@ -97,6 +97,7 @@ INTREP_FRAGS += intrep-ect.cddl
 INTREP_FRAGS += intrep-ev.cddl
 INTREP_FRAGS += intrep-policy.cddl
 INTREP_FRAGS += intrep-rv.cddl
+INTREP_FRAGS += intrep-stage.cddl
 INTREP_FRAGS += intrep-claims-map.cddl
 INTREP_FRAGS += intrep-key.cddl
 # deps
