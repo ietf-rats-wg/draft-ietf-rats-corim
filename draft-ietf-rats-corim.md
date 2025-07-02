@@ -1463,8 +1463,8 @@ Domain structure is defined with the following types of triples.
 ##### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
-The triple's subject is the domain identifier while the triple’s object lists all the member Environments that constitutes the domain.
-Expressing the members in a DMT as domains allows the recursive construction of the topology of an entity such as Composite Device ({{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
+The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
+Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
@@ -1777,7 +1777,7 @@ Environment-Claims Tuples (ECT) have six attributes:
 
 * Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
 
-* Members : Identifies the set of Environments thats acts as members, when a Domain Membership is expressed in an ECT
+* Members : Identifies the set of Environments that act as members when a Domain Membership is expressed in an ECT
 
 * Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
 
@@ -1900,9 +1900,8 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 
 ### Internal Representation of Domain Membership {#sec-ir-dm}
 
-An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment`
-field of ECT and the Domain members are expressed in `members` field of the ECT.
-The `cmtype` is set to domain-member to express the membership.
+An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.
+The `cmtype` is set to domain-member.
 
 ~~~ cddl
 {::include cddl/intrep-domain-mem.cddl}
@@ -1916,7 +1915,7 @@ The `cmtype` is set to domain-member to express the membership.
 |           | `element-list`  | Optional    |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
-|           | `profile`       | n/a         |
+|           | `profile`       | Optional    |
 |           | `members`       | Mandatory   |
 {: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
 
@@ -2266,7 +2265,7 @@ The following transformation steps are applied for both the `identity-triples` a
 
 #### Domain Membership Triples Transformation {#sec-ir-dm-trans}
 
-This section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation ({{sec-ir-dm}}).
+This section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation `dm` (see {{sec-ir-dm}}).
 
 {:dmt-enum: counter="dmt1" style="format Step %d."}
 
@@ -2281,7 +2280,7 @@ This section describes how the external representation of a Domain Membership Tr
 * **copy**(`domain-member`, `domain`.`cmtype`)
 
 {: dmt-enum}
-* Set the authority for the domain ECT to the DMT signer {{sec-corim-signer}}.
+* Set the authority for the domain ECT to the DMT signer ({{sec-corim-signer}}).
 
 {:dmt5-enum: counter="dmt5" style="format %i"}
 
