@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 1 January 2026                                           Linaro
+Expires: 3 January 2026                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            30 June 2025
+                                                             2 July 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 January 2026.
+   This Internet-Draft will expire on 3 January 2026.
 
 Copyright Notice
 
@@ -2094,11 +2094,11 @@ Table of Contents
 
    A Domain Membership Triple (DMT) links a domain identifier to its
    member Environments.  The triple's subject is the domain identifier
-   while the triple’s object lists all the member Environments that
-   constitutes the domain.  Expressing the members in a DMT as domains
-   allows the recursive construction of the topology of an entity such
-   as Composite Device (Section 3.3 of [RFC9334]), where multiple lower-
-   level domains can be aggregated into a higher-level domain.
+   while the triple’s object lists all the member Environments within
+   the domain.  Representing members of a DMT as domains enables the
+   recursive construction of an entity's topology, such as a Composite
+   Device (see Section 3.3 of [RFC9334]), where multiple lower-level
+   domains can be aggregated into a higher-level domain.
 
    domain-membership-triple-record = [
      domain-id: domain-type
@@ -2482,8 +2482,8 @@ Table of Contents
        the public key of an asymmetric key pair that is associated with
        an authority's PKIX certificate.
 
-   4.  Members : Identifies the set of Environments thats acts as
-       members, when a Domain Membership is expressed in an ECT
+   4.  Members : Identifies the set of Environments that act as members
+       when a Domain Membership is expressed in an ECT
 
    5.  Conceptual Message Type : Identifies the type of Conceptual
        Message that originated the tuple.
@@ -2716,9 +2716,8 @@ Table of Contents
 
    An internal representation of Domain Membership is expressed in a
    single ECT, where the domain identifier is set in the environment
-   field of ECT and the Domain members are expressed in members field of
-   the ECT.  The cmtype is set to domain-member to express the
-   membership.
+   field of the ECT, and the domain members are expressed in the members
+   field.  The cmtype is set to domain-member.
 
    dm = [ + ( domain: ECT ) ]
 
@@ -2736,7 +2735,7 @@ Table of Contents
                  +----------+--------------+-------------+
                  |          | cmtype       | Mandatory   |
                  +----------+--------------+-------------+
-                 |          | profile      | n/a         |
+                 |          | profile      | Optional    |
                  +----------+--------------+-------------+
                  |          | members      | Mandatory   |
                  +----------+--------------+-------------+
@@ -3196,7 +3195,7 @@ Table of Contents
 
    This section describes how the external representation of a Domain
    Membership Triple (DMT) (Section 5.1.4.8.1) is transformed into its
-   CoRIM internal representation (Section 9.1.6).
+   CoRIM internal representation dm (see Section 9.1.6).
 
    Step 1.  Allocate a domain ECT entry.
 
@@ -3206,7 +3205,7 @@ Table of Contents
    i  *copy*(domain-member, domain.cmtype)
 
    Step 3.  Set the authority for the domain ECT to the DMT signer
-            Section 4.2.2.1.
+            (Section 4.2.2.1).
 
    i  *copy*(DMT.signer, domain.authority)
 
@@ -3490,15 +3489,15 @@ Table of Contents
    Domain Membership ECTs (cmtype: domain-member) are matched with ACS
    entries (of cmtype: evidence) using the following algorithm:
 
-   *  For every domain entry compare:
+   *  For every domain entry:
 
       -  Each i within members array, check that there is an ACS entry
          with a matching environment and cm-type = evidence
 
-      -  If all entries match, add the domain ECT to ACS
+      -  If all members match an a ACS entry, add the domain ECT to ACS
 
-      -  When there is a partial match of member environments to ACS ECT
-         environment, the following cases, may apply:
+   *  If there is a partial match between the member environments and
+      the ACS ECT environment, three separate cases must be considered.
 
       ACS ECT contains N environments while Domain ECT members reports M
       Environments:
