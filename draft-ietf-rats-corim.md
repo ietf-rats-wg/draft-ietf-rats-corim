@@ -1464,6 +1464,10 @@ Domain structure is defined with the following types of triples.
 
 A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
 The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
+
+Domain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
+If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
+
 Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
 
 ~~~ cddl
@@ -2496,9 +2500,6 @@ If key verification succeeds for any _key_:
 Otherwise, do not add the `addition` ECT to the ACS.
 
 #### Processing Domain Membership {#sec-process-dm}
-
-Domain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
-If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented by Evidence.
 
 This section assumes that each Domain Membership Triples has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
