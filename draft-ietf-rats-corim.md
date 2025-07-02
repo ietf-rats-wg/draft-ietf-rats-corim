@@ -2505,11 +2505,11 @@ This section assumes that each Domain Membership Triples has been transformed in
 
 Domain Membership ECTs (`cmtype`: `domain-member`) are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:
 
-* For every `domain` entry compare:
+* For every `domain` entry:
   * Each `i` within `members` array, check that there is an ACS entry with a matching `environment` and cm-type = `evidence`
-  * If all entries match, add the `domain` ECT to ACS
+  * If all `members` match an a ACS entry, add the `domain` ECT to ACS
 
-  * When there is a partial match of `member` environments to ACS ECT `environment`, the following cases, may apply:
+* If there is a partial match between the `member` environments and the ACS ECT `environment`, three separate cases must be considered.  
 
   ACS ECT contains `N` environments while Domain ECT `members` reports `M` Environments:
 
