@@ -3773,15 +3773,17 @@ domain-type = environment-map
 <a href="#section-5.1.4.8.1" class="section-number selfRef">5.1.4.8.1. </a><a href="#name-domain-membership-triple" class="section-name selfRef">Domain Membership Triple</a>
               </h6>
 <p id="section-5.1.4.8.1-1">A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
-The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
-Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see <span><a href="https://rfc-editor.org/rfc/rfc9334#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>), where multiple lower-level domains can be aggregated into a higher-level domain.<a href="#section-5.1.4.8.1-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.8.1-2">
+The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.<a href="#section-5.1.4.8.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.8.1-2">Domain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
+If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.<a href="#section-5.1.4.8.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.8.1-3">Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see <span><a href="https://rfc-editor.org/rfc/rfc9334#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>), where multiple lower-level domains can be aggregated into a higher-level domain.<a href="#section-5.1.4.8.1-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.8.1-4">
 <pre>
 domain-membership-triple-record = [
   domain-id: domain-type
   members: [ +  domain-type ]
 ]
-</pre><a href="#section-5.1.4.8.1-2" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.8.1-4" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -5933,46 +5935,44 @@ If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref"
             <h5 id="name-processing-domain-membershi">
 <a href="#section-9.3.4.5" class="section-number selfRef">9.3.4.5. </a><a href="#name-processing-domain-membershi" class="section-name selfRef">Processing Domain Membership</a>
             </h5>
-<p id="section-9.3.4.5-1">Domain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
-If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented by Evidence.<a href="#section-9.3.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-2">This section assumes that each Domain Membership Triples has been transformed into an internal representation following the steps described in <a href="#sec-ir-dm-trans" class="auto internal xref">Section 9.2.3.5</a>, resulting in the representation specified in <a href="#sec-ir-dm" class="auto internal xref">Section 9.1.6</a>.<a href="#section-9.3.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-3">Domain Membership ECTs (<code>cmtype</code>: <code>domain-member</code>) are matched with ACS entries (of <code>cmtype</code>: <code>evidence</code>) using the following algorithm:<a href="#section-9.3.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-1">This section assumes that each Domain Membership Triples has been transformed into an internal representation following the steps described in <a href="#sec-ir-dm-trans" class="auto internal xref">Section 9.2.3.5</a>, resulting in the representation specified in <a href="#sec-ir-dm" class="auto internal xref">Section 9.1.6</a>.<a href="#section-9.3.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-2">Domain Membership ECTs (<code>cmtype</code>: <code>domain-member</code>) are matched with ACS entries (of <code>cmtype</code>: <code>evidence</code>) using the following algorithm:<a href="#section-9.3.4.5-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-9.3.4.5-4.1">
-                <p id="section-9.3.4.5-4.1.1">For every <code>domain</code> entry:<a href="#section-9.3.4.5-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9.3.4.5-3.1">
+                <p id="section-9.3.4.5-3.1.1">For every <code>domain</code> entry:<a href="#section-9.3.4.5-3.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-9.3.4.5-4.1.2.1">
-                    <p id="section-9.3.4.5-4.1.2.1.1">For each <code>i</code> in <code>members</code>, check that there is an ACS entry with a matching <code>environment</code> and cm-type = <code>evidence</code><a href="#section-9.3.4.5-4.1.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-9.3.4.5-3.1.2.1">
+                    <p id="section-9.3.4.5-3.1.2.1.1">For each <code>i</code> in <code>members</code>, check that there is an ACS entry with a matching <code>environment</code> and cm-type = <code>evidence</code><a href="#section-9.3.4.5-3.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="normal" id="section-9.3.4.5-4.1.2.2">
-                    <p id="section-9.3.4.5-4.1.2.2.1">If all <code>members</code> match an a ACS entry, add the <code>domain</code> ECT to ACS<a href="#section-9.3.4.5-4.1.2.2.1" class="pilcrow">¶</a></p>
+                  <li class="normal" id="section-9.3.4.5-3.1.2.2">
+                    <p id="section-9.3.4.5-3.1.2.2.1">If all <code>members</code> match an a ACS entry, add the <code>domain</code> ECT to ACS<a href="#section-9.3.4.5-3.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="normal" id="section-9.3.4.5-4.2">
-                <p id="section-9.3.4.5-4.2.1">If there is a partial match between the <code>member</code> environments and the ACS ECT <code>environment</code>, three separate cases must be considered.<a href="#section-9.3.4.5-4.2.1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-4.2.2">
-ACS ECT contains <code>N</code> environments while Domain ECT <code>members</code> reports <code>M</code> Environments:<a href="#section-9.3.4.5-4.2.2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-9.3.4.5-4.2.3">
-<li id="section-9.3.4.5-4.2.3.1">
-                    <p id="section-9.3.4.5-4.2.3.1.1"><code>N</code> &gt;= <code>M</code> and some entries of <code>M</code> match.
+              <li class="normal" id="section-9.3.4.5-3.2">
+                <p id="section-9.3.4.5-3.2.1">If there is a partial match between the <code>member</code> environments and the ACS ECT <code>environment</code>, three separate cases must be considered.<a href="#section-9.3.4.5-3.2.1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-3.2.2">
+ACS ECT contains <code>N</code> environments while Domain ECT <code>members</code> reports <code>M</code> Environments:<a href="#section-9.3.4.5-3.2.2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-9.3.4.5-3.2.3">
+<li id="section-9.3.4.5-3.2.3.1">
+                    <p id="section-9.3.4.5-3.2.3.1.1"><code>N</code> &gt;= <code>M</code> and some entries of <code>M</code> match.
 This is a case of a Composite Attester, where other entries of <code>M</code>, may itself be domain identifiers for other <code>domains</code>.
 In such case, upon complete appraisal, they MUST appear in other <code>domain</code> ECTs.
-Otherwise, the Appraisal is failed.<a href="#section-9.3.4.5-4.2.3.1.1" class="pilcrow">¶</a></p>
+Otherwise, the Appraisal is failed.<a href="#section-9.3.4.5-3.2.3.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li id="section-9.3.4.5-4.2.3.2">
-                    <p id="section-9.3.4.5-4.2.3.2.1">If <code>N</code> &gt;= <code>M</code> and all entries of <code>M</code> match.
-If the Evidence reports extra environments, it may be upto Verifier policy to allow/dis-allow such Evidence.<a href="#section-9.3.4.5-4.2.3.2.1" class="pilcrow">¶</a></p>
+                  <li id="section-9.3.4.5-3.2.3.2">
+                    <p id="section-9.3.4.5-3.2.3.2.1">If <code>N</code> &gt;= <code>M</code> and all entries of <code>M</code> match.
+If the Evidence reports extra environments, it may be upto Verifier policy to allow/dis-allow such Evidence.<a href="#section-9.3.4.5-3.2.3.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li id="section-9.3.4.5-4.2.3.3">
-                    <p id="section-9.3.4.5-4.2.3.3.1"><code>N</code> &lt; <code>M</code> and all <code>N</code> or some of <code>N</code> ACS ECT environments match some of the <code>M</code> members of the <code>domain</code> ECT.
-The Appraisal is terminated with Attestation Results set as Verification Failure.<a href="#section-9.3.4.5-4.2.3.3.1" class="pilcrow">¶</a></p>
+                  <li id="section-9.3.4.5-3.2.3.3">
+                    <p id="section-9.3.4.5-3.2.3.3.1"><code>N</code> &lt; <code>M</code> and all <code>N</code> or some of <code>N</code> ACS ECT environments match some of the <code>M</code> members of the <code>domain</code> ECT.
+The Appraisal is terminated with Attestation Results set as Verification Failure.<a href="#section-9.3.4.5-3.2.3.3.1" class="pilcrow">¶</a></p>
 </li>
                 </ol>
 </li>
             </ul>
-<p id="section-9.3.4.5-5">If none of the <code>members</code> match, proceed to next <code>domain</code> ECT in the list.<a href="#section-9.3.4.5-5" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-6">If none of the <code>domain</code> entries match, the Appraisal is terminated with Attestation Results set as Verification Failure.<a href="#section-9.3.4.5-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-4">If none of the <code>members</code> match, proceed to next <code>domain</code> ECT in the list.<a href="#section-9.3.4.5-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-5">If none of the <code>domain</code> entries match, the Appraisal is terminated with Attestation Results set as Verification Failure.<a href="#section-9.3.4.5-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
