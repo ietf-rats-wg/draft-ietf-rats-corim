@@ -939,13 +939,21 @@ Wild-card binding can be used within the `group` field, see {{sec-comid-wc}}.
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Environment Wild-card Matches {#sec-comid-wc}
+##### Environment Wild-card Binding {#sec-comid-wc}
 
-The `tagged-var-bind` and `tagged-var-ref` types are used for constrained wildcard processing, see {{sec-comid-instance-group-copy}}
+The `tagged-var-bind` and `tagged-var-ref` values are used for constrained wildcard processing. 
 
 ~~~ cddl
 {::include cddl/wc-match-type-choice.cddl}
 ~~~
+
+An `environment-map` without an `instance` field used in a condition will match against an ACS-ECT with any `instance` field.
+When the ACS contains evidence from multiple attestors, and that evidence uses the `instance` field to indicate which attestor created the evidence, these values are used to indicate the relationships between environments.
+These values have the same behaviour when used in the `group` field.
+
+The `tagged-var-bind` is used to indicate that two or more `environment-map`s within conditions must have with the same `instance` value. The `tagged-var-ref` value is used to indicate that the `environment-map`.`instance` field in an addition ECD resulting from processing of part of a triple must be copied from a condition in that triple.
+
+See {{sec-comid-instance-group-copy}} for full details of the Verifier processing for these values.
 
 ##### Measurements {#sec-measurements}
 
@@ -2413,7 +2421,7 @@ If a conditional endorsement containing stateful environments which use `tagged-
 Each match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.
 
 The `tagged-var-bind` and `tagged-var-ref` options in the `group` field work in the same way as in `instance`.
-The bound variables for instance and group slots are separate, instance slot 0 and group slot 0 may be bound to different values.
+The bound variables for instance and group variables are separate, instance variable 0 and group variable 0 may be bound to different values.
 
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
