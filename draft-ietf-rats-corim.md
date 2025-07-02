@@ -948,7 +948,7 @@ The `tagged-var-bind` and `tagged-var-ref` values are used for constrained wildc
 ~~~
 
 An `environment-map` without an `instance` field used in a condition will match against an ACS-ECT with any `instance` field.
-When the ACS contains evidence from multiple attestors, and that evidence uses the `instance` field to indicate which attestor created the evidence, these values are used to indicate the relationships between environments.
+When the ACS contains evidence from multiple Attesters, and that evidence uses the `instance` field to indicate which Attestor created the evidence, these values are used to indicate the relationships between environments.
 These values have the same behaviour when used in the `group` field.
 
 The `tagged-var-bind` is used to indicate that two or more `environment-map`s within conditions must have with the same `instance` value. The `tagged-var-ref` value is used to indicate that the `environment-map`.`instance` field in an addition ECD resulting from processing of part of a triple must be copied from a condition in that triple.
