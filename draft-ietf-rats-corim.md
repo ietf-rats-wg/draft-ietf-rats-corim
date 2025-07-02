@@ -941,7 +941,7 @@ Wild-card binding can be used within the `group` field, see {{sec-comid-wc}}.
 
 ##### Environment Wild-card Binding {#sec-comid-wc}
 
-The `tagged-var-bind` and `tagged-var-ref` values are used for constrained wildcard processing. 
+The `tagged-var-bind` and `tagged-var-ref` values are used for constrained wildcard processing.
 
 ~~~ cddl
 {::include cddl/wc-match-type-choice.cddl}
