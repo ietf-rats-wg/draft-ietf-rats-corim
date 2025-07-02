@@ -1286,7 +1286,7 @@ This document specifies the information elements for representing Endorsements a
                             <p id="section-toc.1-1.5.2.1.2.4.2.1.2.3.1"><a href="#section-5.1.4.1.3" class="auto internal xref">5.1.4.1.3</a>.  <a href="#name-environment-group" class="internal xref">Environment Group</a></p>
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.1.2.4">
-                            <p id="section-toc.1-1.5.2.1.2.4.2.1.2.4.1"><a href="#section-5.1.4.1.4" class="auto internal xref">5.1.4.1.4</a>.  <a href="#name-environment-wild-card-match" class="internal xref">Environment Wild-card Matches</a></p>
+                            <p id="section-toc.1-1.5.2.1.2.4.2.1.2.4.1"><a href="#section-5.1.4.1.4" class="auto internal xref">5.1.4.1.4</a>.  <a href="#name-environment-wild-card-bindi" class="internal xref">Environment Wild-card Binding</a></p>
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.1.2.5">
                             <p id="section-toc.1-1.5.2.1.2.4.2.1.2.5.1"><a href="#section-5.1.4.1.5" class="auto internal xref">5.1.4.1.5</a>.  <a href="#name-measurements" class="internal xref">Measurements</a></p>
@@ -3012,10 +3012,10 @@ $group-id-type-choice /= tagged-bytes
 </div>
 <div id="sec-comid-wc">
 <section id="section-5.1.4.1.4">
-              <h6 id="name-environment-wild-card-match">
-<a href="#section-5.1.4.1.4" class="section-number selfRef">5.1.4.1.4. </a><a href="#name-environment-wild-card-match" class="section-name selfRef">Environment Wild-card Matches</a>
+              <h6 id="name-environment-wild-card-bindi">
+<a href="#section-5.1.4.1.4" class="section-number selfRef">5.1.4.1.4. </a><a href="#name-environment-wild-card-bindi" class="section-name selfRef">Environment Wild-card Binding</a>
               </h6>
-<p id="section-5.1.4.1.4-1">The <code>tagged-var-bind</code> and <code>tagged-var-ref</code> types are used for constrained wildcard processing, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a><a href="#section-5.1.4.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-1">The <code>tagged-var-bind</code> and <code>tagged-var-ref</code> values are used for constrained wildcard processing.<a href="#section-5.1.4.1.4-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.4-2">
 <pre>
 $wc-match-type-choice /= tagged-var-bind
@@ -3028,6 +3028,11 @@ tagged-var-ref = #6.566(var-number)
 var-number = uint
 </pre><a href="#section-5.1.4.1.4-2" class="pilcrow">¶</a>
 </div>
+<p id="section-5.1.4.1.4-3">An <code>environment-map</code> without an <code>instance</code> field used in a condition will match against an ACS-ECT with any <code>instance</code> field.
+When the ACS contains evidence from multiple attestors, and that evidence uses the <code>instance</code> field to indicate which attestor created the evidence, these values are used to indicate the relationships between environments.
+These values have the same behaviour when used in the <code>group</code> field.<a href="#section-5.1.4.1.4-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-4">The <code>tagged-var-bind</code> is used to indicate that two or more <code>environment-map</code>s within conditions must have with the same <code>instance</code> value. The <code>tagged-var-ref</code> value is used to indicate that the <code>environment-map</code>.<code>instance</code> field in an addition ECD resulting from processing of part of a triple must be copied from a condition in that triple.<a href="#section-5.1.4.1.4-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-5">See <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a> for full details of the Verifier processing for these values.<a href="#section-5.1.4.1.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-measurements">
@@ -5658,7 +5663,7 @@ If the corresponding bound variable is not bound then the triple is invalid - th
 <p id="section-9.3.4.1.1-6">If a conditional endorsement containing stateful environments which use <code>tagged-var-bind</code> matches against multiple ECTs, then each match is processed independently of the others.
 Each match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.<a href="#section-9.3.4.1.1-6" class="pilcrow">¶</a></p>
 <p id="section-9.3.4.1.1-7">The <code>tagged-var-bind</code> and <code>tagged-var-ref</code> options in the <code>group</code> field work in the same way as in <code>instance</code>.
-The bound variables for instance and group slots are separate, instance slot 0 and group slot 0 may be bound to different values.<a href="#section-9.3.4.1.1-7" class="pilcrow">¶</a></p>
+The bound variables for instance and group variables are separate, instance variable 0 and group variable 0 may be bound to different values.<a href="#section-9.3.4.1.1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

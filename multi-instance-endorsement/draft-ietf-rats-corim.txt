@@ -107,7 +107,7 @@ Table of Contents
            5.1.4.1.1.  Environment Class
            5.1.4.1.2.  Environment Instance
            5.1.4.1.3.   Environment Group
-           5.1.4.1.4.   Environment Wild-card Matches
+           5.1.4.1.4.   Environment Wild-card Binding
            5.1.4.1.5.  Measurements
              5.1.4.1.5.1.  Measurement Keys
              5.1.4.1.5.2.  Measurement Values
@@ -1372,10 +1372,10 @@ Table of Contents
    $group-id-type-choice /= tagged-uuid-type
    $group-id-type-choice /= tagged-bytes
 
-5.1.4.1.4.   Environment Wild-card Matches
+5.1.4.1.4.   Environment Wild-card Binding
 
-   The tagged-var-bind and tagged-var-ref types are used for constrained
-   wildcard processing, see Section 9.3.4.1.1
+   The tagged-var-bind and tagged-var-ref values are used for
+   constrained wildcard processing.
 
    $wc-match-type-choice /= tagged-var-bind
    $wc-match-type-choice /= tagged-var-ref
@@ -1385,6 +1385,22 @@ Table of Contents
    tagged-var-ref = #6.566(var-number)
 
    var-number = uint
+
+   An environment-map without an instance field used in a condition will
+   match against an ACS-ECT with any instance field.  When the ACS
+   contains evidence from multiple attestors, and that evidence uses the
+   instance field to indicate which attestor created the evidence, these
+   values are used to indicate the relationships between environments.
+   These values have the same behaviour when used in the group field.
+
+   The tagged-var-bind is used to indicate that two or more environment-
+   maps within conditions must have with the same instance value.  The
+   tagged-var-ref value is used to indicate that the environment-
+   map.instance field in an addition ECD resulting from processing of
+   part of a triple must be copied from a condition in that triple.
+
+   See Section 9.3.4.1.1 for full details of the Verifier processing for
+   these values.
 
 5.1.4.1.5.  Measurements
 
@@ -3393,8 +3409,8 @@ Table of Contents
 
    The tagged-var-bind and tagged-var-ref options in the group field
    work in the same way as in instance.  The bound variables for
-   instance and group slots are separate, instance slot 0 and group slot
-   0 may be bound to different values.
+   instance and group variables are separate, instance variable 0 and
+   group variable 0 may be bound to different values.
 
 9.3.4.2.  Processing Conditional Endorsement Series
 
