@@ -2381,7 +2381,7 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 Endorsed Value Triple and Conditional Endorsement Triple share the same internal representation.
 Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Value Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
-The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; it can only add a single Endorsement ECT; and it uses the same enviromnent for `condition` and `addition`.
+The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; and it uses the same environment for `condition` and `addition`.
 
 After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
 Each `ev` entry is processed independently of other `ev`s.
@@ -2394,7 +2394,7 @@ If there are multiple matches then each match is processed independently from th
 
 ##### Copying instance and/or group fields from a condition {#sec-comid-instance-group-copy}
 
-A CoRIM author may need to create a conditional endorsement which applies to all all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` and/or `group` fields.
+A CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` and/or `group` fields.
 The `tagged-var-bind` and `tagged-var-ref` options in these fields can be used to achieve this.
 
 In the simplest case, the CoRIM sets the `enviroment-map`.`instance` field of a `stateful-environment-record` within the triple to hold a `tagged-var-bind` and the `enviroment-map`.`instance` field of an `endorsed-triple-record` to hold a `tagged-var-ref`.
@@ -2402,10 +2402,10 @@ Both instance types contain an integer name for the bound variable which is boun
 
 Within each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.
 
-After successfully matching a `stateful-environment-record` containing a `tagged-var-bind` against an ACS entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding bound variable.
+After successfully matching the `class` field within a `stateful-environment-record` whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.
 If the matching ACS entry does not include an instance then the bound variable is marked as bound to the empty value.
 
-When adding a conditional endorsement whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL set the `enviroment-map`.`instance` field from the contents of the corresponding bound variable.
+When adding a conditional endorsement whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.
 If the corresponding bound variable is bound to the empty value then the verifier SHALL NOT add an `instance` field.
 If the corresponding bound variable is not bound then the triple is invalid - the verifier SHALL NOT add the conditional endorsement to the ACS.
 
