@@ -2503,30 +2503,23 @@ Otherwise, do not add the `addition` ECT to the ACS.
 
 This section assumes that each Domain Membership Triples has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
-Domain Membership ECTs (`cmtype`: `domain-member`) are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:
+##### First Pass {#sec-first-pass}
+Domain Membership ECTs (`cmtype`: `domain-member`) in the staging area are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:
 
-* For every `domain` entry:
+* For every `domain` ECT entry (`cmtype`: `domain-member`):
   * For each `i` in `members`, check that there is an ACS entry with a matching `environment` and cm-type = `evidence`
-  * If all `members` match an a ACS entry, add the `domain` ECT to ACS
+  * If all `members` match an ACS entry, add the `domain` ECT to ACS
+  * If none of the `members` match, proceed to next `domain` ECT in the list.
+  * If there is a partial match, i.e. some `i's` in `members` has a matching ACS `environment` and cm-type = `evidence` add the `domain` ECT entry (`cmtype`: `domain-member`) to the ACS and proceed to ({{sec-second-pass}})
 
-* If there is a partial match between the `member` environments and the ACS ECT `environment`, three separate cases must be considered.
+##### Second Pass {#sec-second-pass}
+The second pass is only applicable, when there is a partial match, i.e. some `i's` in members has a matching ACS `environment` and cm-type = `evidence`.
+This is a case of a Composite Attester, where some `members` i.e.`environment` may refer to the `domain identifiers` for other `domains`, which have yet not been appraised.
+During successive passes of iteration, these unmatched `members` MUST match with the `environment` field (which contains domain identifier) of one of ACS ECT entry of `cmtype`: `domain-member`.
 
-  ACS ECT contains `N` environments while Domain ECT `members` reports `M` Environments:
+If after successive iterations, there is not a complete match for each `i` in `members`, then the `domain` ECT entry  (`cmtype`: `domain-member`), is removed from the ACS
 
-  1. `N` >= `M` and some entries of `M` match.
-  This is a case of a Composite Attester, where other entries of `M`, may itself be domain identifiers for other `domains`.
-  In such case, upon complete appraisal, they MUST appear in other `domain` ECTs.
-  Otherwise, the Appraisal is failed.
-
-  2. If `N` >= `M` and all entries of `M` match.
-  If the Evidence reports extra environments, it may be upto Verifier policy to allow/dis-allow such Evidence.
-
-  3. `N` < `M` and all `N` or some of `N` ACS ECT environments match some of the `M` members of the `domain` ECT.
-  The Appraisal is terminated with Attestation Results set as Verification Failure.
-
-If none of the `members` match, proceed to next `domain` ECT in the list.
-
-If none of the `domain` entries match, the Appraisal is terminated with Attestation Results set as Verification Failure.
+If none of the `domain` ECT entries (`cmtype`: `domain-member`) in the staging area match the ACS `environment` and cm-type = `evidence`, then the phase is terminated.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
