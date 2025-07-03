@@ -948,10 +948,10 @@ The `tagged-var-bind` and `tagged-var-ref` values are used for constrained wildc
 ~~~
 
 An `environment-map` without an `instance` field used in a condition will match against an ACS-ECT with any `instance` field.
-When the ACS contains evidence from multiple Attesters, and that evidence uses the `instance` field to indicate which Attestor created the evidence, these values are used to indicate the relationships between environments.
-These values have the same behaviour when used in the `group` field.
+When the ACS contains evidence from multiple Attesters, and that evidence uses the `instance` field to indicate which Attester created the evidence, these values are used to indicate the relationships between environments.
+These values behave in a similar way when used in the `group` field.
 
-The `tagged-var-bind` is used to indicate that two or more `environment-map`s within conditions must have with the same `instance` value. The `tagged-var-ref` value is used to indicate that the `environment-map`.`instance` field in an addition ECD resulting from processing of part of a triple must be copied from a condition in that triple.
+The `tagged-var-bind` is used to indicate that two or more `environment-map`s within conditions must have the same `instance` value. The `tagged-var-ref` value is used to indicate that the `environment-map`.`instance` field in an addition ECT resulting from processing of part of a triple must be copied from the ACS-ECT which matched a condition in that triple.
 
 See {{sec-comid-instance-group-copy}} for full details of the Verifier processing for these values.
 
@@ -2397,7 +2397,7 @@ Each `ev` entry is processed independently of other `ev`s.
 The Verifier SHALL find all sets of ACS-ECTs which match all the `ev`.`condition`s, where the ACS-ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 For each match ({{sec-match-condition-ect}}), all the `ev`.`addition` ECTs are added to the ACS.
 
-Note that some condition values are able to match against multiple ACS-ECTs, or sets of ACS-ECTs.
+Note that some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
 If there are multiple matches then each match is processed independently from the others.
 
 ##### Copying instance and/or group fields from a condition {#sec-comid-instance-group-copy}
@@ -2405,20 +2405,20 @@ If there are multiple matches then each match is processed independently from th
 A CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` and/or `group` fields.
 The `tagged-var-bind` and `tagged-var-ref` options in these fields can be used to achieve this.
 
-In the simplest case, the CoRIM sets the `enviroment-map`.`instance` field of a `stateful-environment-record` within the triple to hold a `tagged-var-bind` and the `enviroment-map`.`instance` field of an `endorsed-triple-record` to hold a `tagged-var-ref`.
-Both instance types contain an integer name for the bound variable which is bound by the `tagged-var-bind` and referenced by the `tagged-var-ref`.
+In the simplest case, within a CoRIM, the `enviroment-map`.`instance` field of an `ev` condition holds a `tagged-var-bind` and the `enviroment-map`.`instance` field of an addition within that `ev` holds a `tagged-var-ref`.
+Both instance types contain an integer name for the bound variable, which is bound by the `tagged-var-bind` and referenced by the `tagged-var-ref`.
 
 Within each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.
 
 After successfully matching the `class` field within a `stateful-environment-record` whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.
 If the matching ACS entry does not include an instance then the bound variable is marked as bound to the empty value.
 
-When adding a conditional endorsement whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.
-If the corresponding bound variable is bound to the empty value then the verifier SHALL NOT add an `instance` field.
-If the corresponding bound variable is not bound then the triple is invalid - the verifier SHALL NOT add the conditional endorsement to the ACS.
+When adding an `ev` addition ECT whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, if the variable is bound to a non-empty value, then the Verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.
+If the corresponding bound variable is bound to the empty value then the Verifier SHALL NOT add an `instance` field.
+If the corresponding bound variable is not bound then the triple is invalid - the Verifier SHALL NOT add the conditional endorsement to the ACS.
 
-If a conditional endorsement containing stateful environments which use `tagged-var-bind` matches against multiple ECTs, then each match is processed independently of the others.
-Each match uses its own slot bindings, and each match adds a separate endorsement ECT to the ACS.
+If a conditional endorsement containing `ev` condiions which use `tagged-var-bind` matches against multiple ECTs, then each match is processed independently of the others.
+Each match uses its own variable bindings, and each match adds a separate endorsement ECT to the ACS.
 
 The `tagged-var-bind` and `tagged-var-ref` options in the `group` field work in the same way as in `instance`.
 The bound variables for instance and group variables are separate, instance variable 0 and group variable 0 may be bound to different values.
@@ -2525,21 +2525,21 @@ If any field which is present in the condition ECT `environment-map` is not bina
 
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
 
-#### Instance and group slot bind and reference fields
+#### Instance and group variable bind and reference fields
 
 These fields are used to ensure that multiple conjoined conditions match against the same instance or group value.
-They are also used to set the instance or group value in a conditional endorsement addition-ECT to match the matched ECTs.
+They are also used to set the instance or group value in a conditional endorsement addition-ECT to match the ACS-ECTs which matched against the condition(s).
 
 Processing of `tagged-var-bind` and `tagged-var-ref` within the `group` field operates in the same way as for the `instance` field.
-The instance and group slots are not related.
+The instance and group variables are not related.
 
-The verifier maintains a small array of instance slots, each slot is identified using a non-negative integer.
-Before processing each triple, all slots SHALL be set to the unbound state.
+The verifier maintains a small array of instance slots, each variable is identified using a non-negative integer.
+Before processing each triple, all variables SHALL be set to the unbound state.
 
-If the condition ECT `environment-map` contains an `instance` field of type `tagged-var-bind` and that slot is not yet bound then it matches against any instance value.
+If the condition ECT `environment-map` contains an `instance` field of type `tagged-var-bind` and that variable is not yet bound then it matches against any instance value.
 The instance field in the ACS entry is copied into the instance bound variable with the relevant `var-number`.
 
-If the condition ECT `environment-map` contains an `instance` field of type `tagged-var-bind` and that slot is bound to a value which is not binary identical to the value in the condition ECT then the environments do not match.
+If the condition ECT `environment-map` contains an `instance` field of type `tagged-var-bind` and that variable is bound to a value which is not binary identical to the value in the ACS-ECT which potentially matches the condition ECT then the environments do not match.
 
 If a condition ECT contains an `instance` field of type `tagged-var-ref` then it is invalid and the environments do not match.
 
