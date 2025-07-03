@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-01T02:23:55.175627+00:00",
+  "timestamp": "2025-07-03T02:06:45.336304+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11792,6 +11792,22 @@
           "updatedAt": "2025-06-18T13:03:51Z"
         }
       ]
+    },
+    {
+      "number": 455,
+      "id": "I_kwDOH6-tI86-g8g_",
+      "title": "ARS is extraneous",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/455",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Since attestation result creation is out of scope of the document, defining what form attestation results take as an internal representation makes very little sense. I don't think we need the ARS.",
+      "createdAt": "2025-07-02T15:25:55Z",
+      "updatedAt": "2025-07-02T15:25:55Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -50018,13 +50034,13 @@
       "labels": [],
       "body": "Closes Issue #242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2025-06-27T14:44:23Z",
+      "updatedAt": "2025-07-02T15:14:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "deeglaze/draft-ietf-rats-corim",
       "headRefName": "quant",
-      "headRefOid": "c807e3d08d8c5643826aee087c9a72b4e96fb4fa",
+      "headRefOid": "4c68af3d9f89ebb82ba54284871cd6fa36800471",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -51296,6 +51312,59 @@
               "body": "I lost track of what this line used to refer to.",
               "createdAt": "2025-05-03T17:37:54Z",
               "updatedAt": "2025-05-03T17:37:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xhBbM",
+          "commit": {
+            "abbreviatedOid": "4c68af3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:25:27Z",
+          "updatedAt": "2025-07-02T08:25:27Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I am not clear why this data structure is needed ..?\r\n\r\nWe should just have a Staging Area, kept somewhere out side of ACS and then highlight one concept that is known as ACS.\r\n\r\nActive Context of Appraisal is the ACS Data Structure, which tracks the Appraisal.\r\n\r\nAppraisal starts with reception of Evidence and ACS starts getting populated.\r\n\r\nThen ACS keeps growing and at the end, ACS is converted into Attestation Results.\r\n\r\n",
+              "createdAt": "2025-07-02T08:25:27Z",
+              "updatedAt": "2025-07-02T08:25:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xhBy_",
+          "commit": {
+            "abbreviatedOid": "4c68af3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Have made some fundamental Comments, to simplify the proposal....",
+          "createdAt": "2025-07-02T08:25:56Z",
+          "updatedAt": "2025-07-02T08:25:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmLfU",
+          "commit": {
+            "abbreviatedOid": "4c68af3"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:14:07Z",
+          "updatedAt": "2025-07-02T15:14:07Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I have it as a data structure primarily to have a single object of process. We then say that Appraisal = phases567(leastfixedpoint(Phases234)(Phase1(inputs)))\r\n\r\nif the staging area and ACS don't change after running through phases 2, 3, and 4, then there are no more conditional rules that can apply, and you're ready to move to the later phases.",
+              "createdAt": "2025-07-02T15:14:07Z",
+              "updatedAt": "2025-07-02T15:14:07Z"
             }
           ]
         }
@@ -67642,7 +67711,7 @@
       "labels": [],
       "body": "The section describing key verification processing was unclear regarding how the verifier knows to apply the key verification behavior. An introductory paragraph was added to explain the the overall objective. The revised wording also suggests possible optimization to reduce potential for reverifying keys that have previously been verified.\r\n\r\nThis relates in part to issue #423",
       "createdAt": "2025-04-25T23:17:25Z",
-      "updatedAt": "2025-06-25T19:18:21Z",
+      "updatedAt": "2025-07-02T09:42:21Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e226e12c40a0627d645db14a31db3b57d3ccef41",
@@ -67883,6 +67952,46 @@
               "body": "> 2\\. It\u2019s unclear who is responsible for defining the validation policy parameters and the trust anchors.\r\n\r\nThis is defined in phase 1 (possibly incompletely).",
               "createdAt": "2025-06-25T19:01:25Z",
               "updatedAt": "2025-06-25T19:18:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xh74w",
+          "commit": {
+            "abbreviatedOid": "4f01cb5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T09:37:19Z",
+          "updatedAt": "2025-07-02T09:37:20Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "I think a reasonable and quick way out is to slightly modify the sentence as follows:\r\n```suggestion\r\nIf the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.\r\nNote that, in this case, the Verifier is acting in the role of an Endorser.\r\n```",
+              "createdAt": "2025-07-02T09:37:19Z",
+              "updatedAt": "2025-07-02T09:37:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xh_5p",
+          "commit": {
+            "abbreviatedOid": "4f01cb5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T09:42:21Z",
+          "updatedAt": "2025-07-02T09:42:21Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "If Phase 1 contains (or is supposed to contain) all the missing context, we should add a backwards reference here.\r\nIf it's `{{sec-crypto-validate-evidence}}` that we want to reference, there is really not much there.",
+              "createdAt": "2025-07-02T09:42:21Z",
+              "updatedAt": "2025-07-02T09:46:28Z"
             }
           ]
         }
@@ -68373,13 +68482,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-06-27T14:34:04Z",
+      "updatedAt": "2025-07-02T14:57:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "0a0dade80f5702737b1b2e6d687da2b5b7455512",
+      "headRefOid": "ecb39e4ab10c662cf9c23f2624d160d23d1bf510",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -68419,6 +68528,13 @@
           "body": "> My intuition is to keep the matching semantics separate from the identifier semantics....\r\n\r\nI like this description of the semantics, and will update to something like this if nobody disagrees.\r\n\r\n> I don't know if it makes sense to look at wild card matching on instance identifiers in measurement-values-map such as mac-address and ip-address etc. Possibly, Dionna's idea for generalized wild card matching on any measurement type is better. If corim goes in that direction, then maybe that is a better way to consider wildcard matching for class-map values? This should be a different PR. But possibly, the $wc-match-type-choice would be a common aspect that keeps wc matching separate from other RHS type structures.\r\n\r\nThis is an interesting idea, but I think it should probably be a different PR. Making the change you propose above will make it easier to implement this second PR.",
           "createdAt": "2025-06-27T14:34:04Z",
           "updatedAt": "2025-06-27T14:34:04Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have added introductory text which describes use cases for these values\r\n",
+          "createdAt": "2025-07-02T12:32:32Z",
+          "updatedAt": "2025-07-02T12:32:32Z"
         }
       ],
       "reviews": [
@@ -69149,6 +69265,352 @@
               "updatedAt": "2025-06-25T14:46:36Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xgwY8",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:02:52Z",
+          "updatedAt": "2025-07-02T08:02:52Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "This statement is factually incorrect: \r\n\r\nThe Endorsed Values Triples encodes for a single Environment, Multiple Endorsements.\r\n\r\n`endorsed-triple-record = [\r\n  condition: environment-map\r\n  endorsement: [ + measurement-map ]\r\n]`",
+              "createdAt": "2025-07-02T08:02:52Z",
+              "updatedAt": "2025-07-02T08:02:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xgxFt",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:03:50Z",
+          "updatedAt": "2025-07-02T08:03:50Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "```suggestion\r\nThe Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; which implies it can only add multiple Endorsements ECTs which all have the same environment.\r\n```",
+              "createdAt": "2025-07-02T08:03:50Z",
+              "updatedAt": "2025-07-02T08:05:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xgzRL",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:06:44Z",
+          "updatedAt": "2025-07-02T08:06:44Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "Sorry they are not the same. When adding Endorsements from a Endorsed Value Triple, the condition is just matching the Environment, while adding on a Conditional Endorsement, both the Environment and the element-list MUST match!",
+              "createdAt": "2025-07-02T08:06:44Z",
+              "updatedAt": "2025-07-02T08:06:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xg0Jr",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:07:56Z",
+          "updatedAt": "2025-07-02T08:07:57Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "```suggestion\r\nA CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` and/or `group` fields.\r\n```",
+              "createdAt": "2025-07-02T08:07:56Z",
+              "updatedAt": "2025-07-02T08:07:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xg0uH",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:08:44Z",
+          "updatedAt": "2025-07-02T08:08:45Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\r\nIn the simplest case, the CoRIM author sets the `environment-map`.`instance` field of a `stateful-environment-record` within the triple to hold a `slot-bind-type` and the `environment-map`.`instance` field of an `endorsed-triple-record` to hold a `slot-ref-type`.\r\n```",
+              "createdAt": "2025-07-02T08:08:44Z",
+              "updatedAt": "2025-07-02T08:09:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xg2sx",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:11:23Z",
+          "updatedAt": "2025-07-02T08:11:23Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nAfter successfully matching a class variable inside a `stateful-environment-record` containing an `slot-bind-type` against a class ACS environment entry, the verifier SHALL copy the instance value from that ACS entry to the corresponding slot variable inside environment map.\r\n```",
+              "createdAt": "2025-07-02T08:11:23Z",
+              "updatedAt": "2025-07-02T08:11:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xg3fn",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:12:31Z",
+          "updatedAt": "2025-07-02T08:12:31Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "It is not clear what is copied from which source to which destination?\r\n\r\nCan you please add a clarity here...",
+              "createdAt": "2025-07-02T08:12:31Z",
+              "updatedAt": "2025-07-02T08:12:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xg4HX",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T08:13:16Z",
+          "updatedAt": "2025-07-02T08:13:16Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "`enviroment-map`.`instance` field from the contents of the corresponding slot variable to where ??",
+              "createdAt": "2025-07-02T08:13:16Z",
+              "updatedAt": "2025-07-02T08:13:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xg4-C",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "can you please clarify \r\n1. The intent what is the intent of inserting slot bind type and slot ref type.\r\n2. Also the actions are not clear who is going from which source to which destination...",
+          "createdAt": "2025-07-02T08:14:21Z",
+          "updatedAt": "2025-07-02T08:14:21Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xirmR",
+          "commit": {
+            "abbreviatedOid": "3c469b9"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:44:07Z",
+          "updatedAt": "2025-07-02T10:44:08Z",
+          "comments": [
+            {
+              "originalPosition": 48,
+              "body": "```suggestion\r\nThe Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; and it uses the same environment for `condition` and `addition`.\r\n```",
+              "createdAt": "2025-07-02T10:44:07Z",
+              "updatedAt": "2025-07-02T10:44:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xir2q",
+          "commit": {
+            "abbreviatedOid": "3c469b9"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:44:31Z",
+          "updatedAt": "2025-07-02T10:44:31Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "Added similar fix. Thanks.",
+              "createdAt": "2025-07-02T10:44:31Z",
+              "updatedAt": "2025-07-02T10:44:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xixod",
+          "commit": {
+            "abbreviatedOid": "3c469b9"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:53:15Z",
+          "updatedAt": "2025-07-02T10:53:15Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "The text is talking about what happens after the triples are transformed into `ev` form. What I'm saying is that after this transform the processing is the same.\r\n\r\nFor example, an endorsed values triple is transformed into an `ev` with:\r\n`condition.environment = environment`\r\n`condition.measurement = <empty>`\r\n`addition.environment = environment`\r\n`addition.measurement = measurement`\r\n\r\nA conditional endorsement triple can create exactly the same `ev`.\r\nThe results of processing this `ev` will be the same regardless of whether it came from an Endorsed Values Triple or a Conditional Endorsement Triple.",
+              "createdAt": "2025-07-02T10:53:15Z",
+              "updatedAt": "2025-07-02T10:53:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xix0n",
+          "commit": {
+            "abbreviatedOid": "3c469b9"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:53:33Z",
+          "updatedAt": "2025-07-02T10:53:34Z",
+          "comments": [
+            {
+              "originalPosition": 44,
+              "body": "Thanks",
+              "createdAt": "2025-07-02T10:53:33Z",
+              "updatedAt": "2025-07-02T10:53:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xi1JR",
+          "commit": {
+            "abbreviatedOid": "3c469b9"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:58:32Z",
+          "updatedAt": "2025-07-02T10:58:33Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\r\nAfter successfully matching the `class` field within a `stateful-environment-record` whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.\r\n```",
+              "createdAt": "2025-07-02T10:58:33Z",
+              "updatedAt": "2025-07-02T10:58:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xi2UR",
+          "commit": {
+            "abbreviatedOid": "3c469b9"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T11:00:14Z",
+          "updatedAt": "2025-07-02T11:00:15Z",
+          "comments": [
+            {
+              "originalPosition": 75,
+              "body": "```suggestion\r\nWhen adding a conditional endorsement whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, and that variable is bound to a non-empty value, then the verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.\r\n```",
+              "createdAt": "2025-07-02T11:00:14Z",
+              "updatedAt": "2025-07-02T11:00:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xj119",
+          "commit": {
+            "abbreviatedOid": "0a0dade"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T12:31:20Z",
+          "updatedAt": "2025-07-02T12:31:20Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Text changed to make direction of copy more obvious.",
+              "createdAt": "2025-07-02T12:31:20Z",
+              "updatedAt": "2025-07-02T12:31:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xl1cq",
+          "commit": {
+            "abbreviatedOid": "c442276"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T14:50:40Z",
+          "updatedAt": "2025-07-02T14:50:41Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\r\nWhen the ACS contains evidence from multiple Attesters, and that evidence uses the `instance` field to indicate which Attester created the evidence, these values are used to indicate the relationships between environments.\r\n```",
+              "createdAt": "2025-07-02T14:50:41Z",
+              "updatedAt": "2025-07-02T14:56:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xl9QM",
+          "commit": {
+            "abbreviatedOid": "ecb39e4"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-07-02T14:57:26Z",
+          "updatedAt": "2025-07-02T14:57:26Z",
+          "comments": []
         }
       ]
     },
@@ -70646,13 +71108,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-06-25T09:35:07Z",
-      "updatedAt": "2025-06-30T13:18:34Z",
+      "updatedAt": "2025-07-02T16:34:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e838cc939708b000962f466224a083dbec013f28",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-new-proposal",
-      "headRefOid": "df96742bfe422d7d39f56761f776ad1d149d58e2",
+      "headRefOid": "43ef657dd8e7540dc3060cea034bda247f9aaa88",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -70932,49 +71394,9 @@
           "comments": [
             {
               "originalPosition": 245,
-              "body": "Can this be written in a more declarative form?\r\nFor example, something like:\r\n```suggestion\r\nIf, after processing all DM-ECTs, evidence remains which is not authorised by a DM-ECT the Verifier may choose to fail attestation.\r\n```",
+              "body": "If there are extra ECTs in the ACS which are not used for the attestation proof then it is not clear to me what problem this causes. Can we remove these two lines for now and add them in later with a clearer explanation?\r\n```suggestion\r\n```",
               "createdAt": "2025-06-30T10:36:49Z",
-              "updatedAt": "2025-06-30T10:36:49Z"
-            }
-          ]
-        },
-        {
-          "id": "PRR_kwDOH6-tI86xEeyz",
-          "commit": {
-            "abbreviatedOid": "04a756b"
-          },
-          "author": "andrew-draper",
-          "authorAssociation": "COLLABORATOR",
-          "state": "COMMENTED",
-          "body": "",
-          "createdAt": "2025-06-30T10:38:06Z",
-          "updatedAt": "2025-06-30T10:38:06Z",
-          "comments": [
-            {
-              "originalPosition": 248,
-              "body": "Would it be true to say that in this case attestation fails because the domain type ACS-ECT is missing at the end of attestation?\r\nI think there is probably a clearer way to write this.",
-              "createdAt": "2025-06-30T10:38:06Z",
-              "updatedAt": "2025-06-30T10:38:06Z"
-            }
-          ]
-        },
-        {
-          "id": "PRR_kwDOH6-tI86xEgCQ",
-          "commit": {
-            "abbreviatedOid": "04a756b"
-          },
-          "author": "andrew-draper",
-          "authorAssociation": "COLLABORATOR",
-          "state": "COMMENTED",
-          "body": "",
-          "createdAt": "2025-06-30T10:40:00Z",
-          "updatedAt": "2025-06-30T10:40:00Z",
-          "comments": [
-            {
-              "originalPosition": 252,
-              "body": "I think the text here could be written in a simpler way and achieve the same result.\r\n.\r\nFor other failure cases, the relying party is looking for a correctly authorized ACS-ECT but it is not present. Can we rephrase this as the absence of the domain-id causing the failure?\r\nThat makes it similar to a missing endorsement etc.",
-              "createdAt": "2025-06-30T10:40:00Z",
-              "updatedAt": "2025-06-30T11:47:19Z"
+              "updatedAt": "2025-07-01T18:49:16Z"
             }
           ]
         },
@@ -71015,46 +71437,6 @@
               "body": "```suggestion\r\n  * Each `i` within `members` array, check that there is an ACS entry with a matching `environment` and cm-type = `evidence`\r\n```",
               "createdAt": "2025-06-30T11:25:21Z",
               "updatedAt": "2025-06-30T11:25:21Z"
-            }
-          ]
-        },
-        {
-          "id": "PRR_kwDOH6-tI86xFETR",
-          "commit": {
-            "abbreviatedOid": "04a756b"
-          },
-          "author": "andrew-draper",
-          "authorAssociation": "COLLABORATOR",
-          "state": "COMMENTED",
-          "body": "",
-          "createdAt": "2025-06-30T11:34:58Z",
-          "updatedAt": "2025-06-30T11:34:59Z",
-          "comments": [
-            {
-              "originalPosition": 239,
-              "body": "```suggestion\r\n  1 If some entries of `M` match.\r\n```",
-              "createdAt": "2025-06-30T11:34:58Z",
-              "updatedAt": "2025-06-30T11:34:59Z"
-            }
-          ]
-        },
-        {
-          "id": "PRR_kwDOH6-tI86xFEdC",
-          "commit": {
-            "abbreviatedOid": "04a756b"
-          },
-          "author": "andrew-draper",
-          "authorAssociation": "COLLABORATOR",
-          "state": "COMMENTED",
-          "body": "",
-          "createdAt": "2025-06-30T11:35:12Z",
-          "updatedAt": "2025-06-30T11:35:12Z",
-          "comments": [
-            {
-              "originalPosition": 244,
-              "body": "```suggestion\r\n  2. If all entries of `M` match.\r\n```",
-              "createdAt": "2025-06-30T11:35:12Z",
-              "updatedAt": "2025-06-30T11:35:12Z"
             }
           ]
         },
@@ -71148,6 +71530,882 @@
               "body": "As discussed, in face to face, the staging area text is consistent with other sections in the document.\r\n",
               "createdAt": "2025-06-30T13:18:34Z",
               "updatedAt": "2025-06-30T13:18:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xYuMk",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T15:54:08Z",
+          "updatedAt": "2025-07-01T15:54:08Z",
+          "comments": [
+            {
+              "originalPosition": 232,
+              "body": "```suggestion\r\n  * Each `i` within `members` array, check that there is an ACS entry with a matching `environment-map` and cm-type = `evidence`\r\n```",
+              "createdAt": "2025-07-01T15:54:08Z",
+              "updatedAt": "2025-07-01T15:54:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xYvkE",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T15:54:57Z",
+          "updatedAt": "2025-07-01T15:54:58Z",
+          "comments": [
+            {
+              "originalPosition": 233,
+              "body": "```suggestion\r\n  * If all `members` match an a ACS entry, add the `domain` ECT to ACS\r\n```",
+              "createdAt": "2025-07-01T15:54:58Z",
+              "updatedAt": "2025-07-01T15:54:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xYwx-",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T15:55:52Z",
+          "updatedAt": "2025-07-01T15:55:52Z",
+          "comments": [
+            {
+              "originalPosition": 238,
+              "body": "```suggestion\r\nFor a Domain-Membership ECT which references `M` Environments:\r\n```",
+              "createdAt": "2025-07-01T15:55:52Z",
+              "updatedAt": "2025-07-01T15:56:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xY416",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T16:03:18Z",
+          "updatedAt": "2025-07-01T16:03:18Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "```suggestion\r\n  1. If not all entries of `M` match.\r\n    In a hierarchical system, some environment-maps within `M` may refer to `environment-map`s which are domain identifiers for other `domains`.\r\n    If this is the case, then Domain Membership triples will often fail to match during the first pass. After DM-ECTs have been added to the ACS, these triples may match in future passes.\r\n\r\n```",
+              "createdAt": "2025-07-01T16:03:18Z",
+              "updatedAt": "2025-07-02T14:49:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xa9o3",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-01T18:54:17Z",
+          "updatedAt": "2025-07-01T18:54:18Z",
+          "comments": [
+            {
+              "originalPosition": 252,
+              "body": "I think the text here could be written in a simpler way and achieve the same result?\r\n\r\nI expect attestation to fail because one or more expected ACS-ETCs are not present, or do not have the correct authorization. Can we say the same thing here?\r\n\r\nFor other failure cases, the relying party is looking for a correctly authorized ACS-ECT but it is not present. Can we rephrase this as the absence of the domain-id causing the failure?\r\nThat makes it similar to a missing endorsement etc.\r\n\r\n```suggestion\r\nA verifier MAY be configured to require DM-ECTs.\r\nAfter processing all DM-ECTs, a Verifier which is configured to required DM-ECTs should remove evidence ACS-ECTs which are not authorized by a DM-ECT.\r\nIf the missing evidence is required as part of an attestation proof then this will cause an attestation failure.\r\n```",
+              "createdAt": "2025-07-01T18:54:17Z",
+              "updatedAt": "2025-07-02T08:58:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xgxwS",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "some more comments.  I could only make small suggestions to the \u201cprocessing DMT\u201d section because Andy is touching it and I don\u2019t want to mess it up.",
+          "createdAt": "2025-07-02T08:04:43Z",
+          "updatedAt": "2025-07-02T09:17:28Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "\"Composite Attester\u201d is defined in the glossary; I think we are OK here.\r\n\r\nWhat makes me a bit uncomfortable is that this section should discuss \"domain\u201d as a general idea.  So, the focus should not just be the topological arrangement between environments (DMT), but also their CoT arrangement (DDT).\r\n\r\nPerhaps, more generically:\r\n\r\n> _\u201cA domain describes a Composite Attester in terms of its constituent Environments and their relationships.\u201d_\r\n\r\nAnd let the subsections qualify \u201cdescription\u201d and \u201crelationship\u201d.",
+              "createdAt": "2025-07-02T08:04:43Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 21,
+              "body": "Now that we have decided on domains as environments, I believe we can remove this level of abstraction, which serves no purpose other than obscuring the truth ;-)",
+              "createdAt": "2025-07-02T08:18:01Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "Here we should qualify the type of the link relationship \u2014 i.e., the topological arrangement.\r\n\r\nSomething like:\r\n\r\n> _\u201cA DMT provides a topological description of a Composite Attester by linking a parent environment (e.g., a lead attester) to its child environments (e.g., one or more sub-attesters)\u201d_",
+              "createdAt": "2025-07-02T08:23:08Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 42,
+              "body": "```suggestion\r\nRepresenting members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.\r\n```",
+              "createdAt": "2025-07-02T08:28:10Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 59,
+              "body": "```suggestion\r\n* Members : Identifies the set of Environments that act as members when a Domain Membership is expressed in an ECT\r\n```",
+              "createdAt": "2025-07-02T08:35:30Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 59,
+              "body": "I believe that the \u201cEnvironment\u201d attribute description should also be amended to reflect the expansion in semantics.",
+              "createdAt": "2025-07-02T08:37:42Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 108,
+              "body": "NSNL\r\n\r\n```suggestion\r\nAn internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.\r\n```",
+              "createdAt": "2025-07-02T08:40:58Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 109,
+              "body": "```suggestion\r\nThe `cmtype` is set to domain-member.\r\n```",
+              "createdAt": "2025-07-02T08:42:28Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 123,
+              "body": "Perhaps this has been discussed before, but I\u2019d like to understand the rationale behind making the profile \u2019n/a' rather than \u2018Optional\u2019.  That seems a bit odd...",
+              "createdAt": "2025-07-02T08:46:20Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 179,
+              "body": "missing parenthesis\r\n\r\n```suggestion\r\n* Set the authority for the domain ECT to the DMT signer ({{sec-corim-signer}}).\r\n```",
+              "createdAt": "2025-07-02T08:49:38Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 164,
+              "body": "Since the trasnform algoright uses `dm`, it\u2019s good to introduce it explicitly at the top:\r\n\r\n```suggestion\r\nThis section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation `dm` (see {{sec-ir-dm}}).\r\n```",
+              "createdAt": "2025-07-02T08:53:43Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 200,
+              "body": "hmm, this doesn\u2019t look consistent with the profile being n/a.",
+              "createdAt": "2025-07-02T08:57:25Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 225,
+              "body": "I am probably missing something, but the policy has \u201cn/a\u201d for members, so I am not sure I understand how policy and DMT are put together.",
+              "createdAt": "2025-07-02T09:00:50Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 231,
+              "body": "```suggestion\r\n* For every `domain` entry:\r\n```",
+              "createdAt": "2025-07-02T09:05:26Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 232,
+              "body": "```suggestion\r\n  * For each `i` in `members`, check that there is an ACS entry with a matching `environment` and cm-type = `evidence`\r\n```",
+              "createdAt": "2025-07-02T09:06:55Z",
+              "updatedAt": "2025-07-02T09:48:55Z"
+            },
+            {
+              "originalPosition": 235,
+              "body": "unindent + slight rewrite for clarity\r\n\r\n```suggestion\r\n* If there is a partial match between the `member` environments and the ACS ECT `environment`, three separate cases must be considered.  \r\n```",
+              "createdAt": "2025-07-02T09:09:31Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            },
+            {
+              "originalPosition": 233,
+              "body": "L2510 should be de-indented (it\u2019s currently folded under the \u201cfor each\u201d loop)",
+              "createdAt": "2025-07-02T09:14:23Z",
+              "updatedAt": "2025-07-02T09:17:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xh6Cu",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T09:35:00Z",
+          "updatedAt": "2025-07-02T09:35:00Z",
+          "comments": [
+            {
+              "originalPosition": 225,
+              "body": "i mean if a Verifier requires DMT, as DMT is an OTI Triple. Perhaps I can qualify this...",
+              "createdAt": "2025-07-02T09:35:00Z",
+              "updatedAt": "2025-07-02T09:35:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xh7R7",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T09:36:34Z",
+          "updatedAt": "2025-07-02T09:36:34Z",
+          "comments": [
+            {
+              "originalPosition": 232,
+              "body": "no remember that the name is not the map but the table of entries inside the Staging area is known as `envionment` its type is `environment-map`",
+              "createdAt": "2025-07-02T09:36:34Z",
+              "updatedAt": "2025-07-02T09:36:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiFPd",
+          "commit": {
+            "abbreviatedOid": "e732607"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T09:49:19Z",
+          "updatedAt": "2025-07-02T09:49:19Z",
+          "comments": [
+            {
+              "originalPosition": 232,
+              "body": "> no remember that the name is not the map but the table of entries inside the Staging area is known as `envionment` its type is `environment-map`\r\n\r\nI should have fixed the suggestion.",
+              "createdAt": "2025-07-02T09:49:19Z",
+              "updatedAt": "2025-07-02T09:49:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiJgb",
+          "commit": {
+            "abbreviatedOid": "e732607"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T09:54:59Z",
+          "updatedAt": "2025-07-02T09:54:59Z",
+          "comments": [
+            {
+              "originalPosition": 225,
+              "body": "Ah, that isn\u2019t clear in the current wording.\r\n\r\nOne observation: L2501-2502 do not belong here.  They are high-level considerations, which have their raison d'\u00eatre a bit higher up.",
+              "createdAt": "2025-07-02T09:54:59Z",
+              "updatedAt": "2025-07-02T09:54:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiOV7",
+          "commit": {
+            "abbreviatedOid": "e732607"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:01:16Z",
+          "updatedAt": "2025-07-02T10:01:16Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "Remember, not every case is a composite Attester. For example: a Component (single) Attester could also have three Target Environments, but single Attesting Environments, and a DMT may want to see the Evidence comprising of three Environments\r\n\r\nMay be we should define it simply:\r\n`A Domain Membership Triple (DMT) links a domain identifier to its members. Members can be either Target Environments  or Domain identifiers in case of Composite Attester`\r\n",
+              "createdAt": "2025-07-02T10:01:16Z",
+              "updatedAt": "2025-07-02T10:01:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiQ5L",
+          "commit": {
+            "abbreviatedOid": "e732607"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:04:44Z",
+          "updatedAt": "2025-07-02T10:04:44Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "```suggestion\r\n|           | `profile`       | Optional    |\r\n```",
+              "createdAt": "2025-07-02T10:04:44Z",
+              "updatedAt": "2025-07-02T10:04:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiXK0",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:13:48Z",
+          "updatedAt": "2025-07-02T10:13:48Z",
+          "comments": [
+            {
+              "originalPosition": 232,
+              "body": "I will take this suggestion now!",
+              "createdAt": "2025-07-02T10:13:48Z",
+              "updatedAt": "2025-07-02T10:13:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiiv4",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:30:47Z",
+          "updatedAt": "2025-07-02T10:30:47Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "> Remember, not every case is a composite Attester.\r\n\r\nSure, that\u2019s exactly the reason why I used \u201ce.g.,\"",
+              "createdAt": "2025-07-02T10:30:47Z",
+              "updatedAt": "2025-07-02T10:30:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xijE-",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:31:17Z",
+          "updatedAt": "2025-07-02T10:31:17Z",
+          "comments": [
+            {
+              "originalPosition": 225,
+              "body": "moved these lines to the DMT Introduction section now!",
+              "createdAt": "2025-07-02T10:31:17Z",
+              "updatedAt": "2025-07-02T10:31:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xijXw",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:31:43Z",
+          "updatedAt": "2025-07-02T10:31:44Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "Marked this as Optional to align it with other parts of text!",
+              "createdAt": "2025-07-02T10:31:43Z",
+              "updatedAt": "2025-07-02T10:31:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xikYV",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:33:09Z",
+          "updatedAt": "2025-07-02T10:33:10Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "> A DMT provides a topological description of a Composite Attester\r\n\r\nBut your suggested text has the word Composite Attester:\r\n'A DMT provides a topological description of a Composite Attester '",
+              "createdAt": "2025-07-02T10:33:10Z",
+              "updatedAt": "2025-07-02T10:33:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xil6K",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:35:27Z",
+          "updatedAt": "2025-07-02T10:35:28Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "Why has this been marked as resolved?",
+              "createdAt": "2025-07-02T10:35:27Z",
+              "updatedAt": "2025-07-02T10:35:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xinsV",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:38:09Z",
+          "updatedAt": "2025-07-02T10:38:10Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "i thought I have taken your edit, i cannot see the commit button...",
+              "createdAt": "2025-07-02T10:38:10Z",
+              "updatedAt": "2025-07-02T10:38:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xiqOe",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T10:42:00Z",
+          "updatedAt": "2025-07-02T10:42:00Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "yes, if you see the text I have taken your suggestion and github automatically resolved it !",
+              "createdAt": "2025-07-02T10:42:00Z",
+              "updatedAt": "2025-07-02T10:42:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xjDs1",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T11:19:47Z",
+          "updatedAt": "2025-07-02T11:19:47Z",
+          "comments": [
+            {
+              "originalPosition": 59,
+              "body": "Sure, but there was also this:\r\n\r\n> I believe that the \u201cEnvironment\u201d attribute description should also be amended to reflect the expansion in semantics.\r\n\r\nwhich was a bit more substantial.",
+              "createdAt": "2025-07-02T11:19:47Z",
+              "updatedAt": "2025-07-02T11:19:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xjE4W",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T11:21:36Z",
+          "updatedAt": "2025-07-02T11:21:37Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "Ah, you are right!",
+              "createdAt": "2025-07-02T11:21:36Z",
+              "updatedAt": "2025-07-02T11:21:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xjIjN",
+          "commit": {
+            "abbreviatedOid": "df96742"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T11:26:40Z",
+          "updatedAt": "2025-07-02T11:26:40Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "Can we just remove the adjective \u201ccomposite\u201d and say:\r\n\r\n> _\u201dA DMT provides a topological description of an Attester by linking a parent environment (e.g., a lead attester) to its child environments (e.g., one or more sub-attesters)\u201d_\r\n\r\nor similar.  The main point I\u2019d like to make here (i.e., DMT) is that, at this point in the document, we are specialising the link between parent and children in a domain to describe their topological arrangement.",
+              "createdAt": "2025-07-02T11:26:40Z",
+              "updatedAt": "2025-07-02T11:26:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xjmoZ",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T12:10:58Z",
+          "updatedAt": "2025-07-02T12:10:58Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "Given the current algorithm (L2509), I am not sure how this is supposed to work. If DM-ECTs are only matched against 'evidence' ECTs, there is no future pass that can modify the 'evidence' ECTs set and allow an opportunity for matching.\r\nISTM that we need to extend the matching process to include ACS-DM-ECTs if we want to give it a chance to converge.",
+              "createdAt": "2025-07-02T12:10:58Z",
+              "updatedAt": "2025-07-02T12:11:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xl5Ey",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T14:53:34Z",
+          "updatedAt": "2025-07-02T14:53:35Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "where is dm used? I see a \"domain ECT type\" later that doesn't match this.",
+              "createdAt": "2025-07-02T14:53:34Z",
+              "updatedAt": "2025-07-02T14:53:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xl8ZD",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T14:56:27Z",
+          "updatedAt": "2025-07-02T14:56:27Z",
+          "comments": [
+            {
+              "originalPosition": 238,
+              "body": "Referencing M environments means the \"members\" field has length M? I think \"references\" can be confused as including the ECT's environment field.",
+              "createdAt": "2025-07-02T14:56:27Z",
+              "updatedAt": "2025-07-02T14:56:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmdz8",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:30:11Z",
+          "updatedAt": "2025-07-02T15:30:11Z",
+          "comments": [
+            {
+              "originalPosition": 200,
+              "body": "There is no environment-map attribute. \r\n```suggestion\r\n> > **copy**(DMT.`members`[e], `domain`.`members`[e])\r\n```",
+              "createdAt": "2025-07-02T15:30:11Z",
+              "updatedAt": "2025-07-02T15:30:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmeXR",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:30:56Z",
+          "updatedAt": "2025-07-02T15:30:56Z",
+          "comments": [
+            {
+              "originalPosition": 227,
+              "body": "```suggestion\r\nThis section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.\r\n```",
+              "createdAt": "2025-07-02T15:30:56Z",
+              "updatedAt": "2025-07-02T15:30:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmfow",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:32:38Z",
+          "updatedAt": "2025-07-02T15:32:38Z",
+          "comments": [
+            {
+              "originalPosition": 231,
+              "body": "Is every \"domain entry\" meant to be every ECT with cmtype: domain-member?",
+              "createdAt": "2025-07-02T15:32:38Z",
+              "updatedAt": "2025-07-02T15:32:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmiGH",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:36:04Z",
+          "updatedAt": "2025-07-02T15:36:04Z",
+          "comments": [
+            {
+              "originalPosition": 229,
+              "body": "```suggestion\r\nDomain Membership ECTs (`cmtype`: `domain-member`) in the staging area are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:\r\n```",
+              "createdAt": "2025-07-02T15:36:04Z",
+              "updatedAt": "2025-07-02T15:36:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmjLi",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:37:31Z",
+          "updatedAt": "2025-07-02T15:37:31Z",
+          "comments": [
+            {
+              "originalPosition": 233,
+              "body": "```suggestion\r\n  * If all `members` match an ACS entry, add `domain` to ACS and remove from the staging area\r\n```\r\nI think a direct reference to the subject of processing is clearer.",
+              "createdAt": "2025-07-02T15:37:31Z",
+              "updatedAt": "2025-07-02T15:38:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xmny-",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T15:43:38Z",
+          "updatedAt": "2025-07-02T15:43:39Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "M is a natural number. What does it mean to be an entry of M? I think we need to say the DM-ECT members.\r\n\r\nThere's a plurality mismatch here too: \"entries\"/\"itself\".",
+              "createdAt": "2025-07-02T15:43:39Z",
+              "updatedAt": "2025-07-02T15:43:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xm7tX",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:03:06Z",
+          "updatedAt": "2025-07-02T16:03:06Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\n      [ / Allow generalizing the model to just the vendor /\r\n```",
+              "createdAt": "2025-07-02T16:03:06Z",
+              "updatedAt": "2025-07-02T16:03:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xm9Ck",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:05:05Z",
+          "updatedAt": "2025-07-02T16:05:05Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\n      [  / The root of trust is in the trust domain of both loader modules /\r\n         / environment-map / {\r\n```",
+              "createdAt": "2025-07-02T16:05:05Z",
+              "updatedAt": "2025-07-02T16:05:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xm-6C",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:07:49Z",
+          "updatedAt": "2025-07-02T16:07:49Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "What is this this relationship an example of?",
+              "createdAt": "2025-07-02T16:07:49Z",
+              "updatedAt": "2025-07-02T16:07:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xnGHm",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:16:02Z",
+          "updatedAt": "2025-07-02T16:16:02Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "\"Domain membership\" sounds backwards to the intended meaning of domain definition.\r\n\r\nIs it \"I am a member of x, y, z\" or is it \"x, y, z are members of me\"? The former is how I read \"domain membership\".\r\nIf I'm building a directed acyclic graph, I'd like to know which direction I'm expected to traverse.\r\n\r\nWhen I read the root of trust example that E + model has members E, it reads like the former as well.",
+              "createdAt": "2025-07-02T16:16:02Z",
+              "updatedAt": "2025-07-02T16:16:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xnNCo",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:25:33Z",
+          "updatedAt": "2025-07-02T16:25:33Z",
+          "comments": [
+            {
+              "originalPosition": 235,
+              "body": "If I follow the interpretation \"x, y, z are in D\", then the processing step is finding the least fixed point of the following rule:\r\n\r\nFor each member e, there is either an AE- or DM-ECT for e.\r\n\r\nIt can be advantageous then to order your DM-ECT staging area with a topological sort to make this a single pass. If at the end you still have DM-ECTs in your staging area, then so be it. It's up to dependency triples to determine if their failure to match is a problem, right? I don't know where DM-ECTs add constraints.",
+              "createdAt": "2025-07-02T16:25:33Z",
+              "updatedAt": "2025-07-02T16:28:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xnQLg",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:30:28Z",
+          "updatedAt": "2025-07-02T16:30:28Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "This is my understanding, using the interpretation \"I am in x, y, z\".\r\n\r\nIf the meaning is supposed to be \"x, y, z are in me\" then I would think the class _without_ the model should be first, and the classes with models should be in the domain list.",
+              "createdAt": "2025-07-02T16:30:28Z",
+              "updatedAt": "2025-07-02T16:30:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xnUBj",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-02T16:34:45Z",
+          "updatedAt": "2025-07-02T16:34:45Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Again this is the interpretation \"I am in x, y, z\". Root -> LoadInc module{1,2}\r\n\r\nIf instead you're meaning to say loader modules 1 and 2 are always under this root of trust, then use text \"The LoadInc modules are under the PQR root of trust.\" LoadInc module{1,2} -> Root",
+              "createdAt": "2025-07-02T16:34:45Z",
+              "updatedAt": "2025-07-02T16:34:45Z"
             }
           ]
         }
