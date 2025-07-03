@@ -4419,9 +4419,10 @@ rv = [ + {
 </pre><a href="#section-9.1.4-2" class="pilcrow">¶</a>
 </div>
 <p id="section-9.1.4-3">The <code>rv</code> relation is a list of condition-addition pairings where each pairing is evaluated together.
-If the <code>condition</code> containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the <code>addition</code>.<a href="#section-9.1.4-3" class="pilcrow">¶</a></p>
+If the <code>condition</code> containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the <code>addition</code> and <code>cmtype</code> set to <code>reference-values</code>.<a href="#section-9.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-9.1.4-4">The reference ECTs define the matching conditions that are applied to Evidence ECTs.
-If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.<a href="#section-9.1.4-4" class="pilcrow">¶</a></p>
+If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
+Refer to <a href="#sec-phase3" class="auto internal xref">Section 9.3.3</a> for how the <code>rv</code> entries are processed.<a href="#section-9.1.4-4" class="pilcrow">¶</a></p>
 <p id="section-9.1.4-5"><a href="#tbl-rv-ect-optionality" class="auto internal xref">Table 4</a> contains the requirements for the ECT fields of the Reference Values tuple:<a href="#section-9.1.4-5" class="pilcrow">¶</a></p>
 <span id="name-reference-values-tuple-requ"></span><div id="tbl-rv-ect-optionality">
 <table class="center" id="table-4">
@@ -5111,7 +5112,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 <li class="normal ulEmpty" id="section-9.2.3.3-6.1">
                 <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.2.3.3-6.1.1.1">
-                    <p id="section-9.2.3.3-6.1.1.1.1"><strong>copy</strong>(e.<code>measurement-map</code>, <code>rv</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.2.3.3-6.1.1.1.1" class="pilcrow">¶</a></p>
+                    <p id="section-9.2.3.3-6.1.1.1.1"><strong>copy</strong>(e.<code>measurement-map</code>, <code>rv</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.2.3.3-6.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
@@ -5615,12 +5616,22 @@ If a triple condition does not match, then the Verifier continues to process oth
 <a href="#section-9.3.3" class="section-number selfRef">9.3.3. </a><a href="#name-reference-values-corroborat" class="section-name selfRef">Reference Values Corroboration and Augmentation (Phase 3)</a>
           </h4>
 <p id="section-9.3.3-1">Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple (<a href="#sec-comid-triple-refval" class="auto internal xref">Section 5.1.4.2</a>) which are transformed (<a href="#sec-ref-trans" class="auto internal xref">Section 9.2.3.3</a>) into an internal representation (<a href="#sec-ir-ref-val" class="auto internal xref">Section 9.1.4</a>).
-Reference Values may describe multiple possible Attester states.<a href="#section-9.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.3-2">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
-If satisfied, the RVP authority is added to the matching ACS entry.<a href="#section-9.3.3-2" class="pilcrow">¶</a></p>
+Each Reference Value Triple describes a single possible Attester state.<a href="#section-9.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-2">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.<a href="#section-9.3.3-2" class="pilcrow">¶</a></p>
 <p id="section-9.3.3-3">Reference Values are matched with ACS entries by iterating through the <code>rv</code> list.
 For each <code>rv</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains <code>evidence</code>.<a href="#section-9.3.3-3" class="pilcrow">¶</a></p>
-<p id="section-9.3.3-4">If the ECTs match except for authority, the <code>rv</code> <code>addition</code> ECT authority is added to the ACS ECT authority.<a href="#section-9.3.3-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-4">If satisfied, for the <code>rv</code> entry, the following three steps are performed:<a href="#section-9.3.3-4" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-9.3.3-5">
+<li id="section-9.3.3-5.1">
+              <p id="section-9.3.3-5.1.1">The <code>addition</code> ECT is moved to the ACS, with <code>cm-type</code> set to <code>reference-values</code><a href="#section-9.3.3-5.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-9.3.3-5.2">
+              <p id="section-9.3.3-5.2.1">The claims, i.e., the <code>element-list</code> from the ACS ECT with <code>cmtype</code> set to <code>evidence</code> is copied to the <code>element-list</code> of the <code>addition</code> ECT<a href="#section-9.3.3-5.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-9.3.3-5.3">
+              <p id="section-9.3.3-5.3.1">The <code>authority</code> field of the <code>addition</code> ECT has been confirmed as being set correctly to the RVP authority<a href="#section-9.3.3-5.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
 </section>
 </div>
 <div id="sec-phase4">
