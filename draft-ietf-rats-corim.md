@@ -1465,7 +1465,8 @@ Domain structure is defined with the following types of triples.
 A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
 The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
 
-Domain Membership Triples allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
+Domain Membership Triple allow an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments. It enables the expression of topological description of an Attester by linking a parent environment (e.g., a lead attester) to its child environments (e.g., one or more sub-attesters).
+
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
 
 Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
@@ -2507,10 +2508,10 @@ This section assumes that each Domain Membership Triple has been transformed int
 Domain Membership ECTs (`cmtype`: `domain-member`) in the staging area are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:
 
 * For every `domain` ECT entry (`cmtype`: `domain-member`):
-  * For each `i` in `members`, check that there is a corresponding ACS entry with a matching `environment` and cm-type = `evidence`
+  * For each `i` in `members`, check that there is a corresponding ACS entry with a matching `environment` and `cmtype`:`evidence`
   * If all `members` match a corresponding ACS entry, add the `domain` ECT to ACS
   * If none of the `members` match, proceed to next `domain` ECT in the list.
-  * If there is a partial match, i.e. some `i's` in `members` has a matching ACS `environment` and cm-type = `evidence` add the `domain` ECT entry (`cmtype`: `domain-member`) to the ACS and proceed to ({{sec-second-pass}})
+  * If there is a partial match, i.e. some `i's` in `members` has a matching ACS `environment` and `cmtype`:`evidence` add the `domain` ECT entry (`cmtype`: `domain-member`) to the ACS and proceed to ({{sec-second-pass}})
 
 ##### Second Pass {#sec-second-pass}
 The second pass is only applicable, when there is a partial match, i.e. some `i's` in members has a matching ACS `environment` and cm-type = `evidence`.
@@ -2519,7 +2520,7 @@ During successive passes of iteration, these unmatched `members` MUST match with
 
 If after successive iterations, there is not a complete match for each `i` in `members`, then the `domain` ECT entry  (`cmtype`: `domain-member`), is removed from the ACS
 
-If none of the `domain` ECT entries (`cmtype`: `domain-member`) in the staging area match the ACS `environment` and cm-type = `evidence`, then the phase is terminated.
+If none of the `domain` ECT entries (`cmtype`: `domain-member`) in the staging area match the ACS `environment` and `cmtype`:`evidence`, then the phase is terminated.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
