@@ -2302,7 +2302,7 @@ This section describes how the external representation of a Domain Membership Tr
 {: dmt2-enum}
 * For each `environment` `e` in DMT.`members`:
 
-> > **copy**(DMT.`members`[e].`environment-map`, `domain`.`members`[e].`environment-map`)
+> > **copy**(DMT.`members`[e].`environment`, `domain`.`members`[e].`environment`)
 
 {: dmt-enum}
 * If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
@@ -2501,14 +2501,14 @@ Otherwise, do not add the `addition` ECT to the ACS.
 
 #### Processing Domain Membership {#sec-process-dm}
 
-This section assumes that each Domain Membership Triples has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
 ##### First Pass {#sec-first-pass}
 Domain Membership ECTs (`cmtype`: `domain-member`) in the staging area are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:
 
 * For every `domain` ECT entry (`cmtype`: `domain-member`):
-  * For each `i` in `members`, check that there is an ACS entry with a matching `environment` and cm-type = `evidence`
-  * If all `members` match an ACS entry, add the `domain` ECT to ACS
+  * For each `i` in `members`, check that there is a corresponding ACS entry with a matching `environment` and cm-type = `evidence`
+  * If all `members` match a corresponding ACS entry, add the `domain` ECT to ACS
   * If none of the `members` match, proceed to next `domain` ECT in the list.
   * If there is a partial match, i.e. some `i's` in `members` has a matching ACS `environment` and cm-type = `evidence` add the `domain` ECT entry (`cmtype`: `domain-member`) to the ACS and proceed to ({{sec-second-pass}})
 
