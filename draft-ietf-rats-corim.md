@@ -1852,10 +1852,11 @@ An internal representation of Reference Values uses the `rv` relation, which is 
 ~~~
 
 The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
-If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.
+If the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype` set to `reference-values`.
 
 The reference ECTs define the matching conditions that are applied to Evidence ECTs.
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
+Refer to {{sec-phase3}} for how the `rv` entries are processed.
 
 {{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
 
@@ -2107,7 +2108,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 {: rtt2-enum}
 * For each e in RVT.`ref-claims`:
 
-> > **copy**(e.`measurement-map`, `rv`.`addition`.`element-list`.`element-map`)
+> > **copy**(e.`measurement-map`, `rv`.`condition`.`element-list`.`element-map`)
 
 {: rtt-enum}
 * The signer of the Endorsement conceptual message is copied to the `rv`.`addition`.`authority` field.
@@ -2370,15 +2371,18 @@ If a triple condition does not match, then the Verifier continues to process oth
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
-Reference Values may describe multiple possible Attester states.
+Each Reference Value Triple describes a single possible Attester state.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
-If satisfied, the RVP authority is added to the matching ACS entry.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
-If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
+If satisfied, for the `rv` entry, the following three steps are performed:
+
+1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
+2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
+3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
