@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 4 January 2026                                           Linaro
+Expires: 5 January 2026                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                                    Intel
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             3 July 2025
+                                                             4 July 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 January 2026.
+   This Internet-Draft will expire on 5 January 2026.
 
 Copyright Notice
 
@@ -1389,10 +1389,11 @@ Table of Contents
 
    An environment-map without an instance field used in a condition will
    match against an ACS-ECT with any instance field.  When the ACS
-   contains evidence from multiple Attesters, and that evidence uses the
-   instance field to indicate which Attester created the evidence, these
-   values are used to indicate the relationships between environments.
-   These values behave in a similar way when used in the group field.
+   contains evidence from multiple Target Environments, and that
+   evidence uses the instance field to indicate which Target Environment
+   the evidence relates to, the tagged-var-* values are used to indicate
+   the relationships between environments.  These values behave in a
+   similar way when used in the group field.
 
    The tagged-var-bind is used to indicate that two or more environment-
    maps within conditions must have the same instance value.  The
@@ -3397,7 +3398,7 @@ Table of Contents
    Within each triple, each bound variable can only be bound to one
    value, so if there are multiple environment-maps using tagged-var-
    bind then subsequent uses introduce a constraint that the value to
-   bind must be equal to the value already bound to the slot.
+   bind must be equal to the value already bound to the variable.
 
    After successfully matching the class field within a stateful-
    environment-record whose instance field is a tagged-var-bind against
@@ -3413,9 +3414,9 @@ Table of Contents
    ECT.  If the corresponding bound variable is bound to the empty value
    then the Verifier SHALL NOT add an instance field.  If the
    corresponding bound variable is not bound then the triple is invalid
-   - the Verifier SHALL NOT add the conditional endorsement to the ACS.
+   - the Verifier SHALL NOT add the addition ECT to the ACS.
 
-   If a conditional endorsement containing ev condiions which use
+   If a conditional endorsement containing ev conditions which use
    tagged-var-bind matches against multiple ECTs, then each match is
    processed independently of the others.  Each match uses its own
    variable bindings, and each match adds a separate endorsement ECT to
@@ -3593,7 +3594,7 @@ Table of Contents
    field operates in the same way as for the instance field.  The
    instance and group variables are not related.
 
-   The verifier maintains a small array of instance slots, each variable
+   The Verifier maintains a small array of instance slots, each variable
    is identified using a non-negative integer.  Before processing each
    triple, all variables SHALL be set to the unbound state.
 
@@ -4788,11 +4789,11 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
 
    [I-D.fdb-rats-psa-endorsements]
               Fossati, T., Deshpande, Y., and H. Birkholz, "A CoRIM
-              Profile for Arm's Platform Security Architecture (PSA)",
-              Work in Progress, Internet-Draft, draft-fdb-rats-psa-
-              endorsements-06, 3 March 2025,
+              Profile for Arm's Platform Security Architecture (PSA)
+              Endorsements", Work in Progress, Internet-Draft, draft-
+              fdb-rats-psa-endorsements-07, 4 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
-              endorsements-06>.
+              endorsements-07>.
 
    [I-D.ietf-rats-ar4si]
               Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
@@ -4826,9 +4827,9 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-15,
-              30 May 2025, <https://datatracker.ietf.org/doc/html/draft-
-              ietf-rats-msg-wrap-15>.
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-16,
+              3 July 2025, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-rats-msg-wrap-16>.
 
    [I-D.tschofenig-rats-psa-token]
               Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
