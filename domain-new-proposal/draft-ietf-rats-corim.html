@@ -1568,14 +1568,6 @@ This document specifies the information elements for representing Endorsements a
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.5">
                         <p id="section-toc.1-1.9.2.3.2.4.2.5.1"><a href="#section-9.3.4.5" class="auto internal xref">9.3.4.5</a>.  <a href="#name-processing-domain-membershi" class="internal xref">Processing Domain Membership</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.5.2.1">
-                            <p id="section-toc.1-1.9.2.3.2.4.2.5.2.1.1"><a href="#section-9.3.4.5.1" class="auto internal xref">9.3.4.5.1</a>.  <a href="#name-first-pass" class="internal xref">First Pass</a></p>
-</li>
-                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.5.2.2">
-                            <p id="section-toc.1-1.9.2.3.2.4.2.5.2.2.1"><a href="#section-9.3.4.5.2" class="auto internal xref">9.3.4.5.2</a>.  <a href="#name-second-pass" class="internal xref">Second Pass</a></p>
-</li>
-                        </ul>
 </li>
                     </ul>
 </li>
@@ -5945,45 +5937,21 @@ If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref"
 <a href="#section-9.3.4.5" class="section-number selfRef">9.3.4.5. </a><a href="#name-processing-domain-membershi" class="section-name selfRef">Processing Domain Membership</a>
             </h5>
 <p id="section-9.3.4.5-1">This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in <a href="#sec-ir-dm-trans" class="auto internal xref">Section 9.2.3.5</a>, resulting in the representation specified in <a href="#sec-ir-dm" class="auto internal xref">Section 9.1.6</a>.<a href="#section-9.3.4.5-1" class="pilcrow">¶</a></p>
-<div id="sec-first-pass">
-<section id="section-9.3.4.5.1">
-              <h6 id="name-first-pass">
-<a href="#section-9.3.4.5.1" class="section-number selfRef">9.3.4.5.1. </a><a href="#name-first-pass" class="section-name selfRef">First Pass</a>
-              </h6>
-<p id="section-9.3.4.5.1-1">Domain Membership ECTs (<code>cmtype</code>: <code>domain-member</code>) in the staging area are matched with ACS entries (of <code>cmtype</code>: <code>evidence</code>) using the following algorithm:<a href="#section-9.3.4.5.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-9.3.4.5.1-2.1">
-                  <p id="section-9.3.4.5.1-2.1.1">For every <code>domain</code> ECT entry (<code>cmtype</code>: <code>domain-member</code>):<a href="#section-9.3.4.5.1-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-9.3.4.5.1-2.1.2.1">
-                      <p id="section-9.3.4.5.1-2.1.2.1.1">For each <code>i</code> in <code>members</code>, check that there is a corresponding ACS entry with a matching <code>environment</code> and <code>cmtype</code>:<code>evidence</code><a href="#section-9.3.4.5.1-2.1.2.1.1" class="pilcrow">¶</a></p>
-</li>
-                    <li class="normal" id="section-9.3.4.5.1-2.1.2.2">
-                      <p id="section-9.3.4.5.1-2.1.2.2.1">If all <code>members</code> match a corresponding ACS entry, add the <code>domain</code> ECT to ACS<a href="#section-9.3.4.5.1-2.1.2.2.1" class="pilcrow">¶</a></p>
-</li>
-                    <li class="normal" id="section-9.3.4.5.1-2.1.2.3">
-                      <p id="section-9.3.4.5.1-2.1.2.3.1">If none of the <code>members</code> match, proceed to next <code>domain</code> ECT in the list.<a href="#section-9.3.4.5.1-2.1.2.3.1" class="pilcrow">¶</a></p>
-</li>
-                    <li class="normal" id="section-9.3.4.5.1-2.1.2.4">
-                      <p id="section-9.3.4.5.1-2.1.2.4.1">If there is a partial match, i.e. some <code>i's</code> in <code>members</code> has a matching ACS <code>environment</code> and <code>cmtype</code>:<code>evidence</code> add the <code>domain</code> ECT entry (<code>cmtype</code>: <code>domain-member</code>) to the ACS and proceed to (<a href="#sec-second-pass" class="auto internal xref">Section 9.3.4.5.2</a>)<a href="#section-9.3.4.5.1-2.1.2.4.1" class="pilcrow">¶</a></p>
-</li>
-                  </ul>
-</li>
-              </ul>
-</section>
+<p id="section-9.3.4.5-2">Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) using the following algorithm:<a href="#section-9.3.4.5-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-3">For every domain ECT entry (cmtype: domain-member) in staging area, which is not processed yet:<a href="#section-9.3.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-4">For each i in members, check that there is a corresponding ACS entry with a matching <code>environment</code> and (cmtype:evidence OR cmtype: domain-member)
+        * If all members match a corresponding ACS entry, add the domain ECT to ACS<a href="#section-9.3.4.5-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-9.3.4.5-5">
+<pre>
+    * If none of the members match, proceed to next domain ECT in the staging area
+
+    * If there is a partial match, proceed to the next Domain ECT in the staging area
+</pre><a href="#section-9.3.4.5-5" class="pilcrow">¶</a>
 </div>
-<div id="sec-second-pass">
-<section id="section-9.3.4.5.2">
-              <h6 id="name-second-pass">
-<a href="#section-9.3.4.5.2" class="section-number selfRef">9.3.4.5.2. </a><a href="#name-second-pass" class="section-name selfRef">Second Pass</a>
-              </h6>
-<p id="section-9.3.4.5.2-1">The second pass is only applicable, when there is a partial match, i.e. some <code>i's</code> in members has a matching ACS <code>environment</code> and cm-type = <code>evidence</code>.
-This is a case of a Composite Attester, where some <code>members</code> i.e.<code>environment</code> may refer to the <code>domain identifiers</code> for other <code>domains</code>, which have yet not been appraised.
-During successive passes of iteration, these unmatched <code>members</code> MUST match with the <code>environment</code> field (which contains domain identifier) of one of ACS ECT entry of <code>cmtype</code>: <code>domain-member</code>.<a href="#section-9.3.4.5.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5.2-2">If after successive iterations, there is not a complete match for each <code>i</code> in <code>members</code>, then the <code>domain</code> ECT entry  (<code>cmtype</code>: <code>domain-member</code>), is removed from the ACS<a href="#section-9.3.4.5.2-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5.2-3">If none of the <code>domain</code> ECT entries (<code>cmtype</code>: <code>domain-member</code>) in the staging area match the ACS <code>environment</code> and <code>cmtype</code>:<code>evidence</code>, then the phase is terminated.<a href="#section-9.3.4.5.2-3" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-9.3.4.5-6">If the previous execution of the loop added any Domain ECTs to the ACS, then run the loop again
+Else STOP processing Domain ECTs<a href="#section-9.3.4.5-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-7">The processing terminates, when we have added all the Domain ECTs which are appropriate to the Evidence have been added to the ACS.<a href="#section-9.3.4.5-7" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-8">If expected Domain ECTS have not been added, then this may affect the processing in a later phase.<a href="#section-9.3.4.5-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
