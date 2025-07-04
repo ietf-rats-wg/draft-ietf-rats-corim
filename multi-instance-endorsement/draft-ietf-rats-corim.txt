@@ -1375,15 +1375,12 @@ Table of Contents
 
 5.1.4.1.4.   Environment Wild-card Binding
 
-   The tagged-var-bind and tagged-var-ref values are used for
-   constrained wildcard processing.
+   The tagged-variable value is used for constrained wildcard
+   processing.
 
-   $wc-match-type-choice /= tagged-var-bind
-   $wc-match-type-choice /= tagged-var-ref
+   $wc-match-type-choice /= tagged-variable
 
-   tagged-var-bind = #6.565(var-number)
-
-   tagged-var-ref = #6.566(var-number)
+   tagged-variable = #6.565(var-number)
 
    var-number = uint
 
@@ -1391,16 +1388,15 @@ Table of Contents
    match against an ACS-ECT with any instance field.  When the ACS
    contains evidence from multiple Target Environments, and that
    evidence uses the instance field to indicate which Target Environment
-   the evidence relates to, the tagged-var-* values are used to indicate
-   the relationships between environments.  These values behave in a
-   similar way when used in the group field.
+   the evidence relates to, the tagged-variable values are used to
+   indicate the relationships between environment-maps.  These values
+   behave in a similar way when used in the group field.
 
-   The tagged-var-bind is used to indicate that two or more environment-
-   maps within conditions must have the same instance value.  The
-   tagged-var-ref value is used to indicate that the environment-
-   map.instance field in an addition ECT resulting from processing of
-   part of a triple must be copied from the ACS-ECT which matched a
-   condition in that triple.
+   In a condition, the tagged-variable is used to indicate that two or
+   more environment-maps must have the same instance value.  In an
+   addition, the tagged-variable value is used to indicate that the
+   environment-map.instance field must be copied from the ACS-ECT which
+   matched a condition within the same triple.
 
    See Section 9.3.4.1.1 for full details of the Verifier processing for
    these values.
@@ -3372,9 +3368,9 @@ Table of Contents
    independently of other evs.
 
    The Verifier SHALL find all sets of ACS-ECTs which match all the
-   ev.conditions, where the ACS-ECT cmtype contains either evidence,
-   reference-values, or endorsements.  For each match (Section 9.4), all
-   the ev.addition ECTs are added to the ACS.
+   ev.conditions, where the ACS-ECT cmtype contains either evidence, or
+   endorsements.  For each match (Section 9.4), all the ev.addition ECTs
+   are added to the ACS.
 
    Note that some condition values can match against multiple ACS-ECTs,
    or sets of ACS-ECTs.  If there are multiple matches then each match
@@ -3385,47 +3381,48 @@ Table of Contents
    A CoRIM author may need to create a conditional endorsement which
    applies to all measurements which have the same class field within
    their environment-map, regardless of their instance and/or group
-   fields.  The tagged-var-bind and tagged-var-ref options in these
-   fields can be used to achieve this.
+   fields.  The tagged-variable option in these fields can be used to
+   achieve this.
 
    In the simplest case, within a CoRIM, the enviroment-map.instance
-   field of an ev condition holds a tagged-var-bind and the enviroment-
-   map.instance field of an addition within that ev holds a tagged-var-
-   ref.  Both instance types contain an integer name for the bound
-   variable, which is bound by the tagged-var-bind and referenced by the
-   tagged-var-ref.
+   field of an ev condition holds a tagged-variable and the enviroment-
+   map.instance field of an addition within that ev holds the same
+   tagged-variable.  The tagged-variable type contains an integer name
+   for the bound variable, which is bound by the instance within the
+   condition and referenced by the instance within the addition.
 
    Within each triple, each bound variable can only be bound to one
-   value, so if there are multiple environment-maps using tagged-var-
-   bind then subsequent uses introduce a constraint that the value to
-   bind must be equal to the value already bound to the variable.
+   value, so if there are multiple environment-map conditions using
+   tagged-variable then subsequent uses of a bound variable introduce a
+   constraint that the value to bind must be equal to the value already
+   bound to the variable.
 
-   After successfully matching the class field within a ev condition
-   whose instance field is a tagged-var-bind against an ACS entry, the
-   Verifier SHALL copy the instance value from that ACS entry to the
-   corresponding bound variable.  If the matching ACS entry does not
-   include an instance then the bound variable is marked as bound to the
-   empty value.
+   After successfully matching an ev condition ECT whose instance field
+   is a tagged-variable against an ACS entry, the Verifier SHALL copy
+   the instance value from that ACS entry to the corresponding bound
+   variable.  If the matching ACS entry does not include an instance
+   then the bound variable is marked as bound to the empty value.
 
-   When adding an ev addition ECT whose enviroment-map.instance field is
-   a tagged-var-ref to the ACS, if the variable is bound to a non-empty
-   value, then the Verifier SHALL copy the value of the corresponding
-   bound variable to the enviroment-map.instance field of the new ACS-
-   ECT.  If the corresponding bound variable is bound to the empty value
-   then the Verifier SHALL NOT add an instance field.  If the
-   corresponding bound variable is not bound then the triple is invalid
-   - the Verifier SHALL NOT add the addition ECT to the ACS.
+   An ev addition ECT whose enviroment-map.instance field is a tagged-
+   variable references the bound value.  When creating the ECT which
+   will be added to the ACS, if the referenced variable is bound to a
+   non-empty value, then the Verifier SHALL copy the value of the
+   corresponding bound variable to the enviroment-map.instance field of
+   the new ACS-ECT.  If the referenced variable is bound to the empty
+   value then the Verifier SHALL NOT add an instance field.  If the
+   referenced variable is not bound then the triple is invalid - the
+   Verifier SHALL NOT add the addition ECT to the ACS.
 
    If a conditional endorsement containing ev conditions which use
-   tagged-var-bind matches against multiple ECTs, then each match is
+   tagged-variables matches against multiple ECTs, then each match is
    processed independently of the others.  Each match uses its own
-   variable bindings, and each match adds a separate endorsement ECT to
-   the ACS.
+   variable bindings, and each match adds a separate addition ECT to the
+   ACS.
 
-   The tagged-var-bind and tagged-var-ref options in the group field
-   work in the same way as in instance.  The bound variables for
-   instance and group variables are separate, instance variable 0 and
-   group variable 0 may be bound to different values.
+   The tagged-variable type in the group field work in the same way as
+   in instance.  The bound variables for instance and group variables
+   are separate, instance variable 0 and group variable 0 may be bound
+   to different values.
 
 9.3.4.2.  Processing Conditional Endorsement Series
 
@@ -3590,27 +3587,24 @@ Table of Contents
    addition-ECT to match the ACS-ECTs which matched against the
    condition(s).
 
-   Processing of tagged-var-bind and tagged-var-ref within the group
-   field operates in the same way as for the instance field.  The
-   instance and group variables are not related.
+   Processing of tagged-variable within the group field operates in the
+   same way as for the instance field.  The instance and group variables
+   are not related.
 
    The Verifier maintains a small array of instance slots, each variable
    is identified using a non-negative integer.  Before processing each
    triple, all variables SHALL be set to the unbound state.
 
    If the condition ECT environment-map contains an instance field of
-   type tagged-var-bind and that variable is not yet bound then it
-   matches against any instance value.  The instance field in the ACS
-   entry is copied into the instance bound variable with the relevant
-   var-number.
+   type tagged-variable and that variable is not yet bound then it
+   matches against any instance value.  The instance field in the
+   matched ACS entry is copied into the instance bound variable with the
+   relevant var-number.
 
    If the condition ECT environment-map contains an instance field of
-   type tagged-var-bind and that variable is bound to a value which is
+   type tagged-variable and that variable is bound to a value which is
    not binary identical to the value in the ACS-ECT which potentially
    matches the condition ECT then the environments do not match.
-
-   If a condition ECT contains an instance field of type tagged-var-ref
-   then it is invalid and the environments do not match.
 
 9.4.3.  Authority comparison
 
@@ -4127,13 +4121,10 @@ Table of Contents
    | 564     | array       | tagged-int-range, see         | RFCthis   |
    |         |             | Section 5.1.4.1.8             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 565     | tagged-var- | tagged-var-bind, see          | RFCthis   |
-   |         | bind        | Section 9.3.4.1.1             |           |
+   | 565     | tagged-     | tagged-variable, see          | RFCthis   |
+   |         | variable    | Section 9.3.4.1.1             |           |
    +---------+-------------+-------------------------------+-----------+
-   | 566     | tagged-var- | tagged-var-ref, see           | RFCthis   |
-   |         | ref         | Section 9.3.4.1.1             |           |
-   +---------+-------------+-------------------------------+-----------+
-   | 567-599 | any         | Earmarked for CoRIM           | RFCthis   |
+   | 566-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
                                   Table 8
@@ -4791,9 +4782,9 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               Fossati, T., Deshpande, Y., and H. Birkholz, "A CoRIM
               Profile for Arm's Platform Security Architecture (PSA)
               Endorsements", Work in Progress, Internet-Draft, draft-
-              fdb-rats-psa-endorsements-07, 4 July 2025,
+              fdb-rats-psa-endorsements-08, 4 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
-              endorsements-07>.
+              endorsements-08>.
 
    [I-D.ietf-rats-ar4si]
               Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
@@ -5259,12 +5250,9 @@ Appendix A.  Base CoRIM CDDL
      ? &(version-scheme: 1) => $version-scheme
    }
 
-   $wc-match-type-choice /= tagged-var-bind
-   $wc-match-type-choice /= tagged-var-ref
+   $wc-match-type-choice /= tagged-variable
 
-   tagged-var-bind = #6.565(var-number)
-
-   tagged-var-ref = #6.566(var-number)
+   tagged-variable = #6.565(var-number)
 
    var-number = uint
 

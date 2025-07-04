@@ -3015,23 +3015,21 @@ $group-id-type-choice /= tagged-bytes
               <h6 id="name-environment-wild-card-bindi">
 <a href="#section-5.1.4.1.4" class="section-number selfRef">5.1.4.1.4. </a><a href="#name-environment-wild-card-bindi" class="section-name selfRef">Environment Wild-card Binding</a>
               </h6>
-<p id="section-5.1.4.1.4-1">The <code>tagged-var-bind</code> and <code>tagged-var-ref</code> values are used for constrained wildcard processing.<a href="#section-5.1.4.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-1">The <code>tagged-variable</code> value is used for constrained wildcard processing.<a href="#section-5.1.4.1.4-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.1.4-2">
 <pre>
-$wc-match-type-choice /= tagged-var-bind
-$wc-match-type-choice /= tagged-var-ref
+$wc-match-type-choice /= tagged-variable
 
-tagged-var-bind = #6.565(var-number)
-
-tagged-var-ref = #6.566(var-number)
+tagged-variable = #6.565(var-number)
 
 var-number = uint
 </pre><a href="#section-5.1.4.1.4-2" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.4.1.4-3">An <code>environment-map</code> without an <code>instance</code> field used in a condition will match against an ACS-ECT with any <code>instance</code> field.
-When the ACS contains evidence from multiple Target Environments, and that evidence uses the <code>instance</code> field to indicate which Target Environment the evidence relates to, the <code>tagged-var-*</code> values are used to indicate the relationships between environments.
+When the ACS contains evidence from multiple Target Environments, and that evidence uses the <code>instance</code> field to indicate which Target Environment the evidence relates to, the <code>tagged-variable</code> values are used to indicate the relationships between <code>environment-map</code>s.
 These values behave in a similar way when used in the <code>group</code> field.<a href="#section-5.1.4.1.4-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.1.4-4">The <code>tagged-var-bind</code> is used to indicate that two or more <code>environment-map</code>s within conditions must have the same <code>instance</code> value. The <code>tagged-var-ref</code> value is used to indicate that the <code>environment-map</code>.<code>instance</code> field in an addition ECT resulting from processing of part of a triple must be copied from the ACS-ECT which matched a condition in that triple.<a href="#section-5.1.4.1.4-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.1.4-4">In a condition, the <code>tagged-variable</code> is used to indicate that two or more <code>environment-map</code>s must have the same <code>instance</code> value.
+In an addition, the <code>tagged-variable</code> value is used to indicate that the <code>environment-map</code>.<code>instance</code> field must be copied from the ACS-ECT which matched a condition within the same triple.<a href="#section-5.1.4.1.4-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.1.4-5">See <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a> for full details of the Verifier processing for these values.<a href="#section-5.1.4.1.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -5652,7 +5650,7 @@ Both types of triple are transformed into an internal representation based on <c
 The Endorsed Values Triple contains a single <code>environment-map</code>, which means it can only match against one environment in the ACS; and it uses the same environment for <code>condition</code> and <code>addition</code>.<a href="#section-9.3.4.1-1" class="pilcrow">¶</a></p>
 <p id="section-9.3.4.1-2">After transformation into an <code>ev</code> entry, the processing steps of both triples are the same, as described below.
 Each <code>ev</code> entry is processed independently of other <code>ev</code>s.<a href="#section-9.3.4.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1-3">The Verifier SHALL find all sets of ACS-ECTs which match all the <code>ev</code>.<code>condition</code>s, where the ACS-ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
+<p id="section-9.3.4.1-3">The Verifier SHALL find all sets of ACS-ECTs which match all the <code>ev</code>.<code>condition</code>s, where the ACS-ECT <code>cmtype</code> contains either <code>evidence</code>, or <code>endorsements</code>.
 For each match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), all the <code>ev</code>.<code>addition</code> ECTs are added to the ACS.<a href="#section-9.3.4.1-3" class="pilcrow">¶</a></p>
 <p id="section-9.3.4.1-4">Note that some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
 If there are multiple matches then each match is processed independently from the others.<a href="#section-9.3.4.1-4" class="pilcrow">¶</a></p>
@@ -5662,18 +5660,19 @@ If there are multiple matches then each match is processed independently from th
 <a href="#section-9.3.4.1.1" class="section-number selfRef">9.3.4.1.1. </a><a href="#name-copying-instance-and-or-gro" class="section-name selfRef">Copying instance and/or group fields from a condition</a>
               </h6>
 <p id="section-9.3.4.1.1-1">A CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same <code>class</code> field within their <code>environment-map</code>, regardless of their <code>instance</code> and/or <code>group</code> fields.
-The <code>tagged-var-bind</code> and <code>tagged-var-ref</code> options in these fields can be used to achieve this.<a href="#section-9.3.4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-2">In the simplest case, within a CoRIM, the <code>enviroment-map</code>.<code>instance</code> field of an <code>ev</code> condition holds a <code>tagged-var-bind</code> and the <code>enviroment-map</code>.<code>instance</code> field of an addition within that <code>ev</code> holds a <code>tagged-var-ref</code>.
-Both instance types contain an integer name for the bound variable, which is bound by the <code>tagged-var-bind</code> and referenced by the <code>tagged-var-ref</code>.<a href="#section-9.3.4.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-3">Within each triple, each bound variable can only be bound to one value, so if there are multiple <code>environment-map</code>s using <code>tagged-var-bind</code> then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the variable.<a href="#section-9.3.4.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-4">After successfully matching the <code>class</code> field within a <code>ev</code> condition whose <code>instance</code> field is a <code>tagged-var-bind</code> against an ACS entry, the Verifier SHALL copy the <code>instance</code> value from that ACS entry to the corresponding bound variable.
+The <code>tagged-variable</code> option in these fields can be used to achieve this.<a href="#section-9.3.4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-2">In the simplest case, within a CoRIM, the <code>enviroment-map</code>.<code>instance</code> field of an <code>ev</code> condition holds a <code>tagged-variable</code> and the <code>enviroment-map</code>.<code>instance</code> field of an addition within that <code>ev</code> holds the same <code>tagged-variable</code>.
+The <code>tagged-variable</code> type contains an integer name for the bound variable, which is bound by the instance within the condition and referenced by the instance within the addition.<a href="#section-9.3.4.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-3">Within each triple, each bound variable can only be bound to one value, so if there are multiple <code>environment-map</code> conditions using <code>tagged-variable</code> then subsequent uses of a bound variable introduce a constraint that the value to bind must be equal to the value already bound to the variable.<a href="#section-9.3.4.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-4">After successfully matching an <code>ev</code> condition ECT whose <code>instance</code> field is a <code>tagged-variable</code> against an ACS entry, the Verifier SHALL copy the <code>instance</code> value from that ACS entry to the corresponding bound variable.
 If the matching ACS entry does not include an instance then the bound variable is marked as bound to the empty value.<a href="#section-9.3.4.1.1-4" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-5">When adding an <code>ev</code> addition ECT whose <code>enviroment-map</code>.<code>instance</code> field is a <code>tagged-var-ref</code> to the ACS, if the variable is bound to a non-empty value, then the Verifier SHALL copy the value of the corresponding bound variable to the <code>enviroment-map</code>.<code>instance</code> field of the new ACS-ECT.
-If the corresponding bound variable is bound to the empty value then the Verifier SHALL NOT add an <code>instance</code> field.
-If the corresponding bound variable is not bound then the triple is invalid - the Verifier SHALL NOT add the addition ECT to the ACS.<a href="#section-9.3.4.1.1-5" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-6">If a conditional endorsement containing <code>ev</code> conditions which use <code>tagged-var-bind</code> matches against multiple ECTs, then each match is processed independently of the others.
-Each match uses its own variable bindings, and each match adds a separate endorsement ECT to the ACS.<a href="#section-9.3.4.1.1-6" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.1.1-7">The <code>tagged-var-bind</code> and <code>tagged-var-ref</code> options in the <code>group</code> field work in the same way as in <code>instance</code>.
+<p id="section-9.3.4.1.1-5">An <code>ev</code> addition ECT whose <code>enviroment-map</code>.<code>instance</code> field is a <code>tagged-variable</code> references the bound value.
+When creating the ECT which will be added to the ACS, if the referenced variable is bound to a non-empty value, then the Verifier SHALL copy the value of the corresponding bound variable to the <code>enviroment-map</code>.<code>instance</code> field of the new ACS-ECT.
+If the referenced variable is bound to the empty value then the Verifier SHALL NOT add an <code>instance</code> field.
+If the referenced variable is not bound then the triple is invalid - the Verifier SHALL NOT add the addition ECT to the ACS.<a href="#section-9.3.4.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-6">If a conditional endorsement containing <code>ev</code> conditions which use <code>tagged-variables</code> matches against multiple ECTs, then each match is processed independently of the others.
+Each match uses its own variable bindings, and each match adds a separate addition ECT to the ACS.<a href="#section-9.3.4.1.1-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1.1-7">The <code>tagged-variable</code> type in the <code>group</code> field work in the same way as in <code>instance</code>.
 The bound variables for instance and group variables are separate, instance variable 0 and group variable 0 may be bound to different values.<a href="#section-9.3.4.1.1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -5807,14 +5806,13 @@ Before performing the binary comparison, the Verifier SHOULD convert both <code>
             </h5>
 <p id="section-9.4.2.1-1">These fields are used to ensure that multiple conjoined conditions match against the same instance or group value.
 They are also used to set the instance or group value in a conditional endorsement addition-ECT to match the ACS-ECTs which matched against the condition(s).<a href="#section-9.4.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-2">Processing of <code>tagged-var-bind</code> and <code>tagged-var-ref</code> within the <code>group</code> field operates in the same way as for the <code>instance</code> field.
+<p id="section-9.4.2.1-2">Processing of <code>tagged-variable</code> within the <code>group</code> field operates in the same way as for the <code>instance</code> field.
 The instance and group variables are not related.<a href="#section-9.4.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.2.1-3">The Verifier maintains a small array of instance slots, each variable is identified using a non-negative integer.
 Before processing each triple, all variables SHALL be set to the unbound state.<a href="#section-9.4.2.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-4">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>tagged-var-bind</code> and that variable is not yet bound then it matches against any instance value.
-The instance field in the ACS entry is copied into the instance bound variable with the relevant <code>var-number</code>.<a href="#section-9.4.2.1-4" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-5">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>tagged-var-bind</code> and that variable is bound to a value which is not binary identical to the value in the ACS-ECT which potentially matches the condition ECT then the environments do not match.<a href="#section-9.4.2.1-5" class="pilcrow">¶</a></p>
-<p id="section-9.4.2.1-6">If a condition ECT contains an <code>instance</code> field of type <code>tagged-var-ref</code> then it is invalid and the environments do not match.<a href="#section-9.4.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-4">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>tagged-variable</code> and that variable is not yet bound then it matches against any instance value.
+The instance field in the matched ACS entry is copied into the instance bound variable with the relevant <code>var-number</code>.<a href="#section-9.4.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.4.2.1-5">If the condition ECT <code>environment-map</code> contains an <code>instance</code> field of type <code>tagged-variable</code> and that variable is bound to a value which is not binary identical to the value in the ACS-ECT which potentially matches the condition ECT then the environments do not match.<a href="#section-9.4.2.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -6395,23 +6393,14 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
             <tr>
               <td class="text-left" rowspan="1" colspan="1">565</td>
               <td class="text-left" rowspan="1" colspan="1">
-                <code>tagged-var-bind</code>
+                <code>tagged-variable</code>
 </td>
-              <td class="text-left" rowspan="1" colspan="1">tagged-var-bind, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a>
-</td>
-              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">566</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <code>tagged-var-ref</code>
-</td>
-              <td class="text-left" rowspan="1" colspan="1">tagged-var-ref, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a>
+              <td class="text-left" rowspan="1" colspan="1">tagged-variable, see <a href="#sec-comid-instance-group-copy" class="auto internal xref">Section 9.3.4.1.1</a>
 </td>
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">567-599</td>
+              <td class="text-left" rowspan="1" colspan="1">566-599</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <code>any</code>
 </td>
@@ -7669,7 +7658,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dd class="break"></dd>
 <dt id="I-D.fdb-rats-psa-endorsements">[I-D.fdb-rats-psa-endorsements]</dt>
         <dd>
-<span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Deshpande, Y.</span>, and <span class="refAuthor">H. Birkholz</span>, <span class="refTitle">"A CoRIM Profile for Arm's Platform Security Architecture (PSA) Endorsements"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-fdb-rats-psa-endorsements-07</span>, <time datetime="2025-07-04" class="refDate">4 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-endorsements-07">https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-endorsements-07</a>&gt;</span>. </dd>
+<span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Deshpande, Y.</span>, and <span class="refAuthor">H. Birkholz</span>, <span class="refTitle">"A CoRIM Profile for Arm's Platform Security Architecture (PSA) Endorsements"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-fdb-rats-psa-endorsements-08</span>, <time datetime="2025-07-04" class="refDate">4 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-endorsements-08">https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-endorsements-08</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-rats-ar4si">[I-D.ietf-rats-ar4si]</dt>
         <dd>
@@ -8118,12 +8107,9 @@ version-map = {
   ? &amp;(version-scheme: 1) =&gt; $version-scheme
 }
 
-$wc-match-type-choice /= tagged-var-bind
-$wc-match-type-choice /= tagged-var-ref
+$wc-match-type-choice /= tagged-variable
 
-tagged-var-bind = #6.565(var-number)
-
-tagged-var-ref = #6.566(var-number)
+tagged-variable = #6.565(var-number)
 
 var-number = uint
 
