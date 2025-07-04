@@ -2506,23 +2506,23 @@ Otherwise, do not add the `addition` ECT to the ACS.
 This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
 
-Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) using the following algorithm:
+Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
 
-For every domain ECT entry (cmtype: domain-member) in staging area, which is not processed yet:
+For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which is not processed yet:
 
 For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
-	* If all members match a corresponding ACS entry, add the domain ECT to ACS
+	* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
 
-	* If none of the members match, proceed to next domain ECT in the staging area
+	* If none of the members match, proceed to next Domain Membership ECT in the staging area
 	
 	* If there is a partial match, proceed to the next Domain ECT in the staging area
 	
 If the previous execution of the loop added any Domain ECTs to the ACS, then run the loop again
-Else STOP processing Domain ECTs
+Else STOP processing Domain Membership ECTs
 
-The processing terminates, when we have added all the Domain ECTs which are appropriate to the Evidence have been added to the ACS.
+The processing terminates, when we have added all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
 
-If expected Domain ECTS have not been added, then this may affect the processing in a later phase.
+If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
