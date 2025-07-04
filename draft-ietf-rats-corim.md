@@ -2414,7 +2414,7 @@ Both instance types contain an integer name for the bound variable, which is bou
 
 Within each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the variable.
 
-After successfully matching the `class` field within a `stateful-environment-record` whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.
+After successfully matching the `class` field within a `ev` condition whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.
 If the matching ACS entry does not include an instance then the bound variable is marked as bound to the empty value.
 
 When adding an `ev` addition ECT whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, if the variable is bound to a non-empty value, then the Verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.
