@@ -948,7 +948,7 @@ The `tagged-var-bind` and `tagged-var-ref` values are used for constrained wildc
 ~~~
 
 An `environment-map` without an `instance` field used in a condition will match against an ACS-ECT with any `instance` field.
-When the ACS contains evidence from multiple Attesters, and that evidence uses the `instance` field to indicate which Attester created the evidence, these values are used to indicate the relationships between environments.
+When the ACS contains evidence from multiple Target Environments, and that evidence uses the `instance` field to indicate which Target Environment the evidence relates to, the `tagged-var-*` values are used to indicate the relationships between environments.
 These values behave in a similar way when used in the `group` field.
 
 The `tagged-var-bind` is used to indicate that two or more `environment-map`s within conditions must have the same `instance` value. The `tagged-var-ref` value is used to indicate that the `environment-map`.`instance` field in an addition ECT resulting from processing of part of a triple must be copied from the ACS-ECT which matched a condition in that triple.
@@ -2412,16 +2412,16 @@ The `tagged-var-bind` and `tagged-var-ref` options in these fields can be used t
 In the simplest case, within a CoRIM, the `enviroment-map`.`instance` field of an `ev` condition holds a `tagged-var-bind` and the `enviroment-map`.`instance` field of an addition within that `ev` holds a `tagged-var-ref`.
 Both instance types contain an integer name for the bound variable, which is bound by the `tagged-var-bind` and referenced by the `tagged-var-ref`.
 
-Within each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the slot.
+Within each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the variable.
 
 After successfully matching the `class` field within a `stateful-environment-record` whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.
 If the matching ACS entry does not include an instance then the bound variable is marked as bound to the empty value.
 
 When adding an `ev` addition ECT whose `enviroment-map`.`instance` field is a `tagged-var-ref` to the ACS, if the variable is bound to a non-empty value, then the Verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.
 If the corresponding bound variable is bound to the empty value then the Verifier SHALL NOT add an `instance` field.
-If the corresponding bound variable is not bound then the triple is invalid - the Verifier SHALL NOT add the conditional endorsement to the ACS.
+If the corresponding bound variable is not bound then the triple is invalid - the Verifier SHALL NOT add the addition ECT to the ACS.
 
-If a conditional endorsement containing `ev` condiions which use `tagged-var-bind` matches against multiple ECTs, then each match is processed independently of the others.
+If a conditional endorsement containing `ev` conditions which use `tagged-var-bind` matches against multiple ECTs, then each match is processed independently of the others.
 Each match uses its own variable bindings, and each match adds a separate endorsement ECT to the ACS.
 
 The `tagged-var-bind` and `tagged-var-ref` options in the `group` field work in the same way as in `instance`.
@@ -2537,7 +2537,7 @@ They are also used to set the instance or group value in a conditional endorseme
 Processing of `tagged-var-bind` and `tagged-var-ref` within the `group` field operates in the same way as for the `instance` field.
 The instance and group variables are not related.
 
-The verifier maintains a small array of instance slots, each variable is identified using a non-negative integer.
+The Verifier maintains a small array of instance slots, each variable is identified using a non-negative integer.
 Before processing each triple, all variables SHALL be set to the unbound state.
 
 If the condition ECT `environment-map` contains an `instance` field of type `tagged-var-bind` and that variable is not yet bound then it matches against any instance value.
