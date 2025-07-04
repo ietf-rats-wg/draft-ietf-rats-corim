@@ -853,7 +853,7 @@ An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
 An environment MUST be globally unique.
-The combination of values within `class-map` MUST combine to form a globally unique identifier.
+The combination of values within `environment-map` MUST combine to form a globally unique identifier.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
@@ -919,6 +919,8 @@ The key identifier is reliably bound to the subject public key because the ident
 The types defined for an instance identifier are CBOR tagged expressions of
 UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cryptographic keys, or cryptographic key identifiers.
 
+Wild-card binding can be used within the `instance` field, see {{sec-comid-wc}}.
+
 ~~~ cddl
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
@@ -931,9 +933,28 @@ anonymity set.
 
 The types defined for a group identified are UUID and variable-length opaque byte string ({{sec-common-tagged-bytes}}).
 
+Wild-card binding can be used within the `group` field, see {{sec-comid-wc}}.
+
 ~~~ cddl
 {::include cddl/group-id-type-choice.cddl}
 ~~~
+
+##### Environment Wild-card Binding {#sec-comid-wc}
+
+The `tagged-variable` value is used for constrained wildcard processing.
+
+~~~ cddl
+{::include cddl/wc-match-type-choice.cddl}
+~~~
+
+An `environment-map` without an `instance` field used in a condition will match against an ACS-ECT with any `instance` field.
+When the ACS contains evidence from multiple Target Environments, and that evidence uses the `instance` field to indicate which Target Environment the evidence relates to, the `tagged-variable` values are used to indicate the relationships between `environment-map`s.
+These values behave in a similar way when used in the `group` field.
+
+In a condition, the `tagged-variable` is used to indicate that two or more `environment-map`s must have the same `instance` value.
+In an addition, the `tagged-variable` value is used to indicate that the `environment-map`.`instance` field must be copied from the ACS-ECT which matched a condition within the same triple.
+
+See {{sec-comid-instance-group-copy}} for full details of the Verifier processing for these values.
 
 ##### Measurements {#sec-measurements}
 
@@ -2371,14 +2392,42 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
-Endorsements are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+Endorsed Value Triple and Conditional Endorsement Triple share the same internal representation.
+Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Value Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
+The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; and it uses the same environment for `condition` and `addition`.
 
-#### Processing Conditional Endorsements {#sec-process-cond-end}
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
 
-Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
-Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
+The Verifier SHALL find all sets of ACS-ECTs which match all the `ev`.`condition`s, where the ACS-ECT `cmtype` contains either `evidence`, or `endorsements`.
+For each match ({{sec-match-condition-ect}}), all the `ev`.`addition` ECTs are added to the ACS.
+
+Note that some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches then each match is processed independently from the others.
+
+##### Copying instance and/or group fields from a condition {#sec-comid-instance-group-copy}
+
+A CoRIM author may need to create a conditional endorsement which applies to all measurements which have the same `class` field within their `environment-map`, regardless of their `instance` and/or `group` fields.
+The `tagged-variable` option in these fields can be used to achieve this.
+
+In the simplest case, within a CoRIM, the `enviroment-map`.`instance` field of an `ev` condition holds a `tagged-variable` and the `enviroment-map`.`instance` field of an addition within that `ev` holds the same `tagged-variable`.
+The `tagged-variable` type contains an integer name for the bound variable, which is bound by the instance within the condition and referenced by the instance within the addition.
+
+Within each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map` conditions using `tagged-variable` then subsequent uses of a bound variable introduce a constraint that the value to bind must be equal to the value already bound to the variable.
+
+After successfully matching an `ev` condition ECT whose `instance` field is a `tagged-variable` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.
+If the matching ACS entry does not include an instance then the bound variable is marked as bound to the empty value.
+
+An `ev` addition ECT whose `enviroment-map`.`instance` field is a `tagged-variable` references the bound value.
+When creating the ECT which will be added to the ACS, if the referenced variable is bound to a non-empty value, then the Verifier SHALL copy the value of the corresponding bound variable to the `enviroment-map`.`instance` field of the new ACS-ECT.
+If the referenced variable is bound to the empty value then the Verifier SHALL NOT add an `instance` field.
+If the referenced variable is not bound then the triple is invalid - the Verifier SHALL NOT add the addition ECT to the ACS.
+
+If a conditional endorsement containing `ev` conditions which use `tagged-variables` matches against multiple ECTs, then each match is processed independently of the others.
+Each match uses its own variable bindings, and each match adds a separate addition ECT to the ACS.
+
+The `tagged-variable` type in the `group` field work in the same way as in `instance`.
+The bound variables for instance and group variables are separate, instance variable 0 and group variable 0 may be bound to different values.
 
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
@@ -2481,6 +2530,22 @@ If any field which is present in the condition ECT `environment-map` is not pres
 If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
 
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
+
+#### Instance and group variable bind and reference fields
+
+These fields are used to ensure that multiple conjoined conditions match against the same instance or group value.
+They are also used to set the instance or group value in a conditional endorsement addition-ECT to match the ACS-ECTs which matched against the condition(s).
+
+Processing of `tagged-variable` within the `group` field operates in the same way as for the `instance` field.
+The instance and group variables are not related.
+
+The Verifier maintains a small array of instance slots, each variable is identified using a non-negative integer.
+Before processing each triple, all variables SHALL be set to the unbound state.
+
+If the condition ECT `environment-map` contains an `instance` field of type `tagged-variable` and that variable is not yet bound then it matches against any instance value.
+The instance field in the matched ACS entry is copied into the instance bound variable with the relevant `var-number`.
+
+If the condition ECT `environment-map` contains an `instance` field of type `tagged-variable` and that variable is bound to a value which is not binary identical to the value in the ACS-ECT which potentially matches the condition ECT then the environments do not match.
 
 ### Authority comparison {#sec-compare-authority}
 
@@ -2784,7 +2849,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
-| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     565 | `tagged-variable`   | tagged-variable, see {{sec-comid-instance-group-copy}}        | {{&SELF}} |
+| 566-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
