@@ -2505,23 +2505,24 @@ Otherwise, do not add the `addition` ECT to the ACS.
 
 This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
-##### First Pass {#sec-first-pass}
-Domain Membership ECTs (`cmtype`: `domain-member`) in the staging area are matched with ACS entries (of `cmtype`: `evidence`) using the following algorithm:
 
-* For every `domain` ECT entry (`cmtype`: `domain-member`):
-  * For each `i` in `members`, check that there is a corresponding ACS entry with a matching `environment` and `cmtype`:`evidence`
-  * If all `members` match a corresponding ACS entry, add the `domain` ECT to ACS
-  * If none of the `members` match, proceed to next `domain` ECT in the list.
-  * If there is a partial match, i.e. some `i's` in `members` has a matching ACS `environment` and `cmtype`:`evidence` add the `domain` ECT entry (`cmtype`: `domain-member`) to the ACS and proceed to ({{sec-second-pass}})
+Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) using the following algorithm:
 
-##### Second Pass {#sec-second-pass}
-The second pass is only applicable, when there is a partial match, i.e. some `i's` in members has a matching ACS `environment` and cm-type = `evidence`.
-This is a case of a Composite Attester, where some `members` i.e.`environment` may refer to the `domain identifiers` for other `domains`, which have yet not been appraised.
-During successive passes of iteration, these unmatched `members` MUST match with the `environment` field (which contains domain identifier) of one of ACS ECT entry of `cmtype`: `domain-member`.
+For every domain ECT entry (cmtype: domain-member) in staging area, which is not processed yet:
 
-If after successive iterations, there is not a complete match for each `i` in `members`, then the `domain` ECT entry  (`cmtype`: `domain-member`), is removed from the ACS
+For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
+	* If all members match a corresponding ACS entry, add the domain ECT to ACS
 
-If none of the `domain` ECT entries (`cmtype`: `domain-member`) in the staging area match the ACS `environment` and `cmtype`:`evidence`, then the phase is terminated.
+	* If none of the members match, proceed to next domain ECT in the staging area
+	
+	* If there is a partial match, proceed to the next Domain ECT in the staging area
+	
+If the previous execution of the loop added any Domain ECTs to the ACS, then run the loop again
+Else STOP processing Domain ECTs
+
+The processing terminates, when we have added all the Domain ECTs which are appropriate to the Evidence have been added to the ACS.
+
+If expected Domain ECTS have not been added, then this may affect the processing in a later phase.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
