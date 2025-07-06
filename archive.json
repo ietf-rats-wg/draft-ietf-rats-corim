@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-03T02:06:45.336304+00:00",
+  "timestamp": "2025-07-06T02:21:11.651205+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11808,6 +11808,30 @@
       "updatedAt": "2025-07-02T15:25:55Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 456,
+      "id": "I_kwDOH6-tI86-7SYL",
+      "title": "intrep relation multiplicity is inconsistent",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/456",
+      "state": "OPEN",
+      "author": "deeglaze",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We define triples' internal representations rv, ev, evs, ae, dm (PR #454). Both ev and evs are structures that correspond to single triples, and the others are arrays that correspond to multiple triples. I think it would be more understandable to keep them singular and define an explicit staging area that adds in the multiplicity (see ir-stage in PR #307). There's text like \"an rv list entry is allocated\" and \"an ev entry is allocated\" which have no real anchor point without the staging area.\n\nIf y'all agree, I can change #307 to make the change to the grammar and the allocation text.",
+      "createdAt": "2025-07-04T16:09:34Z",
+      "updatedAt": "2025-07-04T16:10:14Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@yogeshbdeshpande @andrew-draper as discussed today in the meeting and in #454 comments.",
+          "createdAt": "2025-07-04T16:10:14Z",
+          "updatedAt": "2025-07-04T16:10:14Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -50034,7 +50058,7 @@
       "labels": [],
       "body": "Closes Issue #242\r\n\r\nThe text already refers to an appraisal session and an appraisal context, but they are not introduced as concepts the same way the ACS is. Add Context and Session as specific constructs that serve distinct purposes.\r\n\r\nI think the \"CoRIMs are collected\" text is a bit too vague, so I put all input fetching in phase 0. Validation and transformation is in phase 1.\r\n\r\nI found it weird that Evidence Collection was not part of input gathering, so I've moved it.\r\n\r\nThis change clarifies the meaning of \"active\" and \"inactive\", and what \"requires CoBOMs\" means. It's just whether all available tags are included in the search space or only referenced ones are. A CoBOM is not a bundle of tags the way a CoRIM is. A CoBOM must reference tags that are already in the input set. It just flips them to being usable in the appraisal procedure.\r\n\r\nI did not provide CDDL for the session or context since I think that needs to be sequenced after PR#299.",
       "createdAt": "2024-10-04T18:15:56Z",
-      "updatedAt": "2025-07-02T15:14:07Z",
+      "updatedAt": "2025-07-03T07:46:41Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
@@ -51367,6 +51391,39 @@
               "updatedAt": "2025-07-02T15:14:07Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xv1wq",
+          "commit": {
+            "abbreviatedOid": "4c68af3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T07:45:58Z",
+          "updatedAt": "2025-07-03T07:45:58Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I do not think, such a Data Structure is Possible. Reason been, a Verifier will have Many Schemes (like TDX, Arm CCA, etc etc) For each scheme there can be Multiple CoRIMs.\r\n\r\nEach CoRIM moves into a Staging Area Data Structure.\r\n\r\nHowever, NOT all CoRIMs are part of `ir-appraisal-context`, but they are ALL part of a `Staging Area` upon reception!!!\r\n\r\n1. Once the Evidence is received, Appraisal Claim Set (ACS) Population Starts, with Evidence\r\n2. Then we Select suitable Staging Area Mapped Data Structure i.e. IR of CoRIMS : \r\n3. Then we progress the remainder of Appraisal, Phase 2/3/4/5...\r\n\r\n\r\n",
+              "createdAt": "2025-07-03T07:45:58Z",
+              "updatedAt": "2025-07-03T07:45:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xv2PW",
+          "commit": {
+            "abbreviatedOid": "4c68af3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Please see my latest comments!",
+          "createdAt": "2025-07-03T07:46:41Z",
+          "updatedAt": "2025-07-03T07:46:41Z",
+          "comments": []
         }
       ]
     },
@@ -68482,13 +68539,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-07-02T14:57:26Z",
+      "updatedAt": "2025-07-04T21:16:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
+      "baseRefOid": "e838cc939708b000962f466224a083dbec013f28",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "ecb39e4ab10c662cf9c23f2624d160d23d1bf510",
+      "headRefOid": "cf66a8965edb99fb992fd9d56a2161244f9a51ac",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -69611,6 +69668,299 @@
           "createdAt": "2025-07-02T14:57:26Z",
           "updatedAt": "2025-07-02T14:57:26Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86x0WSU",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T13:53:14Z",
+          "updatedAt": "2025-07-03T13:53:15Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\r\nWhen the ACS contains evidence from a Composite Attester, and that evidence uses the `instance` field to indicate which Component Attester created the Evidence, the `tagged-var-*` values are used to indicate the relationships between environments.\r\n```",
+              "createdAt": "2025-07-03T13:53:14Z",
+              "updatedAt": "2025-07-04T13:57:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86x0cRm",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T13:59:50Z",
+          "updatedAt": "2025-07-03T13:59:50Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "copy the `instance` value from that ACS entry to the corresponding bound variable?\r\n\r\nDid you mean the ACS entry from Evidence?",
+              "createdAt": "2025-07-03T13:59:50Z",
+              "updatedAt": "2025-07-03T13:59:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86x0dQ4",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T14:00:55Z",
+          "updatedAt": "2025-07-03T14:00:56Z",
+          "comments": [
+            {
+              "originalPosition": 87,
+              "body": "```suggestion\r\nIf a conditional endorsement containing `ev` conditions which use `tagged-var-bind` matches against multiple ECTs, then each match is processed independently of the others.\r\n```",
+              "createdAt": "2025-07-03T14:00:55Z",
+              "updatedAt": "2025-07-03T14:00:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86x0ed_",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T14:02:21Z",
+          "updatedAt": "2025-07-03T14:02:21Z",
+          "comments": [
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\r\nThe Verifier maintains a small array of instance slots, each variable is identified using a non-negative integer.\r\n```",
+              "createdAt": "2025-07-03T14:02:21Z",
+              "updatedAt": "2025-07-03T14:02:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86x0gyU",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "I have few minor comments to improve on, but this is substantially a better version!\r\n\r\nThanks, please do these minor edits and we are good to go from my side!",
+          "createdAt": "2025-07-03T14:04:47Z",
+          "updatedAt": "2025-07-03T14:04:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yDzEX",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T13:51:57Z",
+          "updatedAt": "2025-07-04T13:51:57Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "```suggestion\r\nWhen the ACS contains evidence from multiple Target Environments, and that evidence uses the `instance` field to indicate which Target Environment the evidence relates to, the `tagged-var-*` values are used to indicate the relationships between environments.\r\n```",
+              "createdAt": "2025-07-04T13:51:57Z",
+              "updatedAt": "2025-07-04T13:58:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yD5j4",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:00:17Z",
+          "updatedAt": "2025-07-04T14:00:18Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "```suggestion\r\nWithin each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses introduce a constraint that the value to bind must be equal to the value already bound to the variable.\r\n```",
+              "createdAt": "2025-07-04T14:00:18Z",
+              "updatedAt": "2025-07-04T14:00:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yD-PF",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:06:08Z",
+          "updatedAt": "2025-07-04T14:06:09Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "```suggestion\r\nIf the corresponding bound variable is not bound then the triple is invalid - the Verifier SHALL NOT add the addition ECT to the ACS.\r\n```",
+              "createdAt": "2025-07-04T14:06:09Z",
+              "updatedAt": "2025-07-04T14:06:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yEL3R",
+          "commit": {
+            "abbreviatedOid": "7967cec"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:24:40Z",
+          "updatedAt": "2025-07-04T14:24:40Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "Yes, the instance is copied from ACS-ECT to bound variable",
+              "createdAt": "2025-07-04T14:24:40Z",
+              "updatedAt": "2025-07-04T14:24:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yEM-7",
+          "commit": {
+            "abbreviatedOid": "575cffe"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:26:42Z",
+          "updatedAt": "2025-07-04T14:26:42Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\nThe `tagged-var-bind` is used to indicate that two or more `environment-map`s matched against a condition must have the same `instance` value. The `tagged-var-ref` value is used to indicate that the `environment-map`.`instance` field in an addition ECT resulting from processing of part of a triple must be copied from the ACS-ECT which matched a condition in that triple.\r\n```",
+              "createdAt": "2025-07-04T14:26:42Z",
+              "updatedAt": "2025-07-04T14:26:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yEOL8",
+          "commit": {
+            "abbreviatedOid": "575cffe"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:28:37Z",
+          "updatedAt": "2025-07-04T14:28:38Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "```suggestion\r\nWithin each triple, each bound variable can only be bound to one value, so if there are multiple `environment-map`s using `tagged-var-bind` then subsequent uses of a bound variable introduce a constraint that the value to bind must be equal to the value already bound to the variable.\r\n```",
+              "createdAt": "2025-07-04T14:28:37Z",
+              "updatedAt": "2025-07-04T14:28:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yEPGE",
+          "commit": {
+            "abbreviatedOid": "575cffe"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:29:50Z",
+          "updatedAt": "2025-07-04T14:29:50Z",
+          "comments": [
+            {
+              "originalPosition": 80,
+              "body": "```suggestion\r\nAfter successfully matching the `class` field within a `ev` condition whose `instance` field is a `tagged-var-bind` against an ACS entry, the Verifier SHALL copy the `instance` value from that ACS entry to the corresponding bound variable.\r\n```",
+              "createdAt": "2025-07-04T14:29:50Z",
+              "updatedAt": "2025-07-04T14:29:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yEP64",
+          "commit": {
+            "abbreviatedOid": "575cffe"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T14:30:38Z",
+          "updatedAt": "2025-07-04T14:30:38Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "TODO: Find a way to describe this without using bound variable terminology",
+              "createdAt": "2025-07-04T14:30:38Z",
+              "updatedAt": "2025-07-04T14:30:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFTuA",
+          "commit": {
+            "abbreviatedOid": "855499c"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:49:50Z",
+          "updatedAt": "2025-07-04T15:49:50Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "TODO: Merge these tags into one called tagged-variable",
+              "createdAt": "2025-07-04T15:49:50Z",
+              "updatedAt": "2025-07-04T15:49:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFUT2",
+          "commit": {
+            "abbreviatedOid": "855499c"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:50:59Z",
+          "updatedAt": "2025-07-04T15:51:00Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "```suggestion\r\nIf the corresponding bound variable is not bound then the triple is invalid\u2014the Verifier SHALL NOT add the addition ECT to the ACS.\r\n```",
+              "createdAt": "2025-07-04T15:50:59Z",
+              "updatedAt": "2025-07-04T15:51:00Z"
+            }
+          ]
         }
       ]
     },
@@ -71108,13 +71458,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-06-25T09:35:07Z",
-      "updatedAt": "2025-07-02T16:34:45Z",
+      "updatedAt": "2025-07-04T16:18:19Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e838cc939708b000962f466224a083dbec013f28",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-new-proposal",
-      "headRefOid": "43ef657dd8e7540dc3060cea034bda247f9aaa88",
+      "headRefOid": "b432d8186b17be06969fbaafc562cc12d8bce73d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -72406,6 +72756,559 @@
               "body": "Again this is the interpretation \"I am in x, y, z\". Root -> LoadInc module{1,2}\r\n\r\nIf instead you're meaning to say loader modules 1 and 2 are always under this root of trust, then use text \"The LoadInc modules are under the PQR root of trust.\" LoadInc module{1,2} -> Root",
               "createdAt": "2025-07-02T16:34:45Z",
               "updatedAt": "2025-07-02T16:34:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xyMg9",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T11:00:33Z",
+          "updatedAt": "2025-07-03T11:00:33Z",
+          "comments": [
+            {
+              "originalPosition": 231,
+              "body": "yes",
+              "createdAt": "2025-07-03T11:00:33Z",
+              "updatedAt": "2025-07-03T11:00:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xzMQB",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T12:31:48Z",
+          "updatedAt": "2025-07-03T12:31:48Z",
+          "comments": [
+            {
+              "originalPosition": 252,
+              "body": "We discussed that it is not the Verifier configuration but Appraisal Policy of Evidence, hence the suggested text will not be applied on the PR.",
+              "createdAt": "2025-07-03T12:31:48Z",
+              "updatedAt": "2025-07-03T12:31:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xzM8A",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T12:32:49Z",
+          "updatedAt": "2025-07-03T12:32:49Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "Agree with Thomas, new changes have the Two Pass, first pass has the Evidence comparison, the second pass has the domain ECT Comparison..",
+              "createdAt": "2025-07-03T12:32:49Z",
+              "updatedAt": "2025-07-03T12:32:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xzNhS",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T12:33:38Z",
+          "updatedAt": "2025-07-03T12:33:38Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "> In general, I don't see a problem with having additional measurements in the ACS which are not matched. Some CoRIM authors will care about this, others will not. Why is this a problem?\r\n\r\nWe have corrected the text to align with ONLY matching `M` Members now. The new text addresses this concern...",
+              "createdAt": "2025-07-03T12:33:38Z",
+              "updatedAt": "2025-07-03T12:33:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86xzOFs",
+          "commit": {
+            "abbreviatedOid": "43ef657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-03T12:34:28Z",
+          "updatedAt": "2025-07-03T12:34:28Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "New text refers to `i` in `members` which is much cleaner way of representation!",
+              "createdAt": "2025-07-03T12:34:28Z",
+              "updatedAt": "2025-07-03T12:34:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yCw4r",
+          "commit": {
+            "abbreviatedOid": "7fa449e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T12:40:36Z",
+          "updatedAt": "2025-07-04T12:40:36Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "This file shouldn\u2019t be added (it\u2019s generated automatically by the build)",
+              "createdAt": "2025-07-04T12:40:36Z",
+              "updatedAt": "2025-07-04T12:40:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yC7Q7",
+          "commit": {
+            "abbreviatedOid": "cd3c805"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T12:50:11Z",
+          "updatedAt": "2025-07-04T12:50:11Z",
+          "comments": [
+            {
+              "originalPosition": 43,
+              "body": "NSNL + grammar\r\n\r\n```suggestion\r\nThe Domain Membership Triple allows an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.\r\nThis allows a topological description of an Attester to be expressed by linking a parent Environment (e.g. a lead Attester) to its child Environments (e.g. one or more sub-Attesters).\r\n```",
+              "createdAt": "2025-07-04T12:50:11Z",
+              "updatedAt": "2025-07-04T12:50:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yDIhn",
+          "commit": {
+            "abbreviatedOid": "20ca7f2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T13:04:35Z",
+          "updatedAt": "2025-07-04T13:04:35Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "There is no first pass and second pass.\r\nThere are as many passes needed to converge - or to realise it won\u2019t.",
+              "createdAt": "2025-07-04T13:04:35Z",
+              "updatedAt": "2025-07-04T13:04:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yDQQX",
+          "commit": {
+            "abbreviatedOid": "20ca7f2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T13:12:42Z",
+          "updatedAt": "2025-07-04T13:12:43Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "I think we need more time than is available before the deadline to put this into shape.  I propose that we:\r\n1. Remove the content from the \u201cProcessing Domain Membership\u201d section;\r\n2. Raise an issue regarding its completion;\r\n3. Add the issue link here as a placeholder.",
+              "createdAt": "2025-07-04T13:12:43Z",
+              "updatedAt": "2025-07-04T13:12:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yDdDC",
+          "commit": {
+            "abbreviatedOid": "20ca7f2"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T13:28:19Z",
+          "updatedAt": "2025-07-04T13:28:20Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "> There is no first pass and second pass. There are as many passes needed to converge - or to realise it won\u2019t.\r\n\r\nBasically there are more like a `stage` of Verification: In the first stage the Evidence needs to be compared.\r\n\r\nin the Subsequent Stages, one needs to compare it with Domain ECTs as well.\r\n\r\nI am not clear where you have the issue ..?\r\n\r\nI think, this should address bulk of the issues so we should commit this and improve upon it, unless there is a scenario where you think, it is bound to fail?",
+              "createdAt": "2025-07-04T13:28:19Z",
+              "updatedAt": "2025-07-04T13:28:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yD26h",
+          "commit": {
+            "abbreviatedOid": "20ca7f2"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T13:56:36Z",
+          "updatedAt": "2025-07-04T13:56:36Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "What we need to describe is an iterative algorithm that tries to converge to a fixed point in terms of 3 fundamental pieces:\r\n\r\n* initialisation,\r\n* iterative step procedure,\r\n* stop condition.\r\n\r\nThere should be no real difference between matching against evidence ECTs and domain ECTs. At each pass, we try to match as much as possible, add what matched, and start again until we can match no more.\r\n\r\nAnyway, if others think it's worth merging this section as-is, I won't stand in the way. If so, please create an issue to track improvements to the processing algorithm description.",
+              "createdAt": "2025-07-04T13:56:36Z",
+              "updatedAt": "2025-07-04T13:56:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFMFL",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:34:12Z",
+          "updatedAt": "2025-07-04T15:34:12Z",
+          "comments": [
+            {
+              "originalPosition": 248,
+              "body": "```suggestion\r\nIf expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.\r\n```",
+              "createdAt": "2025-07-04T15:34:12Z",
+              "updatedAt": "2025-07-04T15:45:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFMbc",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:34:52Z",
+          "updatedAt": "2025-07-04T15:34:52Z",
+          "comments": [
+            {
+              "originalPosition": 234,
+              "body": "```suggestion\r\nFor every domain ECT entry (cmtype: domain-member) in the staging area, which is not processed yet:\r\n```",
+              "createdAt": "2025-07-04T15:34:52Z",
+              "updatedAt": "2025-07-04T15:34:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFMtC",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:35:27Z",
+          "updatedAt": "2025-07-04T15:35:27Z",
+          "comments": [
+            {
+              "originalPosition": 232,
+              "body": "```suggestion\r\nDomain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:\r\n```",
+              "createdAt": "2025-07-04T15:35:27Z",
+              "updatedAt": "2025-07-04T15:35:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFM-X",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:36:09Z",
+          "updatedAt": "2025-07-04T15:36:09Z",
+          "comments": [
+            {
+              "originalPosition": 234,
+              "body": "```suggestion\r\nFor every Domain Membership ECT entry (cmtype: domain-member) in staging area, which is not processed yet:\r\n```",
+              "createdAt": "2025-07-04T15:36:09Z",
+              "updatedAt": "2025-07-04T15:36:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFNTw",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:36:43Z",
+          "updatedAt": "2025-07-04T15:36:44Z",
+          "comments": [
+            {
+              "originalPosition": 237,
+              "body": "```suggestion\r\n\t* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS\r\n```",
+              "createdAt": "2025-07-04T15:36:44Z",
+              "updatedAt": "2025-07-04T15:36:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFNU_",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:36:46Z",
+          "updatedAt": "2025-07-04T15:36:46Z",
+          "comments": [
+            {
+              "originalPosition": 237,
+              "body": "```suggestion\r\n\t* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS\r\n```",
+              "createdAt": "2025-07-04T15:36:46Z",
+              "updatedAt": "2025-07-04T15:36:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFNaP",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:36:58Z",
+          "updatedAt": "2025-07-04T15:36:58Z",
+          "comments": [
+            {
+              "originalPosition": 239,
+              "body": "```suggestion\r\n\t* If none of the members match, proceed to next Domain Membership ECT in the staging area\r\n```",
+              "createdAt": "2025-07-04T15:36:58Z",
+              "updatedAt": "2025-07-04T15:36:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFNbu",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:37:01Z",
+          "updatedAt": "2025-07-04T15:37:02Z",
+          "comments": [
+            {
+              "originalPosition": 239,
+              "body": "```suggestion\r\n\t* If none of the members match, proceed to next Domain Membership ECT in the staging area\r\n```",
+              "createdAt": "2025-07-04T15:37:02Z",
+              "updatedAt": "2025-07-04T15:37:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFNfb",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:37:10Z",
+          "updatedAt": "2025-07-04T15:37:10Z",
+          "comments": [
+            {
+              "originalPosition": 241,
+              "body": "```suggestion\r\n\t* If there is a partial match, proceed to the next Domain Membership ECT in the staging area\r\n```",
+              "createdAt": "2025-07-04T15:37:10Z",
+              "updatedAt": "2025-07-04T15:37:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFNlK",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:37:25Z",
+          "updatedAt": "2025-07-04T15:37:25Z",
+          "comments": [
+            {
+              "originalPosition": 243,
+              "body": "```suggestion\r\nIf the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again\r\n```",
+              "createdAt": "2025-07-04T15:37:25Z",
+              "updatedAt": "2025-07-04T15:37:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFOAz",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:38:15Z",
+          "updatedAt": "2025-07-04T15:38:15Z",
+          "comments": [
+            {
+              "originalPosition": 244,
+              "body": "```suggestion\r\nElse STOP processing Domain Membership ECTs\r\n```",
+              "createdAt": "2025-07-04T15:38:15Z",
+              "updatedAt": "2025-07-04T15:38:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFOH8",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:38:35Z",
+          "updatedAt": "2025-07-04T15:38:35Z",
+          "comments": [
+            {
+              "originalPosition": 246,
+              "body": "```suggestion\r\nThe processing terminates, when we have added all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.\r\n```",
+              "createdAt": "2025-07-04T15:38:35Z",
+              "updatedAt": "2025-07-04T15:38:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFOrR",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:39:29Z",
+          "updatedAt": "2025-07-04T15:39:30Z",
+          "comments": [
+            {
+              "originalPosition": 248,
+              "body": "```suggestion\r\nIf expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.\r\n```",
+              "createdAt": "2025-07-04T15:39:29Z",
+              "updatedAt": "2025-07-04T15:39:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFSQ4",
+          "commit": {
+            "abbreviatedOid": "f4c72b1"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T15:46:00Z",
+          "updatedAt": "2025-07-04T15:46:00Z",
+          "comments": [
+            {
+              "originalPosition": 244,
+              "body": "```suggestion\r\nElse STOP processing Domain Membership ECTs\r\n```",
+              "createdAt": "2025-07-04T15:46:00Z",
+              "updatedAt": "2025-07-04T15:46:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFX5c",
+          "commit": {
+            "abbreviatedOid": "881ec57"
+          },
+          "author": "deeglaze",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM. Will open an issue about dm/ev/rv multiplicity consistency.",
+          "createdAt": "2025-07-04T16:00:27Z",
+          "updatedAt": "2025-07-04T16:00:27Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFeQ2",
+          "commit": {
+            "abbreviatedOid": "b432d81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T16:14:46Z",
+          "updatedAt": "2025-07-04T16:14:47Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "It is better to distinguish the term `domain-identifier`, with a domain-type, which internally maps to an `environment`",
+              "createdAt": "2025-07-04T16:14:46Z",
+              "updatedAt": "2025-07-04T16:14:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yFfri",
+          "commit": {
+            "abbreviatedOid": "20ca7f2"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-04T16:18:19Z",
+          "updatedAt": "2025-07-04T16:18:19Z",
+          "comments": [
+            {
+              "originalPosition": 240,
+              "body": "Fully agree with @thomas-fossati suggestion, so we have addressed this in the subsequent commit simplifying the algorithm greatly and doing justice with it.\r\n\r\nAndy and Dionna are on board with this and agree the text in principle.",
+              "createdAt": "2025-07-04T16:18:19Z",
+              "updatedAt": "2025-07-04T16:18:19Z"
             }
           ]
         }
