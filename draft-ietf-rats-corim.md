@@ -2508,7 +2508,7 @@ This section assumes that each Domain Membership Triple has been transformed int
 
 Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
 
-For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which is not processed yet:
+For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:
 
 For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
 	* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
