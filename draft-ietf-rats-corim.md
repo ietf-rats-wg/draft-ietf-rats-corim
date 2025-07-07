@@ -1777,7 +1777,8 @@ Environment-Claims Tuples (ECT) have six attributes:
 {:ect-enum: style="format %d."}
 
 {: ect-enum}
-* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
+* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier (`mkey`).
+If the Conceptual Message Type is `domain-member`, this field contains the domain identifier (`domain-id`) of the domain triple.
 
 * Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
 
