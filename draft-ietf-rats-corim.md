@@ -951,7 +951,7 @@ An `environment-map` without an `instance` field used in a condition will match 
 When the ACS contains evidence from multiple Target Environments, and that evidence uses the `instance` field to indicate which Target Environment the evidence relates to, the `tagged-variable` values are used to indicate the relationships between `environment-map`s.
 These values behave in a similar way when used in the `group` field.
 
-In a condition, the `tagged-variable` is used to indicate that two or more `environment-map`s must have the same `instance` value.
+In a condition, the `tagged-variable` is used to indicate that two or more ACS-ECT `environment-map`s must have the same `instance` value.
 In an addition, the `tagged-variable` value is used to indicate that the `environment-map`.`instance` field must be copied from the ACS-ECT which matched a condition within the same triple.
 
 See {{sec-comid-instance-group-copy}} for full details of the Verifier processing for these values.
