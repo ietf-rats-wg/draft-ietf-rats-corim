@@ -1466,7 +1466,7 @@ A Domain Membership Triple (DMT) links a domain identifier to its member Environ
 The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
 
 The Domain Membership Triple allows an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
-This allows a topological description of an Attester to be expressed by linking a parent Environment (e.g. a lead Attester) to its child Environments (e.g. one or more sub-Attesters).
+This allows a topological description of an Attester to be expressed by linking a parent Environment (e.g., a lead Attester) to its child Environments (e.g., one or more sub-Attesters).
 
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
 
