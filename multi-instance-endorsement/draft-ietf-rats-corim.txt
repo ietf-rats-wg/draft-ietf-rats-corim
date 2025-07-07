@@ -188,6 +188,8 @@ Table of Contents
          9.3.4.1.  Processing Endorsements
            9.3.4.1.1.  Copying instance and/or group fields from a
                    condition
+           9.3.4.1.2.  Example algorithm for processing Tagged
+                   Variable
          9.3.4.2.  Processing Conditional Endorsement Series
          9.3.4.3.  Processing Key Verification Endorsements
        9.3.5.  Examples for optional phases 5, 6, and 7
@@ -3426,6 +3428,44 @@ Table of Contents
    in instance.  The var-numbers for instance and group variables are
    separate, instance var-number 0 and group var-number 0 may be bound
    to different values.
+
+9.3.4.1.2.  Example algorithm for processing Tagged Variable
+
+   This section describes an algorithm for processing an ev containing
+   two or more conditions which include tagged-variables.
+
+   Step 1.  For each of the conditions, find the set of ACS-ECTs which
+            match the fields within that condition which are not tagged-
+            variables.
+
+   Step 2.  Iterate through the set of AES-ECTs which match the first
+            condition.  There may be multiple matches with different
+            instance values.
+
+   i   Any tagged-variables within the first condition will be bound to
+       values from the matching instance AES-ECTs.
+
+   ii  Find AES-ECTs which match the second condition, in the context of
+       the bound tagged-variables
+
+   Step 3.  Repeat the process for the third and subsequent conditions
+            (if any).
+
+   iii If any of the conditions has no matches for any addition ECT then
+       discard that partial set.
+
+   iv  If any of the conditions has multiple matches for an ECT then
+       create a partial set for each output.
+
+   Step 4.  Create a result set for each set of AES-ECTs which match all
+            conditions, add that set to the list of successful matches.
+
+   Step 5.  Continue processing the triple, processing it separately for
+            each result set.
+
+   v  For example, if the triple is a Conditional Endorsement triple
+      which uses tagged-variable within the addition instance field then
+      a separate AES-ECT will be added for each matching set.
 
 9.3.4.2.  Processing Conditional Endorsement Series
 

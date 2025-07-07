@@ -1557,6 +1557,9 @@ This document specifies the information elements for representing Endorsements a
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.1.2.1">
                             <p id="section-toc.1-1.9.2.3.2.4.2.1.2.1.1"><a href="#section-9.3.4.1.1" class="auto internal xref">9.3.4.1.1</a>.  <a href="#name-copying-instance-and-or-gro" class="internal xref">Copying instance and/or group fields from a condition</a></p>
 </li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.1.2.2">
+                            <p id="section-toc.1-1.9.2.3.2.4.2.1.2.2.1"><a href="#section-9.3.4.1.2" class="auto internal xref">9.3.4.1.2</a>.  <a href="#name-example-algorithm-for-proce" class="internal xref">Example algorithm for processing Tagged Variable</a></p>
+</li>
                         </ul>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.2">
@@ -5675,6 +5678,76 @@ If the referenced variable is not bound then the triple is invalid - the Verifie
 Each match uses its own variable bindings, and each match adds a separate addition ECT to the ACS.<a href="#section-9.3.4.1.1-6" class="pilcrow">¶</a></p>
 <p id="section-9.3.4.1.1-7">The <code>tagged-variable</code> type in the <code>group</code> field work in the same way as in <code>instance</code>.
 The <code>var-number</code>s for instance and group variables are separate, instance <code>var-number</code> 0 and group <code>var-number</code> 0 may be bound to different values.<a href="#section-9.3.4.1.1-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-algorithm-for-processing-tagged-variable">
+<section id="section-9.3.4.1.2">
+              <h6 id="name-example-algorithm-for-proce">
+<a href="#section-9.3.4.1.2" class="section-number selfRef">9.3.4.1.2. </a><a href="#name-example-algorithm-for-proce" class="section-name selfRef">Example algorithm for processing Tagged Variable</a>
+              </h6>
+<p id="section-9.3.4.1.2-1">This section describes an algorithm for processing an <code>ev</code> containing two or more conditions which include <code>tagged-variable</code>s.<a href="#section-9.3.4.1.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.1.2-2">
+<dt>Step 1.</dt>
+<dd id="section-9.3.4.1.2-2.1">
+                  <p id="section-9.3.4.1.2-2.1.1">For each of the conditions, find the set of ACS-ECTs which match the fields within that condition which are not <code>tagged-variable</code>s.<a href="#section-9.3.4.1.2-2.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 2.</dt>
+<dd id="section-9.3.4.1.2-2.2">
+                  <p id="section-9.3.4.1.2-2.2.1">Iterate through the set of AES-ECTs which match the first condition. There may be multiple matches with different <code>instance</code> values.<a href="#section-9.3.4.1.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.1.2-3">
+<dt>i</dt>
+<dd id="section-9.3.4.1.2-3.1">
+                  <p id="section-9.3.4.1.2-3.1.1">Any <code>tagged-variable</code>s within the first condition will be bound to values from the matching <code>instance</code> AES-ECTs.<a href="#section-9.3.4.1.2-3.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>ii</dt>
+<dd id="section-9.3.4.1.2-3.2">
+                  <p id="section-9.3.4.1.2-3.2.1">Find AES-ECTs which match the second condition, in the context of the bound <code>tagged-variables</code><a href="#section-9.3.4.1.2-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.1.2-4">
+<dt>Step 3.</dt>
+<dd id="section-9.3.4.1.2-4.1">
+                  <p id="section-9.3.4.1.2-4.1.1">Repeat the process for the third and subsequent conditions (if any).<a href="#section-9.3.4.1.2-4.1.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.1.2-5">
+<dt>iii</dt>
+<dd id="section-9.3.4.1.2-5.1">
+                  <p id="section-9.3.4.1.2-5.1.1">If any of the conditions has no matches for any addition ECT then discard that partial set.<a href="#section-9.3.4.1.2-5.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>iv</dt>
+<dd id="section-9.3.4.1.2-5.2">
+                  <p id="section-9.3.4.1.2-5.2.1">If any of the conditions has multiple matches for an ECT then create a partial set for each output.<a href="#section-9.3.4.1.2-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.1.2-6">
+<dt>Step 4.</dt>
+<dd id="section-9.3.4.1.2-6.1">
+                  <p id="section-9.3.4.1.2-6.1.1">Create a result set for each set of AES-ECTs which match all conditions, add that set to the list of successful matches.<a href="#section-9.3.4.1.2-6.1.1" class="pilcrow">¶</a></p>
+</dd>
+                <dd class="break"></dd>
+<dt>Step 5.</dt>
+<dd id="section-9.3.4.1.2-6.2">
+                  <p id="section-9.3.4.1.2-6.2.1">Continue processing the triple, processing it separately for each result set.<a href="#section-9.3.4.1.2-6.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.1.2-7">
+<dt>v</dt>
+<dd id="section-9.3.4.1.2-7.1">
+                  <p id="section-9.3.4.1.2-7.1.1">For example, if the triple is a Conditional Endorsement triple which uses <code>tagged-variable</code> within the addition <code>instance</code> field then a separate AES-ECT will be added for each matching set.<a href="#section-9.3.4.1.2-7.1.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+</dl>
 </section>
 </div>
 </section>
