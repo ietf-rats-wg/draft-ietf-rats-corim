@@ -2412,8 +2412,9 @@ The `tagged-variable` option in these fields can be used to achieve this.
 
 In the simplest case, within a CoRIM, the `enviroment-map`.`instance` field of an `ev` condition holds a `tagged-variable` and the `enviroment-map`.`instance` field of an addition within that `ev` holds the same `tagged-variable`.
 The `tagged-variable` type contains an integer `var-number` distinguishing different sets of `instance` fields.
+This expresses the requirement that the verifier should copy the `instance` field from the ACS-ECT which matches the condition to the ACS-ECT added as a result of the addition.
 
-Within each triple, each `tagged-variable` can only be bound to one value, so if there are multiple `environment-map` conditions using the same `tagged-variable` then subsequent uses of `tagged-variable` with the same `var-number` introduce a constraint that all `instance`s which match a `tagged-variable` must be binary identical.
+Within each triple, each `tagged-variable` can only be bound to one value, so if there are multiple `environment-map` conditions using the same `tagged-variable` then subsequent uses of `tagged-variable` with the same `var-number` SHALL introduce a constraint that all `instance`s which match a `tagged-variable` must be binary identical.
 
 After successfully matching an `ev` condition ECT whose `instance` field is a `tagged-variable` against an ACS entry, the Verifier SHALL bind the `instance` value to the `instance` value of the ACS-ECT which matched against that condition ECT.
 If the matching ACS-ECT does not include an instance then the bound `instance` value is the empty value.
