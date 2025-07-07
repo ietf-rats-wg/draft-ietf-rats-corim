@@ -2520,7 +2520,7 @@ For each i in members, check that there is a corresponding ACS entry with a matc
 If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
 Else STOP processing Domain Membership ECTs
 
-The processing terminates, when we have added all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
+The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
 
 If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
 
