@@ -2516,7 +2516,6 @@ For each i in members, check that there is a corresponding ACS entry with a matc
 * If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
 * If none of the members match, proceed to next Domain Membership ECT in the staging area
 * If there is a partial match, proceed to the next Domain Membership ECT in the staging area
-	
 If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
 Else STOP processing Domain Membership ECTs
 
