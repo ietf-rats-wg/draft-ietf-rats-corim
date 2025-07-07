@@ -2430,6 +2430,40 @@ Each match uses its own variable bindings, and each match adds a separate additi
 The `tagged-variable` type in the `group` field work in the same way as in `instance`.
 The `var-number`s for instance and group variables are separate, instance `var-number` 0 and group `var-number` 0 may be bound to different values.
 
+##### Example algorithm for processing Tagged Variable
+
+This section describes an algorithm for processing an `ev` containing two or more conditions which include `tagged-variable`s.
+
+{:dmt-enum: counter="dmt1" style="format Step %d."}
+
+{: dmt-enum}
+* For each of the conditions, find the set of ACS-ECTs which match the fields within that condition which are not `tagged-variable`s.
+
+* Iterate through the set of AES-ECTs which match the first condition. There may be multiple matches with different `instance` values.
+
+{:dmt4-enum: counter="dmt4" style="format %i"}
+
+{: dmt4-enum}
+* Any `tagged-variable`s within the first condition will be bound to values from the matching `instance` AES-ECTs.
+
+* Find AES-ECTs which match the second condition, in the context of the bound `tagged-variables`
+
+{: dmt-enum}
+* Repeat the process for the third and subsequent conditions (if any).
+
+{: dmt4-enum}
+* If any of the conditions has no matches for any addition ECT then discard that partial set.
+
+* If any of the conditions has multiple matches for an ECT then create a partial set for each output.
+
+{: dmt-enum}
+* Create a result set for each set of AES-ECTs which match all conditions, add that set to the list of successful matches.
+
+* Continue processing the triple, processing it separately for each result set.
+
+{: dmt4-enum}
+* For example, if the triple is a Conditional Endorsement triple which uses `tagged-variable` within the addition `instance` field then a separate AES-ECT will be added for each matching set.
+
 #### Processing Conditional Endorsement Series {#sec-process-series}
 
 Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
