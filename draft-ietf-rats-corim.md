@@ -1450,7 +1450,7 @@ See {{sec-comid-triple-identity}} for additional details.
 
 #### Triples for domain definitions {#sec-comid-domains}
 
-A domain is a topological description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type.
 
