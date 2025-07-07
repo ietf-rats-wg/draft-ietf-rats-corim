@@ -952,7 +952,7 @@ When the ACS contains evidence from multiple Target Environments, and that evide
 These values behave in a similar way when used in the `group` field.
 
 In a condition, the `tagged-variable` is used to indicate that two or more ACS-ECT `environment-map`s must have the same `instance` value.
-In an addition, the `tagged-variable` value is used to indicate that the `environment-map`.`instance` field must be copied from the ACS-ECT which matched a condition within the same triple.
+In an addition, the `tagged-variable` value is used to indicate that the `environment-map`.`instance` field must be copied from the ACS-ECT which matched a condition within the same triple, to the ACS-ECT added as a result of the addition.
 
 See {{sec-comid-instance-group-copy}} for full details of the Verifier processing for these values.
 
@@ -2392,8 +2392,8 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
-Endorsed Value Triple and Conditional Endorsement Triple share the same internal representation.
-Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Value Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
+Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
+Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Values Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
 The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; and it uses the same environment for `condition` and `addition`.
 
 After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
