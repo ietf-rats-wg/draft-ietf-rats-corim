@@ -2524,15 +2524,15 @@ This section describes an algorithm for processing an `ev` containing two or mor
 {: dmt-enum}
 * For each of the conditions, find the set of ACS-ECTs which match the fields within that condition which are not `tagged-variable`s.
 
-* Iterate through the set of AES-ECTs which match the first condition. There may be multiple matches with different `instance` values.
+* Iterate through the set of ACS-ECTs which match the first condition. There may be multiple matches with different `instance` values.
 
-Any `tagged-variable`s within the first condition will be bound to values from the matching `instance` AES-ECTs.
+Any `tagged-variable`s within the first condition will be bound to values from the matching `instance` ACS-ECTs.
 
 {:dmt4-enum: counter="dmt4" style="format %i"}
 {: dmt4-enum}
-* Find AES-ECTs which match the second condition, in the context of the bound `tagged-variables`
+* Find ACS-ECTs which match the second condition, in the context of the bound `tagged-variables`
 
-* Find AES-ECTs which match the third and subsequent conditions (if there are any).
+* Find ACS-ECTs which match the third and subsequent conditions (if there are any).
 
 * If any of the conditions has no matches for any addition ECT then discard that partial set.
 
