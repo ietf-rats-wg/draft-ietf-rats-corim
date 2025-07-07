@@ -223,7 +223,7 @@ Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
 Domain:
-: A domain is a topological description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
