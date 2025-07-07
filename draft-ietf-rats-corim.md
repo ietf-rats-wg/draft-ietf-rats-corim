@@ -219,6 +219,12 @@ Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
+Composite Attester:
+: A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
+
+Domain:
+: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
@@ -1444,26 +1450,27 @@ See {{sec-comid-triple-identity}} for additional details.
 
 #### Triples for domain definitions {#sec-comid-domains}
 
-A domain is a context for bundling a collection of related environments.
+A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
-The following CDDL describes domain type choices.
+The following CDDL describes domain type.
 
 ~~~ cddl
-{::include cddl/domain-type-choice.cddl}
+{::include cddl/domain-type.cddl}
 ~~~
-
-The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 Domain structure is defined with the following types of triples.
 
 ##### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
-A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain ({{sec-comid-triple-domain-dependency}}) that has a predicate
-relationship to the object containing one or more environments.  Endorsed
-environments ({{sec-comid-triple-endval}}) membership is conditional upon
-successful matching of Reference Values ({{sec-comid-triple-refval}}) to
-Evidence.
+A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
+The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
+
+The Domain Membership Triple allows an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
+This allows a topological description of an Attester to be expressed by linking a parent Environment (e.g., a lead Attester) to its child Environments (e.g., one or more sub-Attesters).
+
+If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
+
+Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
@@ -1765,16 +1772,19 @@ The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir
 
 ### Internal structure of ECT {#sec-ir-ect}
 
-Environment-Claims Tuples (ECT) have five attributes:
+Environment-Claims Tuples (ECT) have six attributes:
 
 {:ect-enum: style="format %d."}
 
 {: ect-enum}
-* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
+* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier (`mkey`).
+If the Conceptual Message Type is `domain-member`, this field contains the domain identifier (`domain-id`) of the domain triple.
 
 * Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
 
 * Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
+
+* Members : Identifies the set of Environments that act as members when a Domain Membership is expressed in an ECT
 
 * Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
 
@@ -1821,6 +1831,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 ### Internal Representation of Reference Values {#sec-ir-ref-val}
@@ -1847,11 +1858,13 @@ Refer to {{sec-phase3}} for how the `rv` entries are processed.
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 ### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1877,17 +1890,41 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
+
+### Internal Representation of Domain Membership {#sec-ir-dm}
+
+An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.
+The `cmtype` is set to domain-member.
+
+~~~ cddl
+{::include cddl/intrep-domain-mem.cddl}
+~~~
+
+{{tbl-dm-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| domain    | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | Mandatory   |
+{: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
 
 ### Internal Representation of Policy Statements {#sec-ir-policy}
 
@@ -1908,11 +1945,13 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -1935,11 +1974,13 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `authority`     | Optional    |
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
+|               | `members`       | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
 |               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
+|               | `members`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
@@ -2229,6 +2270,50 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
+#### Domain Membership Triples Transformation {#sec-ir-dm-trans}
+
+This section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation `dm` (see {{sec-ir-dm}}).
+
+{:dmt-enum: counter="dmt1" style="format Step %d."}
+
+{: dmt-enum}
+* Allocate a `domain` ECT entry.
+
+* Set the conceptual message type for the `domain` ECT to 6 (`domain-member`).
+
+{:dmt4-enum: counter="dmt4" style="format %i"}
+
+{: dmt4-enum}
+* **copy**(`domain-member`, `domain`.`cmtype`)
+
+{: dmt-enum}
+* Set the authority for the domain ECT to the DMT signer ({{sec-corim-signer}}).
+
+{:dmt5-enum: counter="dmt5" style="format %i"}
+
+{: dmt5-enum}
+* **copy**(DMT.`signer`, `domain`.`authority`)
+
+{: dmt-enum}
+* Use the DMT to populate the `dm` internal representation.
+
+{:dmt2-enum: counter="dmt2" style="format %i"}
+
+{: dmt2-enum}
+* **copy**(DMT.`domain-id`, `domain`.`environment`)
+
+{: dmt2-enum}
+* For each `environment` `e` in DMT.`members`:
+
+> > **copy**(DMT.`members`[e].`environment`, `domain`.`members`[e].`environment`)
+
+{: dmt-enum}
+* If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
+
+{:dmt3-enum: counter="dmt3" style="format %i"}
+
+{: dmt3-enum}
+* **copy**(DMT.`profile`, `domain`.`profile`)
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2241,7 +2326,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 
 ### ACS Requirements {#sec-acs-reqs}
 
-At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
+At the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.
 See {{sec-ir-cm}}.
 
 Verifiers are not required to use this as their internal representation.
@@ -2416,6 +2501,27 @@ If key verification succeeds for any _key_:
 * Add the `addition` ECT to the ACS.
 
 Otherwise, do not add the `addition` ECT to the ACS.
+
+#### Processing Domain Membership {#sec-process-dm}
+
+This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+
+
+Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
+
+For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:
+
+For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
+
+* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
+* If none of the members match, proceed to next Domain Membership ECT in the staging area
+* If there is a partial match, proceed to the next Domain Membership ECT in the staging area
+If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
+Else STOP processing Domain Membership ECTs
+
+The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
+
+If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
