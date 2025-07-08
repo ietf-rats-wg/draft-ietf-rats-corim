@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-06T02:21:11.651205+00:00",
+  "timestamp": "2025-07-08T02:07:07.386222+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -2784,7 +2784,7 @@
       "id": "I_kwDOH6-tI85msbg3",
       "title": "allowing domains to be domain members",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/95",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -2793,8 +2793,8 @@
       ],
       "body": "Current domain triples don't allow device composition using domain namespaces and current tag semantics only imply device composition. CoBOM describes tag activation, meaning the set of tags containing information that is related to a device can be specified, but it doesn't define hierarchical relationships between tags. Some tags, such as ta-stores, do not imply device composition. Comid and coswid tags have linked-tags relationships that help manage tag lifecycles, but tag-ids are not long lived. Hence, they are not ideal for representing device composition.\r\n\r\nDomain namespaces have long lived identifiers, but the current `domain-membership-triple-record` only allows multiple `environment-map` entities to be members of a domain namespace. The `domain-dependency-triple-record` has semantics that traces trust dependencies which shouldn't be overloaded with domain membership semantics. \r\n\r\nThis issue proposes extending `domain-membership-triple-record` to include `$domain-type-choice` objects. This will allow it to be used to construct a device composition hierarchy using long lived identifiers. \r\n\r\nA comid tag could be defined to implicitly contain a domain namespace that is unnamed. A domain membership triple that uses the same domain name for the subject and the object could be used to assign a long lived domain name to a comid tag. \r\n\r\nE.g.,:\r\nTag-1 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [ \"X\" ]\r\n      ]\r\n]\r\n```\r\nMultiple domains could exist within a tag if a second domain name appears within the same triple object as the triple subject. \r\nE.g.,\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [ \"X\",  \"Y\" ]\r\n      ]\r\n]\r\n```\r\nMultiple tags can be related by composition using membership triple where both have self-asserted namespace names and a membership triple links them together.\r\ne.g.,\r\nTag-2 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"Z\",\r\n         obj: [ \"Z\" ]\r\n      ]\r\n]\r\n```\r\nAnd tag-1 contains:\r\n```\r\n/ domain-membership-triples / 5 : [\r\n       [  \r\n         subj: \"X\",\r\n         obj: [  \"X\",  \"Z\" ]\r\n      ]\r\n]\r\n```\r\nThe cddl would be something like:\r\n```\r\ndomain-membership-triple-record = [\r\n  $domain-type-choice\r\n  [ + $domain-member-type-choice  ]\r\n]\r\n$domain-member-type-choice /= environment-map\r\n$domain-member-type-choice /= $domain-type-choice\r\n```\r\n",
       "createdAt": "2023-05-23T23:16:29Z",
-      "updatedAt": "2025-06-27T16:47:06Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-07T16:58:29Z",
+      "closedAt": "2025-07-07T16:58:29Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -2872,6 +2872,13 @@
           "body": "PR #454 will allow domains to be members in a collection, so that hierarchical composition can be documented.. ",
           "createdAt": "2025-06-27T16:47:06Z",
           "updatedAt": "2025-06-27T16:47:06Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #454 fixes this compositional semantics!",
+          "createdAt": "2025-07-07T16:58:29Z",
+          "updatedAt": "2025-07-07T16:58:29Z"
         }
       ]
     },
@@ -4320,7 +4327,7 @@
       "id": "I_kwDOH6-tI8547mXl",
       "title": "Group Membership, a proposal",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/177",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -4329,8 +4336,8 @@
       ],
       "body": "see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/wiki/Composite-device-description-using-domain-membership-triples",
       "createdAt": "2023-12-06T16:01:29Z",
-      "updatedAt": "2024-05-07T08:52:32Z",
-      "closedAt": null,
+      "updatedAt": "2025-07-07T14:17:32Z",
+      "closedAt": "2025-07-07T14:17:32Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -4352,6 +4359,13 @@
           "body": "Grouping semantics apply to Evidence as well as RV/Endorsements. A DICE alias certificate / EAT token implies a grouping of evidence claims due to the signature over the claims. The Attester implies the grouping context because it chose to bundle a set of claims before signing them. \r\n\r\nA TPM PCR is also an implied grouping context. TCG specs specify the type of measurements that belong to a specific PCR. The intent is that a Verifier can check the integrity of individual PCRs and return a pass/fail result for each PCR. If some pass and some fail, the final result is neither pass or fail. Hence, there isn't a presumption that appraisal necessarily must produce a binary result.\r\n\r\nSimilarly, the RVs should be grouped such that only the RVs that are apply to the Evidence grouping semantic should be applied for a given grouping.",
           "createdAt": "2024-01-19T18:02:39Z",
           "updatedAt": "2024-01-19T18:05:03Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed via PR #454 ",
+          "createdAt": "2025-07-07T14:17:32Z",
+          "updatedAt": "2025-07-07T14:17:32Z"
         }
       ]
     },
@@ -11832,6 +11846,54 @@
           "updatedAt": "2025-07-04T16:10:14Z"
         }
       ]
+    },
+    {
+      "number": 457,
+      "id": "I_kwDOH6-tI86_Oufa",
+      "title": "\u201cstaging area\u201d is not defined",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/457",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It seems like we are using the term \u201cstaging area\u201d without clearly defining it.",
+      "createdAt": "2025-07-07T09:53:46Z",
+      "updatedAt": "2025-07-07T09:53:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 458,
+      "id": "I_kwDOH6-tI86_SCqT",
+      "title": "Add algorithm explaining how to handle multiple issues",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/458",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The text should include a more algorithmic algorithm describing how to match a set of conditions against the ACS.\n\nThe text below is a first attempt at this.\n\n\nThis section describes an algorithm for processing an `ev` containing two or more conditions which include `tagged-variable`s.\n\n{:dmt-enum: counter=\"dmt1\" style=\"format Step %d.\"}\n\n{: dmt-enum}\n* For each of the condition ECTs (C), find the set MATCH(C) of ACS-ECTs which match the fields within that condition which are not `tagged-variable`s.\n\n* Create a set of results R. At the end of this step, each entry of R will contain one ACS-ECT matching each condition.\n\n* Initialise each entry of R with an entry from MATCH(0) - the ACS-ECTs which matched the first condition.\n\n\n* For each subsequent condition ECT I\n\n*   For each incomplete results set J\n\n*      Find a value within MATCH(I) for which the instance bindings match others in RESULT(J)\n\nresults sets MATCH(1..N),\n\n\n* Iterate through the set of ACS-ECTs which match the first condition. There may be multiple matches with different `instance` values.\n\nAny `tagged-variable`s within the first condition will be bound to values from the matching `instance` ACS-ECTs.\n\n{:dmt4-enum: counter=\"dmt4\" style=\"format %i\"}\n{: dmt4-enum}\n* Find AES-ECTs which match the second condition, in the context of the bound `tagged-variables`\n\n* Find AES-ECTs which match the third and subsequent conditions (if there are any).\n\n* If any of the conditions has no matches for any addition ECT then discard that partial set.\n\n* If any of the conditions has multiple matches for an ECT then create a partial set for each output.\n\n{: dmt-enum}\n* Create a result set for each set of AES-ECTs which match all conditions, add that set to the list of successful matches.\n\n* Continue processing the triple, processing it separately for each result set.\nFor example, if the triple is a Conditional Endorsement triple which uses `tagged-variable` within the addition `instance` field then a separate AES-ECT will be added for each result set.\n",
+      "createdAt": "2025-07-07T14:04:52Z",
+      "updatedAt": "2025-07-07T14:04:52Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 459,
+      "id": "I_kwDOH6-tI86_SJoS",
+      "title": "Is there a better way to encode multiple instance matching?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/459",
+      "state": "OPEN",
+      "author": "andrew-draper",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Thomas has expressed concerns about PR #434 \n\n> I understand the problem that this is trying to solve, and I believe that the technical proposal will achieve the desired outcome.\n> However, from a design perspective, I don't think extending the environment map is the right approach.\n> The idea behind environment-map extensibility is to allow new concrete identifiers to be added to cover use cases and technologies that we didn't anticipate.\n> Instead, this PR adds new semantics to the identifier space, opening up a whole new world in a relatively stable corner of the spec.\n> This is likely to have consequences that we haven't fully grasped.\n> For this reason, even though I am clearly in the minority, I'd advise against merging this and instead exploring solutions that either do not require touching core/stable parts or use different constructs altogether.\n> If we decide to merge it nevertheless, I would like it to be marked as an \u201cexperimental\" solution to the problem rather than one that we present as \"the solution\u201d.\n> And this should also be clearly reflected in the presentation to the wider group in Madrid.\n\nThis PR is to discuss alternative approaches to solving the same problem, which may require syntax changes to the document",
+      "createdAt": "2025-07-07T14:13:04Z",
+      "updatedAt": "2025-07-07T14:13:11Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -68539,13 +68601,13 @@
       "labels": [],
       "body": "Fixes issue #415",
       "createdAt": "2025-05-07T13:54:10Z",
-      "updatedAt": "2025-07-04T21:16:39Z",
+      "updatedAt": "2025-07-07T16:10:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e838cc939708b000962f466224a083dbec013f28",
+      "baseRefOid": "e8d2153df4e8561f38c86463e57225b945aeb5ad",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "multi-instance-endorsement",
-      "headRefOid": "cf66a8965edb99fb992fd9d56a2161244f9a51ac",
+      "headRefOid": "2a2c6ee280ad42539f78178a3b741d2e580b8947",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -68592,6 +68654,41 @@
           "body": "I have added introductory text which describes use cases for these values\r\n",
           "createdAt": "2025-07-02T12:32:32Z",
           "updatedAt": "2025-07-02T12:32:32Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thomas' comment is tracked in issue #459 \r\n\r\nIf there is a better approach then I see no problem with using that approach instead of this one.",
+          "createdAt": "2025-07-07T14:16:38Z",
+          "updatedAt": "2025-07-07T14:17:19Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper :  Given that we need sufficient work to explain the clear steps of Conditions and Exit for the Algorithm as in the issue #458 \r\nHow about we discuss some ideas in the coming CoRIM Meeting, this week and prepare a better proposal in the coming two weeks so that we can work on it at the Hackathon and bring it on the table for RATS session in Madrid ?\r\n\r\nThis gives us better time to work on an Alternative proposal and discuss face to face with other CoRIM Design team members.\r\n\r\nGiven your familiarity with the subject,  in the background please work on a Clear Algorithm and then what is the best type \r\n(other than instance ) to replace it, can be a simple search/replace in the PR to use a new code point example:  `measurement-values-map` to deal with and progress this issue!",
+          "createdAt": "2025-07-07T15:01:09Z",
+          "updatedAt": "2025-07-07T15:01:09Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "The English text seems to be too vague about the problem statement. Additionally, I am having a hard time grasping \"algorithm issues\". This seems to be too hot of a potato to merge.",
+          "createdAt": "2025-07-07T15:46:12Z",
+          "updatedAt": "2025-07-07T15:46:12Z"
+        },
+        {
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If there were issues with this then I think it would have been good to raise them before the last minute, and it would be good to see the alternative proposal.\r\n\r\nIf there was an alternative proposal then it might make sense to delay putting in this change until we can decide between the alternatives. Since there isn't an alternative proposal I would prefer to do what Thomas suggested earlier, which is to check this in and be prepared to change to a better version if that is available.\r\n\r\nIf we don't accept this change then my take is that we don't have a complete solution to this issue, and we are not ready for last call.",
+          "createdAt": "2025-07-07T15:51:32Z",
+          "updatedAt": "2025-07-07T15:51:32Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If there were issues with this then I think it would have been good to raise them before the last minute, and it would be good to see the alternative proposal.\r\n> \r\n> If there was an alternative proposal then it might make sense to delay putting in this change until we can decide between the alternatives. Since there isn't an alternative proposal I would prefer to do what Thomas suggested earlier, which is to check this in and be prepared to change to a better version if that is available.\r\n> \r\n> If we don't accept this change then my take is that we don't have a complete solution to this issue, and we are not ready for last call.\r\n\r\nThanks, we have much more better understanding of your problem, we would like to help you make correct design choice. Current design could cause potential instability in an area which is bed rock of CoRIM. \r\n\r\nLet us discuss about the WGLC aspects on Wednesday!",
+          "createdAt": "2025-07-07T16:09:23Z",
+          "updatedAt": "2025-07-07T16:10:07Z"
         }
       ],
       "reviews": [
@@ -69961,6 +70058,332 @@
               "updatedAt": "2025-07-04T15:51:00Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yX4ac",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T07:50:50Z",
+          "updatedAt": "2025-07-07T07:50:50Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nEndorsed Values Triple and Conditional Endorsement Triple share the same internal representation.\r\n```",
+              "createdAt": "2025-07-07T07:50:50Z",
+              "updatedAt": "2025-07-07T07:50:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yX4uD",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T07:51:19Z",
+          "updatedAt": "2025-07-07T07:51:19Z",
+          "comments": [
+            {
+              "originalPosition": 56,
+              "body": "```suggestion\r\nBoth types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Values Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.\r\n```",
+              "createdAt": "2025-07-07T07:51:19Z",
+              "updatedAt": "2025-07-07T07:51:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYU_8",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:23:14Z",
+          "updatedAt": "2025-07-07T08:23:15Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nIn an addition, the `tagged-variable` value is used to indicate that the `environment-map`.`instance` field must be copied from the ACS-ECT which matched a condition, to the newly added `addition` within the same triple.\r\n```",
+              "createdAt": "2025-07-07T08:23:14Z",
+              "updatedAt": "2025-07-07T08:23:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYWpi",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:25:25Z",
+          "updatedAt": "2025-07-07T08:25:25Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "As the processing steps for using the variable in `condition` location is quite different than the\r\n\r\nprocessing steps for using the same variable in the `addition` location, I would suggest you split the processing steps of the two to make it super clear!",
+              "createdAt": "2025-07-07T08:25:25Z",
+              "updatedAt": "2025-07-07T08:25:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYXbQ",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:26:29Z",
+          "updatedAt": "2025-07-07T08:26:29Z",
+          "comments": [
+            {
+              "originalPosition": 89,
+              "body": "Such muddling is not helping, `addition` then again followed by `condition` again",
+              "createdAt": "2025-07-07T08:26:29Z",
+              "updatedAt": "2025-07-07T08:26:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYvVk",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:54:29Z",
+          "updatedAt": "2025-07-07T08:54:30Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\nIn a condition, the `tagged-variable` is used to indicate that two or more ACS-ECT `environment-map`s must have the same `instance` value.\r\n```",
+              "createdAt": "2025-07-07T08:54:29Z",
+              "updatedAt": "2025-07-07T08:54:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYyqu",
+          "commit": {
+            "abbreviatedOid": "dd47216"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:58:10Z",
+          "updatedAt": "2025-07-07T08:58:10Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\r\nIn an addition, the `tagged-variable` value is used to indicate that the `environment-map`.`instance` field must be copied from the ACS-ECT which matched a condition within the same triple, to the ACS-ECT added as a result of the addition.\r\n```",
+              "createdAt": "2025-07-07T08:58:10Z",
+              "updatedAt": "2025-07-07T08:58:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yY8zj",
+          "commit": {
+            "abbreviatedOid": "cb0ecea"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:10:26Z",
+          "updatedAt": "2025-07-07T09:10:27Z",
+          "comments": [
+            {
+              "originalPosition": 78,
+              "body": "```suggestion\r\nThis expresses the requirement that the verifier should copy the `instance` field from the ACS-ECT which matches the condition to the ACS-ECT added as a result of the addition.\r\n\r\n```\r\n",
+              "createdAt": "2025-07-07T09:10:26Z",
+              "updatedAt": "2025-07-07T09:10:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZAVO",
+          "commit": {
+            "abbreviatedOid": "cb0ecea"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:14:38Z",
+          "updatedAt": "2025-07-07T09:14:39Z",
+          "comments": [
+            {
+              "originalPosition": 79,
+              "body": "```suggestion\r\nWithin each triple, each `tagged-variable` can only be bound to one value, so if there are multiple `environment-map` conditions using the same `tagged-variable` then subsequent uses of `tagged-variable` with the same `var-number` SHALL introduce a constraint that all `instance`s which match a `tagged-variable` must be binary identical.\r\n```",
+              "createdAt": "2025-07-07T09:14:39Z",
+              "updatedAt": "2025-07-07T09:14:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZEic",
+          "commit": {
+            "abbreviatedOid": "cb0ecea"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:19:25Z",
+          "updatedAt": "2025-07-07T09:19:25Z",
+          "comments": [
+            {
+              "originalPosition": 89,
+              "body": "```suggestion\r\nIf a conditional endorsement containing `ev` conditions which use `tagged-variables` matches against multiple ECTs, then each match is processed independently of the others.\r\n```",
+              "createdAt": "2025-07-07T09:19:25Z",
+              "updatedAt": "2025-07-07T14:30:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86ycLcI",
+          "commit": {
+            "abbreviatedOid": "2227c80"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "I understand the problem that this is trying to solve, and I believe that the technical proposal will achieve the desired outcome.\r\nHowever, from a design perspective, I don't think extending the environment map is the right approach.\r\nThe idea behind environment-map extensibility is to allow new concrete identifiers to be added to cover use cases and technologies that we didn't anticipate.\r\nInstead, this PR adds new semantics to the identifier space, opening up a whole new world in a relatively stable corner of the spec.\r\nThis is likely to have consequences that we haven't fully grasped.\r\nFor this reason, even though I am clearly in the minority, I'd advise against merging this and instead exploring solutions that either do not require touching core/stable parts or use different constructs altogether.\r\nIf we decide to merge it nevertheless, I would like it to be marked as an \u201cexperimental\" solution to the problem rather than one that we present as \"the solution\u201d.\r\nAnd this should also be clearly reflected in the presentation to the wider group in Madrid.",
+          "createdAt": "2025-07-07T12:55:58Z",
+          "updatedAt": "2025-07-07T12:55:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yd88T",
+          "commit": {
+            "abbreviatedOid": "c87fc3e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T14:42:54Z",
+          "updatedAt": "2025-07-07T14:42:54Z",
+          "comments": [
+            {
+              "originalPosition": 105,
+              "body": "```suggestion\r\n* Iterate through the set of ACS-ECTs which match the first condition. There may be multiple matches with different `instance` values.\r\n```",
+              "createdAt": "2025-07-07T14:42:54Z",
+              "updatedAt": "2025-07-07T14:42:54Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yd9HL",
+          "commit": {
+            "abbreviatedOid": "c87fc3e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T14:43:07Z",
+          "updatedAt": "2025-07-07T14:43:07Z",
+          "comments": [
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\r\nAny `tagged-variable`s within the first condition will be bound to values from the matching `instance` ACS-ECTs.\r\n```",
+              "createdAt": "2025-07-07T14:43:07Z",
+              "updatedAt": "2025-07-07T14:43:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yd9VG",
+          "commit": {
+            "abbreviatedOid": "c87fc3e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T14:43:24Z",
+          "updatedAt": "2025-07-07T14:43:24Z",
+          "comments": [
+            {
+              "originalPosition": 111,
+              "body": "```suggestion\r\n* Find ACS-ECTs which match the second condition, in the context of the bound `tagged-variables`\r\n```",
+              "createdAt": "2025-07-07T14:43:24Z",
+              "updatedAt": "2025-07-07T14:43:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yd9lo",
+          "commit": {
+            "abbreviatedOid": "c87fc3e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T14:43:43Z",
+          "updatedAt": "2025-07-07T14:43:43Z",
+          "comments": [
+            {
+              "originalPosition": 113,
+              "body": "```suggestion\r\n* Find ACS-ECTs which match the third and subsequent conditions (if there are any).\r\n```",
+              "createdAt": "2025-07-07T14:43:43Z",
+              "updatedAt": "2025-07-07T14:43:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yeCeN",
+          "commit": {
+            "abbreviatedOid": "2a07528"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T14:49:28Z",
+          "updatedAt": "2025-07-07T14:49:29Z",
+          "comments": [
+            {
+              "originalPosition": 123,
+              "body": "```suggestion\r\n[^tracked-at]  https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/458\r\n```",
+              "createdAt": "2025-07-07T14:49:28Z",
+              "updatedAt": "2025-07-07T14:49:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yeie-",
+          "commit": {
+            "abbreviatedOid": "2a2c6ee"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "Rechecking after Thomas' well laid out \"stability\" argument https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/434#pullrequestreview-2993731336",
+          "createdAt": "2025-07-07T15:28:10Z",
+          "updatedAt": "2025-07-07T15:28:10Z",
+          "comments": []
         }
       ]
     },
@@ -71451,24 +71874,26 @@
       "id": "PR_kwDOH6-tI86cBYdl",
       "title": "Domain Membership Triples Processing",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/454",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-06-25T09:35:07Z",
-      "updatedAt": "2025-07-04T16:18:19Z",
+      "updatedAt": "2025-07-07T10:59:05Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e838cc939708b000962f466224a083dbec013f28",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "domain-new-proposal",
-      "headRefOid": "b432d8186b17be06969fbaafc562cc12d8bce73d",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "ec63e0b73b1d7a31c667706a5b72084532e07e4f",
+      "closedAt": "2025-07-07T10:59:02Z",
+      "mergedAt": "2025-07-07T10:59:02Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e8d2153df4e8561f38c86463e57225b945aeb5ad"
+      },
       "comments": [],
       "reviews": [
         {
@@ -73311,6 +73736,558 @@
               "updatedAt": "2025-07-04T16:18:19Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yXs_W",
+          "commit": {
+            "abbreviatedOid": "b432d81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T07:34:16Z",
+          "updatedAt": "2025-07-07T07:34:17Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Discussed in the meeting with Dionna and when the Domain Definition text was read  in totality the concept was well understood hence resolving the comments!",
+              "createdAt": "2025-07-07T07:34:17Z",
+              "updatedAt": "2025-07-07T07:34:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yXtVP",
+          "commit": {
+            "abbreviatedOid": "b432d81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T07:34:44Z",
+          "updatedAt": "2025-07-07T07:34:44Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "See comments on line 12 in the same file for resolution!",
+              "createdAt": "2025-07-07T07:34:44Z",
+              "updatedAt": "2025-07-07T07:34:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yXuja",
+          "commit": {
+            "abbreviatedOid": "b432d81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T07:36:33Z",
+          "updatedAt": "2025-07-07T07:36:33Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "We retained the  domain type to retain the domain identifier concept, distinct from the environment concept,  which highlight RATS Target Environments. This helps us explain the Algorithm with greater ease!",
+              "createdAt": "2025-07-07T07:36:33Z",
+              "updatedAt": "2025-07-07T07:36:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yXxnz",
+          "commit": {
+            "abbreviatedOid": "b432d81"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T07:41:09Z",
+          "updatedAt": "2025-07-07T07:41:10Z",
+          "comments": [
+            {
+              "originalPosition": 246,
+              "body": "```suggestion\r\nThe processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.\r\n```",
+              "createdAt": "2025-07-07T07:41:09Z",
+              "updatedAt": "2025-07-07T07:41:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYXFF",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:26:01Z",
+          "updatedAt": "2025-07-07T08:26:02Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Should this be `domain-type` ?",
+              "createdAt": "2025-07-07T08:26:01Z",
+              "updatedAt": "2025-07-07T08:26:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYYpe",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:27:56Z",
+          "updatedAt": "2025-07-07T08:27:56Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "Is this really a topological description? I would expect a topology to include more details than \"these environment-maps go together\"",
+              "createdAt": "2025-07-07T08:27:56Z",
+              "updatedAt": "2025-07-07T08:27:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYYqP",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:27:57Z",
+          "updatedAt": "2025-07-07T08:27:57Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "In principle it does not matter we can use either of these, but for better clarity I used an `environment-map` here.\r\n\r\n",
+              "createdAt": "2025-07-07T08:27:57Z",
+              "updatedAt": "2025-07-07T08:27:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYZQ7",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:28:44Z",
+          "updatedAt": "2025-07-07T08:28:44Z",
+          "comments": [
+            {
+              "originalPosition": 21,
+              "body": "I prefer to keep `domain-type` as it makes it clear that not all environments are domains",
+              "createdAt": "2025-07-07T08:28:44Z",
+              "updatedAt": "2025-07-07T08:28:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYZa5",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:28:56Z",
+          "updatedAt": "2025-07-07T08:28:56Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "Well you club a set of Environments, and link it a parent.",
+              "createdAt": "2025-07-07T08:28:56Z",
+              "updatedAt": "2025-07-07T08:28:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYirG",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:41:34Z",
+          "updatedAt": "2025-07-07T08:41:35Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\n: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.\r\n```",
+              "createdAt": "2025-07-07T08:41:34Z",
+              "updatedAt": "2025-07-07T08:41:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYjnU",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:42:49Z",
+          "updatedAt": "2025-07-07T08:42:49Z",
+          "comments": [
+            {
+              "originalPosition": 115,
+              "body": "see issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/456",
+              "createdAt": "2025-07-07T08:42:49Z",
+              "updatedAt": "2025-07-07T08:42:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYql7",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T08:49:45Z",
+          "updatedAt": "2025-07-07T08:49:45Z",
+          "comments": [
+            {
+              "originalPosition": 234,
+              "body": "```suggestion\r\nFor every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:\r\n```",
+              "createdAt": "2025-07-07T08:49:45Z",
+              "updatedAt": "2025-07-07T08:49:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yYahy",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "andrew-draper",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-07-07T08:30:28Z",
+          "updatedAt": "2025-07-07T08:50:22Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "How does this happen?\r\nHow is the actual composition represented in Evidence?\r\nIs there an algorithm which the verifier should use to do this matching?",
+              "createdAt": "2025-07-07T08:30:28Z",
+              "updatedAt": "2025-07-07T08:50:22Z"
+            },
+            {
+              "originalPosition": 234,
+              "body": "```suggestion\r\nFor every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:\r\n```",
+              "createdAt": "2025-07-07T08:35:42Z",
+              "updatedAt": "2025-07-07T08:50:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yY9hB",
+          "commit": {
+            "abbreviatedOid": "13801d0"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:11:25Z",
+          "updatedAt": "2025-07-07T09:11:25Z",
+          "comments": [
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\r\nA domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.\r\n```",
+              "createdAt": "2025-07-07T09:11:25Z",
+              "updatedAt": "2025-07-07T09:11:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZCoT",
+          "commit": {
+            "abbreviatedOid": "2f97851"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:16:58Z",
+          "updatedAt": "2025-07-07T09:16:58Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "I agree with Andy.  Irrespective of the appraisal policy the processing in {{sec-process-dm}} will happen as it\u2019s not optional.  I think L1471 can be removed altogether.",
+              "createdAt": "2025-07-07T09:16:58Z",
+              "updatedAt": "2025-07-07T09:16:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZIxI",
+          "commit": {
+            "abbreviatedOid": "2f97851"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:25:04Z",
+          "updatedAt": "2025-07-07T09:25:04Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "I believe that the \u201cEnvironment\u201d attribute description should also be amended to reflect the expansion in semantics.",
+              "createdAt": "2025-07-07T09:25:04Z",
+              "updatedAt": "2025-07-07T09:25:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZJ8T",
+          "commit": {
+            "abbreviatedOid": "283b666"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:26:17Z",
+          "updatedAt": "2025-07-07T09:26:17Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "@thomas-fossati : I meant the DMT is an OTI Triple so if a Verifier needs OTI, then what is the purpose of this Triple!",
+              "createdAt": "2025-07-07T09:26:17Z",
+              "updatedAt": "2025-07-07T09:26:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZLFA",
+          "commit": {
+            "abbreviatedOid": "2f97851"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:27:50Z",
+          "updatedAt": "2025-07-07T09:27:50Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Can you please suggest some suitable text ? I will suggest something but I am not clear what exactly you are looking for?",
+              "createdAt": "2025-07-07T09:27:50Z",
+              "updatedAt": "2025-07-07T09:27:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZOl1",
+          "commit": {
+            "abbreviatedOid": "2f97851"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:32:11Z",
+          "updatedAt": "2025-07-07T09:32:12Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "```suggestion\r\n* Members : Identifies the list of Target Environments that constitutes as members of a domain, when a expressing a DMT in an ECT.\r\n```",
+              "createdAt": "2025-07-07T09:32:11Z",
+              "updatedAt": "2025-07-07T09:32:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZWHe",
+          "commit": {
+            "abbreviatedOid": "4d6f9f1"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:41:24Z",
+          "updatedAt": "2025-07-07T09:41:25Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "I have committed it directly because it was not possible to suggest on a line which was not part of the PR.",
+              "createdAt": "2025-07-07T09:41:24Z",
+              "updatedAt": "2025-07-07T09:41:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZbyF",
+          "commit": {
+            "abbreviatedOid": "4d6f9f1"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:48:33Z",
+          "updatedAt": "2025-07-07T09:48:33Z",
+          "comments": [
+            {
+              "originalPosition": 237,
+              "body": "**SPLAT**: \u201cstaging area\u201d is not defined.\r\n\r\n",
+              "createdAt": "2025-07-07T09:48:33Z",
+              "updatedAt": "2025-07-07T09:50:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZi7H",
+          "commit": {
+            "abbreviatedOid": "56980e4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:54:20Z",
+          "updatedAt": "2025-07-07T09:54:20Z",
+          "comments": [
+            {
+              "originalPosition": 237,
+              "body": "Opened #457 to address this in the future.\r\n",
+              "createdAt": "2025-07-07T09:54:20Z",
+              "updatedAt": "2025-07-07T09:54:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZjOV",
+          "commit": {
+            "abbreviatedOid": "56980e4"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:54:36Z",
+          "updatedAt": "2025-07-07T09:54:36Z",
+          "comments": [
+            {
+              "originalPosition": 246,
+              "body": "```suggestion\r\n\r\n```",
+              "createdAt": "2025-07-07T09:54:36Z",
+              "updatedAt": "2025-07-07T09:54:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZk1c",
+          "commit": {
+            "abbreviatedOid": "ec63e0b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:55:56Z",
+          "updatedAt": "2025-07-07T09:55:56Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "see 4d6f9f14c6cfefa4ac1be2e0ed7d86d9bd877c15\r\n",
+              "createdAt": "2025-07-07T09:55:56Z",
+              "updatedAt": "2025-07-07T09:55:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZmZw",
+          "commit": {
+            "abbreviatedOid": "ec63e0b"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:58:02Z",
+          "updatedAt": "2025-07-07T09:58:02Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "Phrasing, also feels at least incomplete if not wrong. It is not just DMTs it's literally a domain membership kitchen sink. I do not see what this change adds.",
+              "createdAt": "2025-07-07T09:58:02Z",
+              "updatedAt": "2025-07-07T09:58:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZnpm",
+          "commit": {
+            "abbreviatedOid": "ec63e0b"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "Sans any more changes (open or future) this is stable enough to merge.",
+          "createdAt": "2025-07-07T09:59:40Z",
+          "updatedAt": "2025-07-07T09:59:40Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZnss",
+          "commit": {
+            "abbreviatedOid": "ec63e0b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-07T09:59:44Z",
+          "updatedAt": "2025-07-07T09:59:45Z",
+          "comments": [
+            {
+              "originalPosition": 232,
+              "body": "This can be improved, but it\u2019s good enough for now.  Thanks for addressing my comment.",
+              "createdAt": "2025-07-07T09:59:44Z",
+              "updatedAt": "2025-07-07T09:59:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86yZn0v",
+          "commit": {
+            "abbreviatedOid": "ec63e0b"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGMT",
+          "createdAt": "2025-07-07T09:59:55Z",
+          "updatedAt": "2025-07-07T09:59:55Z",
+          "comments": []
         }
       ]
     }
