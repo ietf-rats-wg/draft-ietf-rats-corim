@@ -3047,19 +3047,19 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Triples Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name           | Specification |
+| Index | Item Name                              | Specification |
 |---
-| 0     | reference-triples                     | {{&SELF}}     |
-| 1     | endorsed-triples                      | {{&SELF}}     |
-| 2     | identity-triples                      | {{&SELF}}     |
-| 3     | attest-key-triples                    | {{&SELF}}     |
-| 4     | dependency-triples                    | {{&SELF}}     |
-| 5     | membership-trples                     | {{&SELF}}     |
-| 6     | coswid-triples                        | {{&SELF}}     |
-| 7     | (reserved)                            | {{&SELF}}     |
-| 8     | conditional-endorsment-series-triples | {{&SELF}}     |
-| 9     | (reserved)                            | {{&SELF}}     |
-| 10    | conditional-endorsement-triples       | {{&SELF}}     |
+| 0     | reference-triples                      | {{&SELF}}     |
+| 1     | endorsed-triples                       | {{&SELF}}     |
+| 2     | identity-triples                       | {{&SELF}}     |
+| 3     | attest-key-triples                     | {{&SELF}}     |
+| 4     | dependency-triples                     | {{&SELF}}     |
+| 5     | membership-triples                     | {{&SELF}}     |
+| 6     | coswid-triples                         | {{&SELF}}     |
+| 7     | (reserved)                             | {{&SELF}}     |
+| 8     | conditional-endorsement-series-triples | {{&SELF}}     |
+| 9     | (reserved)                             | {{&SELF}}     |
+| 10    | conditional-endorsement-triples        | {{&SELF}}     |
 | 11-18446744073709551616 | Unassigned | |
 {: #tbl-iana-triples-map-items title="CoMID Triples Map Items Initial Registrations"}
 
