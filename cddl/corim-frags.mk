@@ -45,6 +45,7 @@ COMID_FRAGS += triples-map.cddl
 COMID_FRAGS += ueid.cddl
 COMID_FRAGS += uuid.cddl
 COMID_FRAGS += version-map.cddl
+COMID_FRAGS += wc-match-type-choice.cddl
 COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
 COMID_FRAGS += concise-swid-tag.cddl
