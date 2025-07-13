@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-10T02:08:53.253850+00:00",
+  "timestamp": "2025-07-13T02:26:14.412699+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3100,7 +3100,7 @@
       ],
       "body": "The `domain-dependency-triple-record` lists target environments and the other environments, usually attesting environments, the target depends on for trust establishment. \r\n\r\nIt may be unclear what behavior the Verifier should take if a target environment appears in Evidence, but does not have a corresponding dependency triple. \r\n\r\nA concern is that if an env is compromised (after its measurement / evidence is collected), the compromised env could measure an additional (attack) env, with evidence, that the Verifier will accept. \r\n\r\nNote: There may be other ways to detect this attack. The compromised env could have been issued a DICE certificate that excludes the `ECA` key purpose OID. The compromised env could have been issued an X.509 certificate with a pathlen value=0.\r\nGiven there may be multiple evidence formats that don't have these mitigations, the dependency triple may be an additional form of mitigation.\r\n\r\nHowever, to mitigate this attack, there needs to be conventions for its use. If the dependency triples are a closed set. Then only attack environments will not show up in dependency triples. Can CoRIM assert this requirement?\r\n\r\nVerifier behavior should be clear whether it detects this attack. \r\n\r\nIf the verifier should detect the attack using RIMs, then RIM authors MUST specify dependency triples. \r\n\r\nDetection requires an all-or-nothing approach. All the target envs MUST be included in RIMs, or the verifier is not expected to detect the attack. Otherwise, the possibility of unnamed, but trusted environments could exist. The Verifier is undecided as to which is legitimate. \r\n\r\nDo we think CoBOM plays a role toward identifying tags that contain dependency triples?\r\n\r\n",
       "createdAt": "2023-07-14T21:57:40Z",
-      "updatedAt": "2025-02-12T19:19:44Z",
+      "updatedAt": "2025-07-11T14:50:53Z",
       "closedAt": null,
       "comments": [
         {
@@ -3123,6 +3123,13 @@
           "body": "I think that dependency triples being a closed set is a SHOULD situation to avoid a downgrade attack, but real deployments may have to fudge things and it'll be down to verifier policy which to trust. You could improve the situation with CoBOM maybe, but those are optional.\r\n\r\nI'm still unclear what the verifier's expected processing of these triples is supposed to be. Is it that if you find that for an appraisal session that when you convert evidence into ACS entries, you create subgoals that must be discharged to first establish trust in the domains it depends on? When that's the case, I would think that an appraisal session would need all the evidence for the environments of the sum total of dependent domains that are active among the domain membership triples.\r\n\r\nWhen the domains are not cryptographically bound together in a chain of measurements, I don't know what the hope is for these triples. When the binding is there, the attestation scheme requires verifying the whole chain. Taking a step back, what is the use case scenario for this DAG structure (is it required to be a DAG? I really hope it's required to be a DAG. It's not spec'd to be a DAG)?\r\n\r\n---\r\nSpeculation:\r\n\r\nI can see maybe implicit in certain layers of access to a system, you might not get to see the whole measurement history. For example, a container's attestation shouldn't get to know about the attestation of other containers that have run on that pod: only the policy of the launcher that launched the container. The launcher signs its own attestations for workloads launched, and the certificate for that launcher is known to be issue by a CA that only issues certificates to launchers that prove they're in an approved environment themself. The kernel may even protect the key to do the signing only for a process that had a specific measurement that the CA knew...\r\n\r\nSo for that system, you say the container is in the domain of the launcher, and the launcher is in the domain of the node, and the node is in the domain of both the measurement technology and the CSP that signs certificates that the chip id in the measurement corresponds to their property that's running in a certain locality. These are all aspects I would think to understand as part of an appraisal policy of what in a complete measurement to see as salient. I understand domains more as the certificates for keys that sign the claims that I depend on, and that I have policy that certain claims should only be signed by certain authorities. Yeah, still missing the point :(",
           "createdAt": "2024-09-27T04:58:22Z",
           "updatedAt": "2024-09-27T04:58:22Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Talked to Ned, as now the Internal representation of CDDL and `domain-type` has been finalised, @nedmsmith is going to work on a PR to document the processing of the triple!",
+          "createdAt": "2025-07-11T14:50:53Z",
+          "updatedAt": "2025-07-11T14:50:53Z"
         }
       ]
     },
@@ -11181,7 +11188,7 @@
       "labels": [],
       "body": "If we want to query for CoRIMs signed by a particular entity, we're now in a bind with the manifest-signer role versus the corim-meta-map.\n\nCan we deprecate the corim-meta header in favor of requiring the manifest-signer role for the CoRIM, and require the value type to be the corim-signer-map? It would put another burden on CoTS to express that constraint, but it reduces the ways of expressing the same thing and removes the custom header that a lot of signing services dislike adding support for.",
       "createdAt": "2025-04-15T15:47:19Z",
-      "updatedAt": "2025-07-08T08:23:49Z",
+      "updatedAt": "2025-07-11T14:48:21Z",
       "closedAt": null,
       "comments": [
         {
@@ -11204,6 +11211,13 @@
           "body": "> Can you give an example and what problem you're trying to solve?\n\nWhen a corim is signed the signer populates `5 => [ + corim-entity-map ] ` to point back to the signer. If the signer key is certified by an X.509 certificate, then there may be values in the certificate that can be copied into the corim so that the Verifier can locate the signer entity `manifest-signer`.  `entity-map` has two other code points besides `role`; `entity-name` and `reg-id`. Possibly, fields in the certificate could be leveraged to fill these out? Without corim-meta-map the only way to identify the signer key is via COSE `kid` header. If the corim protection is a TLS session then there's no key-id that can be used to identify the intended signer. It would fall to corim-entity-map to point to the expected TLS cert or possibly a cert in the certification path for the TLS cert.",
           "createdAt": "2025-04-29T23:50:18Z",
           "updatedAt": "2025-04-29T23:50:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@deeglaze Is the PR #422 not enough to restrict this?",
+          "createdAt": "2025-07-11T14:48:21Z",
+          "updatedAt": "2025-07-11T14:48:21Z"
         }
       ]
     },
@@ -12080,6 +12094,30 @@
           "body": "Ah cool, thanks and well spotted, will fix it asap!",
           "createdAt": "2025-07-09T16:08:35Z",
           "updatedAt": "2025-07-09T16:08:35Z"
+        }
+      ]
+    },
+    {
+      "number": 462,
+      "id": "I_kwDOH6-tI86_-ei4",
+      "title": "Extend measurement-values-map with tcb_status and tcb_date",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/462",
+      "state": "OPEN",
+      "author": "a-trikalinou",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "We have a use case where we need to associate measurements of endorsements with:\n1. A tcb_status, i.e. \"Up_to_date\" vs \"Out_of_date, and\n2. A tcb_date, i.e. \"2025-07-10T00:00:00Z\", which describes the date the tcb_status changed.\n\nIn this case we can separate authenticity endorsements, i.e. this is a valid firmware version and SVN, from trust endorsements, i.e. this is a deprecated firmware version and SVN.\n\nI don't think there is an existing good fit in the measurement-values-map to represent tcb_status and tcb_date, so I'm proposing adding them to the CoMID measurement-values-map definition.",
+      "createdAt": "2025-07-10T22:01:52Z",
+      "updatedAt": "2025-07-11T21:05:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note the Intel profile defines these already. See [date type](https://github.com/nedmsmith/draft-cds-rats-intel-corim-profile/blob/main/cddl/tee-date-type.cddl) and [tcbstatus type](https://github.com/nedmsmith/draft-cds-rats-intel-corim-profile/blob/main/cddl/tee-tcbstatus-type.cddl). Maybe it makes sense to draw from these?",
+          "createdAt": "2025-07-11T21:05:43Z",
+          "updatedAt": "2025-07-11T21:05:43Z"
         }
       ]
     }
@@ -74484,24 +74522,26 @@
       "id": "PR_kwDOH6-tI86eJbDO",
       "title": "Fix typos",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/460",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-07-09T15:30:59Z",
-      "updatedAt": "2025-07-09T15:59:15Z",
+      "updatedAt": "2025-07-11T11:04:53Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e8d2153df4e8561f38c86463e57225b945aeb5ad",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "deeglaze-patch-1",
       "headRefOid": "70e77a95feb428959a04ea21655437f42f3da861",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-07-11T11:04:53Z",
+      "mergedAt": "2025-07-11T11:04:53Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "9c05694ea4a5592d6a9cba336ac7006e8819f9fe"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -74537,6 +74577,79 @@
           "createdAt": "2025-07-09T15:59:15Z",
           "updatedAt": "2025-07-09T15:59:15Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 463,
+      "id": "PR_kwDOH6-tI86eetpg",
+      "title": "Address Gap 3 and Gap 4",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/463",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #449 \r\nFixes #450",
+      "createdAt": "2025-07-11T11:40:37Z",
+      "updatedAt": "2025-07-11T13:18:15Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "9c05694ea4a5592d6a9cba336ac7006e8819f9fe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "gap3-gap4-fix",
+      "headRefOid": "938d16128b024d59c413a7838a1839f981e32829",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 464,
+      "id": "PR_kwDOH6-tI86egpbA",
+      "title": "Removed bill of material text",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/464",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #461",
+      "createdAt": "2025-07-11T14:39:33Z",
+      "updatedAt": "2025-07-11T15:00:29Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "9c05694ea4a5592d6a9cba336ac7006e8819f9fe",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "cotl-cleanup",
+      "headRefOid": "74b6dfe0bd8918f7f13892f28291d448b5ca3b1b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI86zcr_C",
+          "commit": {
+            "abbreviatedOid": "74b6dfe"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-07-11T15:00:28Z",
+          "updatedAt": "2025-07-11T15:00:29Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\n  the CoMID and CoSWID tags that constitute the list, i.e.,\r\n```",
+              "createdAt": "2025-07-11T15:00:29Z",
+              "updatedAt": "2025-07-11T15:00:29Z"
+            }
+          ]
         }
       ]
     }
