@@ -1544,8 +1544,7 @@ An Appraisal Policy for Evidence may dictate how multiple CoTLs are to be proces
 
 ## Structure
 
-The CDDL specification for the `concise-tl-tag` map, the rules and its constraints
-that MUST be followed when creating or validating a CoTL tag, is given below:
+The CDDL specification for the `concise-tl-tag` map and additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag are given below:
 
 ~~~ cddl
 {::include cddl/concise-tl-tag.cddl}
