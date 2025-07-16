@@ -1558,7 +1558,7 @@ The following describes each member of the `concise-tl-tag` map.
   Described in {{sec-comid-tag-id}}.
 
 * `tags-list` (index 1): One or more `tag-identity-maps` identifying
-  the CoMID and CoSWID tags that constitutes the list, i.e.,
+  the CoMID and CoSWID tags that constitute the list, i.e.,
   a complete set of verification-related information.  The `tags-list` behaves
   like a signaling mechanism from the supply chain (e.g., a product vendor) to
   a Verifier that activates the tags in `tags-list` for use in the Evidence
