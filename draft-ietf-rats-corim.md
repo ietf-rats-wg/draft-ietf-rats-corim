@@ -1987,8 +1987,8 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 
 An ACS is a list of ECTs that describe an Attester's actual state.
 
-When ECTs get added into the ACS, the Mandatory or Optionality of ECT fields depends on the `cmtype`.
-Table {{tbl-acs-ect-optionality}} shows minimum required mandatory fields applicable to all ECTs in an ACS.
+When ECTs get added into the ACS, the `cmtype` field becomes mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
 
 | ECT type  | ECT Field       | Requirement |
 |---
@@ -2468,7 +2468,7 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
 Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Values Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
-The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; and it uses the same environment for `condition` and `addition`.
+The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; the internal representation uses the same environment for `condition` and `addition`.
 
 After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
 Each `ev` entry is processed independently of other `ev`s.
@@ -2478,7 +2478,7 @@ For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the 
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
 
 Note that some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
-If there are multiple matches then each match is processed independently from the others.
+If there are multiple matches, then each match is processed independently from the others.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
