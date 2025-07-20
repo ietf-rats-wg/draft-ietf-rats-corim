@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-17T02:18:36.293930+00:00",
+  "timestamp": "2025-07-20T02:28:40.876656+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12127,6 +12127,86 @@
           "updatedAt": "2025-07-16T14:27:37Z"
         }
       ]
+    },
+    {
+      "number": 465,
+      "id": "I_kwDOH6-tI87BVbst",
+      "title": "Section 9.2.2.1:  Clarify validation of evidence that includes CoRIM fields or entire CoRIM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/465",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Current text states \"If a CoRIM profile is supplied ...\" but does not clarify whether the profile is supplied as part of attestation evidence.  Given that this statement appears in a section entitled \"Cryptographic Validation of Evidence\", a reader may conclude that the profile is included in the evidence.\n\nRecommend to change to \"If a CoRIM profile is supplied by the attester either as part of evidence or in a separate conceptual message ...\".\n\nWould also recommend an additional statement at the end of the section:  \"The verifier may also ignore a CoRIM profile provided by the attester if it has access to a separate profile.  In other words, an attester-provided CoRIM profile will not necessarily take the place of a CoRIM profile that has been separately provided to the verifier.\"",
+      "createdAt": "2025-07-18T15:37:46Z",
+      "updatedAt": "2025-07-18T15:37:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 466,
+      "id": "I_kwDOH6-tI87BVivV",
+      "title": "Section 4.1.1 Identity:  clarify requirements on uniqueness",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/466",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Text as currently written states that the identifier \"uniquely identifies a CoRIM instance\" but does not define what constitutes an \"CoRIM instance\".\n\nRecommend clarifying:  \"A unique CoRIM instance specifies a unique CoRIM map.  Two CoRIM instances cannot be considered equivalent unless they match bitwise.  If not, they must have different CoRIM IDs.\"\n\n\n\n",
+      "createdAt": "2025-07-18T15:48:58Z",
+      "updatedAt": "2025-07-18T15:48:58Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 467,
+      "id": "I_kwDOH6-tI87BVnbp",
+      "title": "Section 4.2:  Signed CoRIM.  Is the CoRIM signature un-endorsed?",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/467",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "There is no mention of x5c or the like in the COSE headers.  What are the assumptions behind the keypair used in signing?  For instance, should CoRIM signers pubkeys be pre-provisioned in the verifier?  The inclusion of kid seems to imply pre-provisioning, but this should be explicitly spelled out somewhere in the spec.  If it already is there, please point me to the section and I will close the issue.",
+      "createdAt": "2025-07-18T15:55:39Z",
+      "updatedAt": "2025-07-18T15:55:39Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 468,
+      "id": "I_kwDOH6-tI87BWNXI",
+      "title": "Sec. 5.2.4.2.4.2 Measurement Keys:  clarify local scoping",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "If mkey is set to a UUID, then wouldn't it be unique for all CoMID instances regardless of which CoRIM they appear in?",
+      "createdAt": "2025-07-18T17:01:44Z",
+      "updatedAt": "2025-07-18T17:01:44Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 469,
+      "id": "I_kwDOH6-tI87BcM4v",
+      "title": "Jag\u2019s review of \u00a74 and \u00a75 of -08",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/469",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "[Jag\u2019s review](https://mailarchive.ietf.org/arch/msg/rats/smWt5mNQ2IxvTpvQISuuufyBvbg/)\n\n* [ ] nit: Section 4.1: \u201ctags (index 1): An array of one or more CoMID or CoSWID tags. Described in Section 4.1.2\u201d I think this should also mention CoTL\n* [ ] Section 4.1.3: \"Locator Map\u201d \u201chref\" could be an array. Should \u201cthumbprint\" also be an array to represent the digests of each of the href?\n* [ ] Section 4.1.5: \u201cEntities\u201d: \u201cThe only role defined in this specification for a CoRIM Entity is manifest-creator\u201d Should we also specify \"manifest-signer\" here?\n* [ ] nit: Section 5: \"Concise Module Identifier (CoMID)\u201d: \u201cThis specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).\u201d  Capitalize \u2019T\u2019, like \u201cMandatory To Implement (MTI)\u201d\n* [ ] Section [5.1.1.1](http://5.1.1.1/): \u201cTag ID\u201d CDDL specifies \u201ctstr\u201d whereas the text refers to \u201cbstr\u201d\n* [ ] Section 5.1.4.1.4.6 \u201cRaw Values Types\u201d: \u201cRaw value measurements are typically vendor defined values that are checked by Verifiers for consistency only, since the security relevance is opaque to Verifiers\u201d\n* [ ] I couldn\u2019t follow what \u201cconsistency only\u201d means. Could a profile add meaning to the raw value, such that it could interpret it as more than just blob?",
+      "createdAt": "2025-07-19T15:43:42Z",
+      "updatedAt": "2025-07-19T15:44:49Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
