@@ -35,8 +35,8 @@ author:
   email: yogesh.deshpande@arm.com
 - ins: N. Smith
   name: Ned Smith
-  org: Intel
-  email: ned.smith@intel.com
+  org: Independent
+  email: ned.smith.ietf@outlook.com
 - ins: W. Pan
   name: Wei Pan
   org: Huawei Technologies
