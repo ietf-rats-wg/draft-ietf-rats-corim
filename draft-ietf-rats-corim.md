@@ -35,8 +35,8 @@ author:
   email: yogesh.deshpande@arm.com
 - ins: N. Smith
   name: Ned Smith
-  org: Intel
-  email: ned.smith@intel.com
+  org: Independent
+  email: ned.smith.ietf@outlook.com
 - ins: W. Pan
   name: Wei Pan
   org: Huawei Technologies
@@ -1565,9 +1565,7 @@ An Appraisal Policy for Evidence may dictate how multiple CoTLs are to be proces
 
 ## Structure
 
-The CDDL specification for the `concise-tl-tag` map is as follows and this
-rule and its constraints MUST be followed when creating or validating a CoTL
-tag:
+The CDDL specification for the `concise-tl-tag` map and additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag are given below:
 
 ~~~ cddl
 {::include cddl/concise-tl-tag.cddl}
@@ -1579,8 +1577,8 @@ The following describes each member of the `concise-tl-tag` map.
   identification information for the CoTL.
   Described in {{sec-comid-tag-id}}.
 
-* `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
-  the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
+* `tags-list` (index 1): One or more `tag-identity-maps` identifying
+  the CoMID and CoSWID tags that constitute the list, i.e.,
   a complete set of verification-related information.  The `tags-list` behaves
   like a signaling mechanism from the supply chain (e.g., a product vendor) to
   a Verifier that activates the tags in `tags-list` for use in the Evidence
@@ -3118,19 +3116,19 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Triples Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name           | Specification |
+| Index | Item Name                              | Specification |
 |---
-| 0     | reference-triples                     | {{&SELF}}     |
-| 1     | endorsed-triples                      | {{&SELF}}     |
-| 2     | identity-triples                      | {{&SELF}}     |
-| 3     | attest-key-triples                    | {{&SELF}}     |
-| 4     | dependency-triples                    | {{&SELF}}     |
-| 5     | membership-trples                     | {{&SELF}}     |
-| 6     | coswid-triples                        | {{&SELF}}     |
-| 7     | (reserved)                            | {{&SELF}}     |
-| 8     | conditional-endorsment-series-triples | {{&SELF}}     |
-| 9     | (reserved)                            | {{&SELF}}     |
-| 10    | conditional-endorsement-triples       | {{&SELF}}     |
+| 0     | reference-triples                      | {{&SELF}}     |
+| 1     | endorsed-triples                       | {{&SELF}}     |
+| 2     | identity-triples                       | {{&SELF}}     |
+| 3     | attest-key-triples                     | {{&SELF}}     |
+| 4     | dependency-triples                     | {{&SELF}}     |
+| 5     | membership-triples                     | {{&SELF}}     |
+| 6     | coswid-triples                         | {{&SELF}}     |
+| 7     | (reserved)                             | {{&SELF}}     |
+| 8     | conditional-endorsement-series-triples | {{&SELF}}     |
+| 9     | (reserved)                             | {{&SELF}}     |
+| 10    | conditional-endorsement-triples        | {{&SELF}}     |
 | 11-18446744073709551616 | Unassigned | |
 {: #tbl-iana-triples-map-items title="CoMID Triples Map Items Initial Registrations"}
 
