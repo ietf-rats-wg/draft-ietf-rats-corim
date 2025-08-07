@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-31T02:22:07.185891+00:00",
+  "timestamp": "2025-08-07T02:23:45.003209+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12140,9 +12140,17 @@
       "labels": [],
       "body": "Current text states \"If a CoRIM profile is supplied ...\" but does not clarify whether the profile is supplied as part of attestation evidence.  Given that this statement appears in a section entitled \"Cryptographic Validation of Evidence\", a reader may conclude that the profile is included in the evidence.\n\nRecommend to change to \"If a CoRIM profile is supplied by the attester either as part of evidence or in a separate conceptual message ...\".\n\nWould also recommend an additional statement at the end of the section:  \"The verifier may also ignore a CoRIM profile provided by the attester if it has access to a separate profile.  In other words, an attester-provided CoRIM profile will not necessarily take the place of a CoRIM profile that has been separately provided to the verifier.\"",
       "createdAt": "2025-07-18T15:37:46Z",
-      "updatedAt": "2025-07-18T15:37:46Z",
+      "updatedAt": "2025-08-06T14:38:51Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The introduction text:\n\nIf a CoRIM profile is supplied, it MUST describe:\n\nDoes not belong here...",
+          "createdAt": "2025-08-06T14:38:51Z",
+          "updatedAt": "2025-08-06T14:38:51Z"
+        }
+      ]
     },
     {
       "number": 466,
@@ -12156,9 +12164,17 @@
       "labels": [],
       "body": "Text as currently written states that the identifier \"uniquely identifies a CoRIM instance\" but does not define what constitutes an \"CoRIM instance\".\n\nRecommend clarifying:  \"A unique CoRIM instance specifies a unique CoRIM map.  Two CoRIM instances cannot be considered equivalent unless they match bitwise.  If not, they must have different CoRIM IDs.\"\n\n\n\n",
       "createdAt": "2025-07-18T15:48:58Z",
-      "updatedAt": "2025-07-18T15:48:58Z",
+      "updatedAt": "2025-08-06T14:30:04Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@gmandyam to add some clarifying text",
+          "createdAt": "2025-08-06T14:30:04Z",
+          "updatedAt": "2025-08-06T14:30:04Z"
+        }
+      ]
     },
     {
       "number": 467,
@@ -12172,9 +12188,17 @@
       "labels": [],
       "body": "There is no mention of x5c or the like in the COSE headers.  What are the assumptions behind the keypair used in signing?  For instance, should CoRIM signers pubkeys be pre-provisioned in the verifier?  The inclusion of kid seems to imply pre-provisioning, but this should be explicitly spelled out somewhere in the spec.  If it already is there, please point me to the section and I will close the issue.",
       "createdAt": "2025-07-18T15:55:39Z",
-      "updatedAt": "2025-07-18T15:55:39Z",
+      "updatedAt": "2025-08-06T14:21:48Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Like Section [9.2.2.1. ](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.2.2.1)[Cryptographic Validation of Evidence](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-cryptographic-validation-of)\n\nwe need a section that documents, the need for corretc trust anchors to validate the signature on CoRIMs, when CoRIMS are signed.\n\nNeed to add the suitable section in [9.2.1.2. ](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.2.1.2)[Tags Extraction and Validation](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-tags-extraction-and-validat)",
+          "createdAt": "2025-08-06T14:21:00Z",
+          "updatedAt": "2025-08-06T14:21:48Z"
+        }
+      ]
     },
     {
       "number": 468,
@@ -12184,13 +12208,23 @@
       "state": "OPEN",
       "author": "gmandyam",
       "authorAssociation": "NONE",
-      "assignees": [],
+      "assignees": [
+        "gmandyam"
+      ],
       "labels": [],
       "body": "If mkey is set to a UUID, then wouldn't it be unique for all CoMID instances regardless of which CoRIM they appear in?",
       "createdAt": "2025-07-18T17:01:44Z",
-      "updatedAt": "2025-07-18T17:01:44Z",
+      "updatedAt": "2025-08-06T14:09:03Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks to Giri for volunteering to add a clarifying text",
+          "createdAt": "2025-08-06T14:07:13Z",
+          "updatedAt": "2025-08-06T14:07:13Z"
+        }
+      ]
     },
     {
       "number": 469,
@@ -12221,6 +12255,24 @@
       "body": "As explained [on list](https://mailarchive.ietf.org/arch/msg/rats/JLn5AYRFvWw9S60iBCFjY-8X7Kc/)",
       "createdAt": "2025-07-24T08:23:23Z",
       "updatedAt": "2025-07-24T08:23:23Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 472,
+      "id": "I_kwDOH6-tI87EhJc2",
+      "title": "Jags Comment: Locator Map digest should match uri semantics",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/472",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "\u2022\tSection 4.1.3: \"Locator Map\"\no\t\u201chref\" could be an array. Should \u201cthumbprint\" also be an array to represent the digests of each of the href?\n",
+      "createdAt": "2025-08-06T14:47:57Z",
+      "updatedAt": "2025-08-06T14:47:57Z",
       "closedAt": null,
       "comments": []
     }
