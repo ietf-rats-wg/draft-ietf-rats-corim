@@ -989,7 +989,8 @@ competence.
 ###### Measurement Keys {#sec-comid-mkey}
 
 Measurement keys are locally scoped extensible identifiers.
-The initial types defined are OID, UUID, uint, and tstr.
+The initial types defined are OID, UUID, uint, and tstr.  The identifier is not guaranteed to be globally unique but should be unique
+within the context of the CoRIM/CoMID issuer.
 `mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
 A single anonymous `measurement-map` is allowed within the same environment.
 Two or more measurement-map entries within the same environment MUST populate `mkey`.
