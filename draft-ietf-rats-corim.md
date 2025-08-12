@@ -2071,12 +2071,6 @@ If found, COSE Sign1 verification is performed accordingly.
 
 Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
-> If a CoRIM profile is supplied, it MUST describe:
->
-> * How cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags)
-> * How key material is associated with the Attesting Environment
-> * How the Attesting Environment is identified in Evidence
-
 ### Input Transformation {#sec-phase1-trans}
 
 Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
