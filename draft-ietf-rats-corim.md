@@ -2021,6 +2021,12 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
+#### CoRIM Trust Anchors
+The selected CoRIM's should be signed.  If so, the signatures should be validated against an endorsed public key.
+The verifier is expected to have a store of trust anchors.  How these anchors (i.e. root certificates) are provisioned in the verifier is
+beyond the scope of this specification.  The CoRIM itself, if signed, should include at least one certificate (e.g. as part of the x5chain in the
+COSE header) corresponding to keypair used in signing.  This certificate (leaf certificate) must chain up to one of the verifier trust anchors.
+
 #### Tags Extraction and Validation
 
 The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoTL, and CoTS.
