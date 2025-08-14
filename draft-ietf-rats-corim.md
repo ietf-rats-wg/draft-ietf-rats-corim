@@ -513,7 +513,8 @@ The CoRIM MUST be signed by the CoRIM creator.
 
 The following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded either in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}) or a `corim-meta-map` ({{sec-corim-meta}}).
+information about the CoRIM encoded either in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}})
+or as a legacy alternative in a `corim-meta-map` ({{sec-corim-meta}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -538,7 +539,8 @@ The following describes each child element of this type.
 ~~~
 
 The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
-Additional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}}, or in a `corim-meta` map, described in {{sec-corim-meta}}.
+Additional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}},
+or in a `corim-meta` map as a legacy alternative, described in {{sec-corim-meta}}.
 
 The following describes each child item of this map.
 
@@ -554,7 +556,8 @@ One of:
   Described in {{-CWT_CLAIMS_COSE}}.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
-  Described in {{sec-corim-meta}}.
+  Described in {{sec-corim-meta}}. This is supported for compatibility with legacy
+  documents, but `CWT-Claims` is recommended for new documents.
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
