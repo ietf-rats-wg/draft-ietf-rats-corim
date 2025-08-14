@@ -85,6 +85,7 @@ normative:
   RFC9393: coswid
   RFC9334: rats-arch
   RFC9597: CWT_CLAIMS_COSE
+  RFC8392: CWT
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -561,7 +562,28 @@ One of:
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
-### Meta Map {#sec-corim-meta}
+### CWT Claims {#cwt-claims}
+
+The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.
+
+~~~ cddl
+{::include cddl/cwt-claims.cddl}
+~~~
+
+The following describes each child item of this group.
+
+* `iss` (index 1): Issuer or signer for the CoRIM, formerly `signer-name` or `signer-uri` in {{sec-corim-signer}}.
+
+* `sub` (index 2): Subject or description for the CoRIM.
+
+Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
+
+* `exp` (index 4): Expiration time, formerly `signature-validity` in {{sec-common-validity}}.
+
+* `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
+
+### Meta Map (Legacy) {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
