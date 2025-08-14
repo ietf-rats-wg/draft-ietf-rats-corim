@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-07T02:23:45.003209+00:00",
+  "timestamp": "2025-08-14T02:07:26.909829+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12188,7 +12188,7 @@
       "labels": [],
       "body": "There is no mention of x5c or the like in the COSE headers.  What are the assumptions behind the keypair used in signing?  For instance, should CoRIM signers pubkeys be pre-provisioned in the verifier?  The inclusion of kid seems to imply pre-provisioning, but this should be explicitly spelled out somewhere in the spec.  If it already is there, please point me to the section and I will close the issue.",
       "createdAt": "2025-07-18T15:55:39Z",
-      "updatedAt": "2025-08-06T14:21:48Z",
+      "updatedAt": "2025-08-13T14:17:48Z",
       "closedAt": null,
       "comments": [
         {
@@ -12197,13 +12197,20 @@
           "body": "Like Section [9.2.2.1. ](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.2.2.1)[Cryptographic Validation of Evidence](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-cryptographic-validation-of)\n\nwe need a section that documents, the need for corretc trust anchors to validate the signature on CoRIMs, when CoRIMS are signed.\n\nNeed to add the suitable section in [9.2.1.2. ](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-9.2.1.2)[Tags Extraction and Validation](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-tags-extraction-and-validat)",
           "createdAt": "2025-08-06T14:21:00Z",
           "updatedAt": "2025-08-06T14:21:48Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "body": "+1 for adding support for x5c/x5t in the headers, they're technically allowed by the wildcard now, but the guidance will be useful to implementers",
+          "createdAt": "2025-08-13T14:17:48Z",
+          "updatedAt": "2025-08-13T14:17:48Z"
         }
       ]
     },
     {
       "number": 468,
       "id": "I_kwDOH6-tI87BWNXI",
-      "title": "Sec. 5.2.4.2.4.2 Measurement Keys:  clarify local scoping",
+      "title": "Sec. 5.1.4.1.4.1 Measurement Keys:  clarify local scoping",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
       "state": "OPEN",
       "author": "gmandyam",
@@ -12214,7 +12221,7 @@
       "labels": [],
       "body": "If mkey is set to a UUID, then wouldn't it be unique for all CoMID instances regardless of which CoRIM they appear in?",
       "createdAt": "2025-07-18T17:01:44Z",
-      "updatedAt": "2025-08-06T14:09:03Z",
+      "updatedAt": "2025-08-12T22:34:08Z",
       "closedAt": null,
       "comments": [
         {
@@ -12273,6 +12280,62 @@
       "body": "\u2022\tSection 4.1.3: \"Locator Map\"\no\t\u201chref\" could be an array. Should \u201cthumbprint\" also be an array to represent the digests of each of the href?\n",
       "createdAt": "2025-08-06T14:47:57Z",
       "updatedAt": "2025-08-06T14:47:57Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 477,
+      "id": "I_kwDOH6-tI87FxAhs",
+      "title": "Interoperability with SCITT Transparency Services",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/477",
+      "state": "OPEN",
+      "author": "achamayou",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "It would be really useful to allow COSE_Sign1-signed CoRIM/CoRIM collections to be made transparent on a SCITT Transparency Service (https://ietf-wg-scitt.github.io/draft-ietf-scitt-architecture/draft-ietf-scitt-architecture.html).\n\nSince they are COSE_Sign1, that's not far off, but there are two blockers that I can see:\n\n1. The lack of support for X.509 in the Signed CoRIM schema (x5c/x5t), as specified in the SCITT Signed Statement definition: https://ietf-wg-scitt.github.io/draft-ietf-scitt-architecture/draft-ietf-scitt-architecture.html#fig-signed-statement-cddl\n\nAside from technical compatibility, this is of substantial practical value to enable transition from signing services and infrastructure that still uses X.509.\n\n2. The lack of support for CWT_Claims (https://datatracker.ietf.org/doc/rfc9597/) as a mechanism to capture signer/issuer information for the COSE_Sign1-signed CoRIM: https://ietf-wg-scitt.github.io/draft-ietf-scitt-architecture/draft-ietf-scitt-architecture.html#fig-signed-statement-cddl. It would be good to enable that either as an alternative, or even as mechanism that can be composed with `corim-meta` for COSE_Sign1.\n\nThis would enable COSE_Sign1-signed CoRIM/CoRIM collections to be registered with transparency services, using the same authentication and registration policies that are used for other Signed Statements.",
+      "createdAt": "2025-08-13T10:57:45Z",
+      "updatedAt": "2025-08-13T14:55:19Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hi @achamayou, thanks very much for raising this (very relevant) issue.\n\n> It would be really useful to allow COSE_Sign1-signed CoRIM/CoRIM collections to be made transparent on a SCITT Transparency Service (https://ietf-wg-scitt.github.io/draft-ietf-scitt-architecture/draft-ietf-scitt-architecture.html).\n> \n> Since they are COSE_Sign1, that's not far off, but there are two blockers that I can see:\n> \n> 1. The lack of support for X.509 in the Signed CoRIM schema (x5c/x5t), as specified in the SCITT Signed Statement definition: https://ietf-wg-scitt.github.io/draft-ietf-scitt-architecture/draft-ietf-scitt-architecture.html#fig-signed-statement-cddl\n\nI may misunderstand the requirement, but there is nothing preventing CoRIMs from including `x5chain` et similia.  In fact, our implementation supports it, see: https://github.com/veraison/corim/blob/009c553f94e7e889bd423fbe5c88e5e8c24a40f6/corim/signedcorim.go#L85\n\n> Aside from technical compatibility, this is of substantial practical value to enable transition from signing services and infrastructure that still uses X.509.\n\nAbsolutely.\n\n> 3. The lack of support for CWT_Claims (https://datatracker.ietf.org/doc/rfc9597/) as a mechanism to capture signer/issuer information for the COSE_Sign1-signed CoRIM: https://ietf-wg-scitt.github.io/draft-ietf-scitt-architecture/draft-ietf-scitt-architecture.html#fig-signed-statement-cddl. It would be good to enable that either as an alternative, or even as mechanism that can be composed with `corim-meta` for COSE_Sign1.\n\nSimilarly to the above, there is no explicit \u201clack of support\u201d, it\u2019s more that we don\u2019t make RFC9597 support a requirement (at least, currently).  However, an implementation / profile is free to make it so.\n\nAs you point out, the crux is the potential for semantic overlap between `corim-meta` and \"claim in headers\u201d, which is better dealt with as a clear alternative.\n\n> This would enable COSE_Sign1-signed CoRIM/CoRIM collections to be registered with transparency services, using the same authentication and registration policies that are used for other Signed Statements.\n\n\ud83d\udc4d ",
+          "createdAt": "2025-08-13T12:38:27Z",
+          "updatedAt": "2025-08-13T12:38:27Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "body": "Hi @thomas-fossati,\n\n> I may misunderstand the requirement, but there is nothing preventing CoRIMs from including x5chain et similia. In fact, our implementation supports it, see: https://github.com/veraison/corim/blob/009c553f94e7e889bd423fbe5c88e5e8c24a40f6/corim/signedcorim.go#L85\n\nSorry, you are right that it is allowed. I should have been more precise: I suggest `kid` should not be mandatory when `x5t/x5c` is present. It is mandatory according to the CCDL:\n\n```\n4.2.1.  Protected Header Map\n\n   protected-corim-header-map = {\n     &(alg: 1) => int\n     &(content-type: 3) => \"application/rim+cbor\"\n     &(kid: 4) => bstr\n     &(corim-meta: 8) => bstr .cbor corim-meta-map\n     * cose-label => cose-value\n   }\n```\n\n> Similarly to the above, there is no explicit \u201clack of support\u201d, it\u2019s more that we don\u2019t make RFC9597 support a requirement (at least, currently). However, an implementation / profile is free to make it so.\n\nYes, the `* cose-label => cose-value` part allows anything, that is true. But the `kid` and `corim-meta` are mandated, and pre-existing alternatives are not mentioned. I am proposing that they should be explicitly allowed at least.\n\nI agree that there is potential for semantic overlap with `corim-meta` at the top level, and that's probably also a useful discussion to have too.\n",
+          "createdAt": "2025-08-13T13:28:27Z",
+          "updatedAt": "2025-08-13T13:28:27Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "body": "As discussed today, item 1 overlaps with #467. The agreed resolution for is to update #475 to remove the mandatory `kid` parameter from the protected header, and explicitly defer to RFC9052 (COSE) and RFC9630 (carrying and referencing X.509 certificates in COSE) to enable `x5c`/`x5t`/...\n\nOn item 2, I will propose a PR before next week's meeting to allow either `CWT_Claims` () or `corim-meta` to be used for COSE_Sign1-signed CoRIM.",
+          "createdAt": "2025-08-13T14:55:19Z",
+          "updatedAt": "2025-08-13T14:55:19Z"
+        }
+      ]
+    },
+    {
+      "number": 478,
+      "id": "I_kwDOH6-tI87F0jZZ",
+      "title": "Editor's Copy link is not working",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/478",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "bug"
+      ],
+      "body": "https://ietf-rats-wg.github.io/draft-ietf-rats-corim/#go.draft-ietf-rats-corim.html does not go to the Editor's Copy",
+      "createdAt": "2025-08-13T15:22:16Z",
+      "updatedAt": "2025-08-13T15:22:16Z",
       "closedAt": null,
       "comments": []
     }
@@ -74747,7 +74810,7 @@
       "labels": [],
       "body": "Fixes #449 \r\nFixes #450",
       "createdAt": "2025-07-11T11:40:37Z",
-      "updatedAt": "2025-07-22T17:05:32Z",
+      "updatedAt": "2025-08-13T12:41:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9c05694ea4a5592d6a9cba336ac7006e8819f9fe",
@@ -74857,6 +74920,26 @@
               "body": "I don't think this is accurate. The internal representation separates condition and addition, but the external representation for the endorsed-value-triple combines them. The internal representation constructs the condition and addition from the external representation.",
               "createdAt": "2025-07-22T17:04:56Z",
               "updatedAt": "2025-07-22T17:05:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865t_IC",
+          "commit": {
+            "abbreviatedOid": "01fda61"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T12:41:38Z",
+          "updatedAt": "2025-08-13T12:41:39Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "@nedmsmith This is talking about Internal Representation.\r\n\r\nPlease see: line 2469: we explicitly stated, they share the same internal representation\r\n",
+              "createdAt": "2025-08-13T12:41:38Z",
+              "updatedAt": "2025-08-13T12:41:39Z"
             }
           ]
         }
@@ -75021,6 +75104,333 @@
           "body": "",
           "createdAt": "2025-07-22T22:41:53Z",
           "updatedAt": "2025-07-22T22:41:53Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 473,
+      "id": "PR_kwDOH6-tI86jXN3_",
+      "title": "Remove extraneous text in Sec. 9.2.2.1",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/473",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Addressing https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/465",
+      "createdAt": "2025-08-12T22:11:47Z",
+      "updatedAt": "2025-08-13T09:00:30Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "headRepository": "gmandyam/draft-ietf-rats-corim",
+      "headRefName": "Issue_465",
+      "headRefOid": "350380d64ffe5fb599dd5c6383a0eefc76dd0cd4",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI865pgDY",
+          "commit": {
+            "abbreviatedOid": "350380d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-08-13T09:00:30Z",
+          "updatedAt": "2025-08-13T09:00:30Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 474,
+      "id": "PR_kwDOH6-tI86jXQxA",
+      "title": "Clarification on uniqueness of the CoRIM ID",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/474",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/466",
+      "createdAt": "2025-08-12T22:20:27Z",
+      "updatedAt": "2025-08-13T08:57:00Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "headRepository": "gmandyam/draft-ietf-rats-corim",
+      "headRefName": "Issue466",
+      "headRefOid": "014f4f75d9850a2324afee1d08de73c83a2d7c56",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI865jptm",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-12T22:47:10Z",
+          "updatedAt": "2025-08-12T22:47:10Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Is `CoRIM issuer` synonymous with `signer-name` and/or `kid` within the CoRIM?",
+              "createdAt": "2025-08-12T22:47:10Z",
+              "updatedAt": "2025-08-12T22:47:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865kVa3",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "gmandyam",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-12T23:41:42Z",
+          "updatedAt": "2025-08-12T23:41:42Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I referred to Section 2 of the current draft:  \" By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what. The origin of the inputs is tracked as authority. The authority for the Claims in a CoRIM is the CoRIM issuer.\"  \r\n\r\nI assumed that CoRIM issuer was only synonymous with authority, and the authority did not necessarily correspond to any of the claims in the CoRIM itself.",
+              "createdAt": "2025-08-12T23:41:42Z",
+              "updatedAt": "2025-08-12T23:41:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865lxdW",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T01:20:32Z",
+          "updatedAt": "2025-08-13T01:20:32Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "OK that is a separate issue then. You can close this comment as resolved.",
+              "createdAt": "2025-08-13T01:20:32Z",
+              "updatedAt": "2025-08-13T01:20:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865pXd8",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T08:55:34Z",
+          "updatedAt": "2025-08-13T08:55:34Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nbut it is used to distinguish CoRIMs that come from the same issuer.\r\n```",
+              "createdAt": "2025-08-13T08:55:34Z",
+              "updatedAt": "2025-08-13T08:55:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865pYTD",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T08:56:01Z",
+          "updatedAt": "2025-08-13T08:56:02Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nA CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.  In other words the CoRIM identifier may not be globally unique,\r\n```",
+              "createdAt": "2025-08-13T08:56:02Z",
+              "updatedAt": "2025-08-13T08:56:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865pZtU",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T08:57:00Z",
+          "updatedAt": "2025-08-13T08:57:00Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "The catch is that when CoRIM ID is using `uuid` construct it will be globally unique, hence I would say may not be, instead of an affirmative, is not",
+              "createdAt": "2025-08-13T08:57:00Z",
+              "updatedAt": "2025-08-13T08:57:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 475,
+      "id": "PR_kwDOH6-tI86jXWif",
+      "title": "Address CoRIM endorsements",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/475",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/467",
+      "createdAt": "2025-08-12T22:31:34Z",
+      "updatedAt": "2025-08-13T09:09:38Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "headRepository": "gmandyam/draft-ietf-rats-corim",
+      "headRefName": "Issue_467",
+      "headRefOid": "0bbff4572c74102178734cdc592bba8289ec83bb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI865pouI",
+          "commit": {
+            "abbreviatedOid": "0bbff45"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T09:07:24Z",
+          "updatedAt": "2025-08-13T09:07:25Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "As we support unsigned CoRIMs in specification, Kindly refer to Section 4.3. that details handling of unsigned CoRIMs.\r\n\r\nSo I would suggest, we change the sentence to render something like below:\r\n\r\n`When CoRIM's are signed, the signatures must be validated using correct trust anchors inside the Verifier`",
+              "createdAt": "2025-08-13T09:07:24Z",
+              "updatedAt": "2025-08-13T09:07:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865pqN3",
+          "commit": {
+            "abbreviatedOid": "0bbff45"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T09:08:38Z",
+          "updatedAt": "2025-08-13T09:08:38Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nThe Verifier is expected to have a trust anchor store.  How these trust anchors (i.e. root certificates) are provisioned in the Verifier is\r\n```",
+              "createdAt": "2025-08-13T09:08:38Z",
+              "updatedAt": "2025-08-13T09:08:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865pqxt",
+          "commit": {
+            "abbreviatedOid": "0bbff45"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-13T09:09:09Z",
+          "updatedAt": "2025-08-13T09:09:09Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nCOSE header) corresponding to keypair used in signing.  This certificate (leaf certificate) must chain up to one of the Verifier trust anchors.\r\n```",
+              "createdAt": "2025-08-13T09:09:09Z",
+              "updatedAt": "2025-08-13T09:09:09Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865prRF",
+          "commit": {
+            "abbreviatedOid": "0bbff45"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "in general looks good, just added few comments for you to have a look at!",
+          "createdAt": "2025-08-13T09:09:38Z",
+          "updatedAt": "2025-08-13T09:09:38Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 476,
+      "id": "PR_kwDOH6-tI86jXZd7",
+      "title": "Clarify local scoping of mkey with unique identifiers (e.g. UUID)",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/476",
+      "state": "OPEN",
+      "author": "gmandyam",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
+      "createdAt": "2025-08-12T22:37:46Z",
+      "updatedAt": "2025-08-13T08:58:22Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "headRepository": "gmandyam/draft-ietf-rats-corim",
+      "headRefName": "Issue_468",
+      "headRefOid": "99b3e6e498ae69d3b6b17a519832c4e8c9178b19",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI865pb6G",
+          "commit": {
+            "abbreviatedOid": "99b3e6e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-08-13T08:58:22Z",
+          "updatedAt": "2025-08-13T08:58:22Z",
           "comments": []
         }
       ]
