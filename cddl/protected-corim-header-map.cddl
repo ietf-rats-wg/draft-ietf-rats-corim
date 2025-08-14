@@ -2,6 +2,9 @@ protected-corim-header-map = {
   &(alg: 1) => int
   &(content-type: 3) => "application/rim+cbor"
   &(kid: 4) => bstr
-  &(corim-meta: 8) => bstr .cbor corim-meta-map
+  &meta = (
+    (corim-meta: 8) => bstr .cbor corim-meta-map //
+    (CWT-Claims: 15) => cwt-claims
+  )
   * cose-label => cose-value
 }
