@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-14T02:07:26.909829+00:00",
+  "timestamp": "2025-08-17T02:19:48.904091+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12140,7 +12140,7 @@
       "labels": [],
       "body": "Current text states \"If a CoRIM profile is supplied ...\" but does not clarify whether the profile is supplied as part of attestation evidence.  Given that this statement appears in a section entitled \"Cryptographic Validation of Evidence\", a reader may conclude that the profile is included in the evidence.\n\nRecommend to change to \"If a CoRIM profile is supplied by the attester either as part of evidence or in a separate conceptual message ...\".\n\nWould also recommend an additional statement at the end of the section:  \"The verifier may also ignore a CoRIM profile provided by the attester if it has access to a separate profile.  In other words, an attester-provided CoRIM profile will not necessarily take the place of a CoRIM profile that has been separately provided to the verifier.\"",
       "createdAt": "2025-07-18T15:37:46Z",
-      "updatedAt": "2025-08-06T14:38:51Z",
+      "updatedAt": "2025-08-14T11:24:32Z",
       "closedAt": null,
       "comments": [
         {
@@ -12149,6 +12149,13 @@
           "body": "The introduction text:\n\nIf a CoRIM profile is supplied, it MUST describe:\n\nDoes not belong here...",
           "createdAt": "2025-08-06T14:38:51Z",
           "updatedAt": "2025-08-06T14:38:51Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This paragraph is paired with the second paragraph of \u00a78:\n\n> _If a CoRIM profile is specified, there are a few well-defined points in the procedure where Verifier behaviour depends on the profile. The CoRIM profile MUST provide a description of the expected Verifier behavior for each of those well-defined points._\n\nThis important information needs to be made clear to the reader.  While this is perhaps not the best place, we cannot just remove it.",
+          "createdAt": "2025-08-14T11:24:32Z",
+          "updatedAt": "2025-08-14T11:24:32Z"
         }
       ]
     },
@@ -12338,6 +12345,44 @@
       "updatedAt": "2025-08-13T15:22:16Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 481,
+      "id": "I_kwDOH6-tI87GWDsb",
+      "title": "id-nits reports",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/481",
+      "state": "OPEN",
+      "author": "mcr",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "\n1.\n\ndraft-ietf-rats-corim-08.txt:\n-(4009): Line appears to be too long, but this could be caused by non-ascii characters in UTF-8 encoding\n-(4781): Line appears to be too long, but this could be caused by non-ascii characters in UTF-8 encoding\n\n2.\n  == There are 6 instances of lines with non-ascii characters in the document.\n\n3. \n  == There are 41 instances of lines with non-RFC2606-compliant FQDNs in the\n     document.\n??? - no idea what this means.\n\n4.   ** Obsolete normative reference: RFC 4122 (Obsoleted by RFC 9562)\n5.   ** Downref: Normative reference to an Informational RFC: RFC 9334\n\n",
+      "createdAt": "2025-08-16T21:32:07Z",
+      "updatedAt": "2025-08-16T21:34:14Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "mcr",
+          "authorAssociation": "NONE",
+          "body": "Maybe normative:\n\n````\n   [I-D.ietf-rats-eat]\n              Lundblade, L., Mandyam, G., O'Donoghue, J., and C.\n              Wallace, \"The Entity Attestation Token (EAT)\", Work in\n              Progress, Internet-Draft, draft-ietf-rats-eat-31, 6\n              September 2024, <https://datatracker.ietf.org/doc/html/\n              draft-ietf-rats-eat-31>.\n````\n",
+          "createdAt": "2025-08-16T21:33:08Z",
+          "updatedAt": "2025-08-16T21:33:08Z"
+        },
+        {
+          "author": "mcr",
+          "authorAssociation": "NONE",
+          "body": "Also, maybe normative:\n````\n   [I-D.ietf-rats-msg-wrap]\n              Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and\n              D. Glaze, \"RATS Conceptual Messages Wrapper (CMW)\", Work\n              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-16,\n              3 July 2025, <https://datatracker.ietf.org/doc/html/draft-\n              ietf-rats-msg-wrap-16>.\n````\n",
+          "createdAt": "2025-08-16T21:33:31Z",
+          "updatedAt": "2025-08-16T21:33:31Z"
+        },
+        {
+          "author": "mcr",
+          "authorAssociation": "NONE",
+          "body": "Should be normative:\n````\n   [RFC9562]  Davis, K., Peabody, B., and P. Leach, \"Universally Unique\n              IDentifiers (UUIDs)\", RFC 9562, DOI 10.17487/RFC9562, May\n              2024, <https://www.rfc-editor.org/rfc/rfc9562>.\n````\n",
+          "createdAt": "2025-08-16T21:34:14Z",
+          "updatedAt": "2025-08-16T21:34:14Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -75120,7 +75165,7 @@
       "labels": [],
       "body": "Addressing https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/465",
       "createdAt": "2025-08-12T22:11:47Z",
-      "updatedAt": "2025-08-13T09:00:30Z",
+      "updatedAt": "2025-08-14T13:41:52Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
@@ -75131,7 +75176,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "At last weeks' meeting we concluded this text is totally out of context and is of no relevance to the section where it is written\r\n\r\nProfile sections adequately describes the usage of profiles. If one thinks the text is relevant that should be addressed in a separate issue and via a separate PR. ",
+          "createdAt": "2025-08-14T13:41:24Z",
+          "updatedAt": "2025-08-14T13:41:52Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI865pgDY",
@@ -75144,6 +75197,32 @@
           "body": "LGTM!",
           "createdAt": "2025-08-13T09:00:30Z",
           "updatedAt": "2025-08-13T09:00:30Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-hV-",
+          "commit": {
+            "abbreviatedOid": "350380d"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "not blocking this deletion, but please highlight in case there is a really good reason why you still need this (relatively arbitrary text).",
+          "createdAt": "2025-08-14T11:14:56Z",
+          "updatedAt": "2025-08-14T11:14:56Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-o66",
+          "commit": {
+            "abbreviatedOid": "350380d"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "See https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/465#issuecomment-3188103138",
+          "createdAt": "2025-08-14T11:25:06Z",
+          "updatedAt": "2025-08-14T11:25:06Z",
           "comments": []
         }
       ]
@@ -75160,7 +75239,7 @@
       "labels": [],
       "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/466",
       "createdAt": "2025-08-12T22:20:27Z",
-      "updatedAt": "2025-08-13T08:57:00Z",
+      "updatedAt": "2025-08-14T11:24:09Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
@@ -75292,6 +75371,39 @@
               "updatedAt": "2025-08-13T08:57:00Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-n5Y",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T11:23:27Z",
+          "updatedAt": "2025-08-14T11:23:27Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "If we are going down this route, alternatively:\r\n\r\n```suggestion\r\nA CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.\r\nIn other words, while a CoRIM identifier can be unique in a global scope, its main purpose is to distinguish CoRIM tags that originate from the same issuer.\r\n```\r\n",
+              "createdAt": "2025-08-14T11:23:27Z",
+              "updatedAt": "2025-08-14T11:23:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-oVU",
+          "commit": {
+            "abbreviatedOid": "014f4f7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "Check the suggestions and maybe add some +1 or -1",
+          "createdAt": "2025-08-14T11:24:09Z",
+          "updatedAt": "2025-08-14T11:24:09Z",
+          "comments": []
         }
       ]
     },
@@ -75307,7 +75419,7 @@
       "labels": [],
       "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/467",
       "createdAt": "2025-08-12T22:31:34Z",
-      "updatedAt": "2025-08-13T09:09:38Z",
+      "updatedAt": "2025-08-14T11:32:46Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
@@ -75392,6 +75504,46 @@
           "createdAt": "2025-08-13T09:09:38Z",
           "updatedAt": "2025-08-13T09:09:38Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-suO",
+          "commit": {
+            "abbreviatedOid": "0bbff45"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T11:30:21Z",
+          "updatedAt": "2025-08-14T11:30:22Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nIf CoRIM tags are signed, the signatures MUST be validated using appropriate trust anchors (certification paths) available to the Verifier.\r\n```\r\n\r\nI really would like to avoid the term \"endorsed public key\" here. Management of a Verifier's TA store is a policy decision maybe is a \"very specific endorsement\" that is covered by draft-ietf-rats-concise-ta-stores.",
+              "createdAt": "2025-08-14T11:30:21Z",
+              "updatedAt": "2025-08-14T11:30:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-u6G",
+          "commit": {
+            "abbreviatedOid": "0bbff45"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T11:32:45Z",
+          "updatedAt": "2025-08-14T11:32:46Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I would recommend to replace \"root certificates\" with \"certification paths\" or remove the parentheses altogether. (Also, missing NL.)",
+              "createdAt": "2025-08-14T11:32:46Z",
+              "updatedAt": "2025-08-14T11:32:46Z"
+            }
+          ]
         }
       ]
     },
@@ -75407,7 +75559,7 @@
       "labels": [],
       "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
       "createdAt": "2025-08-12T22:37:46Z",
-      "updatedAt": "2025-08-13T08:58:22Z",
+      "updatedAt": "2025-08-14T13:39:57Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
@@ -75432,8 +75584,233 @@
           "createdAt": "2025-08-13T08:58:22Z",
           "updatedAt": "2025-08-13T08:58:22Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI865-wpJ",
+          "commit": {
+            "abbreviatedOid": "99b3e6e"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T11:35:05Z",
+          "updatedAt": "2025-08-14T11:35:05Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "just md editorial\r\n\r\n```suggestion\r\nThe initial types defined are OID, UUID, uint, and tstr.\r\nThe identifier is not guaranteed to be globally unique but is intended to be unique within the context of the CoRIM/CoMID issuer.\r\n```\r\n\r\nEither \"SHOULD\" or \"is intended to\", I think.",
+              "createdAt": "2025-08-14T11:35:05Z",
+              "updatedAt": "2025-08-14T11:35:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI866AUQa",
+          "commit": {
+            "abbreviatedOid": "99b3e6e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T13:39:56Z",
+          "updatedAt": "2025-08-14T13:39:57Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "I don\u2019t think this is correct.\r\n\r\nSpecifically, as it is not possible to coordinate the allocation of mkeys across profiles, a given CoRIM issuer could end up creating CoRIMs using different profiles with clashing mkeys.\r\n",
+              "createdAt": "2025-08-14T13:39:57Z",
+              "updatedAt": "2025-08-14T13:39:57Z"
+            }
+          ]
         }
       ]
+    },
+    {
+      "number": 479,
+      "id": "PR_kwDOH6-tI86jsJU1",
+      "title": "Add CWT Claims (RFC9597) to Signed CoRIM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/479",
+      "state": "OPEN",
+      "author": "achamayou",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "As proposed in #477",
+      "createdAt": "2025-08-14T13:54:08Z",
+      "updatedAt": "2025-08-15T08:16:37Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "headRepository": "achamayou/draft-ietf-rats-corim",
+      "headRefName": "cwt_claims",
+      "headRefOid": "02bc2c68151751307aa4552439ca6c6ac1e27660",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI866AvBH",
+          "commit": {
+            "abbreviatedOid": "b7ec278"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Thanks for the contribution, @achamayou!\r\nI have left a few comments inline.",
+          "createdAt": "2025-08-14T14:09:58Z",
+          "updatedAt": "2025-08-14T14:16:39Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "This is great, but I wonder if we should also add the following:\r\n1. A historical note explaining why we initially opted for `corim-meta`, and\r\n2. An indication that `corim-meta` is considered legacy and that the recommended way forward is to use `CWT-Claims`.\r\n\r\n```suggestion\r\nAdditional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}}, or in a `corim-meta` map, described in {{sec-corim-meta}}.\r\n```\r\n\r\nIn addition, I believe we should provide a \"migration\" story explaining how to convert the semantics currently encoded in `corim-meta` into equivalent `CWT-Claims`.\r\n\r\nLast but not least (please, don\u2019t kill me \ud83d\ude04), we should remove extensibility from the `corim-meta` map to inhibit semantic divergence.\r\n ",
+              "createdAt": "2025-08-14T14:09:58Z",
+              "updatedAt": "2025-08-14T14:16:39Z"
+            },
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\r\nThese metadata containers ensure that each CoRIM in the collection has an identified signer.\r\n```",
+              "createdAt": "2025-08-14T14:11:37Z",
+              "updatedAt": "2025-08-14T14:16:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI866Bs-2",
+          "commit": {
+            "abbreviatedOid": "20c8205"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T15:17:56Z",
+          "updatedAt": "2025-08-14T15:17:57Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "@thomas-fossati a historical note would be great, I agree, but I wasn't there and so I am not sure what to write :)\r\nWill do item 2.\r\n\r\nHappy to try and draft a migration story if that helps, do you see that going here or in a separate section?\r\n\r\nHappy to remove extensibility, or to propose it anyway, thank you for taking the time to provide such detailed and constructive feedback!",
+              "createdAt": "2025-08-14T15:17:57Z",
+              "updatedAt": "2025-08-14T15:17:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI866CGp3",
+          "commit": {
+            "abbreviatedOid": "b7ec278"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T15:48:17Z",
+          "updatedAt": "2025-08-14T15:48:17Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "I have had a stab at making those changes, except the historical justification where I need input. Please let me know if further changes are needed.",
+              "createdAt": "2025-08-14T15:48:17Z",
+              "updatedAt": "2025-08-14T15:48:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI866COBn",
+          "commit": {
+            "abbreviatedOid": "b7ec278"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T15:56:26Z",
+          "updatedAt": "2025-08-14T15:56:26Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "> I have had a stab at making those changes\r\n\r\nexcellent stuff, thanks!\r\n\r\n> [\u2026] except the historical justification where I need input.\r\n\r\nPerhaps something like:\r\n\r\n  _The corim-meta map was introduced at a time when RFC 9597, which defines CWT_Claims, was not available in any form.  Now that RFC9597 has been published as a proposed standard, it makes sense to migrate away from the custom corim-meta and reuse a standard COSE ecosystem component instead._\r\n",
+              "createdAt": "2025-08-14T15:56:26Z",
+              "updatedAt": "2025-08-14T15:56:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI866CSrh",
+          "commit": {
+            "abbreviatedOid": "b7ec278"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-08-14T16:01:33Z",
+          "updatedAt": "2025-08-14T16:01:33Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "@thomas-fossati done, thank you!",
+              "createdAt": "2025-08-14T16:01:33Z",
+              "updatedAt": "2025-08-14T16:01:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI866DB-M",
+          "commit": {
+            "abbreviatedOid": "02bc2c6"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Awesome job, thanks very much @achamayou ",
+          "createdAt": "2025-08-14T16:52:07Z",
+          "updatedAt": "2025-08-14T16:52:07Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI866KJ8Y",
+          "commit": {
+            "abbreviatedOid": "02bc2c6"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "CDDL lgtm & the reasoning as well (thanks for CI augments, too)",
+          "createdAt": "2025-08-15T08:16:37Z",
+          "updatedAt": "2025-08-15T08:16:37Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 480,
+      "id": "PR_kwDOH6-tI86j9cXc",
+      "title": "fix broken URL for implementation of cocli",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/480",
+      "state": "OPEN",
+      "author": "mcr",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-08-16T21:23:55Z",
+      "updatedAt": "2025-08-16T21:23:56Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "headRepository": "mcr/draft-ietf-rats-corim",
+      "headRefName": "patch-1",
+      "headRefOid": "837185d8dba04b8763568e864d7cd1823a71c1ed",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
