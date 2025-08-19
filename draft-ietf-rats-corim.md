@@ -3316,7 +3316,7 @@ The authors would like to thank the following people for review and comment on t
 {{{Carl Wallace}}}
 {{{Steven Bellock}}}
 {{{Jag Raman}}}
-{{{Giri Madhyam}}} and
+{{{Giri Mandyam}}} and
 {{{Jeremy O'Donoghue}}}
 
 [^revise]: (This content needs to be revised. Consider removing for now and
