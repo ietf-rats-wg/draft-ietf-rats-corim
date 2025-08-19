@@ -2833,7 +2833,7 @@ groups to use this information as they see fit".
   API from the `veraison/swid` package) to provide a user command line
   interface for working with CoRIM, CoMID and CoSWID. Specifically, it allows
   creating, signing, verifying, displaying, uploading, and more. See
-  [https://github.com/cocli/README.md](https://github.com/veraison/corim/blob/main/cocli/README.md) for
+  [https://github.com/veraison/cocli/README.md](https://github.com/veraison/cocli/README.md) for
   further details.
 
 * Implementation's level of maturity: alpha.
