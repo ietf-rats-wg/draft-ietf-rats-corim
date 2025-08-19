@@ -3312,7 +3312,12 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 # Acknowledgments
 {:unnumbered}
 
-{{{Carl Wallace}}}, {{{Steven Bellock}}}, {{{Jag Raman}}}, {{{Giri Madhyam}}} and {{{Jeremy O'Donoghue}}} for review and comments on this document.
+The authors would like to thank the following people for review and comment on this document.
+{{{Carl Wallace}}}
+{{{Steven Bellock}}}
+{{{Jag Raman}}}
+{{{Giri Madhyam}}} and
+{{{Jeremy O'Donoghue}}}
 
 [^revise]: (This content needs to be revised. Consider removing for now and
     replacing with an issue.)
