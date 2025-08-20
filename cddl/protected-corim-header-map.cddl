@@ -1,4 +1,4 @@
-; protected header map MUST contain exactly one of corim-meta (8) or CWT-Claims (15)
+; protected header map MUST contain at least one of corim-meta (8) or CWT-Claims (15)
 protected-corim-header-map =
   {
     &(alg: 1) => int,
@@ -7,10 +7,10 @@ protected-corim-header-map =
     * cose-label => cose-value
   }
 
-meta //= (
-  &(CWT-Claims: 15) => cwt-claims
-)
+meta = ((
+        corim-meta-fragment,
+        ? cwt-claims-fragment,
+      ) // cwt-claims-fragment)
 
-meta //= (
-  &(corim-meta: 8) => bstr .cbor corim-meta-map
-)
+corim-meta-fragment = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
+cwt-claims-fragment = (&(CWT-Claims: 15) => cwt-claims)
