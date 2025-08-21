@@ -1302,6 +1302,8 @@ By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixin
 See {{-rats-endorsements}}.
 Re-asserted Evidence using RVP authority is said to be "corroborated".
 
+It is valid to have multiple reference-triple-records with the same environment map within a reference-triple-array. When multiple records reference the same Target Environment, appraisal succeeds if the evidence matches any of the reference values (logical OR operation).
+
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
 An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
