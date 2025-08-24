@@ -2392,6 +2392,17 @@ The Verifier MUST ensure that a triple including a matching condition is process
 
 This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
 
+##### Idempotency of triple processing
+
+Identical triples are idempotent with respect to processing. When a 
+Verifier encounters multiple instances of identical triples (whether 
+within the same CoRIM or across multiple CoRIMs), the processing 
+result is the same as processing a single instance.
+
+Including identical reference values or other triples multiple times 
+is redundant and implementers SHOULD optimize by detecting and 
+eliminating duplicate processing where possible.
+
 #### ACS Augmentation Requirements {#sec-acs-aug-req}
 
 The ordering of ECTs in the ACS is not significant.
