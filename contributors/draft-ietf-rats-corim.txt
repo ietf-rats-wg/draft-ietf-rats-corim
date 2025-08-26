@@ -336,7 +336,7 @@ Table of Contents
    Class ID:
       An identifier for an Environment that is shared among similar
       Environment instances, such as those with the same hardware
-      assembly.  See also Section 4.2.4 of [I-D.ietf-rats-eat].
+      assembly.  See also Section 4.2.4 of [RFC9711].
 
    Composite Attester:
       A Composite Attester is either a Composite Device (Section 3.3 of
@@ -373,7 +373,7 @@ Table of Contents
    Instance ID:
       An identifier of an Environment that is unique to that Environment
       instance, such as the serial number of a hardware module.  See
-      also Section 4.2.1 of [I-D.ietf-rats-eat].
+      also Section 4.2.1 of [RFC9711].
 
    Measurement:
       A value associated with specific security characteristics of an
@@ -809,7 +809,6 @@ Table of Contents
    protected-corim-header-map = {
      &(alg: 1) => int
      &(content-type: 3) => "application/rim+cbor"
-     &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
    }
@@ -822,9 +821,6 @@ Table of Contents
 
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
-
-   *  kid (index 4): A byte string which is a key identity pertaining to
-      the CoRIM Issuer.
 
    *  corim-meta (index 8): A map that contains metadata associated with
       a signed CoRIM.  Described in Section 4.2.2.
@@ -932,6 +928,8 @@ Table of Contents
    The following example demonstrates these recommendations for bundling
    CoRIMs with a common signer but have different profiles.
 
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
    / cbor-collection / {
      "__cmwc_t": "tag:{{&SELF}}:corim",
      "adee8cd4-4e47-461f-b341-2aba3ae4cbda":
@@ -943,11 +941,13 @@ Table of Contents
            },
            / triples / 4: {
              / reference-triples / 0: [[
-               / ref-env / {/ class / 0: {/ class-id / 0: 560(h'c0de')}},
+               / ref-env / {/ class / 0: {/ class-id / 0: 560(h'c0de')}\
+                                                                      },
                / ref-claims / {
                  / mval / 1: {
                    / profile-foo / -404:
-                     h'6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc'
+                     h'\
+                     6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc'
                  }}]],
              / coswid-triples / 6: [[
                {/ class / 0: {/ class-id / 0: 560(h'c0de')}},
@@ -956,7 +956,8 @@ Table of Contents
          / dependent-rims / 2: [{
            / href / 0: [
              "urn:uuid:51a5f633-71c0-45f5-855e-43e8254c1806",
-             "https://example.com/369a6688451240b9b74905b1dd5fae9f.corim"
+             "https://example.com/369a6688451240b9b74905b1dd5fae9f.\
+                                                                  corim"
            ]}]}) >>],
      "51a5f633-71c0-45f5-855e-43e8254c1806":
        / cbor-cmw / [TBD1, << / tagged-corim-map / 501({
@@ -1122,9 +1123,9 @@ Table of Contents
    tag use since the tag-id serves as the global key for matching,
    lookups and linking.  If represented as a 16-byte binary string, the
    identifier MUST be a valid universally unique identifier as defined
-   by [RFC4122].  There are no strict guidelines on how the identifier
+   by [RFC9562].  There are no strict guidelines on how the identifier
    is structured, but examples include a 16-byte GUID (e.g., class 4
-   UUID) [RFC4122], or a URI [STD66].
+   UUID) [RFC9562], or a URI [STD66].
 
 5.1.1.2.  Tag Version
 
@@ -2313,8 +2314,8 @@ Table of Contents
 
 7.4.  UUID
 
-   Used to tag a byte string as a binary UUID.  Defined in
-   Section 4.1.2. of [RFC4122].
+   Used to tag a byte string as a binary UUID.  Defined in Section 4 of
+   [RFC9562].
 
    uuid-type = bytes .size 16
    tagged-uuid-type = #6.37(uuid-type)
@@ -2322,7 +2323,7 @@ Table of Contents
 7.5.  UEID
 
    Used to tag a byte string as Universal Entity ID Claim (UEID).
-   Defined in Section 4.2.1 of [I-D.ietf-rats-eat].
+   Defined in Section 4.2.1 of [RFC9711].
 
    ueid-type = bytes .size (7..33)
    tagged-ueid-type = #6.550(ueid-type)
@@ -2965,10 +2966,10 @@ Table of Contents
    See Section 9.2.1 of [DICE.Layer].  If a trusted root certificate is
    found, X.509 certificate validation is performed.
 
-   As a second example, in PSA [I-D.tschofenig-rats-psa-token] the
-   verification public key is looked up in the appraisal context using
-   the ueid claim found in the PSA claims-set.  If found, COSE Sign1
-   verification is performed accordingly.
+   As a second example, in PSA [RFC9783] the verification public key is
+   looked up in the appraisal context using the ueid claim found in the
+   PSA claims-set.  If found, COSE Sign1 verification is performed
+   accordingly.
 
    Regardless of the specific integrity protection method used, the
    Verifier MUST NOT process Evidence which is not successfully
@@ -4383,7 +4384,8 @@ Table of Contents
    registry uses integer values as index values for items in the
    triples-map CBOR maps in concise-mid-tag codepoint 4.
 
-Future registrations for this registry are to be made based on {{RFC8126}} as follows:
+   Future registrations for this registry are to be made based on
+   [RFC8126] as follows:
 
          +============================+=========================+
          | Range                      | Registration Procedures |
@@ -4697,6 +4699,13 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
 
 13.1.  Normative References
 
+   [I-D.ietf-rats-msg-wrap]
+              Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
+              D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-17,
+              12 August 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-17>.
+
    [IANA.cbor-tags]
               IANA, "Concise Binary Object Representation (CBOR) Tags",
               <https://www.iana.org/assignments/cbor-tags>.
@@ -4724,11 +4733,6 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
 
-   [RFC4122]  Leach, P., Mealling, M., and R. Salz, "A Universally
-              Unique IDentifier (UUID) URN Namespace", RFC 4122,
-              DOI 10.17487/RFC4122, July 2005,
-              <https://www.rfc-editor.org/rfc/rfc4122>.
-
    [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
               Housley, R., and W. Polk, "Internet X.509 Public Key
               Infrastructure Certificate and Certificate Revocation List
@@ -4754,15 +4758,19 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               DOI 10.17487/RFC9090, July 2021,
               <https://www.rfc-editor.org/rfc/rfc9090>.
 
-   [RFC9334]  Birkholz, H., Thaler, D., Richardson, M., Smith, N., and
-              W. Pan, "Remote ATtestation procedureS (RATS)
-              Architecture", RFC 9334, DOI 10.17487/RFC9334, January
-              2023, <https://www.rfc-editor.org/rfc/rfc9334>.
-
    [RFC9393]  Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
               Waltermire, "Concise Software Identification Tags",
               RFC 9393, DOI 10.17487/RFC9393, June 2023,
               <https://www.rfc-editor.org/rfc/rfc9393>.
+
+   [RFC9562]  Davis, K., Peabody, B., and P. Leach, "Universally Unique
+              IDentifiers (UUIDs)", RFC 9562, DOI 10.17487/RFC9562, May
+              2024, <https://www.rfc-editor.org/rfc/rfc9562>.
+
+   [RFC9711]  Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
+              Wallace, "The Entity Attestation Token (EAT)", RFC 9711,
+              DOI 10.17487/RFC9711, April 2025,
+              <https://www.rfc-editor.org/rfc/rfc9711>.
 
    [STD66]    Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
@@ -4822,34 +4830,12 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
               rats-concise-ta-stores-02>.
 
-   [I-D.ietf-rats-eat]
-              Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
-              Wallace, "The Entity Attestation Token (EAT)", Work in
-              Progress, Internet-Draft, draft-ietf-rats-eat-31, 6
-              September 2024, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-eat-31>.
-
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
               Endorsements", Work in Progress, Internet-Draft, draft-
               ietf-rats-endorsements-07, 25 August 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
               endorsements-07>.
-
-   [I-D.ietf-rats-msg-wrap]
-              Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
-              D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-17,
-              12 August 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-msg-wrap-17>.
-
-   [I-D.tschofenig-rats-psa-token]
-              Tschofenig, H., Frost, S., Brossard, M., Shaw, A. L., and
-              T. Fossati, "Arm's Platform Security Architecture (PSA)
-              Attestation Token", Work in Progress, Internet-Draft,
-              draft-tschofenig-rats-psa-token-24, 23 September 2024,
-              <https://datatracker.ietf.org/doc/html/draft-tschofenig-
-              rats-psa-token-24>.
 
    [IANA.coswid]
               IANA, "Concise Software Identifier (CoSWID)",
@@ -4869,9 +4855,15 @@ Future registrations for this registry are to be made based on {{RFC8126}} as fo
               RFC 8126, DOI 10.17487/RFC8126, June 2017,
               <https://www.rfc-editor.org/rfc/rfc8126>.
 
-   [RFC9562]  Davis, K., Peabody, B., and P. Leach, "Universally Unique
-              IDentifiers (UUIDs)", RFC 9562, DOI 10.17487/RFC9562, May
-              2024, <https://www.rfc-editor.org/rfc/rfc9562>.
+   [RFC9334]  Birkholz, H., Thaler, D., Richardson, M., Smith, N., and
+              W. Pan, "Remote ATtestation procedureS (RATS)
+              Architecture", RFC 9334, DOI 10.17487/RFC9334, January
+              2023, <https://www.rfc-editor.org/rfc/rfc9334>.
+
+   [RFC9783]  Tschofenig, H., Frost, S., Brossard, M., Shaw, A., and T.
+              Fossati, "Arm's Platform Security Architecture (PSA)
+              Attestation Token", RFC 9783, DOI 10.17487/RFC9783, June
+              2025, <https://www.rfc-editor.org/rfc/rfc9783>.
 
    [TNC.Arch] Trusted Computing Group, "TCG Trusted Network Connect TNC
               Architecture for Interoperability", Specification Version
@@ -4956,7 +4948,6 @@ Appendix A.  Base CoRIM CDDL
    protected-corim-header-map = {
      &(alg: 1) => int
      &(content-type: 3) => "application/rim+cbor"
-     &(kid: 4) => bstr
      &(corim-meta: 8) => bstr .cbor corim-meta-map
      * cose-label => cose-value
    }
