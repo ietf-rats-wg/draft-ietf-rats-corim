@@ -68,7 +68,7 @@ contributor:
       Dionna contributed many clarifying questions and disambiguations to the semantics of attestation appraisal as well as consistent contribution to weekly reviews of others' edits.
 
 normative:
-  RFC4122: uuid
+  RFC9562: uuid
   RFC5280: pkix-cert
   RFC7468: pkix-text
   RFC8610: cddl
@@ -83,7 +83,8 @@ normative:
     -: uri
     =: RFC3986
   RFC9393: coswid
-  RFC9334: rats-arch
+  RFC9711: eat
+  I-D.ietf-rats-msg-wrap: cmw
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -101,11 +102,10 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
-  RFC9562:
+  RFC9334: rats-arch
   I-D.fdb-rats-psa-endorsements: psa-endorsements
-  I-D.tschofenig-rats-psa-token: psa-token
+  RFC9783: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
-  I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -114,7 +114,6 @@ informative:
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.coswid: coswid-reg
-  I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
   DICE.cert:
@@ -543,8 +542,6 @@ The following describes each child item of this map.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
-
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
 
@@ -614,7 +611,7 @@ If using other signing envelope formats, the CoRIM signing authority MUST be spe
 
 The Collection CMW MAY use any label for its CoRIMs.
 If there is a hierarchical structure to the CoRIM Collection CMW, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
-It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{RFC9562}}.
+It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{-uuid}}.
 CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
@@ -623,7 +620,7 @@ It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards 
 The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
 
 ~~~cbor-diag
-{::include cddl/examples/cmw-corim-collection.diag}
+{::include-fold cddl/examples/cmw-corim-collection.diag}
 ~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
@@ -1636,7 +1633,7 @@ date/time as per {{Section 3.4.2 of -cbor}}.
 ## UUID {#sec-common-uuid}
 
 Used to tag a byte string as a binary UUID.
-Defined in {{Section 4.1.2. of -uuid}}.
+Defined in {{Section 4 of -uuid}}.
 
 ~~~ cddl
 {::include cddl/uuid.cddl}
@@ -3032,7 +3029,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 This document defines a new registry titled "CoMID Triples Map".
 The registry uses integer values as index values for items in the `triples-map` CBOR maps in `concise-mid-tag` codepoint 4.
 
-    Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
 | 0-1023                     | Standards Action
