@@ -105,7 +105,6 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
-  RFC9334: rats-arch
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   RFC9783: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
