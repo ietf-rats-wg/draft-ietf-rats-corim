@@ -3341,8 +3341,15 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 # Acknowledgments
 {:unnumbered}
 
-{{{Carl Wallace}}} for review and comments on this document.
-
+The authors would like to thank the following people for their review and comments on this document:
+{{{Carl Wallace}}}
+{{{Hannes Tschofenig}}}
+{{{Steven Bellock}}}
+{{{Jag Raman}}}
+{{{Giri Mandyam}}}
+{{{Jeremy O'Donoghue}}}
+and
+{{{Michael Richardson}}}
 
 [^revise]: (This content needs to be revised. Consider removing for now and
     replacing with an issue.)
