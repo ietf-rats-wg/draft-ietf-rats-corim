@@ -557,7 +557,7 @@ At least one of:
   Described in {{sec-corim-meta}}. This is supported for compatibility with legacy
   documents, but `CWT-Claims` is recommended for new documents.
 
-Documents MAY include both `CWT-Claims` and `corim-meta` to ease transition for verifiers, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
+Documents MAY include both `CWT-Claims` and `corim-meta` to ease transition for Verifiers, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
