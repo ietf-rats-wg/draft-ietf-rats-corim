@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-04T01:49:25.938626+00:00",
+  "timestamp": "2025-09-07T01:58:00.299207+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -75717,13 +75717,13 @@
       "labels": [],
       "body": "As proposed in #477",
       "createdAt": "2025-08-14T13:54:08Z",
-      "updatedAt": "2025-09-03T16:50:07Z",
+      "updatedAt": "2025-09-05T18:07:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "cceb4830ada7d07712b5cedd7694f7605943ac64",
       "headRepository": "achamayou/draft-ietf-rats-corim",
       "headRefName": "cwt_claims",
-      "headRefOid": "3a4ab16c4b229ca67e2a48b27ae21875efe0c217",
+      "headRefOid": "a3f0bbe54b787a4d4aa05ea4682b0733d3b80138",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -75742,6 +75742,13 @@
           "body": "@andrew-draper I don't find any `deprecated_` or `deprecated-` fields, but there is one instance of `raw-value-mask-DEPRECATED`, so I guess `corim-meta` could become `corim-meta-DEPRECATED` for consistency.",
           "createdAt": "2025-08-27T09:53:07Z",
           "updatedAt": "2025-08-27T09:53:07Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@achamayou : I am ok, with the text from Thomas, specifically:\r\n\r\n\u201cTo avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags\"",
+          "createdAt": "2025-09-04T14:52:44Z",
+          "updatedAt": "2025-09-04T14:52:44Z"
         }
       ],
       "reviews": [
@@ -76231,9 +76238,9 @@
           "comments": [
             {
               "originalPosition": 61,
-              "body": "```suggestion\r\nThis ensures the consumer is able to identify credentials used to authenticate its signer.\r\nThe CWT Claims map SHOULD NOT be used to carry any claims than identifying claims, to avoid any possible ambiguity with the CoRIM tags contained in the payload.\r\n```",
+              "body": "```suggestion\r\nThis ensures the consumer is able to identify credentials used to authenticate its signer.\r\nTo avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.\r\n```",
               "createdAt": "2025-09-03T16:49:48Z",
-              "updatedAt": "2025-09-03T16:49:48Z"
+              "updatedAt": "2025-09-04T14:04:18Z"
             }
           ]
         },
@@ -76254,6 +76261,318 @@
               "body": "@henkbirkholz @yogeshbdeshpande please review the above proposed change.",
               "createdAt": "2025-09-03T16:50:07Z",
               "updatedAt": "2025-09-03T16:50:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI869zJq6",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T09:35:20Z",
+          "updatedAt": "2025-09-04T09:35:20Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "I am ok, in principle to the text, however, I would stop at:\r\n\r\n`The CWT Claims map SHOULD NOT be used to carry any claims other than the ones that identify the CoRIM signer`",
+              "createdAt": "2025-09-04T09:35:20Z",
+              "updatedAt": "2025-09-04T09:35:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI869zOoV",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T09:41:35Z",
+          "updatedAt": "2025-09-04T09:41:35Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "The reason been, the discussion about the CoRIM Tags were for Subject fields, technically sub field in CoRIM is not needed, as all the payloads are CoRIM payload and to distinguish individual CoRIM payloads, we have the CoRIM tags.",
+              "createdAt": "2025-09-04T09:41:35Z",
+              "updatedAt": "2025-09-04T09:41:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI869zO93",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Some comments on your proposed changes",
+          "createdAt": "2025-09-04T09:42:02Z",
+          "updatedAt": "2025-09-04T09:42:02Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI8690Oh8",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T10:56:03Z",
+          "updatedAt": "2025-09-04T10:56:03Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "My understanding, both theoretical and from first-hand experience with AD reviews, is that the usage of SHOULD (NOT) always calls for an explanation [so that](https://www.rfc-editor.org/rfc/rfc2119.txt):\r\n\r\n> the full implications should be understood and the case carefully weighed before implementing any behavior described with this label.\r\n\r\nI understand your point about subject, but I think it is much more specific than the current text.",
+              "createdAt": "2025-09-04T10:56:03Z",
+              "updatedAt": "2025-09-04T10:56:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8692Zq_",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T13:01:00Z",
+          "updatedAt": "2025-09-04T13:01:00Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "Personally, I like the extra bit of explanation given by Amaury.  However, I am wondering why that\u2019s not a `MUST NOT` instead?  As in:\r\n\r\n> _\u201cTo avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT be used for any claims other than those identifying the CoRIM signer.\u201d_\r\n",
+              "createdAt": "2025-09-04T13:01:00Z",
+              "updatedAt": "2025-09-04T13:01:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8693CXr",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T13:31:07Z",
+          "updatedAt": "2025-09-04T13:31:08Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "At yesterdays meeting, majority of authors preferred a strong language to avoid any potential  `mis-use` of CWT Claims like sub: and other (* any) in the COSE Header for CoRIM.",
+              "createdAt": "2025-09-04T13:31:07Z",
+              "updatedAt": "2025-09-04T13:31:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8693pIR",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T13:59:51Z",
+          "updatedAt": "2025-09-04T13:59:51Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "OK, so what about this:\r\n\r\n> _\u201cTo avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags\"_\r\n",
+              "createdAt": "2025-09-04T13:59:51Z",
+              "updatedAt": "2025-09-04T13:59:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8693uVj",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T14:03:19Z",
+          "updatedAt": "2025-09-04T14:03:19Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "@thomas-fossati @yogeshbdeshpande either phrasing is completely inconsistent with the approach otherwise taken by Signed CoRIM, which allows arbitrary [protected header parameters](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/main/cddl/protected-corim-header-map.cddl), [unprotected parameters](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/main/cddl/unprotected-corim-header-map.cddl), and the previous meta map which has an [explicit](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cceb4830ada7d07712b5cedd7694f7605943ac64/cddl/corim-signer-map.cddl#L4) [provision for arbitrary extension](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/cceb4830ada7d07712b5cedd7694f7605943ac64/draft-ietf-rats-corim.md?plain=1#L578).\r\n\r\nThe rest of the format also contains an abundance of extension points, to cater to potential future uses. That's quite right in my opinion, for what it's worth.\r\n\r\nI do not know why there is suddenly an obsession with potential misuse of values specifically under parameter 15, but nowhere else at all, and I am rapidly losing the ability to care.",
+              "createdAt": "2025-09-04T14:03:19Z",
+              "updatedAt": "2025-09-04T14:03:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8694awG",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T14:39:41Z",
+          "updatedAt": "2025-09-04T14:39:41Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "@achamayou \u2013 I wasn\u2019t present at yesterday's call and I am very likely missing important context, which means I am just shooting in the dark here.\r\nHave mercy and please disregard any silly suggestions ;-)",
+              "createdAt": "2025-09-04T14:39:41Z",
+              "updatedAt": "2025-09-04T14:39:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI8694zrh",
+          "commit": {
+            "abbreviatedOid": "7e42297"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-09-04T15:04:38Z",
+          "updatedAt": "2025-09-04T15:04:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI8695kja",
+          "commit": {
+            "abbreviatedOid": "3a4ab16"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-04T15:51:04Z",
+          "updatedAt": "2025-09-04T15:51:04Z",
+          "comments": [
+            {
+              "originalPosition": 61,
+              "body": "@thomas-fossati I replied without having seen your suggestion, which I think is fine and I have applied.",
+              "createdAt": "2025-09-04T15:51:04Z",
+              "updatedAt": "2025-09-04T15:51:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86-Hda7",
+          "commit": {
+            "abbreviatedOid": "7e42297"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-05T14:33:15Z",
+          "updatedAt": "2025-09-05T14:33:16Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": ">MUST\r\n\r\nAre comments in CDDL normative? ",
+              "createdAt": "2025-09-05T14:33:16Z",
+              "updatedAt": "2025-09-05T14:33:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86-IZpY",
+          "commit": {
+            "abbreviatedOid": "7e42297"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-05T15:43:26Z",
+          "updatedAt": "2025-09-05T15:43:26Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "The comment just re-states what the CDDL says, so I think this boils down to \"is the CDDL normative\". And since it's included inline at line 517 in the .md and introduced as \"The following CDDL specification defines a restrictive subset of COSE...\" I would say it probably is.\r\n\r\nI am very happy to see it go if it causes confusion somehow.",
+              "createdAt": "2025-09-05T15:43:26Z",
+              "updatedAt": "2025-09-05T15:43:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86-IdiD",
+          "commit": {
+            "abbreviatedOid": "7e42297"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-05T15:48:38Z",
+          "updatedAt": "2025-09-05T15:48:38Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\n; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)\r\n```",
+              "createdAt": "2025-09-05T15:48:38Z",
+              "updatedAt": "2025-09-05T15:48:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86-Id8Q",
+          "commit": {
+            "abbreviatedOid": "7e42297"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-05T15:49:15Z",
+          "updatedAt": "2025-09-05T15:49:15Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I will add that to my \"normative language\" scrubs I have been doing on the rest of the document.",
+              "createdAt": "2025-09-05T15:49:15Z",
+              "updatedAt": "2025-09-05T15:49:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86-J5E2",
+          "commit": {
+            "abbreviatedOid": "78139cb"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-05T17:31:24Z",
+          "updatedAt": "2025-09-05T17:32:08Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\r\n; Consistent with CWT-Claims in RFC9597\r\n```",
+              "createdAt": "2025-09-05T17:31:24Z",
+              "updatedAt": "2025-09-05T17:32:08Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "```suggestion\r\nDocuments MAY include both `CWT-Claims` and `corim-meta` to ease transition for Verifiers, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.\r\n```",
+              "createdAt": "2025-09-05T17:31:46Z",
+              "updatedAt": "2025-09-05T17:32:08Z"
             }
           ]
         }
