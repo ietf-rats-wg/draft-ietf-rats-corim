@@ -83,7 +83,6 @@ normative:
     -: uri
     =: RFC3986
   RFC9393: coswid
-  RFC9334: rats-arch
   RFC9597: CWT_CLAIMS_COSE
   RFC8392: CWT
   RFC9711: eat
@@ -105,6 +104,7 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
+  RFC9334: rats-arch
   I-D.fdb-rats-psa-endorsements: psa-endorsements
   RFC9783: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
