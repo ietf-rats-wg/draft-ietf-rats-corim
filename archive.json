@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-11T01:53:10.799698+00:00",
+  "timestamp": "2025-09-14T01:57:10.875414+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -70917,7 +70917,7 @@
       "labels": [],
       "body": "Addresses issue #435 where `claims-list` can be optional. `authorized-by` is added into the `condition` since `claims-list` is optional.",
       "createdAt": "2025-05-09T20:26:59Z",
-      "updatedAt": "2025-06-27T15:11:38Z",
+      "updatedAt": "2025-09-12T14:44:56Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "86465925cced64930e6222cca57d24ca03005612",
@@ -70942,6 +70942,20 @@
           "body": "I believe this is ready to merge.",
           "createdAt": "2025-06-25T18:45:58Z",
           "updatedAt": "2025-06-25T18:45:58Z"
+        },
+        {
+          "author": "gkostal",
+          "authorAssociation": "NONE",
+          "body": "@yogeshbdeshpande - any idea on when will this change get merged?  I have in-flight work that will benefit greatly once this is merged.  :-)",
+          "createdAt": "2025-09-12T13:34:44Z",
+          "updatedAt": "2025-09-12T13:34:44Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@gkostal : Thank you for your prod. I will follow this up, as some one really needs this...",
+          "createdAt": "2025-09-12T14:44:56Z",
+          "updatedAt": "2025-09-12T14:44:56Z"
         }
       ],
       "reviews": [
@@ -75639,7 +75653,7 @@
       "labels": [],
       "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
       "createdAt": "2025-08-12T22:37:46Z",
-      "updatedAt": "2025-09-10T16:42:29Z",
+      "updatedAt": "2025-09-12T17:59:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
@@ -75657,6 +75671,27 @@
           "body": "@gmandyam \r\nChecking the existing text in the spec:\r\n` Measurement keys are locally scoped extensible identifiers.  The\r\n   initial types defined are OID, UUID, uint, and tstr. mkey may be\r\n   necessary to disambiguate multiple measurements of the same type or\r\n   to distinguish multiple measured elements within the same\r\n   environment.  A single anonymous measurement-map is allowed within\r\n   the same environment.  Two or more measurement-map entries within the\r\n   same environment MUST populate mkey.`\r\n\r\nThe above text is sufficient to identify the scope and usage of Mkey, so I am tempted to close the PR without merging the same!\r\n\r\nThe users of CoRIM are permitted to use the defined types in the MKey system or extend it but the scope is always local to an Environment.",
           "createdAt": "2025-09-10T16:42:29Z",
           "updatedAt": "2025-09-10T16:42:29Z"
+        },
+        {
+          "author": "gmandyam",
+          "authorAssociation": "NONE",
+          "body": "> @gmandyam Checking the existing text in the spec: ` Measurement keys are locally scoped extensible identifiers. The initial types defined are OID, UUID, uint, and tstr. mkey may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment. A single anonymous measurement-map is allowed within the same environment. Two or more measurement-map entries within the same environment MUST populate mkey.`\r\n> \r\n> The above text is sufficient to identify the scope and usage of Mkey, so I am tempted to close the PR without merging the same!\r\n> \r\n> The users of CoRIM are permitted to use the defined types in the MKey system or extend it but the scope is always local to an Environment.\r\n\r\nThe text \"mkey may be necessary to disambiguate multiple measurements of the same type *or * to distinguish multiple measured elements within the same environment\" does not imply that scoping is with respect to a single environment.  Per CoRIM, a domain can entail multiple environments.  The uniqueness requirement may have to extend beyond a single environment in order to distinguish measurements of the same type but appearing in different environments that are part of the same domain.\r\n\r\nThere are attested protocols that define local scoping that pre-date RATS and therefore  should have served as precedent when defining domains in the CoRIM context.  Scoping for FIDO/Webauthn is defined in https://www.w3.org/TR/webauthn-2/#scope, and is defined according to FQDN-1.  I don't know whether the CoRIM definition of domain contemplates FQDN nor if mkey scoping is defined with respect to domains.  \r\n",
+          "createdAt": "2025-09-12T16:57:06Z",
+          "updatedAt": "2025-09-12T16:57:44Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@gmandyam : Can you please elaborate on the requirement below, which you stated:\r\n\r\n`_The uniqueness requirement may have to extend beyond a single environment in order to distinguish measurements of the same type but appearing in different environments that are part of the same domain_.`\r\n\r\nCan you please provide a use case ...?\r\n\r\nWhat we say in CoRIM is that a Domain is a collection of Environments, and each Environment has Multiple Measured Elements, which needs to be uniquely identified using `mkey` in that Environment. \r\n\r\nIf a Profile wants to use it at a scope higher than Environment then we cannot stop them, however, this may not be a general guidance in the base specification, as I think, this can lead to serious mis-use and mis-interpretation.\r\n",
+          "createdAt": "2025-09-12T17:10:02Z",
+          "updatedAt": "2025-09-12T17:10:02Z"
+        },
+        {
+          "author": "gmandyam",
+          "authorAssociation": "NONE",
+          "body": "> What we say in CoRIM is that a Domain is a collection of Environments, and each Environment has Multiple Measured Elements, which needs to be uniquely identified using `mkey` in that Environment.\r\n\r\nThe text you cited does not state that unambiguously.  I already pointed out a contradictory sentence.  If scoping is only with respect to a specific environment (which is not clear at all from the cited text), then maybe simply state that \"Measurement keys are locally scoped extensible identifiers, which means that the keys MUST be unique within an environment.  The initial types defined are OID, UUID, uint, and tstr. A single anonymous measurement-map is allowed within the same environment. Two or more measurement-map entries within the same environment MUST populate mkey.\"  \r\n\r\nMy comment on FIDO/Webauthn serving as precedent still stands.  In that standard local scoping of credentials/attestations is with respect to the domain as defined by RFC 6454.  One could argue that \"domain\" in CoRIM is not the same as a domain associated with internet protocols, but I could not find such a distinction in the document.\r\n\r\n\r\n",
+          "createdAt": "2025-09-12T17:59:34Z",
+          "updatedAt": "2025-09-12T17:59:34Z"
         }
       ],
       "reviews": [
@@ -75747,7 +75782,7 @@
       "labels": [],
       "body": "As proposed in #477",
       "createdAt": "2025-08-14T13:54:08Z",
-      "updatedAt": "2025-09-10T18:25:29Z",
+      "updatedAt": "2025-09-11T08:05:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "cceb4830ada7d07712b5cedd7694f7605943ac64",
@@ -77053,6 +77088,46 @@
               "body": "That registry is of course already defined by IETF STD 96 (COSE) and exists. We have to do nothing here, but to register codepoint 8 (where it is unclear, if we get that codepoint as we did not ask for early registration - that is up to the DEs). Codepoint 15 is already registered as that is defined by https://www.iana.org/go/rfc9597 (see IANA reg here: https://www.iana.org/assignments/cose/cose.xhtml#header-parameters)",
               "createdAt": "2025-09-10T18:25:29Z",
               "updatedAt": "2025-09-10T18:25:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86_TCEp",
+          "commit": {
+            "abbreviatedOid": "11b8584"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-11T07:25:52Z",
+          "updatedAt": "2025-09-11T07:25:52Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "That\u2019s the advantage of choosing a standardised approach over a bespoke one.\r\n\r\nThe other side of the story is that we need to take care of the legacy. I think this PR does a very neat and balanced job of handling the transition.",
+              "createdAt": "2025-09-11T07:25:52Z",
+              "updatedAt": "2025-09-11T07:28:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI86_T8AI",
+          "commit": {
+            "abbreviatedOid": "1aad8f5"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-09-11T08:05:48Z",
+          "updatedAt": "2025-09-11T08:05:48Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "The CDDL looks aligned with the prose.",
+              "createdAt": "2025-09-11T08:05:48Z",
+              "updatedAt": "2025-09-11T08:05:48Z"
             }
           ]
         }
