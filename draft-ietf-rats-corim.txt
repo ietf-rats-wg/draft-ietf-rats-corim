@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 28 February 2026                                         Linaro
+Expires: 21 March 2026                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          27 August 2025
+                                                       17 September 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 February 2026.
+   This Internet-Draft will expire on 21 March 2026.
 
 Copyright Notice
 
@@ -90,9 +90,10 @@ Table of Contents
        4.1.5.  Entities
      4.2.  Signed CoRIM
        4.2.1.  Protected Header Map
-       4.2.2.  Meta Map
-         4.2.2.1.  Signer Map
-       4.2.3.  Unprotected CoRIM Header Map
+       4.2.2.  CWT Claims
+       4.2.3.  Meta Map
+         4.2.3.1.  Signer Map
+       4.2.4.  Unprotected CoRIM Header Map
      4.3.  Signer authority of securely conveyed unsigned CoRIM
        4.3.1.  CoRIM collections
    5.  Concise Module Identifier (CoMID)
@@ -781,7 +782,7 @@ Table of Contents
    The following CDDL specification defines a restrictive subset of COSE
    header parameters that MUST be used in the protected header alongside
    additional information about the CoRIM encoded in a corim-meta-map
-   (Section 4.2.2).
+   (Section 4.2.3) or alternatively in a CWT-Claims ([RFC9597]).
 
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
@@ -806,29 +807,80 @@ Table of Contents
 
 4.2.1.  Protected Header Map
 
-   protected-corim-header-map = {
-     &(alg: 1) => int
-     &(content-type: 3) => "application/rim+cbor"
-     &(corim-meta: 8) => bstr .cbor corim-meta-map
-     * cose-label => cose-value
-   }
+   ; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
+   protected-corim-header-map =
+     {
+       &(alg: 1) => int,
+       &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   meta-group = ((
+           corim-meta-identity,
+           ? cwt-claims-identity,
+         ) // cwt-claims-identity)
+
+   corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
+   cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
 
    The CoRIM protected header map uses some common COSE header
-   parameters plus an additional corim-meta parameter.  The following
-   describes each child item of this map.
+   parameters plus additional metadata.  Additional metadata can either
+   be carried in a CWT_Claims (index: 15) parameter as defined by
+   [RFC9597], or in a corim-meta map as a legacy alternative, described
+   in Section 4.2.3.
+
+   The following describes each child item of this map.
 
    *  alg (index 1): An integer that identifies a signature algorithm.
 
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
 
+   At least one of:
+
+   *  CWT-Claims (index 15): A map that contains metadata associated
+      with a signed CoRIM.  Described in [RFC9597].
+
    *  corim-meta (index 8): A map that contains metadata associated with
-      a signed CoRIM.  Described in Section 4.2.2.
+      a signed CoRIM.  Described in Section 4.2.3.
+
+   Documents MAY include both CWT-Claims and corim-meta, in which case
+   the signer MUST ensure that their contents are semantically
+   identical: the CWT-Claims issuer (iss) MUST have the same value as
+   signer-name in corim-meta, and the nbf and exp values in the CWT-
+   Claims MUST match the signature-validity in corim-meta.
 
    Additional data can be included in the COSE header map as per
    (Section 3 of [STD96]).
 
-4.2.2.  Meta Map
+4.2.2.  CWT Claims
+
+   The CWT Claims ([RFC9597]) map identifies the entity that created and
+   signed the CoRIM.  This ensures the consumer is able to identify
+   credentials used to authenticate its signer.  To avoid any possible
+   ambiguity with the contents of the CoRIM tags, the CWT Claims map
+   MUST NOT contain claims that have semantic overlap with the
+   information contained in CoRIM tags.
+
+   The following describes each child item of this group.
+
+   *  iss (index 1): Issuer or signer for the CoRIM, formerly signer-
+      name or signer-uri in Section 4.2.3.1.
+
+   *  sub (index 2): Optional - identifies the CoRIM document,
+      equivalent to a string representation of $corim-id-type-choice
+
+   Additional data can be included in the CWT Claims, as per [RFC8392],
+   such as:
+
+   *  exp (index 4): Expiration time, formerly signature-validity in
+      Section 7.3.
+
+   *  nbf (index 5): Not before time, formerly signature-validity in
+      Section 7.3.
+
+4.2.3.  Meta Map
 
    The CoRIM meta map identifies the entity or entities that create and
    sign the CoRIM.  This ensures the consumer is able to identify
@@ -842,12 +894,12 @@ Table of Contents
    The following describes each child item of this group.
 
    *  signer (index 0): Information about the entity that signs the
-      CoRIM.  Described in Section 4.2.2.1.
+      CoRIM.  Described in Section 4.2.3.1.
 
    *  signature-validity (index 1): Validity period for the CoRIM.
       Described in Section 7.3.
 
-4.2.2.1.  Signer Map
+4.2.3.1.  Signer Map
 
    corim-signer-map = {
      &(signer-name: 0) => $entity-name-type-choice
@@ -863,7 +915,7 @@ Table of Contents
    *  $$corim-signer-map-extension: Extension point for future expansion
       of the Signer map.
 
-4.2.3.  Unprotected CoRIM Header Map
+4.2.4.  Unprotected CoRIM Header Map
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
@@ -893,12 +945,12 @@ Table of Contents
    tag:{{&SELF}}:corim.
 
    A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to
-   a signed CoRIM.  The signing operation MUST include the corim-meta in
-   the COSE_Sign1 protected-header parameter.  The corim-meta statement
-   ensures that each CoRIM in the collection has an identified signer.
-   The COSE protected header can include a Collection CMW type name by
-   using the cmwc_t content type parameter for the &(content-type: 3)
-   COSE header.
+   a signed CoRIM.  The signing operation MUST include either a CWT-
+   Claims or a corim-meta and MAY contain both, in the COSE_Sign1
+   protected-header parameter.  These metadata containers ensure that
+   each CoRIM in the collection has an identified signer.  The COSE
+   protected header can include a Collection CMW type name by using the
+   cmwc_t content type parameter for the &(content-type: 3) COSE header.
 
    If using other signing envelope formats, the CoRIM signing authority
    MUST be specified.  For example, this can be accomplished by adding
@@ -3221,7 +3273,7 @@ Table of Contents
    i  *copy*(domain-member, domain.cmtype)
 
    Step 3.  Set the authority for the domain ECT to the DMT signer
-            (Section 4.2.2.1).
+            (Section 4.2.3.1).
 
    i  *copy*(DMT.signer, domain.authority)
 
@@ -4747,6 +4799,10 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
+   [RFC8392]  Jones, M., Wahlstroem, E., Erdtman, S., and H. Tschofenig,
+              "CBOR Web Token (CWT)", RFC 8392, DOI 10.17487/RFC8392,
+              May 2018, <https://www.rfc-editor.org/rfc/rfc8392>.
+
    [RFC8610]  Birkholz, H., Vigano, C., and C. Bormann, "Concise Data
               Definition Language (CDDL): A Notational Convention to
               Express Concise Binary Object Representation (CBOR) and
@@ -4766,6 +4822,10 @@ Table of Contents
    [RFC9562]  Davis, K., Peabody, B., and P. Leach, "Universally Unique
               IDentifiers (UUIDs)", RFC 9562, DOI 10.17487/RFC9562, May
               2024, <https://www.rfc-editor.org/rfc/rfc9562>.
+
+   [RFC9597]  Looker, T. and M.B. Jones, "CBOR Web Token (CWT) Claims in
+              COSE Headers", RFC 9597, DOI 10.17487/RFC9597, June 2024,
+              <https://www.rfc-editor.org/rfc/rfc9597>.
 
    [RFC9711]  Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
               Wallace, "The Entity Attestation Token (EAT)", RFC 9711,
@@ -4945,12 +5005,29 @@ Appendix A.  Base CoRIM CDDL
    $profile-type-choice /= uri
    $profile-type-choice /= tagged-oid-type
 
-   protected-corim-header-map = {
-     &(alg: 1) => int
-     &(content-type: 3) => "application/rim+cbor"
-     &(corim-meta: 8) => bstr .cbor corim-meta-map
-     * cose-label => cose-value
+   cwt-claims = {
+     &(iss: 1) => tstr
+     ? &(sub: 2) => tstr
+     ? &(exp: 4) => int / float
+     ? &(nbf: 5) => int / float
+     * int => any
    }
+
+   protected-corim-header-map =
+     {
+       &(alg: 1) => int,
+       &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   meta-group = ((
+           corim-meta-identity,
+           ? cwt-claims-identity,
+         ) // cwt-claims-identity)
+
+   corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
+   cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
 
    signed-corim = #6.18(COSE-Sign1-corim)
 
