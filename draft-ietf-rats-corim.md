@@ -571,7 +571,7 @@ The following describes each child item of this group.
 
 * `iss` (index 1): Issuer or signer for the CoRIM, formerly `signer-name` or `signer-uri` in {{sec-corim-signer}}.
 
-* `sub` (index 2): Subject or description for the CoRIM.
+* `sub` (index 2): Optional - identifies the CoRIM document, equivalent to a string representation of $corim-id-type-choice
 
 Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 
