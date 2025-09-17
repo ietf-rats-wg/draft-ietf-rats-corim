@@ -582,9 +582,6 @@ Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
 
-This map was introduced at a time when RFC9597, which defines CWT-Claims, was not available in any form.
-Now that RFC9597 has been published as a proposed standard, it makes sense to migrate away from the custom `corim-meta`
-and reuse a standard COSE ecosystem component instead.
 
 ~~~ cddl
 {::include cddl/corim-meta-map.cddl}
