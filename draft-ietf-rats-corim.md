@@ -607,7 +607,7 @@ Described in {{sec-common-validity}}.
 * `signer-uri` (index 1): A URI identifying the same organization
 
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
-  Signer map.
+Signer map.
 
 ### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
