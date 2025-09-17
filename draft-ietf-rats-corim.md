@@ -83,6 +83,8 @@ normative:
     -: uri
     =: RFC3986
   RFC9393: coswid
+  RFC9597: CWT_CLAIMS_COSE
+  RFC8392: CWT
   RFC9711: eat
   I-D.ietf-rats-msg-wrap: cmw
   IANA.language-subtag-registry: language-subtag
@@ -511,7 +513,7 @@ The CoRIM MUST be signed by the CoRIM creator.
 
 The following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}).
+information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -535,22 +537,51 @@ The following describes each child element of this type.
 {::include cddl/protected-corim-header-map.cddl}
 ~~~
 
-The CoRIM protected header map uses some common COSE header parameters plus an additional `corim-meta` parameter.
+The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
+Additional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}},
+or in a `corim-meta` map as a legacy alternative, described in {{sec-corim-meta}}.
+
 The following describes each child item of this map.
 
 * `alg` (index 1): An integer that identifies a signature algorithm.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
+At least one of:
+
+* `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
+  Described in {{-CWT_CLAIMS_COSE}}.
+
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
 
+Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
+
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
+
+### CWT Claims {#cwt-claims}
+
+The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.
+To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.
+
+The following describes each child item of this group.
+
+* `iss` (index 1): Issuer or signer for the CoRIM, formerly `signer-name` or `signer-uri` in {{sec-corim-signer}}.
+
+* `sub` (index 2): Optional - identifies the CoRIM document, equivalent to a string representation of $corim-id-type-choice
+
+Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
+
+* `exp` (index 4): Expiration time, formerly `signature-validity` in {{sec-common-validity}}.
+
+* `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
 ### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
+
 
 ~~~ cddl
 {::include cddl/corim-meta-map.cddl}
@@ -576,7 +607,7 @@ Described in {{sec-common-validity}}.
 * `signer-uri` (index 1): A URI identifying the same organization
 
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
-  Signer map.
+Signer map.
 
 ### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
@@ -599,8 +630,8 @@ The Collection CMW type is similar to a profile in its way of restricting the sh
 The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
-The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
-The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
+The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
+These metadata containers ensure that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
 
 If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
