@@ -577,7 +577,7 @@ Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 
 * `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
-### Meta Map (Legacy) {#sec-corim-meta}
+### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
