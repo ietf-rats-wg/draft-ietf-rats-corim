@@ -553,8 +553,7 @@ At least one of:
   Described in {{-CWT_CLAIMS_COSE}}.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
-  Described in {{sec-corim-meta}}. This is supported for compatibility with legacy
-  documents, but `CWT-Claims` is recommended for new documents.
+  Described in {{sec-corim-meta}}.
 
 Documents MAY include both `CWT-Claims` and `corim-meta` to ease transition for Verifiers, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
 
