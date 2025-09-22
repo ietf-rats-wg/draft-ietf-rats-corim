@@ -17,11 +17,11 @@ Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
 This document specifies the information elements for representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.30.1" name="generator">
+<meta content="xml2rfc 3.30.2" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.30.1
+  xml2rfc 3.30.2
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 21 March 2026</td>
+<td class="center">Expires 26 March 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-09-17" class="published">17 September 2025</time>
+<time datetime="2025-09-22" class="published">22 September 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-03-21">21 March 2026</time></dd>
+<dd class="expires"><time datetime="2026-03-26">26 March 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1467,10 +1467,13 @@ This document specifies the information elements for representing Endorsements a
                         <p id="section-toc.1-1.9.2.2.2.1.2.1.1"><a href="#section-9.2.1.1" class="auto internal xref">9.2.1.1</a>.  <a href="#name-corim-selection" class="internal xref">CoRIM Selection</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2.2.1.2.2">
-                        <p id="section-toc.1-1.9.2.2.2.1.2.2.1"><a href="#section-9.2.1.2" class="auto internal xref">9.2.1.2</a>.  <a href="#name-tags-extraction-and-validat" class="internal xref">Tags Extraction and Validation</a></p>
+                        <p id="section-toc.1-1.9.2.2.2.1.2.2.1"><a href="#section-9.2.1.2" class="auto internal xref">9.2.1.2</a>.  <a href="#name-corim-trust-anchors" class="internal xref">CoRIM Trust Anchors</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2.2.1.2.3">
-                        <p id="section-toc.1-1.9.2.2.2.1.2.3.1"><a href="#section-9.2.1.3" class="auto internal xref">9.2.1.3</a>.  <a href="#name-cotl-extraction" class="internal xref">CoTL Extraction</a></p>
+                        <p id="section-toc.1-1.9.2.2.2.1.2.3.1"><a href="#section-9.2.1.3" class="auto internal xref">9.2.1.3</a>.  <a href="#name-tags-extraction-and-validat" class="internal xref">Tags Extraction and Validation</a></p>
+</li>
+                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2.2.1.2.4">
+                        <p id="section-toc.1-1.9.2.2.2.1.2.4.1"><a href="#section-9.2.1.4" class="auto internal xref">9.2.1.4</a>.  <a href="#name-cotl-extraction" class="internal xref">CoTL Extraction</a></p>
 </li>
                     </ul>
 </li>
@@ -5111,29 +5114,41 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 <p id="section-9.2.1.1-5">Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.<a href="#section-9.2.1.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="tags-extraction-and-validation">
+<div id="corim-trust-anchors">
 <section id="section-9.2.1.2">
-            <h5 id="name-tags-extraction-and-validat">
-<a href="#section-9.2.1.2" class="section-number selfRef">9.2.1.2. </a><a href="#name-tags-extraction-and-validat" class="section-name selfRef">Tags Extraction and Validation</a>
+            <h5 id="name-corim-trust-anchors">
+<a href="#section-9.2.1.2" class="section-number selfRef">9.2.1.2. </a><a href="#name-corim-trust-anchors" class="section-name selfRef">CoRIM Trust Anchors</a>
             </h5>
-<p id="section-9.2.1.2-1">The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoTL, and CoTS.<a href="#section-9.2.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.2-2">The Verifier MUST discard all tags which are not syntactically and semantically valid.
-Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.<a href="#section-9.2.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.2-1">If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors (certification paths) available to the Verifier.
+The Verifier is expected to have a trust anchor store.
+The way in which these trust anchors (i.e., root certificates) are provisioned in the Verifier is beyond the scope of this specification.
+If signed, the CoRIM itself should include at least one certificate (e.g., as part of the <code>x5chain</code> in the COSE header), which corresponds to the key pair used for signing.
+This certificate (the "leaf certificate") must be linked to one of the Verifier trust anchors.<a href="#section-9.2.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="tags-extraction-and-validation">
+<section id="section-9.2.1.3">
+            <h5 id="name-tags-extraction-and-validat">
+<a href="#section-9.2.1.3" class="section-number selfRef">9.2.1.3. </a><a href="#name-tags-extraction-and-validat" class="section-name selfRef">Tags Extraction and Validation</a>
+            </h5>
+<p id="section-9.2.1.3-1">The Verifier chooses tags from the selected CoRIMs - including CoMID, CoSWID, CoTL, and CoTS.<a href="#section-9.2.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.3-2">The Verifier MUST discard all tags which are not syntactically and semantically valid.
+Cross-referenced triples MUST be successfully resolved. An example of a cross-referenced triple is a CoMID-CoSWID linking triple.<a href="#section-9.2.1.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cotl-extraction">
-<section id="section-9.2.1.3">
+<section id="section-9.2.1.4">
             <h5 id="name-cotl-extraction">
-<a href="#section-9.2.1.3" class="section-number selfRef">9.2.1.3. </a><a href="#name-cotl-extraction" class="section-name selfRef">CoTL Extraction</a>
+<a href="#section-9.2.1.4" class="section-number selfRef">9.2.1.4. </a><a href="#name-cotl-extraction" class="section-name selfRef">CoTL Extraction</a>
             </h5>
-<p id="section-9.2.1.3-1">This section is not applicable if the Verifier appraisal policy does not require CoTLs.<a href="#section-9.2.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.3-2">CoTLs which are not within their validity period MUST be discarded.<a href="#section-9.2.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.3-3">The Verifier processes all CoTLs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.<a href="#section-9.2.1.3-3" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.3-4">The Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
+<p id="section-9.2.1.4-1">This section is not applicable if the Verifier appraisal policy does not require CoTLs.<a href="#section-9.2.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.4-2">CoTLs which are not within their validity period MUST be discarded.<a href="#section-9.2.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.4-3">The Verifier processes all CoTLs that are valid at the point in time of Evidence Appraisal and activates all tags referenced therein.<a href="#section-9.2.1.4-3" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.4-4">The Verifier MAY decide to discard some of the available and valid CoTLs depending on any locally configured authorization policies.
 Such policies model the trust relationships between the Verifier Owner and the relevant suppliers, and are out of the scope of the present document.
 For example, a composite device (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-3.3" class="relref">Section 3.3</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>) is likely to be fully described by multiple CoRIMs, each signed by a different supplier.
-In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoTLs that are not also activated by the trusted integrator.<a href="#section-9.2.1.3-4" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.3-5">After the Verifier has processed all CoTLs it MUST discard any tags which have not been activated by a CoTL.<a href="#section-9.2.1.3-5" class="pilcrow">¶</a></p>
+In such a case, the Verifier Owner may instruct the Verifier to discard tags activated by supplier CoTLs that are not also activated by the trusted integrator.<a href="#section-9.2.1.4-4" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.4-5">After the Verifier has processed all CoTLs it MUST discard any tags which have not been activated by a CoTL.<a href="#section-9.2.1.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
