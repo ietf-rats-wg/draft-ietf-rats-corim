@@ -392,7 +392,7 @@ The following describes each child item of this map.
 * `id` (index 0): A globally unique identifier to identify a CoRIM. Described
   in {{sec-corim-id}}.
 
-* `tags` (index 1):  An array of one or more CoMID or CoSWID tags.  Described
+* `tags` (index 1):  An array of one or more CoMID, CoSWID or CoTL tags.  Described
   in {{sec-corim-tags}}.
 
 * `dependent-rims` (index 2): One or more services supplying additional,
@@ -452,8 +452,7 @@ The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
 
-* `thumbprint` (index 1): expected digest of the resource referenced by `href`.
-  See sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See sec-common-hash-entry}}.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -665,7 +664,7 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+This specification defines two classes of triples, the Mandatory To Implement (MTI) and the Optional To Implement (OTI).
 The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
 Every CoRIM Verifier MUST implement the MTI triples.
 The OTI class of triples are generally useful across profiles.
@@ -1182,7 +1181,8 @@ the sensitive values in memory are encrypted.
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
-for consistency only, since the security relevance is opaque to Verifiers.
+for consistency only, since the security relevance is opaque to Verifiers. A profile may choose
+to define more specific semantic meaning to a raw value.
 
 A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
