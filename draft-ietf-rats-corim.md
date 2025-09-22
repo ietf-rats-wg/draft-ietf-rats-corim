@@ -2022,10 +2022,11 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### CoRIM Trust Anchors
-If CoRIM tags are signed, the signatures MUST be validated using appropriate trust anchors (certification paths) available to the Verifier.
-The Verifier is expected to have a trust anchor store.  How these trust anchors (i.e. root certificates) are provisioned in the Verifier is
-beyond the scope of this specification.  The CoRIM itself, if signed, should include at least one certificate (e.g. as part of the x5chain in the
-COSE header) corresponding to keypair used in signing.  This certificate (leaf certificate) must chain up to one of the Verifier trust anchors.
+If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors (certification paths) available to the Verifier.
+The Verifier is expected to have a trust anchor store.
+The way in which these trust anchors (i.e., root certificates) are provisioned in the Verifier is beyond the scope of this specification.
+If signed, the CoRIM itself should include at least one certificate (e.g., as part of the `x5chain` in the COSE header), which corresponds to the key pair used for signing.
+This certificate (the "leaf certificate") must be linked to one of the Verifier trust anchors.
 
 #### Tags Extraction and Validation
 
