@@ -2394,14 +2394,10 @@ This can be acheived by sorting the triples before processing, by repeating proc
 
 ##### Idempotency of triple processing
 
-Identical triples are idempotent with respect to processing. When a 
-Verifier encounters multiple instances of identical triples (whether 
-within the same CoRIM or across multiple CoRIMs), the processing 
-result is the same as processing a single instance.
+Identical triples are idempotent with respect to processing.
+When a Verifier encounters multiple instances of identical triples (whether within the same CoRIM or across multiple CoRIMs), the processing result SHALL be the same as processing a single instance.
 
-Including identical reference values or other triples multiple times 
-is redundant and implementers SHOULD optimize by detecting and 
-eliminating duplicate processing where possible.
+Including identical reference values or other triples multiple times is redundant and implementers SHOULD optimize by detecting and eliminating duplicate processing where possible.
 
 #### ACS Augmentation Requirements {#sec-acs-aug-req}
 
