@@ -420,9 +420,10 @@ A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a Co
 {::include cddl/tagged-unsigned-corim-map.cddl}
 ~~~
 
-### Identity {#sec-corim-id}
+### CoRIM Identifier {#sec-corim-id}
 
-A CoRIM Identifier uniquely identifies a CoRIM instance.
+A CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.
+In other words the CoRIM identifier is not guaranteed to be globally unique, but can be used to distinguish CoRIMs that come from the same issuer.
 The base CDDL definition allows UUID and text identifiers.
 Other types of identifiers could be defined as needed.
 
@@ -2013,6 +2014,16 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 
 An ACS is a list of ECTs that describe an Attester's actual state.
 
+For ECTs present in the ACS, the `cmtype` field is mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| n/a       | `environment`   | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
+
 ~~~ cddl
 {::include cddl/intrep-acs.cddl}
 ~~~
@@ -2489,9 +2500,17 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
+Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
+
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
+
 Endorsements are matched with ACS entries by iterating through the `ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+
+Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches, then each match is processed independently from the others.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
