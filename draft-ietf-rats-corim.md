@@ -2468,7 +2468,6 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
 Both types of triple are transformed into an internal representation based on `ev`, but the CBOR encoding of Endorsed Values Triple can only represent a subset of the CBOR encoding of Conditional Endorsement Triple.
-The Endorsed Values Triple contains a single `environment-map`, which means it can only match against one environment in the ACS; the internal representation uses the same environment for `condition` and `addition`.
 
 After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
 Each `ev` entry is processed independently of other `ev`s.
