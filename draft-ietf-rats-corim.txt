@@ -654,8 +654,8 @@ Table of Contents
    *  id (index 0): A globally unique identifier to identify a CoRIM.
       Described in Section 4.1.1.
 
-   *  tags (index 1): An array of one or more CoMID or CoSWID tags.
-      Described in Section 4.1.2.
+   *  tags (index 1): An array of one or more CoMID, CoSWID or CoTL
+      tags.  Described in Section 4.1.2.
 
    *  dependent-rims (index 2): One or more services supplying
       additional, possibly dependent, manifests or related files.
@@ -710,7 +710,7 @@ Table of Contents
 
    corim-locator-map = {
      &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest
+     ? &(thumbprint: 1) => digest / [digest]
    }
 
    The following describes each child element of this type.
@@ -718,8 +718,9 @@ Table of Contents
    *  href (index 0): a URI or array of alternative URIs identifying
       locations where the additional resource can be fetched.
 
-   *  thumbprint (index 1): expected digest of the resource referenced
-      by href.  See sec-common-hash-entry}}.
+   *  thumbprint (index 1): expected digest or an array of digests
+      referenced by href or an array of hrefs.  See sec-common-hash-
+      entry}}.
 
 4.1.4.  Profile Types
 
@@ -1049,8 +1050,8 @@ Table of Contents
    their security features, for example measurements, cryptographic key
    material, etc.
 
-   This specification defines two classes of triples, the Mandatory to
-   Implement (MTI) and the Optional to Implement (OTI).  The MTI triples
+   This specification defines two classes of triples, the Mandatory To
+   Implement (MTI) and the Optional To Implement (OTI).  The MTI triples
    are essential to basic appraisal processing as illustrated in
    [RFC9334] and [I-D.ietf-rats-endorsements].  Every CoRIM Verifier
    MUST implement the MTI triples.  The OTI class of triples are
@@ -1708,7 +1709,8 @@ Table of Contents
 
    Raw value measurements are typically vendor defined values that are
    checked by Verifiers for consistency only, since the security
-   relevance is opaque to Verifiers.
+   relevance is opaque to Verifiers.  A profile may choose to define
+   more specific semantic meaning to a raw value.
 
    A raw-value measurement, or an Endorsement, is a tagged value of type
    bytes.  This specification defines tag #6.560.  The default raw value
@@ -5011,7 +5013,7 @@ Appendix A.  Base CoRIM CDDL
 
    corim-locator-map = {
      &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest
+     ? &(thumbprint: 1) => digest / [digest]
    }
 
    corim-map = {
