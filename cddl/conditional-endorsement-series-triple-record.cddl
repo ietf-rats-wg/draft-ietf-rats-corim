@@ -1,4 +1,8 @@
 conditional-endorsement-series-triple-record = [
-  condition: stateful-environment-record
+  condition: [
+    environment: environment-map
+    claims-list: [ * measurement-map ]
+    ? authorized-by: [ + $crypto-key-type-choice ]
+  ]
   series: [ + conditional-series-record ]
 ]
