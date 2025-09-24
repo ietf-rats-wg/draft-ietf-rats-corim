@@ -35,8 +35,8 @@ author:
   email: yogesh.deshpande@arm.com
 - ins: N. Smith
   name: Ned Smith
-  org: Intel
-  email: ned.smith@intel.com
+  org: Independent
+  email: ned.smith.ietf@outlook.com
 - ins: W. Pan
   name: Wei Pan
   org: Huawei Technologies
@@ -68,7 +68,7 @@ contributor:
       Dionna contributed many clarifying questions and disambiguations to the semantics of attestation appraisal as well as consistent contribution to weekly reviews of others' edits.
 
 normative:
-  RFC4122: uuid
+  RFC9562: uuid
   RFC5280: pkix-cert
   RFC7468: pkix-text
   RFC8610: cddl
@@ -83,7 +83,10 @@ normative:
     -: uri
     =: RFC3986
   RFC9393: coswid
-  RFC9334: rats-arch
+  RFC9597: CWT_CLAIMS_COSE
+  RFC8392: CWT
+  RFC9711: eat
+  I-D.ietf-rats-msg-wrap: cmw
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -101,11 +104,10 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
-  RFC9562:
+  RFC9334: rats-arch
   I-D.fdb-rats-psa-endorsements: psa-endorsements
-  I-D.tschofenig-rats-psa-token: psa-token
+  RFC9783: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
-  I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -114,7 +116,6 @@ informative:
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.coswid: coswid-reg
-  I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
   DICE.cert:
@@ -218,6 +219,12 @@ See also {{Section 4.2 of -rats-arch}} and {{Section 2 of -jwt}}.
 Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
+
+Composite Attester:
+: A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
+
+Domain:
+: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -385,7 +392,7 @@ The following describes each child item of this map.
 * `id` (index 0): A globally unique identifier to identify a CoRIM. Described
   in {{sec-corim-id}}.
 
-* `tags` (index 1):  An array of one or more CoMID or CoSWID tags.  Described
+* `tags` (index 1):  An array of one or more CoMID, CoSWID or CoTL tags.  Described
   in {{sec-corim-tags}}.
 
 * `dependent-rims` (index 2): One or more services supplying additional,
@@ -413,9 +420,10 @@ A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a Co
 {::include cddl/tagged-unsigned-corim-map.cddl}
 ~~~
 
-### Identity {#sec-corim-id}
+### CoRIM Identifier {#sec-corim-id}
 
-A CoRIM Identifier uniquely identifies a CoRIM instance.
+A CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.
+In other words the CoRIM identifier is not guaranteed to be globally unique, but can be used to distinguish CoRIMs that come from the same issuer.
 The base CDDL definition allows UUID and text identifiers.
 Other types of identifiers could be defined as needed.
 
@@ -445,8 +453,7 @@ The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
 
-* `thumbprint` (index 1): expected digest of the resource referenced by `href`.
-  See sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See sec-common-hash-entry}}.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -506,7 +513,7 @@ The CoRIM MUST be signed by the CoRIM creator.
 
 The following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}).
+information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -530,24 +537,51 @@ The following describes each child element of this type.
 {::include cddl/protected-corim-header-map.cddl}
 ~~~
 
-The CoRIM protected header map uses some common COSE header parameters plus an additional `corim-meta` parameter.
+The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
+Additional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}},
+or in a `corim-meta` map as a legacy alternative, described in {{sec-corim-meta}}.
+
 The following describes each child item of this map.
 
 * `alg` (index 1): An integer that identifies a signature algorithm.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
+At least one of:
+
+* `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
+  Described in {{-CWT_CLAIMS_COSE}}.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
 
+Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
+
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
+
+### CWT Claims {#cwt-claims}
+
+The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.
+To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.
+
+The following describes each child item of this group.
+
+* `iss` (index 1): Issuer or signer for the CoRIM, formerly `signer-name` or `signer-uri` in {{sec-corim-signer}}.
+
+* `sub` (index 2): Optional - identifies the CoRIM document, equivalent to a string representation of $corim-id-type-choice
+
+Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
+
+* `exp` (index 4): Expiration time, formerly `signature-validity` in {{sec-common-validity}}.
+
+* `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
 ### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
+
 
 ~~~ cddl
 {::include cddl/corim-meta-map.cddl}
@@ -573,7 +607,7 @@ Described in {{sec-common-validity}}.
 * `signer-uri` (index 1): A URI identifying the same organization
 
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
-  Signer map.
+Signer map.
 
 ### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
@@ -596,8 +630,8 @@ The Collection CMW type is similar to a profile in its way of restricting the sh
 The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
-The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
-The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
+The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
+These metadata containers ensure that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
 
 If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
@@ -608,7 +642,7 @@ If using other signing envelope formats, the CoRIM signing authority MUST be spe
 
 The Collection CMW MAY use any label for its CoRIMs.
 If there is a hierarchical structure to the CoRIM Collection CMW, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
-It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{RFC9562}}.
+It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{-uuid}}.
 CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
@@ -617,7 +651,7 @@ It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards 
 The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
 
 ~~~cbor-diag
-{::include cddl/examples/cmw-corim-collection.diag}
+{::include-fold cddl/examples/cmw-corim-collection.diag}
 ~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
@@ -631,7 +665,7 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+This specification defines two classes of triples, the Mandatory To Implement (MTI) and the Optional To Implement (OTI).
 The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
 Every CoRIM Verifier MUST implement the MTI triples.
 The OTI class of triples are generally useful across profiles.
@@ -1148,7 +1182,8 @@ the sensitive values in memory are encrypted.
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
-for consistency only, since the security relevance is opaque to Verifiers.
+for consistency only, since the security relevance is opaque to Verifiers. A profile may choose
+to define more specific semantic meaning to a raw value.
 
 A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
@@ -1447,26 +1482,27 @@ See {{sec-comid-triple-identity}} for additional details.
 
 #### Triples for domain definitions {#sec-comid-domains}
 
-A domain is a context for bundling a collection of related environments.
+A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
-The following CDDL describes domain type choices.
+The following CDDL describes domain type.
 
 ~~~ cddl
-{::include cddl/domain-type-choice.cddl}
+{::include cddl/domain-type.cddl}
 ~~~
-
-The `uint` and `text` types MUST NOT be interpreted in a global scope.
 
 Domain structure is defined with the following types of triples.
 
 ##### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
-A Domain Membership triple assigns domain membership to environments.  The
-subject identifies a domain ({{sec-comid-triple-domain-dependency}}) that has a predicate
-relationship to the object containing one or more environments.  Endorsed
-environments ({{sec-comid-triple-endval}}) membership is conditional upon
-successful matching of Reference Values ({{sec-comid-triple-refval}}) to
-Evidence.
+A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
+The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
+
+The Domain Membership Triple allows an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
+This allows a topological description of an Attester to be expressed by linking a parent Environment (e.g., a lead Attester) to its child Environments (e.g., one or more sub-Attesters).
+
+If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
+
+Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
@@ -1540,9 +1576,7 @@ An Appraisal Policy for Evidence may dictate how multiple CoTLs are to be proces
 
 ## Structure
 
-The CDDL specification for the `concise-tl-tag` map is as follows and this
-rule and its constraints MUST be followed when creating or validating a CoTL
-tag:
+The CDDL specification for the `concise-tl-tag` map and additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag are given below:
 
 ~~~ cddl
 {::include cddl/concise-tl-tag.cddl}
@@ -1554,8 +1588,8 @@ The following describes each member of the `concise-tl-tag` map.
   identification information for the CoTL.
   Described in {{sec-comid-tag-id}}.
 
-* `tags-list` (index 1): A list of one or more `tag-identity-maps` identifying
-  the CoMID and CoSWID tags that constitute the "bill of material", i.e.,
+* `tags-list` (index 1): One or more `tag-identity-maps` identifying
+  the CoMID and CoSWID tags that constitute the list, i.e.,
   a complete set of verification-related information.  The `tags-list` behaves
   like a signaling mechanism from the supply chain (e.g., a product vendor) to
   a Verifier that activates the tags in `tags-list` for use in the Evidence
@@ -1634,7 +1668,7 @@ date/time as per {{Section 3.4.2 of -cbor}}.
 ## UUID {#sec-common-uuid}
 
 Used to tag a byte string as a binary UUID.
-Defined in {{Section 4.1.2. of -uuid}}.
+Defined in {{Section 4 of -uuid}}.
 
 ~~~ cddl
 {::include cddl/uuid.cddl}
@@ -1768,16 +1802,19 @@ The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir
 
 ### Internal structure of ECT {#sec-ir-ect}
 
-Environment-Claims Tuples (ECT) have five attributes:
+Environment-Claims Tuples (ECT) have six attributes:
 
 {:ect-enum: style="format %d."}
 
 {: ect-enum}
-* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier.
+* Environment : Identifies the Target Environment. Environments are identified using instance, class, or group identifiers. Environments may be composed of elements, each having an element identifier (`mkey`).
+If the Conceptual Message Type is `domain-member`, this field contains the domain identifier (`domain-id`) of the domain triple.
 
 * Elements : Identifies the set of elements contained within a Target Environment and their trustworthiness Claims.
 
 * Authority : Identifies the entity that issued the tuple. A certain type of key material by which the authority (and corresponding provenance) of the tuple can be determined, such as the public key of an asymmetric key pair that is associated with an authority's PKIX certificate.
+
+* Members : Identifies the set of Environments that act as members when a Domain Membership is expressed in an ECT
 
 * Conceptual Message Type : Identifies the type of Conceptual Message that originated the tuple.
 
@@ -1824,6 +1861,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 ### Internal Representation of Reference Values {#sec-ir-ref-val}
@@ -1835,10 +1873,11 @@ An internal representation of Reference Values uses the `rv` relation, which is 
 ~~~
 
 The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
-If the `condition` containing reference ECTs overlaps Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition`.
+If the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype` set to `reference-values`.
 
 The reference ECTs define the matching conditions that are applied to Evidence ECTs.
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
+Refer to {{sec-phase3}} for how the `rv` entries are processed.
 
 {{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
 
@@ -1849,11 +1888,13 @@ If the matching condition is satisfied, then the re-asserted ECTs are added to t
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 ### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1879,17 +1920,41 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
+
+### Internal Representation of Domain Membership {#sec-ir-dm}
+
+An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.
+The `cmtype` is set to domain-member.
+
+~~~ cddl
+{::include cddl/intrep-domain-mem.cddl}
+~~~
+
+{{tbl-dm-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| domain    | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | Mandatory   |
+{: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
 
 ### Internal Representation of Policy Statements {#sec-ir-policy}
 
@@ -1910,11 +1975,13 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
+|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
+|           | `members`       | n/a         |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -1937,16 +2004,28 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `authority`     | Optional    |
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
+|               | `members`       | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
 |               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
+|               | `members`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
 
 An ACS is a list of ECTs that describe an Attester's actual state.
+
+For ECTs present in the ACS, the `cmtype` field is mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| n/a       | `environment`   | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
 
 ~~~ cddl
 {::include cddl/intrep-acs.cddl}
@@ -1983,6 +2062,13 @@ Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
+
+#### CoRIM Trust Anchors
+If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors (certification paths) available to the Verifier.
+The Verifier is expected to have a trust anchor store.
+The way in which these trust anchors (i.e., root certificates) are provisioned in the Verifier is beyond the scope of this specification.
+If signed, the CoRIM itself should include at least one certificate (e.g., as part of the `x5chain` in the COSE header), which corresponds to the key pair used for signing.
+This certificate (the "leaf certificate") must be linked to one of the Verifier trust anchors.
 
 #### Tags Extraction and Validation
 
@@ -2090,7 +2176,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 {: rtt2-enum}
 * For each e in RVT.`ref-claims`:
 
-> > **copy**(e.`measurement-map`, `rv`.`addition`.`element-list`.`element-map`)
+> > **copy**(e.`measurement-map`, `rv`.`condition`.`element-list`.`element-map`)
 
 {: rtt-enum}
 * The signer of the Endorsement conceptual message is copied to the `rv`.`addition`.`authority` field.
@@ -2233,6 +2319,50 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
+#### Domain Membership Triples Transformation {#sec-ir-dm-trans}
+
+This section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation `dm` (see {{sec-ir-dm}}).
+
+{:dmt-enum: counter="dmt1" style="format Step %d."}
+
+{: dmt-enum}
+* Allocate a `domain` ECT entry.
+
+* Set the conceptual message type for the `domain` ECT to 6 (`domain-member`).
+
+{:dmt4-enum: counter="dmt4" style="format %i"}
+
+{: dmt4-enum}
+* **copy**(`domain-member`, `domain`.`cmtype`)
+
+{: dmt-enum}
+* Set the authority for the domain ECT to the DMT signer ({{sec-corim-signer}}).
+
+{:dmt5-enum: counter="dmt5" style="format %i"}
+
+{: dmt5-enum}
+* **copy**(DMT.`signer`, `domain`.`authority`)
+
+{: dmt-enum}
+* Use the DMT to populate the `dm` internal representation.
+
+{:dmt2-enum: counter="dmt2" style="format %i"}
+
+{: dmt2-enum}
+* **copy**(DMT.`domain-id`, `domain`.`environment`)
+
+{: dmt2-enum}
+* For each `environment` `e` in DMT.`members`:
+
+> > **copy**(DMT.`members`[e].`environment`, `domain`.`members`[e].`environment`)
+
+{: dmt-enum}
+* If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
+
+{:dmt3-enum: counter="dmt3" style="format %i"}
+
+{: dmt3-enum}
+* **copy**(DMT.`profile`, `domain`.`profile`)
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2245,7 +2375,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 
 ### ACS Requirements {#sec-acs-reqs}
 
-At the end of the Evidence collection process Evidence has been converted into an internal represenetation suitable for appraisal.
+At the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.
 See {{sec-ir-cm}}.
 
 Verifiers are not required to use this as their internal representation.
@@ -2355,15 +2485,18 @@ If a triple condition does not match, then the Verifier continues to process oth
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
-Reference Values may describe multiple possible Attester states.
+Each Reference Value Triple describes a single possible Attester state.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
-If satisfied, the RVP authority is added to the matching ACS entry.
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
 
-If the ECTs match except for authority, the `rv` `addition` ECT authority is added to the ACS ECT authority.
+If satisfied, for the `rv` entry, the following three steps are performed:
+
+1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
+2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
+3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
@@ -2372,9 +2505,17 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
+Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
+
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
+
 Endorsements are matched with ACS entries by iterating through the `ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+
+Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches, then each match is processed independently from the others.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
@@ -2417,6 +2558,27 @@ If key verification succeeds for any _key_:
 * Add the `addition` ECT to the ACS.
 
 Otherwise, do not add the `addition` ECT to the ACS.
+
+#### Processing Domain Membership {#sec-process-dm}
+
+This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+
+
+Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
+
+For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:
+
+For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
+
+* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
+* If none of the members match, proceed to next Domain Membership ECT in the staging area
+* If there is a partial match, proceed to the next Domain Membership ECT in the staging area
+If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
+Else STOP processing Domain Membership ECTs
+
+The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
+
+If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
@@ -2696,7 +2858,7 @@ groups to use this information as they see fit".
   API from the `veraison/swid` package) to provide a user command line
   interface for working with CoRIM, CoMID and CoSWID. Specifically, it allows
   creating, signing, verifying, displaying, uploading, and more. See
-  [https://github.com/cocli/README.md](https://github.com/veraison/corim/blob/main/cocli/README.md) for
+  [https://github.com/veraison/cocli/README.md](https://github.com/veraison/cocli/README.md) for
   further details.
 
 * Implementation's level of maturity: alpha.
@@ -2929,7 +3091,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 This document defines a new registry titled "CoMID Triples Map".
 The registry uses integer values as index values for items in the `triples-map` CBOR maps in `concise-mid-tag` codepoint 4.
 
-    Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
 | 0-1023                     | Standards Action
@@ -2942,19 +3104,19 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Triples Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name           | Specification |
+| Index | Item Name                              | Specification |
 |---
-| 0     | reference-triples                     | {{&SELF}}     |
-| 1     | endorsed-triples                      | {{&SELF}}     |
-| 2     | identity-triples                      | {{&SELF}}     |
-| 3     | attest-key-triples                    | {{&SELF}}     |
-| 4     | dependency-triples                    | {{&SELF}}     |
-| 5     | membership-trples                     | {{&SELF}}     |
-| 6     | coswid-triples                        | {{&SELF}}     |
-| 7     | (reserved)                            | {{&SELF}}     |
-| 8     | conditional-endorsment-series-triples | {{&SELF}}     |
-| 9     | (reserved)                            | {{&SELF}}     |
-| 10    | conditional-endorsement-triples       | {{&SELF}}     |
+| 0     | reference-triples                      | {{&SELF}}     |
+| 1     | endorsed-triples                       | {{&SELF}}     |
+| 2     | identity-triples                       | {{&SELF}}     |
+| 3     | attest-key-triples                     | {{&SELF}}     |
+| 4     | dependency-triples                     | {{&SELF}}     |
+| 5     | membership-triples                     | {{&SELF}}     |
+| 6     | coswid-triples                         | {{&SELF}}     |
+| 7     | (reserved)                             | {{&SELF}}     |
+| 8     | conditional-endorsement-series-triples | {{&SELF}}     |
+| 9     | (reserved)                             | {{&SELF}}     |
+| 10    | conditional-endorsement-triples        | {{&SELF}}     |
 | 11-18446744073709551616 | Unassigned | |
 {: #tbl-iana-triples-map-items title="CoMID Triples Map Items Initial Registrations"}
 
@@ -3209,8 +3371,15 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 # Acknowledgments
 {:unnumbered}
 
-{{{Carl Wallace}}} for review and comments on this document.
-
+The authors would like to thank the following people for their review and comments on this document:
+{{{Carl Wallace}}}
+{{{Hannes Tschofenig}}}
+{{{Steven Bellock}}}
+{{{Jag Raman}}}
+{{{Giri Mandyam}}}
+{{{Jeremy O'Donoghue}}}
+and
+{{{Michael Richardson}}}
 
 [^revise]: (This content needs to be revised. Consider removing for now and
     replacing with an issue.)
