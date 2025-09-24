@@ -419,7 +419,7 @@ A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a Co
 {::include cddl/tagged-unsigned-corim-map.cddl}
 ~~~
 
-### Identity {#sec-corim-id}
+### CoRIM Identifier {#sec-corim-id}
 
 A CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer. 
 In other words the CoRIM identifier is not guaranteed to be globally unique,
