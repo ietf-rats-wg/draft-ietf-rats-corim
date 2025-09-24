@@ -2475,7 +2475,7 @@ Endorsements are matched with ACS entries by iterating through the `ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
 
-Note that some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
 If there are multiple matches, then each match is processed independently from the others.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
