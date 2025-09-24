@@ -1,6 +1,16 @@
-protected-corim-header-map = {
-  &(alg: 1) => int
-  &(content-type: 3) => "application/rim+cbor"
-  &(corim-meta: 8) => bstr .cbor corim-meta-map
-  * cose-label => cose-value
-}
+; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
+protected-corim-header-map =
+  {
+    &(alg: 1) => int,
+    &(content-type: 3) => "application/rim+cbor",
+    meta-group,
+    * cose-label => cose-value
+  }
+
+meta-group = ((
+        corim-meta-identity,
+        ? cwt-claims-identity,
+      ) // cwt-claims-identity)
+
+corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
+cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
