@@ -2013,7 +2013,7 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 
 An ACS is a list of ECTs that describe an Attester's actual state.
 
-When ECTs get added into the ACS, the `cmtype` field becomes mandatory.
+For ECTs present in the ACS, the `cmtype` field is mandatory.
 Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
 
 | ECT type  | ECT Field       | Requirement |
