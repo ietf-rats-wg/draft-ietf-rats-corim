@@ -837,7 +837,7 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
   Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsements that are applicable based on the acceptance of a condition.
   Described in {{sec-comid-triple-cond-series}}.
 
 * `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
@@ -1360,19 +1360,19 @@ The Conditional Endorsement Series Triple has the following structure:
 
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
-* `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
-The condition is a `stateful-environment-record` consisting of an `environment` and `claims-list`.
+* `condition`: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
+The condition consists of an `environment-map`, a (possibly empty) `claims-list`, and an optional `authorized-by`.
 
 * `series`: A sequence of selection-addition tuples.
 
 The `conditional-series-record` has the following parameters:
 
-* `selection`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the `condition` result.
+* `selection`: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's `condition` result.
 
 * `addition`: Endorsements that are added if the `selection` criteria are satisfied.
 
-To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the `series` tuples are processed.
+To process a `conditional-endorsement-series-record` the selection criteria in `condition` entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
+If the selection criteria are satisfied, the `series` tuples are processed.
 
 The `series` array contains an ordered list of `conditional-series-record` entries.
 Evaluation order begins at list position 0.
@@ -1381,8 +1381,6 @@ For each `series` entry, if the `selection` criteria matches an entry found in t
 The new entry is added to the existing set of Endorsements.
 
 The first `series` entry that successfully matches the `selection` criteria terminates `series` processing.
-
-If both `claims-list`.`measurement-series-map`.`authorized-by` and `series`.`conditional-series-record`.`selection`.`measurement-map`.`authorized-by` are populated then `claims-list`.`measurement-series-map`.`authorized-by` is used and `series`.`conditional-series-record`.`selection`.`measurement-map`.`authorized-by` entries are ignored.
 
 #### Device Identity Triple {#sec-comid-triple-identity}
 
@@ -2164,7 +2162,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 
 * If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-##### Conditional Endorsement Triple Transformation {#sec-end-trans-cest}
+##### Conditional Endorsement Series Triple Transformation {#sec-end-trans-cest}
 
 {:cestt-enum: counter="cestt" style="format Step %d."}
 
@@ -2178,27 +2176,29 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 {:cestt2-enum: counter="cestt2" style="format %i."}
 
 {: cestt2-enum}
-* CEST.`condition`:
+* For `c` in CEST.`condition`:
 
-> > **copy**(`stateful-environment-record`.`environment`.`environment-map`, `evs`.`condition`.`environment`.`environment-map`)
+> > **copy**(`c`.`environment`, `evs`.`condition`.`environment`)
 
-> > **copy**(`stateful-environment-record`.`claims-list`.`measurement-map`, `evs`.`condition`.`element-list`.`element-map`)
+> > If the `c`.`claims-list` is not empty then **copy**(`c`.`claims-list`, `evs`.`condition`.`element-list`)
+
+> > If `c`.`authorized-by` is present then **copy**(`c`.`authorized-by`, `evs`.`condition`.`authority`)
 
 {: cestt2-enum}
-* For each e in CEST.`series`:
+* For each `s` in CEST.`series`:
 
-> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`selection`.`environment`.`environment-map`)
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`selection`.`environment`)
 
-> > **copy**(e.`conditional-series-record`.`selection`.`measurement`.`measurement-map`, `evs`.`series`.`selection`.`element-list`.`element-map`)
+> > **copy**(`s`.`selection`, `evs`.`series[s]`.`selection`.`element-list`)
 
-> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`addition`.`environment`.`environment-map`)
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`addition`.`environment`)
 
-> > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
+> > **copy**(`s`.`addition`, `evs`.`series[s]`.`addition`.`element-list`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field for each addition.
 
-* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field for each addition.
 
 ##### Key Verification Triples Transformation {#sec-end-trans-kvt}
 
