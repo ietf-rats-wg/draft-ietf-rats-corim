@@ -68,7 +68,7 @@ contributor:
       Dionna contributed many clarifying questions and disambiguations to the semantics of attestation appraisal as well as consistent contribution to weekly reviews of others' edits.
 
 normative:
-  RFC4122: uuid
+  RFC9562: uuid
   RFC5280: pkix-cert
   RFC7468: pkix-text
   RFC8610: cddl
@@ -83,7 +83,10 @@ normative:
     -: uri
     =: RFC3986
   RFC9393: coswid
-  RFC9334: rats-arch
+  RFC9597: CWT_CLAIMS_COSE
+  RFC8392: CWT
+  RFC9711: eat
+  I-D.ietf-rats-msg-wrap: cmw
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -101,11 +104,10 @@ normative:
 informative:
   RFC7519: jwt
   RFC7942:
-  RFC9562:
+  RFC9334: rats-arch
   I-D.fdb-rats-psa-endorsements: psa-endorsements
-  I-D.tschofenig-rats-psa-token: psa-token
+  RFC9783: psa-token
   I-D.ietf-rats-endorsements: rats-endorsements
-  I-D.ietf-rats-msg-wrap: cmw
   DICE.Layer:
     title: DICE Layering Architecture
     author:
@@ -114,7 +116,6 @@ informative:
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.coswid: coswid-reg
-  I-D.ietf-rats-eat: eat
   I-D.ietf-rats-concise-ta-stores: ta-store
   I-D.ietf-rats-ar4si: ar4si
   DICE.cert:
@@ -391,7 +392,7 @@ The following describes each child item of this map.
 * `id` (index 0): A globally unique identifier to identify a CoRIM. Described
   in {{sec-corim-id}}.
 
-* `tags` (index 1):  An array of one or more CoMID or CoSWID tags.  Described
+* `tags` (index 1):  An array of one or more CoMID, CoSWID or CoTL tags.  Described
   in {{sec-corim-tags}}.
 
 * `dependent-rims` (index 2): One or more services supplying additional,
@@ -419,9 +420,10 @@ A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a Co
 {::include cddl/tagged-unsigned-corim-map.cddl}
 ~~~
 
-### Identity {#sec-corim-id}
+### CoRIM Identifier {#sec-corim-id}
 
-A CoRIM Identifier uniquely identifies a CoRIM instance.
+A CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.
+In other words the CoRIM identifier is not guaranteed to be globally unique, but can be used to distinguish CoRIMs that come from the same issuer.
 The base CDDL definition allows UUID and text identifiers.
 Other types of identifiers could be defined as needed.
 
@@ -451,8 +453,7 @@ The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
 
-* `thumbprint` (index 1): expected digest of the resource referenced by `href`.
-  See sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See sec-common-hash-entry}}.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -512,7 +513,7 @@ The CoRIM MUST be signed by the CoRIM creator.
 
 The following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}).
+information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -536,24 +537,51 @@ The following describes each child element of this type.
 {::include cddl/protected-corim-header-map.cddl}
 ~~~
 
-The CoRIM protected header map uses some common COSE header parameters plus an additional `corim-meta` parameter.
+The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
+Additional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}},
+or in a `corim-meta` map as a legacy alternative, described in {{sec-corim-meta}}.
+
 The following describes each child item of this map.
 
 * `alg` (index 1): An integer that identifies a signature algorithm.
 
 * `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-* `kid` (index 4): A byte string which is a key identity pertaining to the CoRIM Issuer.
+At least one of:
+
+* `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
+  Described in {{-CWT_CLAIMS_COSE}}.
 
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
 
+Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
+
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
+
+### CWT Claims {#cwt-claims}
+
+The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.
+To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.
+
+The following describes each child item of this group.
+
+* `iss` (index 1): Issuer or signer for the CoRIM, formerly `signer-name` or `signer-uri` in {{sec-corim-signer}}.
+
+* `sub` (index 2): Optional - identifies the CoRIM document, equivalent to a string representation of $corim-id-type-choice
+
+Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
+
+* `exp` (index 4): Expiration time, formerly `signature-validity` in {{sec-common-validity}}.
+
+* `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
 ### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
+
 
 ~~~ cddl
 {::include cddl/corim-meta-map.cddl}
@@ -579,7 +607,7 @@ Described in {{sec-common-validity}}.
 * `signer-uri` (index 1): A URI identifying the same organization
 
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
-  Signer map.
+Signer map.
 
 ### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
@@ -602,8 +630,8 @@ The Collection CMW type is similar to a profile in its way of restricting the sh
 The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
-The signing operation MUST include the `corim-meta` in the COSE_Sign1 `protected-header` parameter.
-The `corim-meta` statement ensures that each CoRIM in the collection has an identified signer.
+The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
+These metadata containers ensure that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
 
 If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
@@ -614,7 +642,7 @@ If using other signing envelope formats, the CoRIM signing authority MUST be spe
 
 The Collection CMW MAY use any label for its CoRIMs.
 If there is a hierarchical structure to the CoRIM Collection CMW, the base entry point SHOULD be labeled `0` in CBOR or `"base"` in JSON.
-It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{RFC9562}}.
+It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{-uuid}}.
 CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
@@ -623,7 +651,7 @@ It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards 
 The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
 
 ~~~cbor-diag
-{::include cddl/examples/cmw-corim-collection.diag}
+{::include-fold cddl/examples/cmw-corim-collection.diag}
 ~~~
 
 # Concise Module Identifier (CoMID) {#sec-comid}
@@ -637,7 +665,7 @@ A CoMID defines several types of Claims, using "triples" semantics.
 At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.
 
-This specification defines two classes of triples, the Mandatory to Implement (MTI) and the Optional to Implement (OTI).
+This specification defines two classes of triples, the Mandatory To Implement (MTI) and the Optional To Implement (OTI).
 The MTI triples are essential to basic appraisal processing as illustrated in {{-rats-arch}} and {{-rats-endorsements}}.
 Every CoRIM Verifier MUST implement the MTI triples.
 The OTI class of triples are generally useful across profiles.
@@ -1154,7 +1182,8 @@ the sensitive values in memory are encrypted.
 ###### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
-for consistency only, since the security relevance is opaque to Verifiers.
+for consistency only, since the security relevance is opaque to Verifiers. A profile may choose
+to define more specific semantic meaning to a raw value.
 
 A `raw-value` measurement, or an Endorsement, is a tagged value of type `bytes`.
 This specification defines tag #6.560.
@@ -1636,7 +1665,7 @@ date/time as per {{Section 3.4.2 of -cbor}}.
 ## UUID {#sec-common-uuid}
 
 Used to tag a byte string as a binary UUID.
-Defined in {{Section 4.1.2. of -uuid}}.
+Defined in {{Section 4 of -uuid}}.
 
 ~~~ cddl
 {::include cddl/uuid.cddl}
@@ -1985,6 +2014,16 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 
 An ACS is a list of ECTs that describe an Attester's actual state.
 
+For ECTs present in the ACS, the `cmtype` field is mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| n/a       | `environment`   | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
+
 ~~~ cddl
 {::include cddl/intrep-acs.cddl}
 ~~~
@@ -2020,6 +2059,13 @@ Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
+
+#### CoRIM Trust Anchors
+If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors (certification paths) available to the Verifier.
+The Verifier is expected to have a trust anchor store.
+The way in which these trust anchors (i.e., root certificates) are provisioned in the Verifier is beyond the scope of this specification.
+If signed, the CoRIM itself should include at least one certificate (e.g., as part of the `x5chain` in the COSE header), which corresponds to the key pair used for signing.
+This certificate (the "leaf certificate") must be linked to one of the Verifier trust anchors.
 
 #### Tags Extraction and Validation
 
@@ -2448,9 +2494,17 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
 
 #### Processing Endorsements {#sec-process-end}
 
+Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
+
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
+
 Endorsements are matched with ACS entries by iterating through the `ev` list.
 For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
 If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+
+Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches, then each match is processed independently from the others.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
@@ -2793,7 +2847,7 @@ groups to use this information as they see fit".
   API from the `veraison/swid` package) to provide a user command line
   interface for working with CoRIM, CoMID and CoSWID. Specifically, it allows
   creating, signing, verifying, displaying, uploading, and more. See
-  [https://github.com/cocli/README.md](https://github.com/veraison/corim/blob/main/cocli/README.md) for
+  [https://github.com/veraison/cocli/README.md](https://github.com/veraison/cocli/README.md) for
   further details.
 
 * Implementation's level of maturity: alpha.
@@ -3026,7 +3080,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 This document defines a new registry titled "CoMID Triples Map".
 The registry uses integer values as index values for items in the `triples-map` CBOR maps in `concise-mid-tag` codepoint 4.
 
-    Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
+Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
 | 0-1023                     | Standards Action
@@ -3306,8 +3360,15 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 # Acknowledgments
 {:unnumbered}
 
-{{{Carl Wallace}}} for review and comments on this document.
-
+The authors would like to thank the following people for their review and comments on this document:
+{{{Carl Wallace}}}
+{{{Hannes Tschofenig}}}
+{{{Steven Bellock}}}
+{{{Jag Raman}}}
+{{{Giri Mandyam}}}
+{{{Jeremy O'Donoghue}}}
+and
+{{{Michael Richardson}}}
 
 [^revise]: (This content needs to be revised. Consider removing for now and
     replacing with an issue.)
