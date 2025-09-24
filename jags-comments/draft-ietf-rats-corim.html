@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 26 March 2026</td>
+<td class="center">Expires 28 March 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-09-22" class="published">22 September 2025</time>
+<time datetime="2025-09-24" class="published">24 September 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-03-26">26 March 2026</time></dd>
+<dd class="expires"><time datetime="2026-03-28">28 March 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 26 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 28 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1202,7 +1202,7 @@ This document specifies the information elements for representing Endorsements a
                 <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-corim-map" class="internal xref">CoRIM Map</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
-                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-identity" class="internal xref">Identity</a></p>
+                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-corim-identifier" class="internal xref">CoRIM Identifier</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.2">
                     <p id="section-toc.1-1.4.2.1.2.2.1"><a href="#section-4.1.2" class="auto internal xref">4.1.2</a>.  <a href="#name-tags" class="internal xref">Tags</a></p>
@@ -2198,10 +2198,11 @@ tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
 ~~~<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 <div id="sec-corim-id">
 <section id="section-4.1.1">
-          <h4 id="name-identity">
-<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-identity" class="section-name selfRef">Identity</a>
+          <h4 id="name-corim-identifier">
+<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-corim-identifier" class="section-name selfRef">CoRIM Identifier</a>
           </h4>
-<p id="section-4.1.1-1">A CoRIM Identifier uniquely identifies a CoRIM instance.
+<p id="section-4.1.1-1">A CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.
+In other words the CoRIM identifier is not guaranteed to be globally unique, but can be used to distinguish CoRIMs that come from the same issuer.
 The base CDDL definition allows UUID and text identifiers.
 Other types of identifiers could be defined as needed.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.1.1-2">
@@ -4320,7 +4321,7 @@ ECT = {
   ? element-list: [ + element-map ]
   ? authority: [ + $crypto-key-type-choice ]
   ? members: [ + environment-map ]
-  cmtype: cm-type
+  ? cmtype: cm-type
   ? profile: $profile-type-choice
 }
 
@@ -5064,10 +5065,50 @@ If any of the <code>ars-additions</code> are not found in the ACS then these ACS
 <a href="#section-9.1.9" class="section-number selfRef">9.1.9. </a><a href="#name-internal-representation-of-ap" class="section-name selfRef">Internal Representation of Appraisal Claims Set (ACS)</a>
           </h4>
 <p id="section-9.1.9-1">An ACS is a list of ECTs that describe an Attester's actual state.<a href="#section-9.1.9-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-9.1.9-2">
+<p id="section-9.1.9-2">For ECTs present in the ACS, the <code>cmtype</code> field is mandatory.
+Table <a href="#tbl-acs-ect-optionality" class="auto internal xref">Table 9</a> shows the minimum required mandatory fields applicable to all ECTs in an ACS.<a href="#section-9.1.9-2" class="pilcrow">¶</a></p>
+<span id="name-acs-tuple-minimum-requireme"></span><div id="tbl-acs-ect-optionality">
+<table class="center" id="table-9">
+            <caption>
+<a href="#table-9" class="selfRef">Table 9</a>:
+<a href="#name-acs-tuple-minimum-requireme" class="selfRef">ACS tuple minimum requirements</a>
+            </caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">ECT type</th>
+                <th class="text-left" rowspan="1" colspan="1">ECT Field</th>
+                <th class="text-left" rowspan="1" colspan="1">Requirement</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">n/a</td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <code>environment</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Mandatory</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <code>authority</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Mandatory</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1">
+                  <code>cmtype</code>
+</td>
+                <td class="text-left" rowspan="1" colspan="1">Mandatory</td>
+              </tr>
+            </tbody>
+          </table>
+</div>
+<div class="lang-cddl sourcecode" id="section-9.1.9-4">
 <pre>
 ACS = [ + ECT ]
-</pre><a href="#section-9.1.9-2" class="pilcrow">¶</a>
+</pre><a href="#section-9.1.9-4" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -5927,9 +5968,14 @@ Endorsements are added to the ACS if the Endorsement condition is satisifed by t
             <h5 id="name-processing-endorsements">
 <a href="#section-9.3.4.1" class="section-number selfRef">9.3.4.1. </a><a href="#name-processing-endorsements" class="section-name selfRef">Processing Endorsements</a>
             </h5>
-<p id="section-9.3.4.1-1">Endorsements are matched with ACS entries by iterating through the <code>ev</code> list.
+<p id="section-9.3.4.1-1">Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.<a href="#section-9.3.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1-2">After transformation into an <code>ev</code> entry, the processing steps of both triples are the same, as described below.
+Each <code>ev</code> entry is processed independently of other <code>ev</code>s.<a href="#section-9.3.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1-3">Endorsements are matched with ACS entries by iterating through the <code>ev</code> list.
 For each <code>ev</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
-If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), the <code>ev</code> <code>addition</code> ECT is added to the ACS.<a href="#section-9.3.4.1-1" class="pilcrow">¶</a></p>
+If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), the <code>ev</code> <code>addition</code> ECT is added to the ACS.<a href="#section-9.3.4.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.1-4">Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches, then each match is processed independently from the others.<a href="#section-9.3.4.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-process-cond-end">
@@ -6458,8 +6504,8 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
 <a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-new-cbor-tags" class="section-name selfRef">New CBOR Tags</a>
         </h3>
 <p id="section-12.2-1">IANA is requested to allocate the following tags in the "CBOR Tags" registry <span>[<a href="#IANA.cbor-tags" class="cite xref">IANA.cbor-tags</a>]</span>, preferably with the specific CBOR tag value requested:<a href="#section-12.2-1" class="pilcrow">¶</a></p>
-<table class="center" id="table-9">
-          <caption><a href="#table-9" class="selfRef">Table 9</a></caption>
+<table class="center" id="table-10">
+          <caption><a href="#table-10" class="selfRef">Table 10</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Tag</th>
@@ -6685,9 +6731,9 @@ Refer to <span><a href="https://rfc-editor.org/rfc/rfc9334#section-12.2" class="
 The registry uses integer values as index values for items in <code>corim-map</code> CBOR maps.<a href="#section-12.3-1" class="pilcrow">¶</a></p>
 <p id="section-12.3-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.3-2" class="pilcrow">¶</a></p>
 <span id="name-corim-map-items-registratio"></span><div id="tbl-iana-corim-map-items-reg-procedures">
-<table class="center" id="table-10">
+<table class="center" id="table-11">
           <caption>
-<a href="#table-10" class="selfRef">Table 10</a>:
+<a href="#table-11" class="selfRef">Table 11</a>:
 <a href="#name-corim-map-items-registratio" class="selfRef">CoRIM Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -6712,9 +6758,9 @@ The registry uses integer values as index values for items in <code>corim-map</c
 <p id="section-12.3-5">Initial registrations for the "CoRIM Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.3-5" class="pilcrow">¶</a></p>
 <span id="name-corim-map-items-initial-reg"></span><div id="tbl-iana-corim-map-items">
-<table class="center" id="table-11">
+<table class="center" id="table-12">
           <caption>
-<a href="#table-11" class="selfRef">Table 11</a>:
+<a href="#table-12" class="selfRef">Table 12</a>:
 <a href="#name-corim-map-items-initial-reg" class="selfRef">CoRIM Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -6774,9 +6820,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in <code>corim-entity-map</code> CBOR maps.<a href="#section-12.4-1" class="pilcrow">¶</a></p>
 <p id="section-12.4-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.4-2" class="pilcrow">¶</a></p>
 <span id="name-corim-entity-map-items-regi"></span><div id="tbl-iana-corim-entity-map-items-reg-procedures">
-<table class="center" id="table-12">
+<table class="center" id="table-13">
           <caption>
-<a href="#table-12" class="selfRef">Table 12</a>:
+<a href="#table-13" class="selfRef">Table 13</a>:
 <a href="#name-corim-entity-map-items-regi" class="selfRef">CoRIM Entity Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -6801,9 +6847,9 @@ The registry uses integer values as index values for items in <code>corim-entity
 <p id="section-12.4-5">Initial registrations for the "CoRIM Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.4-5" class="pilcrow">¶</a></p>
 <span id="name-corim-entity-map-items-init"></span><div id="tbl-iana-corim-entity-map-items">
-<table class="center" id="table-13">
+<table class="center" id="table-14">
           <caption>
-<a href="#table-13" class="selfRef">Table 13</a>:
+<a href="#table-14" class="selfRef">Table 14</a>:
 <a href="#name-corim-entity-map-items-init" class="selfRef">CoRIM Entity Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -6859,9 +6905,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in <code>corim-signer-map</code> CBOR maps.<a href="#section-12.5-1" class="pilcrow">¶</a></p>
 <p id="section-12.5-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.5-2" class="pilcrow">¶</a></p>
 <span id="name-corim-signer-map-items-regi"></span><div id="tbl-iana-corim-signer-map-items-reg-procedures">
-<table class="center" id="table-14">
+<table class="center" id="table-15">
           <caption>
-<a href="#table-14" class="selfRef">Table 14</a>:
+<a href="#table-15" class="selfRef">Table 15</a>:
 <a href="#name-corim-signer-map-items-regi" class="selfRef">CoRIM Signer Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -6886,9 +6932,9 @@ The registry uses integer values as index values for items in <code>corim-signer
 <p id="section-12.5-5">Initial registrations for the "CoRIM Signer Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.5-5" class="pilcrow">¶</a></p>
 <span id="name-corim-signer-map-items-init"></span><div id="tbl-iana-corim-signer-map-items">
-<table class="center" id="table-15">
+<table class="center" id="table-16">
           <caption>
-<a href="#table-15" class="selfRef">Table 15</a>:
+<a href="#table-16" class="selfRef">Table 16</a>:
 <a href="#name-corim-signer-map-items-init" class="selfRef">CoRIM Signer Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -6928,9 +6974,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in <code>concise-mid-tag</code> CBOR maps.<a href="#section-12.6-1" class="pilcrow">¶</a></p>
 <p id="section-12.6-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.6-2" class="pilcrow">¶</a></p>
 <span id="name-comid-map-items-registratio"></span><div id="tbl-iana-comid-map-items-reg-procedures">
-<table class="center" id="table-16">
+<table class="center" id="table-17">
           <caption>
-<a href="#table-16" class="selfRef">Table 16</a>:
+<a href="#table-17" class="selfRef">Table 17</a>:
 <a href="#name-comid-map-items-registratio" class="selfRef">CoMID Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -6955,9 +7001,9 @@ The registry uses integer values as index values for items in <code>concise-mid-
 <p id="section-12.6-5">Initial registrations for the "CoMID Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.6-5" class="pilcrow">¶</a></p>
 <span id="name-comid-map-items-initial-reg"></span><div id="tbl-iana-comid-map-items">
-<table class="center" id="table-17">
+<table class="center" id="table-18">
           <caption>
-<a href="#table-17" class="selfRef">Table 17</a>:
+<a href="#table-18" class="selfRef">Table 18</a>:
 <a href="#name-comid-map-items-initial-reg" class="selfRef">CoMID Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -7012,9 +7058,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in <code>corim-entity-map</code> CBOR maps.<a href="#section-12.7-1" class="pilcrow">¶</a></p>
 <p id="section-12.7-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.7-2" class="pilcrow">¶</a></p>
 <span id="name-comid-entity-map-items-regi"></span><div id="tbl-iana-comid-entity-map-items-reg-procedures">
-<table class="center" id="table-18">
+<table class="center" id="table-19">
           <caption>
-<a href="#table-18" class="selfRef">Table 18</a>:
+<a href="#table-19" class="selfRef">Table 19</a>:
 <a href="#name-comid-entity-map-items-regi" class="selfRef">CoMID Entity Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -7039,9 +7085,9 @@ The registry uses integer values as index values for items in <code>corim-entity
 <p id="section-12.7-5">Initial registrations for the "CoMID Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.7-5" class="pilcrow">¶</a></p>
 <span id="name-comid-entity-map-items-init"></span><div id="tbl-iana-comid-entity-map-items">
-<table class="center" id="table-19">
+<table class="center" id="table-20">
           <caption>
-<a href="#table-19" class="selfRef">Table 19</a>:
+<a href="#table-20" class="selfRef">Table 20</a>:
 <a href="#name-comid-entity-map-items-init" class="selfRef">CoMID Entity Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -7097,9 +7143,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in the <code>triples-map</code> CBOR maps in <code>concise-mid-tag</code> codepoint 4.<a href="#section-12.8-1" class="pilcrow">¶</a></p>
 <p id="section-12.8-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.8-2" class="pilcrow">¶</a></p>
 <span id="name-comid-triples-map-items-reg"></span><div id="tbl-iana-comid-triples-map-items-reg-procedures">
-<table class="center" id="table-20">
+<table class="center" id="table-21">
           <caption>
-<a href="#table-20" class="selfRef">Table 20</a>:
+<a href="#table-21" class="selfRef">Table 21</a>:
 <a href="#name-comid-triples-map-items-reg" class="selfRef">CoMID Triples Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -7128,9 +7174,9 @@ The registry uses integer values as index values for items in the <code>triples-
 <p id="section-12.8-5">Initial registrations for the "CoMID Triples Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.8-5" class="pilcrow">¶</a></p>
 <span id="name-comid-triples-map-items-ini"></span><div id="tbl-iana-triples-map-items">
-<table class="center" id="table-21">
+<table class="center" id="table-22">
           <caption>
-<a href="#table-21" class="selfRef">Table 21</a>:
+<a href="#table-22" class="selfRef">Table 22</a>:
 <a href="#name-comid-triples-map-items-ini" class="selfRef">CoMID Triples Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -7215,9 +7261,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in multiple triples' representations.<a href="#section-12.9-1" class="pilcrow">¶</a></p>
 <p id="section-12.9-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.9-2" class="pilcrow">¶</a></p>
 <span id="name-comid-measurement-values-map"></span><div id="tbl-iana-comid-measurement-values-map-items-reg-procedures">
-<table class="center" id="table-22">
+<table class="center" id="table-23">
           <caption>
-<a href="#table-22" class="selfRef">Table 22</a>:
+<a href="#table-23" class="selfRef">Table 23</a>:
 <a href="#name-comid-measurement-values-map" class="selfRef">CoMID Measurement Values Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -7246,9 +7292,9 @@ The registry uses integer values as index values for items in multiple triples' 
 <p id="section-12.9-5">Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.9-5" class="pilcrow">¶</a></p>
 <span id="name-measurement-values-map-item"></span><div id="tbl-iana-comid-measurement-values-map-items">
-<table class="center" id="table-23">
+<table class="center" id="table-24">
           <caption>
-<a href="#table-23" class="selfRef">Table 23</a>:
+<a href="#table-24" class="selfRef">Table 24</a>:
 <a href="#name-measurement-values-map-item" class="selfRef">Measurement Values Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -7358,9 +7404,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in <code>measurement-values-map</code> codepoint 3.<a href="#section-12.10-1" class="pilcrow">¶</a></p>
 <p id="section-12.10-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.10-2" class="pilcrow">¶</a></p>
 <span id="name-comid-flags-map-items-regis"></span><div id="tbl-iana-comid-flags-map-items-reg-procedures">
-<table class="center" id="table-24">
+<table class="center" id="table-25">
           <caption>
-<a href="#table-24" class="selfRef">Table 24</a>:
+<a href="#table-25" class="selfRef">Table 25</a>:
 <a href="#name-comid-flags-map-items-regis" class="selfRef">CoMID Flags Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -7389,9 +7435,9 @@ The registry uses integer values as index values for items in <code>measurement-
 <p id="section-12.10-5">Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.10-5" class="pilcrow">¶</a></p>
 <span id="name-flags-map-items-initial-reg"></span><div id="tbl-iana-comid-flags-map-items">
-<table class="center" id="table-25">
+<table class="center" id="table-26">
           <caption>
-<a href="#table-25" class="selfRef">Table 25</a>:
+<a href="#table-26" class="selfRef">Table 26</a>:
 <a href="#name-flags-map-items-initial-reg" class="selfRef">Flags Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -7471,9 +7517,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 The registry uses integer values as index values for items in 'concise-tl-tag' CBOR maps.<a href="#section-12.11-1" class="pilcrow">¶</a></p>
 <p id="section-12.11-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-12.11-2" class="pilcrow">¶</a></p>
 <span id="name-cotl-map-items-registration"></span><div id="tbl-iana-cotl-map-items-reg-procedures">
-<table class="center" id="table-26">
+<table class="center" id="table-27">
           <caption>
-<a href="#table-26" class="selfRef">Table 26</a>:
+<a href="#table-27" class="selfRef">Table 27</a>:
 <a href="#name-cotl-map-items-registration" class="selfRef">CoTL Map Items Registration Procedures</a>
           </caption>
 <thead>
@@ -7498,9 +7544,9 @@ The registry uses integer values as index values for items in 'concise-tl-tag' C
 <p id="section-12.11-5">Initial registrations for the "CoTL Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.<a href="#section-12.11-5" class="pilcrow">¶</a></p>
 <span id="name-cotl-map-items-initial-regi"></span><div id="tbl-iana-tl-map-items">
-<table class="center" id="table-27">
+<table class="center" id="table-28">
           <caption>
-<a href="#table-27" class="selfRef">Table 27</a>:
+<a href="#table-28" class="selfRef">Table 28</a>:
 <a href="#name-cotl-map-items-initial-regi" class="selfRef">CoTL Map Items Initial Registrations</a>
           </caption>
 <thead>
@@ -7544,9 +7590,9 @@ Assignments consist of an integer index value, the item name, and a reference to
 <p id="section-12.12-1">IANA is requested to add the following media types to the "Media Types"
 registry <span>[<a href="#IANA.media-types" class="cite xref">IANA.media-types</a>]</span>.<a href="#section-12.12-1" class="pilcrow">¶</a></p>
 <span id="name-new-media-types-2"></span><div id="tbl-media-type">
-<table class="left" id="table-28">
+<table class="left" id="table-29">
           <caption>
-<a href="#table-28" class="selfRef">Table 28</a>:
+<a href="#table-29" class="selfRef">Table 29</a>:
 <a href="#name-new-media-types-2" class="selfRef">New Media Types</a>
           </caption>
 <thead>
@@ -7784,9 +7830,9 @@ transports.<a href="#section-12.12.2-1.18.1" class="pilcrow">¶</a></p>
 <p id="section-12.13-1">IANA is requested to register the two following Content-Format numbers in the
 "CoAP Content-Formats" sub-registry, within the "Constrained RESTful
 Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" class="cite xref">IANA.core-parameters</a>]</span>:<a href="#section-12.13-1" class="pilcrow">¶</a></p>
-<span id="name-new-content-formats"></span><table class="left" id="table-29">
+<span id="name-new-content-formats"></span><table class="left" id="table-30">
           <caption>
-<a href="#table-29" class="selfRef">Table 29</a>:
+<a href="#table-30" class="selfRef">Table 30</a>:
 <a href="#name-new-content-formats" class="selfRef">New Content-Formats</a>
           </caption>
 <thead>

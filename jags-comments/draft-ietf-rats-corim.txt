@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 26 March 2026                                            Linaro
+Expires: 28 March 2026                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       22 September 2025
+                                                       24 September 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 March 2026.
+   This Internet-Draft will expire on 28 March 2026.
 
 Copyright Notice
 
@@ -83,7 +83,7 @@ Table of Contents
    3.  Typographical Conventions for CDDL
    4.  Concise Reference Integrity Manifest (CoRIM)
      4.1.  CoRIM Map
-       4.1.1.  Identity
+       4.1.1.  CoRIM Identifier
        4.1.2.  Tags
        4.1.3.  Locator Map
        4.1.4.  Profile Types
@@ -680,11 +680,14 @@ Table of Contents
    parsing a CoRIM, so it is named tagged-unsigned-corim-map. ~~~ cddl
    tagged-unsigned-corim-map = #6.501(unsigned-corim-map) ~~~
 
-4.1.1.  Identity
+4.1.1.  CoRIM Identifier
 
-   A CoRIM Identifier uniquely identifies a CoRIM instance.  The base
-   CDDL definition allows UUID and text identifiers.  Other types of
-   identifiers could be defined as needed.
+   A CoRIM Identifier uniquely identifies a CoRIM instance within the
+   context of a CoRIM issuer.  In other words the CoRIM identifier is
+   not guaranteed to be globally unique, but can be used to distinguish
+   CoRIMs that come from the same issuer.  The base CDDL definition
+   allows UUID and text identifiers.  Other types of identifiers could
+   be defined as needed.
 
    $corim-id-type-choice /= tstr
    $corim-id-type-choice /= uuid-type
@@ -2569,7 +2572,7 @@ Table of Contents
      ? element-list: [ + element-map ]
      ? authority: [ + $crypto-key-type-choice ]
      ? members: [ + environment-map ]
-     cmtype: cm-type
+     ? cmtype: cm-type
      ? profile: $profile-type-choice
    }
 
@@ -2909,6 +2912,22 @@ Table of Contents
 9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
 
    An ACS is a list of ECTs that describe an Attester's actual state.
+
+   For ECTs present in the ACS, the cmtype field is mandatory.
+   Table Table 9 shows the minimum required mandatory fields applicable
+   to all ECTs in an ACS.
+
+                 +==========+=============+=============+
+                 | ECT type | ECT Field   | Requirement |
+                 +==========+=============+=============+
+                 | n/a      | environment | Mandatory   |
+                 +----------+-------------+-------------+
+                 |          | authority   | Mandatory   |
+                 +----------+-------------+-------------+
+                 |          | cmtype      | Mandatory   |
+                 +----------+-------------+-------------+
+
+                 Table 9: ACS tuple minimum requirements
 
    ACS = [ + ECT ]
 
@@ -3498,11 +3517,22 @@ Table of Contents
 
 9.3.4.1.  Processing Endorsements
 
+   Endorsed Values Triple and Conditional Endorsement Triple share the
+   same internal representation.
+
+   After transformation into an ev entry, the processing steps of both
+   triples are the same, as described below.  Each ev entry is processed
+   independently of other evs.
+
    Endorsements are matched with ACS entries by iterating through the ev
    list.  For each ev entry, the condition ECT is compared with an ACS
    ECT, where the ACS ECT cmtype contains either evidence, reference-
    values, or endorsements.  If the ECTs match (Section 9.4), the ev
    addition ECT is added to the ACS.
+
+   Some condition values can match against multiple ACS-ECTs, or sets of
+   ACS-ECTs.  If there are multiple matches, then each match is
+   processed independently from the others.
 
 9.3.4.2.  Processing Conditional Endorsements
 
@@ -4217,7 +4247,7 @@ Table of Contents
    | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
-                                  Table 9
+                                  Table 10
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -4240,7 +4270,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 10: CoRIM Map Items
+                         Table 11: CoRIM Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4267,7 +4297,7 @@ Table of Contents
                 | 3-255 | Unassigned     |               |
                 +-------+----------------+---------------+
 
-                    Table 11: CoRIM Map Items Initial
+                    Table 12: CoRIM Map Items Initial
                               Registrations
 
 12.4.  CoRIM Entity Map Registry
@@ -4287,7 +4317,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 12: CoRIM Entity Map Items
+                      Table 13: CoRIM Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4314,7 +4344,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 13: CoRIM Entity Map Items Initial Registrations
+           Table 14: CoRIM Entity Map Items Initial Registrations
 
 12.5.  CoRIM Signer Map Registry
 
@@ -4333,7 +4363,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 14: CoRIM Signer Map Items
+                      Table 15: CoRIM Signer Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4352,7 +4382,7 @@ Table of Contents
                   | 2-255 | Unassigned  |               |
                   +-------+-------------+---------------+
 
-                      Table 15: CoRIM Signer Map Items
+                      Table 16: CoRIM Signer Map Items
                            Initial Registrations
 
 12.6.  CoMID Map Registry
@@ -4372,7 +4402,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 16: CoMID Map Items
+                         Table 17: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4397,7 +4427,7 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 17: CoMID Map Items Initial
+                    Table 18: CoMID Map Items Initial
                               Registrations
 
 12.7.  CoMID Entity Map Registry
@@ -4417,7 +4447,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 18: CoMID Entity Map Items
+                      Table 19: CoMID Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4444,7 +4474,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 19: CoMID Entity Map Items Initial Registrations
+           Table 20: CoMID Entity Map Items Initial Registrations
 
 12.8.  CoMID Triples Map Registry
 
@@ -4465,7 +4495,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-              Table 20: CoMID Triples Map Items Registration
+              Table 21: CoMID Triples Map Items Registration
                                 Procedures
 
    All negative values are reserved for Private Use.
@@ -4512,7 +4542,7 @@ Table of Contents
        | 11-18446744073709551616 | Unassigned     |               |
        +-------------------------+----------------+---------------+
 
-         Table 21: CoMID Triples Map Items Initial Registrations
+         Table 22: CoMID Triples Map Items Initial Registrations
 
 12.9.  CoMID Measurement Values Map Registry
 
@@ -4533,7 +4563,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-               Table 22: CoMID Measurement Values Map Items
+               Table 23: CoMID Measurement Values Map Items
                          Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4580,7 +4610,7 @@ Table of Contents
     |16-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
-        Table 23: Measurement Values Map Items Initial Registrations
+        Table 24: Measurement Values Map Items Initial Registrations
 
 12.10.  CoMID Flags Map Registry
 
@@ -4601,7 +4631,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-         Table 24: CoMID Flags Map Items Registration Procedures
+         Table 25: CoMID Flags Map Items Registration Procedures
 
    All negative values are reserved for Private Use.
 
@@ -4635,7 +4665,7 @@ Table of Contents
    |10-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
-             Table 25: Flags Map Items Initial Registrations
+             Table 26: Flags Map Items Initial Registrations
 
 12.11.  CoTL Map Registry
 
@@ -4654,7 +4684,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 26: CoTL Map Items
+                          Table 27: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4675,7 +4705,7 @@ Table of Contents
                  | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 27: CoTL Map Items Initial
+                     Table 28: CoTL Map Items Initial
                               Registrations
 
 12.12.  New Media Types
@@ -4691,7 +4721,7 @@ Table of Contents
    | rim+cose | application/rim+cose | RFCthis, (Section 12.12.2) |
    +----------+----------------------+----------------------------+
 
-                      Table 28: New Media Types
+                      Table 29: New Media Types
 
 12.12.1.  rim+cbor
 
@@ -4761,7 +4791,7 @@ Table of Contents
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 29: New Content-Formats
+                  Table 30: New Content-Formats
 
 13.  References
 
