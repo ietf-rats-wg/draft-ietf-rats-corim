@@ -1016,7 +1016,7 @@ competence.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-Measurement keys are locally scoped extensible identifiers.
+Measurement keys SHALL be unique within the scope of the `environment-map` they are associated with.
 The initial types defined are OID, UUID, uint, and tstr.
 `mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
 A single anonymous `measurement-map` is allowed within the same environment.
