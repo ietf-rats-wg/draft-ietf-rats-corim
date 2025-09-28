@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-09-25T01:53:01.973045+00:00",
+  "timestamp": "2025-09-28T02:01:36.094288+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -3100,7 +3100,7 @@
       ],
       "body": "The `domain-dependency-triple-record` lists target environments and the other environments, usually attesting environments, the target depends on for trust establishment. \r\n\r\nIt may be unclear what behavior the Verifier should take if a target environment appears in Evidence, but does not have a corresponding dependency triple. \r\n\r\nA concern is that if an env is compromised (after its measurement / evidence is collected), the compromised env could measure an additional (attack) env, with evidence, that the Verifier will accept. \r\n\r\nNote: There may be other ways to detect this attack. The compromised env could have been issued a DICE certificate that excludes the `ECA` key purpose OID. The compromised env could have been issued an X.509 certificate with a pathlen value=0.\r\nGiven there may be multiple evidence formats that don't have these mitigations, the dependency triple may be an additional form of mitigation.\r\n\r\nHowever, to mitigate this attack, there needs to be conventions for its use. If the dependency triples are a closed set. Then only attack environments will not show up in dependency triples. Can CoRIM assert this requirement?\r\n\r\nVerifier behavior should be clear whether it detects this attack. \r\n\r\nIf the verifier should detect the attack using RIMs, then RIM authors MUST specify dependency triples. \r\n\r\nDetection requires an all-or-nothing approach. All the target envs MUST be included in RIMs, or the verifier is not expected to detect the attack. Otherwise, the possibility of unnamed, but trusted environments could exist. The Verifier is undecided as to which is legitimate. \r\n\r\nDo we think CoBOM plays a role toward identifying tags that contain dependency triples?\r\n\r\n",
       "createdAt": "2023-07-14T21:57:40Z",
-      "updatedAt": "2025-07-11T14:50:53Z",
+      "updatedAt": "2025-09-26T12:08:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -3130,6 +3130,13 @@
           "body": "Talked to Ned, as now the Internal representation of CDDL and `domain-type` has been finalised, @nedmsmith is going to work on a PR to document the processing of the triple!",
           "createdAt": "2025-07-11T14:50:53Z",
           "updatedAt": "2025-07-11T14:50:53Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith to complete this PR...",
+          "createdAt": "2025-09-26T12:08:30Z",
+          "updatedAt": "2025-09-26T12:08:30Z"
         }
       ]
     },
@@ -5086,7 +5093,7 @@
       "id": "I_kwDOH6-tI859OFYu",
       "title": "Hannes's comments",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/195",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -5095,8 +5102,8 @@
       ],
       "body": "Here are few points raised by Hannes, which are listed in sequence below, so that they are not lost and feedback incorporated.\n\n1. [] Document Readability** : Overall, the document is hard to read. As a reader one is lost in details and there is no big picture. The introduction is 2 paragraphs long to be followed by lots of CDDL definitions in the terminology section. \n2. **Document Purpose** Need to clearly define the `Goal` of the document.\n3. Need a clear and consistent definition of a `CoMID`. \n4. Define the concept of \"module composition\" in context of CoRIM document\n5. Needs consistency in terminology: Example some places, `language` is referred as `lang`.",
       "createdAt": "2024-01-25T17:19:10Z",
-      "updatedAt": "2025-03-04T21:18:00Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-25T08:29:14Z",
+      "closedAt": "2025-09-25T08:29:14Z",
       "comments": [
         {
           "author": "thomas-fossati",
@@ -5328,6 +5335,13 @@
           "body": "> I agree we need to define a `tag`. For this we need to understand does SWID defines a tag..?\n> \n> If yes, inherit the definition and apply Hardware and Firmware for the context of CoMID...\n\nAccording to Bing a coswid \"tag\" refers to a concise representation of a software component's installation on an endpoint. A hardware interpretation might be: \"A concise representation of a component's installation or provisioning to an endpoint.",
           "createdAt": "2025-03-04T21:17:59Z",
           "updatedAt": "2025-03-04T21:17:59Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Addressed all comments from Hannes, hence closing the issue!!!",
+          "createdAt": "2025-09-25T08:29:14Z",
+          "updatedAt": "2025-09-25T08:29:14Z"
         }
       ]
     },
@@ -11951,13 +11965,15 @@
       "state": "OPEN",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "thomas-fossati"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "Previous text distinguished ACS entries from data in triples.\n\nThe current text talks about ECTs in many places.\n\nCan we have different terms for ECTs which have been added to the ACS, and ECTs which have been created from triples. These last ECTs may be matched against ACS or inserted (perhaps with modification), but they work differently from ACS ECTs.\n\nSome parts of the matching rules talk about ACS entries and candidate ECTs, but the phase description uses different terms. We should align these.\n\n",
       "createdAt": "2025-06-11T13:59:06Z",
-      "updatedAt": "2025-07-08T08:17:50Z",
+      "updatedAt": "2025-09-25T08:27:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -11973,6 +11989,13 @@
           "body": "The issue which @thomas-fossati reported: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/457\nIs identical to this as Triples are transformed into ECT and put in Staging Area.",
           "createdAt": "2025-07-08T08:17:35Z",
           "updatedAt": "2025-07-08T08:17:35Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "When @thomas-fossati works on defining staging area via issue  #457 , this issue can be duplicated and closed",
+          "createdAt": "2025-09-25T08:27:30Z",
+          "updatedAt": "2025-09-25T08:27:30Z"
         }
       ]
     },
@@ -12239,15 +12262,15 @@
       "id": "I_kwDOH6-tI87BVnbp",
       "title": "Section 4.2:  Signed CoRIM.  Is the CoRIM signature un-endorsed?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/467",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gmandyam",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "There is no mention of x5c or the like in the COSE headers.  What are the assumptions behind the keypair used in signing?  For instance, should CoRIM signers pubkeys be pre-provisioned in the verifier?  The inclusion of kid seems to imply pre-provisioning, but this should be explicitly spelled out somewhere in the spec.  If it already is there, please point me to the section and I will close the issue.",
       "createdAt": "2025-07-18T15:55:39Z",
-      "updatedAt": "2025-09-24T16:25:49Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-25T08:24:35Z",
+      "closedAt": "2025-09-25T08:24:35Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -12269,6 +12292,13 @@
           "body": "@gmandyam : Please check and close this...",
           "createdAt": "2025-09-24T16:25:49Z",
           "updatedAt": "2025-09-24T16:25:49Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #475 fixes the issue, hence closing.",
+          "createdAt": "2025-09-25T08:24:33Z",
+          "updatedAt": "2025-09-25T08:24:33Z"
         }
       ]
     },
@@ -12277,17 +12307,17 @@
       "id": "I_kwDOH6-tI87BWNXI",
       "title": "Sec. 5.1.4.1.4.1 Measurement Keys:  clarify local scoping",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gmandyam",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [
         "gmandyam"
       ],
       "labels": [],
       "body": "If mkey is set to a UUID, then wouldn't it be unique for all CoMID instances regardless of which CoRIM they appear in?",
       "createdAt": "2025-07-18T17:01:44Z",
-      "updatedAt": "2025-08-12T22:34:08Z",
-      "closedAt": null,
+      "updatedAt": "2025-09-26T12:05:01Z",
+      "closedAt": "2025-09-26T12:05:01Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -12295,6 +12325,13 @@
           "body": "Thanks to Giri for volunteering to add a clarifying text",
           "createdAt": "2025-08-06T14:07:13Z",
           "updatedAt": "2025-08-06T14:07:13Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/476 fixes the issue",
+          "createdAt": "2025-09-26T12:05:01Z",
+          "updatedAt": "2025-09-26T12:05:01Z"
         }
       ]
     },
@@ -12475,13 +12512,15 @@
       "state": "OPEN",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
-      "assignees": [],
+      "assignees": [
+        "steven-bellock"
+      ],
       "labels": [
         "mustfix"
       ],
       "body": "The TCG DICE Endorsement Architecture for Devices 1.0 is intended to be a subset of this I-D (wrt the CoMID semantics), but that is not captured well and that is... bad.",
       "createdAt": "2025-08-20T17:15:11Z",
-      "updatedAt": "2025-09-24T16:21:43Z",
+      "updatedAt": "2025-09-25T15:58:01Z",
       "closedAt": null,
       "comments": [
         {
@@ -12504,6 +12543,20 @@
           "body": "> The TCG specification currently constrains the CoRIM specification. This information does not necessarily need to go directly into the CoRIM document; a wiki or small CONSTRAINTS.md file would suffice.\n\nNice suggestion, I agree to this!",
           "createdAt": "2025-09-24T16:21:43Z",
           "updatedAt": "2025-09-24T16:21:43Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@steven-bellock Will you be able to work on this and create a file and suitable text for the same???",
+          "createdAt": "2025-09-25T08:22:41Z",
+          "updatedAt": "2025-09-25T08:22:41Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, I can start the pull request.",
+          "createdAt": "2025-09-25T15:57:58Z",
+          "updatedAt": "2025-09-25T15:57:58Z"
         }
       ]
     },
@@ -12572,6 +12625,29 @@
           "updatedAt": "2025-09-24T22:45:08Z"
         }
       ]
+    },
+    {
+      "number": 493,
+      "id": "I_kwDOH6-tI87OEyKd",
+      "title": "Jeremy O'Donoghue CoRIM Comments",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/493",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith",
+        "thomas-fossati",
+        "henkbirkholz",
+        "yogeshbdeshpande"
+      ],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "\nIn general, I struggled to understand Section 2.2 because the different structures are informally defined. I think there is supposed to be a processing sequence and a (relational) data model here, but it is unclear. A diagram would help considerably.\n\nA reference to section 8.1 would address the \"processing sequence\" question. It is hard to tell whether the CDDL can be (or is even intended to be) modelled relationally, which is the reason for the diagram suggestion. \n\n**Section 2**\nminor: define Reference Value Provider (RVP) in section 1.1.1 for regularity with other sections.\n\n**Section 2.2**\ntechnical: I believe the requirement for \"Reference Values\" is too broad. The text says that \"if _a_ reference value in a CoRIM matches claims in the ACS then the authority of the CoRIM issuer is added to those claims.\"\n\nI can imagine cases (in large scale attestation of many devices from many vendors) where a particular reference value occurs in more than one CoRIM (commonly used binary WiFi FW modules, for example).\n\nI believe there is an implication that the CoRIM authority and the Attester authority are the same for this operation to occur.\n\nAlso, doesn't a reference value match a (singular) claim rather than claims?\n\nProposed: \"If a reference value in a CoRIM issued by the same authority as the Attester, then the authority of the CoRIM issuer is added to that claim.\"\n\n**Section 2.2 **\ntechnical: I could not find a definition of the term \"series selection condition\", so I am not sure how I can verify that it is satisfied.\n\n**Section 4**\n\nminor: Is it legal to convey a CoRIM in an encrypted structure? I understand the requirement to ensure the integrity and authenticity of the CoRIM in conveyance from Endorser to Verifier, but it is at least conceivable that some Endorsers might wish to retain confidentiality of CoRIMs in transit. I think, rather than talking only about COSE signing, that the section should indicate that conveyance mechanisms SHALL ensure authenticity and integrity of the CoRIM without specifying mechanisms further.\n\n**Section 4.1.1**\neditorial: Some text on how uniqueness of `tstr` identifiers can be achieved is needed. Alternatively, text along the lines of \"If a Verifier identifies more than one CoRIM with the same `$corim-id-type-choice` it MUST reject all of them\".\n\n**Section 4.1.3**\nminor: All of the `href` (SHALL or SHOULD?) return the same value(s) of additional resource? I think the `thumbprint` implies SHALL.\n\n**Section 5.1.4.1.3**\nminor: A few words on how the environment group is reliably bound to an opaque byte stirng would be desirable.\n\n**Section 5.1.4.1.4.4**\n\nquestion: Would it be better to say \"security version numbers MUST NOT be decremented\"?\n\n**Secton 5.1.4.1.4.5**\n\neditorial: I found I needed to read this text a few times to realise what it meant. Perhaps \"If the flag is true, the measured environment has provides protection from rollback to previous software images\".\n\n**Section 5.1.4.1.7**\n\nminor: I am, in general, uncomfortable with representing infinities on bounded integer values.\n\nOn infinities generally, I note the intermainable discussions on NaN payloads in the CBOR WG and wonder if it is better to avoid the problem. If values alrger than representable wioth MT0/1 integers are required, consider support for big integers here.\n\n**Section 9.1.1**\n\nminor: ECT tuples have **_up to_** six attributes (five of which are optional)... \"The `cm-type` determines which attributes are mandatory\". I could not easily find where this is defined.\n\n**Section 9.2.2**\n\neditorial: Section 9.2.2 says that collected evidence is not cryptographically validated... and is transformed to an internal representation. The first sentance of the next section (9.2.2.1) says that the evidence is validated if cryptographically signed before transforming to an internal representation. Which is it? (yes, I'm aware that 9.2.2.1 addresses this, but the ordering of information here is unfortunate and confusing)\n\n**Section 9.2.2.1*\n\neditorial: What is a security context? I cannot find any definition.\n\n**Section 9.2.3.2**\n\nmajor: I understood that the whole of section 9 is simply an example, yet we have normative text implying that the `ae` relation (defined in an informative section) is mandatoru for transformaing evidence. Have I misunderstood something?\n\n**Section 9.3.1.2**\n\nminor: Normative text in an informative section.\n\n**Section 9.3.2.2**\n\nminor: Normative text in informative section\n\nI won't bother to enumerate further examples of normative text in section 9 as there are many...\n\n**Appendix A**\nThis is more of a meta-comment about CDDL in general which I believe merits broader discussion as it jumped out at me when reading this specification.\n\nIn the Base CDDL there is a repetition of the complete COSE CDDL. I can see that this is done to specify mandatory header material for COSE signed CoRIMs, along with CoSWID tags and the like.\n\n1. This makes it hard for this specification to take account of potential evolution of current specifications.\n2. It makes the CDDL much harder to read than it needs to be as there is a lot of irrelevant detail (I do not need to think about COSE_Key when I am reading about CoRIM).\n3. However I do understand the need to specify mandatory content in certain fields.\n\nMore seriously, is Appendix A normative or informative?\n",
+      "createdAt": "2025-09-26T12:20:47Z",
+      "updatedAt": "2025-09-26T12:22:56Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -76125,24 +76201,26 @@
       "id": "PR_kwDOH6-tI86jXZd7",
       "title": "Clarify local scoping of mkey with unique identifiers (e.g. UUID)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/476",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "gmandyam",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/468",
       "createdAt": "2025-08-12T22:37:46Z",
-      "updatedAt": "2025-09-24T16:39:43Z",
+      "updatedAt": "2025-09-26T12:04:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "4cb2a15125ced9f2b595c14b8bae98050e86302f",
+      "baseRefOid": "67b0cddc1320d56fd3a98e7fb83f9dcedc7d4313",
       "headRepository": "gmandyam/draft-ietf-rats-corim",
       "headRefName": "Issue_468",
-      "headRefOid": "fd80548c379e47b045c985de51ac8d47b24d82cc",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "f2c6f82ac1b69784a5441652488933eabf097c8a",
+      "closedAt": "2025-09-26T12:04:28Z",
+      "mergedAt": "2025-09-26T12:04:28Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -76206,6 +76284,20 @@
           "body": "In todays meeting we agreed that the suggested Line: 992 & line 993 are good to capture and remove the rest.\r\n\r\nHence @gmandyam will work on this so that we merge the PR then",
           "createdAt": "2025-09-24T16:39:43Z",
           "updatedAt": "2025-09-24T16:39:43Z"
+        },
+        {
+          "author": "gmandyam",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> In todays meeting we agreed that the suggested Line: 992 & line 993 are good to capture and remove the rest.\r\n> \r\n> Hence @gmandyam will work on this so that we merge the PR then\r\n\r\n@yogeshbdeshpande - please re-confirm that the changes are consistent with group consensus.  If so, please merge.",
+          "createdAt": "2025-09-25T23:17:52Z",
+          "updatedAt": "2025-09-25T23:17:52Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> LGTM!\r\n\r\n@gmandyam Changes looks good to me and inline with the discussions we had during the CoRIM Meeting.\r\n\r\nThank you for your contributions!",
+          "createdAt": "2025-09-26T12:03:55Z",
+          "updatedAt": "2025-09-26T12:03:55Z"
         }
       ],
       "reviews": [
@@ -76333,6 +76425,19 @@
           "body": "LGTM",
           "createdAt": "2025-09-24T14:26:30Z",
           "updatedAt": "2025-09-24T14:26:30Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87DBdWp",
+          "commit": {
+            "abbreviatedOid": "f2c6f82"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-09-26T12:02:57Z",
+          "updatedAt": "2025-09-26T12:03:04Z",
           "comments": []
         }
       ]
@@ -78595,7 +78700,7 @@
       "labels": [],
       "body": "ignore /lib/ghpages.mk to allow troubleshooting CI build failures.",
       "createdAt": "2025-09-24T20:03:29Z",
-      "updatedAt": "2025-09-24T20:26:54Z",
+      "updatedAt": "2025-09-26T12:10:14Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "50c71de135e3d7937894850d68546e804e012d72",
@@ -78613,6 +78718,13 @@
           "body": "This PR fixes the build issues in corim by changing the ghpages.mk file in ~/lib. It had to work around the ignored /lib in .gitignore. \r\n\r\nI submitted an issue to I-D-template as well. https://github.com/martinthomson/i-d-template/issues/495 \r\n\r\nOnce the I-D-template repo is updated with a fix, possibly, the corim repo can re-image the /lib and the override of /lib/ghpages.mk can be removed from .gitignore?",
           "createdAt": "2025-09-24T20:25:22Z",
           "updatedAt": "2025-09-24T20:26:54Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixes https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/478\r\n\r\n@nedmsmith could you please confirm the PR intention is to fix above issue??",
+          "createdAt": "2025-09-26T12:10:14Z",
+          "updatedAt": "2025-09-26T12:10:14Z"
         }
       ],
       "reviews": []
