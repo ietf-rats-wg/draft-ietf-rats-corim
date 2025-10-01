@@ -1016,7 +1016,7 @@ competence.
 
 ###### Measurement Keys {#sec-comid-mkey}
 
-Measurement keys are locally scoped extensible identifiers.
+Measurement keys SHALL be unique within the scope of the `environment-map` they are associated with.
 The initial types defined are OID, UUID, uint, and tstr.
 `mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
 A single anonymous `measurement-map` is allowed within the same environment.
@@ -2119,12 +2119,6 @@ As a second example, in PSA {{-psa-token}} the verification public key is looked
 If found, COSE Sign1 verification is performed accordingly.
 
 Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
-
-> If a CoRIM profile is supplied, it MUST describe:
->
-> * How cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags)
-> * How key material is associated with the Attesting Environment
-> * How the Attesting Environment is identified in Evidence
 
 ### Input Transformation {#sec-phase1-trans}
 
