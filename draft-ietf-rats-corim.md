@@ -1776,11 +1776,11 @@ These Claims are added with the policy author's authority.
 During Phase 7, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
 The Claims in the output staging area and other Verifier related metadata are transformed into an external representation suitable for consumption by a Relying Party.
 
-# Example Verifier Algorithm {#sec-verifier-abstraction}
+# Reference Verifier Algorithm {#sec-verifier-abstraction}
 
-This document assumes that Verifier implementations may differ.
-To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.
-
+This document presumes that Verifier implementations will differ.
+To facilitate the description of normative Verifier behavior, this document describes the internal representation for a reference Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.
+If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.
 
 The terms
 Claim,
