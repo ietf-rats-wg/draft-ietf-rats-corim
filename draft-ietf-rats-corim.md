@@ -2172,9 +2172,9 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 > > **copy**(e.`measurement-map`, `rv`.`condition`.`element-list`.`element-map`)
 
 {: rtt-enum}
-* The signer of the Endorsement conceptual message is copied to the `rv`.`addition`.`authority` field.
+* The signer of the Reference Values conceptual message is copied to the `rv`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
+* If the Reference Values conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
@@ -2241,7 +2241,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 
 * If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-##### Conditional Endorsement Triple Transformation {#sec-end-trans-cest}
+##### Conditional Endorsement Series Triple Transformation {#sec-end-trans-cest}
 
 {:cestt-enum: counter="cestt" style="format Step %d."}
 
