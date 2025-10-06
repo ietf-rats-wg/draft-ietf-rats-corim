@@ -178,7 +178,8 @@ See {{sec-verifier-rec}}.
 
 {::boilerplate bcp14}
 
-This document uses terms and concepts defined by the RATS architecture.
+This document uses terms and concepts defined by the RATS architecture. Specifically the terms Attester, Reference Value Provider (RVP), Endorsers, Verifier Owners and Relying Parties taken from {{Section 4 of -rats-arch}}, are heavily used in this document.
+
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
 This document uses the terms _"actual state"_ and _"reference state"_ as defined in {{Section 2 of -rats-endorsements}}.
@@ -303,7 +304,8 @@ The internal representations used by this document are defined in {{sec-ir-cm}}.
 
 ## Interacting with an ACS {#sec-interact-acs}
 
-Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
+Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied. The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
+
 Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
 
 | CM Type | Structure | Description |
@@ -368,9 +370,11 @@ For more detail, see {{sec-corim-profile-types}}.
 
 * Information about the supply chain entities responsible for the contents of the CoRIM and their associated roles.
 
+A CoRIM conveyance mechanisms SHALL ensure authenticity and integrity of the CoRIM.
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
-Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and transported over a secure channel.
+Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and
+transported over a secure channel.
 
 The following CDDL describes the top-level CoRIM.
 
@@ -1162,7 +1166,7 @@ mode.
 mode.
 
 * `is-replay-protected` (index 4): If the flag is true, the measured environment is
-protected from replay by a previous image that differs from the current image.
+protected from rollback to previous software images.
 
 * `is-integrity-protected` (index 5): If the flag is true, the measured environment is
 protected from unauthorized update.
@@ -1823,7 +1827,8 @@ The following CDDL describes the ECT structure in more detail.
 {::include cddl/intrep-ect.cddl}
 ~~~
 
-The Conceptual Message type determines which attributes are mandatory.
+Which attributes of ECT are mandatory is determined by the Conceptual Message (`cmtype`) inside the tuple.
+See section {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
 
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
@@ -2092,19 +2097,16 @@ After the Verifier has processed all CoTLs it MUST discard any tags which have n
 ### Evidence Collection {#sec-ev-coll}
 
 During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
-The first part of this phase does not require any cryptographic validation.
-This means that Verifiers can use untrusted code to discover Evidence sources.
-Attesters are Evidence sources.
-
 Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
 
-The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
+The exact protocol used to collect Evidence is out of scope of this specification.
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 
 If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
 
-If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.
+If Evidence is not cryptographically signed, the underlying conveyance protocol that collected it, should provide the required security.
+In such cases, the cryptographic validation of Evidence is determined by the security offered by the conveyance protocol.
 
 The way cryptographic signature validation works depends on the specific Evidence collection method used.
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
@@ -2483,7 +2485,7 @@ For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the 
 
 If satisfied, for the `rv` entry, the following three steps are performed:
 
-1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
+1. The `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`
 2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
 3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
 
