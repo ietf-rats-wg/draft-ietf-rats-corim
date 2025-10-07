@@ -1323,6 +1323,9 @@ The signed integer range representation is an inclusive range unless either `min
 
 #### Reference Values Triple {#sec-comid-triple-refval}
 
+Reference Values Triples describe possible states of an Attester.
+At a given point in time, an Attester can occupy at most one of the possible states described by Reference Values or none of them.
+
 A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
 For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.
 
@@ -1337,13 +1340,20 @@ The `reference-triple-record` has the following parameters:
 * `ref-env`: Identifies the Target Environment
 * `ref-claims`: One or more measurement claims for the Target Environment
 
+A comid tag triples map ({{sec-comid-triples}}) can have multiple `reference-triple-record` entries.
+Each entry could describe possible state for a particular Target Environment.
+Within a `reference-triple-record`, each `ref-claims` instance could describe possible states as elements within a Target Environment.
+Furthur still, a measurement key-value pair could be defined to have multiple values or use wild carding to describe multiple values.
+In the context of Reference Values, any of these multiplicities could be used to describe possible state.
+
 To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
-First `ref-env` is used as a search criterion to locate the Evidence environment that matches the reference environment.
-Subsequently, the `ref-claims` from this triple are used to match against the Evidence measurements for the matched environment.
-If the search criteria are satisfied, the matching entry is re-asserted, except with the Reference Value Provider's authority.
-By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixing Reference Values (reference state) with Evidence (actual state).
+First `ref-env` is used as search criteria to locate matching Evidence environments.
+Subsequently, the `ref-claims` from this triple are used to match against the Evidence measurements for a matched environment.
+If the search criteria are satisfied, the matching entry is added to the body of Attester state, except these Claims are asserted with the Reference Value Provider's authority.
+By re-asserting Evidence matched with Reference Values using the RVP's authority, the Verifier avoids confusing Reference Values (reference / possible state) with Evidence (actual state).
 See {{-rats-endorsements}}.
-Re-asserted Evidence using RVP authority is said to be "corroborated".
+Re-asserting Evidence Claims using RVP authority is said to be "corroborated Evidence"
+because the actual state in Evidence was found within the corpus of the RVPs possible state.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
