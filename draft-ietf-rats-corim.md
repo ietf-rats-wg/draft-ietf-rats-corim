@@ -477,6 +477,10 @@ The profile identifier uniquely identifies a documented profile.  Any changes
 to the profile, even the slightest deviation, is considered a different profile
 that MUST have a different identifier.
 
+The CoRIM profile must describe at a minimum the following:  (a) how cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags), and
+(b) how key material is associated with the Attesting Environment.
+The CoRIM profile should also specify whether CBOR deterministic encoding is required.
+
 ~~~ cddl
 {::include cddl/profile-type-choice.cddl}
 ~~~
@@ -617,9 +621,12 @@ Signer map.
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
-An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
-The CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.
-A CoRIM role entry that contains the `manifest-signer` role MUST be added to `corim-entity-map`.
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, or it may be conveyed unsigned within the protection scope of a secure channel.
+The CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.
+For example, this entity could be the sending peer in a secure channel.
+A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
+If the authority cannot be expressed directly via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based).
+If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier’s authority as the CoRIM origin.
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
@@ -1752,9 +1759,11 @@ The appraisal procedure is divided into several logical phases for clarity.
 
 + **Phase 1**: Input Validation and Transformation
 
-During Phase 1, Conceptual Message inputs are cryptographically validated, such as checking digital signatures.
-Inputs are transformed from their external representations to an internal representation.
-Internal representations are staged for appraisal processing, such as populating an input queue.
+During Phase 1, all available Conceptual Messages are processed for validation.
+This involves checking digital signatures to verify their integrity and authenticity, ensuring they are not outdated, and confirming their relevance to the current appraisal.
+If validation fails, the input Conceptual Message is discarded.
+If validation succeeds, the input Conceptual Message is transformed from its external representation into an internal one.
+These internal representations are then collected in an implementation-specific "staging area", which acts as a database for subsequent appraisal processing.
 
 + **Phase 2**: Evidence Augmentation
 
@@ -1792,11 +1801,11 @@ These Claims are added with the policy author's authority.
 During Phase 7, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
 The Claims in the output staging area and other Verifier related metadata are transformed into an external representation suitable for consumption by a Relying Party.
 
-# Example Verifier Algorithm {#sec-verifier-abstraction}
+# Reference Verifier Algorithm {#sec-verifier-abstraction}
 
-This document assumes that Verifier implementations may differ.
-To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.
-
+This document presumes that Verifier implementations will differ.
+To facilitate the description of normative Verifier behavior, this document describes the internal representation for a reference Verifier and demonstrates how the data is used in the appraisal phases outlined in {{sec-appraisal-procedure}}.
+If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.
 
 The terms
 Claim,
