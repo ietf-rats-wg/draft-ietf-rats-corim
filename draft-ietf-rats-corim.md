@@ -1324,7 +1324,7 @@ The signed integer range representation is an inclusive range unless either `min
 #### Reference Values Triple {#sec-comid-triple-refval}
 
 Reference Values Triples describe possible states of an Attester.
-At a given point in time, an Attester can occupy at most one of the possible states described by Reference Values or none of them.
+At a given point in time, an Attester can occupy at most one of the possible states described by Reference Values.
 
 A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
 For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.
