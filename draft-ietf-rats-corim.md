@@ -619,7 +619,9 @@ Signer map.
 
 An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, or it may be conveyed unsigned within the protection scope of a secure channel.
 The CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.  For example, this could be the sending peer in a secure channel.
-A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`. If the authority cannot be directly expressed via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based). If it is impossible to assert any origin authority, a Verifier's appraisal policy MAY allow to assert its own authority as the CoRIM origin.
+A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
+If the authority cannot be expressed directly via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based).
+If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier’s authority as the CoRIM origin.
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
