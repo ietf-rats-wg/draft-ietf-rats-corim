@@ -1244,8 +1244,9 @@ A cryptographic key can be one of the following formats:
 
 A cryptographic key digest can be one of the following formats:
 
-* `tagged-key-thumbprint-type`: a `digest` of a raw public key.
-  The digest value may be used to find the public key if contained in a lookup table.
+* `tagged-key-thumbprint-type`: a `digest` (e.g., the SHA-2 hash) of a raw public key.
+For example, the digest value can be used to locate a public key contained in a lookup table.
+Ultimately, the discovered keys have to be successfully byte-by-byte compared with the corresponding keys.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
   The digest value may be used to find the certificate if contained in a lookup table.
@@ -2635,7 +2636,7 @@ If any of the fields does not match, then the condition ECT does not match the A
 The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
 Before performing the binary comparison, the Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical, then the environments match.
+If all fields which are present in the condition ECT `environment-map` (e.g., instance-id or group-id) are also present in the ACS entry and are binary identical, then the environments match.
 
 If any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.
 
@@ -2645,9 +2646,9 @@ If a field is not present in the condition ECT `environment-map` then the presen
 
 ### Authority comparison {#sec-compare-authority}
 
-The Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.
+The Verifier MUST compare byte-by-byte the condition ECT's `authority` value to the candidate entry's `authority` value.
 
-If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field, then the authorities match.
+If every entry in the condition ECT `authority` matches byte-by-byte a corresponding entry in the ACS entry `authority` field, then the authorities match.
 The order of the fields in each `authority` field do not affect the result of the comparison.
 
 If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
@@ -2781,8 +2782,8 @@ If, for every bit position in the mask whose value is 1, the corresponding bits 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
 The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
-If the byte strings match, and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
+If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.
+If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
 If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the `cryptokeys` condition ECT matches.
 Otherwise, `cryptokeys` does not match.
 
