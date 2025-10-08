@@ -478,8 +478,8 @@ to the profile, even the slightest deviation, is considered a different profile
 that MUST have a different identifier.
 
 The CoRIM profile must describe at a minimum the following:  (a) how cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags), and
-(b) how key material is associated with the Attesting Environment.  The CoRIM profile should also specify
-whether CBOR deterministic encoding is required.
+(b) how key material is associated with the Attesting Environment.
+The CoRIM profile should also specify whether CBOR deterministic encoding is required.
 
 ~~~ cddl
 {::include cddl/profile-type-choice.cddl}
