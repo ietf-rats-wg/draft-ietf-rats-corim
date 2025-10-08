@@ -1508,7 +1508,7 @@ Representing members of a DMT as domains enables the recursive construction of a
 ##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
 A Domain Dependency Triple (DDT) links a domain (Environment) to a set of trustee domains (Environments).
-A trestee is an Environment to which the trust assessment of a domain is prefaced.
+A trustee is an Environment to which the trust assessment of a domain is prefaced.
 
 The domain dependency triple subject `domain-id` identifies a member domain (see sec-comid-triple-domain-membership}).
 The triple object `trustees` is a list of member domains that are the trustees for the domein.
