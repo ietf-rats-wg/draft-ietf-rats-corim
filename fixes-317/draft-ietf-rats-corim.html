@@ -6124,7 +6124,7 @@ If the condition ECT contains a profile, but the profile does not define an algo
           </h4>
 <p id="section-9.4.2-1">The Verifier SHALL compare each field which is present in the condition ECT <code>environment-map</code> against the corresponding field in the ACS entry <code>environment-map</code> using binary comparison.
 Before performing the binary comparison, the Verifier SHOULD convert both <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.2-2">If all fields which are present in the condition ECT <code>environment-map</code> (e.g., instance-id or group-id) are present in the ACS entry and are binary identical, then the environments match.<a href="#section-9.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-2">If all fields which are present in the condition ECT <code>environment-map</code> (e.g., instance-id or group-id) are also present in the ACS entry and are binary identical, then the environments match.<a href="#section-9.4.2-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-3">If any field which is present in the condition ECT <code>environment-map</code> is not present in the ACS entry, then the environments do not match.<a href="#section-9.4.2-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-4">If any field which is present in the condition ECT <code>environment-map</code> is not binary identical to the corresponding ACS entry field, then the environments do not match.<a href="#section-9.4.2-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-5">If a field is not present in the condition ECT <code>environment-map</code> then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.<a href="#section-9.4.2-5" class="pilcrow">¶</a></p>
@@ -6136,7 +6136,7 @@ Before performing the binary comparison, the Verifier SHOULD convert both <code>
 <a href="#section-9.4.3" class="section-number selfRef">9.4.3. </a><a href="#name-authority-comparison" class="section-name selfRef">Authority comparison</a>
           </h4>
 <p id="section-9.4.3-1">The Verifier MUST compare byte-by-byte the condition ECT's <code>authority</code> value to the candidate entry's <code>authority</code> value.<a href="#section-9.4.3-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.3-2">If every entry in the condition ECT <code>authority</code> can be successfully byte-compared to a matching entry in the ACS entry <code>authority</code> field, then the authorities match.
+<p id="section-9.4.3-2">If every entry in the condition ECT <code>authority</code> matches byte-by-byte a corresponding entry in the ACS entry <code>authority</code> field, then the authorities match.
 The order of the fields in each <code>authority</code> field do not affect the result of the comparison.<a href="#section-9.4.3-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.3-3">If any entry in the condition ECT <code>authority</code> does not have a matching entry in the ACS entry <code>authority</code> field then the authorities do not match.<a href="#section-9.4.3-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.3-4">When comparing two <code>$crypto-key-type-choice</code> fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.<a href="#section-9.4.3-4" class="pilcrow">¶</a></p>
@@ -6276,7 +6276,7 @@ If, for every bit position in the mask whose value is 1, the corresponding bits 
 <a href="#section-9.4.6.1.5" class="section-number selfRef">9.4.6.1.5. </a><a href="#name-comparison-for-cryptokeys-e" class="section-name selfRef">Comparison for cryptokeys entries</a>
               </h6>
 <p id="section-9.4.6.1.5-1">The CBOR tag of the first entry of the condition ECT <code>cryptokeys</code> array is compared with the CBOR tag of the first entry of the candidate entry <code>cryptokeys</code> value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are byte-compared with the bytes following the CBOR tag from the candidate entry.
+If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.
 If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
 If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the <code>cryptokeys</code> condition ECT matches.
 Otherwise, <code>cryptokeys</code> does not match.<a href="#section-9.4.6.1.5-1" class="pilcrow">¶</a></p>
