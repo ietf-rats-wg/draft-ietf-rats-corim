@@ -1238,7 +1238,7 @@ A cryptographic key can be one of the following formats:
 A cryptographic key digest can be one of the following formats:
 
 * `tagged-key-thumbprint-type`: a `digest` (e.g., the SHA-2 hash) of a raw public key.
-The digest value can be used to locate a public key contained in a lookup table, for example.
+For example, he digest value can be used to locate a public key contained in a lookup table.
 Ultimately, the discovered keys have to be able to be successfully byte-compared with the corresponding keys.
 
 * `tagged-cert-thumbprint-type`: a `digest` of a certificate.
