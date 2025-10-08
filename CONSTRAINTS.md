@@ -1,6 +1,6 @@
 # CoRIM Specification Constraints
 
-This document details development constaints placed upon the CoRIM specification.
+This document details development constraints placed upon the CoRIM specification.
 
 ## DICE Endorsement Architecture for Devices
 
