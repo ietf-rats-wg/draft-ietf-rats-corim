@@ -2626,7 +2626,7 @@ If any of the fields does not match, then the condition ECT does not match the A
 The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
 Before performing the binary comparison, the Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
 
-If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical, then the environments match.
+If all fields which are present in the condition ECT `environment-map` are present in the ACS entry and are binary identical (e.g., instance-id or group-id), then the environments match.
 
 If any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.
 
@@ -2636,9 +2636,9 @@ If a field is not present in the condition ECT `environment-map` then the presen
 
 ### Authority comparison {#sec-compare-authority}
 
-The Verifier SHALL compare the condition ECT's `authority` value to the candidate entry's `authority` value.
+The Verifier SHALL byte-compare the condition ECT's `authority` value to the candidate entry's `authority` value.
 
-If every entry in the condition ECT `authority` has a matching entry in the ACS entry `authority` field, then the authorities match.
+If every entry in the condition ECT `authority` can successfully byte-compared to a matching entry in the ACS entry `authority` field, then the authorities match.
 The order of the fields in each `authority` field do not affect the result of the comparison.
 
 If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
@@ -2772,8 +2772,8 @@ If, for every bit position in the mask whose value is 1, the corresponding bits 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
 The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
-If the byte strings match, and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
+If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are byte-compared with the bytes following the CBOR tag from the candidate entry.
+If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
 If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the `cryptokeys` condition ECT matches.
 Otherwise, `cryptokeys` does not match.
 
