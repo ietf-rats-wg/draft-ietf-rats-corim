@@ -2637,7 +2637,7 @@ If a field is not present in the condition ECT `environment-map` then the presen
 
 ### Authority comparison {#sec-compare-authority}
 
-The Verifier SHALL byte-compare the condition ECT's `authority` value to the candidate entry's `authority` value.
+The Verifier MUST compare byte-by-byte the condition ECT's `authority` value to the candidate entry's `authority` value.
 
 If every entry in the condition ECT `authority` can successfully byte-compared to a matching entry in the ACS entry `authority` field, then the authorities match.
 The order of the fields in each `authority` field do not affect the result of the comparison.
