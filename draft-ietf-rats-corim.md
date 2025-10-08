@@ -479,7 +479,7 @@ that MUST have a different identifier.
 
 The CoRIM profile must describe at a minimum the following:  (a) how cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags),
 (b) how key material is associated with the Attesting Environment, and (c) how the Attesting Environment is identified in Evidence.  The CoRIM profile should also specify
-whether deterministic encoding is required.
+whether CBOR deterministic encoding is required.
 
 ~~~ cddl
 {::include cddl/profile-type-choice.cddl}
