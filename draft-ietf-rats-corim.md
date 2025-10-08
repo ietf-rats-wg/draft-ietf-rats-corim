@@ -1742,8 +1742,9 @@ The appraisal procedure is divided into several logical phases for clarity.
 
 During Phase 1, all available Conceptual Messages are processed for validation.
 This involves checking digital signatures to verify their integrity and authenticity, ensuring they are not outdated, and confirming their relevance to the current appraisal.
-The validated inputs are then transformed from their external representations into an internal representation.
-These internal representations are collected in an implementation-specific "staging area", which acts as a database for subsequent appraisal processing.
+If validation fails, the input Conceptual Message is discarded
+If validation succeeds, the input Conceptual Message is transformed from its external representation into an internal one.
+These internal representations are then collected in an implementation-specific "staging area", which acts as a database for subsequent appraisal processing.
 
 + **Phase 2**: Evidence Augmentation
 
