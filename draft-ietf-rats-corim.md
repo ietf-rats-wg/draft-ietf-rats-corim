@@ -2731,7 +2731,7 @@ The condition therefore treats the minimum SVN as an exact state and not one to 
 A `digests` entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
 
-In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
+In the simple case, a condition ECT digests entry containing one digest matches a candidate entry containing a single entry with the same algorithm and value.
 
 If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
 This is to prevent downgrade attacks.
