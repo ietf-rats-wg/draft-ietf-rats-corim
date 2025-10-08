@@ -884,7 +884,7 @@ The following describes each member of the `triples-map`:
 * `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
   Described in {{sec-comid-triple-cond-endors}}.
 
-##### Environments {#sec-environments}
+#### Environments {#sec-environments}
 
 An `environment-map` may be used to represent a whole Attester, an Attesting
 Environment, or a Target Environment.  The exact semantic depends on the
@@ -912,7 +912,7 @@ The following describes each member of the `environment-map`:
   anonymization scheme is used.
   Described in {{sec-comid-group}}.
 
-##### Environment Class {#sec-comid-class}
+#### Environment Class {#sec-comid-class}
 
 The Class name consists of class attributes that distinguish the class of
 environment from other classes. The class attributes include class-id, vendor,
@@ -947,7 +947,7 @@ The following describes each member of the `class-map`:
   with several network interface controllers (NIC), each NIC can be given a
   different index value.
 
-##### Environment Instance {#sec-comid-instance}
+#### Environment Instance {#sec-comid-instance}
 
 An `instance-id` is a unique value that identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
@@ -964,7 +964,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Environment Group {#sec-comid-group}
+#### Environment Group {#sec-comid-group}
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -976,7 +976,7 @@ The types defined for a group identified are UUID and variable-length opaque byt
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Measurements {#sec-measurements}
+#### Measurements {#sec-measurements}
 
 Measurements can be of a variety of things including software, firmware,
 configuration files, read-only memory, fuses, IO ring configuration, partial
@@ -1021,7 +1021,7 @@ The following describes each member of the `measurement-map`:
  An entity is authoritative when it makes Claims that are inside its area of
 competence.
 
-###### Measurement Keys {#sec-comid-mkey}
+##### Measurement Keys {#sec-comid-mkey}
 
 Measurement keys SHALL be unique within the scope of the `environment-map` they are associated with.
 The initial types defined are OID, UUID, uint, and tstr.
@@ -1033,7 +1033,7 @@ Two or more measurement-map entries within the same environment MUST populate `m
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
 
-###### Measurement Values {#sec-comid-mval}
+##### Measurement Values {#sec-comid-mval}
 
 A `measurement-values-map` contains measurements associated with a certain
 environment. Depending on the context (triple) in which they are found,
@@ -1098,7 +1098,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
-###### Version {#sec-comid-version}
+##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
 environment.
@@ -1125,7 +1125,7 @@ $version-scheme /= &(semver: 16384)
 $version-scheme /= int / text
 ~~~
 
-###### Security Version Number {#sec-comid-svn}
+##### Security Version Number {#sec-comid-svn}
 
 The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
 A security version number is used to track changes to an object (e.g., a secure enclave, a boot loader executable, a configuration file, etc.) that are security relevant.
@@ -1146,7 +1146,7 @@ The `tagged-svn` and `tagged-min-svn` tags are CBOR tags with the values `#6.552
 {::include cddl/svn-type-choice.cddl}
 ~~~
 
-###### Flags {#sec-comid-flags}
+##### Flags {#sec-comid-flags}
 
 The `flags-map` measurement describes a number of boolean operational modes.
 If a `flags-map` value is not specified, then the operational mode is unknown.
@@ -1186,7 +1186,7 @@ computing base.
 is confidentiality protected. For example, if the measured environment consists of memory,
 the sensitive values in memory are encrypted.
 
-###### Raw Values Types {#sec-comid-raw-value-types}
+##### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers. A profile may choose
@@ -1211,7 +1211,7 @@ This code point may be removed in a future revision of this specification.
 {::include cddl/tagged-masked-raw-value.cddl}
 ~~~
 
-###### Address Types {#sec-comid-address-types}
+##### Address Types {#sec-comid-address-types}
 
 The types or associating addressing information to a measured environment are:
 
@@ -1221,7 +1221,7 @@ The types or associating addressing information to a measured environment are:
 {::include cddl/mac-addr-type-choice.cddl}
 ~~~
 
-##### Crypto Keys {#sec-crypto-keys}
+#### Crypto Keys {#sec-crypto-keys}
 
 A cryptographic key can be one of the following formats:
 
@@ -1259,7 +1259,7 @@ A cryptographic key digest can be one of the following formats:
 {::include cddl/crypto-key-type-choice.cddl}
 ~~~
 
-##### Integrity Registers {#sec-comid-integrity-registers}
+#### Integrity Registers {#sec-comid-integrity-registers}
 
 An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
@@ -1305,7 +1305,7 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
-##### Int Range {#sec-comid-int-range}
+#### Int Range {#sec-comid-int-range}
 
 An int range describes an integer value that can be compared with linear order in the target environment.
 An int range is represented with either major type 0 or major type 1 ints.
@@ -1316,7 +1316,7 @@ An int range is represented with either major type 0 or major type 1 ints.
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
-#### Reference Values Triple {#sec-comid-triple-refval}
+### Reference Values Triple {#sec-comid-triple-refval}
 
 A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
 For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.
@@ -1816,7 +1816,7 @@ Appraisal Policy, and
 Attestation Results Set (ARS)
 are used with the meaning defined in {{sec-glossary}}.
 
-### Internal Representation of Conceptual Messages {#sec-ir-cm}
+## Internal Representation of Conceptual Messages {#sec-ir-cm}
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
@@ -2120,6 +2120,7 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### CoRIM Trust Anchors
+
 If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors (certification paths) available to the Verifier.
 The Verifier is expected to have a trust anchor store.
 The way in which these trust anchors (i.e., root certificates) are provisioned in the Verifier is beyond the scope of this specification.
@@ -2400,9 +2401,9 @@ This section describes how the external representation of a Domain Membership Tr
 * **copy**(DMT.`domain-id`, `domain`.`environment`)
 
 {: dmt2-enum}
-* For each `environment` `e` in DMT.`members`:
+* For each `environment` `*e*` in DMT.`members`:
 
-> > **copy**(DMT.`members`[e].`environment`, `domain`.`members`[e].`environment`)
+> > **copy**(DMT.`members`\[*e*\].`environment`, `domain`.`members`\[*e*\].`environment`)
 
 {: dmt-enum}
 * If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
@@ -2454,7 +2455,7 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 {: ddt5-enum}
 * For each `environment` *e* in `ddtr`.`trustees`:
 
-> > **copy**([*e*].`environment`, `dde`.`trustees`[*e*].`environment`)
+> > **copy**(\[*e*\].`environment`, `dde`.`trustees`\[*e*\].`environment`)
 
 {: ddt1-enum}
 * If the conceptual message containing the DDT has a profile, it is used to populate the profile for the `dde` ECT.
