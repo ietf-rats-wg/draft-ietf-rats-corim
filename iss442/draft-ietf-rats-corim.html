@@ -1056,7 +1056,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 11 April 2026</td>
+<td class="center">Expires 12 April 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1069,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-10-08" class="published">8 October 2025</time>
+<time datetime="2025-10-09" class="published">9 October 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-04-11">11 April 2026</time></dd>
+<dd class="expires"><time datetime="2026-04-12">12 April 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1136,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 11 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 12 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1420,7 +1420,7 @@ This document specifies the information elements for representing Endorsements a
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-example-verifier-algorithm" class="internal xref">Example Verifier Algorithm</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-reference-verifier-algorith" class="internal xref">Reference Verifier Algorithm</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
                 <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-internal-representation-of-" class="internal xref">Internal Representation of Conceptual Messages</a></p>
@@ -2273,13 +2273,16 @@ Alternatively, it MAY define and register its own media type.<a href="#section-4
 <p id="section-4.1.4-7">The profile identifier uniquely identifies a documented profile.  Any changes
 to the profile, even the slightest deviation, is considered a different profile
 that MUST have a different identifier.<a href="#section-4.1.4-7" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-4.1.4-8">
+<p id="section-4.1.4-8">The CoRIM profile must describe at a minimum the following:  (a) how cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags), and
+(b) how key material is associated with the Attesting Environment.
+The CoRIM profile should also specify whether CBOR deterministic encoding is required.<a href="#section-4.1.4-8" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.1.4-9">
 <pre>
 $profile-type-choice /= uri
 $profile-type-choice /= tagged-oid-type
-</pre><a href="#section-4.1.4-8" class="pilcrow">¶</a>
+</pre><a href="#section-4.1.4-9" class="pilcrow">¶</a>
 </div>
-<p id="section-4.1.4-9">For an example profile definition, see <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>.<a href="#section-4.1.4-9" class="pilcrow">¶</a></p>
+<p id="section-4.1.4-10">For an example profile definition, see <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>.<a href="#section-4.1.4-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-corim-entity">
@@ -2507,9 +2510,12 @@ unprotected-corim-header-map = {
         <h3 id="name-signer-authority-of-securel">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-signer-authority-of-securel" class="section-name selfRef">Signer authority of securely conveyed unsigned CoRIM</a>
         </h3>
-<p id="section-4.3-1">An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document.
-The CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.
-A CoRIM role entry that contains the <code>manifest-signer</code> role MUST be added to <code>corim-entity-map</code>.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-1">An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, or it may be conveyed unsigned within the protection scope of a secure channel.
+The CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.
+For example, this entity could be the sending peer in a secure channel.
+A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the <code>manifest-signer</code> role MUST be added to <code>corim-entity-map</code>.
+If the authority cannot be expressed directly via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based).
+If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier’s authority as the CoRIM origin.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.3-2">It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
 <div id="corim-collections">
 <section id="section-4.3.1">
@@ -3468,8 +3474,9 @@ Defined in <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4" class="r
 <p id="section-5.1.4.1.5-3">A cryptographic key digest can be one of the following formats:<a href="#section-5.1.4.1.5-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.1.5-4.1">
-                  <p id="section-5.1.4.1.5-4.1.1"><code>tagged-key-thumbprint-type</code>: a <code>digest</code> of a raw public key.
-The digest value may be used to find the public key if contained in a lookup table.<a href="#section-5.1.4.1.5-4.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-5.1.4.1.5-4.1.1"><code>tagged-key-thumbprint-type</code>: a <code>digest</code> (e.g., the SHA-2 hash) of a raw public key.
+For example, the digest value can be used to locate a public key contained in a lookup table.
+Ultimately, the discovered keys have to be successfully byte-by-byte compared with the corresponding keys.<a href="#section-5.1.4.1.5-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.1.5-4.2">
                   <p id="section-5.1.4.1.5-4.2.1"><code>tagged-cert-thumbprint-type</code>: a <code>digest</code> of a certificate.
@@ -4206,9 +4213,11 @@ They are not required to use the same internal representation or evaluation orde
             <p id="section-8.1-2.1.1"><strong>Phase 1</strong>: Input Validation and Transformation<a href="#section-8.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-8.1-3">During Phase 1, Conceptual Message inputs are cryptographically validated, such as checking digital signatures.
-Inputs are transformed from their external representations to an internal representation.
-Internal representations are staged for appraisal processing, such as populating an input queue.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.1-3">During Phase 1, all available Conceptual Messages are processed for validation.
+This involves checking digital signatures to verify their integrity and authenticity, ensuring they are not outdated, and confirming their relevance to the current appraisal.
+If validation fails, the input Conceptual Message is discarded.
+If validation succeeds, the input Conceptual Message is transformed from its external representation into an internal one.
+These internal representations are then collected in an implementation-specific "staging area", which acts as a database for subsequent appraisal processing.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.1-4.1">
             <p id="section-8.1-4.1.1"><strong>Phase 2</strong>: Evidence Augmentation<a href="#section-8.1-4.1.1" class="pilcrow">¶</a></p>
@@ -4262,11 +4271,12 @@ The Claims in the output staging area and other Verifier related metadata are tr
 </div>
 <div id="sec-verifier-abstraction">
 <section id="section-9">
-      <h2 id="name-example-verifier-algorithm">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-example-verifier-algorithm" class="section-name selfRef">Example Verifier Algorithm</a>
+      <h2 id="name-reference-verifier-algorith">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-reference-verifier-algorith" class="section-name selfRef">Reference Verifier Algorithm</a>
       </h2>
-<p id="section-9-1">This document assumes that Verifier implementations may differ.
-To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in <a href="#sec-appraisal-procedure" class="auto internal xref">Section 8.1</a>.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-1">This document presumes that Verifier implementations will differ.
+To facilitate the description of normative Verifier behavior, this document describes the internal representation for a reference Verifier and demonstrates how the data is used in the appraisal phases outlined in <a href="#sec-appraisal-procedure" class="auto internal xref">Section 8.1</a>.
+If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.<a href="#section-9-1" class="pilcrow">¶</a></p>
 <p id="section-9-2">The terms
 Claim,
 Environment-Claim Tuple (ECT),
@@ -6122,7 +6132,7 @@ If the condition ECT contains a profile, but the profile does not define an algo
           </h4>
 <p id="section-9.4.2-1">The Verifier SHALL compare each field which is present in the condition ECT <code>environment-map</code> against the corresponding field in the ACS entry <code>environment-map</code> using binary comparison.
 Before performing the binary comparison, the Verifier SHOULD convert both <code>environment-map</code> fields into a form which meets CBOR Core Deterministic Encoding Requirements <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.2-2">If all fields which are present in the condition ECT <code>environment-map</code> are present in the ACS entry and are binary identical, then the environments match.<a href="#section-9.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-2">If all fields which are present in the condition ECT <code>environment-map</code> (e.g., instance-id or group-id) are also present in the ACS entry and are binary identical, then the environments match.<a href="#section-9.4.2-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-3">If any field which is present in the condition ECT <code>environment-map</code> is not present in the ACS entry, then the environments do not match.<a href="#section-9.4.2-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-4">If any field which is present in the condition ECT <code>environment-map</code> is not binary identical to the corresponding ACS entry field, then the environments do not match.<a href="#section-9.4.2-4" class="pilcrow">¶</a></p>
 <p id="section-9.4.2-5">If a field is not present in the condition ECT <code>environment-map</code> then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.<a href="#section-9.4.2-5" class="pilcrow">¶</a></p>
@@ -6133,8 +6143,8 @@ Before performing the binary comparison, the Verifier SHOULD convert both <code>
           <h4 id="name-authority-comparison">
 <a href="#section-9.4.3" class="section-number selfRef">9.4.3. </a><a href="#name-authority-comparison" class="section-name selfRef">Authority comparison</a>
           </h4>
-<p id="section-9.4.3-1">The Verifier SHALL compare the condition ECT's <code>authority</code> value to the candidate entry's <code>authority</code> value.<a href="#section-9.4.3-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.3-2">If every entry in the condition ECT <code>authority</code> has a matching entry in the ACS entry <code>authority</code> field, then the authorities match.
+<p id="section-9.4.3-1">The Verifier MUST compare byte-by-byte the condition ECT's <code>authority</code> value to the candidate entry's <code>authority</code> value.<a href="#section-9.4.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.3-2">If every entry in the condition ECT <code>authority</code> matches byte-by-byte a corresponding entry in the ACS entry <code>authority</code> field, then the authorities match.
 The order of the fields in each <code>authority</code> field do not affect the result of the comparison.<a href="#section-9.4.3-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.3-3">If any entry in the condition ECT <code>authority</code> does not have a matching entry in the ACS entry <code>authority</code> field then the authorities do not match.<a href="#section-9.4.3-3" class="pilcrow">¶</a></p>
 <p id="section-9.4.3-4">When comparing two <code>$crypto-key-type-choice</code> fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.<a href="#section-9.4.3-4" class="pilcrow">¶</a></p>
@@ -6274,8 +6284,8 @@ If, for every bit position in the mask whose value is 1, the corresponding bits 
 <a href="#section-9.4.6.1.5" class="section-number selfRef">9.4.6.1.5. </a><a href="#name-comparison-for-cryptokeys-e" class="section-name selfRef">Comparison for cryptokeys entries</a>
               </h6>
 <p id="section-9.4.6.1.5-1">The CBOR tag of the first entry of the condition ECT <code>cryptokeys</code> array is compared with the CBOR tag of the first entry of the candidate entry <code>cryptokeys</code> value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared with the bytes following the CBOR tag from the candidate entry.
-If the byte strings match, and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
+If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.
+If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
 If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the <code>cryptokeys</code> condition ECT matches.
 Otherwise, <code>cryptokeys</code> does not match.<a href="#section-9.4.6.1.5-1" class="pilcrow">¶</a></p>
 </section>
