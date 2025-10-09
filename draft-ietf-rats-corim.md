@@ -884,7 +884,7 @@ The following describes each member of the `triples-map`:
 * `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
   Described in {{sec-comid-triple-cond-endors}}.
 
-##### Environments {#sec-environments}
+#### Environments {#sec-environments}
 
 An `environment-map` may be used to represent a whole Attester, an Attesting
 Environment, or a Target Environment.  The exact semantic depends on the
@@ -912,7 +912,7 @@ The following describes each member of the `environment-map`:
   anonymization scheme is used.
   Described in {{sec-comid-group}}.
 
-##### Environment Class {#sec-comid-class}
+#### Environment Class {#sec-comid-class}
 
 The Class name consists of class attributes that distinguish the class of
 environment from other classes. The class attributes include class-id, vendor,
@@ -947,7 +947,7 @@ The following describes each member of the `class-map`:
   with several network interface controllers (NIC), each NIC can be given a
   different index value.
 
-##### Environment Instance {#sec-comid-instance}
+#### Environment Instance {#sec-comid-instance}
 
 An `instance-id` is a unique value that identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
@@ -964,7 +964,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-##### Environment Group {#sec-comid-group}
+#### Environment Group {#sec-comid-group}
 
 A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -976,7 +976,7 @@ The types defined for a group identified are UUID and variable-length opaque byt
 {::include cddl/group-id-type-choice.cddl}
 ~~~
 
-##### Measurements {#sec-measurements}
+#### Measurements {#sec-measurements}
 
 Measurements can be of a variety of things including software, firmware,
 configuration files, read-only memory, fuses, IO ring configuration, partial
@@ -1021,7 +1021,7 @@ The following describes each member of the `measurement-map`:
  An entity is authoritative when it makes Claims that are inside its area of
 competence.
 
-###### Measurement Keys {#sec-comid-mkey}
+##### Measurement Keys {#sec-comid-mkey}
 
 Measurement keys SHALL be unique within the scope of the `environment-map` they are associated with.
 The initial types defined are OID, UUID, uint, and tstr.
@@ -1033,7 +1033,7 @@ Two or more measurement-map entries within the same environment MUST populate `m
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
 
-###### Measurement Values {#sec-comid-mval}
+##### Measurement Values {#sec-comid-mval}
 
 A `measurement-values-map` contains measurements associated with a certain
 environment. Depending on the context (triple) in which they are found,
@@ -1098,7 +1098,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
-###### Version {#sec-comid-version}
+##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
 environment.
@@ -1125,7 +1125,7 @@ $version-scheme /= &(semver: 16384)
 $version-scheme /= int / text
 ~~~
 
-###### Security Version Number {#sec-comid-svn}
+##### Security Version Number {#sec-comid-svn}
 
 The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
 A security version number is used to track changes to an object (e.g., a secure enclave, a boot loader executable, a configuration file, etc.) that are security relevant.
@@ -1146,7 +1146,7 @@ The `tagged-svn` and `tagged-min-svn` tags are CBOR tags with the values `#6.552
 {::include cddl/svn-type-choice.cddl}
 ~~~
 
-###### Flags {#sec-comid-flags}
+##### Flags {#sec-comid-flags}
 
 The `flags-map` measurement describes a number of boolean operational modes.
 If a `flags-map` value is not specified, then the operational mode is unknown.
@@ -1186,7 +1186,7 @@ computing base.
 is confidentiality protected. For example, if the measured environment consists of memory,
 the sensitive values in memory are encrypted.
 
-###### Raw Values Types {#sec-comid-raw-value-types}
+##### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
 for consistency only, since the security relevance is opaque to Verifiers. A profile may choose
@@ -1211,7 +1211,7 @@ This code point may be removed in a future revision of this specification.
 {::include cddl/tagged-masked-raw-value.cddl}
 ~~~
 
-###### Address Types {#sec-comid-address-types}
+##### Address Types {#sec-comid-address-types}
 
 The types or associating addressing information to a measured environment are:
 
@@ -1221,7 +1221,7 @@ The types or associating addressing information to a measured environment are:
 {::include cddl/mac-addr-type-choice.cddl}
 ~~~
 
-##### Crypto Keys {#sec-crypto-keys}
+#### Crypto Keys {#sec-crypto-keys}
 
 A cryptographic key can be one of the following formats:
 
@@ -1260,7 +1260,7 @@ Ultimately, the discovered keys have to be successfully byte-by-byte compared wi
 {::include cddl/crypto-key-type-choice.cddl}
 ~~~
 
-##### Integrity Registers {#sec-comid-integrity-registers}
+#### Integrity Registers {#sec-comid-integrity-registers}
 
 An Integrity Registers map groups together one or more measured "objects".
 Each measured object has a unique identifier and one or more associated digests.
@@ -1306,7 +1306,7 @@ are acceptable states.
 Integrity Registers can be used to model the PCRs in a TPM or vTPM, in which case the identifier is the register index, or other kinds of vendor-specific measured objects.
 
 
-##### Int Range {#sec-comid-int-range}
+#### Int Range {#sec-comid-int-range}
 
 An int range describes an integer value that can be compared with linear order in the target environment.
 An int range is represented with either major type 0 or major type 1 ints.
@@ -1317,7 +1317,7 @@ An int range is represented with either major type 0 or major type 1 ints.
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
 
-#### Reference Values Triple {#sec-comid-triple-refval}
+### Reference Values Triple {#sec-comid-triple-refval}
 
 A Reference Values Triple provides reference measurements or reference claims pertaining to a Target Environment.
 For a Reference Value triple, the subject identifies a Target Environment, the object contains reference measurements associated to one or more measured elements of the Environment, and the predicate asserts that these are expected (i.e., reference) measurements for the Target Environment.
@@ -1515,13 +1515,29 @@ Representing members of a DMT as domains enables the recursive construction of a
 
 ##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
-A Domain Dependency triple defines trust dependencies between measurement sources.
-The subject identifies a domain ({{sec-comid-triple-domain-membership}}) that has a predicate relationship to the object containing one or more dependent domains.
-Dependency means the subject domain’s trustworthiness properties rely on the object domain(s) trustworthiness having been established before the trustworthiness properties of the subject domain exist.
+A Domain Dependency Triple (DDT) links a domain (Environment) to a set of trustee domains (Environments).
+A trustee is an Environment to which the trust assessment of a domain is prefaced.
+
+The domain dependency triple subject `domain-id` identifies a member domain (see sec-comid-triple-domain-membership}).
+The triple object `trustees` is a list of member domains that are the trustees for the domein.
+The triple predicate asserts that a trust assessment of `domain-id` is not complete without also doing a trust assessment of the `trustees`.
 
 ~~~ cddl
 {::include cddl/domain-dependency-triple-record.cddl}
 ~~~
+
+The dependency `domain-id` and `trustees` MUST be members of the Attesters composition to be a valid expression.
+Dependency graphs are acyclic, meaning a `domain-id` MUST NOT appear in the `trustees` list or a trustee of a domain member subtree.
+A terminating "leaf" trustee is a "root of trust" for that subtree.
+Root of trust trustees SHOULD have a corresponding Endorsement.
+Verifiers MAY use DDTs to assess the veracity of domain-to-trustee linkages.
+Appraisals that don't satifiy the veracity requirements are omitted from the dependency graph.
+
+Trust dependency typically exists if any of the following are true:
+
+* A trustee performs any Attesting Environment functions on behalf of its `domain-id` (a.k.a, the Target Environment); such as Claims collection, Claims signing, loading or initialization of the TE; provisioning TE secrets, cryptographic keys, or other security significant material.
+* A trustee executes security relevant code in response to execution originating from its `domain-id` environment.
+* A trustee is embedded within the `domain-id` environment.
 
 #### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
@@ -1801,7 +1817,7 @@ Appraisal Policy, and
 Attestation Results Set (ARS)
 are used with the meaning defined in {{sec-glossary}}.
 
-### Internal Representation of Conceptual Messages {#sec-ir-cm}
+## Internal Representation of Conceptual Messages {#sec-ir-cm}
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
@@ -1869,6 +1885,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 ### Internal Representation of Reference Values {#sec-ir-ref-val}
@@ -1896,12 +1913,14 @@ Refer to {{sec-phase3}} for how the `rv` entries are processed.
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 ### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1928,18 +1947,21 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 | selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 ### Internal Representation of Domain Membership {#sec-ir-dm}
@@ -1961,7 +1983,31 @@ The `cmtype` is set to domain-member.
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | Mandatory   |
+|           | `trustees`      | Optional    |
 {: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
+
+### Internal Representation of Domain Dependency {#sec-ir-dd}
+
+An internal representation of trust dependency is a directed acyclic graph where each node in the graph identifies a member domain and contains edges to dependent, or "trustee" domains.
+An ECT structure `environment` field contains the domain identifier, and the ECT trustees list are the edges.
+The `cmtype` is inclusive of `trustee` to indicate the ECT is being used to model a trust dependency graph.
+
+~~~ cddl
+{::include cddl/intrep-domain-dep.cddl}
+~~~
+
+{{tbl-dd-ect-optionality}} contains the requirements for the ECT fields of the Domain Dependency tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| domain    | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | Mandatory   |
+|           | `trustees`      | Mandatory   |
+{: #tbl-dd-ect-optionality title="Domain Dependency tuple requirements"}
 
 ### Internal Representation of Policy Statements {#sec-ir-policy}
 
@@ -1983,12 +2029,14 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -2012,12 +2060,14 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
 |               | `members`       | n/a         |
+|               | `trustees`      | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
 |               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
 |               | `members`       | Optional    |
+|               | `trustees`      | n/a         |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
@@ -2071,6 +2121,7 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
 Later stages will further select the CoRIMs appropriate to the Evidence Appraisal stage.
 
 #### CoRIM Trust Anchors
+
 If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors (certification paths) available to the Verifier.
 The Verifier is expected to have a trust anchor store.
 The way in which these trust anchors (i.e., root certificates) are provisioned in the Verifier is beyond the scope of this specification.
@@ -2351,9 +2402,9 @@ This section describes how the external representation of a Domain Membership Tr
 * **copy**(DMT.`domain-id`, `domain`.`environment`)
 
 {: dmt2-enum}
-* For each `environment` `e` in DMT.`members`:
+* For each `environment` `*e*` in DMT.`members`:
 
-> > **copy**(DMT.`members`[e].`environment`, `domain`.`members`[e].`environment`)
+> > **copy**(DMT.`members`\[*e*\].`environment`, `domain`.`members`\[*e*\].`environment`)
 
 {: dmt-enum}
 * If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
@@ -2362,6 +2413,62 @@ This section describes how the external representation of a Domain Membership Tr
 
 {: dmt3-enum}
 * **copy**(DMT.`profile`, `domain`.`profile`)
+
+#### Domain Dependency Triples Transformation {#sec-ir-dd-trans}
+
+This section describes how the external representation of a Domain Dependency Triple (DDT) ({{sec-comid-triple-domain-dependency}}) is transformed into its CoRIM internal representation of a domain dependency graph (`ddg`) (see {{sec-ir-dd}}).
+
+For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the following steps:
+
+{:ddt1-enum: counter="ddt1" style="format Step %d."}
+
+{: ddt1-enum}
+* Allocate a domain dependency edge `dde` ECT entry.
+
+* Set the conceptual message type `cmtype` for the `dde` ECT to `trustee`).
+
+{:ddt2-enum: counter="ddt2" style="format %i"}
+
+{: ddt2-enum}
+* **assign**(`trustee`, `dde`.`cmtype`)
+
+{: ddt1-enum}
+* Set the authority for the domain ECT to the ddt signer ({{sec-corim-signer}}).
+
+{:ddt3-enum: counter="ddt3" style="format %i"}
+
+{: ddt3-enum}
+* **copy**(`ddtr`.`signer`, `dde`.`authority`)
+
+{: ddt1-enum}
+* Populate the `environment` using the domain identifier.
+
+{:ddt4-enum: counter="ddt4" style="format %i"}
+
+{: ddt4-enum}
+* **copy**(`ddtr`.`domain-id`, `dde`.`environment`)
+
+{: ddt1-enum}
+* Populate the `trustees`.
+
+{:ddt5-enum: counter="ddt5" style="format %i"}
+
+{: ddt5-enum}
+* For each `environment` *e* in `ddtr`.`trustees`:
+
+> > **copy**(\[*e*\].`environment`, `dde`.`trustees`\[*e*\].`environment`)
+
+{: ddt1-enum}
+* If the conceptual message containing the DDT has a profile, it is used to populate the profile for the `dde` ECT.
+
+{:ddt6-enum: counter="ddt6" style="format %i"}
+
+{: ddt6-enum}
+* **copy**(`ddtr`.`profile`, `dde`.`profile`)
+
+Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`) internal representation.
+
+Process the next `ddtr` until all entries have been processed.
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2560,24 +2667,61 @@ Otherwise, do not add the `addition` ECT to the ACS.
 
 #### Processing Domain Membership {#sec-process-dm}
 
-This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+This section assumes that each Domain Membership Triple (see {{sec-comid-triple-domain-membership}}) has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
+Domain Membership ECTs (i.e., `cmtype` equals `domain-member`) in the `dm` staging area are matched with ACS entries where `cmtype` is set to `evidence`, `reference-values`, or `domain-member` using the following algorithm:
 
-Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
+For each `domain` in the `dm` staging area, which has not been processed (outer loop):
 
-For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:
+For each member `m` in `domain`.`members` (inner loop):
 
-For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
+* Check that there is a corresponding ACS entry `environment` that matches `m`.`environment`.
+* Check that the ACS entry `cmtype` is one of `evidence`, `reference-values`, or `domain-member`.
 
-* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
-* If none of the members match, proceed to next Domain Membership ECT in the staging area
-* If there is a partial match, proceed to the next Domain Membership ECT in the staging area
-If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
-Else STOP processing Domain Membership ECTs
+Outer loop resumes:
+
+* If all `domain`.`members` matched a corresponding ACS entry, add the `domain` ECT to the ACS.
+* If none of the `domain`.`members` matched, proceed to next `dm` entry.
+* If some, but not all of the `domain`.`members` matched, proceed to the next `dm` entry.
+If the previous execution of the outer loop added any `domain` entry to the ACS, then run the outer loop again
+Else STOP processing `dm` entries.
 
 The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
 
-If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
+If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.
+
+#### Processing Domain Dependency {#sec-process-dd}
+
+This section assumes that each Domain Dependency Triple (see {{sec-comid-triple-domain-dependency}}) has been transformed into an internal representation following the steps described in {{sec-ir-dd-trans}}, resulting in the representation specified in {{sec-ir-dd}}.
+
+Processing a domain dependency graph (DDG) has the following objectives:
+
+* Verify each edge in a DDG has a corresponding edge in a domain membership graph.
+DDGs need not be isomorphic to domain membership graphs.
+* Verify the DDG is acyclic.
+
+If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be furthur evaluated.
+For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
+
+Domain Dependency ECTs are processed using the following algorithm:
+
+For each `dde` in the `ddg` staging array (outer loop):
+
+* Check that the ACS.`cmtype` contains `domain-member`.
+* Check that the `dde`.`environment` matches a domain member ACS entry `environment`.
+* OR that the `dde`.`environment` matches one of it's ACS.`members`.`environment`.
+
+For each trustee *t* in `dde`.`trustees` (inner loop):
+
+* Check that the ACS.`cmtype` contains `domain-member`.
+* Check that *t* matches an ACS.`environment`.
+
+Outer loop resumes:
+
+* If the `dde`.`environment` record AND all `dde`.`trustees` matched an ACS `domain-member` entry.
+Then add the `dde` to the ACS.
+
+* Continue to the next `dde` untill all are processed.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
