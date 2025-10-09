@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-07T01:50:51.966603+00:00",
+  "timestamp": "2025-10-09T01:52:10.239093+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -8274,19 +8274,20 @@
       "id": "I_kwDOH6-tI86Z3tun",
       "title": "Remove key lookup normative text around key digests",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/317",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
-        "deeglaze"
+        "deeglaze",
+        "henkbirkholz"
       ],
       "labels": [
         "mustfix"
       ],
       "body": ">  The digest value may be used to find the public key if contained in a lookup table.\r\n\r\nWe've decided that crypto-key-type-choice can only be binary-compared, so lookups are not meaningful to appraisal.",
       "createdAt": "2024-10-11T14:28:41Z",
-      "updatedAt": "2025-10-01T15:32:19Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T22:49:50Z",
+      "closedAt": "2025-10-08T22:49:50Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -10456,7 +10457,7 @@
       "id": "I_kwDOH6-tI86sQAIb",
       "title": "Normative statements in section 9",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/406",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10468,8 +10469,8 @@
       ],
       "body": "For the first time I realized that the entirety of section 9 is titled (emphasis mine) \"**Example** Verifier Algorithm\" and states\n>This document assumes that Verifier implementations may differ. To facilitate the description of normative Verifier behavior, this document describes the internal representation for an example Verifier and demonstrates how the data is used in the appraisal phases outlined in [Section 8.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#sec-appraisal-procedure).\n\nNormative text should not be used in an example, however section 9 has many `MUST`s. Am I correct in thinking that\n>To facilitate the description of normative Verifier behavior\n\nmeans that section 9 is a non-normative guide to another to-be-written specification that will specify normative Verifier behavior?",
       "createdAt": "2025-03-03T00:10:03Z",
-      "updatedAt": "2025-10-02T21:57:28Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T15:58:02Z",
+      "closedAt": "2025-10-08T15:58:02Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -10701,7 +10702,7 @@
       "id": "I_kwDOH6-tI86v2C9I",
       "title": "uncertainty on the authority of an unsigned CoRIM",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/414",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -10710,8 +10711,8 @@
       ],
       "body": "If the reference value provider/endorser uses a mutually authenticated channel (e.g., mTLS or server-authenticated HTTPS with one HTTP authentication scheme) to supply _unsigned_ CoRIMs to the verifier, the spec doesn\u2019t clarify the authority to use for the related ACS entries.\n\n[\u00a74.3](https://www.ietf.org/archive/id/draft-ietf-rats-corim-07.html#section-4.3) covers some cases, but not this one.\n\n----\n\ncc @setrofim ",
       "createdAt": "2025-03-26T16:24:22Z",
-      "updatedAt": "2025-10-01T15:14:15Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T16:05:12Z",
+      "closedAt": "2025-10-08T16:05:12Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -11574,7 +11575,7 @@
       ],
       "body": "`$crypto-key-type-choice` and `$instance-id-type-choice` use digest types where the source of the type of object being digested is ambiguously defined. \n\nFor example, `tagged-key-thumbprint` could be a 5280 keyIdentifier, a COSE `kid`, a digest of a PEM key, a digest of X and Y values, etc...\n`tagged-cert-thumbprint-type` could be a 5280 cert or a digest of a CWT / JWT etc...\n`tagged-cert-path-thumbprint-type` could be a 5280 certification path or possibly a serialization of an x5bag etc...\n\nThe issue is that if these (digest) values are used to find an actual public key, certificate or as part of certification path construction, there needs to be a way to related the digest to the actual value. If the digest is known but the actual value is not, the algorithm to find the value is guess-and-check. This algorithm may be  appropriate for Bitcoin mining, but not ideal for attestation. \n\nIf the thumbprint types identified the type of object digested and the verifier had the key already (aka via certificate) then guess-and-check is constrained to the type of object that was digested and the algorithm used to computed the digest (e.g., 5280 keyIdentifier).  ",
       "createdAt": "2025-05-01T00:34:53Z",
-      "updatedAt": "2025-10-01T14:45:39Z",
+      "updatedAt": "2025-10-08T22:52:01Z",
       "closedAt": null,
       "comments": [
         {
@@ -11583,6 +11584,20 @@
           "body": "Is this an implementation detail?",
           "createdAt": "2025-10-01T14:45:39Z",
           "updatedAt": "2025-10-01T14:45:39Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think its ok to consider it an implementation detail for now. The most challenging to implement case is when the thumbprint is for a key that was dynamically generated while in deployment. Presumably, there is another structure that contains the cleartext value that was used to produce the thumbprint that is communicated to the Verifier. The verifier could use this to create a lookup table that associates the thumbprint with the cleartext. If the verifier needs to validate the cleartext (because policy requires?) then it will use the lookup table to find the cleartext.",
+          "createdAt": "2025-10-07T18:47:05Z",
+          "updatedAt": "2025-10-07T18:47:05Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith I think, the PR #317 does address this? Is this correct. Please check",
+          "createdAt": "2025-10-08T22:52:01Z",
+          "updatedAt": "2025-10-08T22:52:01Z"
         }
       ]
     },
@@ -12097,7 +12112,7 @@
       "id": "I_kwDOH6-tI86_Oufa",
       "title": "\u201cstaging area\u201d is not defined",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/457",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -12108,8 +12123,8 @@
       ],
       "body": "It seems like we are using the term \u201cstaging area\u201d without clearly defining it.",
       "createdAt": "2025-07-07T09:53:46Z",
-      "updatedAt": "2025-09-24T16:28:30Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T14:50:20Z",
+      "closedAt": "2025-10-08T14:50:20Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -12233,7 +12248,7 @@
       "id": "I_kwDOH6-tI87BVbst",
       "title": "Section 9.2.2.1:  Clarify validation of evidence that includes CoRIM fields or entire CoRIM",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/465",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gmandyam",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -12242,8 +12257,8 @@
       "labels": [],
       "body": "Current text states \"If a CoRIM profile is supplied ...\" but does not clarify whether the profile is supplied as part of attestation evidence.  Given that this statement appears in a section entitled \"Cryptographic Validation of Evidence\", a reader may conclude that the profile is included in the evidence.\n\nRecommend to change to \"If a CoRIM profile is supplied by the attester either as part of evidence or in a separate conceptual message ...\".\n\nWould also recommend an additional statement at the end of the section:  \"The verifier may also ignore a CoRIM profile provided by the attester if it has access to a separate profile.  In other words, an attester-provided CoRIM profile will not necessarily take the place of a CoRIM profile that has been separately provided to the verifier.\"",
       "createdAt": "2025-07-18T15:37:46Z",
-      "updatedAt": "2025-09-24T16:51:29Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T22:54:33Z",
+      "closedAt": "2025-10-08T22:54:33Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -12272,6 +12287,13 @@
           "body": "@gmandyam Could you please edit the existing PR #473 as per suggestion from Thomas and progress this?\n\nThank you for your contribution!!!",
           "createdAt": "2025-09-24T16:51:29Z",
           "updatedAt": "2025-09-24T16:51:29Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We can now close this issue as PR #501 has been merged!",
+          "createdAt": "2025-10-08T22:54:33Z",
+          "updatedAt": "2025-10-08T22:54:33Z"
         }
       ]
     },
@@ -12585,7 +12607,7 @@
       "id": "I_kwDOH6-tI87HA_Gh",
       "title": "No hidden interoperability constraints",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/485",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [
@@ -12596,8 +12618,8 @@
       ],
       "body": "The TCG DICE Endorsement Architecture for Devices 1.0 is intended to be a subset of this I-D (wrt the CoMID semantics), but that is not captured well and that is... bad.",
       "createdAt": "2025-08-20T17:15:11Z",
-      "updatedAt": "2025-09-25T15:58:01Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T15:34:36Z",
+      "closedAt": "2025-10-08T15:34:36Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -12695,7 +12717,7 @@
       "id": "I_kwDOH6-tI87NtVIq",
       "title": "Insert extraneos text from section 9.2.2.1 into its proper place",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/492",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -12706,8 +12728,8 @@
       ],
       "body": "In section 9.2.2.1 there was an extraneous text as below:\n\n`> If a CoRIM profile is supplied, it MUST describe:\n>\n> * How cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags)\n> * How key material is associated with the Attesting Environment\n> * How the Attesting Environment is identified in Evidence`\n\n\nThis text does not belong here.\n\nWe need to find a proper home for this valid text!",
       "createdAt": "2025-09-24T22:44:22Z",
-      "updatedAt": "2025-10-02T23:03:48Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-08T22:55:47Z",
+      "closedAt": "2025-10-08T22:55:47Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -12722,6 +12744,13 @@
           "body": "As discussed during Meeting on 02nd OCt 2025, @gmandyam will be working on this issue!",
           "createdAt": "2025-10-02T23:03:48Z",
           "updatedAt": "2025-10-02T23:03:48Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@gmandyam I think, we can close this, now?",
+          "createdAt": "2025-10-08T22:55:47Z",
+          "updatedAt": "2025-10-08T22:55:47Z"
         }
       ]
     },
@@ -12784,9 +12813,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Creating an issue for https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/487.\n\nIt seems like currently the preferred method of CoRIM revocation is via revocation of the key / certificate that signed the CoRIM. If a signer wants to limit the scope of revocation then it can, for example, generate a new signing key and certificate for each new [CoRIM Identifier](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-corim-identifier). This issue is to explore direct revocation of a CoRIM via (something like) [xcorim](https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf).",
+      "body": "Creating an issue for submitting https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/487.\n\nIt seems like currently the preferred method of CoRIM revocation is via revocation of the key / certificate that signed the CoRIM. If a signer wants to limit the scope of revocation then it can, for example, generate a new signing key and certificate for each new [CoRIM Identifier](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-corim-identifier). This issue is to explore direct revocation of a CoRIM via (something like) [xcorim](https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf).",
       "createdAt": "2025-10-01T21:33:21Z",
-      "updatedAt": "2025-10-01T21:34:50Z",
+      "updatedAt": "2025-10-08T15:37:42Z",
       "closedAt": null,
       "comments": [
         {
@@ -12811,6 +12840,24 @@
       "body": "The current Appendix containing the CDDL Blob needs to split into two:\n\nAppendix A: CoRIM, CoMID and any CDDL which is part of the base CoRIM specification..\nThis forms the Normative text which is required for compliant implementation of the CoRIM spec.\n\nAppendix B: CoSWID Specification which is informative here but Normative in the base CoSWID Specification.",
       "createdAt": "2025-10-06T16:38:50Z",
       "updatedAt": "2025-10-06T16:38:50Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 506,
+      "id": "I_kwDOH6-tI87QY5nK",
+      "title": "CoRIM Verifier Feedback:",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix"
+      ],
+      "body": "This is feedback received from Sergei Trofimov : while implementing a CoRIM Verifier in Veraison Project:\n\n----\n Section 9.2.3.4.3 Title missing \"series\" (as-is it is identical to section 9.2.3.4.2 title)\n- Section 9.3.3.\n\t- Step 1. `cm-type` of addition was set when the Ect was created during corim processing (section 9.2.3.3, step 2), there is no need to re-set it here.\n\t- Step 2, claims are copied from ACS ECT into the addition before it is being added to ACS. It is unclear why (its identical to the values in the ACS ECT). Surely we want to be keeping track of the reference values that were matched, not a duplicate of the evidence values?\n\t- Step 3 is to confirm the `authority` field of the `addition` has been set to the RVP authority. It is not clear why this is necessary, since it should _always_ be set if the `rv` entry has been constructed correctly. Also, it not clear _how_ this can be confirmed since we're not tracking the RVP authority independently of what's populated in  the `rv` entry at this point (at this stage, we do not have access to the original CoRIMs -- just the extracted entries).\n- Section 9.4 indicates that authorities must be compared when matching against ACS, however,  in the reference value conditions, the authority not populated, and in additions, the authority is the signer of the corim, so there is no reason why it would match the authority in the evidence  (see section 9.2.3.3).\n\t- Further, by matching authorities, we're effectively saying that reference values are for a specific instance of a device, rather than for class (they are usually the latter).\n- Section 9.4.4, paragraph 3. `element-list` should be `element-map` (i.e. `element-list` entry)?\n- Section 9.4.6 typo: \"map map\" in the title.\n- Section 9.4.6.1 does not have a sub-section for `flags-map` comparison. In particular, it is not clear whether extra flags in evidence should be treated analogously to extra measurement value code points in evidence (i.e. ignored), or whether they would constitute a failed match.\n- Section 9.4.6.1.3. Paragraph 2. Typo: \"matches matches\".\n- Section 9.4.6.1.5 seems to imply that `cryptokeys` entries are compared _in order_, as ordered lists, rather than sets. Is this correct?\n-  (Note: as per prior discussions with Thomas, I'm pretty much ignoring everything from phase 5 onwards -- these are marked as \"optional\" in the doc. However without knowing how a policy engine will use the data, the structures proposed don't make much sense. E.g. reference values are matched to specific evidence entries, but the link between the`rv` and `ev` entries is not preserved--they're just both in the ACS--so a policy would need to try to re-match them.)\n- Matching is done by iterating through list, the description is not clear on whether the corims are somehow pre-selected just for that evidence or taken from a common pool, (given that environment is used in matching, the later is implied). Given that there maybe a plethora of environments, matching based on environment should be done first.\n- Rather than relying on binary comparison of encoded values, instead the equality of parsed types used throughout. This is to make things simpler (otherwise, parsed values will need to be re-materialised unnecessarily all over the place). Also neither `corim-rs` , nor the Golang `corim`, libraries currently do deterministic encoding.\n- There are a number of entries in the form\n  ```copy(e.endorsement.measurement-map, ev.addition.element-list.element-map)```\n  the `element-list` (and corresponding field in the source) is in fact a list, so does not have an `element-map` should be something like `element-list[*].element-map` maybe?\n- Reference values are matched \"holistically\" -- we iterate though available `rv` entries and for each try to find find an `ev` entry that matches on environment, (optionally) `mkey` and `mval`. And we only keep track of matches. This means that if we fail to match, we have no further recourse to find out why. It would make more sense to first match on environment to get a subset of relevant known-good-states before attempting a full match, so that if a match fails policy could then be used to identify _which_ entries failed to match (this might be relevant for, e.g. populating the trust vector). This would also give the flexibility of potentially matching each mkey independently rather as a set.\n- The assumption here seems to be that there is only one set of reference values per environment/mkey set. It's unclear how multiple parallel known good releases could be handled.",
+      "createdAt": "2025-10-08T16:50:06Z",
+      "updatedAt": "2025-10-08T16:50:29Z",
       "closedAt": null,
       "comments": []
     }
@@ -78755,7 +78802,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-09-16T22:19:44Z",
-      "updatedAt": "2025-10-01T16:04:22Z",
+      "updatedAt": "2025-10-08T15:52:52Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a23c08e10fac948c0da61cb0142c4c36a2b966d7",
@@ -78815,6 +78862,39 @@
               "updatedAt": "2025-09-22T12:13:15Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnsST",
+          "commit": {
+            "abbreviatedOid": "18ab1f1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T15:52:31Z",
+          "updatedAt": "2025-10-08T15:52:31Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "CoRIM tags are discarded if:\r\n* If they are expired\r\n* that have been revoked\r\n* are not associated with an authenticated source",
+              "createdAt": "2025-10-08T15:52:31Z",
+              "updatedAt": "2025-10-08T15:52:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnslS",
+          "commit": {
+            "abbreviatedOid": "18ab1f1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "looks good just need some word smitthing",
+          "createdAt": "2025-10-08T15:52:52Z",
+          "updatedAt": "2025-10-08T15:52:52Z",
+          "comments": []
         }
       ]
     },
@@ -78878,7 +78958,7 @@
       "id": "PR_kwDOH6-tI86qXDu8",
       "title": "Update .gitignore",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/491",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -78887,14 +78967,14 @@
       "labels": [],
       "body": "ignore /lib/ghpages.mk to allow troubleshooting CI build failures.",
       "createdAt": "2025-09-24T20:03:29Z",
-      "updatedAt": "2025-10-01T15:40:42Z",
+      "updatedAt": "2025-10-08T15:35:16Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "ghpages-fix",
       "headRefOid": "45061d05afd60216d6ba6d8277197198c4ddd47f",
-      "closedAt": null,
+      "closedAt": "2025-10-08T15:35:15Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -78919,6 +78999,13 @@
           "body": "Yes this fixes https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/478",
           "createdAt": "2025-10-01T14:21:28Z",
           "updatedAt": "2025-10-01T14:21:28Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "this PR is not needed anymore!",
+          "createdAt": "2025-10-08T15:35:15Z",
+          "updatedAt": "2025-10-08T15:35:15Z"
         }
       ],
       "reviews": [
@@ -78942,37 +79029,65 @@
       "id": "PR_kwDOH6-tI86r2m3c",
       "title": "Change Example Verifier to Reference Verifier",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/496",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fix #406.",
       "createdAt": "2025-10-02T22:16:51Z",
-      "updatedAt": "2025-10-02T23:01:29Z",
+      "updatedAt": "2025-10-08T15:58:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf",
+      "baseRefOid": "fafa87d6df7534f0fac20c899209319d3514876f",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-406",
-      "headRefOid": "7287b793e244bd3c9a63a2d705a16e9ef0d74b59",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "801c972803323437e797ca9e3530bb2eed448249",
+      "closedAt": "2025-10-08T15:58:01Z",
+      "mergedAt": "2025-10-08T15:58:01Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "5ffa60dc7296c5b780060a77a6adf87ded9ba180"
+      },
       "comments": [],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI87EgPQb",
           "commit": {
-            "abbreviatedOid": "7287b79"
+            "abbreviatedOid": "801c972"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM!",
           "createdAt": "2025-10-02T23:01:29Z",
-          "updatedAt": "2025-10-02T23:01:29Z",
+          "updatedAt": "2025-10-08T15:36:03Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnYP2",
+          "commit": {
+            "abbreviatedOid": "801c972"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-10-08T15:33:54Z",
+          "updatedAt": "2025-10-08T15:36:03Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnYUE",
+          "commit": {
+            "abbreviatedOid": "801c972"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-08T15:33:58Z",
+          "updatedAt": "2025-10-08T15:36:03Z",
           "comments": []
         }
       ]
@@ -78982,26 +79097,75 @@
       "id": "PR_kwDOH6-tI86r3Ffv",
       "title": "Document constraints on specification",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/497",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fix #485.",
       "createdAt": "2025-10-02T23:18:02Z",
-      "updatedAt": "2025-10-02T23:22:08Z",
+      "updatedAt": "2025-10-08T15:34:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf",
+      "baseRefOid": "1724834f30d9154542e343689ced0cb74de861ab",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-485",
-      "headRefOid": "1edcb1826fe75ff9546616094275cc8deb1a9677",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "738922e519dbe3db7effb4aa503c6d9679bd646c",
+      "closedAt": "2025-10-08T15:34:35Z",
+      "mergedAt": "2025-10-08T15:34:35Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "fafa87d6df7534f0fac20c899209319d3514876f"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87FnIIN",
+          "commit": {
+            "abbreviatedOid": "1edcb18"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T15:20:20Z",
+          "updatedAt": "2025-10-08T15:20:21Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "```suggestion\r\nThis document details development constraints placed upon the CoRIM specification.\r\n```",
+              "createdAt": "2025-10-08T15:20:20Z",
+              "updatedAt": "2025-10-08T15:20:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnTsh",
+          "commit": {
+            "abbreviatedOid": "738922e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-08T15:29:52Z",
+          "updatedAt": "2025-10-08T15:30:16Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnT5j",
+          "commit": {
+            "abbreviatedOid": "738922e"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-10-08T15:30:00Z",
+          "updatedAt": "2025-10-08T15:30:15Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 499,
@@ -79015,13 +79179,13 @@
       "labels": [],
       "body": "See issue #493 ",
       "createdAt": "2025-10-06T16:43:00Z",
-      "updatedAt": "2025-10-06T17:52:56Z",
+      "updatedAt": "2025-10-08T15:59:25Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "jeremy-comments",
-      "headRefOid": "f65ded49913ab011422be93fa9bf937cfd5a7333",
+      "headRefOid": "838da3cf1b56ad0b2385e381bf9864d826a814d1",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -79047,6 +79211,940 @@
               "updatedAt": "2025-10-06T16:54:45Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FnxNj",
+          "commit": {
+            "abbreviatedOid": "838da3c"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See suggested changes.",
+          "createdAt": "2025-10-08T15:58:00Z",
+          "updatedAt": "2025-10-08T15:59:25Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nCoRIM conveyance mechanisms SHALL ensure authenticity and integrity of the CoRIM.\r\n```",
+              "createdAt": "2025-10-08T15:58:00Z",
+              "updatedAt": "2025-10-08T15:59:25Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "```suggestion\r\nConceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.\r\nThe processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.\r\n```",
+              "createdAt": "2025-10-08T15:58:42Z",
+              "updatedAt": "2025-10-08T15:59:25Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 500,
+      "id": "PR_kwDOH6-tI86sjXCq",
+      "title": "Addressed issue 442",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/500",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Reworded section 5.1.4.2 to better clarify the scope of how possible state could be represented in reference values for reference-triple-record and reference-triples.",
+      "createdAt": "2025-10-07T18:30:17Z",
+      "updatedAt": "2025-10-08T14:57:36Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "iss442",
+      "headRefOid": "e7112748cd307d7472e6ac2c3f2bb2bc1cc2c5c6",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87FYV0x",
+          "commit": {
+            "abbreviatedOid": "a564cb3"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-07T19:00:37Z",
+          "updatedAt": "2025-10-07T19:04:24Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nAt a given point in time, an Attester can occupy at most one of the possible states described by Reference Values.\r\n```\r\n\"none of them\" is encompassed in \"at most one\".\r\n",
+              "createdAt": "2025-10-07T19:00:37Z",
+              "updatedAt": "2025-10-07T19:04:24Z"
+            },
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\r\nA CoMID tag triples map ({{sec-comid-triples}}) can have multiple `reference-triple-record` entries.\r\n```",
+              "createdAt": "2025-10-07T19:01:09Z",
+              "updatedAt": "2025-10-07T19:04:24Z"
+            },
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\nFurther still, a measurement key-value pair could be defined to have multiple values or use wild carding to describe multiple values.\r\n```",
+              "createdAt": "2025-10-07T19:03:00Z",
+              "updatedAt": "2025-10-07T19:04:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmndS",
+          "commit": {
+            "abbreviatedOid": "7c96901"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:53:00Z",
+          "updatedAt": "2025-10-08T14:53:00Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\r\nCoMID triples ({{sec-comid-triples}}) can have multiple `reference-triple-record` entries.\r\n```",
+              "createdAt": "2025-10-08T14:53:00Z",
+              "updatedAt": "2025-10-08T14:53:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmuQ3",
+          "commit": {
+            "abbreviatedOid": "e711274"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-08T14:57:36Z",
+          "updatedAt": "2025-10-08T14:57:36Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 501,
+      "id": "PR_kwDOH6-tI86sliUb",
+      "title": "Refine CoRIM profile based on old text from Section 9.2.2.1",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/501",
+      "state": "MERGED",
+      "author": "gmandyam",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "To address https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/465",
+      "createdAt": "2025-10-07T22:25:23Z",
+      "updatedAt": "2025-10-08T14:25:33Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "a27b67eea2b3b7fc3058f9e4e8863690fe476ebf",
+      "headRepository": "gmandyam/draft-ietf-rats-corim",
+      "headRefName": "CoRIM_profile",
+      "headRefOid": "60fa3835914342eaab15945a1db1fb3d70646f2c",
+      "closedAt": "2025-10-08T14:25:21Z",
+      "mergedAt": "2025-10-08T14:25:21Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "c882cb2fe5a4cb71dcd2939c244c8a6e8cb31337"
+      },
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you @gmandyam ",
+          "createdAt": "2025-10-08T14:25:33Z",
+          "updatedAt": "2025-10-08T14:25:33Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87Flwdx",
+          "commit": {
+            "abbreviatedOid": "fd97244"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:09:18Z",
+          "updatedAt": "2025-10-08T14:09:19Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nwhether CBOR deterministic encoding is required.\r\n```",
+              "createdAt": "2025-10-08T14:09:19Z",
+              "updatedAt": "2025-10-08T14:09:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fl4W6",
+          "commit": {
+            "abbreviatedOid": "1e08d95"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM- subject to a change as agreed in the review",
+          "createdAt": "2025-10-08T14:14:39Z",
+          "updatedAt": "2025-10-08T14:14:39Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fl70c",
+          "commit": {
+            "abbreviatedOid": "407a49c"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:17:42Z",
+          "updatedAt": "2025-10-08T14:17:43Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\n(b) how key material is associated with the Attesting Environment.\r\nThe CoRIM profile should also specify whether CBOR deterministic encoding is required.\r\n```",
+              "createdAt": "2025-10-08T14:17:42Z",
+              "updatedAt": "2025-10-08T14:17:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fl73t",
+          "commit": {
+            "abbreviatedOid": "407a49c"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-10-08T14:17:45Z",
+          "updatedAt": "2025-10-08T14:17:45Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fl8gS",
+          "commit": {
+            "abbreviatedOid": "60fa383"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-08T14:18:14Z",
+          "updatedAt": "2025-10-08T14:18:14Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 502,
+      "id": "PR_kwDOH6-tI86smK26",
+      "title": "PR to address issue #111 considerations",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/502",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fleshed out sections describing how to process domain dependency / trust dependency endorsements. ",
+      "createdAt": "2025-10-08T00:28:42Z",
+      "updatedAt": "2025-10-08T18:26:45Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "9d63f77fdc33589a0f5be0a61d04fc55fbaf1a4a",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "iss111",
+      "headRefOid": "29aa80fb47c7711b4e5837400fa5964df71e0360",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note: Still needs examples.",
+          "createdAt": "2025-10-08T00:33:07Z",
+          "updatedAt": "2025-10-08T00:33:07Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note that domain membership and domain dependency triples are in phase 4 - Endorsement Values Augmentation section. There was discussion whether these are endorsements or reference values. Regardless of how they are classified, it makes sense to process these after most all the other triples.",
+          "createdAt": "2025-10-08T18:26:45Z",
+          "updatedAt": "2025-10-08T18:26:45Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87FmkiE",
+          "commit": {
+            "abbreviatedOid": "76bc75b"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:51:18Z",
+          "updatedAt": "2025-10-08T14:51:18Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nA trustee is an Environment to which the trust assessment of a domain is prefaced.\r\n```",
+              "createdAt": "2025-10-08T14:51:18Z",
+              "updatedAt": "2025-10-08T14:51:19Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 503,
+      "id": "PR_kwDOH6-tI86sr-KU",
+      "title": "More Explicit Byte Comparison Text",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/503",
+      "state": "MERGED",
+      "author": "henkbirkholz",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "fixes #317 ",
+      "createdAt": "2025-10-08T12:06:05Z",
+      "updatedAt": "2025-10-08T22:49:56Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "9d63f77fdc33589a0f5be0a61d04fc55fbaf1a4a",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "fixes-317",
+      "headRefOid": "10a843993807c167a076fe40430e835584be9404",
+      "closedAt": "2025-10-08T22:49:49Z",
+      "mergedAt": "2025-10-08T22:49:49Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "d2519bdacc51346bcf95fe34bb4ac29588e63d31"
+      },
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "LGTM.  I have inlined a couple of suggestions for replacing the odd-sounding \u201cbyte-compare\u201d verb.",
+          "createdAt": "2025-10-08T16:21:27Z",
+          "updatedAt": "2025-10-08T16:21:27Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87Fj57C",
+          "commit": {
+            "abbreviatedOid": "b57f7a4"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T12:11:11Z",
+          "updatedAt": "2025-10-08T12:11:12Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\n  The digest value can be used to locate a public key that is contained, e.g., in a lookup table. Ultimately, discovered keys SHOULD be byte-comparable with corresponding keys. As a fall-back alternative, digests can by byte-compared.\r\n```",
+              "createdAt": "2025-10-08T12:11:11Z",
+              "updatedAt": "2025-10-08T12:11:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fj7zc",
+          "commit": {
+            "abbreviatedOid": "28d2485"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T12:13:23Z",
+          "updatedAt": "2025-10-08T12:22:11Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I had never heard the term \u201cbyte-comparable\u201d before.  It sounds odd, and I am not sure I understand what it means.  Does that mean they share the saem serialisation format?\r\n\r\nPerhaps you mean \u201csuccessful byte-by-byte comparison\u201d instead?\r\n\r\nAlso, some slight grammar reflow.\r\n\r\n```suggestion\r\n  The digest value can be used to locate a public key contained in a lookup table, for example. Ultimately, the discovered keys SHOULD be byte-comparable with the corresponding keys. As an alternative, the digests can be byte-compared.\r\n```",
+              "createdAt": "2025-10-08T12:13:24Z",
+              "updatedAt": "2025-10-08T12:22:11Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\n* `tagged-key-thumbprint-type`: a `digest` (e.g., the SHA-2 hash) of a raw public key.\r\n```",
+              "createdAt": "2025-10-08T12:14:10Z",
+              "updatedAt": "2025-10-08T12:22:11Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "The new parenthetical seems misplaced.  Should it be moved just after \u201c`environment-map`\u201d?",
+              "createdAt": "2025-10-08T12:20:44Z",
+              "updatedAt": "2025-10-08T12:22:11Z"
+            },
+            {
+              "originalPosition": 25,
+              "body": "s/byte-compare/compare byte-by-byte/ ?",
+              "createdAt": "2025-10-08T12:21:54Z",
+              "updatedAt": "2025-10-08T12:22:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmCNc",
+          "commit": {
+            "abbreviatedOid": "fa5f3f3"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:23:16Z",
+          "updatedAt": "2025-10-08T14:23:16Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nThe digest value can be used to locate a public key contained in a lookup table, for example. Ultimately, the discovered keys SHOULD be able to be successfully byte-comparable with the corresponding keys.\r\nAs an alternative, the digests MAY be byte-compared.\r\n```",
+              "createdAt": "2025-10-08T14:23:16Z",
+              "updatedAt": "2025-10-08T14:23:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmDlH",
+          "commit": {
+            "abbreviatedOid": "66e7dba"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:24:37Z",
+          "updatedAt": "2025-10-08T14:24:38Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\n* `tagged-key-thumbprint-type`: a `digest` (e.g., the SHA-2 hash) of a raw public key.\r\nThe digest value can be used to locate a public key contained in a lookup table, for example. Ultimately, the discovered keys SHOULD be able to be successfully byte-compared with the corresponding keys.\r\nAs an alternative, the digests MAY be byte-compared.\r\n```",
+              "createdAt": "2025-10-08T14:24:38Z",
+              "updatedAt": "2025-10-08T14:24:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmHEP",
+          "commit": {
+            "abbreviatedOid": "3b11915"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:28:04Z",
+          "updatedAt": "2025-10-08T14:28:04Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\n* `tagged-key-thumbprint-type`: a `digest` (e.g., the SHA-2 hash) of a raw public key.\r\nThe digest value can be used to locate a public key contained in a lookup table, for example. Ultimately, the discovered keys have to be able to be successfully byte-compared with the corresponding keys.\r\n```",
+              "createdAt": "2025-10-08T14:28:04Z",
+              "updatedAt": "2025-10-08T14:28:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmJkK",
+          "commit": {
+            "abbreviatedOid": "ceff32a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:30:30Z",
+          "updatedAt": "2025-10-08T14:30:30Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nThe digest value can be used to locate a public key contained in a lookup table, for example.\r\nUltimately, the discovered keys have to be able to be successfully byte-compared with the corresponding keys.\r\n```",
+              "createdAt": "2025-10-08T14:30:30Z",
+              "updatedAt": "2025-10-08T14:30:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmKbA",
+          "commit": {
+            "abbreviatedOid": "9995913"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:31:13Z",
+          "updatedAt": "2025-10-08T14:31:14Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nFor example, he digest value can be used to locate a public key contained in a lookup table.\r\n```",
+              "createdAt": "2025-10-08T14:31:13Z",
+              "updatedAt": "2025-10-08T14:31:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmK6s",
+          "commit": {
+            "abbreviatedOid": "62c31c4"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:31:36Z",
+          "updatedAt": "2025-10-08T14:31:37Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nFor example, the digest value can be used to locate a public key contained in a lookup table.\r\n```",
+              "createdAt": "2025-10-08T14:31:37Z",
+              "updatedAt": "2025-10-08T14:31:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmMEG",
+          "commit": {
+            "abbreviatedOid": "66e7ede"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:32:33Z",
+          "updatedAt": "2025-10-08T14:32:34Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nThe Verifier MUST compare byte-by-byte the condition ECT's `authority` value to the candidate entry's `authority` value.\r\n```",
+              "createdAt": "2025-10-08T14:32:33Z",
+              "updatedAt": "2025-10-08T14:32:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmOTc",
+          "commit": {
+            "abbreviatedOid": "d897743"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:34:15Z",
+          "updatedAt": "2025-10-08T14:34:16Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\nIf all fields which are present in the condition ECT `environment-map` (e.g., instance-id or group-id) are present in the ACS entry and are binary identical, then the environments match.\r\n```",
+              "createdAt": "2025-10-08T14:34:16Z",
+              "updatedAt": "2025-10-08T14:34:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmPWu",
+          "commit": {
+            "abbreviatedOid": "d897743"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:35:03Z",
+          "updatedAt": "2025-10-08T14:35:03Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nUltimately, the discovered keys have to be successfully byte-by-byte compared with the corresponding keys.\r\n```",
+              "createdAt": "2025-10-08T14:35:03Z",
+              "updatedAt": "2025-10-08T14:35:03Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmRvp",
+          "commit": {
+            "abbreviatedOid": "d897743"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:36:59Z",
+          "updatedAt": "2025-10-08T14:37:00Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\nIf every entry in the condition ECT `authority` can be successfully byte-compared to a matching entry in the ACS entry `authority` field, then the authorities match.\r\n```",
+              "createdAt": "2025-10-08T14:36:59Z",
+              "updatedAt": "2025-10-08T14:37:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmSje",
+          "commit": {
+            "abbreviatedOid": "c208f7b"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-10-08T14:37:36Z",
+          "updatedAt": "2025-10-08T14:37:36Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmToQ",
+          "commit": {
+            "abbreviatedOid": "b247a23"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-08T14:38:30Z",
+          "updatedAt": "2025-10-08T16:12:48Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fn_Mh",
+          "commit": {
+            "abbreviatedOid": "b247a23"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T16:13:33Z",
+          "updatedAt": "2025-10-08T16:13:33Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\r\nIf all fields which are present in the condition ECT `environment-map` (e.g., instance-id or group-id) are also present in the ACS entry and are binary identical, then the environments match.\r\n```",
+              "createdAt": "2025-10-08T16:13:33Z",
+              "updatedAt": "2025-10-08T16:13:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FoC8q",
+          "commit": {
+            "abbreviatedOid": "b247a23"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T16:17:33Z",
+          "updatedAt": "2025-10-08T16:17:33Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\r\nIf every entry in the condition ECT `authority` matches byte-by-byte a corresponding entry in the ACS entry `authority` field, then the authorities match.\r\n```",
+              "createdAt": "2025-10-08T16:17:33Z",
+              "updatedAt": "2025-10-08T16:17:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FoEa4",
+          "commit": {
+            "abbreviatedOid": "b247a23"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T16:19:21Z",
+          "updatedAt": "2025-10-08T16:19:21Z",
+          "comments": [
+            {
+              "originalPosition": 39,
+              "body": "```suggestion\r\nIf the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.\r\n```",
+              "createdAt": "2025-10-08T16:19:21Z",
+              "updatedAt": "2025-10-08T16:19:22Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 504,
+      "id": "PR_kwDOH6-tI86ssSAU",
+      "title": "Authority Expressions for \"unsigned CoRIMs\"",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/504",
+      "state": "MERGED",
+      "author": "henkbirkholz",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "fixes #414 ",
+      "createdAt": "2025-10-08T12:32:16Z",
+      "updatedAt": "2025-10-08T16:09:37Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "5ffa60dc7296c5b780060a77a6adf87ded9ba180",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "fixes-414",
+      "headRefOid": "08c6d1112c6344e9a481dbdc635f1b64bbc7c5bd",
+      "closedAt": "2025-10-08T16:05:11Z",
+      "mergedAt": "2025-10-08T16:05:11Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "9d63f77fdc33589a0f5be0a61d04fc55fbaf1a4a"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87FkOt2",
+          "commit": {
+            "abbreviatedOid": "3fb0c8e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T12:34:43Z",
+          "updatedAt": "2025-10-08T12:43:43Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nAn unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, or it may be conveyed unsigned within the protection scope of a secure channel.\r\n```",
+              "createdAt": "2025-10-08T12:34:43Z",
+              "updatedAt": "2025-10-08T12:43:43Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nThe CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.  For example, this could be the sending peer in a secure channel.\r\n```",
+              "createdAt": "2025-10-08T12:40:08Z",
+              "updatedAt": "2025-10-08T12:43:43Z"
+            },
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nA CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.\r\nIf the authority cannot be expressed directly via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based).\r\nIf it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier\u2019s authority as the CoRIM origin.\r\n```",
+              "createdAt": "2025-10-08T12:43:21Z",
+              "updatedAt": "2025-10-08T12:43:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fmbiy",
+          "commit": {
+            "abbreviatedOid": "4d6b1b8"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:45:15Z",
+          "updatedAt": "2025-10-08T14:45:15Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nThe CoRIM signer authority is taken from the authenticated credential of the entity that originates the CoRIM.\r\nFor example, this entity could be the sending peer in a secure channel.\r\n```",
+              "createdAt": "2025-10-08T14:45:15Z",
+              "updatedAt": "2025-10-08T14:45:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmeT8",
+          "commit": {
+            "abbreviatedOid": "09ccdb1"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:47:36Z",
+          "updatedAt": "2025-10-08T14:47:37Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nThe CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.\r\n```",
+              "createdAt": "2025-10-08T14:47:36Z",
+              "updatedAt": "2025-10-08T14:47:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmhSd",
+          "commit": {
+            "abbreviatedOid": "08c6d11"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-10-08T14:49:28Z",
+          "updatedAt": "2025-10-08T16:02:40Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fmh_W",
+          "commit": {
+            "abbreviatedOid": "08c6d11"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-08T14:49:52Z",
+          "updatedAt": "2025-10-08T16:02:40Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fn0_0",
+          "commit": {
+            "abbreviatedOid": "08c6d11"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM, thanks!",
+          "createdAt": "2025-10-08T16:02:32Z",
+          "updatedAt": "2025-10-08T16:02:40Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 505,
+      "id": "PR_kwDOH6-tI86ssmj3",
+      "title": "staging area construction",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/505",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Provide a slightly richer description of Phase 1, including a rough definition of the staging area.\r\n\r\nFix #457",
+      "createdAt": "2025-10-08T12:59:48Z",
+      "updatedAt": "2025-10-08T14:50:26Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "c882cb2fe5a4cb71dcd2939c244c8a6e8cb31337",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "457",
+      "headRefOid": "a7cc410468c4539ddb58710196e30c5d0d84631c",
+      "closedAt": "2025-10-08T14:50:19Z",
+      "mergedAt": "2025-10-08T14:50:19Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "1724834f30d9154542e343689ced0cb74de861ab"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87Fk125",
+          "commit": {
+            "abbreviatedOid": "a17c8de"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T13:14:42Z",
+          "updatedAt": "2025-10-08T13:14:43Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nThis processing involves checking digital signatures to verify their integrity and authenticity, ensuring they are not outdated, and confirming their relevance to the current appraisal.\r\n```",
+              "createdAt": "2025-10-08T13:14:43Z",
+              "updatedAt": "2025-10-08T13:14:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmXGJ",
+          "commit": {
+            "abbreviatedOid": "40e6589"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-08T14:41:28Z",
+          "updatedAt": "2025-10-08T14:41:28Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Fl61p",
+          "commit": {
+            "abbreviatedOid": "40e6589"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2025-10-08T14:16:47Z",
+          "updatedAt": "2025-10-08T14:41:45Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nIf validation fails, the input Conceptual Message is discarded.\r\n```",
+              "createdAt": "2025-10-08T14:16:47Z",
+              "updatedAt": "2025-10-08T14:41:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmXgg",
+          "commit": {
+            "abbreviatedOid": "40e6589"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-08T14:41:52Z",
+          "updatedAt": "2025-10-08T14:41:52Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\nIf validation fails, the input Conceptual Message is discarded.\r\n```",
+              "createdAt": "2025-10-08T14:41:52Z",
+              "updatedAt": "2025-10-08T14:41:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87FmXvg",
+          "commit": {
+            "abbreviatedOid": "40e6589"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-08T14:42:01Z",
+          "updatedAt": "2025-10-08T14:42:01Z",
+          "comments": []
         }
       ]
     }
