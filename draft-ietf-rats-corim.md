@@ -1340,20 +1340,19 @@ The `reference-triple-record` has the following parameters:
 * `ref-env`: Identifies the Target Environment
 * `ref-claims`: One or more measurement claims for the Target Environment
 
-CoMID triples ({{sec-comid-triples}}) can have multiple `reference-triple-record` entries.
-Each entry could describe possible state for a particular Target Environment.
+CoMID triples ({{sec-comid-triples}}) may contain multiple `reference-triple-record` entries.
+Each entry can describe a possible state for a particular Target Environment.
 Within a `reference-triple-record`, each `ref-claims` instance could describe possible states as elements within a Target Environment.
 Further still, a measurement key-value pair could be defined to have multiple values or use wild carding to describe multiple values.
-In the context of Reference Values, any of these multiplicities could be used to describe possible state.
+In the context of Reference Values, any of these multiplicities could be used to describe a possible state.
 
-To process `reference-triple-record` both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
-First `ref-env` is used as search criteria to locate matching Evidence environments.
+To process `reference-triple-record`, both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
+First, `ref-env` is used as search criteria to locate matching Evidence environments.
 Subsequently, the `ref-claims` from this triple are used to match against the Evidence measurements for a matched environment.
 If the search criteria are satisfied, the matching entry is added to the body of Attester state, except these Claims are asserted with the Reference Value Provider's authority.
 By re-asserting Evidence matched with Reference Values using the RVP's authority, the Verifier avoids confusing Reference Values (reference / possible state) with Evidence (actual state).
 See {{-rats-endorsements}}.
-Re-asserting Evidence Claims using RVP authority is said to be "corroborated Evidence"
-because the actual state in Evidence was found within the corpus of the RVPs possible state.
+Re-asserting Evidence Claims using RVP authority is said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVPs possible state.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
