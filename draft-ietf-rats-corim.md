@@ -178,7 +178,7 @@ See {{sec-verifier-rec}}.
 
 {::boilerplate bcp14}
 
-This document uses terms and concepts defined by the RATS architecture. Specifically the terms Attester, Reference Value Provider (RVP), Endorsers, Verifier Owners and Relying Parties taken from {{Section 4 of -rats-arch}}, are heavily used in this document.
+This document uses terms and concepts defined by the RATS architecture. Specifically the terms Attester, Reference Value Provider, Endorser, Verifier Owner, and Relying Party are taken from {{Section 4 of -rats-arch}}.
 
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
@@ -304,7 +304,8 @@ The internal representations used by this document are defined in {{sec-ir-cm}}.
 
 ## Interacting with an ACS {#sec-interact-acs}
 
-Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied. The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
+Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
+The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
 
 Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
 
@@ -370,7 +371,7 @@ For more detail, see {{sec-corim-profile-types}}.
 
 * Information about the supply chain entities responsible for the contents of the CoRIM and their associated roles.
 
-A CoRIM conveyance mechanisms SHALL ensure authenticity and integrity of the CoRIM.
+CoRIM conveyance mechanisms SHALL ensure authenticity and integrity of the CoRIM.
 A CoRIM can be signed ({{sec-corim-signed}}) using COSE Sign1 to provide end-to-end security to the CoRIM contents.
 When CoRIM is signed, the protected header carries further identifying information about the CoRIM signer.
 Alternatively, CoRIM can be encoded as a #6.501 CBOR-tagged payload ({{sec-corim-map}}) and
