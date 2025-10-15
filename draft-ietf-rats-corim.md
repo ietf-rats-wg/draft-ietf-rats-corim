@@ -1827,7 +1827,7 @@ The following CDDL describes the ECT structure in more detail.
 {::include cddl/intrep-ect.cddl}
 ~~~
 
-Which attributes of ECT are mandatory is determined by the Conceptual Message (`cmtype`) inside the tuple.
+The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
 See section {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
 
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
