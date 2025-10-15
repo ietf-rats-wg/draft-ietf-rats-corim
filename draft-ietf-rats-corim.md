@@ -2060,7 +2060,7 @@ After context initialization, additional inputs are held back until appraisal pr
 
 All available CoRIMs are collected.
 
-CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.
+CoRIM tags MUST be discarded if they are expired, or if they are not associated with an authenticated and authorized source, or if they have been revoked by an authorized source.
 
 Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
 An example of such a mechanism is a digital signature.
