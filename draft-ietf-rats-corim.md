@@ -178,7 +178,8 @@ See {{sec-verifier-rec}}.
 
 {::boilerplate bcp14}
 
-This document uses terms and concepts defined by the RATS architecture. Specifically the terms Attester, Reference Value Provider, Endorser, Verifier Owner, and Relying Party are taken from {{Section 4 of -rats-arch}}.
+This document uses terms and concepts defined by the RATS architecture.
+Specifically the terms Attester, Reference Value Provider, Endorser, Verifier Owner, and Relying Party are taken from {{Section 4 of -rats-arch}}.
 
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
