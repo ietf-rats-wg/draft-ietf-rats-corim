@@ -1828,7 +1828,7 @@ The following CDDL describes the ECT structure in more detail.
 ~~~
 
 The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
-See section {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
+See {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
 
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
