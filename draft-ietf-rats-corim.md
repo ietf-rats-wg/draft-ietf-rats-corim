@@ -1352,7 +1352,7 @@ Subsequently, the `ref-claims` from this triple are used to match against the Ev
 If the search criteria are satisfied, the matching entry is added to the body of Attester state, except these Claims are asserted with the Reference Value Provider's authority.
 By re-asserting Evidence matched with Reference Values using the RVP's authority, the Verifier avoids confusing Reference Values (reference / possible state) with Evidence (actual state).
 See {{-rats-endorsements}}.
-Re-asserting Evidence Claims using RVP authority is said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVPs possible state.
+Re-asserting Evidence Claims using RVP authority is said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVP's possible state.
 
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
