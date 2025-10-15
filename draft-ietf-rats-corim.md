@@ -2097,6 +2097,7 @@ After the Verifier has processed all CoTLs it MUST discard any tags which have n
 ### Evidence Collection {#sec-ev-coll}
 
 During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
+Discovery of Evidence sources is untrusted.
 Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
 
 The exact protocol used to collect Evidence is out of scope of this specification.
