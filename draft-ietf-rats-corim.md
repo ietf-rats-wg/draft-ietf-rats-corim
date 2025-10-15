@@ -179,6 +179,8 @@ See {{sec-verifier-rec}}.
 {::boilerplate bcp14}
 
 This document uses terms and concepts defined by the RATS architecture.
+Specifically the terms Attester, Reference Value Provider, Endorser, Verifier Owner, and Relying Party are taken from {{Section 4 of -rats-arch}}.
+
 For a complete glossary, see {{Section 4 of -rats-arch}}.
 
 This document uses the terms _"actual state"_ and _"reference state"_ as defined in {{Section 2 of -rats-endorsements}}.
@@ -304,6 +306,8 @@ The internal representations used by this document are defined in {{sec-ir-cm}}.
 ## Interacting with an ACS {#sec-interact-acs}
 
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
+The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
+
 Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
 
 | CM Type | Structure | Description |
@@ -1169,7 +1173,7 @@ mode.
 mode.
 
 * `is-replay-protected` (index 4): If the flag is true, the measured environment is
-protected from replay by a previous image that differs from the current image.
+protected from rollback to previous software images.
 
 * `is-integrity-protected` (index 5): If the flag is true, the measured environment is
 protected from unauthorized update.
@@ -1833,7 +1837,8 @@ The following CDDL describes the ECT structure in more detail.
 {::include cddl/intrep-ect.cddl}
 ~~~
 
-The Conceptual Message type determines which attributes are mandatory.
+The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
+See {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
 
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
@@ -2102,19 +2107,19 @@ After the Verifier has processed all CoTLs it MUST discard any tags which have n
 ### Evidence Collection {#sec-ev-coll}
 
 During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
-The first part of this phase does not require any cryptographic validation.
-This means that Verifiers can use untrusted code to discover Evidence sources.
-Attesters are Evidence sources.
-
+Discovery of Evidence sources is untrusted.
 Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
 
 The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
+
+The exact protocol used to collect Evidence is out of scope of this specification.
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
 
 If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
 
-If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.
+If Evidence is not cryptographically signed, the underlying conveyance protocol that collected it, should provide the required security.
+In such cases, the cryptographic validation of Evidence is determined by the security offered by the conveyance protocol.
 
 The way cryptographic signature validation works depends on the specific Evidence collection method used.
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
@@ -2180,9 +2185,9 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 > > **copy**(e.`measurement-map`, `rv`.`condition`.`element-list`.`element-map`)
 
 {: rtt-enum}
-* The signer of the Endorsement conceptual message is copied to the `rv`.`addition`.`authority` field.
+* The signer of the Reference Values conceptual message is copied to the `rv`.`addition`.`authority` field.
 
-* If the Endorsement conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
+* If the Reference Values conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
 
 #### Endorsement Triples Transformations {#sec-end-trans}
 
@@ -2249,7 +2254,7 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 
 * If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-##### Conditional Endorsement Triple Transformation {#sec-end-trans-cest}
+##### Conditional Endorsement Series Triple Transformation {#sec-end-trans-cest}
 
 {:cestt-enum: counter="cestt" style="format Step %d."}
 
@@ -2493,7 +2498,7 @@ For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the 
 
 If satisfied, for the `rv` entry, the following three steps are performed:
 
-1. The `addition` ECT is moved to the ACS, with `cm-type` set to `reference-values`
+1. The `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`
 2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
 3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
 
@@ -2739,7 +2744,7 @@ The condition therefore treats the minimum SVN as an exact state and not one to 
 A `digests` entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
 
-In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
+In the simple case, a condition ECT digests entry containing one digest matches a candidate entry containing a single entry with the same algorithm and value.
 
 If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
 This is to prevent downgrade attacks.
