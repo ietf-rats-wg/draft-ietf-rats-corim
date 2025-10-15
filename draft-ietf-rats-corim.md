@@ -2109,7 +2109,7 @@ The exact protocol used to collect Evidence is out of scope of this specificatio
 If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
 
 If Evidence is not cryptographically signed, the underlying conveyance protocol that collected it, should provide the required security.
-In such cases, the cryptographic verification of Evidence is determined by the security offered by the conveyance protocol.
+In such cases, the cryptographic validation of Evidence is determined by the security offered by the conveyance protocol.
 
 The way cryptographic signature validation works depends on the specific Evidence collection method used.
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
