@@ -2709,27 +2709,28 @@ The following subsections define the comparison algorithms for the `measurement-
 
 ##### Comparison for version entries
 
-The value stored under `measurement-values-map` codepoint 0 is an version label, which MUST have type `version-map`.
-Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
+The value stored under `measurement-values-map` codepoint 0 in a candidate entry is an version label, which MUST have type `version-map`, named ENTRY.
+The value stored in the condition ECT under `measurement-values-map` codepoint 0 is named CONDITION.
+ENTRY and CONDITION can only be compared for equality, as they are colloquial versions that cannot specify ordering.
 
 ##### Comparison for svn entries
 
-The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which MUST have type `svn-type`.
+The candidate entry value stored under `measurement-values-map` codepoint 1 is a security version number, which MUST have type `svn-type`, named ENTRY.
 
-If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
+If ENTRY is a `uint` or a `uint` tagged with #6.552, then comparison with the condition ECT value named CONDITION is as follows.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed on the `uint` components.
-The comparison MUST return true if the value of SVN is equal to the `uint` value in the condition ECT.
+*  If CONDITION for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed on the `uint` components.
+The comparison MUST return true if the value of ENTRY is equal to the `uint` value in CONDITION.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
-The comparison MUST return true if the `uint` value in the condition ECT is less than or equal to the value of SVN.
+*  If CONDITION for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
+The comparison MUST return true if the `uint` value in CONDITION is less than or equal to the value of ENTRY.
 
-If the entry `svn-type` is a `uint` tagged with #6.553, then comparison with the `uint` named as MINSVN is as follows.
+If ENTRY is a `uint` tagged with #6.553, then comparison with the condition ECT value named CONDITION is as follows.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then the comparison MUST return false.
+*  If CONDITION for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then the comparison MUST return false.
 
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then an equality comparison is performed.
-The comparison MUST return true if the value of MINSVN is equal to the `uint` value in the condition ECT.
+*  If CONDITION for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then an equality comparison is performed.
+The comparison MUST return true if the value of ENTRY is equal to the `uint` value in CONDITION.
 
 The meaning of a minimum SVN as an entry value is only meaningful as an endorsed value that has been added to the ACS.
 The condition therefore treats the minimum SVN as an exact state and not one to compare with inequality.
@@ -2739,60 +2740,60 @@ The condition therefore treats the minimum SVN as an exact state and not one to 
 A `digests` entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
 
-In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.
+In the simple case, a CONDITION digests entry containing one digest matches a candidate ENTRY containing a single entry with the same algorithm and value.
 
-If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
+If there are multiple algorithms in common between CONDITION and ENTRY, then the bytes paired with common algorithms MUST be equal.
 This is to prevent downgrade attacks.
 The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
 If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
-If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
+If CONDITION and ENTRY use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
 
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
+The comparison MUST return false if the CBOR encoding of the `digests` entry in CONDITION or ENTRY is incorrect. For example, if fields are missing or if they are the wrong type.
 
-The comparison MUST return false if the condition ECT digests entry does not contain any digests.
+The comparison MUST return false if CONDITION digests entry does not contain any digests.
 
-The comparison MUST return false if either digests entry contains multiple values for the same hash algorithm.
+The comparison MUST return false if either CONDITION or ENTRY contains multiple values for the same hash algorithm.
 
-The Verifier MUST iterate over the condition ECT `digests` array, locating the common hash algorithm identifiers which are present in both the condition ECT and in the candidate entry.
-If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
+The Verifier MUST iterate over the CONDITION `digests` array, locating the common hash algorithm identifiers which are present in both CONDITION and ENTRY.
+If the value associated with any common hash algorithm identifier in CONDITION differs from the value for the same algorithm identifier in ENTRY then the comparison MUST return false.
 
-The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.
+The comparison MUST return false if there are no hash algorithms from CONDITION in common with the hash algorithms from ENTRY.
 
 ##### Comparison for raw-value entries
 
 A `raw-value` entry contains binary data.
 
-The value stored under `measurement-values-map` codepoint 4 in an ACS entry MUST be a `raw-value` entry, which MUST be tagged and have type `bytes`.
+The value stored under `measurement-values-map` codepoint 4 in a candidate ENTRY MUST be a `raw-value` entry, which MUST be tagged and have type `bytes`.
 
-The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
+The value stored in CONDITION under `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
 
-If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
+If CONDITION `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
 The standard comparison function defined in this document removes the tag before performing the comparison.
 
-For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+For backwards compatibility, if CONDITION `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
 
-The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
+The comparison MUST return false if the lengths of ENTRY value and CONDITION value are different.
 
-The comparison MUST return false if the lengths of the condition ECT mask and value are different.
+The comparison MUST return false if the lengths of CONDITION mask and value are different.
 
 The comparison MUST use the mask to determine which bits to compare.
-If a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.
+If a bit in the mask is 0 then this indicates that the corresponding bit in ENTRY value may have either value.
 If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
 
 ##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
 
-The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.
-If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
-If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the `cryptokeys` condition ECT matches.
+The CBOR tag of the first entry of the CONDITION `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate ENTRY `cryptokeys` value.
+If the CBOR tags match, then the bytes following the CBOR tag from CONDITION entry are compared byte-by-byte with the bytes following the CBOR tag from ENTRY.
+If the byte strings match and there is another array entry, then the next entry from CONDITION array is likewise compared with the next entry of ENTRY array.
+If all entries of CONDITION array match a corresponding entry in ENTRY array, then the `cryptokeys` condition ECT matches.
 Otherwise, `cryptokeys` does not match.
 
 ##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
 
-For each Integrity Register entry in the condition ECT, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in the candidate entry.
+For each Integrity Register entry in CONDITION, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in the candidate ENTRY.
 If no entry is found, the comparison MUST return false.
 Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
-Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
+Note that it is not required for all the entries in the candidate ENTRY to be used during matching: CONDITION could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while CONDITION could describe a subset of PCRs.
 
 ##### Comparison for int-range entries
 
