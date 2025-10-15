@@ -2100,6 +2100,8 @@ During the Evidence collection phase, the Verifier communicates with Attesters t
 Discovery of Evidence sources is untrusted.
 Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
 
+The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
+
 The exact protocol used to collect Evidence is out of scope of this specification.
 
 #### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
