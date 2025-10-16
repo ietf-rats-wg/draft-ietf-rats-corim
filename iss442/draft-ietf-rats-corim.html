@@ -1507,7 +1507,7 @@ This document specifies the information elements for representing Endorsements a
                             <p id="section-toc.1-1.9.2.2.2.3.2.4.2.2.1"><a href="#section-9.2.3.4.2" class="auto internal xref">9.2.3.4.2</a>.  <a href="#name-conditional-endorsement-trip" class="internal xref">Conditional Endorsement Triple Transformation</a></p>
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2.2.3.2.4.2.3">
-                            <p id="section-toc.1-1.9.2.2.2.3.2.4.2.3.1"><a href="#section-9.2.3.4.3" class="auto internal xref">9.2.3.4.3</a>.  <a href="#name-conditional-endorsement-tripl" class="internal xref">Conditional Endorsement Triple Transformation</a></p>
+                            <p id="section-toc.1-1.9.2.2.2.3.2.4.2.3.1"><a href="#section-9.2.3.4.3" class="auto internal xref">9.2.3.4.3</a>.  <a href="#name-conditional-endorsement-seri" class="internal xref">Conditional Endorsement Series Triple Transformation</a></p>
 </li>
                           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2.2.3.2.4.2.4">
                             <p id="section-toc.1-1.9.2.2.2.3.2.4.2.4.1"><a href="#section-9.2.3.4.4" class="auto internal xref">9.2.3.4.4</a>.  <a href="#name-key-verification-triples-tr" class="internal xref">Key Verification Triples Transformation</a></p>
@@ -1758,12 +1758,13 @@ NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
 <p id="section-1.1-2">This document uses terms and concepts defined by the RATS architecture.
-For a complete glossary, see <span><a href="https://rfc-editor.org/rfc/rfc9334#section-4" class="relref">Section 4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
-<p id="section-1.1-3">This document uses the terms <em>"actual state"</em> and <em>"reference state"</em> as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-endorsements-07#section-2" class="relref">Section 2</a> of [<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
-<p id="section-1.1-4">In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
-<p id="section-1.1-5">The terminology from CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>, CDDL <span>[<a href="#RFC8610" class="cite xref">RFC8610</a>]</span> and COSE <span>[<a href="#STD96" class="cite xref">STD96</a>]</span> applies;
+Specifically the terms Attester, Reference Value Provider, Endorser, Verifier Owner, and Relying Party are taken from <span><a href="https://rfc-editor.org/rfc/rfc9334#section-4" class="relref">Section 4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">For a complete glossary, see <span><a href="https://rfc-editor.org/rfc/rfc9334#section-4" class="relref">Section 4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-4">This document uses the terms <em>"actual state"</em> and <em>"reference state"</em> as defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-endorsements-07#section-2" class="relref">Section 2</a> of [<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.1-5">In this document, the term CoRIM message and CoRIM documents are used as synonyms. A CoRIM data structure can be at rest (e.g., residing in a file system as a document) or can be in flight (e.g., conveyed as a message in a protocol exchange). The bytes composing the CoRIM data structure are the same either way.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
+<p id="section-1.1-6">The terminology from CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span>, CDDL <span>[<a href="#RFC8610" class="cite xref">RFC8610</a>]</span> and COSE <span>[<a href="#STD96" class="cite xref">STD96</a>]</span> applies;
 in particular, CBOR diagnostic notation is defined in <span><a href="https://rfc-editor.org/rfc/rfc8949#section-8" class="relref">Section 8</a> of [<a href="#STD94" class="cite xref">STD94</a>]</span>
-and <span><a href="https://rfc-editor.org/rfc/rfc8610#appendix-G" class="relref">Appendix G</a> of [<a href="#RFC8610" class="cite xref">RFC8610</a>]</span>. Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
+and <span><a href="https://rfc-editor.org/rfc/rfc8610#appendix-G" class="relref">Appendix G</a> of [<a href="#RFC8610" class="cite xref">RFC8610</a>]</span>. Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.<a href="#section-1.1-6" class="pilcrow">¶</a></p>
 <div id="sec-glossary">
 <section id="section-1.1.1">
           <h4 id="name-glossary">
@@ -1923,7 +1924,8 @@ The internal representations used by this document are defined in <a href="#sec-
 <a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-interacting-with-an-acs" class="section-name selfRef">Interacting with an ACS</a>
         </h3>
 <p id="section-2.2-1">Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+The processing sequence of Conceptual Message interaction with ACS is guided by <a href="#sec-appraisal-procedure" class="auto internal xref">Section 8.1</a>.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:<a href="#section-2.2-2" class="pilcrow">¶</a></p>
 <span id="name-conceptual-message-represen"></span><div id="tbl-cmrr">
 <table class="center" id="table-1">
           <caption>
@@ -3363,7 +3365,7 @@ mode.<a href="#section-5.1.4.1.4.5-4.4.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.5-4.5">
                     <p id="section-5.1.4.1.4.5-4.5.1"><code>is-replay-protected</code> (index 4): If the flag is true, the measured environment is
-protected from replay by a previous image that differs from the current image.<a href="#section-5.1.4.1.4.5-4.5.1" class="pilcrow">¶</a></p>
+protected from rollback to previous software images.<a href="#section-5.1.4.1.4.5-4.5.1" class="pilcrow">¶</a></p>
 </li>
                   <li class="normal" id="section-5.1.4.1.4.5-4.6">
                     <p id="section-5.1.4.1.4.5-4.6.1"><code>is-integrity-protected</code> (index 5): If the flag is true, the measured environment is
@@ -4367,7 +4369,8 @@ cm-type =  &amp;(
 )
 </pre><a href="#section-9.1.1-4" class="pilcrow">¶</a>
 </div>
-<p id="section-9.1.1-5">The Conceptual Message type determines which attributes are mandatory.<a href="#section-9.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.1.1-5">The Conceptual Message type (<code>cmtype</code>) determines which attributes are mandatory.
+See <a href="#sec-ir-evidence" class="auto internal xref">Section 9.1.3</a> through to <a href="#sec-ir-ars" class="auto internal xref">Section 9.1.10</a> for ECTs of various conceptual messages.<a href="#section-9.1.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-ir-ext">
@@ -5173,7 +5176,7 @@ The primary goal of this phase is to ensure that all necessary information is av
 <a href="#section-9.2.1.1" class="section-number selfRef">9.2.1.1. </a><a href="#name-corim-selection" class="section-name selfRef">CoRIM Selection</a>
             </h5>
 <p id="section-9.2.1.1-1">All available CoRIMs are collected.<a href="#section-9.2.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.2.1.1-2">CoRIMs that are not within their validity period, or that cannot be associated with an authenticated and authorized source MUST be discarded.<a href="#section-9.2.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.2.1.1-2">CoRIM tags MUST be discarded if they are expired, or if they are not associated with an authenticated and authorized source, or if they have been revoked by an authorized source.<a href="#section-9.2.1.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.1-3">Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded.
 An example of such a mechanism is a digital signature.<a href="#section-9.2.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-9.2.1.1-4">Other selection criteria MAY be applied.
@@ -5226,18 +5229,18 @@ In such a case, the Verifier Owner may instruct the Verifier to discard tags act
 <a href="#section-9.2.2" class="section-number selfRef">9.2.2. </a><a href="#name-evidence-collection" class="section-name selfRef">Evidence Collection</a>
           </h4>
 <p id="section-9.2.2-1">During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
-The first part of this phase does not require any cryptographic validation.
-This means that Verifiers can use untrusted code to discover Evidence sources.
-Attesters are Evidence sources.<a href="#section-9.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.2.2-2">Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.<a href="#section-9.2.2-2" class="pilcrow">¶</a></p>
-<p id="section-9.2.2-3">The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.<a href="#section-9.2.2-3" class="pilcrow">¶</a></p>
+Discovery of Evidence sources is untrusted.
+Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.<a href="#section-9.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.2.2-2">The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.<a href="#section-9.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.2.2-3">The exact protocol used to collect Evidence is out of scope of this specification.<a href="#section-9.2.2-3" class="pilcrow">¶</a></p>
 <div id="sec-crypto-validate-evidence">
 <section id="section-9.2.2.1">
             <h5 id="name-cryptographic-validation-of">
 <a href="#section-9.2.2.1" class="section-number selfRef">9.2.2.1. </a><a href="#name-cryptographic-validation-of" class="section-name selfRef">Cryptographic Validation of Evidence</a>
             </h5>
 <p id="section-9.2.2.1-1">If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.<a href="#section-9.2.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.2.2.1-2">If Evidence is not cryptographically signed, the security context of the conveyance protocol that collected it is used to cryptographically validate Evidence.<a href="#section-9.2.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.2.2.1-2">If Evidence is not cryptographically signed, the underlying conveyance protocol that collected it, should provide the required security.
+In such cases, the cryptographic validation of Evidence is determined by the security offered by the conveyance protocol.<a href="#section-9.2.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-9.2.2.1-3">The way cryptographic signature validation works depends on the specific Evidence collection method used.
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
@@ -5366,12 +5369,12 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 <span class="break"></span><dl class="olPercent" id="section-9.2.3.3-7">
 <dt>Step 4.</dt>
 <dd id="section-9.2.3.3-7.1">
-                <p id="section-9.2.3.3-7.1.1">The signer of the Endorsement conceptual message is copied to the <code>rv</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-9.2.3.3-7.1.1" class="pilcrow">¶</a></p>
+                <p id="section-9.2.3.3-7.1.1">The signer of the Reference Values conceptual message is copied to the <code>rv</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-9.2.3.3-7.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 <dt>Step 5.</dt>
 <dd id="section-9.2.3.3-7.2">
-                <p id="section-9.2.3.3-7.2.1">If the Endorsement conceptual message has a profile, the profile identifier is copied to the <code>rv</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-9.2.3.3-7.2.1" class="pilcrow">¶</a></p>
+                <p id="section-9.2.3.3-7.2.1">If the Reference Values conceptual message has a profile, the profile identifier is copied to the <code>rv</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-9.2.3.3-7.2.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 </dl>
@@ -5547,8 +5550,8 @@ The handling of dynamic Evidence transformation algorithms is out of scope for t
 </div>
 <div id="sec-end-trans-cest">
 <section id="section-9.2.3.4.3">
-              <h6 id="name-conditional-endorsement-tripl">
-<a href="#section-9.2.3.4.3" class="section-number selfRef">9.2.3.4.3. </a><a href="#name-conditional-endorsement-tripl" class="section-name selfRef">Conditional Endorsement Triple Transformation</a>
+              <h6 id="name-conditional-endorsement-seri">
+<a href="#section-9.2.3.4.3" class="section-number selfRef">9.2.3.4.3. </a><a href="#name-conditional-endorsement-seri" class="section-name selfRef">Conditional Endorsement Series Triple Transformation</a>
               </h6>
 <span class="break"></span><dl class="olPercent" id="section-9.2.3.4.3-1">
 <dt>Step 1.</dt>
@@ -5954,7 +5957,7 @@ For each <code>rv</code> entry, the <code>condition</code> ECT is compared with 
 <p id="section-9.3.3-4">If satisfied, for the <code>rv</code> entry, the following three steps are performed:<a href="#section-9.3.3-4" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-9.3.3-5">
 <li id="section-9.3.3-5.1">
-              <p id="section-9.3.3-5.1.1">The <code>addition</code> ECT is moved to the ACS, with <code>cm-type</code> set to <code>reference-values</code><a href="#section-9.3.3-5.1.1" class="pilcrow">¶</a></p>
+              <p id="section-9.3.3-5.1.1">The <code>addition</code> ECT is moved to the ACS, with <code>cmtype</code> set to <code>reference-values</code><a href="#section-9.3.3-5.1.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-9.3.3-5.2">
               <p id="section-9.3.3-5.2.1">The claims, i.e., the <code>element-list</code> from the ACS ECT with <code>cmtype</code> set to <code>evidence</code> is copied to the <code>element-list</code> of the <code>addition</code> ECT<a href="#section-9.3.3-5.2.1" class="pilcrow">¶</a></p>
@@ -6254,7 +6257,7 @@ The condition therefore treats the minimum SVN as an exact state and not one to 
               </h6>
 <p id="section-9.4.6.1.3-1">A <code>digests</code> entry contains one or more digests, each measuring the same object.
 When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.<a href="#section-9.4.6.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-9.4.6.1.3-2">In the simple case, a condition ECT digests entry containing one digest matches matches a candidate entry containing a single entry with the same algorithm and value.<a href="#section-9.4.6.1.3-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.6.1.3-2">In the simple case, a condition ECT digests entry containing one digest matches a candidate entry containing a single entry with the same algorithm and value.<a href="#section-9.4.6.1.3-2" class="pilcrow">¶</a></p>
 <p id="section-9.4.6.1.3-3">If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
 This is to prevent downgrade attacks.
 The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
