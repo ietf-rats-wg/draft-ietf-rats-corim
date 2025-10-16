@@ -1343,7 +1343,8 @@ The `reference-triple-record` has the following parameters:
 CoMID triples ({{sec-comid-triples}}) may contain multiple `reference-triple-record` entries.
 Each entry can describe a possible state for a particular Target Environment.
 Within a `reference-triple-record`, each `ref-claims` instance could describe possible states as elements within a Target Environment.
-Further still, a measurement key-value pair could be defined to have multiple values or use wild carding to describe multiple values.
+Note that a measurement key-value pair could be defined to have multiple values or use "wild carding" to describe multiple values.
+For example, when using `int-range`, `min-svn`.
 In the context of Reference Values, any of these multiplicities could be used to describe a possible state.
 
 To process `reference-triple-record`, both the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
