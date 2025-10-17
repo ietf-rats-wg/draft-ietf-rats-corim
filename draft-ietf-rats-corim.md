@@ -1345,6 +1345,8 @@ By re-asserting Evidence using the RVP's authority, the Verifier can avoid mixin
 See {{-rats-endorsements}}.
 Re-asserted Evidence using RVP authority is said to be "corroborated".
 
+It is valid to have multiple reference-triple-records with the same environment map within a reference-triple-array. When multiple records reference the same Target Environment, appraisal succeeds if the evidence matches any of the reference values (logical OR operation).
+
 #### Endorsed Values Triple {#sec-comid-triple-endval}
 
 An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
@@ -2446,6 +2448,13 @@ Processing a triple may result in ACS modifications that affect matching behavio
 The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
 
 This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
+
+##### Idempotency of triple processing
+
+Identical triples are idempotent with respect to processing.
+When a Verifier encounters multiple instances of identical triples (whether within the same CoRIM or across multiple CoRIMs), the processing result SHALL be the same as processing a single instance.
+
+Including identical reference values or other triples multiple times is redundant and implementers SHOULD optimize by detecting and eliminating duplicate processing where possible.
 
 #### ACS Augmentation Requirements {#sec-acs-aug-req}
 
