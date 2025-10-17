@@ -1804,7 +1804,7 @@ are used with the meaning defined in {{sec-glossary}}.
 ~~~ aasvg
 {::include pics/corim-verifier.txt}
 ~~~
-{: #fig-verifier-internal artwork-align="left" title="CoRIM Verifier Flow"}
+{: #fig-verifier-internal artwork-align="center" title="CoRIM Verifier Flow"}
 
 ### Internal Representation of Conceptual Messages {#sec-ir-cm}
 
