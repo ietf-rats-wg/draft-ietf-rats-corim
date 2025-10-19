@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-16T01:54:30.440774+00:00",
+  "timestamp": "2025-10-19T02:06:23.074136+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12815,15 +12815,17 @@
       "id": "I_kwDOH6-tI87PI3Qk",
       "title": "CoRIM Revocation",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/495",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "steven-bellock"
+      ],
       "labels": [],
       "body": "Creating an issue for submitting https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/487.\n\nIt seems like currently the preferred method of CoRIM revocation is via revocation of the key / certificate that signed the CoRIM. If a signer wants to limit the scope of revocation then it can, for example, generate a new signing key and certificate for each new [CoRIM Identifier](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-corim-identifier). This issue is to explore direct revocation of a CoRIM via (something like) [xcorim](https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf).",
       "createdAt": "2025-10-01T21:33:21Z",
-      "updatedAt": "2025-10-08T15:37:42Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-17T01:43:57Z",
+      "closedAt": "2025-10-17T01:43:57Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -12831,6 +12833,13 @@
           "body": "@nedmsmith is my summary of the current state of things correct?",
           "createdAt": "2025-10-01T21:34:50Z",
           "updatedAt": "2025-10-01T21:34:50Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This was completed in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/487.",
+          "createdAt": "2025-10-17T01:43:57Z",
+          "updatedAt": "2025-10-17T01:43:57Z"
         }
       ]
     },
@@ -79548,13 +79557,13 @@
       "labels": [],
       "body": "Reworded section 5.1.4.2 to better clarify the scope of how possible state could be represented in reference values for reference-triple-record and reference-triples.\r\n\r\nFix #442 ",
       "createdAt": "2025-10-07T18:30:17Z",
-      "updatedAt": "2025-10-15T23:31:36Z",
+      "updatedAt": "2025-10-17T18:19:05Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d2519bdacc51346bcf95fe34bb4ac29588e63d31",
+      "baseRefOid": "294c0d6d4eebe6040e9bfa08e1898c17efb6d2ed",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "iss442",
-      "headRefOid": "4b63db1f310b448fa7c8f1a2d59228c40be174e2",
+      "headRefOid": "ff80f9f032e51e307d95743309be9dd506e4edd4",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -79566,6 +79575,41 @@
           "body": "@thomas-fossati to polish language and would request a review before final merge!",
           "createdAt": "2025-10-15T23:31:36Z",
           "updatedAt": "2025-10-15T23:31:36Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati @yogeshbdeshpande this commit https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/500/commits/adc4baf73ca271c069709244a45adc592b3bacce is incorrect. If the thing gets hacked then the state will not match any of the reference values.",
+          "createdAt": "2025-10-17T16:13:22Z",
+          "updatedAt": "2025-10-17T17:53:33Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @thomas-fossati @yogeshbdeshpande this commit [adc4baf](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/adc4baf73ca271c069709244a45adc592b3bacce) is incorrect. If the thing gets hacked then then the state will not match any of the reference values.\r\n\r\n@steven-bellock Can you please clarify what you meant..?\r\nWe are talking of Reference Values here, which is coming from an Endorser in Supply Chain.\r\n\r\nThe Evidence can get hacked and the state will not match Reference State and Fail the Appraisal?\r\n\r\n* What does the thing means in your statement above? Can you please clarify ?",
+          "createdAt": "2025-10-17T17:41:59Z",
+          "updatedAt": "2025-10-17T17:41:59Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">The Evidence can get hacked and the state will not match Reference State and Fail the Appraisal?\r\n\r\nCorrect, which is not consistent with\r\n>At any given point in time, an Attester can occupy only one of these states.\r\n\r\nassuming that the Reference Value Provider does not list \"hacked states\" as Reference Values.",
+          "createdAt": "2025-10-17T18:10:27Z",
+          "updatedAt": "2025-10-17T18:10:27Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > The Evidence can get hacked and the state will not match Reference State and Fail the Appraisal?\r\n> \r\n> Correct, which is not consistent with\r\n> \r\n> > At any given point in time, an Attester can occupy only one of these states.\r\n> \r\n> assuming that the Reference Value Provider does not list \"hacked states\" as Reference Values.\r\n\r\nI got it, I think, it should be re-worded as:\r\n\r\n`At any given point in time, an Attester is expected to match only one of these states`",
+          "createdAt": "2025-10-17T18:14:39Z",
+          "updatedAt": "2025-10-17T18:14:39Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati : Please review the suggested modifications to connect Reference State at the start, to the measurements in the middle of the RV Triples description!\r\n\r\nWe need to close this early Monday Morning, I am here to help accomplish this!",
+          "createdAt": "2025-10-17T18:18:40Z",
+          "updatedAt": "2025-10-17T18:19:05Z"
         }
       ],
       "reviews": [
@@ -79967,6 +80011,279 @@
               "body": "```suggestion\r\nRe-asserting Evidence Claims using RVP authority is said to be \"corroborated Evidence\" because the actual state in Evidence was found within the corpus of the RVP's possible state.\r\n```",
               "createdAt": "2025-10-15T14:46:15Z",
               "updatedAt": "2025-10-15T14:46:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HXQ59",
+          "commit": {
+            "abbreviatedOid": "abd2e85"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:09:37Z",
+          "updatedAt": "2025-10-16T13:09:37Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "Line 1341 does not make sense\r\n`The `ref-claims` in a `reference-triple-record` can contain one or more `measurement-map` items`",
+              "createdAt": "2025-10-16T13:09:37Z",
+              "updatedAt": "2025-10-16T13:09:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HXReo",
+          "commit": {
+            "abbreviatedOid": "abd2e85"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:10:03Z",
+          "updatedAt": "2025-10-16T13:10:04Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I will suggest something better!",
+              "createdAt": "2025-10-16T13:10:03Z",
+              "updatedAt": "2025-10-16T13:10:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HXnNB",
+          "commit": {
+            "abbreviatedOid": "abd2e85"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:28:15Z",
+          "updatedAt": "2025-10-16T13:28:15Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I'm not sure what you mean by \"it makes no sense\" when it's a literal translation of what the CDDL says. But please go ahead and suggest something better!  \ud83d\ude04 ",
+              "createdAt": "2025-10-16T13:28:15Z",
+              "updatedAt": "2025-10-16T13:28:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HXu7y",
+          "commit": {
+            "abbreviatedOid": "abd2e85"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:35:23Z",
+          "updatedAt": "2025-10-16T13:35:23Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "> I'm not sure what you mean by \"it makes no sense\" when it's a literal translation of what the CDDL says. But please go ahead and suggest something better! \ud83d\ude04\r\n\r\nBetween, have a read of the entire section from top to bottom, and we will soon realise, we toggle between measurements and states, moving from one to other and back, frequently, just falling the section apart!",
+              "createdAt": "2025-10-16T13:35:23Z",
+              "updatedAt": "2025-10-16T13:35:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HX-Ib",
+          "commit": {
+            "abbreviatedOid": "abd2e85"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:46:42Z",
+          "updatedAt": "2025-10-16T13:46:42Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "Really? I did the same and thought it held together pretty well.",
+              "createdAt": "2025-10-16T13:46:42Z",
+              "updatedAt": "2025-10-16T13:46:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HYEmr",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:51:28Z",
+          "updatedAt": "2025-10-16T13:51:28Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "```suggestion\r\nThe `ref-claims` in a `reference-triple-record` can contain one or more entries.\r\n```",
+              "createdAt": "2025-10-16T13:51:28Z",
+              "updatedAt": "2025-10-16T13:54:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HYGk0",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:52:45Z",
+          "updatedAt": "2025-10-16T13:52:45Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "Also where is the possibility of the combination of 1. and 2. ?",
+              "createdAt": "2025-10-16T13:52:45Z",
+              "updatedAt": "2025-10-16T13:52:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HYIw6",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "please see the suggested change!",
+          "createdAt": "2025-10-16T13:54:22Z",
+          "updatedAt": "2025-10-16T13:54:22Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HYO9b",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T13:58:40Z",
+          "updatedAt": "2025-10-16T13:58:40Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "No need to specify the exact numbers: the ordered list is handled by the renderer.",
+              "createdAt": "2025-10-16T13:58:40Z",
+              "updatedAt": "2025-10-16T13:58:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HYSR6",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T14:00:48Z",
+          "updatedAt": "2025-10-16T14:00:48Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "> Also where is the possibility of the combination of 1. and 2. ?\r\n\r\n1 and 2 are not phrased as alternatives anymore, therefore they can coexist.  (During the call, @nedmsmith asked to remove it because it was effectively redundant.)",
+              "createdAt": "2025-10-16T14:00:48Z",
+              "updatedAt": "2025-10-16T14:00:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HYTxI",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-16T14:02:00Z",
+          "updatedAt": "2025-10-16T14:02:01Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "I have no problem with the suggestion, but I don't understand how it improves on the current text.",
+              "createdAt": "2025-10-16T14:02:00Z",
+              "updatedAt": "2025-10-16T14:02:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HwMb7",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-17T17:44:17Z",
+          "updatedAt": "2025-10-17T17:44:18Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\nReference Values Triples describe the possible reference states of an Attester.\r\n```",
+              "createdAt": "2025-10-17T17:44:18Z",
+              "updatedAt": "2025-10-17T17:44:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HwOJU",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-17T17:46:23Z",
+          "updatedAt": "2025-10-17T17:46:24Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "```suggestion\r\n\r\nIn a Reference Values Triple, the reference state is expressed using reference measurements pertaining to a Environment.\r\n```",
+              "createdAt": "2025-10-17T17:46:23Z",
+              "updatedAt": "2025-10-17T17:46:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87HwRR-",
+          "commit": {
+            "abbreviatedOid": "ff80f9f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-17T17:51:40Z",
+          "updatedAt": "2025-10-17T17:51:40Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Well the ref-claims itself are items/entries, the `measurement-map` is just the way to express them, in cddl",
+              "createdAt": "2025-10-17T17:51:40Z",
+              "updatedAt": "2025-10-17T17:51:40Z"
             }
           ]
         }
@@ -80846,19 +81163,48 @@
       "labels": [],
       "body": "Incorporating Review Feedback and Inserting a top level Verifier Diagram",
       "createdAt": "2025-10-12T15:34:54Z",
-      "updatedAt": "2025-10-12T15:37:10Z",
+      "updatedAt": "2025-10-17T17:18:33Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d2519bdacc51346bcf95fe34bb4ac29588e63d31",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "corim-verifier-diag",
-      "headRefOid": "6ddbd05b2313bf1ed57c47af4c3850356314c78f",
+      "headRefOid": "327ee072bd7d9e38880408f591c4b27a65366095",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes, Thanks Thomas, we all agreed to do the rotation bit ",
+          "createdAt": "2025-10-16T13:11:59Z",
+          "updatedAt": "2025-10-16T13:12:17Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati @nedmsmith @henkbirkholz @steven-bellock \r\n\r\nAll comments have been addressed now!\r\n\r\nPlease review one more time, I plan to merge this on one approval.\r\n\r\nThis needs to be speed up!",
+          "createdAt": "2025-10-17T17:18:33Z",
+          "updatedAt": "2025-10-17T17:18:33Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87HXSME",
+          "commit": {
+            "abbreviatedOid": "6ddbd05"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "This is too wide: it breaks horribly in the TXT rendering.\r\nPerhaps try rotating it 90 degrees?",
+          "createdAt": "2025-10-16T13:10:40Z",
+          "updatedAt": "2025-10-16T13:10:40Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 509,
