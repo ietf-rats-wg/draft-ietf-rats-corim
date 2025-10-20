@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 20 April 2026                                            Linaro
+Expires: 23 April 2026                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         17 October 2025
+                                                         20 October 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2026.
+   This Internet-Draft will expire on 23 April 2026.
 
 Copyright Notice
 
@@ -173,7 +173,8 @@ Table of Contents
          9.2.3.4.  Endorsement Triples Transformations
            9.2.3.4.1.  Endorsed Values Triple Transformation
            9.2.3.4.2.  Conditional Endorsement Triple Transformation
-           9.2.3.4.3.  Conditional Endorsement Triple Transformation
+           9.2.3.4.3.  Conditional Endorsement Series Triple
+                   Transformation
            9.2.3.4.4.  Key Verification Triples Transformation
          9.2.3.5.  Domain Membership Triples Transformation
      9.3.  ACS Augmentation - Phases 2, 3, and 4
@@ -287,7 +288,11 @@ Table of Contents
    capitals, as shown here.
 
    This document uses terms and concepts defined by the RATS
-   architecture.  For a complete glossary, see Section 4 of [RFC9334].
+   architecture.  Specifically the terms Attester, Reference Value
+   Provider, Endorser, Verifier Owner, and Relying Party are taken from
+   Section 4 of [RFC9334].
+
+   For a complete glossary, see Section 4 of [RFC9334].
 
    This document uses the terms _"actual state"_ and _"reference state"_
    as defined in Section 2 of [I-D.ietf-rats-endorsements].
@@ -478,10 +483,13 @@ Table of Contents
 
    Conceptual Messages interact with an ACS by specifying criteria that
    should be met by the ACS and by presenting the assertions that should
-   be added to the ACS if the criteria are satisfied.  Internal
-   representations of Conceptual Messages, ACS, and Attestation Results
-   Set (ARS) SHOULD satisfy the following requirements for Verifier
-   reconciliation and appraisal processing:
+   be added to the ACS if the criteria are satisfied.  The processing
+   sequence of Conceptual Message interaction with ACS is guided by
+   Section 8.1.
+
+   Internal representations of Conceptual Messages, ACS, and Attestation
+   Results Set (ARS) SHOULD satisfy the following requirements for
+   Verifier reconciliation and appraisal processing:
 
    +==============+====================+==============================+
    | CM Type      | Structure          | Description                  |
@@ -1704,8 +1712,8 @@ Table of Contents
       is in a debug enabled mode.
 
    *  is-replay-protected (index 4): If the flag is true, the measured
-      environment is protected from replay by a previous image that
-      differs from the current image.
+      environment is protected from rollback to previous software
+      images.
 
    *  is-integrity-protected (index 5): If the flag is true, the
       measured environment is protected from unauthorized update.
@@ -2664,8 +2672,9 @@ Table of Contents
      domain-member: 6
    )
 
-   The Conceptual Message type determines which attributes are
-   mandatory.
+   The Conceptual Message type (cmtype) determines which attributes are
+   mandatory.  See Section 9.1.3 through to Section 9.1.10 for ECTs of
+   various conceptual messages.
 
 9.1.2.  Internal Representation of Cryptographic Keys
 
@@ -3032,9 +3041,9 @@ Table of Contents
 
    All available CoRIMs are collected.
 
-   CoRIMs that are not within their validity period, or that cannot be
-   associated with an authenticated and authorized source MUST be
-   discarded.
+   CoRIM tags MUST be discarded if they are expired, or if they are not
+   associated with an authenticated and authorized source, or if they
+   have been revoked by an authorized source.
 
    Any CoRIM that has been secured by a cryptographic mechanism that
    fails validation MUST be discarded.  An example of such a mechanism
@@ -3096,26 +3105,26 @@ Table of Contents
 9.2.2.  Evidence Collection
 
    During the Evidence collection phase, the Verifier communicates with
-   Attesters to gather Evidence.  The first part of this phase does not
-   require any cryptographic validation.  This means that Verifiers can
-   use untrusted code to discover Evidence sources.  Attesters are
-   Evidence sources.
-
-   Verifiers may rely on conveyance protocol specific context to
-   identify an Evidence source, which is the Evidence input oracle for
-   appraisal.
+   Attesters to gather Evidence.  Discovery of Evidence sources is
+   untrusted.  Verifiers may rely on conveyance protocol specific
+   context to identify an Evidence source, which is the Evidence input
+   oracle for appraisal.
 
    The collected Evidence is then transformed to an internal
    representation, making it suitable for appraisal processing.
+
+   The exact protocol used to collect Evidence is out of scope of this
+   specification.
 
 9.2.2.1.  Cryptographic Validation of Evidence
 
    If Evidence is cryptographically signed, its validation is applied
    before transforming Evidence to an internal representation.
 
-   If Evidence is not cryptographically signed, the security context of
-   the conveyance protocol that collected it is used to
-   cryptographically validate Evidence.
+   If Evidence is not cryptographically signed, the underlying
+   conveyance protocol that collected it, should provide the required
+   security.  In such cases, the cryptographic validation of Evidence is
+   determined by the security offered by the conveyance protocol.
 
    The way cryptographic signature validation works depends on the
    specific Evidence collection method used.  For example, in DICE, a
@@ -3202,11 +3211,11 @@ Table of Contents
       *copy*(e.measurement-map, rv.condition.element-list.element-
          map)
 
-   Step 4.  The signer of the Endorsement conceptual message is copied
-            to the rv.addition.authority field.
+   Step 4.  The signer of the Reference Values conceptual message is
+            copied to the rv.addition.authority field.
 
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile identifier is copied to the rv.addition.profile
+   Step 5.  If the Reference Values conceptual message has a profile,
+            the profile identifier is copied to the rv.addition.profile
             field.
 
 9.2.3.4.  Endorsement Triples Transformations
@@ -3274,7 +3283,7 @@ Table of Contents
             profile, the profile is copied to the ev.addition.profile
             field.
 
-9.2.3.4.3.  Conditional Endorsement Triple Transformation
+9.2.3.4.3.  Conditional Endorsement Series Triple Transformation
 
    Step 1.  An evs entry (Section 9.1.5) is allocated.
 
@@ -3561,7 +3570,7 @@ Table of Contents
    If satisfied, for the rv entry, the following three steps are
    performed:
 
-   1.  The addition ECT is moved to the ACS, with cm-type set to
+   1.  The addition ECT is moved to the ACS, with cmtype set to
        reference-values
 
    2.  The claims, i.e., the element-list from the ACS ECT with cmtype
@@ -3948,8 +3957,8 @@ Table of Contents
    different algorithm acceptable to the condition ECT author.
 
    In the simple case, a condition ECT digests entry containing one
-   digest matches matches a candidate entry containing a single entry
-   with the same algorithm and value.
+   digest matches a candidate entry containing a single entry with the
+   same algorithm and value.
 
    If there are multiple algorithms in common between the condition ECT
    and candidate entry, then the bytes paired with common algorithms
