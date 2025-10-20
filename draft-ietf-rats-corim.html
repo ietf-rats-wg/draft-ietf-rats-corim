@@ -17,22 +17,21 @@ Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
 This document specifies the information elements for representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.30.2" name="generator">
+<meta content="xml2rfc 3.31.0" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.30.2
-    Python 3.12.11
+  xml2rfc 3.31.0
+    Python 3.12.12
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
     lxml 5.3.1
-    platformdirs 4.4.0
+    platformdirs 4.5.0
     pycountry 24.6.1
     PyYAML 6.0.2
     requests 2.32.5
-    setuptools 80.9.0
     wcwidth 0.2.14
 -->
 <link href="draft-ietf-rats-corim.xml" rel="alternate" type="application/rfc+xml">
@@ -1056,7 +1055,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 18 April 2026</td>
+<td class="center">Expires 23 April 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1069,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-10-15" class="published">15 October 2025</time>
+<time datetime="2025-10-20" class="published">20 October 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-04-18">18 April 2026</time></dd>
+<dd class="expires"><time datetime="2026-04-23">23 April 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1136,7 +1135,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 23 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1899,7 +1898,7 @@ Each producer of corresponding RATS Conceptual Messages can assert Claims about 
 The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
 Producers of RATS Conceptual Messages can assert contradictory assertions.
 For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
-In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the ACS.<a href="#section-2-3" class="pilcrow">¶</a></p>
+In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the ACS. Please see <a href="#fig-verifier-internal" class="auto internal xref">Figure 1</a>.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <p id="section-2-4">A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
 For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
 The Verifier may produce new assertions as a result of an applied appraisal policy.
@@ -4279,6 +4278,135 @@ Appraisal Claims Set (ACS),
 Appraisal Policy, and
 Attestation Results Set (ARS)
 are used with the meaning defined in <a href="#sec-glossary" class="auto internal xref">Section 1.1.1</a>.<a href="#section-9-2" class="pilcrow">¶</a></p>
+<span id="name-corim-verifier-flow"></span><div id="fig-verifier-internal">
+<figure id="figure-1">
+        <div id="section-9-3.1">
+          <div class="alignCenter art-svg artwork" id="section-9-3.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="720" width="800" viewBox="0 0 800 720" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,128 L 8,704" fill="none" stroke="black"></path>
+              <path d="M 48,336 L 48,432" fill="none" stroke="black"></path>
+              <path d="M 56,160 L 56,192" fill="none" stroke="black"></path>
+              <path d="M 56,240 L 56,288" fill="none" stroke="black"></path>
+              <path d="M 56,512 L 56,560" fill="none" stroke="black"></path>
+              <path d="M 64,368 L 64,416" fill="none" stroke="black"></path>
+              <path d="M 88,32 L 88,80" fill="none" stroke="black"></path>
+              <path d="M 96,640 L 96,672" fill="none" stroke="black"></path>
+              <path d="M 120,80 L 120,152" fill="none" stroke="black"></path>
+              <path d="M 120,464 L 120,504" fill="none" stroke="black"></path>
+              <path d="M 120,560 L 120,592" fill="none" stroke="black"></path>
+              <path d="M 144,368 L 144,416" fill="none" stroke="black"></path>
+              <path d="M 168,368 L 168,416" fill="none" stroke="black"></path>
+              <path d="M 176,32 L 176,80" fill="none" stroke="black"></path>
+              <path d="M 192,32 L 192,80" fill="none" stroke="black"></path>
+              <path d="M 192,512 L 192,560" fill="none" stroke="black"></path>
+              <path d="M 200,192 L 200,232" fill="none" stroke="black"></path>
+              <path d="M 200,288 L 200,328" fill="none" stroke="black"></path>
+              <path d="M 200,432 L 200,448" fill="none" stroke="black"></path>
+              <path d="M 224,80 L 224,152" fill="none" stroke="black"></path>
+              <path d="M 232,464 L 232,608" fill="none" stroke="black"></path>
+              <path d="M 248,368 L 248,416" fill="none" stroke="black"></path>
+              <path d="M 256,512 L 256,560" fill="none" stroke="black"></path>
+              <path d="M 288,32 L 288,80" fill="none" stroke="black"></path>
+              <path d="M 296,368 L 296,416" fill="none" stroke="black"></path>
+              <path d="M 304,32 L 304,80" fill="none" stroke="black"></path>
+              <path d="M 312,512 L 312,560" fill="none" stroke="black"></path>
+              <path d="M 328,608 L 328,632" fill="none" stroke="black"></path>
+              <path d="M 336,80 L 336,152" fill="none" stroke="black"></path>
+              <path d="M 352,160 L 352,192" fill="none" stroke="black"></path>
+              <path d="M 360,240 L 360,288" fill="none" stroke="black"></path>
+              <path d="M 376,368 L 376,416" fill="none" stroke="black"></path>
+              <path d="M 392,32 L 392,80" fill="none" stroke="black"></path>
+              <path d="M 400,336 L 400,432" fill="none" stroke="black"></path>
+              <path d="M 416,464 L 416,608" fill="none" stroke="black"></path>
+              <path d="M 416,640 L 416,672" fill="none" stroke="black"></path>
+              <path d="M 440,128 L 440,688" fill="none" stroke="black"></path>
+              <path d="M 88,32 L 176,32" fill="none" stroke="black"></path>
+              <path d="M 192,32 L 288,32" fill="none" stroke="black"></path>
+              <path d="M 304,32 L 392,32" fill="none" stroke="black"></path>
+              <path d="M 88,80 L 176,80" fill="none" stroke="black"></path>
+              <path d="M 192,80 L 288,80" fill="none" stroke="black"></path>
+              <path d="M 304,80 L 392,80" fill="none" stroke="black"></path>
+              <path d="M 24,112 L 424,112" fill="none" stroke="black"></path>
+              <path d="M 56,160 L 352,160" fill="none" stroke="black"></path>
+              <path d="M 56,192 L 352,192" fill="none" stroke="black"></path>
+              <path d="M 56,240 L 360,240" fill="none" stroke="black"></path>
+              <path d="M 56,288 L 360,288" fill="none" stroke="black"></path>
+              <path d="M 48,336 L 400,336" fill="none" stroke="black"></path>
+              <path d="M 64,368 L 144,368" fill="none" stroke="black"></path>
+              <path d="M 168,368 L 248,368" fill="none" stroke="black"></path>
+              <path d="M 296,368 L 376,368" fill="none" stroke="black"></path>
+              <path d="M 64,416 L 144,416" fill="none" stroke="black"></path>
+              <path d="M 168,416 L 248,416" fill="none" stroke="black"></path>
+              <path d="M 296,416 L 376,416" fill="none" stroke="black"></path>
+              <path d="M 48,432 L 400,432" fill="none" stroke="black"></path>
+              <path d="M 120,464 L 184,464" fill="none" stroke="black"></path>
+              <path d="M 232,464 L 416,464" fill="none" stroke="black"></path>
+              <path d="M 56,512 L 192,512" fill="none" stroke="black"></path>
+              <path d="M 256,512 L 312,512" fill="none" stroke="black"></path>
+              <path d="M 200,528 L 232,528" fill="none" stroke="black"></path>
+              <path d="M 56,560 L 192,560" fill="none" stroke="black"></path>
+              <path d="M 256,560 L 312,560" fill="none" stroke="black"></path>
+              <path d="M 120,592 L 224,592" fill="none" stroke="black"></path>
+              <path d="M 232,608 L 416,608" fill="none" stroke="black"></path>
+              <path d="M 96,640 L 416,640" fill="none" stroke="black"></path>
+              <path d="M 96,672 L 416,672" fill="none" stroke="black"></path>
+              <path d="M 8,704 L 424,704" fill="none" stroke="black"></path>
+              <path d="M 24,112 C 15.16936,112 8,119.16936 8,128" fill="none" stroke="black"></path>
+              <path d="M 424,112 C 432.83064,112 440,119.16936 440,128" fill="none" stroke="black"></path>
+              <path d="M 184,464 C 192.83064,464 200,456.83064 200,448" fill="none" stroke="black"></path>
+              <path d="M 424,704 C 432.83064,704 440,696.83064 440,688" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="344,152 332,146.4 332,157.6" fill="black" transform="rotate(90,336,152)"></polygon>
+              <polygon class="arrowhead" points="336,632 324,626.4 324,637.6" fill="black" transform="rotate(90,328,632)"></polygon>
+              <polygon class="arrowhead" points="232,592 220,586.4 220,597.6" fill="black" transform="rotate(0,224,592)"></polygon>
+              <polygon class="arrowhead" points="232,152 220,146.4 220,157.6" fill="black" transform="rotate(90,224,152)"></polygon>
+              <polygon class="arrowhead" points="208,528 196,522.4 196,533.6" fill="black" transform="rotate(180,200,528)"></polygon>
+              <polygon class="arrowhead" points="208,328 196,322.4 196,333.6" fill="black" transform="rotate(90,200,328)"></polygon>
+              <polygon class="arrowhead" points="208,232 196,226.4 196,237.6" fill="black" transform="rotate(90,200,232)"></polygon>
+              <polygon class="arrowhead" points="128,504 116,498.4 116,509.6" fill="black" transform="rotate(90,120,504)"></polygon>
+              <polygon class="arrowhead" points="128,152 116,146.4 116,157.6" fill="black" transform="rotate(90,120,152)"></polygon>
+              <g class="text">
+                <text x="132" y="52">Evidence</text>
+                <text x="240" y="52">Reference</text>
+                <text x="348" y="52">Endorsed</text>
+                <text x="228" y="68">Values</text>
+                <text x="340" y="68">Values</text>
+                <text x="192" y="132">CORIM</text>
+                <text x="268" y="132">VERIFIER</text>
+                <text x="160" y="180">Input</text>
+                <text x="228" y="180">Validation</text>
+                <text x="160" y="260">Input</text>
+                <text x="244" y="260">Transformation</text>
+                <text x="144" y="276">(Internal</text>
+                <text x="248" y="276">Representation)</text>
+                <text x="160" y="356">Staging</text>
+                <text x="212" y="356">Area</text>
+                <text x="96" y="388">ECT</text>
+                <text x="200" y="388">ECT</text>
+                <text x="328" y="388">ECT</text>
+                <text x="84" y="404">(ct=</text>
+                <text x="120" y="404">Ev)</text>
+                <text x="188" y="404">(ct=</text>
+                <text x="224" y="404">RV)</text>
+                <text x="268" y="404">..</text>
+                <text x="336" y="404">(ct=EndV)</text>
+                <text x="280" y="484">Appraisal</text>
+                <text x="348" y="484">Claims</text>
+                <text x="392" y="484">Set</text>
+                <text x="288" y="500">(ACS)</text>
+                <text x="80" y="532">ACS</text>
+                <text x="140" y="532">Matching</text>
+                <text x="280" y="532">ECT</text>
+                <text x="104" y="548">Condition</text>
+                <text x="196" y="660">OUTPUT</text>
+                <text x="284" y="660">TRANSFORMATION</text>
+              </g>
+            </svg><a href="#section-9-3.1.1" class="pilcrow">¶</a>
+</div>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-corim-verifier-flow" class="selfRef">CoRIM Verifier Flow</a>
+        </figcaption></figure>
+</div>
 <div id="sec-ir-cm">
 <section id="section-9.1">
         <h3 id="name-internal-representation-of-">
@@ -7872,7 +8000,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dl class="references">
 <dt id="I-D.ietf-rats-msg-wrap">[I-D.ietf-rats-msg-wrap]</dt>
         <dd>
-<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Smith, N.</span>, <span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">D. Glaze</span>, <span class="refTitle">"RATS Conceptual Messages Wrapper (CMW)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-msg-wrap-18</span>, <time datetime="2025-09-29" class="refDate">29 September 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-18">https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-18</a>&gt;</span>. </dd>
+<span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Smith, N.</span>, <span class="refAuthor">Fossati, T.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">D. Glaze</span>, <span class="refTitle">"RATS Conceptual Messages Wrapper (CMW)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-rats-msg-wrap-19</span>, <time datetime="2025-10-17" class="refDate">17 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-19">https://datatracker.ietf.org/doc/html/draft-ietf-rats-msg-wrap-19</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="IANA.cbor-tags">[IANA.cbor-tags]</dt>
         <dd>
