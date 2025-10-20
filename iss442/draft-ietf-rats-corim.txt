@@ -445,6 +445,7 @@ Table of Contents
    conflict with the Reference Values provided by a Reference Value
    Provider (RVP).  In essence, if Evidence is not corroborated by an
    RVP's Claims, then the RVP's Claims are not included in the ACS.
+   Please see Figure 1.
 
    A Verifier relies on input from appraisal policy to identify relevant
    assertions included in the ACS.  For example, if a policy requires
@@ -2588,6 +2589,52 @@ Table of Contents
    The terms Claim, Environment-Claim Tuple (ECT), Authority, Appraisal
    Claims Set (ACS), Appraisal Policy, and Attestation Results Set (ARS)
    are used with the meaning defined in Section 1.1.1.
+
+                    .----------. .-----------. .----------.
+                    | Evidence | | Reference | | Endorsed |
+                    |          | | Values    | | Values   |
+                    '---+------' '---+-------' '---+------'
+                        |            |             |
+           .------------+------------+-------------+-----------.
+          |             |      CORIM | VERIFIER    |            |
+          |             v            v             v            |
+          |     +------------------------------------+          |
+          |     |          Input Validation          |          |
+          |     +-----------------+------------------+          |
+          |                       |                             |
+          |                       v                             |
+          |     +-----------------+-------------------+         |
+          |     |          Input Transformation       |         |
+          |     |      (Internal Representation)      |         |
+          |     +-----------------+-------------------+         |
+          |                       |                             |
+          |                       v                             |
+          |    +------------------+------------------------+    |
+          |    |          Staging Area                     |    |
+          |    | +---------+  +---------+     +---------+  |    |
+          |    | |  ECT    |  |  ECT    |     |  ECT    |  |    |
+          |    | |(ct= Ev) |  |(ct= RV) | ..  |(ct=EndV)|  |    |
+          |    | +---------+  +---------+     +---------+  |    |
+          |    +------------------+------------------------+    |
+          |                       |                             |
+          |             +--------+    +----------------------+  |
+          |             |             | Appraisal Claims Set |  |
+          |             v             |    (ACS)             |  |
+          |     +-------+--------+    |  +------+            |  |
+          |     + ACS  Matching  +<---+  | ECT  |            |  |
+          |     | Condition      |    |  |      |            |  |
+          |     +-------+--------+    |  +------+            |  |
+          |             |             |                      |  |
+          |             +------------>|                      |  |
+          |                           +-----------+----------+  |
+          |                                       v             |
+          |          +----------------------------+----------+  |
+          |          |         OUTPUT TRANSFORMATION         |  |
+          |          +---------------------------------------+  |
+          |                                                     |
+          '----------------------------------------------------'
+
+                       Figure 1: CoRIM Verifier Flow
 
 9.1.  Internal Representation of Conceptual Messages
 
