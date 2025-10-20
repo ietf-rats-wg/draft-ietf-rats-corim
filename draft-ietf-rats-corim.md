@@ -1342,7 +1342,7 @@ The `reference-triple-record` has the following parameters:
 
 CoMID triples ({{sec-comid-triples}}) may contain multiple `reference-triple-record` entries, each of which describes one or more possible states for a particular Target Environment.
 
-The `ref-claims` in a `reference-triple-record` can contain one or more `measurement-map` items.
+The `ref-claims` in a `reference-triple-record` can contain one or more entries.
 This multiplicity can have different meanings:
 
 1. Each `ref-claims` entry can represent a different possible state of the Environment.
