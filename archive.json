@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-10-19T02:06:23.074136+00:00",
+  "timestamp": "2025-10-21T01:56:49.668581+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -11716,7 +11716,7 @@
       "id": "I_kwDOH6-tI8641j2p",
       "title": "Improve description for reference values triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/442",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -11727,8 +11727,8 @@
       ],
       "body": "Reference values triples is an array of values where multiple possible values can be included as reference values to be compared (matched) against evidence.\n\nThe processing section seems to document the matching process correctly, but it would help if the reference values triples section clearly explained how to use the array of triples to represent \"possible\" states. \n\nAlso, there is the case where mkey is the same value and there is an array of measurement values. Should this be another way to represent \"possible\" states or should the semantics be that the multiple measurements map to multiple components, each having an expected state(value)?\n\nIf measurement-map multiplicity contains possible state, then the processing section needs to be reworded. \n\nAlternatively, there should be normative language in the Evidence specifications that forbids multiple measurement-map entries where mkey is the same and the measurement-values-map entries are the same code point and type. \n\nNote PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/258 describes a macro any-of<T> which makes an array of T. If used in refererence-values triples, it is reasonable to consider whether the any-of<> semantics means the set can be possible state. \n\n\n",
       "createdAt": "2025-05-29T17:49:31Z",
-      "updatedAt": "2025-07-08T08:21:28Z",
-      "closedAt": null,
+      "updatedAt": "2025-10-20T16:07:19Z",
+      "closedAt": "2025-10-20T16:07:19Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -12759,7 +12759,7 @@
       "id": "I_kwDOH6-tI87OEyKd",
       "title": "Jeremy O'Donoghue CoRIM Comments",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/493",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -12773,9 +12773,17 @@
       ],
       "body": "\nIn general, I struggled to understand Section 2.2 because the different structures are informally defined. I think there is supposed to be a processing sequence and a (relational) data model here, but it is unclear. A diagram would help considerably.\n\nA reference to section 8.1 would address the \"processing sequence\" question. It is hard to tell whether the CDDL can be (or is even intended to be) modelled relationally, which is the reason for the diagram suggestion. \n\n**Section 2**\nminor: define Reference Value Provider (RVP) in section 1.1.1 for regularity with other sections.\n\n**Section 2.2**\ntechnical: I believe the requirement for \"Reference Values\" is too broad. The text says that \"if _a_ reference value in a CoRIM matches claims in the ACS then the authority of the CoRIM issuer is added to those claims.\"\n\nI can imagine cases (in large scale attestation of many devices from many vendors) where a particular reference value occurs in more than one CoRIM (commonly used binary WiFi FW modules, for example).\n\nI believe there is an implication that the CoRIM authority and the Attester authority are the same for this operation to occur.\n\nAlso, doesn't a reference value match a (singular) claim rather than claims?\n\nProposed: \"If a reference value in a CoRIM issued by the same authority as the Attester, then the authority of the CoRIM issuer is added to that claim.\"\n\n**Section 2.2 **\ntechnical: I could not find a definition of the term \"series selection condition\", so I am not sure how I can verify that it is satisfied.\n\n**Section 4**\n\nminor: Is it legal to convey a CoRIM in an encrypted structure? I understand the requirement to ensure the integrity and authenticity of the CoRIM in conveyance from Endorser to Verifier, but it is at least conceivable that some Endorsers might wish to retain confidentiality of CoRIMs in transit. I think, rather than talking only about COSE signing, that the section should indicate that conveyance mechanisms SHALL ensure authenticity and integrity of the CoRIM without specifying mechanisms further.\n\n**Section 4.1.1**\neditorial: Some text on how uniqueness of `tstr` identifiers can be achieved is needed. Alternatively, text along the lines of \"If a Verifier identifies more than one CoRIM with the same `$corim-id-type-choice` it MUST reject all of them\".\n\n**Section 4.1.3**\nminor: All of the `href` (SHALL or SHOULD?) return the same value(s) of additional resource? I think the `thumbprint` implies SHALL.\n\n**Section 5.1.4.1.3**\nminor: A few words on how the environment group is reliably bound to an opaque byte stirng would be desirable.\n\n**Section 5.1.4.1.4.4**\n\nquestion: Would it be better to say \"security version numbers MUST NOT be decremented\"?\n\n**Secton 5.1.4.1.4.5**\n\neditorial: I found I needed to read this text a few times to realise what it meant. Perhaps \"If the flag is true, the measured environment has provides protection from rollback to previous software images\".\n\n**Section 5.1.4.1.7**\n\nminor: I am, in general, uncomfortable with representing infinities on bounded integer values.\n\nOn infinities generally, I note the intermainable discussions on NaN payloads in the CBOR WG and wonder if it is better to avoid the problem. If values alrger than representable wioth MT0/1 integers are required, consider support for big integers here.\n\n**Section 9.1.1**\n\nminor: ECT tuples have **_up to_** six attributes (five of which are optional)... \"The `cm-type` determines which attributes are mandatory\". I could not easily find where this is defined.\n\n**Section 9.2.2**\n\neditorial: Section 9.2.2 says that collected evidence is not cryptographically validated... and is transformed to an internal representation. The first sentance of the next section (9.2.2.1) says that the evidence is validated if cryptographically signed before transforming to an internal representation. Which is it? (yes, I'm aware that 9.2.2.1 addresses this, but the ordering of information here is unfortunate and confusing)\n\n**Section 9.2.2.1*\n\neditorial: What is a security context? I cannot find any definition.\n\n**Section 9.2.3.2**\n\nmajor: I understood that the whole of section 9 is simply an example, yet we have normative text implying that the `ae` relation (defined in an informative section) is mandatoru for transformaing evidence. Have I misunderstood something?\n\n**Section 9.3.1.2**\n\nminor: Normative text in an informative section.\n\n**Section 9.3.2.2**\n\nminor: Normative text in informative section\n\nI won't bother to enumerate further examples of normative text in section 9 as there are many...\n\n**Appendix A**\nThis is more of a meta-comment about CDDL in general which I believe merits broader discussion as it jumped out at me when reading this specification.\n\nIn the Base CDDL there is a repetition of the complete COSE CDDL. I can see that this is done to specify mandatory header material for COSE signed CoRIMs, along with CoSWID tags and the like.\n\n1. This makes it hard for this specification to take account of potential evolution of current specifications.\n2. It makes the CDDL much harder to read than it needs to be as there is a lot of irrelevant detail (I do not need to think about COSE_Key when I am reading about CoRIM).\n3. However I do understand the need to specify mandatory content in certain fields.\n\nMore seriously, is Appendix A normative or informative?\n",
       "createdAt": "2025-09-26T12:20:47Z",
-      "updatedAt": "2025-09-26T12:22:56Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2025-10-20T13:10:41Z",
+      "closedAt": "2025-10-20T13:10:40Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #499 and PR #508 completes this issue!",
+          "createdAt": "2025-10-20T13:10:41Z",
+          "updatedAt": "2025-10-20T13:10:41Z"
+        }
+      ]
     },
     {
       "number": 494,
@@ -78685,7 +78693,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-08-21T18:01:57Z",
-      "updatedAt": "2025-10-01T15:47:48Z",
+      "updatedAt": "2025-10-20T14:14:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e9a844d90025bb4c1fce85fd84e83dd2d4024c67",
@@ -78717,6 +78725,13 @@
           "body": "@nedmsmith to work in conjunction with @fdamato to progress this!",
           "createdAt": "2025-10-01T15:47:48Z",
           "updatedAt": "2025-10-01T15:47:48Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think we should close this as this one is addressed using: PR #500 ",
+          "createdAt": "2025-10-20T14:14:17Z",
+          "updatedAt": "2025-10-20T14:14:17Z"
         }
       ],
       "reviews": [
@@ -79548,7 +79563,7 @@
       "id": "PR_kwDOH6-tI86sjXCq",
       "title": "Improve description for reference values triples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/500",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -79557,17 +79572,19 @@
       "labels": [],
       "body": "Reworded section 5.1.4.2 to better clarify the scope of how possible state could be represented in reference values for reference-triple-record and reference-triples.\r\n\r\nFix #442 ",
       "createdAt": "2025-10-07T18:30:17Z",
-      "updatedAt": "2025-10-17T18:19:05Z",
+      "updatedAt": "2025-10-20T16:41:43Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "294c0d6d4eebe6040e9bfa08e1898c17efb6d2ed",
+      "baseRefOid": "e4d8b0a593479560f8bc28fb882fc6d2c0ede34e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "iss442",
-      "headRefOid": "ff80f9f032e51e307d95743309be9dd506e4edd4",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "0ecef0eac5662d15308eaa1949b440756ae609d9",
+      "closedAt": "2025-10-20T16:07:18Z",
+      "mergedAt": "2025-10-20T16:07:18Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "a0168697271f7387928a5c6afa88ef3985745873"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -79610,6 +79627,20 @@
           "body": "@thomas-fossati : Please review the suggested modifications to connect Reference State at the start, to the measurements in the middle of the RV Triples description!\r\n\r\nWe need to close this early Monday Morning, I am here to help accomplish this!",
           "createdAt": "2025-10-17T18:18:40Z",
           "updatedAt": "2025-10-17T18:19:05Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you @henkbirkholz for the review\r\n\r\nCan you please approve now, we can proceed with the change!",
+          "createdAt": "2025-10-20T14:57:05Z",
+          "updatedAt": "2025-10-20T14:57:05Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "Please mind, this state is not ideal. But there are now more specific texts to bash.",
+          "createdAt": "2025-10-20T16:41:43Z",
+          "updatedAt": "2025-10-20T16:41:43Z"
         }
       ],
       "reviews": [
@@ -80286,6 +80317,112 @@
               "updatedAt": "2025-10-17T17:51:40Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IEp0X",
+          "commit": {
+            "abbreviatedOid": "1ec296c"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T14:17:31Z",
+          "updatedAt": "2025-10-20T14:17:32Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\r\nAt any given point in time, an Attester is expected to match only one of these states.\r\n```",
+              "createdAt": "2025-10-20T14:17:32Z",
+              "updatedAt": "2025-10-20T14:17:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IFHLB",
+          "commit": {
+            "abbreviatedOid": "bb50552"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T14:50:35Z",
+          "updatedAt": "2025-10-20T14:50:35Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "does not read like an improvement.\r\n\r\n```suggestion\r\nReference Values Triples describe the possible intended states of an Attester.\r\n```",
+              "createdAt": "2025-10-20T14:50:35Z",
+              "updatedAt": "2025-10-20T14:50:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IFIqo",
+          "commit": {
+            "abbreviatedOid": "bb50552"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T14:51:52Z",
+          "updatedAt": "2025-10-20T14:51:52Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "why not \"using reference values\" that seems more straight forward?\r\n\r\n```suggestion\r\n\r\nA Reference Values Triple provides reference values pertaining to a Target Environment.\r\n```",
+              "createdAt": "2025-10-20T14:51:52Z",
+              "updatedAt": "2025-10-20T14:51:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IFK6B",
+          "commit": {
+            "abbreviatedOid": "bb50552"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2025-10-20T14:53:57Z",
+          "updatedAt": "2025-10-20T14:53:57Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "not great, but good enough to get bashed productively. But ordered lists are handled by the renderer.",
+              "createdAt": "2025-10-20T14:53:57Z",
+              "updatedAt": "2025-10-20T14:53:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IFPHK",
+          "commit": {
+            "abbreviatedOid": "0ecef0e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2025-10-20T14:58:22Z",
+          "updatedAt": "2025-10-20T14:58:33Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IGOXR",
+          "commit": {
+            "abbreviatedOid": "0ecef0e"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T16:07:05Z",
+          "updatedAt": "2025-10-20T16:07:05Z",
+          "comments": []
         }
       ]
     },
@@ -81156,24 +81293,26 @@
       "id": "PR_kwDOH6-tI86tUrbr",
       "title": "Insert CoRIM Verifier Diagram",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/508",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Incorporating Review Feedback and Inserting a top level Verifier Diagram",
       "createdAt": "2025-10-12T15:34:54Z",
-      "updatedAt": "2025-10-17T17:18:33Z",
+      "updatedAt": "2025-10-20T13:08:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d2519bdacc51346bcf95fe34bb4ac29588e63d31",
+      "baseRefOid": "294c0d6d4eebe6040e9bfa08e1898c17efb6d2ed",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "corim-verifier-diag",
-      "headRefOid": "327ee072bd7d9e38880408f591c4b27a65366095",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "4c43334a0dc033863e1221fec3d873f6afe0f20c",
+      "closedAt": "2025-10-20T13:08:25Z",
+      "mergedAt": "2025-10-20T13:08:25Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e4d8b0a593479560f8bc28fb882fc6d2c0ede34e"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -81202,6 +81341,19 @@
           "body": "This is too wide: it breaks horribly in the TXT rendering.\r\nPerhaps try rotating it 90 degrees?",
           "createdAt": "2025-10-16T13:10:40Z",
           "updatedAt": "2025-10-16T13:10:40Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87IDnzQ",
+          "commit": {
+            "abbreviatedOid": "4c43334"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-10-20T13:04:21Z",
+          "updatedAt": "2025-10-20T13:06:56Z",
           "comments": []
         }
       ]
