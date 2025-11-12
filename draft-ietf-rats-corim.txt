@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 23 April 2026                                            Linaro
+Expires: 16 May 2026                                              Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         20 October 2025
+                                                        12 November 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2026.
+   This Internet-Draft will expire on 16 May 2026.
 
 Copyright Notice
 
@@ -2590,51 +2590,52 @@ Table of Contents
    Claims Set (ACS), Appraisal Policy, and Attestation Results Set (ARS)
    are used with the meaning defined in Section 1.1.1.
 
-                    .----------. .-----------. .----------.
-                    | Evidence | | Reference | | Endorsed |
-                    |          | | Values    | | Values   |
-                    '---+------' '---+-------' '---+------'
-                        |            |             |
-           .------------+------------+-------------+-----------.
-          |             |      CORIM | VERIFIER    |            |
-          |             v            v             v            |
-          |     +------------------------------------+          |
-          |     |          Input Validation          |          |
-          |     +-----------------+------------------+          |
-          |                       |                             |
-          |                       v                             |
-          |     +-----------------+-------------------+         |
-          |     |          Input Transformation       |         |
-          |     |      (Internal Representation)      |         |
-          |     +-----------------+-------------------+         |
-          |                       |                             |
-          |                       v                             |
-          |    +------------------+------------------------+    |
-          |    |          Staging Area                     |    |
-          |    | +---------+  +---------+     +---------+  |    |
-          |    | |  ECT    |  |  ECT    |     |  ECT    |  |    |
-          |    | |(ct= Ev) |  |(ct= RV) | ..  |(ct=EndV)|  |    |
-          |    | +---------+  +---------+     +---------+  |    |
-          |    +------------------+------------------------+    |
-          |                       |                             |
-          |             +--------+    +----------------------+  |
-          |             |             | Appraisal Claims Set |  |
-          |             v             |    (ACS)             |  |
-          |     +-------+--------+    |  +------+            |  |
-          |     + ACS  Matching  +<---+  | ECT  |            |  |
-          |     | Condition      |    |  |      |            |  |
-          |     +-------+--------+    |  +------+            |  |
-          |             |             |                      |  |
-          |             +------------>|                      |  |
-          |                           +-----------+----------+  |
-          |                                       v             |
-          |          +----------------------------+----------+  |
-          |          |         OUTPUT TRANSFORMATION         |  |
-          |          +---------------------------------------+  |
-          |                                                     |
-          '----------------------------------------------------'
+          +-----------+ +----------+
+          | Reference | | Endorsed |
+          |  Values   | |  Values  |
+          +---+-------+ +---+------+
+              |             |
++-------------+-------------+-------------------------+
+|             |      CORIM  | PROCESSING              |
+|             v             v                         |
+|     +------------------------------------+          |    +-----------+
+|     |          Input Validation          |          |    |           |
+|     +-----------------+------------------+          |    | Evidence  |
+|                       |                             |    |           |
+|                       v                             |    +-----+-----+
+|     +-----------------+-------------------+         |          |
+|     |          Input Transformation       |         |          v
+|     |      (Internal Representation)      |         |    +-----+------+
+|     +-----------------+-------------------+         |    |            |
+|                       |                             |    | Validation |
+|                       v                             |    |   &        |
+|    +------------------+------------------------+    |    | Internal   |
+|    |          Staging Area                     |    |    | Transform  |
+|    | +---------+  +---------+     +---------+  |    |    |            |
+|    | |  ECT    |  |  ECT    |     |  ECT    |  |    |    +-----+------+
+|    | |(ct= Rv) |  |(ct=End) | ..  |(ct=CEV) |  |    |          |
+|    | +---------+  +---------+     +---------+  |    |          |
+|    +------------------+------------------------+    |          |
+|                       |                             |          |
+|             +--------+    +----------------------+  |          |
+|             |             | Appraisal Claims Set |  |          |
+|             v             |    (ACS)             |  |          |
+|     +-------+--------+    |  +------+            |  |          |
+|     + ACS  Matching  +<---+  | ECT  | ...        |  |          |
+|     | Condition      |    |  |      |            +<-+----------+
+|     +-------+--------+    |  +------+            |  |
+|             |             |  ECT =               |  |
+|             +------------>|  Env. Claims Tuple   |  |
+|                           +-----------+----------+  |
+|                                       |             |
+|                             +--------+              |
++-----------------------------+-----------------------+
+                              V
+           +------------------+--------------------+
+           |         OUTPUT TRANSFORMATION         |
+           +---------------------------------------+
 
-                       Figure 1: CoRIM Verifier Flow
+                    Figure 1: CoRIM Verifier Flow
 
 9.1.  Internal Representation of Conceptual Messages
 
