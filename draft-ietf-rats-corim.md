@@ -169,6 +169,7 @@ Not only Attesters can evolve and therefore new measurement types need to be exp
 
 In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
+
 Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
 See {{sec-verifier-rec}}.
@@ -303,7 +304,7 @@ The actual internal representation of a Verifier is implementation-specific and 
 Requirements for an internal representation of Conceptual Messages are defined in {{tbl-cmrr}}, where each Conceptual Message type has a structure as depicted by the *Structure* column.
 The internal representations used by this document are defined in {{sec-ir-cm}}.
 
-## Interacting with an ACS {#sec-interact-acs}
+## Interacting with an Appraisal Claims Set (ACS) {#sec-interact-acs}
 
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
 The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
@@ -955,7 +956,7 @@ The following describes each member of the `class-map`:
 
 An `instance-id` is a unique value that identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
-For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
+For example, if a PKIX certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
 See {{Section 4.1 of -pkix-cert}}.
 Alternatively, if the certificate's subject public key is large, the `instance-id` might be a key identifier that is a digest of that public key.
 See {{Section 4.2.1.2 of -pkix-cert}}.
@@ -1057,7 +1058,7 @@ The following describes each member of the `measurement-values-map`.
 * `version` (index 0): Typically changes whenever the measured environment is updated.
   Described in {{sec-comid-version}}.
 
-* `svn` (index 1): The security version number typically changes only when a security relevant change is made to the measured environment.
+* `svn` (index 1): The Security Version Number (SVN) typically changes only when a security relevant change is made to the measured environment.
   Described in {{sec-comid-svn}}.
 
 * `digests` (index 2): Contains the digest(s) of the measured environment
@@ -1129,9 +1130,9 @@ $version-scheme /= &(semver: 16384)
 $version-scheme /= int / text
 ~~~
 
-###### Security Version Number {#sec-comid-svn}
+###### Security Version Number (SVN) {#sec-comid-svn}
 
-The following details the security version number (`svn`) and the minimum security version number (`min-svn`) statements.
+The following details the Security Version Number (`svn`) and the minimum Security Version Number (`min-svn`) statements.
 A security version number is used to track changes to an object (e.g., a secure enclave, a boot loader executable, a configuration file, etc.) that are security relevant.
 Rollback of a security relevant change is considered to be an attack vector; as such, security version numbers cannot be decremented.
 If a security relevant flaw is discovered in the Target Environment and is subsequently fixed, the `svn` value is typically incremented.
@@ -1232,18 +1233,18 @@ A cryptographic key can be one of the following formats:
 * `tagged-pkix-base64-key-type`: PEM encoded SubjectPublicKeyInfo.
   Defined in {{Section 13 of -pkix-text}}.
 
-* `tagged-pkix-base64-cert-type`: PEM encoded X.509 public key certificate.
+* `tagged-pkix-base64-cert-type`: PEM encoded PKIX public key certificate.
   Defined in {{Section 5 of -pkix-text}}.
 
-* `tagged-pkix-base64-cert-path-type`: X.509 certificate chain created by the
-  concatenation of as many PEM encoded X.509 certificates as needed.  The
+* `tagged-pkix-base64-cert-path-type`: PKIX certificate chain created by the
+  concatenation of as many PEM encoded PKIX certificates as needed.  The
   certificates MUST be concatenated in order so that each directly certifies
   the one preceding.
 
 * `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
   Defined in {{Section 7 of -cose}}.
 
-* `tagged-pkix-asn1der-cert-type`: a `bstr` of ASN.1 DER encoded X.509 public key certificate.
+* `tagged-pkix-asn1der-cert-type`: a `bstr` of ASN.1 DER encoded PKIX public key certificate.
   Defined in {{Section 4 of -pkix-cert}}.
 
 A cryptographic key digest can be one of the following formats:
@@ -2147,7 +2148,7 @@ The way cryptographic signature validation works depends on the specific Evidenc
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
 See Section 9.2.1 of {{DICE.Layer}}.
-If a trusted root certificate is found, X.509 certificate validation is performed.
+If a trusted root certificate is found, PKIX certificate validation is performed.
 
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.
@@ -3390,9 +3391,12 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 
 # Base CoRIM CDDL {#sec-corim-cddl}
 
+The following CDDL module formally defines the CoRIM data model:
+
 ~~~ cddl
 {::include cddl/corim-autogen.cddl}
 ~~~
+{: sourcecode-markers="true" sourcecode-name="corim.cddl"}
 
 # Acknowledgments
 {:unnumbered}
