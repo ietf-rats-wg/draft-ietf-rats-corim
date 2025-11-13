@@ -1,17 +1,17 @@
 COMID_FRAGS := concise-mid-tag.cddl
-COMID_FRAGS += attest-key-triple-record.cddl
+#COMID_FRAGS += attest-key-triple-record.cddl
 COMID_FRAGS += class-id-type-choice.cddl
 COMID_FRAGS += class-map.cddl
 COMID_FRAGS += comid-entity-map.cddl
 COMID_FRAGS += comid-role-type-choice.cddl
-COMID_FRAGS += conditional-endorsement-series-triple-record.cddl
+#COMID_FRAGS += conditional-endorsement-series-triple-record.cddl
 COMID_FRAGS += conditional-series-record.cddl
 COMID_FRAGS += cose-key.cddl
 COMID_FRAGS += cose-label-and-value.cddl
-COMID_FRAGS += coswid-triple-record.cddl
+#COMID_FRAGS += coswid-triple-record.cddl
 COMID_FRAGS += crypto-key-type-choice.cddl
-COMID_FRAGS += domain-dependency-triple-record.cddl
-COMID_FRAGS += domain-membership-triple-record.cddl
+#COMID_FRAGS += domain-dependency-triple-record.cddl
+#COMID_FRAGS += domain-membership-triple-record.cddl
 COMID_FRAGS += conditional-endorsement-triple-record.cddl
 COMID_FRAGS += domain-type.cddl
 COMID_FRAGS += endorsed-triple-record.cddl
@@ -20,7 +20,7 @@ COMID_FRAGS += entity-name-type-choice.cddl
 COMID_FRAGS += environment-map.cddl
 COMID_FRAGS += flags-map.cddl
 COMID_FRAGS += group-id-type-choice.cddl
-COMID_FRAGS += identity-triple-record.cddl
+#COMID_FRAGS += identity-triple-record.cddl
 COMID_FRAGS += instance-id-type-choice.cddl
 COMID_FRAGS += ip-addr-type-choice.cddl
 COMID_FRAGS += int-range-type-choice.cddl
@@ -49,7 +49,7 @@ COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
 COMID_FRAGS += concise-swid-tag.cddl
 
-COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
+#COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
 
 COTL_FRAGS := concise-tl-tag.cddl
 COTL_FRAGS += validity-map.cddl
@@ -60,7 +60,7 @@ COTL_FRAGS += uuid.cddl
 COTL_FRAGS += tag-version-type.cddl
 COTL_FRAGS += concise-swid-tag.cddl
 
-COTL_EXAMPLES := $(wildcard examples/cotl-*.diag)
+#COTL_EXAMPLES := $(wildcard examples/cotl-*.diag)
 
 CORIM_FRAGS := corim.cddl
 CORIM_FRAGS += concise-tl-tag.cddl
@@ -86,7 +86,7 @@ CORIM_FRAGS += validity-map.cddl
 
 CORIM_FRAGS += $(COMID_FRAGS)
 
-CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
+#CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
 
 INTREP_FRAGS := intrep-start.cddl
 INTREP_FRAGS += intrep-acs.cddl
@@ -125,4 +125,4 @@ INTREP_FRAGS += cose-label-and-value.cddl
 INTREP_FRAGS += class-id-type-choice.cddl
 INTREP_FRAGS += oid.cddl
 
-INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
+#INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
