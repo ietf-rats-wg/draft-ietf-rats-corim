@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-13T02:02:53.609428+00:00",
+  "timestamp": "2025-11-16T02:07:13.875073+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12921,6 +12921,22 @@
       "body": "Refine the diagram:\r\n\r\n* left-to-right (move evidence input to left hand side)\r\n* add legend\r\n* stores vs processes shapes\r\n* top-level input is \"corim files\u201d (one box instead of two)\r\n* reduce width to 72\r\n",
       "createdAt": "2025-11-12T15:44:25Z",
       "updatedAt": "2025-11-12T18:44:18Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 514,
+      "id": "I_kwDOH6-tI87X5J66",
+      "title": "Detached CoRIM Signing Support",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/514",
+      "state": "OPEN",
+      "author": "mingweishih",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "CBOR spec (RFC 9052) allows the Cose_Sign1 with a detached payload but the current CoRIM spec 09 draft does not seem to support this mode. Is this intentional, or something can be added?\n\nReference: \nCBOR CDDL\n```\n   COSE_Sign1 = [\n       Headers,\n       payload : bstr / nil,\n       signature : bstr\n   ]\n```\n\nCoRIM CDDL:\n```\nCOSE-Sign1-corim = [\n  protected: bstr .cbor protected-corim-header-map\n  unprotected: unprotected-corim-header-map\n  payload: bstr .cbor tagged-unsigned-corim-map\n  signature: bstr\n]\n```\n\n",
+      "createdAt": "2025-11-13T17:13:59Z",
+      "updatedAt": "2025-11-13T17:13:59Z",
       "closedAt": null,
       "comments": []
     }
@@ -81583,13 +81599,13 @@
       "labels": [],
       "body": "* left-to-right (specifically, move evidence input to the left hand side)\r\n* add a legend to expand acronyms\r\n* stores (rectangular) vs processes (round) shapes\r\n* top-level input is corim files rather than CMs\r\n* reduce width <= 72 columns\r\n\r\nFix #511",
       "createdAt": "2025-11-12T17:56:37Z",
-      "updatedAt": "2025-11-12T18:44:24Z",
+      "updatedAt": "2025-11-13T12:41:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fbe8b7561048a66d0d01c9c67bb67d1a3de2d677",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "dia++",
-      "headRefOid": "12289e59ea6b61f0c2e0f988ef31b4fd15ea232c",
+      "headRefOid": "5ac2a95b5f781ea742fe16e32c9bedb66f824792",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -81604,6 +81620,46 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 513,
+      "id": "PR_kwDOH6-tI86zNlkl",
+      "title": "diet experiment",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/513",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR implements the \u201cdiet\u201d strategy discussed in the 11/12/2025 call, including:\r\n\r\n* removal of OTI triples\r\n* stop at phase 4\r\n\r\nThe resulting TXT renderings (including all the unavoidable boilerplate) are as follows:\r\n\r\n```bash\r\n% wc -l draft-ietf-rats-corim-*.txt\r\n5034 draft-ietf-rats-corim-DIET.txt\r\n5838 draft-ietf-rats-corim-MAIN.txt\r\n```\r\n\r\nshowing a 13.77% decrease.",
+      "createdAt": "2025-11-13T12:00:12Z",
+      "updatedAt": "2025-11-13T20:01:48Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "fbe8b7561048a66d0d01c9c67bb67d1a3de2d677",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "diet",
+      "headRefOid": "9cae542f4985f0235b0c5f90f4f7861e26311f9c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87OUes9",
+          "commit": {
+            "abbreviatedOid": "9cae542"
+          },
+          "author": "mcr",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-11-13T20:01:48Z",
+          "updatedAt": "2025-11-13T20:01:48Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
