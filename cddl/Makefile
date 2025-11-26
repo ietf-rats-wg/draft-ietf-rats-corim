@@ -44,9 +44,9 @@ CLEANFILES += $(3:.diag=.pretty)
 endef # cddl_check_template
 
 # Commented since CI doesn't have openssl
-examples/sig-structure.diag: examples/sig-structure.diag.tmpl examples/payload-corim-4.diag examples/protected-header-map.diag
+examples/sig-structure.diag: examples/sig-structure.diag.tmpl examples/payload-corim-4.diag examples/protected-header-map-corim-meta.diag
 	payload="$$(cat examples/payload-corim-4.diag)" \
-	protected="$$(cat examples/protected-header-map.diag)" \
+	protected="$$(cat examples/protected-header-map-corim-meta.diag)" \
 	envsubst < examples/sig-structure.diag.tmpl > examples/sig-structure.diag
 
 examples/testkey.pem:
@@ -55,9 +55,9 @@ examples/testkey.pem:
 examples/corim-4.sig: examples/sig-structure.cbor examples/testkey.pem
 	openssl dgst -sha384 -sign examples/testkey.pem -out examples/corim-4.sig examples/sig-structure.cbor
 
-examples/corim-4.diag: examples/corim-4.sig examples/corim-4.diag.tmpl examples/payload-corim-4.diag examples/protected-header-map.diag
+examples/corim-4.diag: examples/corim-4.sig examples/corim-4.diag.tmpl examples/payload-corim-4.diag examples/protected-header-map-corim-meta.diag
 	payload="$$(cat examples/payload-corim-4.diag)" \
-	protected="$$(cat examples/protected-header-map.diag)" \
+	protected="$$(cat examples/protected-header-map-corim-meta.diag)" \
 	signature="h'$$(cat examples/corim-4.sig | xxd -p -c 128)'" \
 	envsubst < examples/corim-4.diag.tmpl > examples/corim-4.diag
 
