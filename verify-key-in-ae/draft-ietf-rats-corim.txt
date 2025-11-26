@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 23 April 2026                                            Linaro
+Expires: 30 May 2026                                              Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         20 October 2025
+                                                        26 November 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2026.
+   This Internet-Draft will expire on 30 May 2026.
 
 Copyright Notice
 
@@ -192,7 +192,7 @@ Table of Contents
          9.3.4.1.  Processing Endorsements
          9.3.4.2.  Processing Conditional Endorsements
          9.3.4.3.  Processing Conditional Endorsement Series
-         9.3.4.4.  Processing Key Verification Endorsements
+         9.3.4.4.  Processing Key Verifications
          9.3.4.5.  Processing Domain Membership
        9.3.5.  Examples for optional phases 5, 6, and 7
      9.4.  Comparing a condition ECT against the ACS
@@ -2590,51 +2590,52 @@ Table of Contents
    Claims Set (ACS), Appraisal Policy, and Attestation Results Set (ARS)
    are used with the meaning defined in Section 1.1.1.
 
-                    .----------. .-----------. .----------.
-                    | Evidence | | Reference | | Endorsed |
-                    |          | | Values    | | Values   |
-                    '---+------' '---+-------' '---+------'
-                        |            |             |
-           .------------+------------+-------------+-----------.
-          |             |      CORIM | VERIFIER    |            |
-          |             v            v             v            |
-          |     +------------------------------------+          |
-          |     |          Input Validation          |          |
-          |     +-----------------+------------------+          |
-          |                       |                             |
-          |                       v                             |
-          |     +-----------------+-------------------+         |
-          |     |          Input Transformation       |         |
-          |     |      (Internal Representation)      |         |
-          |     +-----------------+-------------------+         |
-          |                       |                             |
-          |                       v                             |
-          |    +------------------+------------------------+    |
-          |    |          Staging Area                     |    |
-          |    | +---------+  +---------+     +---------+  |    |
-          |    | |  ECT    |  |  ECT    |     |  ECT    |  |    |
-          |    | |(ct= Ev) |  |(ct= RV) | ..  |(ct=EndV)|  |    |
-          |    | +---------+  +---------+     +---------+  |    |
-          |    +------------------+------------------------+    |
-          |                       |                             |
-          |             +--------+    +----------------------+  |
-          |             |             | Appraisal Claims Set |  |
-          |             v             |    (ACS)             |  |
-          |     +-------+--------+    |  +------+            |  |
-          |     + ACS  Matching  +<---+  | ECT  |            |  |
-          |     | Condition      |    |  |      |            |  |
-          |     +-------+--------+    |  +------+            |  |
-          |             |             |                      |  |
-          |             +------------>|                      |  |
-          |                           +-----------+----------+  |
-          |                                       v             |
-          |          +----------------------------+----------+  |
-          |          |         OUTPUT TRANSFORMATION         |  |
-          |          +---------------------------------------+  |
-          |                                                     |
-          '----------------------------------------------------'
+          +-----------+ +----------+
+          | Reference | | Endorsed |
+          |  Values   | |  Values  |
+          +---+-------+ +---+------+
+              |             |
++-------------+-------------+-------------------------+
+|             |      CORIM  | PROCESSING              |
+|             v             v                         |
+|     +------------------------------------+          |    +-----------+
+|     |          Input Validation          |          |    |           |
+|     +-----------------+------------------+          |    | Evidence  |
+|                       |                             |    |           |
+|                       v                             |    +-----+-----+
+|     +-----------------+-------------------+         |          |
+|     |          Input Transformation       |         |          v
+|     |      (Internal Representation)      |         |    +-----+------+
+|     +-----------------+-------------------+         |    |            |
+|                       |                             |    | Validation |
+|                       v                             |    |   &        |
+|    +------------------+------------------------+    |    | Internal   |
+|    |          Staging Area                     |    |    | Transform  |
+|    | +---------+  +---------+     +---------+  |    |    |            |
+|    | |  ECT    |  |  ECT    |     |  ECT    |  |    |    +-----+------+
+|    | |(ct= Rv) |  |(ct=End) | ..  |(ct=CEV) |  |    |          |
+|    | +---------+  +---------+     +---------+  |    |          |
+|    +------------------+------------------------+    |          |
+|                       |                             |          |
+|             +--------+    +----------------------+  |          |
+|             |             | Appraisal Claims Set |  |          |
+|             v             |    (ACS)             |  |          |
+|     +-------+--------+    |  +------+            |  |          |
+|     + ACS  Matching  +<---+  | ECT  | ...        |  |          |
+|     | Condition      |    |  |      |            +<-+----------+
+|     +-------+--------+    |  +------+            |  |
+|             |             |  ECT =               |  |
+|             +------------>|  Env. Claims Tuple   |  |
+|                           +-----------+----------+  |
+|                                       |             |
+|                             +--------+              |
++-----------------------------+-----------------------+
+                              V
+           +------------------+--------------------+
+           |         OUTPUT TRANSFORMATION         |
+           +---------------------------------------+
 
-                       Figure 1: CoRIM Verifier Flow
+                    Figure 1: CoRIM Verifier Flow
 
 9.1.  Internal Representation of Conceptual Messages
 
@@ -3656,38 +3657,60 @@ Table of Contents
    ACS.  Series iteration terminates after the first matching series
    entry is processed or when no series entries match.
 
-9.3.4.4.  Processing Key Verification Endorsements
+9.3.4.4.  Processing Key Verifications
 
-   For each ev entry, the condition ECT is compared with an ACS ECT,
-   where the ACS ECT cmtype contains either evidence, reference-values,
-   or endorsements.  If the ECTs match (Section 9.4), for each _key_ in
-   ev.condition.element-claims.measurement-values-map.intrep-keys:
+   To process key verification triples, the internal representation of
+   ECTs containing intrep-keys is used to identify ACS entries
+   containing $crypto-key-type-choice values that require additional key
+   verification steps.  If the key-type field is set, the Verifier will
+   apply the verification steps defined below.  If the key verification
+   check succeeds, the key is re-asserted by the Verifier as an
+   Endorsement by constructing an ECT that contains the verified key
+   using the authority of the Verifier.
 
-   *  Verify the certificate signatures for the certification path.
+   For each ECT from endorsed value (ev) or attestation evidence (ae)
+   entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-
+   ECT), where the ACS-ECT cmtype contains either evidence or
+   endorsements.  If the C-ECT and ACS-ECT match (Section 9.4), then for
+   each _key_ in the C-ECT.element-claims.measurement-values-map.intrep-
+   keys, do the following steps:
 
-   *  Verify certificate revocation status for the certification path.
+   Step 1.  Verify the certificate signatures for each certificate in
+            the certification path.
 
-   *  Verify key usage restrictions appropriate for the type of key.
+   Step 2.  Verify certificate revocation status for each certificate in
+            the certification path.
 
-   *  If key verification succeeds, *append*(_key_, ev.addition.element-
-      list.element-map.element-claims.measurement-values-map.intrep-
-      keys).
+   Step 3.  Verify key usage restrictions appropriate for the type of
+            key in key-type.
 
-   If key verification succeeds for any _key_:
+   Step 4.  If key verification succeeds for any _key_, allocate an
+            addition ECT (ADDITION).
 
-   *  *copy*(ev.condition.environment, ev.addition.environment).
+   Step 5.  For each verified _key_ in C-ECT:
 
-   *  *copy*(ev.condition.element-list.element-map.element-id,
-      ev.addition.element-list.element-map.element-id).
+   i  *append*(_key_, ADDITION.element-list.element-map.element-
+      claims.measurement-values-map.intrep-keys).
 
-   *  Set ev.addition.cmtype to endorsements.
+   Step 6.  *copy*(ACS-ECT.environment, ADDITION.environment`).
 
-   *  Add the Verifier authority $crypto-key-type-choice to the
-      ev.addition.authority field.
+   Step 7.  *copy*(ACS-ECT.element-list.element-map.element-id,
+            ADDITION.element-list.element-map.element-id).
 
-   *  Add the addition ECT to the ACS.
+   Step 8.  Set ADDITION.cmtype to endorsements.
 
-   Otherwise, do not add the addition ECT to the ACS.
+   Step 9.  Add the Verifier authority $crypto-key-type-choice to the
+            ADDITION.authority field.
+
+   Step 10. Add the ADDITION to the ACS.
+
+   Otherwise, do not add the ADDITION to the ACS.
+
+   It is possible that a candidate key has been verified during Phase 1
+   processing (Section 9.2) or is replicated across Evidence or
+   Endorsement ECTs.  Implementations might optimize processing of key
+   verifications by checking whether a key has already been verified by
+   the Verifier.
 
 9.3.4.5.  Processing Domain Membership
 
@@ -4903,9 +4926,9 @@ Table of Contents
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-19,
-              17 October 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-msg-wrap-19>.
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-21,
+              18 November 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-21>.
 
    [IANA.cbor-tags]
               IANA, "Concise Binary Object Representation (CBOR) Tags",
