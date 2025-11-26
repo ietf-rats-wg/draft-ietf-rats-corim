@@ -268,61 +268,12 @@ In CoRIM, unlike RDF, the predicate of the triple is implicit and is encoded in 
 CoRIM triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
 See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
-# Verifier Reconciliation {#sec-verifier-rec}
-
-This specification describes the CoRIM format and documents how a Verifier must process the CoRIM.
-This ensures that the behaviour of the CoRIM-based appraisal is predictable and consistent, in a word deterministic.
-
-A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
-In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
-By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
-The origin of the inputs is tracked as *authority*.
-The authority for the Claims in a CoRIM is the CoRIM issuer.
-To this effect, this specification defines one possible internal representation of the attester's actual state for use during the appraisal procedure, known as Appraisal Claims Set (ACS).
-
-Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
-Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
-The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
-Producers of RATS Conceptual Messages can assert contradictory assertions.
-For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
-In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the ACS. Please see {{fig-verifier-internal}}.
-
-A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
-For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
-The Verifier may produce new assertions as a result of an applied appraisal policy.
-For example, if an appraisal procedure finds all of the components of a subsystem are configured correctly, the policy may direct the Verifier to produce new assertions, "Subsystem=X" has the Claim "TRUSTED=TRUE".
-Consequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual Messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion (the authority), and has applied Conceptual Message constraints to the assertion.
-
-The CoRIM data model specified in this document covers the RATS Conceptual Message types, "Reference Values" and "Endorsements".
-Reference values and Endorsements are required for Verifier reconciliation, and Evidence is required for corresponding internal ACS creation as illustrated in {{sec-interact-acs}}.
-
-## Internal Representation {#sec-internal-rep}
-
-In this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the appraisal procedure.
-The actual internal representation of a Verifier is implementation-specific and out-of-scope of this document.
-Requirements for an internal representation of Conceptual Messages are defined in {{tbl-cmrr}}, where each Conceptual Message type has a structure as depicted by the *Structure* column.
-The internal representations used by this document are defined in {{sec-ir-cm}}.
-
-## Interacting with an ACS {#sec-interact-acs}
-
-Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
-
-Internal representations of Conceptual Messages, ACS, and Attestation Results Set (ARS) SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
-
-| CM Type | Structure | Description |
-|---
-| Evidence | List of Evidence claims | If the Attester is authenticated, add Evidence claims to the ACS with Attester authority |
-| Reference Values | List of Reference Values claims | If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer is added to those claims. |
-| Endorsements | List of expected actual state claims, List of Endorsed Values claims | If the list of expected claims are in the ACS, then add the list of Endorsed Values claims to the ACS with Endorser authority |
-| Series Endorsements | List of expected actual state claims and a series of selection-addition tuples | If the expected claims are in the ACS, and if the series selection condition is satisfied, then add the additional claims to the ACS with Endorser authority. See {{sec-ir-end-val}} |
-| Verifier | List of expected actual state claims, List of Verifier-generated claims | If the list of expected claims are in the ACS, then add the list of Verifier-generated claims to the ACS with Verifier authority |
-| Policy | List of expected actual state claims, List of Policy-generated claims | If the list of expected claims are in the ACS, then add the list of Policy-generated claims to the ACS with Policy Owner authority |
-| Attestation Results | List of expected actual state claims, List of expected Attestation Results claims | If the list of expected claims are in the ACS, then copy the list of Attestation Results claims into the ARS. See {{sec-ir-ars}} |
-{: #tbl-cmrr title="Conceptual Message Representation Requirements"}
-
-## Quantizing Inputs {#sec-quantize}
-[^tracked-at] https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/242
+# Document structure
+The document structure follows the principles of a top down approach.
+Section 4 describes the CoRIM structure and essential elements that comprise CoRIM.
+Section 5 provides a detailed view of Concise Module Identifiers (CoMIDs) and Section 6 about Concise Tag Lists (CoTL).
+The common types are detailed in section 7.
+Section 8 and Section 9 descibes how CoRIMs can be used. Specifically Section 8, describes how, CoRIM based inputs are transformed and utilised into various appraisal phases. Section 9 describes Verifier handling of CoRIM based data to perform Verifier processing in detail.
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
@@ -1746,6 +1697,10 @@ When used as an identifier the responsible allocator entity SHOULD ensure unique
 
 # Appraisal of CoRIM-based Inputs {#sec-appr-corim-inputs}
 
+This section describes how a Verifier must process the CoRIM. This ensures that the behaviour of the CoRIM-based appraisal is predictable and consistent, in a word deterministic.
+
+A Verifier needs to reconcile its various inputs, with CoRIM being one of them. In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one. By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what. The origin of the inputs is tracked using authority. The authority for the Claims in a CoRIM is the CoRIM issuer. To this effect, this specification defines one possible internal representation of the attester's actual state for use during the appraisal procedure, known as Appraisal Claims Set (ACS).
+
 Inputs to a Verifier are mapped from their external representation to an internal representation.
 CoRIM defines CBOR structures and content media types for Conceptual Messages that include Endorsements and Reference Values.
 CoRIM data structures may also be used by Evidence and Attestation Results that wish to describe overlapping structure.
@@ -1861,6 +1816,8 @@ The following CDDL describes the ECT structure in more detail.
 
 The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
 See {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
+Please note only Mandatory and Optional elements that are applicable to a conceptual message are shown.
+The ones ommitted are `n/a` and should be ignored.
 
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
@@ -1895,7 +1852,6 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `members`       | n/a         |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
 ### Internal Representation of Reference Values {#sec-ir-ref-val}
@@ -1920,15 +1876,11 @@ Refer to {{sec-phase3}} for how the `rv` entries are processed.
 | condition | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `members`       | n/a         |
 {: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
 
 ### Internal Representation of Endorsed Values {#sec-ir-end-val}
@@ -1952,21 +1904,14 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 | condition | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
 | selection | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `members`       | n/a         |
 {: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
 
 ### Internal Representation of Domain Membership {#sec-ir-dm}
@@ -2007,15 +1952,11 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 | condition | `environment`   | Optional    |
 |           | `element-list`  | Optional    |
 |           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
-|           | `members`       | n/a         |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Internal Representation of Attestation Results {#sec-ir-ar}
@@ -2036,9 +1977,6 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 | acs-condition | `environment`   | Optional    |
 |               | `element-list`  | Optional    |
 |               | `authority`     | Optional    |
-|               | `cmtype`        | n/a         |
-|               | `profile`       | n/a         |
-|               | `members`       | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
@@ -2708,7 +2646,7 @@ If any condition ECT entry has multiple corresponding `element-id`s then the ele
 Second, the Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
 See {{sec-compare-mvm}}.
 
-### Measurement values map map Comparison {#sec-compare-mvm}
+### Measurement values map Comparison {#sec-compare-mvm}
 
 The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
 Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
