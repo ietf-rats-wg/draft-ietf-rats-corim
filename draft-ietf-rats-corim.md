@@ -169,9 +169,8 @@ Not only Attesters can evolve and therefore new measurement types need to be exp
 
 In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
-Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
+Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state. See {{#sec-appr-corim-inputs}}
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
-See {{sec-verifier-rec}}.
 
 
 ## Terminology and Requirements Language
@@ -1819,6 +1818,25 @@ See {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual
 Please note only Mandatory and Optional elements that are applicable to a conceptual message are shown.
 The ones ommitted are `n/a` and should be ignored.
 
+### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
+
+An ACS is a list of ECTs that describe an Attester's actual state and represents the current state of Appraisal.
+
+For ECTs present in the ACS, the `cmtype` field is mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| n/a       | `environment`   | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
+
+~~~ cddl
+{::include cddl/intrep-acs.cddl}
+~~~
+
+
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
 The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
@@ -1984,24 +2002,6 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `profile`       | Optional    |
 |               | `members`       | Optional    |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
-
-### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
-
-An ACS is a list of ECTs that describe an Attester's actual state.
-
-For ECTs present in the ACS, the `cmtype` field is mandatory.
-Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| n/a       | `environment`   | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
-
-~~~ cddl
-{::include cddl/intrep-acs.cddl}
-~~~
 
 ### Internal Representation of Attestation Results Set (ARS) {#sec-ir-ars}
 
