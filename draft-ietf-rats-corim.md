@@ -301,7 +301,7 @@ Reference values and Endorsements are required for Verifier reconciliation, and 
 In this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the appraisal procedure.
 The actual internal representation of a Verifier is implementation-specific and out-of-scope of this document.
 Requirements for an internal representation of Conceptual Messages are defined in {{tbl-cmrr}}, where each Conceptual Message type has a structure as depicted by the *Structure* column.
-The internal representations used by this document are defined in {{sec-ir-cm}}.
+The internal representations used by this document are defined in {{sec-conc-mess}}.
 
 ## Interacting with an ACS {#sec-interact-acs}
 
@@ -1966,7 +1966,7 @@ Refer to {{sec-phase3}} for how the `rv` entries are processed.
 
 ### Processing of Endorsed Value Triple, Conditional Endorsement Triple & Conditional Endorsement Series Triples
 
-#### Internal Representation of Endorsed Values
+#### Internal Representation of Endorsed Values {#sec-ir-end-val}
 
 An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
 The `ev` relation is applicable to Endorsed Values  (EV) and Conditional Endorsement (CE) Triple.
@@ -2375,7 +2375,7 @@ Regardless of the specific integrity protection method used, the Verifier MUST N
 
 ### Input Transformation {#sec-phase1-trans}
 
-Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-ir-cm}}).
+Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-conc-mess}}).
 
 The following mapping conventions apply to all forms of input transformation:
 
@@ -2433,7 +2433,7 @@ If a triple condition does not match, then the Verifier continues to process oth
 ### ACS Requirements {#sec-acs-reqs}
 
 At the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.
-See {{sec-ir-cm}}.
+See {{sec-conc-mess}}.
 
 Verifiers are not required to use this as their internal representation.
 For the purposes of this document, appraisal is described in terms of the above cited internal representation.
