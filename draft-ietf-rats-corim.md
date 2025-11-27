@@ -1862,7 +1862,16 @@ The following CDDL describes the ECT structure in more detail.
 
 The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
 
-### Processing of Evidence
+### Common Conventions for Input Transformation
+The following mapping conventions apply to all forms of input transformation:
+
+> * The `environment` field is populated with a Target Environment identifier.
+> * The `element-list` field is populated with the measurements collected by an Attesting Environment.
+> * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
+> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
+> * The `profile` field is set based on the `corim-map` `profile` value.
+
+### Processing of Evidence {#sec-ev-processing}
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
@@ -1890,7 +1899,7 @@ The `addition` is added to the ACS for a specific Attester.
 |           | `members`       | n/a         |
 {: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
 
-#### Evidence Tranformation
+#### Evidence Transformation
 
 Evidence is transformed from an external representation to an internal representation based on the ae relation {{sec-ir-evidence}}. The Evidence is mapped into one or more addition ECTs. If the Evidence does not have a value for the mandatory ae fields, the Verifier MUST NOT process the Evidence.
 
@@ -2373,17 +2382,11 @@ If found, COSE Sign1 verification is performed accordingly.
 
 Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
+Once Evidence is validated it is transformed into an internal representation as given in {{sec-ev-processing}}.
+
 ### Input Transformation {#sec-phase1-trans}
 
 Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-conc-mess}}).
-
-The following mapping conventions apply to all forms of input transformation:
-
-> * The `environment` field is populated with a Target Environment identifier.
-> * The `element-list` field is populated with the measurements collected by an Attesting Environment.
-> * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
-> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
-> * The `profile` field is set based on the `corim-map` `profile` value.
 
 #### Appraisal Context Construction
 
@@ -2410,16 +2413,6 @@ Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields ap
 ~~~ cddl
 {::include cddl/intrep-acs.cddl}
 ~~~
-
-#### Evidence Tranformation
-
-Evidence is transformed from an external representation to an internal representation based on the `ae` relation ({{sec-ir-evidence}}).
-The Evidence is mapped into one or more `addition` ECTs.
-If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
-
-Evidence transformation algorithms may be well-known, defined by a CoRIM profile ({{sec-corim-profile-types}}), or supplied dynamically.
-The handling of dynamic Evidence transformation algorithms is out of scope for this document.
-
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
