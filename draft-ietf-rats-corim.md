@@ -316,9 +316,6 @@ Internal representations of Conceptual Messages, ACS, and Attestation Results Se
 | Reference Values | List of Reference Values claims | If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer is added to those claims. |
 | Endorsements | List of expected actual state claims, List of Endorsed Values claims | If the list of expected claims are in the ACS, then add the list of Endorsed Values claims to the ACS with Endorser authority |
 | Series Endorsements | List of expected actual state claims and a series of selection-addition tuples | If the expected claims are in the ACS, and if the series selection condition is satisfied, then add the additional claims to the ACS with Endorser authority. See {{sec-ir-end-val}} |
-| Verifier | List of expected actual state claims, List of Verifier-generated claims | If the list of expected claims are in the ACS, then add the list of Verifier-generated claims to the ACS with Verifier authority |
-| Policy | List of expected actual state claims, List of Policy-generated claims | If the list of expected claims are in the ACS, then add the list of Policy-generated claims to the ACS with Policy Owner authority |
-| Attestation Results | List of expected actual state claims, List of expected Attestation Results claims | If the list of expected claims are in the ACS, then copy the list of Attestation Results claims into the ARS. See {{sec-ir-ars}} |
 {: #tbl-cmrr title="Conceptual Message Representation Requirements"}
 
 ## Quantizing Inputs {#sec-quantize}
@@ -1789,24 +1786,6 @@ During Phase 4, Endorsed Values inputs containing conditions that describe expec
 If the comparison is satisfied, then additional Claims about the Attester are added to the ACS.
 These inputs are added with the Endorser's authority.
 
-+ **Phase 5**: Verifier Augmentation
-
-During Phase 5, the Verifier may perform consistency, integrity, or additional validity checks.
-
-These checks may result in additional Claims about the Attester that are added to the ACS.
-These Claims are added with the Verifier's authority.
-
-+ **Phase 6**: Policy Augmentation
-
-During Phase 6, appraisal policies are processed that describe Attester states that are desirable or undesirable.
-If these conditions exist, the policy may add additional Claims about the Attester, to the ACS.
-These Claims are added with the policy author's authority.
-
-+ **Phase 7**: Attestation Results Production and Transformation
-
-During Phase 7, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
-The Claims in the output staging area and other Verifier related metadata are transformed into an external representation suitable for consumption by a Relying Party.
-
 # Reference Verifier Algorithm {#sec-verifier-abstraction}
 
 This document presumes that Verifier implementations will differ.
@@ -1831,7 +1810,7 @@ are used with the meaning defined in {{sec-glossary}}.
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
-The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) and ARS ({{sec-ir-ars}}), are constructed from a common building block structure called Environment-Claims Tuple (ECT).
+The internal representation of Conceptual Messages, as well as the ACS ({{sec-ir-acs}}) is constructed from a common building block structure called Environment-Claims Tuple (ECT).
 
 ### Internal structure of ECT {#sec-ir-ect}
 
@@ -1860,7 +1839,7 @@ The following CDDL describes the ECT structure in more detail.
 ~~~
 
 The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
-See {{sec-ir-evidence}} through to {{sec-ir-ars}} for ECTs of various conceptual messages.
+See {{sec-ir-evidence}} through to {{sec-ir-acs}} for ECTs of various conceptual messages.
 
 ### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
@@ -1990,63 +1969,6 @@ The `cmtype` is set to domain-member.
 |           | `members`       | Mandatory   |
 {: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
 
-### Internal Representation of Policy Statements {#sec-ir-policy}
-
-The `policy` relation compares the `condition` ECTs to the ACS.
-
-~~~ cddl
-{::include cddl/intrep-policy.cddl}
-~~~
-
-If all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS with the policy author's authority.
-
-{{tbl-policy-ect-optionality}} contains the requirements for the ECT fields of the Policy tuple:
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| condition | `environment`   | Optional    |
-|           | `element-list`  | Optional    |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-{: #tbl-policy-ect-optionality title="Policy tuple requirements"}
-
-### Internal Representation of Attestation Results {#sec-ir-ar}
-
-The `ar` relation compares the `acs-condition` to the ACS.
-
-~~~ cddl
-{::include cddl/intrep-ar.cddl}
-~~~
-
-If the condition is satisfied, the `ars-additions` are copied from the ACS to the ARS.
-If any of the `ars-additions` are not found in the ACS then these ACS entries are not copied to the ARS.
-
-{{tbl-ar-ect-optionality}} contains the requirements for the ECT fields of the Attestation Results tuple:
-
-| ECT type      | ECT Field       | Requirement |
-|---
-| acs-condition | `environment`   | Optional    |
-|               | `element-list`  | Optional    |
-|               | `authority`     | Optional    |
-|               | `cmtype`        | n/a         |
-|               | `profile`       | n/a         |
-|               | `members`       | n/a         |
-| ars-addition  | `environment`   | Mandatory   |
-|               | `element-list`  | Mandatory   |
-|               | `authority`     | Mandatory   |
-|               | `cmtype`        | Mandatory   |
-|               | `profile`       | Optional    |
-|               | `members`       | Optional    |
-{: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
-
 ### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
 
 An ACS is a list of ECTs that describe an Attester's actual state.
@@ -2063,14 +1985,6 @@ Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields ap
 
 ~~~ cddl
 {::include cddl/intrep-acs.cddl}
-~~~
-
-### Internal Representation of Attestation Results Set (ARS) {#sec-ir-ars}
-
-An ARS is a list of ECTs that describe ACS entries that are selected for use as Attestation Results.
-
-~~~ cddl
-{::include cddl/intrep-ars.cddl}
 ~~~
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
@@ -2605,36 +2519,6 @@ Else STOP processing Domain Membership ECTs
 The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
 
 If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
-
-### Examples for optional phases 5, 6, and 7 {#sec-phases567}
-
-Phases 5, 6, and 7 are optional depending on implementation design.
-Verifier implementations that apply consistency, integrity, or validity checks could be represented as Claims that augment the ACS or could be handled by application specific interfaces.
-Processing appraisal policies may result in augmentation or modification of the ACS, but techniques for tracking the application of policies during appraisal need not result in ACS augmentation.
-Additionally, the creation of Attestation Results is out-of-scope for this document, nevertheless internal staging may facilitate processing of Attestation Results.
-
-Phase 5: Verifier Augmentation
-
-Verifiers may add value to accepted Claims, such as ensuring freshness, consistency, and integrity.
-The results of the added value may be asserted as Claims with Verifier authority.
-For example, if a Verifier is able to ensure collected Evidence is fresh, it might create a freshness Claim that is included with the Evidence Claims in the ACS.
-
-Phase 6: Policy Augmentation
-
-Appraisal policy inputs could result in Claims that augment the ACS.
-For example, an Appraisal Policy for Evidence may specify that if all of a collection of subcomponents satisfy a particular quality metric, the top-level component also satisfies the quality metric.
-The Verifier might generate an Endorsement ECT for the top-level component that asserts a quality metric.
-Details about the applied policy may augment the ACS.
-An internal representation of policy details, based on the policy ECT, as described in {{sec-ir-policy}}, contains the environments affected by the policy with policy identifiers as Claims.
-
-Phase 7: Attestation Results Production and Transformation
-
-Attestation Results rely on input from the ACS, but may not bear any similarity to its content.
-For example, Attestation Results processing may map the ACS state to a generalized trustworthiness state such as {{-ar4si}}.
-Generated Attestation Results Claims may be specific to a particular Relying Party.
-Hence, the Verifier may need to maintain multiple Attestation Results contexts.
-An internal representation of Attestation Results as separate contexts ({{sec-ir-ars}}) ensures Relying Party–specific processing does not modify the ACS, which is common to all Relying Parties.
-Attestation Results contexts are the inputs to Attestation Results procedures that produce external representations.
 
 ## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
 
