@@ -316,7 +316,6 @@ Internal representations of Conceptual Messages, ACS, and Attestation Results Se
 | Reference Values | List of Reference Values claims | If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer is added to those claims. |
 | Endorsements | List of expected actual state claims, List of Endorsed Values claims | If the list of expected claims are in the ACS, then add the list of Endorsed Values claims to the ACS with Endorser authority |
 | Series Endorsements | List of expected actual state claims and a series of selection-addition tuples | If the expected claims are in the ACS, and if the series selection condition is satisfied, then add the additional claims to the ACS with Endorser authority. See {{sec-ir-end-val}} |
-
 {: #tbl-cmrr title="Conceptual Message Representation Requirements"}
 
 ## Quantizing Inputs {#sec-quantize}
