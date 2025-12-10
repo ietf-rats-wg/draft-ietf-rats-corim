@@ -1825,7 +1825,7 @@ are used with the meaning defined in {{sec-glossary}}.
 ~~~ aasvg
 {::include pics/corim-verifier.txt}
 ~~~
-{: #fig-verifier-internal artwork-align="center" title="CoRIM Verifier Flow"}
+{: #fig-verifier-internal artwork-align="center" title="CoRIM Processing Flow"}
 
 ### Processing of Conceptual Messages {#sec-conc-mess}
 
