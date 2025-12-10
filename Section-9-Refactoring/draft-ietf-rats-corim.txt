@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 31 May 2026                                              Linaro
+Expires: 13 June 2026                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        27 November 2025
+                                                        10 December 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 May 2026.
+   This Internet-Draft will expire on 13 June 2026.
 
 Copyright Notice
 
@@ -178,52 +178,51 @@ Table of Contents
        9.1.10. Internal Representation of Attestation Results Set
                (ARS)
      9.2.  Reference Verifier Algorithm
-     9.3.  Input Validation and Transformation (Phase 1)
-       9.3.1.  Input Validation
-         9.3.1.1.  CoRIM Selection
-         9.3.1.2.  CoRIM Trust Anchors
-         9.3.1.3.  Tags Extraction and Validation
-         9.3.1.4.  CoTL Extraction
-       9.3.2.  Evidence Collection
-         9.3.2.1.  Cryptographic Validation of Evidence
-       9.3.3.  Input Transformation
-         9.3.3.1.  Appraisal Context Construction
-       9.3.4.  Internal Representation of Appraisal Claims Set (ACS)
-     9.4.  ACS Augmentation - Phases 2, 3, and 4
-       9.4.1.  ACS Requirements
-         9.4.1.1.  ACS Processing Requirements
-           9.4.1.1.1.  Ordering of triple processing
-         9.4.1.2.  ACS Augmentation Requirements
-       9.4.2.  Evidence Augmentation (Phase 2)
-         9.4.2.1.  Appraisal Claims Set Initialization
-         9.4.2.2.  The authority field in the ACS
-         9.4.2.3.  ACS augmentation using CoMID triples
-       9.4.3.  Reference Values Corroboration and Augmentation (Phase
+       9.2.1.  Input Validation
+         9.2.1.1.  CoRIM Selection
+         9.2.1.2.  CoRIM Trust Anchors
+         9.2.1.3.  Tags Extraction and Validation
+         9.2.1.4.  CoTL Extraction
+       9.2.2.  Evidence Collection
+         9.2.2.1.  Cryptographic Validation of Evidence
+       9.2.3.  Input Transformation
+         9.2.3.1.  Appraisal Context Construction
+       9.2.4.  Internal Representation of Appraisal Claims Set (ACS)
+     9.3.  ACS Augmentation - Phases 2, 3, and 4
+       9.3.1.  ACS Requirements
+         9.3.1.1.  ACS Processing Requirements
+           9.3.1.1.1.  Ordering of triple processing
+         9.3.1.2.  ACS Augmentation Requirements
+       9.3.2.  Evidence Augmentation (Phase 2)
+         9.3.2.1.  Appraisal Claims Set Initialization
+         9.3.2.2.  The authority field in the ACS
+         9.3.2.3.  ACS augmentation using CoMID triples
+       9.3.3.  Reference Values Corroboration and Augmentation (Phase
                3)
-       9.4.4.  Endorsed Values Augmentation (Phase 4)
-         9.4.4.1.  Processing Endorsements
-         9.4.4.2.  Processing Conditional Endorsements
-         9.4.4.3.  Processing Conditional Endorsement Series
-         9.4.4.4.  Processing Key Verification Endorsements
-         9.4.4.5.  Processing Domain Membership
-       9.4.5.  Examples for optional phases 5, 6, and 7
-     9.5.  Comparing a condition ECT against the ACS
-       9.5.1.  Comparing a condition ECT against a single ACS entry
-       9.5.2.  Environment Comparison
-       9.5.3.  Authority comparison
-       9.5.4.  Element list comparison
-       9.5.5.  Element map comparison
-       9.5.6.  Measurement values map map Comparison
-         9.5.6.1.  Comparison of a single measurement-values-map
+       9.3.4.  Endorsed Values Augmentation (Phase 4)
+         9.3.4.1.  Processing Endorsements
+         9.3.4.2.  Processing Conditional Endorsements
+         9.3.4.3.  Processing Conditional Endorsement Series
+         9.3.4.4.  Processing Key Verification Endorsements
+         9.3.4.5.  Processing Domain Membership
+       9.3.5.  Examples for optional phases 5, 6, and 7
+     9.4.  Comparing a condition ECT against the ACS
+       9.4.1.  Comparing a condition ECT against a single ACS entry
+       9.4.2.  Environment Comparison
+       9.4.3.  Authority comparison
+       9.4.4.  Element list comparison
+       9.4.5.  Element map comparison
+       9.4.6.  Measurement values map map Comparison
+         9.4.6.1.  Comparison of a single measurement-values-map
                  codepoint
-           9.5.6.1.1.  Comparison for version entries
-           9.5.6.1.2.  Comparison for svn entries
-           9.5.6.1.3.  Comparison for digests entries
-           9.5.6.1.4.  Comparison for raw-value entries
-           9.5.6.1.5.  Comparison for cryptokeys entries
-           9.5.6.1.6.  Comparison for Integrity Registers
-           9.5.6.1.7.  Comparison for int-range entries
-       9.5.7.  Profile-directed Comparison
+           9.4.6.1.1.  Comparison for version entries
+           9.4.6.1.2.  Comparison for svn entries
+           9.4.6.1.3.  Comparison for digests entries
+           9.4.6.1.4.  Comparison for raw-value entries
+           9.4.6.1.5.  Comparison for cryptokeys entries
+           9.4.6.1.6.  Comparison for Integrity Registers
+           9.4.6.1.7.  Comparison for int-range entries
+       9.4.7.  Profile-directed Comparison
    10. Implementation Status
      10.1.  Veraison
    11. Security and Privacy Considerations
@@ -1625,7 +1624,7 @@ Table of Contents
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 9.5.6.1.5.
+      Value entry.  Matching is described in Section 9.4.6.1.5.
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
@@ -2814,7 +2813,7 @@ Table of Contents
 
    The reference ECTs define the matching conditions that are applied to
    Evidence ECTs.  If the matching condition is satisfied, then the re-
-   asserted ECTs are added to the ACS.  Refer to Section 9.4.3 for how
+   asserted ECTs are added to the ACS.  Refer to Section 9.3.3 for how
    the rv entries are processed.
 
    Table 4 contains the requirements for the ECT fields of the Reference
@@ -3308,7 +3307,7 @@ Table of Contents
 
 9.2.  Reference Verifier Algorithm
 
-9.3.  Input Validation and Transformation (Phase 1)
+   ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
    During the initialization phase, the CoRIM Appraisal Context is
    loaded with various conceptual message inputs such as CoMID tags
@@ -3323,9 +3322,9 @@ Table of Contents
    After context initialization, additional inputs are held back until
    appraisal processing has completed.
 
-9.3.1.  Input Validation
+9.2.1.  Input Validation
 
-9.3.1.1.  CoRIM Selection
+9.2.1.1.  CoRIM Selection
 
    All available CoRIMs are collected.
 
@@ -3344,7 +3343,7 @@ Table of Contents
    Later stages will further select the CoRIMs appropriate to the
    Evidence Appraisal stage.
 
-9.3.1.2.  CoRIM Trust Anchors
+9.2.1.2.  CoRIM Trust Anchors
 
    If CoRIM tags are signed, the signatures MUST be validated using the
    appropriate trust anchors (certification paths) available to the
@@ -3357,7 +3356,7 @@ Table of Contents
    (the "leaf certificate") must be linked to one of the Verifier trust
    anchors.
 
-9.3.1.3.  Tags Extraction and Validation
+9.2.1.3.  Tags Extraction and Validation
 
    The Verifier chooses tags from the selected CoRIMs - including CoMID,
    CoSWID, CoTL, and CoTS.
@@ -3367,7 +3366,7 @@ Table of Contents
    resolved.  An example of a cross-referenced triple is a CoMID-CoSWID
    linking triple.
 
-9.3.1.4.  CoTL Extraction
+9.2.1.4.  CoTL Extraction
 
    This section is not applicable if the Verifier appraisal policy does
    not require CoTLs.
@@ -3390,7 +3389,7 @@ Table of Contents
    After the Verifier has processed all CoTLs it MUST discard any tags
    which have not been activated by a CoTL.
 
-9.3.2.  Evidence Collection
+9.2.2.  Evidence Collection
 
    During the Evidence collection phase, the Verifier communicates with
    Attesters to gather Evidence.  Discovery of Evidence sources is
@@ -3404,7 +3403,7 @@ Table of Contents
    The exact protocol used to collect Evidence is out of scope of this
    specification.
 
-9.3.2.1.  Cryptographic Validation of Evidence
+9.2.2.1.  Cryptographic Validation of Evidence
 
    If Evidence is cryptographically signed, its validation is applied
    before transforming Evidence to an internal representation.
@@ -3435,13 +3434,13 @@ Table of Contents
    Once Evidence is validated it is transformed into an internal
    representation as given in Section 9.1.3.
 
-9.3.3.  Input Transformation
+9.2.3.  Input Transformation
 
    Input Conceptual Messages, whether Evidence, Reference Values,
    Endorsements, or Policies, are transformed to an internal
    representation that is based on ECTs (Section 9.1).
 
-9.3.3.1.  Appraisal Context Construction
+9.2.3.1.  Appraisal Context Construction
 
    All of the extracted and validated tags are loaded into an _appraisal
    context_. The Appraisal Context contains an internal representation
@@ -3449,9 +3448,9 @@ Table of Contents
    an internal representation, making them suitable for appraisal
    processing.  As the Conceptual Messages are processed during
    Appraisal, the _appraisal context_ starts to get populated using a
-   data structure as given below.  See Section 9.3.4
+   data structure as given below.  See Section 9.2.4
 
-9.3.4.  Internal Representation of Appraisal Claims Set (ACS)
+9.2.4.  Internal Representation of Appraisal Claims Set (ACS)
 
    An ACS is a list of ECTs that describe an Attester's actual state.
 
@@ -3473,7 +3472,7 @@ Table of Contents
 
    ACS = [ + ECT ]
 
-9.4.  ACS Augmentation - Phases 2, 3, and 4
+9.3.  ACS Augmentation - Phases 2, 3, and 4
 
    In the ACS augmentation phase, a CoRIM Appraisal Context and an
    Evidence Appraisal Policy are used by the Verifier to find CoMID
@@ -3486,7 +3485,7 @@ Table of Contents
    triple condition does not match, then the Verifier continues to
    process other triples.
 
-9.4.1.  ACS Requirements
+9.3.1.  ACS Requirements
 
    At the end of the Evidence collection process, the Evidence has been
    converted into an internal representation suitable for appraisal.
@@ -3496,14 +3495,14 @@ Table of Contents
    representation.  For the purposes of this document, appraisal is
    described in terms of the above cited internal representation.
 
-9.4.1.1.  ACS Processing Requirements
+9.3.1.1.  ACS Processing Requirements
 
    The ACS contains the actual state of Attester's Target Environments
    (TEs).  The ACS contains Evidence ECTs (from Attesters) and
    Endorsement ECTs (e.g. from endorsed-triple-record).
 
    CoMID Reference Values will be matched against the ACS following the
-   comparison rules in Section 9.5.
+   comparison rules in Section 9.4.
 
    Each Endorsement ECT contains the environment and internal
    representation of measurement-maps as extracted from an endorsed-
@@ -3536,7 +3535,7 @@ Table of Contents
 
    The ACS MUST maintain the authority information for each ECT.  There
    can be multiple entries in state-triples which have the same
-   environment-map and a different authority.  See Section 9.4.2.2.
+   environment-map and a different authority.  See Section 9.3.2.2.
 
    If the merged measurement-values-map contains duplicate codepoints
    and the measurement values are equivalent, then duplicate claims
@@ -3547,7 +3546,7 @@ Table of Contents
    and the measurement values are not equivalent, then the Verifier
    SHALL report an error and stop validation processing.
 
-9.4.1.1.1.  Ordering of triple processing
+9.3.1.1.1.  Ordering of triple processing
 
    Triples interface with the ACS by either adding new ACS entries or by
    matching existing ACS entries before updating the ACS.  Most triples
@@ -3567,7 +3566,7 @@ Table of Contents
    repeating processing of some triples after ACS modifications or by
    other algorithms.
 
-9.4.1.2.  ACS Augmentation Requirements
+9.3.1.2.  ACS Augmentation Requirements
 
    The ordering of ECTs in the ACS is not significant.  Logically, the
    ACS represents the conjunction of all claims, so adding an ECT entry
@@ -3575,14 +3574,14 @@ Table of Contents
    else.  Implementations may optimize ECT order to achieve better
    performance.  Additions to the ACS MUST be atomic.
 
-9.4.2.  Evidence Augmentation (Phase 2)
+9.3.2.  Evidence Augmentation (Phase 2)
 
-9.4.2.1.  Appraisal Claims Set Initialization
+9.3.2.1.  Appraisal Claims Set Initialization
 
    The ACS is initialized by copying the internal representation of
-   Evidence claims to the ACS.  See Section 9.4.
+   Evidence claims to the ACS.  See Section 9.3.
 
-9.4.2.2.  The authority field in the ACS
+9.3.2.2.  The authority field in the ACS
 
    The authority field in an ACS ECT indicates the entity whose
    authority backs the Claims.
@@ -3611,7 +3610,7 @@ Table of Contents
    match ACS entries if all of the entries present in the condition
    authorized-by field are present in the ACS authority field.
 
-9.4.2.3.  ACS augmentation using CoMID triples
+9.3.2.3.  ACS augmentation using CoMID triples
 
    In the ACS augmentation phase, a CoRIM Appraisal Context and an
    Evidence Appraisal Policy are used by the Verifier to find CoMID
@@ -3624,7 +3623,7 @@ Table of Contents
    triple condition does not match, then the Verifier continues to
    process other triples.
 
-9.4.3.  Reference Values Corroboration and Augmentation (Phase 3)
+9.3.3.  Reference Values Corroboration and Augmentation (Phase 3)
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.4.2) which are transformed
@@ -3651,7 +3650,7 @@ Table of Contents
    3.  The authority field of the addition ECT has been confirmed as
        being set correctly to the RVP authority
 
-9.4.4.  Endorsed Values Augmentation (Phase 4)
+9.3.4.  Endorsed Values Augmentation (Phase 4)
 
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
@@ -3660,7 +3659,7 @@ Table of Contents
    Endorsements are added to the ACS if the Endorsement condition is
    satisifed by the ACS.
 
-9.4.4.1.  Processing Endorsements
+9.3.4.1.  Processing Endorsements
 
    Endorsed Values Triple and Conditional Endorsement Triple share the
    same internal representation.
@@ -3672,37 +3671,37 @@ Table of Contents
    Endorsements are matched with ACS entries by iterating through the ev
    list.  For each ev entry, the condition ECT is compared with an ACS
    ECT, where the ACS ECT cmtype contains either evidence, reference-
-   values, or endorsements.  If the ECTs match (Section 9.5), the ev
+   values, or endorsements.  If the ECTs match (Section 9.4), the ev
    addition ECT is added to the ACS.
 
    Some condition values can match against multiple ACS-ECTs, or sets of
    ACS-ECTs.  If there are multiple matches, then each match is
    processed independently from the others.
 
-9.4.4.2.  Processing Conditional Endorsements
+9.3.4.2.  Processing Conditional Endorsements
 
    Conditional Endorsement Triples are transformed into an internal
    representation based on ev.  Conditional endorsements have the same
-   processing steps as shown in (Section 9.4.4.1).
+   processing steps as shown in (Section 9.3.4.1).
 
-9.4.4.3.  Processing Conditional Endorsement Series
+9.3.4.3.  Processing Conditional Endorsement Series
 
    Conditional Endorsement Series Triples are transformed into an
    internal representation based on evs.  Conditional series
    endorsements are matched with ACS entries first by iterating through
    the evs list, where for each evs entry, the condition ECT is compared
    with an ACS ECT, where the ACS ECT cmtype contains either evidence,
-   reference-values, or endorsements.  If the ECTs match (Section 9.5),
+   reference-values, or endorsements.  If the ECTs match (Section 9.4),
    the evs series array is iterated, where for each series entry, if the
    selection ECT matches an ACS ECT, the addition ECT is added to the
    ACS.  Series iteration terminates after the first matching series
    entry is processed or when no series entries match.
 
-9.4.4.4.  Processing Key Verification Endorsements
+9.3.4.4.  Processing Key Verification Endorsements
 
    For each ev entry, the condition ECT is compared with an ACS ECT,
    where the ACS ECT cmtype contains either evidence, reference-values,
-   or endorsements.  If the ECTs match (Section 9.5), for each _key_ in
+   or endorsements.  If the ECTs match (Section 9.4), for each _key_ in
    ev.condition.element-claims.measurement-values-map.intrep-keys:
 
    *  Verify the certificate signatures for the certification path.
@@ -3731,7 +3730,7 @@ Table of Contents
 
    Otherwise, do not add the addition ECT to the ACS.
 
-9.4.4.5.  Processing Domain Membership
+9.3.4.5.  Processing Domain Membership
 
    This section assumes that each Domain Membership Triple has been
    transformed into an internal representation following the steps
@@ -3766,7 +3765,7 @@ Table of Contents
    If expected Domain Membership ECTs have not been added, then this may
    affect the processing in a later phase.
 
-9.4.5.  Examples for optional phases 5, 6, and 7
+9.3.5.  Examples for optional phases 5, 6, and 7
 
    Phases 5, 6, and 7 are optional depending on implementation design.
    Verifier implementations that apply consistency, integrity, or
@@ -3815,10 +3814,10 @@ Table of Contents
    Attestation Results contexts are the inputs to Attestation Results
    procedures that produce external representations.
 
-9.5.  Comparing a condition ECT against the ACS
+9.4.  Comparing a condition ECT against the ACS
 
    The Verifier SHALL iterate over all ACS entries and SHALL attempt to
-   match the condition ECT against each ACS entry.  See Section 9.5.1.
+   match the condition ECT against each ACS entry.  See Section 9.4.1.
    The Verifier SHALL create a "matched entries" set, and SHALL populate
    it with all ACS entries which matched the condition ECT.
 
@@ -3828,7 +3827,7 @@ Table of Contents
    If the matched entries array is empty, then the condition ECT does
    not match the ACS.
 
-9.5.1.  Comparing a condition ECT against a single ACS entry
+9.4.1.  Comparing a condition ECT against a single ACS entry
 
    If the condition ECT contains a profile and the profile defines an
    algorithm for a codepoint and environment-map then the Verifier MUST
@@ -3840,7 +3839,7 @@ Table of Contents
    at that codepoint.
 
    The Verifier SHALL perform all of the comparisons defined in
-   Section 9.5.2, Section 9.5.3, and Section 9.5.4.
+   Section 9.4.2, Section 9.4.3, and Section 9.4.4.
 
    Each of these comparisons compares one field in the condition ECT
    against the same field in the ACS entry.
@@ -3851,7 +3850,7 @@ Table of Contents
    If any of the fields does not match, then the condition ECT does not
    match the ACS entry.
 
-9.5.2.  Environment Comparison
+9.4.2.  Environment Comparison
 
    The Verifier SHALL compare each field which is present in the
    condition ECT environment-map against the corresponding field in the
@@ -3875,7 +3874,7 @@ Table of Contents
    the presence of, and value of, the corresponding ACS entry field
    SHALL NOT affect whether the environments match.
 
-9.5.3.  Authority comparison
+9.4.3.  Authority comparison
 
    The Verifier MUST compare byte-by-byte the condition ECT's authority
    value to the candidate entry's authority value.
@@ -3893,7 +3892,7 @@ Table of Contents
    Verifier SHALL treat them as equal if their deterministic CBOR
    encoding is binary equal.
 
-9.5.4.  Element list comparison
+9.4.4.  Element list comparison
 
    The Verifier SHALL iterate over all the entries in the condition ECT
    element-list and compare each one against the corresponding entry in
@@ -3909,7 +3908,7 @@ Table of Contents
    matching entry in the ACS entry element-list field then the element-
    list do not match.
 
-9.5.5.  Element map comparison
+9.4.5.  Element map comparison
 
    The Verifier SHALL compare each element-map within the condition ECT
    element-list against the ACS entry element-list.
@@ -3932,9 +3931,9 @@ Table of Contents
 
    Second, the Verifier SHALL compare the element-claims field within
    the condition ECT element-list and the corresponding field from the
-   ACS entry.  See Section 9.5.6.
+   ACS entry.  See Section 9.4.6.
 
-9.5.6.  Measurement values map map Comparison
+9.4.6.  Measurement values map map Comparison
 
    The Verifier SHALL iterate over the codepoints which are present in
    the condition ECT element's measurement-values-map.  Each of the
@@ -3952,7 +3951,7 @@ Table of Contents
    measurement-values-map then Verifier SHALL remove that candidate
    entry from the candidate entries array.
 
-9.5.6.1.  Comparison of a single measurement-values-map codepoint
+9.4.6.1.  Comparison of a single measurement-values-map codepoint
 
    The Verifier SHALL compare each condition ECT measurement-values-map
    value against the corresponding ACS entry value using the appropriate
@@ -3979,14 +3978,14 @@ Table of Contents
    The following subsections define the comparison algorithms for the
    measurement-values-map codepoints defined by this specification.
 
-9.5.6.1.1.  Comparison for version entries
+9.4.6.1.1.  Comparison for version entries
 
    The value stored under measurement-values-map codepoint 0 is an
    version label, which MUST have type version-map.  Two version-map
    values can only be compared for equality, as they are colloquial
    versions that cannot specify ordering.
 
-9.5.6.1.2.  Comparison for svn entries
+9.4.6.1.2.  Comparison for svn entries
 
    The ACS entry value stored under measurement-values-map codepoint 1
    is a security version number, which MUST have type svn-type.
@@ -4022,7 +4021,7 @@ Table of Contents
    therefore treats the minimum SVN as an exact state and not one to
    compare with inequality.
 
-9.5.6.1.3.  Comparison for digests entries
+9.4.6.1.3.  Comparison for digests entries
 
    A digests entry contains one or more digests, each measuring the same
    object.  When multiple digests are provided, each represents a
@@ -4065,7 +4064,7 @@ Table of Contents
    the condition ECT in common with the hash algorithms from the
    candidate entry ECT.
 
-9.5.6.1.4.  Comparison for raw-value entries
+9.4.6.1.4.  Comparison for raw-value entries
 
    A raw-value entry contains binary data.
 
@@ -4103,7 +4102,7 @@ Table of Contents
    position in the mask whose value is 1, the corresponding bits in both
    values are equal then the comparison MUST return true.
 
-9.5.6.1.5.  Comparison for cryptokeys entries
+9.4.6.1.5.  Comparison for cryptokeys entries
 
    The CBOR tag of the first entry of the condition ECT cryptokeys array
    is compared with the CBOR tag of the first entry of the candidate
@@ -4117,21 +4116,21 @@ Table of Contents
    then the cryptokeys condition ECT matches.  Otherwise, cryptokeys
    does not match.
 
-9.5.6.1.6.  Comparison for Integrity Registers
+9.4.6.1.6.  Comparison for Integrity Registers
 
    For each Integrity Register entry in the condition ECT, the Verifier
    will use the associated identifier (i.e., integrity-register-id-type-
    choice) to look up the matching Integrity Register entry in the
    candidate entry.  If no entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
-   as defined in Section 9.5.6.1.3 after equivalence has been found
+   as defined in Section 9.4.6.1.3 after equivalence has been found
    according to Section 5.1.4.1.6.  Note that it is not required for all
    the entries in the candidate entry to be used during matching: the
    condition ECT could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a condition ECT could describe a subset of PCRs.
 
-9.5.6.1.7.  Comparison for int-range entries
+9.4.6.1.7.  Comparison for int-range entries
 
    The ACS entry value stored under measurement-values-map codepoint 15
    is an int range value, which MUST have type int-range-type-choice.
@@ -4172,7 +4171,7 @@ Table of Contents
       -  CONDITION.max is null or ENTRY.max is an int that is less than
          or equal to CONDITION.max.
 
-9.5.7.  Profile-directed Comparison
+9.4.7.  Profile-directed Comparison
 
    A profile MUST specify comparison algorithms for its additions to
    $-prefixed CoRIM CDDL codepoints when this specification does not
@@ -4945,9 +4944,9 @@ Table of Contents
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-21,
-              18 November 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-msg-wrap-21>.
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-22,
+              4 December 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-22>.
 
    [IANA.cbor-tags]
               IANA, "Concise Binary Object Representation (CBOR) Tags",
