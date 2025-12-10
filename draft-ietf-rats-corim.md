@@ -2299,7 +2299,6 @@ An ARS is a list of ECTs that describe ACS entries that are selected for use as 
 {::include cddl/intrep-ars.cddl}
 ~~~
 
-## Reference Verifier Algorithm
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
 During the initialization phase, the CoRIM Appraisal Context is loaded with various conceptual message inputs such as CoMID tags ({{sec-comid}}), CoSWID tags {{-coswid}}, CoTL tags, and cryptographic validation key material (including raw public keys, root certificates, intermediate CA certificate chains), and Concise Trust Anchor Stores (CoTS) {{-ta-store}}.
