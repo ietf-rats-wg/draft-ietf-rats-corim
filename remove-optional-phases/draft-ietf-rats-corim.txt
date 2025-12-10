@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 9 May 2026                                               Linaro
+Expires: 13 June 2026                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         5 November 2025
+                                                        10 December 2025
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 May 2026.
+   This Internet-Draft will expire on 13 June 2026.
 
 Copyright Notice
 
@@ -153,11 +153,7 @@ Table of Contents
        9.1.4.  Internal Representation of Reference Values
        9.1.5.  Internal Representation of Endorsed Values
        9.1.6.  Internal Representation of Domain Membership
-       9.1.7.  Internal Representation of Policy Statements
-       9.1.8.  Internal Representation of Attestation Results
-       9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
-       9.1.10. Internal Representation of Attestation Results Set
-               (ARS)
+       9.1.7.  Internal Representation of Appraisal Claims Set (ACS)
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
          9.2.1.1.  CoRIM Selection
@@ -194,7 +190,6 @@ Table of Contents
          9.3.4.3.  Processing Conditional Endorsement Series
          9.3.4.4.  Processing Key Verification Endorsements
          9.3.4.5.  Processing Domain Membership
-       9.3.5.  Examples for optional phases 5, 6, and 7
      9.4.  Comparing a condition ECT against the ACS
        9.4.1.  Comparing a condition ECT against a single ACS entry
        9.4.2.  Environment Comparison
@@ -518,25 +513,6 @@ Table of Contents
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
    |              |                    | See Section 9.1.5            |
-   +--------------+--------------------+------------------------------+
-   | Verifier     | List of expected   | If the list of expected      |
-   |              | actual state       | claims are in the ACS, then  |
-   |              | claims, List of    | add the list of Verifier-    |
-   |              | Verifier-generated | generated claims to the ACS  |
-   |              | claims             | with Verifier authority      |
-   +--------------+--------------------+------------------------------+
-   | Policy       | List of expected   | If the list of expected      |
-   |              | actual state       | claims are in the ACS, then  |
-   |              | claims, List of    | add the list of Policy-      |
-   |              | Policy-generated   | generated claims to the ACS  |
-   |              | claims             | with Policy Owner authority  |
-   +--------------+--------------------+------------------------------+
-   | Attestation  | List of expected   | If the list of expected      |
-   | Results      | actual state       | claims are in the ACS, then  |
-   |              | claims, List of    | copy the list of Attestation |
-   |              | expected           | Results claims into the ARS. |
-   |              | Attestation        | See Section 9.1.10           |
-   |              | Results claims     |                              |
    +--------------+--------------------+------------------------------+
 
          Table 1: Conceptual Message Representation Requirements
@@ -2551,32 +2527,6 @@ Table of Contents
    satisfied, then additional Claims about the Attester are added to the
    ACS.  These inputs are added with the Endorser's authority.
 
-   *  *Phase 5*: Verifier Augmentation
-
-   During Phase 5, the Verifier may perform consistency, integrity, or
-   additional validity checks.
-
-   These checks may result in additional Claims about the Attester that
-   are added to the ACS.  These Claims are added with the Verifier's
-   authority.
-
-   *  *Phase 6*: Policy Augmentation
-
-   During Phase 6, appraisal policies are processed that describe
-   Attester states that are desirable or undesirable.  If these
-   conditions exist, the policy may add additional Claims about the
-   Attester, to the ACS.  These Claims are added with the policy
-   author's authority.
-
-   *  *Phase 7*: Attestation Results Production and Transformation
-
-   During Phase 7, the outcome of Appraisal and the set of Attester
-   Claims that are interesting to a Relying Party are copied from the
-   Attester state to an output staging area.  The Claims in the output
-   staging area and other Verifier related metadata are transformed into
-   an external representation suitable for consumption by a Relying
-   Party.
-
 9.  Reference Verifier Algorithm
 
    This document presumes that Verifier implementations will differ.  To
@@ -2590,51 +2540,52 @@ Table of Contents
    Claims Set (ACS), Appraisal Policy, and Attestation Results Set (ARS)
    are used with the meaning defined in Section 1.1.1.
 
-                    .----------. .-----------. .----------.
-                    | Evidence | | Reference | | Endorsed |
-                    |          | | Values    | | Values   |
-                    '---+------' '---+-------' '---+------'
-                        |            |             |
-           .------------+------------+-------------+-----------.
-          |             |      CORIM | VERIFIER    |            |
-          |             v            v             v            |
-          |     +------------------------------------+          |
-          |     |          Input Validation          |          |
-          |     +-----------------+------------------+          |
-          |                       |                             |
-          |                       v                             |
-          |     +-----------------+-------------------+         |
-          |     |          Input Transformation       |         |
-          |     |      (Internal Representation)      |         |
-          |     +-----------------+-------------------+         |
-          |                       |                             |
-          |                       v                             |
-          |    +------------------+------------------------+    |
-          |    |          Staging Area                     |    |
-          |    | +---------+  +---------+     +---------+  |    |
-          |    | |  ECT    |  |  ECT    |     |  ECT    |  |    |
-          |    | |(ct= Ev) |  |(ct= RV) | ..  |(ct=EndV)|  |    |
-          |    | +---------+  +---------+     +---------+  |    |
-          |    +------------------+------------------------+    |
-          |                       |                             |
-          |             +--------+    +----------------------+  |
-          |             |             | Appraisal Claims Set |  |
-          |             v             |    (ACS)             |  |
-          |     +-------+--------+    |  +------+            |  |
-          |     + ACS  Matching  +<---+  | ECT  |            |  |
-          |     | Condition      |    |  |      |            |  |
-          |     +-------+--------+    |  +------+            |  |
-          |             |             |                      |  |
-          |             +------------>|                      |  |
-          |                           +-----------+----------+  |
-          |                                       v             |
-          |          +----------------------------+----------+  |
-          |          |         OUTPUT TRANSFORMATION         |  |
-          |          +---------------------------------------+  |
-          |                                                     |
-          '----------------------------------------------------'
+          +-----------+ +----------+
+          | Reference | | Endorsed |
+          |  Values   | |  Values  |
+          +---+-------+ +---+------+
+              |             |
++-------------+-------------+-------------------------+
+|             |      CORIM  | PROCESSING              |
+|             v             v                         |
+|     +------------------------------------+          |    +-----------+
+|     |          Input Validation          |          |    |           |
+|     +-----------------+------------------+          |    | Evidence  |
+|                       |                             |    |           |
+|                       v                             |    +-----+-----+
+|     +-----------------+-------------------+         |          |
+|     |          Input Transformation       |         |          v
+|     |      (Internal Representation)      |         |    +-----+------+
+|     +-----------------+-------------------+         |    |            |
+|                       |                             |    | Validation |
+|                       v                             |    |   &        |
+|    +------------------+------------------------+    |    | Internal   |
+|    |          Staging Area                     |    |    | Transform  |
+|    | +---------+  +---------+     +---------+  |    |    |            |
+|    | |  ECT    |  |  ECT    |     |  ECT    |  |    |    +-----+------+
+|    | |(ct= Rv) |  |(ct=End) | ..  |(ct=CEV) |  |    |          |
+|    | +---------+  +---------+     +---------+  |    |          |
+|    +------------------+------------------------+    |          |
+|                       |                             |          |
+|             +--------+    +----------------------+  |          |
+|             |             | Appraisal Claims Set |  |          |
+|             v             |    (ACS)             |  |          |
+|     +-------+--------+    |  +------+            |  |          |
+|     + ACS  Matching  +<---+  | ECT  | ...        |  |          |
+|     | Condition      |    |  |      |            +<-+----------+
+|     +-------+--------+    |  +------+            |  |
+|             |             |  ECT =               |  |
+|             +------------>|  Env. Claims Tuple   |  |
+|                           +-----------+----------+  |
+|                                       |             |
+|                             +--------+              |
++-----------------------------+-----------------------+
+                              V
+           +------------------+--------------------+
+           |         OUTPUT TRANSFORMATION         |
+           +---------------------------------------+
 
-                       Figure 1: CoRIM Verifier Flow
+                    Figure 1: CoRIM Verifier Flow
 
 9.1.  Internal Representation of Conceptual Messages
 
@@ -2643,9 +2594,8 @@ Table of Contents
    Attestation Results.
 
    The internal representation of Conceptual Messages, as well as the
-   ACS (Section 9.1.9) and ARS (Section 9.1.10), are constructed from a
-   common building block structure called Environment-Claims Tuple
-   (ECT).
+   ACS (Section 9.1.7) is constructed from a common building block
+   structure called Environment-Claims Tuple (ECT).
 
 9.1.1.  Internal structure of ECT
 
@@ -2703,7 +2653,7 @@ Table of Contents
    )
 
    The Conceptual Message type (cmtype) determines which attributes are
-   mandatory.  See Section 9.1.3 through to Section 9.1.10 for ECTs of
+   mandatory.  See Section 9.1.3 through to Section 9.1.7 for ECTs of
    various conceptual messages.
 
 9.1.2.  Internal Representation of Cryptographic Keys
@@ -2929,104 +2879,12 @@ Table of Contents
                       Table 6: Domain Membership tuple
                                 requirements
 
-9.1.7.  Internal Representation of Policy Statements
-
-   The policy relation compares the condition ECTs to the ACS.
-
-   policy = [
-     condition: [ + ECT ]
-     addition: [ + ECT ]
-   ]
-
-   If all of the ECTs are found in the ACS then the addition ECTs are
-   added to the ACS with the policy author's authority.
-
-   Table 7 contains the requirements for the ECT fields of the Policy
-   tuple:
-
-                +===========+==============+=============+
-                | ECT type  | ECT Field    | Requirement |
-                +===========+==============+=============+
-                | condition | environment  | Optional    |
-                +-----------+--------------+-------------+
-                |           | element-list | Optional    |
-                +-----------+--------------+-------------+
-                |           | authority    | Optional    |
-                +-----------+--------------+-------------+
-                |           | cmtype       | n/a         |
-                +-----------+--------------+-------------+
-                |           | profile      | n/a         |
-                +-----------+--------------+-------------+
-                |           | members      | n/a         |
-                +-----------+--------------+-------------+
-                | addition  | environment  | Mandatory   |
-                +-----------+--------------+-------------+
-                |           | element-list | Mandatory   |
-                +-----------+--------------+-------------+
-                |           | authority    | Mandatory   |
-                +-----------+--------------+-------------+
-                |           | cmtype       | Mandatory   |
-                +-----------+--------------+-------------+
-                |           | profile      | Optional    |
-                +-----------+--------------+-------------+
-                |           | members      | n/a         |
-                +-----------+--------------+-------------+
-
-                    Table 7: Policy tuple requirements
-
-9.1.8.  Internal Representation of Attestation Results
-
-   The ar relation compares the acs-condition to the ACS.
-
-   ar = [
-     acs-condition: [ + ECT ]
-     ars-addition: [ + ECT ]
-   ]
-
-   If the condition is satisfied, the ars-additions are copied from the
-   ACS to the ARS.  If any of the ars-additions are not found in the ACS
-   then these ACS entries are not copied to the ARS.
-
-   Table 8 contains the requirements for the ECT fields of the
-   Attestation Results tuple:
-
-              +===============+==============+=============+
-              | ECT type      | ECT Field    | Requirement |
-              +===============+==============+=============+
-              | acs-condition | environment  | Optional    |
-              +---------------+--------------+-------------+
-              |               | element-list | Optional    |
-              +---------------+--------------+-------------+
-              |               | authority    | Optional    |
-              +---------------+--------------+-------------+
-              |               | cmtype       | n/a         |
-              +---------------+--------------+-------------+
-              |               | profile      | n/a         |
-              +---------------+--------------+-------------+
-              |               | members      | n/a         |
-              +---------------+--------------+-------------+
-              | ars-addition  | environment  | Mandatory   |
-              +---------------+--------------+-------------+
-              |               | element-list | Mandatory   |
-              +---------------+--------------+-------------+
-              |               | authority    | Mandatory   |
-              +---------------+--------------+-------------+
-              |               | cmtype       | Mandatory   |
-              +---------------+--------------+-------------+
-              |               | profile      | Optional    |
-              +---------------+--------------+-------------+
-              |               | members      | Optional    |
-              +---------------+--------------+-------------+
-
-                    Table 8: Attestation Results tuple
-                               requirements
-
-9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
+9.1.7.  Internal Representation of Appraisal Claims Set (ACS)
 
    An ACS is a list of ECTs that describe an Attester's actual state.
 
    For ECTs present in the ACS, the cmtype field is mandatory.
-   Table Table 9 shows the minimum required mandatory fields applicable
+   Table Table 7 shows the minimum required mandatory fields applicable
    to all ECTs in an ACS.
 
                  +==========+=============+=============+
@@ -3039,16 +2897,9 @@ Table of Contents
                  |          | cmtype      | Mandatory   |
                  +----------+-------------+-------------+
 
-                 Table 9: ACS tuple minimum requirements
+                 Table 7: ACS tuple minimum requirements
 
    ACS = [ + ECT ]
-
-9.1.10.  Internal Representation of Attestation Results Set (ARS)
-
-   An ARS is a list of ECTs that describe ACS entries that are selected
-   for use as Attestation Results.
-
-   ARS = [ + ECT ]
 
 9.2.  Input Validation and Transformation (Phase 1)
 
@@ -3724,55 +3575,6 @@ Table of Contents
    If expected Domain Membership ECTs have not been added, then this may
    affect the processing in a later phase.
 
-9.3.5.  Examples for optional phases 5, 6, and 7
-
-   Phases 5, 6, and 7 are optional depending on implementation design.
-   Verifier implementations that apply consistency, integrity, or
-   validity checks could be represented as Claims that augment the ACS
-   or could be handled by application specific interfaces.  Processing
-   appraisal policies may result in augmentation or modification of the
-   ACS, but techniques for tracking the application of policies during
-   appraisal need not result in ACS augmentation.  Additionally, the
-   creation of Attestation Results is out-of-scope for this document,
-   nevertheless internal staging may facilitate processing of
-   Attestation Results.
-
-   Phase 5: Verifier Augmentation
-
-   Verifiers may add value to accepted Claims, such as ensuring
-   freshness, consistency, and integrity.  The results of the added
-   value may be asserted as Claims with Verifier authority.  For
-   example, if a Verifier is able to ensure collected Evidence is fresh,
-   it might create a freshness Claim that is included with the Evidence
-   Claims in the ACS.
-
-   Phase 6: Policy Augmentation
-
-   Appraisal policy inputs could result in Claims that augment the ACS.
-   For example, an Appraisal Policy for Evidence may specify that if all
-   of a collection of subcomponents satisfy a particular quality metric,
-   the top-level component also satisfies the quality metric.  The
-   Verifier might generate an Endorsement ECT for the top-level
-   component that asserts a quality metric.  Details about the applied
-   policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 9.1.7,
-   contains the environments affected by the policy with policy
-   identifiers as Claims.
-
-   Phase 7: Attestation Results Production and Transformation
-
-   Attestation Results rely on input from the ACS, but may not bear any
-   similarity to its content.  For example, Attestation Results
-   processing may map the ACS state to a generalized trustworthiness
-   state such as [I-D.ietf-rats-ar4si].  Generated Attestation Results
-   Claims may be specific to a particular Relying Party.  Hence, the
-   Verifier may need to maintain multiple Attestation Results contexts.
-   An internal representation of Attestation Results as separate
-   contexts (Section 9.1.10) ensures Relying Party–specific processing
-   does not modify the ACS, which is common to all Relying Parties.
-   Attestation Results contexts are the inputs to Attestation Results
-   procedures that produce external representations.
-
 9.4.  Comparing a condition ECT against the ACS
 
    The Verifier SHALL iterate over all ACS entries and SHALL attempt to
@@ -4350,7 +4152,7 @@ Table of Contents
    | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
-                                  Table 10
+                                  Table 8
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -4373,7 +4175,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 11: CoRIM Map Items
+                          Table 9: CoRIM Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4400,7 +4202,7 @@ Table of Contents
                 | 3-255 | Unassigned     |               |
                 +-------+----------------+---------------+
 
-                    Table 12: CoRIM Map Items Initial
+                    Table 10: CoRIM Map Items Initial
                               Registrations
 
 12.4.  CoRIM Entity Map Registry
@@ -4420,7 +4222,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 13: CoRIM Entity Map Items
+                      Table 11: CoRIM Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4447,7 +4249,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 14: CoRIM Entity Map Items Initial Registrations
+           Table 12: CoRIM Entity Map Items Initial Registrations
 
 12.5.  CoRIM Signer Map Registry
 
@@ -4466,7 +4268,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 15: CoRIM Signer Map Items
+                      Table 13: CoRIM Signer Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4485,7 +4287,7 @@ Table of Contents
                   | 2-255 | Unassigned  |               |
                   +-------+-------------+---------------+
 
-                      Table 16: CoRIM Signer Map Items
+                      Table 14: CoRIM Signer Map Items
                            Initial Registrations
 
 12.6.  CoMID Map Registry
@@ -4505,7 +4307,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 17: CoMID Map Items
+                         Table 15: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4530,7 +4332,7 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 18: CoMID Map Items Initial
+                    Table 16: CoMID Map Items Initial
                               Registrations
 
 12.7.  CoMID Entity Map Registry
@@ -4550,7 +4352,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 19: CoMID Entity Map Items
+                      Table 17: CoMID Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4577,7 +4379,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 20: CoMID Entity Map Items Initial Registrations
+           Table 18: CoMID Entity Map Items Initial Registrations
 
 12.8.  CoMID Triples Map Registry
 
@@ -4598,7 +4400,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-              Table 21: CoMID Triples Map Items Registration
+              Table 19: CoMID Triples Map Items Registration
                                 Procedures
 
    All negative values are reserved for Private Use.
@@ -4645,7 +4447,7 @@ Table of Contents
        | 11-18446744073709551616 | Unassigned     |               |
        +-------------------------+----------------+---------------+
 
-         Table 22: CoMID Triples Map Items Initial Registrations
+         Table 20: CoMID Triples Map Items Initial Registrations
 
 12.9.  CoMID Measurement Values Map Registry
 
@@ -4666,7 +4468,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-               Table 23: CoMID Measurement Values Map Items
+               Table 21: CoMID Measurement Values Map Items
                          Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4713,7 +4515,7 @@ Table of Contents
     |16-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
-        Table 24: Measurement Values Map Items Initial Registrations
+        Table 22: Measurement Values Map Items Initial Registrations
 
 12.10.  CoMID Flags Map Registry
 
@@ -4734,7 +4536,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-         Table 25: CoMID Flags Map Items Registration Procedures
+         Table 23: CoMID Flags Map Items Registration Procedures
 
    All negative values are reserved for Private Use.
 
@@ -4768,7 +4570,7 @@ Table of Contents
    |10-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
-             Table 26: Flags Map Items Initial Registrations
+             Table 24: Flags Map Items Initial Registrations
 
 12.11.  CoTL Map Registry
 
@@ -4787,7 +4589,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 27: CoTL Map Items
+                          Table 25: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4808,7 +4610,7 @@ Table of Contents
                  | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 28: CoTL Map Items Initial
+                     Table 26: CoTL Map Items Initial
                               Registrations
 
 12.12.  New Media Types
@@ -4824,7 +4626,7 @@ Table of Contents
    | rim+cose | application/rim+cose | RFCthis, (Section 12.12.2) |
    +----------+----------------------+----------------------------+
 
-                      Table 29: New Media Types
+                      Table 27: New Media Types
 
 12.12.1.  rim+cbor
 
@@ -4894,7 +4696,7 @@ Table of Contents
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 30: New Content-Formats
+                  Table 28: New Content-Formats
 
 13.  References
 
@@ -4903,9 +4705,9 @@ Table of Contents
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
-              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-19,
-              17 October 2025, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-msg-wrap-19>.
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-22,
+              4 December 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-22>.
 
    [IANA.cbor-tags]
               IANA, "Concise Binary Object Representation (CBOR) Tags",
