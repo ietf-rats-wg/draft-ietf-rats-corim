@@ -2665,6 +2665,14 @@ If the matched entries array is not empty, then the condition ECT matches the AC
 
 If the matched entries array is empty, then the condition ECT does not match the ACS.
 
+```
+    bool match_against_acs(condition_ect)
+        for (acs_entry in ACS_entries)
+            if (acs_entry.matches(condition_ect)
+                return true; // Matched
+        return false; // Did not match 
+```
+
 ### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
 
 If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then the Verifier MUST use the algorithm defined by the profile, or it MUST use a standard algorithm if the profile defines that.
@@ -2678,6 +2686,16 @@ If all of the fields match, then the condition ECT matches the ACS entry.
 
 If any of the fields does not match, then the condition ECT does not match the ACS entry.
 
+```
+    bool acs_entry::matches(condition_ect)
+        if (condition_ect contains a profile)
+            return profile_ect_matches(this, condition_ect)
+
+        return this.matches_environment(condition_ect) &&
+               this.matches_authority(condition_ect) &&
+               this.matches_elements(condition_ect)
+```
+
 ### Environment Comparison {#sec-compare-environment}
 
 The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
@@ -2690,6 +2708,19 @@ If any field which is present in the condition ECT `environment-map` is not pres
 If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
 
 If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
+
+```
+    bool acs_entry::matches_environment(condition_ect)
+        for (field IN condition ect.environment.fields) // eg. class, instance, group
+            if (acs_entry does not contain same field)
+                return false
+            // Comparison below is a binary comparison of fields, using CBOR deterministic encoding
+            if (!acs_entry.field.equals(condition_ect.field)
+                return false
+        if (condition_ect.environment is empty)
+            return false
+        return true
+```
 
 ### Authority comparison {#sec-compare-authority}
 
