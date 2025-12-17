@@ -100,6 +100,7 @@ normative:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
+  I-D.ietf-cose-hash-envelope: cose-hash-envelope
 
 informative:
   RFC7519: jwt
@@ -553,7 +554,13 @@ The following describes each child item of this map.
 
 * `alg` (index 1): An integer that identifies a signature algorithm.
 
-* `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
+Either:
+
+* `content-type` (index 3): An integer or string that represents the "MIME Content type" carried in the CoRIM payload.
+
+Or:
+
+* `payload_preimage_content_type` (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload, when using a Hash Envelope ({{-cose-hash-envelope}}).
 
 At least one of:
 
@@ -643,7 +650,7 @@ The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
 These metadata containers ensure that each CoRIM in the collection has an identified signer.
-The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header.
+The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.
 
 If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
