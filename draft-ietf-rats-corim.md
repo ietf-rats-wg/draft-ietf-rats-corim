@@ -560,7 +560,7 @@ Either:
 
 Or:
 
-* `payload_preimage_content_type` (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload, when using a Hash Envelope ({{-cose-hash-envelope}}).
+* `payload_preimage_content_type` (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload when using a Hash Envelope ({{-cose-hash-envelope}}).
 
 At least one of:
 
