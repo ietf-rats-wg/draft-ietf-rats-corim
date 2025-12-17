@@ -1,8 +1,20 @@
 ; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-protected-corim-header-map =
+protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+
+protected-corim-header-map-inline =
   {
     &(alg: 1) => int,
     &(content-type: 3) => "application/rim+cbor",
+    meta-group,
+    * cose-label => cose-value
+  }
+
+protected-corim-header-map-hash-envelope =
+  {
+    &(alg: 1) => int,
+    &(payload_hash_alg: 258) => int
+    &(payload_preimage_content_type: 259) => "application/rim+cbor",
+    ? &(payload_location: 260) => tstr
     meta-group,
     * cose-label => cose-value
   }
