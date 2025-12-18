@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-12-11T02:08:46.301896+00:00",
+  "timestamp": "2025-12-18T02:04:55.984780+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -81985,6 +81985,81 @@
               "body": "```suggestion\r\n```",
               "createdAt": "2025-12-10T15:02:40Z",
               "updatedAt": "2025-12-10T15:02:41Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 520,
+      "id": "PR_kwDOH6-tI865YDN0",
+      "title": "Add support for COSE Hash Envelope to Signed CoRIM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/520",
+      "state": "OPEN",
+      "author": "achamayou",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "[COSE Hash Envelope](https://datatracker.ietf.org/doc/draft-ietf-cose-hash-envelope/) is used in some scenarios such as remote signing, or envelope-based policy/authorization. It is currently in the [RFC Editor Queue](https://www.rfc-editor.org/current_queue.php).\r\n\r\nThis proposes a minimal change to Signed CoRIM to support these scenarios through COSE Hash Envelope.",
+      "createdAt": "2025-12-17T13:47:21Z",
+      "updatedAt": "2025-12-17T18:13:54Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
+      "headRepository": "achamayou/draft-ietf-rats-corim",
+      "headRefName": "add_cose_hash_envelope",
+      "headRefOid": "43baeaed0c0fb67f075aa72ae1c0ac68efdba221",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@achamayou : This document, provides a Data Format for conveying CoRIMs. For now CoRIMs convey Reference Values and Endorsements.\r\n\r\nCan you please elaborate why the Cose Hash Envelope should be part of CoRIM Specification.\r\n\r\n",
+          "createdAt": "2025-12-17T16:03:26Z",
+          "updatedAt": "2025-12-17T16:03:26Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> @achamayou : This document, provides a Data Format for conveying CoRIMs. For now CoRIMs convey Reference Values and Endorsements.\r\n> \r\n> Can you please elaborate why the Cose Hash Envelope should be part of CoRIM Specification.\r\n\r\nHi Yogesh, the Signed CoRIM section places normative requirements on how CoRIM can be signed. These normative requirements currently forbid COSE Hash Envelope signing because they mandate the usage of `content-type (3)`.\r\n\r\nAdding a reference to COSE Hash Envelope signing is not the only way to resolve this problem, another solution would be to avoid making normative decisions about Signing envelopes in the CoRIM document. This is a larger change though, and after reaching out for advice in email, I went with the minimal change that was suggested to me.",
+          "createdAt": "2025-12-17T18:13:54Z",
+          "updatedAt": "2025-12-17T18:13:54Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87V3mZg",
+          "commit": {
+            "abbreviatedOid": "4ab2bf7"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "minimal invasive and quite comprehensive",
+          "createdAt": "2025-12-17T14:51:25Z",
+          "updatedAt": "2025-12-17T14:51:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87V4Gjn",
+          "commit": {
+            "abbreviatedOid": "4ab2bf7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM, thanks!",
+          "createdAt": "2025-12-17T15:20:02Z",
+          "updatedAt": "2025-12-17T15:22:14Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\r\n* `payload_preimage_content_type` (index 259): A string that represents the \"MIME Content type\" of the CoRIM document used as the pre-image of the payload when using a Hash Envelope ({{-cose-hash-envelope}}).\r\n```",
+              "createdAt": "2025-12-17T15:20:03Z",
+              "updatedAt": "2025-12-17T15:22:14Z"
             }
           ]
         }
