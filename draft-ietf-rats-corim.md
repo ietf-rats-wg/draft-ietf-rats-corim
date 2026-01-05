@@ -535,10 +535,9 @@ The following describes each child element of this type.
 
 * `unprotected`: A COSE header that is not protected by COSE signature.
 
-* `payload`: A CBOR encoded tagged CoRIM.
+* `payload`: Either a CBOR encoded tagged CoRIM, the digest of a CBOR encoded tagged CoRIM, or nil for detached use-cases.
 
-* `signature`: A COSE signature block which is the signature over the protected
-  and payload components of the signed CoRIM.
+* `signature`: A COSE signature block which is the signature over the envelope.
 
 ### Protected Header Map
 
