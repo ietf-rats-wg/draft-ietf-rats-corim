@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-06T02:11:53.064023+00:00",
+  "timestamp": "2026-01-08T02:11:33.471166+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -12993,6 +12993,22 @@
           "updatedAt": "2025-12-10T15:46:31Z"
         }
       ]
+    },
+    {
+      "number": 521,
+      "id": "I_kwDOH6-tI87h8Y3c",
+      "title": "Optimization: Allow Evidence to Assert Domain-ID for Efficient DMT Discovery",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/521",
+      "state": "OPEN",
+      "author": "fdamato",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "## Summary\n\nCurrently, Section 9.3.4.5 \"Processing Domain Membership\" requires verifiers to scan all Domain Membership ECTs in the staging area against evidence environments to find matches. This approach works but can be computationally expensive, especially for resource-constrained verifiers (e.g., embedded verifiers behind a BMC).\n\nThis issue proposes an optimization to allow evidence to optionally assert a `domain-id`, providing a hint to the verifier about which DMT(s) to process, significantly reducing the search space.\n\n---\n\n## Current Behavior\n\nPer Section 9.3.4.5, the verifier must:\n\n1. Iterate through every Domain Membership ECT in the staging area\n2. For each DMT, check if all members match corresponding ACS entries\n3. Repeat until no new DMTs are added to ACS\n\n**Complexity:** O(D \u00d7 M \u00d7 E) where:\n- D = number of Domain Membership ECTs in staging area\n- M = average number of members per DMT\n- E = number of evidence entries in ACS\n\nFor large deployments with hundreds of DMTs and environments, this can be prohibitively expensive for constrained verifiers.\n\n---\n\n## Proposed Enhancement\n\nAllow evidence to optionally include a `domain-id` assertion that hints which DMT(s) the attester claims membership in. The verifier would:\n\n1. **If domain-id is present in evidence:** Prioritize processing only the DMT(s) matching that domain-id\n2. **If domain-id is not present:** Fall back to the current algorithm (Section 9.3.4.5)\n\n**Benefits:**\n- **Performance:** Reduces search space from all DMTs to specific DMT(s)\n- **Resource efficiency:** Enables deployment on constrained verifiers\n- **Backward compatibility:** Existing evidence without domain-id continues to work\n- **Security:** Domain-id assertion is still corroborated against authoritative Endorser DMTs (no trust boundary violation)\n\n---\n\n## Security Considerations\n\nThe `domain-id` in evidence is a **hint, not authoritative**. The verifier must still:\n\n- Corroborate the domain-id assertion against Endorser-provided DMTs\n- Reject evidence if the claimed domain-id doesn't match Endorser DMTs\n- Validate all domain membership per existing security model\n\nThe Endorser remains the authoritative source for domain composition.\n\n---\n\n## Evidence Profile Option\n\nFor strict resource-constrained deployments, an evidence profile could specify:\n\n- **MUST include domain-id:** Evidence without domain-id is rejected\n- **Verifier MAY skip fallback:** Verifier is not required to implement the full scan algorithm\n\nThis allows adoption in environments where the full algorithm is not feasible.",
+      "createdAt": "2026-01-07T23:34:30Z",
+      "updatedAt": "2026-01-07T23:34:30Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -82002,13 +82018,13 @@
       "labels": [],
       "body": "[COSE Hash Envelope](https://datatracker.ietf.org/doc/draft-ietf-cose-hash-envelope/) is used in some scenarios such as remote signing, or envelope-based policy/authorization. It is currently in the [RFC Editor Queue](https://www.rfc-editor.org/current_queue.php). COSE detached payloads are used in situations where it is convenient to locate contents and envelopes separately, as pointed out in #514.\r\n\r\nThis proposes a minimal change to Signed CoRIM to support these scenarios.",
       "createdAt": "2025-12-17T13:47:21Z",
-      "updatedAt": "2026-01-05T19:59:34Z",
+      "updatedAt": "2026-01-07T16:56:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
       "headRepository": "achamayou/draft-ietf-rats-corim",
       "headRefName": "add_cose_hash_envelope",
-      "headRefOid": "b46a83eb359fe816a8b2d01075863973f33fd19b",
+      "headRefOid": "4cc6266deaae5ee340f8702b536bbb78fa42a3cf",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -82027,6 +82043,13 @@
           "body": "> @achamayou : This document, provides a Data Format for conveying CoRIMs. For now CoRIMs convey Reference Values and Endorsements.\r\n> \r\n> Can you please elaborate why the Cose Hash Envelope should be part of CoRIM Specification.\r\n\r\nHi Yogesh, the Signed CoRIM section places normative requirements on how CoRIM can be signed. These normative requirements currently forbid COSE Hash Envelope signing because they mandate the usage of `content-type (3)`.\r\n\r\nAdding a reference to COSE Hash Envelope signing is not the only way to resolve this problem, another solution would be to avoid making normative decisions about Signing envelopes in the CoRIM document. This is a larger change though, and after reaching out for advice in email, I went with the minimal change that was suggested to me.",
           "createdAt": "2025-12-17T18:13:54Z",
           "updatedAt": "2025-12-17T18:13:54Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@yogeshbdeshpande @thomas-fossati @nedmsmith I simplified the CDDL a little too much to fit on the slides, but the PR actually already makes the Direct / Indirect choice explicit and precise: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/520/changes#diff-fd733677e805bba8df43e15d3bbaea19657d6c99bb59e0dd92e3738276aaec8aR2",
+          "createdAt": "2026-01-07T15:56:48Z",
+          "updatedAt": "2026-01-07T15:56:48Z"
         }
       ],
       "reviews": [
@@ -82062,6 +82085,19 @@
               "updatedAt": "2025-12-17T15:22:14Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Yszak",
+          "commit": {
+            "abbreviatedOid": "b46a83e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks for the presentation @achamayou; restating my approval just in case.",
+          "createdAt": "2026-01-07T16:08:25Z",
+          "updatedAt": "2026-01-07T16:08:25Z",
+          "comments": []
         }
       ]
     }
