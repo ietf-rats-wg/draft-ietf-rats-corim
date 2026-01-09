@@ -512,8 +512,8 @@ The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` 
 
 ## Signed CoRIM {#sec-corim-signed}
 
-CoRIM documents can be signed using the procedure defined in {{Section 4.2 of RFC9052}} (COSE_Sign1).
-The payload can be placed inline, or detached as defined in {{Section 2 of RFC9052}}, when circumstances call for it to be transported separately.
+CoRIM documents can be signed using the procedure defined in {{Section 4.2 of -cose}} (COSE_Sign1).
+The payload can be placed inline, or detached as defined in {{Section 2 of -cose}}, when circumstances call for it to be transported separately.
 In contexts where payload transmission is not required, such as remote signing, {{-cose-hash-envelope}} can be used to sign the digest of a CoRIM document.
 
 ### Protected Header Map
