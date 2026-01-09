@@ -100,6 +100,7 @@ normative:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
   IANA.named-information: named-info
+  I-D.ietf-cose-hash-envelope: cose-hash-envelope
 
 informative:
   RFC7519: jwt
@@ -511,51 +512,15 @@ The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` 
 
 ## Signed CoRIM {#sec-corim-signed}
 
-~~~ cddl
-{::include cddl/signed-corim.cddl}
-~~~
-
-Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption {{-cose}}. A CoRIM tag MUST be wrapped in a COSE_Sign1 structure.
-The CoRIM MUST be signed by the CoRIM creator.
-
-The following CDDL specification defines a restrictive subset of COSE header
-parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
-
-~~~ cddl
-{::include cddl/cose-sign1-corim.cddl}
-~~~
-
-The following describes each child element of this type.
-
-* `protected`: A CBOR Encoded protected header which is protected by the COSE
-  signature. Contains information as given by Protected Header Map below.
-
-* `unprotected`: A COSE header that is not protected by COSE signature.
-
-* `payload`: A CBOR encoded tagged CoRIM.
-
-* `signature`: A COSE signature block which is the signature over the protected
-  and payload components of the signed CoRIM.
+CoRIM documents can be signed using the procedure defined in {{Section 4.2 of RFC9052}} (COSE_Sign1).
+The payload can be placed inline, or detached as defined in {{Section 2 of RFC9052}}, when circumstances call for it to be transported separately.
+In contexts where payload transmission is not required, such as remote signing, {{-cose-hash-envelope}} can be used to sign the digest of a CoRIM document.
 
 ### Protected Header Map
 
-~~~ cddl
-{::include cddl/protected-corim-header-map.cddl}
-~~~
+The MIME content type of a Signed CoRIM MUST be set to "application/rim+cbor", using the relevant label: `content-type` (index 3) for inline or detached payloads, or `payload_preimage_content_type` (index 259) for digest signing.
 
-The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
-Additional metadata can either be carried in a `CWT_Claims` (index: 15) parameter as defined by {{-CWT_CLAIMS_COSE}},
-or in a `corim-meta` map as a legacy alternative, described in {{sec-corim-meta}}.
-
-The following describes each child item of this map.
-
-* `alg` (index 1): An integer that identifies a signature algorithm.
-
-* `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
-
-At least one of:
+The protected header MUST contain additional information about the CoRIM encoded in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}) or in a `corim-meta-map` ({{sec-corim-meta}}) as a legacy alternative:
 
 * `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
   Described in {{-CWT_CLAIMS_COSE}}.
@@ -565,7 +530,11 @@ At least one of:
 
 Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
 
-Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
+~~~ cddl
+{::include cddl/protected-corim-header-map.cddl}
+~~~
+
+Additional data can be included in the COSE protected header map as per ({{Section 3 of -cose}}).
 
 ### CWT Claims {#cwt-claims}
 
@@ -589,7 +558,6 @@ Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
-
 
 ~~~ cddl
 {::include cddl/corim-meta-map.cddl}
@@ -616,12 +584,6 @@ Described in {{sec-common-validity}}.
 
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
 Signer map.
-
-### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
-
-~~~ cddl
-{::include cddl/unprotected-corim-header-map.cddl}
-~~~
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
