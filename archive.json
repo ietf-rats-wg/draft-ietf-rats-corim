@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-08T02:11:33.471166+00:00",
+  "timestamp": "2026-01-11T02:28:33.618207+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -82009,7 +82009,7 @@
     {
       "number": 520,
       "id": "PR_kwDOH6-tI865YDN0",
-      "title": "Add support for COSE Hash Envelope and COSE detached payloads to Signed CoRIM",
+      "title": "Add support for COSE Hash Envelope and COSE detached payloads to Signed CoRIM (proposal 1)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/520",
       "state": "OPEN",
       "author": "achamayou",
@@ -82018,13 +82018,13 @@
       "labels": [],
       "body": "[COSE Hash Envelope](https://datatracker.ietf.org/doc/draft-ietf-cose-hash-envelope/) is used in some scenarios such as remote signing, or envelope-based policy/authorization. It is currently in the [RFC Editor Queue](https://www.rfc-editor.org/current_queue.php). COSE detached payloads are used in situations where it is convenient to locate contents and envelopes separately, as pointed out in #514.\r\n\r\nThis proposes a minimal change to Signed CoRIM to support these scenarios.",
       "createdAt": "2025-12-17T13:47:21Z",
-      "updatedAt": "2026-01-07T16:56:28Z",
+      "updatedAt": "2026-01-09T17:54:23Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
       "headRepository": "achamayou/draft-ietf-rats-corim",
       "headRefName": "add_cose_hash_envelope",
-      "headRefOid": "4cc6266deaae5ee340f8702b536bbb78fa42a3cf",
+      "headRefOid": "88e6d25ea46cd34eda48d57caaca41e17f375332",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -82050,6 +82050,13 @@
           "body": "@yogeshbdeshpande @thomas-fossati @nedmsmith I simplified the CDDL a little too much to fit on the slides, but the PR actually already makes the Direct / Indirect choice explicit and precise: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/520/changes#diff-fd733677e805bba8df43e15d3bbaea19657d6c99bb59e0dd92e3738276aaec8aR2",
           "createdAt": "2026-01-07T15:56:48Z",
           "updatedAt": "2026-01-07T15:56:48Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> Thanks for the presentation @achamayou; restating my approval just in case.\r\n\r\nAs discussed in the meeting, I've also written up the more lightweight version in #522, which shortens the text somewhat. It has the same properties: no breaking change, allows detached and indirect signing, but does no try to be exhaustive in case new useful signing profiles emerge.",
+          "createdAt": "2026-01-09T15:06:10Z",
+          "updatedAt": "2026-01-09T15:06:10Z"
         }
       ],
       "reviews": [
@@ -82098,6 +82105,299 @@
           "createdAt": "2026-01-07T16:08:25Z",
           "updatedAt": "2026-01-07T16:08:25Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQBob",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:18:25Z",
+          "updatedAt": "2026-01-09T17:18:25Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "Does line 540, indicates signature over the payload, not just over the envelope..? Right?",
+              "createdAt": "2026-01-09T17:18:25Z",
+              "updatedAt": "2026-01-09T17:18:25Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQIsx",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:25:26Z",
+          "updatedAt": "2026-01-09T17:25:26Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Note in my view the description at Line 548 is now insufficient.\r\n\r\nYou MUST describe that when the Payload contains CoRIM or a Detached payload, the regular protected-corim-header-map-inline should be used.\r\n\r\nWhen a Digest of the payload is transmitted then the Protected Header should be set to `protected-header-hash-envelope-type`\r\n\r\nAlso and explain all the fields of hash envelope here in detail to mention it to be mandatorily  used and the purpose of each field",
+              "createdAt": "2026-01-09T17:25:26Z",
+              "updatedAt": "2026-01-09T17:25:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQLkU",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "In general looks good, I think, we need to add more clarity on the description of Header parameters in the new case - hash envelope.",
+          "createdAt": "2026-01-09T17:27:50Z",
+          "updatedAt": "2026-01-09T17:27:50Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQNbU",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:30:20Z",
+          "updatedAt": "2026-01-09T17:30:21Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\r\n; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)\r\n```",
+              "createdAt": "2026-01-09T17:30:20Z",
+              "updatedAt": "2026-01-09T17:30:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQOTr",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "Please see  some comments",
+          "createdAt": "2026-01-09T17:31:26Z",
+          "updatedAt": "2026-01-09T17:31:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQRD8",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:34:37Z",
+          "updatedAt": "2026-01-09T17:34:38Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "My understanding of \"envelope\" is that it's everything in the COSE document that is in included in the TBS (so, yes), but I went back to RFC9052, and I find no explicit definition to that effect. There is only mentions of \"enveloped\" content, which is implicitly compatible. The definition of signature in RFC9052 is \"This field contains the computed signature value.\" (Section 4.1).\r\n\r\nHappy to change this if it causes confusion though. I think this is a good example of something that #522 deletes on purpose because it is defined in RFC9052 and there is not an obvious benefit to re-defining it here.\r\n\r\n",
+              "createdAt": "2026-01-09T17:34:37Z",
+              "updatedAt": "2026-01-09T17:34:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQX9M",
+          "commit": {
+            "abbreviatedOid": "88e6d25"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:41:30Z",
+          "updatedAt": "2026-01-09T17:41:30Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Happy to expand, I was trying to keep the change to a minimum. I would have thought that pointing to the COSE Hash Envelope document would be preferable rather duplicate the descriptions here.",
+              "createdAt": "2026-01-09T17:41:30Z",
+              "updatedAt": "2026-01-09T17:41:30Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQYZs",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:41:51Z",
+          "updatedAt": "2026-01-09T17:41:51Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "> My understanding of \"envelope\" is that it's everything in the COSE document that is in included in the TBS (so, yes), but I went back to RFC9052, and I find no explicit definition to that effect. There is only mentions of \"enveloped\" content, which is implicitly compatible. The definition of signature in RFC9052 is \"This field contains the computed signature value.\" (Section 4.1).\r\n> \r\n> Happy to change this if it causes confusion though. I think this is a good example of something that #522 deletes on purpose because it is defined in RFC9052 and there is not an obvious benefit to re-defining it here.\r\n\r\nYou have used the term envelope to means hashed-envelope, I was wondering we should come up with a better term to be super clear!!",
+              "createdAt": "2026-01-09T17:41:51Z",
+              "updatedAt": "2026-01-09T17:41:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQaib",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:43:39Z",
+          "updatedAt": "2026-01-09T17:43:39Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "> Happy to expand, I was trying to keep the change to a minimum. I would have thought that pointing to the COSE Hash Envelope document would be preferable rather duplicate the descriptions here.\r\n\r\nSo in that case, you should clearly state:\r\n\r\n1. When Inline Payload or Detached payload, use the following header.\r\n2. When Hashed Envelope Payload the header parameters comply to the specification Refer to Spec XYZ...\r\n",
+              "createdAt": "2026-01-09T17:43:39Z",
+              "updatedAt": "2026-01-09T17:43:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQkwZ",
+          "commit": {
+            "abbreviatedOid": "88e6d25"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:54:22Z",
+          "updatedAt": "2026-01-09T17:54:23Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Thinking a bit more, there is no harm in expanding both the headers here.\r\nWe have already done `alg` & `content-type` for inline header, \r\n\r\nIt would be prudent to have a one liner for mandatory one used with hash-envelope and in the end put a reference to core spec which can have more details...\r\n\r\nLet us wait for others to comment on this aspect and make a final call.... ",
+              "createdAt": "2026-01-09T17:54:22Z",
+              "updatedAt": "2026-01-09T17:54:23Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 522,
+      "id": "PR_kwDOH6-tI868WMBK",
+      "title": "Allow COSE Hash Envelope and detached payloads in Signed CoRIM (Proposal 2)",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/522",
+      "state": "OPEN",
+      "author": "achamayou",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A more lightweight alternative to #520, which focuses on the content type and claims, cites detached and envelope explicitly but leaves open potential usage of other future COSE profiles.",
+      "createdAt": "2026-01-09T14:58:19Z",
+      "updatedAt": "2026-01-09T17:45:33Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
+      "headRepository": "achamayou/draft-ietf-rats-corim",
+      "headRefName": "minimal_signing_restrictions",
+      "headRefOid": "b476fbb0bf5e37e0fd2c98710131ac530ce5ea4f",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI87ZP54M",
+          "commit": {
+            "abbreviatedOid": "b476fbb"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:08:18Z",
+          "updatedAt": "2026-01-09T17:08:18Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Does Detached payload which means `nil` in the `payload` section also has the same  `content-type` (index 3) ??",
+              "createdAt": "2026-01-09T17:08:18Z",
+              "updatedAt": "2026-01-09T17:08:18Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZP-V6",
+          "commit": {
+            "abbreviatedOid": "b476fbb"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:14:21Z",
+          "updatedAt": "2026-01-09T17:14:21Z",
+          "comments": [
+            {
+              "originalPosition": 58,
+              "body": "Yes, detaching the payload has no bearing on the content type (3). Using a hash indirection does, because the payload becomes a digest, and so the pre-image content type has a distinct label (259).",
+              "createdAt": "2026-01-09T17:14:21Z",
+              "updatedAt": "2026-01-09T17:14:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQP63",
+          "commit": {
+            "abbreviatedOid": "b476fbb"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:33:17Z",
+          "updatedAt": "2026-01-09T17:33:17Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "This creates a slight risk indicating that a CoRIM Payload can be anything other than CBOR, like a JSON Payload using `bstr`, which the spec is strictly against been used to,,",
+              "createdAt": "2026-01-09T17:33:17Z",
+              "updatedAt": "2026-01-09T17:33:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZQcg0",
+          "commit": {
+            "abbreviatedOid": "b476fbb"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-09T17:45:33Z",
+          "updatedAt": "2026-01-09T17:45:33Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I don't think it really creates that risk, this is a paragraph called \"Signed CoRIM\", starting with \"CoRIM documents can be signed using the procedure\" :)",
+              "createdAt": "2026-01-09T17:45:33Z",
+              "updatedAt": "2026-01-09T17:45:33Z"
+            }
+          ]
         }
       ]
     }
