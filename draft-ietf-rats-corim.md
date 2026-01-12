@@ -535,9 +535,10 @@ The following describes each child element of this type.
 
 * `unprotected`: A COSE header that is not protected by COSE signature.
 
-* `payload`: Either a CBOR encoded tagged CoRIM, the digest of a CBOR encoded tagged CoRIM, or nil for detached use-cases.
+* `payload`: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
+  When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
-* `signature`: A COSE signature block which is the signature over the envelope.
+* `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
 
 ### Protected Header Map
 
@@ -553,13 +554,17 @@ The following describes each child item of this map.
 
 * `alg` (index 1): An integer that identifies a signature algorithm.
 
-Either:
+Either, when the payload is signed directly:
 
-* `content-type` (index 3): An integer or string that represents the "MIME Content type" carried in the CoRIM payload.
+* `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
 
-Or:
+Or, when the payload is signed indirectly using a Hash Envelope ({{-cose-hash-envelope}}):
 
-* `payload_preimage_content_type` (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload when using a Hash Envelope ({{-cose-hash-envelope}}).
+* `payload_hash_alg` (index 258): The hash algorithm used to produce the payload.
+
+* `payload_preimage_content_type` (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload.
+
+* `payload_location` (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.
 
 At least one of:
 
