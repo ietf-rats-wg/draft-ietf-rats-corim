@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-11T02:28:33.618207+00:00",
+  "timestamp": "2026-01-13T02:09:44.682966+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -13007,6 +13007,22 @@
       "body": "## Summary\n\nCurrently, Section 9.3.4.5 \"Processing Domain Membership\" requires verifiers to scan all Domain Membership ECTs in the staging area against evidence environments to find matches. This approach works but can be computationally expensive, especially for resource-constrained verifiers (e.g., embedded verifiers behind a BMC).\n\nThis issue proposes an optimization to allow evidence to optionally assert a `domain-id`, providing a hint to the verifier about which DMT(s) to process, significantly reducing the search space.\n\n---\n\n## Current Behavior\n\nPer Section 9.3.4.5, the verifier must:\n\n1. Iterate through every Domain Membership ECT in the staging area\n2. For each DMT, check if all members match corresponding ACS entries\n3. Repeat until no new DMTs are added to ACS\n\n**Complexity:** O(D \u00d7 M \u00d7 E) where:\n- D = number of Domain Membership ECTs in staging area\n- M = average number of members per DMT\n- E = number of evidence entries in ACS\n\nFor large deployments with hundreds of DMTs and environments, this can be prohibitively expensive for constrained verifiers.\n\n---\n\n## Proposed Enhancement\n\nAllow evidence to optionally include a `domain-id` assertion that hints which DMT(s) the attester claims membership in. The verifier would:\n\n1. **If domain-id is present in evidence:** Prioritize processing only the DMT(s) matching that domain-id\n2. **If domain-id is not present:** Fall back to the current algorithm (Section 9.3.4.5)\n\n**Benefits:**\n- **Performance:** Reduces search space from all DMTs to specific DMT(s)\n- **Resource efficiency:** Enables deployment on constrained verifiers\n- **Backward compatibility:** Existing evidence without domain-id continues to work\n- **Security:** Domain-id assertion is still corroborated against authoritative Endorser DMTs (no trust boundary violation)\n\n---\n\n## Security Considerations\n\nThe `domain-id` in evidence is a **hint, not authoritative**. The verifier must still:\n\n- Corroborate the domain-id assertion against Endorser-provided DMTs\n- Reject evidence if the claimed domain-id doesn't match Endorser DMTs\n- Validate all domain membership per existing security model\n\nThe Endorser remains the authoritative source for domain composition.\n\n---\n\n## Evidence Profile Option\n\nFor strict resource-constrained deployments, an evidence profile could specify:\n\n- **MUST include domain-id:** Evidence without domain-id is rejected\n- **Verifier MAY skip fallback:** Verifier is not required to implement the full scan algorithm\n\nThis allows adoption in environments where the full algorithm is not feasible.",
       "createdAt": "2026-01-07T23:34:30Z",
       "updatedAt": "2026-01-07T23:34:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 523,
+      "id": "I_kwDOH6-tI87iu6ae",
+      "title": "Reference Verifier Algorithm: regarding Reference Values Triples processing",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/523",
+      "state": "OPEN",
+      "author": "DhanusML",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Claims which are not present in the Reference Values Triples may get added to ACS with the reference value provider's authority.\n\nThe section titled 'Reference Values Corroboration and Augmentation' (9.3.3) states,\n>... the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`. If satisfied, for the `rv` entry, the following three steps are performed:\n>\n>1.\tThe `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`\n>2.\tThe `element-list` from ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT\n>3.\tThe `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority.\n\nIn step 2, the `element-list` from ACS ECT, which gets copied to the `element-list` of `addition` ECT might contain more claims than those present in the actual reference values triple. This is because the matching condition for `element-list` of ECT (section 9.4.4) is\n\n>If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field, then the element lists match.\n\nSo it is possible to have element-maps in the matching ACS entry that do no not have corresponding entries in the `condition` ECT. But these element-maps are also added to ACS with the reference value provider's authority.\n\n---\n\nSection 9.3.3 also says\n>Each reference value triple describes a single possible Attester state.\n\nThis does not align with the discussion about `ref-claims` multiplicity in section 5.1.4.2, which states \n>Each `ref-claims` entry can represent a different possible state of the Environment\n\nImplying, a single Reference Values Triple can describe multiple possible attester states. \n\nFurthermore, transforming a Reference Values Triple containing multiple states, according to section 9.2.3.3, would result in a (possibly invalid) condition ECT describing multiple states of the environment, which cannot match any evidence ACS entries. Hence, some clarification is needed on how to split such a Reference Values Triple into multiple ECTs, each describing a single state of the environment.\n\n---\n\nFinally, an unrelated issue: The term 'Reference Value Triple' being used in a few places inside the document. I assume this was a typo and is referring to 'Reference Values Triple'.\n\nRelated: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506, https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/442",
+      "createdAt": "2026-01-12T11:39:35Z",
+      "updatedAt": "2026-01-12T11:39:35Z",
       "closedAt": null,
       "comments": []
     }
@@ -82018,13 +82034,13 @@
       "labels": [],
       "body": "[COSE Hash Envelope](https://datatracker.ietf.org/doc/draft-ietf-cose-hash-envelope/) is used in some scenarios such as remote signing, or envelope-based policy/authorization. It is currently in the [RFC Editor Queue](https://www.rfc-editor.org/current_queue.php). COSE detached payloads are used in situations where it is convenient to locate contents and envelopes separately, as pointed out in #514.\r\n\r\nThis proposes a minimal change to Signed CoRIM to support these scenarios.",
       "createdAt": "2025-12-17T13:47:21Z",
-      "updatedAt": "2026-01-09T17:54:23Z",
+      "updatedAt": "2026-01-12T12:15:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
       "headRepository": "achamayou/draft-ietf-rats-corim",
       "headRefName": "add_cose_hash_envelope",
-      "headRefOid": "88e6d25ea46cd34eda48d57caaca41e17f375332",
+      "headRefOid": "3c1ecb82bb7cd1e1f822c34ebeddae19a8156175",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -82291,6 +82307,59 @@
               "updatedAt": "2026-01-09T17:54:23Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Zk8mP",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-12T11:32:54Z",
+          "updatedAt": "2026-01-12T11:32:55Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "I've expanded the description to cover:\r\n\r\n1. When to set which fields in the text\r\n2. All the fields in Hash Envelope\r\n\r\nPlease check if you feel that any ambiguity remains.",
+              "createdAt": "2026-01-12T11:32:54Z",
+              "updatedAt": "2026-01-12T11:32:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Zk9dM",
+          "commit": {
+            "abbreviatedOid": "4cc6266"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-12T11:33:55Z",
+          "updatedAt": "2026-01-12T11:33:55Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "I have updated the text to remove the mention of envelope and point back to the full definition of signature in RFC9052, please check if that removes any confusion.",
+              "createdAt": "2026-01-12T11:33:55Z",
+              "updatedAt": "2026-01-12T11:33:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87Zlh6J",
+          "commit": {
+            "abbreviatedOid": "3c1ecb8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! Thanks for making the edits!!!",
+          "createdAt": "2026-01-12T12:15:45Z",
+          "updatedAt": "2026-01-12T12:15:45Z",
+          "comments": []
         }
       ]
     },
@@ -82306,13 +82375,13 @@
       "labels": [],
       "body": "A more lightweight alternative to #520, which focuses on the content type and claims, cites detached and envelope explicitly but leaves open potential usage of other future COSE profiles.",
       "createdAt": "2026-01-09T14:58:19Z",
-      "updatedAt": "2026-01-09T17:45:33Z",
+      "updatedAt": "2026-01-12T11:39:02Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
       "headRepository": "achamayou/draft-ietf-rats-corim",
       "headRefName": "minimal_signing_restrictions",
-      "headRefOid": "b476fbb0bf5e37e0fd2c98710131ac530ce5ea4f",
+      "headRefOid": "fcca2e6117a7a13015c85bd5d3598fd4b56bb6c5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -82396,6 +82465,26 @@
               "body": "I don't think it really creates that risk, this is a paragraph called \"Signed CoRIM\", starting with \"CoRIM documents can be signed using the procedure\" :)",
               "createdAt": "2026-01-09T17:45:33Z",
               "updatedAt": "2026-01-09T17:45:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ZlCBF",
+          "commit": {
+            "abbreviatedOid": "b476fbb"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-01-12T11:39:01Z",
+          "updatedAt": "2026-01-12T11:39:02Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I have made the payload type explicit, as was done in #522, to mitigate this risk. Please check.",
+              "createdAt": "2026-01-12T11:39:01Z",
+              "updatedAt": "2026-01-12T11:39:02Z"
             }
           ]
         }
