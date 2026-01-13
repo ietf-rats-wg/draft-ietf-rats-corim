@@ -87,6 +87,7 @@ normative:
   RFC8392: CWT
   RFC9711: eat
   I-D.ietf-rats-msg-wrap: cmw
+  I-D.ietf-rats-eat-measured-component: eat-mc
   IANA.language-subtag-registry: language-subtag
   X.690:
     title: >
@@ -99,7 +100,6 @@ normative:
     seriesinfo:
       ITU-T: Recommendation X.690
     target: https://www.itu.int/rec/T-REC-X.690
-  IANA.named-information: named-info
 
 informative:
   RFC7519: jwt
@@ -1721,9 +1721,8 @@ identifier {{-cbor-oids}}.
 ## Digest {#sec-common-hash-entry}
 
 A digest represents the value of a hashing operation together with the hash algorithm used.
-The type of the digest algorithm identifier can be either `int` or `text` and is interpreted according to the {{-named-info}} registry.
-Specifically, `int` values are matched against "ID" entries, `text` values are matched against "Hash Name String" entries.
-Whenever possible, using the `int` encoding is RECOMMENDED.
+This specification reuses the `digest` type defined in {{Section 4.2 of -eat-mc}}.
+Only the CBOR serialization is used.
 
 ~~~ cddl
 {::include cddl/digest.cddl}
