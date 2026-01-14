@@ -1518,7 +1518,7 @@ A Domain Dependency Triple (DDT) links a domain (Environment) to a set of truste
 A trustee is an Environment to which the trust assessment of a domain is prefaced.
 
 The domain dependency triple subject `domain-id` identifies a member domain (see sec-comid-triple-domain-membership}).
-The triple object `trustees` is a list of member domains that are the trustees for the domein.
+The triple object `trustees` is a list of member domains that are the trustees for the domain.
 The triple predicate asserts that a trust assessment of `domain-id` is not complete without also doing a trust assessment of the `trustees`.
 
 ~~~ cddl
