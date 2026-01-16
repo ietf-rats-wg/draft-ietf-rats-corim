@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 18 July 2026                                             Linaro
+Expires: 20 July 2026                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         14 January 2026
+                                                         16 January 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 July 2026.
+   This Internet-Draft will expire on 20 July 2026.
 
 Copyright Notice
 
@@ -2501,13 +2501,12 @@ Table of Contents
 7.7.  Digest
 
    A digest represents the value of a hashing operation together with
-   the hash algorithm used.  The type of the digest algorithm identifier
-   can be either int or text and is interpreted according to the
-   [IANA.named-information] registry.  Specifically, int values are
-   matched against "ID" entries, text values are matched against "Hash
-   Name String" entries.  Whenever possible, using the int encoding is
-   RECOMMENDED.
+   the hash algorithm used.  This specification reuses the digest type
+   defined in Section 4.2 of [I-D.ietf-rats-eat-measured-component].
+   Only the CBOR serialization is used.
 
+   ; This definition of 'digest' is equivalent to the one in
+   ; I-D.ietf-rats-eat-measured-component
    digest = [
      alg: (int / text),
      val: bytes
@@ -4980,6 +4979,13 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
               hash-envelope-10>.
 
+   [I-D.ietf-rats-eat-measured-component]
+              Frost, S., Fossati, T., Tschofenig, H., and H. Birkholz,
+              "EAT Measured Component", Work in Progress, Internet-
+              Draft, draft-ietf-rats-eat-measured-component-10, 12
+              January 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-measured-component-10>.
+
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
@@ -5004,10 +5010,6 @@ Table of Contents
    [IANA.media-types]
               IANA, "Media Types",
               <https://www.iana.org/assignments/media-types>.
-
-   [IANA.named-information]
-              IANA, "Named Information",
-              <https://www.iana.org/assignments/named-information>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
