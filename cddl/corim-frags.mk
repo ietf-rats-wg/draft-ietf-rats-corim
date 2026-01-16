@@ -48,7 +48,7 @@ COMID_FRAGS += version-map.cddl
 COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
 
-#COMID_IMPORTS += eatmc=measured-component
+COMID_IMPORTS += eatmc=measured-component
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
 
@@ -60,7 +60,7 @@ COTL_FRAGS += tag-identity-map.cddl
 COTL_FRAGS += uuid.cddl
 COTL_FRAGS += tag-version-type.cddl
 
-#COTL_IMPORTS += eatmc=measured-component
+COTL_IMPORTS += eatmc=measured-component
 
 COTL_EXAMPLES := $(wildcard examples/cotl-*.diag)
 
@@ -81,7 +81,7 @@ CORIM_FRAGS += protected-corim-header-map.cddl
 CORIM_FRAGS += signed-corim.cddl
 CORIM_FRAGS += tagged-concise-swid-tag.cddl
 
-#CORIM_IMPORTS += eatmc=measured-component
+CORIM_IMPORTS += eatmc=measured-component
 
 CORIM_FRAGS += tagged-concise-mid-tag.cddl
 CORIM_FRAGS += tagged-concise-tl-tag.cddl
@@ -130,6 +130,6 @@ INTREP_FRAGS += cose-label-and-value.cddl
 INTREP_FRAGS += class-id-type-choice.cddl
 INTREP_FRAGS += oid.cddl
 
-#INTREP_IMPORTS += eatmc=measured-component
+INTREP_IMPORTS += eatmc=measured-component
 
 INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)

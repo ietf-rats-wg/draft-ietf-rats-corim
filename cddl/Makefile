@@ -12,6 +12,8 @@ check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
 check:: check-cotl check-cotl-examples
 
+include measured-component.mk
+
 $(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES),$(COMID_IMPORTS)))
 $(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES),$(COTL_IMPORTS)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES),$(CORIM_IMPORTS)))
