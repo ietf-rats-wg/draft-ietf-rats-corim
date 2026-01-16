@@ -12,18 +12,10 @@ check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
 check:: check-cotl check-cotl-examples
 
-$(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES)))
-$(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES)))
-$(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES)))
-$(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES)))
-
-GITHUB := https://raw.githubusercontent.com/
-COSWID_REPO := sacmwg/draft-ietf-sacm-coswid/master
-COSWID_REPO_URL := $(join $(GITHUB), $(COSWID_REPO))
-
-concise-swid-tag.cddl: ; $(curl) -O $(COSWID_REPO_URL)/$@
-
-CLEANFILES += concise-swid-tag.cddl
+$(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES),$(COMID_IMPORTS)))
+$(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES),$(COTL_IMPORTS)))
+$(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES),$(CORIM_IMPORTS)))
+$(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES),$(INTREP_IMPORTS)))
 
 clean: ; rm -f $(CLEANFILES)
 
