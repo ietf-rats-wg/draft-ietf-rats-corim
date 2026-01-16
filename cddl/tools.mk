@@ -26,3 +26,7 @@ ifeq ($(strip $(cbor2pretty)),)
 $(error cbor2pretty.rb not found. To install cbor2pretty.rb: 'gem install cbor-diag')
 endif
 
+cddlc ?= $(shell command -v cddlc)
+ifeq ($(strip $(cddlc)),)
+  $(error cddlc tool not found. To install cddl, run: 'gem install cddlc')
+endif
