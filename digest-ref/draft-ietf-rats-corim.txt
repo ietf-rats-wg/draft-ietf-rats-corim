@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 17 July 2026                                             Linaro
+Expires: 20 July 2026                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         13 January 2026
+                                                         16 January 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 July 2026.
+   This Internet-Draft will expire on 20 July 2026.
 
 Copyright Notice
 
@@ -818,9 +818,11 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
      signature: bstr
    ]
+
+   hash-envelope-digest = bstr
 
    The following describes each child element of this type.
 
@@ -831,18 +833,32 @@ Table of Contents
    *  unprotected: A COSE header that is not protected by COSE
       signature.
 
-   *  payload: A CBOR encoded tagged CoRIM.
+   *  payload: When the payload is signed directly, either a CBOR-
+      encoded tagged CoRIM, or nil if it is detached.  When the payload
+      is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
-   *  signature: A COSE signature block which is the signature over the
-      protected and payload components of the signed CoRIM.
+   *  signature: A COSE signature block, as defined in Section 4 of
+      [STD96].
 
 4.2.1.  Protected Header Map
 
-   ; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-   protected-corim-header-map =
+   ; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
+   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+
+   protected-corim-header-map-inline =
      {
        &(alg: 1) => int,
        &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   protected-corim-header-map-hash-envelope =
+     {
+       &(alg: 1) => int,
+       &(payload_hash_alg: 258) => int
+       &(payload_preimage_content_type: 259) => "application/rim+cbor",
+       ? &(payload_location: 260) => tstr
        meta-group,
        * cose-label => cose-value
      }
@@ -865,8 +881,24 @@ Table of Contents
 
    *  alg (index 1): An integer that identifies a signature algorithm.
 
+   Either, when the payload is signed directly:
+
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
+
+   Or, when the payload is signed indirectly using a Hash Envelope
+   ([I-D.ietf-cose-hash-envelope]):
+
+   *  payload_hash_alg (index 258): The hash algorithm used to produce
+      the payload.
+
+   *  payload_preimage_content_type (index 259): A string that
+      represents the "MIME Content type" of the CoRIM document used as
+      the pre-image of the payload.
+
+   *  payload_location (index 260): An optional identifier enabling
+      retrieval of the original resource (preimage) identified by the
+      payload.
 
    At least one of:
 
@@ -992,7 +1024,9 @@ Table of Contents
    protected-header parameter.  These metadata containers ensure that
    each CoRIM in the collection has an identified signer.  The COSE
    protected header can include a Collection CMW type name by using the
-   cmwc_t content type parameter for the &(content-type: 3) COSE header.
+   cmwc_t content type parameter for the &(content-type: 3) COSE header,
+   or &(payload_preimage_content_type: 259) in the case of hash
+   envelopes.
 
    If using other signing envelope formats, the CoRIM signing authority
    MUST be specified.  For example, this can be accomplished by adding
@@ -4938,6 +4972,13 @@ Table of Contents
 
 13.1.  Normative References
 
+   [I-D.ietf-cose-hash-envelope]
+              Steele, O., Lasker, S., and H. Birkholz, "COSE Hash
+              Envelope", Work in Progress, Internet-Draft, draft-ietf-
+              cose-hash-envelope-10, 15 November 2025,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
+              hash-envelope-10>.
+
    [I-D.ietf-rats-eat-measured-component]
               Frost, S., Fossati, T., Tschofenig, H., and H. Birkholz,
               "EAT Measured Component", Work in Progress, Internet-
@@ -5188,9 +5229,11 @@ Appendix A.  Base CoRIM CDDL
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
      signature: bstr
    ]
+
+   hash-envelope-digest = bstr
 
    $profile-type-choice /= uri
    $profile-type-choice /= tagged-oid-type
@@ -5203,10 +5246,22 @@ Appendix A.  Base CoRIM CDDL
      * int => any
    }
 
-   protected-corim-header-map =
+   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+
+   protected-corim-header-map-inline =
      {
        &(alg: 1) => int,
        &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   protected-corim-header-map-hash-envelope =
+     {
+       &(alg: 1) => int,
+       &(payload_hash_alg: 258) => int
+       &(payload_preimage_content_type: 259) => "application/rim+cbor",
+       ? &(payload_location: 260) => tstr
        meta-group,
        * cose-label => cose-value
      }
