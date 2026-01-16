@@ -3422,7 +3422,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 # Base CoRIM CDDL {#sec-corim-cddl}
 
 ~~~ cddl
-{::include cddl/corim-autogen.cddl}
+{::include-fold cddl/corim-autogen.cddl}
 ~~~
 
 # Acknowledgments
