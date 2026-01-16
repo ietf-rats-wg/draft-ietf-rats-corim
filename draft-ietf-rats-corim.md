@@ -73,6 +73,7 @@ normative:
   RFC7468: pkix-text
   RFC8610: cddl
   RFC9090: cbor-oids
+  RFC9164: cbor-ip
   STD96:
     -: cose
     =: RFC9052
@@ -89,19 +90,8 @@ normative:
   I-D.ietf-rats-msg-wrap: cmw
   I-D.ietf-rats-eat-measured-component: eat-mc
   IANA.language-subtag-registry: language-subtag
-  X.690:
-    title: >
-      Information technology — ASN.1 encoding rules:
-      Specification of Basic Encoding Rules (BER), Canonical Encoding
-      Rules (CER) and Distinguished Encoding Rules (DER)
-    author:
-      org: International Telecommunications Union
-    date: 2015-08
-    seriesinfo:
-      ITU-T: Recommendation X.690
-    target: https://www.itu.int/rec/T-REC-X.690
+  X.690: CCITT.X690.2002
   I-D.ietf-cose-hash-envelope: cose-hash-envelope
-
 
 informative:
   RFC7519: jwt
@@ -141,6 +131,7 @@ informative:
     seriesinfo: Family "2.0", Level 00, Revision 01.83
     date: January 24, 2024,
     target: https://trustedcomputinggroup.org/resource/tpm-library-specification/
+  IEEE-802.OandA: DOI.10.1109/IEEESTD.2014.6847097
 
 entity:
   SELF: "RFCthis"
@@ -1090,7 +1081,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `raw-value-mask-DEPRECATED` (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the `tagged-masked-raw-value` on index 4 instead of using index 5.
 
-* `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
+* `mac-addr` (index 6): An EUI-48 (Extended Unique Identifier 48) or EUI-64 MAC address {{IEEE-802.OandA}} associated with the measured environment.
   Described in {{sec-comid-address-types}}.
 
 * `ip-addr` (index 7): An IPv4 or IPv6 address associated with the measured environment.
@@ -1229,7 +1220,10 @@ This code point may be removed in a future revision of this specification.
 
 ###### Address Types {#sec-comid-address-types}
 
-The types or associating addressing information to a measured environment are:
+This specification defines types for 48-bit and 64-bit MAC identifiers.
+For IP addresses, it reuses the "Address Format" types defined in {{-cbor-ip}} with the CBOR tag removed.
+
+All the types represent a single address.
 
 ~~~ cddl
 {::include cddl/ip-addr-type-choice.cddl}
