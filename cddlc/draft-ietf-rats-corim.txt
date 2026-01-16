@@ -1669,9 +1669,11 @@ Table of Contents
    A version-map contains details about the versioning of a measured
    environment.
 
+   ;# import rfc9393 as coswid
+
    version-map = {
      &(version: 0) => text
-     ? &(version-scheme: 1) => $version-scheme
+     ? &(version-scheme: 1) => coswid.$version-scheme
    }
 
    The following describes each member of the version-map:
@@ -2304,12 +2306,12 @@ Table of Contents
    existing CoSWIDs, and the predicate asserts that these contain the
    expected (i.e., reference) measurements for the Target Environment.
 
+   ;# import rfc9393 as coswid
+
    coswid-triple-record = [
      environment-map
-     [ + concise-swid-tag-id ]
+     [ + coswid.tag-id ]
    ]
-
-   concise-swid-tag-id = text / bstr .size 16
 
 5.2.  Extensibility
 
@@ -5253,7 +5255,7 @@ Appendix A.  Base CoRIM CDDL
    corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
    signed-corim = #6.18(COSE-Sign1-corim)
-   tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
+   tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
    tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
    tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
@@ -5311,9 +5313,8 @@ Appendix A.  Base CoRIM CDDL
    cose-value = any
    coswid-triple-record = [
      environment-map,
-     [+ concise-swid-tag-id],
+     [+ coswid.tag-id],
    ]
-   concise-swid-tag-id = text / bstr .size 16
    $crypto-key-type-choice /= tagged-pkix-base64-key-type / tagged-pkix\
    -base64-cert-type / tagged-pkix-base64-cert-path-type / tagged-cose-\
    key-type / tagged-pkix-asn1der-cert-type / tagged-key-thumbprint-\
@@ -5481,7 +5482,7 @@ Appendix A.  Base CoRIM CDDL
    tagged-uuid-type = #6.37(uuid-type)
    version-map = {
      &(version: 0) => text,
-     ? &(version-scheme: 1) => $version-scheme,
+     ? &(version-scheme: 1) => coswid.$version-scheme,
    }
    digest = [
      alg: int / text,
@@ -5491,223 +5492,230 @@ Appendix A.  Base CoRIM CDDL
    integrity-register-id-type-choice = uint / text
    integrity-registers = {+ integrity-register-id-type-choice => \
                                                            digests-type}
-   concise-swid-tag = {
-     tag-id => text / bstr .size 16,
-     tag-version => integer,
-     ? corpus => bool,
-     ? patch => bool,
-     ? supplemental => bool,
-     software-name => text,
-     ? software-version => text,
-     ? version-scheme => $version-scheme,
-     ? media => text,
-     ? software-meta => one-or-more<software-meta-entry>,
-     entity => one-or-more<entity-entry>,
-     ? link => one-or-more<link-entry>,
-     ? payload-or-evidence,
+   coswid.concise-swid-tag = {
+     coswid.tag-id => text / bstr .size 16,
+     coswid.tag-version => integer,
+     ? coswid.corpus => bool,
+     ? coswid.patch => bool,
+     ? coswid.supplemental => bool,
+     coswid.software-name => text,
+     ? coswid.software-version => text,
+     ? coswid.version-scheme => coswid.$version-scheme,
+     ? coswid.media => text,
+     ? coswid.software-meta => coswid.one-or-more<coswid.software-meta-\
+                                                                 entry>,
+     coswid.entity => coswid.one-or-more<coswid.entity-entry>,
+     ? coswid.link => coswid.one-or-more<coswid.link-entry>,
+     ? coswid.payload-or-evidence,
      * $$coswid-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-   payload-or-evidence //= (payload => payload-entry // evidence => \
-                                                         evidence-entry)
-   any-uri = uri
-   label = text / int
-   $version-scheme /= multipartnumeric / multipartnumeric-suffix / \
-                            alphanumeric / decimal / semver / int / text
-   any-attribute = (label => one-or-more<text> / one-or-more<int>)
-   one-or-more<T> = T / [2*T]
-   global-attributes = (
-     ? lang => text,
-     * any-attribute,
+   coswid.tag-id = 0
+   coswid.$version-scheme /= coswid.multipartnumeric / coswid.\
+   multipartnumeric-suffix / coswid.alphanumeric / coswid.decimal / \
+                                              coswid.semver / int / text
+   coswid.one-or-more<T> = T / [2*T]
+   coswid.tag-version = 12
+   coswid.corpus = 8
+   coswid.patch = 9
+   coswid.supplemental = 11
+   coswid.software-name = 1
+   coswid.software-version = 13
+   coswid.version-scheme = 14
+   coswid.media = 10
+   coswid.software-meta = 5
+   coswid.software-meta-entry = {
+     ? coswid.activation-status => text,
+     ? coswid.channel-type => text,
+     ? coswid.colloquial-version => text,
+     ? coswid.description => text,
+     ? coswid.edition => text,
+     ? coswid.entitlement-data-required => bool,
+     ? coswid.entitlement-key => text,
+     ? coswid.generator => text / bstr .size 16,
+     ? coswid.persistent-id => text,
+     ? coswid.product => text,
+     ? coswid.product-family => text,
+     ? coswid.revision => text,
+     ? coswid.summary => text,
+     ? coswid.unspsc-code => text,
+     ? coswid.unspsc-version => text,
+     * $$software-meta-extension,
+     coswid.global-attributes,
+   }
+   coswid.entity = 2
+   coswid.entity-entry = {
+     coswid.entity-name => text,
+     ? coswid.reg-id => coswid.any-uri,
+     coswid.role => coswid.one-or-more<coswid.$role>,
+     ? coswid.thumbprint => coswid.hash-entry,
+     * $$entity-extension,
+     coswid.global-attributes,
+   }
+   coswid.link = 4
+   coswid.link-entry = {
+     ? coswid.artifact => text,
+     coswid.href => coswid.any-uri,
+     ? coswid.media => text,
+     ? coswid.ownership => coswid.$ownership,
+     coswid.rel => coswid.$rel,
+     ? coswid.media-type => text,
+     ? coswid.use => coswid.$use,
+     * $$link-extension,
+     coswid.global-attributes,
+   }
+   coswid.payload-or-evidence //= (coswid.payload => coswid.payload-\
+                      entry // coswid.evidence => coswid.evidence-entry)
+   coswid.global-attributes = (
+     ? coswid.lang => text,
+     * coswid.any-attribute,
      )
-   hash-entry = [
+   coswid.multipartnumeric = 1
+   coswid.multipartnumeric-suffix = 2
+   coswid.alphanumeric = 3
+   coswid.decimal = 4
+   coswid.semver = 16384
+   coswid.activation-status = 43
+   coswid.channel-type = 44
+   coswid.colloquial-version = 45
+   coswid.description = 46
+   coswid.edition = 47
+   coswid.entitlement-data-required = 48
+   coswid.entitlement-key = 49
+   coswid.generator = 50
+   coswid.persistent-id = 51
+   coswid.product = 52
+   coswid.product-family = 53
+   coswid.revision = 54
+   coswid.summary = 55
+   coswid.unspsc-code = 56
+   coswid.unspsc-version = 57
+   coswid.entity-name = 31
+   coswid.reg-id = 32
+   coswid.any-uri = uri
+   coswid.role = 33
+   coswid.$role /= coswid.tag-creator / coswid.software-creator / \
+   coswid.aggregator / coswid.distributor / coswid.licensor / coswid.\
+                                                 maintainer / int / text
+   coswid.thumbprint = 34
+   coswid.hash-entry = [
      hash-alg-id: int,
      hash-value: bytes,
    ]
-   entity-entry = {
-     entity-name => text,
-     ? reg-id => any-uri,
-     role => one-or-more<$role>,
-     ? thumbprint => hash-entry,
-     * $$entity-extension,
-     global-attributes,
+   coswid.artifact = 37
+   coswid.href = 38
+   coswid.ownership = 39
+   coswid.$ownership /= coswid.shared / coswid.private / coswid.\
+                                                    abandon / int / text
+   coswid.rel = 40
+   coswid.$rel /= coswid.ancestor / coswid.component / coswid.feature \
+   / coswid.installationmedia / coswid.packageinstaller / coswid.\
+   parent / coswid.patches / coswid.requires / coswid.see-also / coswid\
+                .supersedes / coswid.supplemental / -256 .. 65536 / text
+   coswid.media-type = 41
+   coswid.use = 42
+   coswid.$use /= coswid.optional / coswid.required / coswid.\
+                                                recommended / int / text
+   coswid.payload = 6
+   coswid.payload-entry = {
+     coswid.resource-collection,
+     * $$payload-extension,
+     coswid.global-attributes,
    }
-   $role /= tag-creator / software-creator / aggregator / distributor \
-                                    / licensor / maintainer / int / text
-   link-entry = {
-     ? artifact => text,
-     href => any-uri,
-     ? media => text,
-     ? ownership => $ownership,
-     rel => $rel,
-     ? media-type => text,
-     ? use => $use,
-     * $$link-extension,
-     global-attributes,
+   coswid.evidence = 3
+   coswid.evidence-entry = {
+     coswid.resource-collection,
+     ? coswid.date => coswid.integer-time,
+     ? coswid.device-id => text,
+     ? coswid.location => text,
+     * $$evidence-extension,
+     coswid.global-attributes,
    }
-   $ownership /= shared / private / abandon / int / text
-   $rel /= ancestor / component / feature / installationmedia / \
-   packageinstaller / parent / patches / requires / see-also / \
-                        supersedes / supplemental / -256 .. 64436 / text
-   $use /= optional / required / recommended / int / text
-   software-meta-entry = {
-     ? activation-status => text,
-     ? channel-type => text,
-     ? colloquial-version => text,
-     ? description => text,
-     ? edition => text,
-     ? entitlement-data-required => bool,
-     ? entitlement-key => text,
-     ? generator => text / bstr .size 16,
-     ? persistent-id => text,
-     ? product => text,
-     ? product-family => text,
-     ? revision => text,
-     ? summary => text,
-     ? unspsc-code => text,
-     ? unspsc-version => text,
-     * $$software-meta-extension,
-     global-attributes,
-   }
-   path-elements-group = (
-     ? directory => one-or-more<directory-entry>,
-     ? file => one-or-more<file-entry>,
-     )
-   resource-collection = (
-     path-elements-group,
-     ? process => one-or-more<process-entry>,
-     ? resource => one-or-more<resource-entry>,
+   coswid.lang = 15
+   coswid.any-attribute = (coswid.label => coswid.one-or-more<text> / \
+                                                coswid.one-or-more<int>)
+   coswid.tag-creator = 1
+   coswid.software-creator = 2
+   coswid.aggregator = 3
+   coswid.distributor = 4
+   coswid.licensor = 5
+   coswid.maintainer = 6
+   coswid.shared = 3
+   coswid.private = 2
+   coswid.abandon = 1
+   coswid.ancestor = 1
+   coswid.component = 2
+   coswid.feature = 3
+   coswid.installationmedia = 4
+   coswid.packageinstaller = 5
+   coswid.parent = 6
+   coswid.patches = 7
+   coswid.requires = 8
+   coswid.see-also = 9
+   coswid.supersedes = 10
+   coswid.optional = 1
+   coswid.required = 2
+   coswid.recommended = 3
+   coswid.resource-collection = (
+     coswid.path-elements-group,
+     ? coswid.process => coswid.one-or-more<coswid.process-entry>,
+     ? coswid.resource => coswid.one-or-more<coswid.resource-entry>,
      * $$resource-collection-extension,
      )
-   file-entry = {
-     filesystem-item,
-     ? size => uint,
-     ? file-version => text,
-     ? hash => hash-entry,
-     * $$file-extension,
-     global-attributes,
-   }
-   directory-entry = {
-     filesystem-item,
-     ? path-elements => {path-elements-group},
-     * $$directory-extension,
-     global-attributes,
-   }
-   process-entry = {
-     process-name => text,
-     ? pid => integer,
-     * $$process-extension,
-     global-attributes,
-   }
-   resource-entry = {
-     type => text,
-     * $$resource-extension,
-     global-attributes,
-   }
-   filesystem-item = (
-     ? key => bool,
-     ? location => text,
-     fs-name => text,
-     ? root => text,
+   coswid.date = 35
+   coswid.integer-time = #6.1(int)
+   coswid.device-id = 36
+   coswid.location = 23
+   coswid.label = text / int
+   coswid.path-elements-group = (
+     ? coswid.directory => coswid.one-or-more<coswid.directory-entry>,
+     ? coswid.file => coswid.one-or-more<coswid.file-entry>,
      )
-   payload-entry = {
-     resource-collection,
-     * $$payload-extension,
-     global-attributes,
+   coswid.process = 18
+   coswid.process-entry = {
+     coswid.process-name => text,
+     ? coswid.pid => integer,
+     * $$process-extension,
+     coswid.global-attributes,
    }
-   evidence-entry = {
-     resource-collection,
-     ? date => integer-time,
-     ? device-id => text,
-     ? location => text,
-     * $$evidence-extension,
-     global-attributes,
+   coswid.resource = 19
+   coswid.resource-entry = {
+     coswid.type => text,
+     * $$resource-extension,
+     coswid.global-attributes,
    }
-   integer-time = #6.1(int)
-   tag-id = 0
-   software-name = 1
-   entity = 2
-   evidence = 3
-   link = 4
-   software-meta = 5
-   payload = 6
-   hash = 7
-   corpus = 8
-   patch = 9
-   media = 10
-   supplemental = 11
-   tag-version = 12
-   software-version = 13
-   version-scheme = 14
-   lang = 15
-   directory = 16
-   file = 17
-   process = 18
-   resource = 19
-   size = 20
-   file-version = 21
-   key = 22
-   location = 23
-   fs-name = 24
-   root = 25
-   path-elements = 26
-   process-name = 27
-   pid = 28
-   type = 29
-   entity-name = 31
-   reg-id = 32
-   role = 33
-   thumbprint = 34
-   date = 35
-   device-id = 36
-   artifact = 37
-   href = 38
-   ownership = 39
-   rel = 40
-   media-type = 41
-   use = 42
-   activation-status = 43
-   channel-type = 44
-   colloquial-version = 45
-   description = 46
-   edition = 47
-   entitlement-data-required = 48
-   entitlement-key = 49
-   generator = 50
-   persistent-id = 51
-   product = 52
-   product-family = 53
-   revision = 54
-   summary = 55
-   unspsc-code = 56
-   unspsc-version = 57
-   multipartnumeric = 1
-   multipartnumeric-suffix = 2
-   alphanumeric = 3
-   decimal = 4
-   semver = 16384
-   tag-creator = 1
-   software-creator = 2
-   aggregator = 3
-   distributor = 4
-   licensor = 5
-   maintainer = 6
-   abandon = 1
-   private = 2
-   shared = 3
-   ancestor = 1
-   component = 2
-   feature = 3
-   installationmedia = 4
-   packageinstaller = 5
-   parent = 6
-   patches = 7
-   requires = 8
-   see-also = 9
-   supersedes = 10
-   optional = 1
-   required = 2
-   recommended = 3
+   coswid.directory = 16
+   coswid.directory-entry = {
+     coswid.filesystem-item,
+     ? coswid.path-elements => {coswid.path-elements-group},
+     * $$directory-extension,
+     coswid.global-attributes,
+   }
+   coswid.file = 17
+   coswid.file-entry = {
+     coswid.filesystem-item,
+     ? coswid.size => uint,
+     ? coswid.file-version => text,
+     ? coswid.hash => coswid.hash-entry,
+     * $$file-extension,
+     coswid.global-attributes,
+   }
+   coswid.process-name = 27
+   coswid.pid = 28
+   coswid.type = 29
+   coswid.filesystem-item = (
+     ? coswid.key => bool,
+     ? coswid.location => text,
+     coswid.fs-name => text,
+     ? coswid.root => text,
+     )
+   coswid.path-elements = 26
+   coswid.size = 20
+   coswid.file-version = 21
+   coswid.hash = 7
+   coswid.key = 22
+   coswid.fs-name = 24
+   coswid.root = 25
 
 Acknowledgments
 
