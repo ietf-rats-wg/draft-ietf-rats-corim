@@ -68,13 +68,8 @@ $(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES)))
 $(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES)))
 
-GITHUB := https://raw.githubusercontent.com/
-COSWID_REPO := sacmwg/draft-ietf-sacm-coswid/master
-COSWID_REPO_URL := $(join $(GITHUB), $(COSWID_REPO))
-
-concise-swid-tag.cddl: ; $(curl) -O $(COSWID_REPO_URL)/$@
-
-CLEANFILES += concise-swid-tag.cddl
+include coswid.mk
+include measured-component.mk
 
 clean: ; rm -f $(CLEANFILES)
 

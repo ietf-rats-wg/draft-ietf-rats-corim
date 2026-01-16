@@ -48,6 +48,7 @@ COMID_FRAGS += version-map.cddl
 COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
 COMID_FRAGS += concise-swid-tag.cddl
+COMID_FRAGS += measured-component.cddl
 
 COMID_EXAMPLES := $(wildcard examples/comid-*.diag)
 
@@ -124,5 +125,6 @@ INTREP_FRAGS += cose-key.cddl
 INTREP_FRAGS += cose-label-and-value.cddl
 INTREP_FRAGS += class-id-type-choice.cddl
 INTREP_FRAGS += oid.cddl
+INTREP_FRAGS += measured-component.cddl
 
 INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
