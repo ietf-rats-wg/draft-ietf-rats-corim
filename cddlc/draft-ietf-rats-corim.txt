@@ -728,9 +728,11 @@ Table of Contents
    manifests, certificates, or other relevant information can be
    retrieved by the Verifier.
 
+   ;# import measured-component as eatmc
+
    corim-locator-map = {
      &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest / [digest]
+     ? &(thumbprint: 1) => eatmc.digest / [ eatmc.digest ]
    }
 
    The following describes each child element of this type.
@@ -1866,6 +1868,8 @@ Table of Contents
    *  tagged-bytes: a key identifier with no prescribed construction
       method.
 
+   ;# import measured-component as eatmc
+
    $crypto-key-type-choice /= tagged-pkix-base64-key-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
@@ -1878,10 +1882,10 @@ Table of Contents
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-key-thumbprint-type = #6.557(eatmc.digest)
    tagged-cose-key-type = #6.558(COSE_Key)
-   tagged-cert-thumbprint-type = #6.559(digest)
-   tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+   tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
 5.1.4.1.6.  Integrity Registers
@@ -2507,14 +2511,9 @@ Table of Contents
    defined in Section 4.2 of [I-D.ietf-rats-eat-measured-component].
    Only the CBOR serialization is used.
 
-   ; This definition of 'digest' is equivalent to the one in
-   ; I-D.ietf-rats-eat-measured-component
-   digest = [
-     alg: (int / text),
-     val: bytes
-   ]
+   ;# import measured-component as eatmc
 
-   digests-type = [ + digest ]
+   digests-type = [ + eatmc.digest ]
 
    A measurement can be obtained using different hash algorithms.  A
    digests-type can be used to collect multiple digest values obtained
@@ -5193,7 +5192,7 @@ Appendix A.  Base CoRIM CDDL
    $corim-id-type-choice /= tstr / uuid-type
    corim-locator-map = {
      &(href: 0) => uri / [+ uri],
-     ? &(thumbprint: 1) => digest / [digest],
+     ? &(thumbprint: 1) => eatmc.digest / [eatmc.digest],
    }
    corim-map = {
      &(id: 0) => $corim-id-type-choice,
@@ -5323,10 +5322,10 @@ Appendix A.  Base CoRIM CDDL
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-key-thumbprint-type = #6.557(eatmc.digest)
    tagged-cose-key-type = #6.558(COSE_Key)
-   tagged-cert-thumbprint-type = #6.559(digest)
-   tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+   tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
    domain-dependency-triple-record = [
      domain-type,
@@ -5484,14 +5483,58 @@ Appendix A.  Base CoRIM CDDL
      &(version: 0) => text,
      ? &(version-scheme: 1) => coswid.$version-scheme,
    }
-   digest = [
-     alg: int / text,
-     val: bytes,
-   ]
-   digests-type = [+ digest]
+   digests-type = [+ eatmc.digest]
    integrity-register-id-type-choice = uint / text
    integrity-registers = {+ integrity-register-id-type-choice => \
                                                            digests-type}
+   eatmc.measured-component = {
+     eatmc.component-id-label => eatmc.component-id,
+     eatmc.measurement,
+     ? eatmc.authorities-label => [+ eatmc.authority-id-type],
+     ? eatmc.flags-label => eatmc.flags-type,
+   }
+   eatmc.measurement //= (eatmc.digested-measurement-label => eatmc.\
+                         digest // eatmc.raw-measurement-label => bytes)
+   eatmc.authority-id-type = eatmc.eat.JC<eatmc.bytes-b64u, bytes>
+   eatmc.flags-type = eatmc.eat.JC<eatmc.bytes8-b64u, eatmc.bytes8>
+   eatmc.component-id = [
+     name: text,
+     ? version: eatmc.version,
+   ]
+   eatmc.version = [
+     val: text,
+     ? scheme: eatmc.coswid.$version-scheme,
+   ]
+   eatmc.digest = [
+     alg: int / text,
+     val: eatmc.digest-value-type,
+   ]
+   eatmc.digest-value-type = eatmc.eat.JC<eatmc.bytes-b64u, bytes>
+   eatmc.bytes-b64u = text .b64u bytes
+   eatmc.bytes8 = bytes .size 8
+   eatmc.bytes8-b64u = text .b64u eatmc.bytes8
+   eatmc.component-id-label = eatmc.eat.JC<"id", 1>
+   eatmc.digested-measurement-label = eatmc.eat.JC<"digested-\
+                                                        measurement", 2>
+   eatmc.raw-measurement-label = eatmc.eat.JC<"raw-measurement", 5>
+   eatmc.authorities-label = eatmc.eat.JC<"authorities", 3>
+   eatmc.flags-label = eatmc.eat.JC<"flags", 4>
+   eatmc.mc-cbor = bytes .cbor eatmc.measured-component
+   eatmc.mc-json = text .json eatmc.measured-component
+   eatmc.$measurements-body-cbor /= eatmc.mc-cbor / eatmc.mc-json
+   eatmc.$measurements-body-json /= eatmc.mc-json / text .b64u eatmc.mc\
+                                                                   -cbor
+   eatmc.eat.JSON-ONLY<J> = J .feature "json"
+   eatmc.eat.CBOR-ONLY<C> = C .feature "cbor"
+   eatmc.eat.JC<J, C> = eatmc.eat.JSON-ONLY<J> / eatmc.eat.CBOR-ONLY<C>
+   eatmc.coswid.$version-scheme /= eatmc.coswid.multipartnumeric / \
+   eatmc.coswid.multipartnumeric-suffix / eatmc.coswid.alphanumeric / \
+                 eatmc.coswid.decimal / eatmc.coswid.semver / int / text
+   eatmc.coswid.multipartnumeric = 1
+   eatmc.coswid.multipartnumeric-suffix = 2
+   eatmc.coswid.alphanumeric = 3
+   eatmc.coswid.decimal = 4
+   eatmc.coswid.semver = 16384
    coswid.concise-swid-tag = {
      coswid.tag-id => text / bstr .size 16,
      coswid.tag-version => integer,
