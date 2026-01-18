@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-01-15T02:11:17.635604+00:00",
+  "timestamp": "2026-01-18T02:27:16.944887+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -82,6 +82,16 @@
       "name": "not yet ready for review",
       "description": "",
       "color": "0e8a16"
+    },
+    {
+      "name": "Info_or_Data_Model",
+      "description": "A Label that is applicable to Information or Data Model, documented in Section 1 - Section 7",
+      "color": "aaaaaa"
+    },
+    {
+      "name": "Verifier_Processing",
+      "description": "Label to mark issue as specific to Section 8 or 9 which deals with Verifier processing!",
+      "color": "a3b93d"
     }
   ],
   "issues": [
@@ -3096,11 +3106,12 @@
         "yogeshbdeshpande"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "The `domain-dependency-triple-record` lists target environments and the other environments, usually attesting environments, the target depends on for trust establishment. \r\n\r\nIt may be unclear what behavior the Verifier should take if a target environment appears in Evidence, but does not have a corresponding dependency triple. \r\n\r\nA concern is that if an env is compromised (after its measurement / evidence is collected), the compromised env could measure an additional (attack) env, with evidence, that the Verifier will accept. \r\n\r\nNote: There may be other ways to detect this attack. The compromised env could have been issued a DICE certificate that excludes the `ECA` key purpose OID. The compromised env could have been issued an X.509 certificate with a pathlen value=0.\r\nGiven there may be multiple evidence formats that don't have these mitigations, the dependency triple may be an additional form of mitigation.\r\n\r\nHowever, to mitigate this attack, there needs to be conventions for its use. If the dependency triples are a closed set. Then only attack environments will not show up in dependency triples. Can CoRIM assert this requirement?\r\n\r\nVerifier behavior should be clear whether it detects this attack. \r\n\r\nIf the verifier should detect the attack using RIMs, then RIM authors MUST specify dependency triples. \r\n\r\nDetection requires an all-or-nothing approach. All the target envs MUST be included in RIMs, or the verifier is not expected to detect the attack. Otherwise, the possibility of unnamed, but trusted environments could exist. The Verifier is undecided as to which is legitimate. \r\n\r\nDo we think CoBOM plays a role toward identifying tags that contain dependency triples?\r\n\r\n",
       "createdAt": "2023-07-14T21:57:40Z",
-      "updatedAt": "2025-09-26T12:08:30Z",
+      "updatedAt": "2026-01-15T16:44:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -3137,6 +3148,13 @@
           "body": "@nedmsmith to complete this PR...",
           "createdAt": "2025-09-26T12:08:30Z",
           "updatedAt": "2025-09-26T12:08:30Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "See PR #502 ",
+          "createdAt": "2026-01-15T16:44:22Z",
+          "updatedAt": "2026-01-15T16:44:22Z"
         }
       ]
     },
@@ -3145,7 +3163,7 @@
       "id": "I_kwDOH6-tI85ueILS",
       "title": "Allow untagged raw-value types in evidence and endorsements",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/124",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -3154,8 +3172,8 @@
       ],
       "body": "The current CDDL does not permit raw-value to contain an untagged bstr. This syntax is required in evidence/endorsements\r\nThis syntax may be required in reference-values which use the mask and match format",
       "createdAt": "2023-08-16T14:43:02Z",
-      "updatedAt": "2025-01-29T16:29:43Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-15T16:45:05Z",
+      "closedAt": "2026-01-15T16:45:05Z",
       "comments": [
         {
           "author": "andrew-draper",
@@ -5699,7 +5717,7 @@
       "id": "I_kwDOH6-tI86BcuPC",
       "title": "Representing ACS entries with multiple measurements, and extension point for new matching algorithms",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/211",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -5708,8 +5726,8 @@
       ],
       "body": "The contents of environment-map are chosen by the attesting environment (AE) making measurements, but it is constrained by the protocol used to collect the evidence.\r\n\r\nIf an target environment (TE) being measured has multiple measurements of the same type, for example multiple digest measurements or multiple raw value entries, then one option is for the AE to store each measurement under a different environment-map. This is not always the natural way to store the data.\r\n\r\nI suggest that a solution to this is to store the first measurement of a particular type under the standard measurement-map entry (eg 2 for digest or 4 for raw value) and to store the other measurements of this type using negative codepoints within `measurement-values-map`.\r\n\r\nThe verifier needs to know which comparison algorithm to use for measurements at negative codepoints.\r\n\r\nI suggest that, for measurements at negative codepoints, the verifier should use the CBOR tag at the start of the reference value to select the comparison algorithm. Some types, for example svn(1) and raw-value(4), already have tags defined.\r\n\r\nIf we choose this mechanism then we need to change the CDDL to add optional tags to relevant `measurement-values-map` values so that `stateful-environment`s can indicate which comparison algorithm should be used for negative types.\r\n\r\nIf we do not use the CBOR tag of the `stateful-environment` to select the comparison algorithm for a negative codepoint then we need to define a different way to do this. Using profiles to do this will mean either additional code in every verifier or the need for a profile definition language to indicate that _environment E with codepoint -X must use comparison algorithm A_.\r\n\r\nA related problem occurs when the data format requires extended comparison algorithms which differ from those described in the base specification. The specification of an extended comparison algorithm should define a CBOR tag which tells the verifier to use that algorithm, and the stateful-environment which provides the expected value should be tagged with that tag.\r\n\r\nPR #203 requests adding a tag for digests.",
       "createdAt": "2024-03-06T15:31:39Z",
-      "updatedAt": "2024-07-17T01:08:57Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-15T16:43:46Z",
+      "closedAt": "2026-01-15T16:43:46Z",
       "comments": [
         {
           "author": "deeglaze",
@@ -6300,10 +6318,12 @@
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "* `context` is now (preliminary) part of ECT\r\n* Verifier Reconciliation provides `context`\r\n* Claims in ECT somehow rely on `context`\r\n* Attester_ECT provide a `context`\r\n* A Verifier establishes `context` for interacting with an Attester\r\n* a `context` is the scope of application of a certain language used in tstr\r\n* the semantics of the environment-map or measurement-values-map depend on the `context` they are used in\r\n* a domain is a `context` for bundling a collection of related environments and their measurements\r\n* a condition must must describe the expected `context`\r\n\r\nThere are more instances of examples, but I think the examples above already convey the point I am trying to make.\r\n\r\nWhenever `context` means not the exact same thing in the document, we must reshuffle the use of the term, significantly (and probably introduce or reuse other terms).",
       "createdAt": "2024-05-22T12:16:33Z",
-      "updatedAt": "2024-05-22T12:16:33Z",
+      "updatedAt": "2026-01-15T16:43:14Z",
       "closedAt": null,
       "comments": []
     },
@@ -9759,7 +9779,7 @@
       "id": "I_kwDOH6-tI86oQP93",
       "title": "Is CoTL (old CoBOM) really a tag?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/372",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -9768,8 +9788,8 @@
       ],
       "body": "CoTL Concise Tag List is not really a tag on its own, but it is a list of tags + another MetaData.\n\nThis issue revisits the new entry in corim-map for this tag list related information :\n\n1. Suitable data structure \n2. Modifying the CoRIM specification with the required and impacted text around this new structure!",
       "createdAt": "2025-01-31T09:04:43Z",
-      "updatedAt": "2025-02-12T18:45:58Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-15T16:42:44Z",
+      "closedAt": "2026-01-15T16:42:44Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -10534,10 +10554,12 @@
       "assignees": [
         "henkbirkholz"
       ],
-      "labels": [],
+      "labels": [
+        "Info_or_Data_Model"
+      ],
       "body": "Amanda\u2019s early review comments:\n\n> 1) Please provide the name of the registry group that each of the new registries should belong to. (An example of a registry group name: \"CBOR Object Signing and Encryption (COSE)\" at https://www.iana.org/assignments/cose.)\n>\n> 2) The title of Section 12.7 refers to \u201cCoMID,\u201d but the first sentence of the section refers to CoRIM.\n>\n> 3) In Section 12.13, please specify the range the CoAP Content-Format values should be taken from. See https://www.iana.org/assignments/core-parameters for a list of ranges and procedures.\n",
       "createdAt": "2025-03-12T09:57:15Z",
-      "updatedAt": "2025-09-24T16:53:36Z",
+      "updatedAt": "2026-01-15T16:47:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -10567,6 +10589,13 @@
           "body": "@henkbirkholz Still awaiting your reply on this one!!!",
           "createdAt": "2025-09-24T16:53:36Z",
           "updatedAt": "2025-09-24T16:53:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@henkbirkholz What is the status of this PR..?",
+          "createdAt": "2026-01-15T16:47:40Z",
+          "updatedAt": "2026-01-15T16:47:40Z"
         }
       ]
     },
@@ -10575,7 +10604,7 @@
       "id": "I_kwDOH6-tI86tqHo0",
       "title": "Add Definition of Tag to the Glossary section",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/409",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10584,8 +10613,8 @@
       "labels": [],
       "body": "PR #378 improved the definition of tag.\n\nTag should be moved to Glossary. However CoSWID is also Tag.\n\nSo which document is the right place for defining tag?\n\nIf in CoRIM should it be in Glossary or in the place where it is in the current V7 Version of draft?",
       "createdAt": "2025-03-12T10:36:53Z",
-      "updatedAt": "2025-09-24T16:54:24Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-15T16:42:06Z",
+      "closedAt": "2026-01-15T16:42:06Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -10812,7 +10841,7 @@
       "id": "I_kwDOH6-tI86wRhOD",
       "title": "Handling of conditional endorsement when there are multiple identical devices",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/415",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "andrew-draper",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -10823,8 +10852,8 @@
       ],
       "body": "Consider an compound system using two attestation environments and two target environments.\n\nIn the example, the AEs and TEs use identical hardware, but may be running different firmware.\n\nThis diagram shows a simplified view of the system.\n```mermaid\ngraph TD\n    Verifier[\"Verifier\"]\n\n    subgraph Compound[\"Compound system\"]\n\n    subgraph DICE1[\"Component #1\"]\n        TE1z[\"SPDM TE\"]\n        TE1y[\"SPDM AE\"]\n    end\n    TE1y ==> TE1z\n\n    subgraph DICE2[\"Component #2\"]\n        TE2y[\"SPDM AE\"]\n        TE2z[\"SPDM TE\"]\n    end\n    TE2y ==> TE2z\n\n    end\n\n    style Compound fill:#CCC,stroke:#CCC\n\n    Verifier -...-> TE1y\n    Verifier -...-> TE2y\n```\nThe Verifier communicates directly with an attestation environment within each component.\n\nThe attestation environments return measurements of each TE, for example AE#1 might return a hash indicating the firmware running in TE#1:\n```cbor-diag\n  [\n    / environment-map / {\n      / class / 0 : {\n        / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n        / vendor / 1 : \"example.com\"\n      },\n      / instance / 1 : 560(h'12345678')\n    },\n    / measurement-map / [ {\n      / mval / 1 : {\n        / digests / 2 : [\n          [\n            / sha-384 / 7,\n            h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n          ]\n        ]\n      }\n    } ]\n  ]\n```\n\nThe measurements of TE#2 are similar, except for the instance ID and the digest in the measurement-values-map.\n\nThe evidence import phase will add the measurements for TE#1 and TE#2 to the ACS.\n\nThe CoRIM author has published several CoRIMs, each of which maps one hash to a version number, for example:\n\n```comid\n  / triples / 4 : {\n    / conditional-endorsement-triples / 10 : [\n      / conditions: / [ \n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / digests / 2 : [\n                [\n                  / sha-384 / 7,\n                  h'15E77D6F133252F1DB7044901313884F2977D2109B33C79F33E079BFC78865255C0FB733C240FDDA544B8215D7B8F815'\n                ]\n              ]\n            }\n          } ]\n        ],\n  / endorsements: / [\n        [\n          / environment-map / {\n            / class / 0 : {\n              / class-id / 0 : / 2.16.1.2.3.4 / 111(h'6001020304'),\n              / vendor / 1 : \"example.com\"\n            }\n            / WHAT GOES HERE? /\n          },\n          / measurement-map / [ {\n            / mval / 1 : {\n              / ver / 0 : {\n                / version / 0 : \"1.0\",\n                / version-scheme / 1 : / alphanumeric / 3\n              }\n            }\n          } ]\n        ],\n      ]\n    ]\n  }\n```\n\nThe goal of this CoMID fragment is to add a version number to the environment which contains the hash.\nI expect that the Conditional Endorser (perhaps the device manufacturer) will release many CoMID fragments, one for each released version of firmware.\n\nAssuming that the firmware is genuine, one of the CoMID fragments will match against the ACS entry for TE#1, and one will match against the ACS entry for TE#2.\n\nThe CoMID fragments don't include an `instance` field within their environment, so they will match against any ACS entry which contains the same `class-id`, regardless of instance.\n\n# How to get expected results?\n\nI would like to have the version number added to the environment which matched against the digest, with the ACS entry containing the version string including both the `class` and `instance` fields.\n\nHow do we tell the Verifier to copy the `instance` field from the `stateful-environment` part of `conditional-endorsement-triple-record` to the new ACS entry created by `endorsed-triple-record`?\n\nI think a similar issue is raised if the Conditional Endorser wants the Verifier to match against two `stateful-environments`, both of them having the same value in the `instance` field.\n\n# Possible solution\n\nOne solution I can imagine is to create special syntax which is inserted into the example conditional endorsement above in the location marked `/ What goes here? /`.\n\nThis syntax tells the Verifier to copy the instance value which was matched against the first `stateful-environment` into the newly created endorsed ACS entry.\n\nIs there a better solution?",
       "createdAt": "2025-03-28T22:19:44Z",
-      "updatedAt": "2025-07-08T08:25:55Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-15T16:41:30Z",
+      "closedAt": "2026-01-15T16:41:30Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -11242,7 +11271,7 @@
       "id": "I_kwDOH6-tI86yoNUZ",
       "title": "Restrict manifest-signer role's value type?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/421",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "deeglaze",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -11251,8 +11280,8 @@
       "labels": [],
       "body": "If we want to query for CoRIMs signed by a particular entity, we're now in a bind with the manifest-signer role versus the corim-meta-map.\n\nCan we deprecate the corim-meta header in favor of requiring the manifest-signer role for the CoRIM, and require the value type to be the corim-signer-map? It would put another burden on CoTS to express that constraint, but it reduces the ways of expressing the same thing and removes the custom header that a lot of signing services dislike adding support for.",
       "createdAt": "2025-04-15T15:47:19Z",
-      "updatedAt": "2025-07-11T14:48:21Z",
-      "closedAt": null,
+      "updatedAt": "2026-01-15T16:40:53Z",
+      "closedAt": "2026-01-15T16:40:53Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -11296,11 +11325,12 @@
         "nedmsmith"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "SPDM, DICE and other attester designs dynamically create keys after attester deployment. Since dyncamically generated keys are not known until they are generated, it currently isn't possible to match on those keys using crypto-key-type-choice / exact match semantics. \n\nA certificate chain is a structure that could allow matching on derived keys if the derived keys have a portion of the cert chain in common and the cert chain that is in common is known before the alias (lower layer) keys have been generated. \n\nIf a parent key is supplied in matching criteria, it can be interpreted that a match on a derived key is intended. For example, if the crypto-key-type-choice options for cert chain (tagged-pkix-base64-cert-path-type and tagged-cert-path-thumbprint-type) could be a way to trigger verifier behavior that applies path construction to the intermediate / alias certs to the specified criteria. \n\nThe full cert path could then be used as the condition that matches derived keys as part of processing matching functions. \n\nThis is one possible approach. \n\nThere could be others. For example, if Evidence contains a singleton key, path construction could be applied that results in a full cert path. Matching any part of the cert path in a condition would match the ECT.  The concern is whether the intent was to match a specific key vs. any of the keys in the cert path. ",
       "createdAt": "2025-04-22T20:07:02Z",
-      "updatedAt": "2025-07-08T08:24:18Z",
+      "updatedAt": "2026-01-15T16:42:22Z",
       "closedAt": null,
       "comments": [
         {
@@ -11329,11 +11359,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "The comparison section for section 9.4.1.7 Comparison for`raw-int` (or whatever we ended up calling it) uses a convention where \"CONDITION\" is used to refer to contents of a condition ECT and \"ENTRY\" is used to refer to the current ACE ECT that is the ECT being matched. \n\nThis seems like a valuable convention for the reader. Does it make sense to consistently apply this convention for all the comparson sections (9.4.6.1.*)?",
       "createdAt": "2025-04-22T20:16:54Z",
-      "updatedAt": "2025-06-11T13:30:13Z",
+      "updatedAt": "2026-01-15T16:39:23Z",
       "closedAt": null,
       "comments": [
         {
@@ -11571,11 +11602,12 @@
         "nedmsmith"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Info_or_Data_Model"
       ],
       "body": "`$crypto-key-type-choice` and `$instance-id-type-choice` use digest types where the source of the type of object being digested is ambiguously defined. \n\nFor example, `tagged-key-thumbprint` could be a 5280 keyIdentifier, a COSE `kid`, a digest of a PEM key, a digest of X and Y values, etc...\n`tagged-cert-thumbprint-type` could be a 5280 cert or a digest of a CWT / JWT etc...\n`tagged-cert-path-thumbprint-type` could be a 5280 certification path or possibly a serialization of an x5bag etc...\n\nThe issue is that if these (digest) values are used to find an actual public key, certificate or as part of certification path construction, there needs to be a way to related the digest to the actual value. If the digest is known but the actual value is not, the algorithm to find the value is guess-and-check. This algorithm may be  appropriate for Bitcoin mining, but not ideal for attestation. \n\nIf the thumbprint types identified the type of object digested and the verifier had the key already (aka via certificate) then guess-and-check is constrained to the type of object that was digested and the algorithm used to computed the digest (e.g., 5280 keyIdentifier).  ",
       "createdAt": "2025-05-01T00:34:53Z",
-      "updatedAt": "2025-10-08T22:52:01Z",
+      "updatedAt": "2026-01-15T16:40:32Z",
       "closedAt": null,
       "comments": [
         {
@@ -11598,6 +11630,13 @@
           "body": "@nedmsmith I think, the PR #317 does address this? Is this correct. Please check",
           "createdAt": "2025-10-08T22:52:01Z",
           "updatedAt": "2025-10-08T22:52:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Please check and close this...",
+          "createdAt": "2026-01-15T16:40:22Z",
+          "updatedAt": "2026-01-15T16:40:22Z"
         }
       ]
     },
@@ -11613,11 +11652,12 @@
         "nedmsmith"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Info_or_Data_Model"
       ],
       "body": "A conditional endorsement series expression doesn't necessarily have to have a stateful condition given the selection state is sufficient. However, the `stateful-environment-record` makes `measurement-map` mandatory. \n\nAllowing the claims-list in stateful-environment-record to be optional would accommodate the class of use cases. \n\nSuch as the following cddl:\n```\nconditional-endorsement-series-triple-record = [\n  condition: [\n    environment: environment-map,\n    ? claims-list: [ + measurement-map ]\n  ]\n  series: [ + conditional-series-record ]\n]\n```",
       "createdAt": "2025-05-09T19:16:33Z",
-      "updatedAt": "2025-06-25T19:37:09Z",
+      "updatedAt": "2026-01-15T16:39:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -11805,11 +11845,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "The appraisal algorithm has ballooned in its description text to dizzying lengths. We need to have an introduction and stricter organization principles to present the meaning of CoMID triples as they affect the ACS.\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/424 is a smaller plea for organizing principles.",
       "createdAt": "2025-06-04T14:42:49Z",
-      "updatedAt": "2025-06-11T13:19:18Z",
+      "updatedAt": "2026-01-15T16:37:58Z",
       "closedAt": null,
       "comments": []
     },
@@ -12031,11 +12072,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "Previous text distinguished ACS entries from data in triples.\n\nThe current text talks about ECTs in many places.\n\nCan we have different terms for ECTs which have been added to the ACS, and ECTs which have been created from triples. These last ECTs may be matched against ACS or inserted (perhaps with modification), but they work differently from ACS ECTs.\n\nSome parts of the matching rules talk about ACS entries and candidate ECTs, but the phase description uses different terms. We should align these.\n\n",
       "createdAt": "2025-06-11T13:59:06Z",
-      "updatedAt": "2025-10-01T14:15:36Z",
+      "updatedAt": "2026-01-15T16:37:35Z",
       "closedAt": null,
       "comments": [
         {
@@ -12073,11 +12115,12 @@
         "yogeshbdeshpande"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "Since attestation result creation is out of scope of the document, defining what form attestation results take as an internal representation makes very little sense. I don't think we need the ARS.",
       "createdAt": "2025-07-02T15:25:55Z",
-      "updatedAt": "2025-10-02T23:04:18Z",
+      "updatedAt": "2026-01-15T16:36:31Z",
       "closedAt": null,
       "comments": []
     },
@@ -12091,11 +12134,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "We define triples' internal representations rv, ev, evs, ae, dm (PR #454). Both ev and evs are structures that correspond to single triples, and the others are arrays that correspond to multiple triples. I think it would be more understandable to keep them singular and define an explicit staging area that adds in the multiplicity (see ir-stage in PR #307). There's text like \"an rv list entry is allocated\" and \"an ev entry is allocated\" which have no real anchor point without the staging area.\n\nIf y'all agree, I can change #307 to make the change to the grammar and the allocation text.",
       "createdAt": "2025-07-04T16:09:34Z",
-      "updatedAt": "2025-07-08T08:18:40Z",
+      "updatedAt": "2026-01-15T16:36:10Z",
       "closedAt": null,
       "comments": [
         {
@@ -12173,9 +12217,17 @@
       "labels": [],
       "body": "Thomas has expressed concerns about PR #434 \n\n> I understand the problem that this is trying to solve, and I believe that the technical proposal will achieve the desired outcome.\n> However, from a design perspective, I don't think extending the environment map is the right approach.\n> The idea behind environment-map extensibility is to allow new concrete identifiers to be added to cover use cases and technologies that we didn't anticipate.\n> Instead, this PR adds new semantics to the identifier space, opening up a whole new world in a relatively stable corner of the spec.\n> This is likely to have consequences that we haven't fully grasped.\n> For this reason, even though I am clearly in the minority, I'd advise against merging this and instead exploring solutions that either do not require touching core/stable parts or use different constructs altogether.\n> If we decide to merge it nevertheless, I would like it to be marked as an \u201cexperimental\" solution to the problem rather than one that we present as \"the solution\u201d.\n> And this should also be clearly reflected in the presentation to the wider group in Madrid.\n\nThis PR is to discuss alternative approaches to solving the same problem, which may require syntax changes to the document",
       "createdAt": "2025-07-07T14:13:04Z",
-      "updatedAt": "2025-07-07T14:13:11Z",
+      "updatedAt": "2026-01-15T16:35:46Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@andrew-draper we will not work on this PR as agreed, request please close this!!!",
+          "createdAt": "2026-01-15T16:35:46Z",
+          "updatedAt": "2026-01-15T16:35:46Z"
+        }
+      ]
     },
     {
       "number": 461,
@@ -12677,11 +12729,12 @@
         "nedmsmith"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Info_or_Data_Model"
       ],
       "body": "```suggestion\r\nor in a `corim-meta` map described in {{sec-corim-meta}}.\r\n```\r\n\r\n_Originally posted by @nedmsmith in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/479#discussion_r2337241261_\r\n            ",
       "createdAt": "2025-09-17T14:51:42Z",
-      "updatedAt": "2025-10-01T14:24:15Z",
+      "updatedAt": "2026-01-15T16:33:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -12704,10 +12757,12 @@
       "assignees": [
         "henkbirkholz"
       ],
-      "labels": [],
+      "labels": [
+        "Info_or_Data_Model"
+      ],
       "body": "",
       "createdAt": "2025-09-17T15:35:53Z",
-      "updatedAt": "2025-09-24T16:44:18Z",
+      "updatedAt": "2026-01-15T16:50:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -12716,6 +12771,20 @@
           "body": "@henkbirkholz Do we need to do something about this. Can you please work on a PR???",
           "createdAt": "2025-09-24T16:44:18Z",
           "updatedAt": "2025-09-24T16:44:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think this is addressed.\n@achamayou can you please coordinate with @henkbirkholz to understand where are we with this ..?",
+          "createdAt": "2026-01-15T16:32:49Z",
+          "updatedAt": "2026-01-15T16:32:49Z"
+        },
+        {
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@yogeshbdeshpande yes, on it.",
+          "createdAt": "2026-01-15T16:50:40Z",
+          "updatedAt": "2026-01-15T16:50:40Z"
         }
       ]
     },
@@ -12804,11 +12873,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Info_or_Data_Model"
       ],
       "body": "Authors: I can turn the low-hanging things into github issues/PRs if you want.\n\nHigh-level: I know I read this document before.\nIt feels lot bigger now.  A lot.  So I looked at line counts over time:\n   2856 corim-01.txt    Mar  9  2023\n   3472 corim-02.txt    Jul 10  2023\n   3976 corim-03.txt    Oct 23  2023\n   4256 corim-04.txt    Mar  4  2024\n   4872 corim-05.txt    Jul  8  2024\n   5544 corim-06.txt    Oct 18  2024\n   6496 corim-07.txt    Mar  3 11:33\n   6832 corim-08.txt    Jul  7 12:24\n\nSection 13, references, starts at line 5749.\nSo roughly 1000 lines of appendix, including all the CDDL.\nI think that CDDL in Appendix A should be marked as source code?\n\nSo it's tripled in size since adopted... compare to:\n   2437 rfc9334.txt\n   4418 rfc9711.txt\n\nI am not saying it's too big, but it's something to think about.\nCould any non-core(OTI) attributes be moved to an addendum document?\n(5.1.4.1.4.6 Raw Values Types comes to mind)\n\n1. You have Table of Contents depth set to at least 5.\n\nIt seems to be section 9, \"Example Verifier Algorithm\" where this might be too much.\nQuestion: how are you managing to make sure all the CDDL excerpts are consistent with that in Appendix A?  Hate to repeat the oops in the SDF document.\nI haven't looked at your git repo... I know what I'd do.\n\n2. In section 1, it says:\n\n   ... The CoRIM data model\n   is expressed in CDDL which is used to realize a CBOR [STD94] encoding\n   suitable for cryptographic operations (e.g., hashing, signing,\n   encryption) and transmission over computer networks.  Additionally,\n\nReading this, I wondered, \"why don't they just say COSE?\"\nI think that the point is that the CDDL describes what goes into a COSE Payload.\nIt just feels really awkward.\nI would start a new paragraph at \"Additionally,\"...\n\n3. Glossary.\nSome terms (Appraisal Policy) seem to have a lot of detailed words, others less.  A reviewer (probably DNSDIR...) is going to complain about unadorned \"Domain\"\nA downside of alphabetical order is that there are forward references.\nTerms like Environment seem to repeat 9334.\nNot liking Environment-Claim Tuple as a term. It just sounds wrong/forced to my ear.\nMeasurement, Reference Values and Triple all seem to need more than Glossary has space for.\nDo I need to understand RDF?  Is the contrast useful?\n\n4. section 2...\n\n\"2.  Verifier Reconciliation\n\nThis specification describes \"\ncould it be that you mean, \"This section ...\"?\nWill you Capitalize your terminology?\n(here, _authority_)\n\nHere:\n   conflict with the Reference Values provided by a Reference Value\n   Provider (RVP).  In essence, if Evidence is not corroborated by an\n   RVP's Claims, then the RVP's Claims are not included in the ACS.\n\nIsn't a RVP's Claim, actually... a Reference Value?\nPerhaps there is some subtly that is important, if so I've missed it at that point.  The next paragraph suggests that the RVP Claim really says:\n        \"If Evidence FOO == Reference Value FOO, Then\n        Assert Device-Is-In-FOO-Good-State\"\nMaybe the order of these things would be easier if swapped?\n\n2.2:\nI would prefer that section 2.2 title expanded \"ACS\"\n(it will also help the ToC)\nTable 1 is interesting, but is it ordered?  Is it proceedural, or declarative?\n{Many places in the document have rules that depend upon implicit ordering of entries in an array, btw} Can If ... reference previously asserted claims?\nOr can all things be evaluated concurrently?\nI find the If/Then statements in the description do not seem match the title that this table is \"Conceptual Message Representation **REQUIREMENTS**\"\n\n2.3: issue 242, so not finished.\n\nsection 4:\n  *  A validity period, which indicates the time period for which the\n      CoRIM contents are valid.\n\nIf an auditor wants to know if your 737MAX was running the approved firmware in 2018, I guess that they would need to look for a CoRIM that was valid in 2018?  This might even be recently (COSE) signed.\nThis validity period is not associated with the signature, correct?\n\n4.1.1: uuid-type is not tagged in anyway.  section 4.3.1 says it is a string type, but uuids are 128-bit objects.  RFC9562 does not define anything CBOR specific.... aha.  section 7.4 says it's a bytes array.\nYou reference both 4122 and rfc4122bis (aka 9562), like in section 5.1.1.1 Why is uuid-type sometimes not tagged?  I think in 4.1.1 it might be better tagged, since new identifier types could be defined...\nWhen used in measurement-values-map, there is already a distinguishing map key.\n\n4.1.4.  Profile Types\n   Profiling is the mechanism that allows the base CoRIM CDDL definition\n   to be customized to fit a specific Attester.\n\nI hated \"Profile\"ing when we did EAT.\nI don't think it's all similar to an EAT profile, operating at a different standardization level.  ... I dislike it even more here.\nI'd sure like a different word.  I don't have any suggestion yet.\nfdb-rats-psa-endorsement is linked.  That actually makes my understanding worse.\nIt says \"fit a specific Attester\". I read that to mean, \"Michael's Blue Car\".\nBut rats-psa-endorsement is defining a profile an entire category of devices that are part of a specific *Ecosystem*...\n\nIt would be ideal if some details of the design considerations from fdb-rats-psa-endorsements was in corim-08 at this point, or an appendix.\n\"Considerations for Cooking with CORIM: example tradeoffs from the PSA Profile\"\n\n4.3.1:\n        If using other signing envelope formats, the CoRIM signing authority like... what?\nI thought it was COSE_Sign1 only.\n\nExample in section 4.3.1 should be in new section 4.3.2.\nMy thought up to this point was that perhaps prior to getting into Reference quality explanation of section 4, that we could have an example that was walked through.\nThis example is too complicated/detailed/dense to really understand.\n\nsection 5:\n   object via a predicate.  CoMID triples typically encode assertions\n   made by the CoRIM author about ATTESTING or Target Environments and\n   their security features, for example measurements, cryptographic key\n   material, etc.\n\nI guess an assertion made about an ATTESTING Environment, would be an Endorsement?\nI don't really understand breaking out the Conditional Endorsement triples.\nAren't they all IF condition(X) THEN Express attribute Y?\n\nHigh-level: a feature of YANG descriptions is that prior to getting into the details of the YANG module, we have a tradition of inserting the tree version.\nThat version is often a really good mental guide to the rest.\nSince this is all CDDL, and CDDL like:\n\n   concise-mid-tag = {\n     ? &(language: 0) => text\n     &(tag-identity: 1) => tag-identity-map\n     ? &(entities: 2) => [ + comid-entity-map ]\n     ? &(linked-tags: 3) => [ + linked-tag-map ]\n     &(triples: 4) => triples-map\n     * $$concise-mid-tag-extension\n   }\n\nwhile comprehensive, it's also tedious.  The large structure gets a bit lost\nin the details.    I hate to ask: can we have an Entity Relationship diagram?\n\nI am having difficulty understanding Triples used in Co*M*ID as being part of a thing that \"contains information hardware, firmware or module **composition**\"\n\n5.1.1.2: I understand how Tag Version might be used.  I'm not clear how\n         a Verifier might know if if the Tag it has cached is obsolete.\n         Some link up to CoSERV or delegation to CoSERV might be better.\n         A Cache TTL kind of thing might be better?\n\n\n>   *  svn (index 1): The security version number typically changes only\n\nCould you do:\n>   *  svn (index 1): The Security Version Number typically changes only\n\nbecause it took me awhile to not translate svn = Subversion.\n\n>*  cryptokeys (index 13): identifies cryptographic keys that are\n>      protected by the Target Environment See Section 5.1.4.1.5 for the\n>      supported formats.  An Attesting Environment determines that keys\n\nCould you do:\n>*  cryptokeys (index 13): identifies cryptographic keys that are\n>      protected by the Target Environment. Section 5.1.4.1.5 describes the\n>      supported formats.  An Attesting Environment determines that keys\n\n5.1.4.1.4.3.  Version\nWhy does semver get 16384, rather than... 5?\nOh, because it's that way in rfc9393. Now I wonder why 9393 had that jump.\n\ntitle:\ns/5.1.4.1.4.4.  Security Version Number/\n  5.1.4.1.4.4.  Security Version Number (SVN)/\n\nDoesn't SUIT have some text about not rolling back manifests even when\nrolling back the firmware?   SVN has the same properties.  Worth a mindshare\nreference?\n\n5.1.4.1.4.5.  Flags\nCan more than one flag be asserted?\nI'm unclear, but I think so?\nIs it cumulative? I think not.\n\n>   *  is-replay-protected (index 4): If the flag is true, the measured\nmaybe explain how it would untrue.\n\n5.1.4.1.4.7.  Address Types\nRFC 9164 Concise Binary Object Representation (CBOR) Tags for IPv4 and IPv6 Addresses and Prefixes useful here?\n\ns/X.509/PKIX/g\n(It's not X.509. It's not even X.509v3. It's RFC5280)\n\n5.1.4.5 uses the term \"mkey\" and \"mkeys\", and I'm not sure what it refers to.\nNot in glossary.  Ah..it's in section 5.1.4.1.4's measurement-map, is that the right reference?  It's then used into section 9, for instance.\n\nI was surprised when I got to section 6. CoTL, since I felt like I'd never heard of them before.  And then section seemed to end too soon.\n\nI think that scetion 7 is a kind of library.\nI see that validity-map is there.\nObsolete reference to rfc4122 already noted.\n\nSection 9 has some statements about how Composite and Multi-Verifier might work.  I'm concerned that the terminology around this is not yet established,\nand this document might cause confusion.   Maybe the terms with less\nstability need to be marked, and evaluated whether they are still accurate at AUTH48.  Given number of references, this document likely sits in RPC-Q for awhile.\n\n9.1.3, \"ae\" is later referenced (in 9.2.3.2).  I guess it means Attestation Evidence?\nMaybe at least capitalize it?\n9.2.3.3: steps are arabic numbered (1,2,3), and then roman numeral (i,ii).\nBut intenting suggests opposite.  Maybe Step 3i/3ii?\n\n_Step 1.  An ev entry (Section 9.1.5) is allocated._ do people need to told this?\nI can't evaluate these instructions...\nI'm concerned that it's too detailed for someone who knows what's going on (will be ignored), and not detailed for someone with no clue (won't understand anyway).\n\n9.3.1.1: yeah, my eyes are now blurred over.\nI will have come back another time to fully review this section.\nI'm on my second full afternoon already...\n\nIn section 9 is an *example* verifier algorithm, then I think no BCP14 keywords should be here, they should all be in the other sections.\nRemembering that SHALL == MUST... not SHOULD.\nPlease check all SHOULD for exceptions.\n\nI think that the work on Veraison is amazing.\nWhile we do not need two implementations for PS (except for Internet-scale Routing), this document is complex enough that it sure would be nice to have.\n\n_11.  Security and Privacy Considerations_ maybe two sections?\n\n   It is critical that appraisal procedures are auditable and\n   reproducible.  The integrity of code and data during execution is an\n   explicit objective, for example, ensuring that the appraisal\n   functions are executed in an attestable trusted execution environment\n   (TEE).\n\nTwo really important ideas are mixed up in a single paragraph.\nBoth deserve their own section.\n\n   The Verifier should use cryptographically protected, mutually\n   authenticated secure channels to all its trusted input sources\n   (Endorsers, RVPs, Verifier Owners).  These links must reach as deep\n\nActually, I strongly disagree.\nAll of the objects are signed, (unless explicitely conveyed UCCS-like).\nUse of mutually authenticated secure channels makes it harder for third parties to make sure that they are getting the same answers as the Verifiers.\nFrom what I understand, a Verifier could be provided with all these signed objects via USB stick, right?\n\nI found no privacy considerations. I found no traffic analysis considerations.\nMaybe all of that belongs in CoSERV.\n\nIf IANA has done an early allocation for 12.2 (tags 500 thru 599) (I saw it in the Registry when I looked one up back in section 6), then could you note that it's already done that?\nOtherwise, TBA500, etc.?\n\n12.3: CoRIM MAp Registry.  AFAIK, CBOR has no boundary at 127 :-) So it's a \"1+1\" only thing.  Any advice for allocating <24?\nCan we break into 1+2?  Ditto for other maps.\n\ntypo in 12.8:\n   Future registrations for this registry are to be made based on {{RFC8126}}\n   as follows:\n\nI think that MAX-CBOR-INT is 18446744073709551615, that is, 2^64-1.\nYou have 2^64.  Do you want to limit to 2^63-1 to make signed-integer-only environments (which I think Javascript is), happier?  It's only a loss of 9 quintillion values.\n\n   Optional parameters:  \"profile\" (CoRIM profile in string format.\n      OIDs MUST use the dotted-decimal notation.)\n\nhuh.  Does this mean EDN?  What is \"String format\"\n\nrim+cbor:\n   File extension(s):  .corim\n   Magic number(s):  D9 01 F5\nTag(501)?  Works for me.\n\nrim+cose\n   File extension(s):  .corim\n   Magic number(s):  D2 84\nThis is just COSE Tag, right?\nNot sure, especially since it's the same extension as rim+cbor.\n\nYou'd also get two Content-Format based:\n https://www.rfc-editor.org/rfc/rfc9277.html#name-cbor-tags-for-coap-content-\n\n\n\n\n\n--\n",
       "createdAt": "2025-10-01T09:25:43Z",
-      "updatedAt": "2026-01-14T00:19:46Z",
+      "updatedAt": "2026-01-15T16:46:53Z",
       "closedAt": null,
       "comments": [
         {
@@ -12922,11 +12992,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "mustfix"
+        "mustfix",
+        "Verifier_Processing"
       ],
       "body": "This is feedback received from Sergei Trofimov : while implementing a CoRIM Verifier in Veraison Project:\n\n----\n Section 9.2.3.4.3 Title missing \"series\" (as-is it is identical to section 9.2.3.4.2 title)\n- Section 9.3.3.\n\t- Step 1. `cm-type` of addition was set when the Ect was created during corim processing (section 9.2.3.3, step 2), there is no need to re-set it here.\n\t- Step 2, claims are copied from ACS ECT into the addition before it is being added to ACS. It is unclear why (its identical to the values in the ACS ECT). Surely we want to be keeping track of the reference values that were matched, not a duplicate of the evidence values?\n\t- Step 3 is to confirm the `authority` field of the `addition` has been set to the RVP authority. It is not clear why this is necessary, since it should _always_ be set if the `rv` entry has been constructed correctly. Also, it not clear _how_ this can be confirmed since we're not tracking the RVP authority independently of what's populated in  the `rv` entry at this point (at this stage, we do not have access to the original CoRIMs -- just the extracted entries).\n- Section 9.4 indicates that authorities must be compared when matching against ACS, however,  in the reference value conditions, the authority not populated, and in additions, the authority is the signer of the corim, so there is no reason why it would match the authority in the evidence  (see section 9.2.3.3).\n\t- Further, by matching authorities, we're effectively saying that reference values are for a specific instance of a device, rather than for class (they are usually the latter).\n- Section 9.4.4, paragraph 3. `element-list` should be `element-map` (i.e. `element-list` entry)?\n- Section 9.4.6 typo: \"map map\" in the title.\n- Section 9.4.6.1 does not have a sub-section for `flags-map` comparison. In particular, it is not clear whether extra flags in evidence should be treated analogously to extra measurement value code points in evidence (i.e. ignored), or whether they would constitute a failed match.\n- Section 9.4.6.1.3. Paragraph 2. Typo: \"matches matches\".\n- Section 9.4.6.1.5 seems to imply that `cryptokeys` entries are compared _in order_, as ordered lists, rather than sets. Is this correct?\n-  (Note: as per prior discussions with Thomas, I'm pretty much ignoring everything from phase 5 onwards -- these are marked as \"optional\" in the doc. However without knowing how a policy engine will use the data, the structures proposed don't make much sense. E.g. reference values are matched to specific evidence entries, but the link between the`rv` and `ev` entries is not preserved--they're just both in the ACS--so a policy would need to try to re-match them.)\n- Matching is done by iterating through list, the description is not clear on whether the corims are somehow pre-selected just for that evidence or taken from a common pool, (given that environment is used in matching, the later is implied). Given that there maybe a plethora of environments, matching based on environment should be done first.\n- Rather than relying on binary comparison of encoded values, instead the equality of parsed types used throughout. This is to make things simpler (otherwise, parsed values will need to be re-materialised unnecessarily all over the place). Also neither `corim-rs` , nor the Golang `corim`, libraries currently do deterministic encoding.\n- There are a number of entries in the form\n  ```copy(e.endorsement.measurement-map, ev.addition.element-list.element-map)```\n  the `element-list` (and corresponding field in the source) is in fact a list, so does not have an `element-map` should be something like `element-list[*].element-map` maybe?\n- Reference values are matched \"holistically\" -- we iterate though available `rv` entries and for each try to find find an `ev` entry that matches on environment, (optionally) `mkey` and `mval`. And we only keep track of matches. This means that if we fail to match, we have no further recourse to find out why. It would make more sense to first match on environment to get a subset of relevant known-good-states before attempting a full match, so that if a match fails policy could then be used to identify _which_ entries failed to match (this might be relevant for, e.g. populating the trust vector). This would also give the flexibility of potentially matching each mkey independently rather as a set.\n- The assumption here seems to be that there is only one set of reference values per environment/mkey set. It's unclear how multiple parallel known good releases could be handled.",
       "createdAt": "2025-10-08T16:50:06Z",
-      "updatedAt": "2025-10-09T15:39:29Z",
+      "updatedAt": "2026-01-15T16:31:45Z",
       "closedAt": null,
       "comments": [
         {
@@ -12959,16 +13030,24 @@
       "id": "I_kwDOH6-tI87X5J66",
       "title": "Detached CoRIM Signing Support",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/514",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "mingweishih",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "CBOR spec (RFC 9052) allows the Cose_Sign1 with a detached payload but the current CoRIM spec 09 draft does not seem to support this mode. Is this intentional, or something can be added?\n\nReference: \nCBOR CDDL\n```\n   COSE_Sign1 = [\n       Headers,\n       payload : bstr / nil,\n       signature : bstr\n   ]\n```\n\nCoRIM CDDL:\n```\nCOSE-Sign1-corim = [\n  protected: bstr .cbor protected-corim-header-map\n  unprotected: unprotected-corim-header-map\n  payload: bstr .cbor tagged-unsigned-corim-map\n  signature: bstr\n]\n```\n\n",
       "createdAt": "2025-11-13T17:13:59Z",
-      "updatedAt": "2025-11-13T17:13:59Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-01-15T16:31:14Z",
+      "closedAt": "2026-01-15T16:31:14Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #520 Addressed this so closing the issue now!!",
+          "createdAt": "2026-01-15T16:31:14Z",
+          "updatedAt": "2026-01-15T16:31:14Z"
+        }
+      ]
     },
     {
       "number": 515,
@@ -12979,10 +13058,12 @@
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "This issue is motivated by issue #494 and [1] is a snippet from that issue.\n\n[1] \n\n> High-level: I know I read this document before.\n> It feels lot bigger now. A lot. So I looked at line counts over time:\n> 2856 corim-01.txt Mar 9 2023\n> 3472 corim-02.txt Jul 10 2023\n> 3976 corim-03.txt Oct 23 2023\n> 4256 corim-04.txt Mar 4 2024\n> 4872 corim-05.txt Jul 8 2024\n> 5544 corim-06.txt Oct 18 2024\n> 6496 corim-07.txt Mar 3 11:33\n> 6832 corim-08.txt Jul 7 12:24\n> \n> Section 13, references, starts at line 5749.\n> So roughly 1000 lines of appendix, including all the CDDL.\n> I think that CDDL in Appendix A should be marked as source code?\n> \n> So it's tripled in size since adopted... compare to:\n> 2437 rfc9334.txt\n> 4418 rfc9711.txt\n> \n> I am not saying it's too big, but it's something to think about.\n> Could any non-core(OTI) attributes be moved to an addendum document?\n> (5.1.4.1.4.6 Raw Values Types comes to mind)\n\nSeveral design team meetings have considered the document size concern. There seems to be 4 possible / reasonable options.\na) Do nothing - readers should plan to carve out a larger chunk of time to get their arms around it.\nb) Restructure the document so that it flows better so it doesn't feel like a large document.\nc) Strip out the optional to implement items. (See PR #513)\nd) Strip out the reference verifier (Section 9).\n\nOption (c) represents a 13% reduction in lines. Possibly this is still insignificant from the perspective of making the document feel / read like a simple document. It also breaks up the triples-map structure which would then require reading and comparing two documents to put together the complete picture of the structure. Maybe this adds to reader overload as much as it reduces it? It is noted that the motivation for the Optional To Implement (OTI) sections was not that these are entirely optional, but that constrained environments that can't implement a full verifier would have guidance for what to exclude. Nevertheless, unconstrained environments are fully expected to implement OTI. Possibly, the name choice is misleading? MTI/OTI are better described as profiles of corim in which case, the question becomes whether a single draft should describe multiple profiles / or if a single draft would structure the content differently to bucket sections according to profile and readers only interested in one profile could safely avoid reading about the other.\n\nOption (d) represents a 32% reduction in lines. But possibly more important is that structurally, section 9 represents a strategy for addressing the bow tie complexity considerations. Essentially, all external representations for all verifier inputs need to undergo a external to internal transformation for verifier consistency to be guaranteed and to ensure interoperability. This applies to Evidence as well as RV and Endorsement formats. Looking forward to multi-verifiers, there may be a verifier-to-verifier format that also will require an external to internal mapping. Legacy formats such as TPM, will require a similar mapping. Any of these specifications would like to reference a refernence verifier spec as a way to show their spec is implementable by verifiers and interoperable. The existing evidence transformations draft already depends on section 9 for this purpose.\n\nThe design team should consider the four options and report back to the list to see if the list has a preference.\n\n",
       "createdAt": "2025-11-19T16:54:37Z",
-      "updatedAt": "2025-11-19T16:57:40Z",
+      "updatedAt": "2026-01-15T16:30:15Z",
       "closedAt": null,
       "comments": []
     },
@@ -12995,10 +13076,12 @@
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "\r\n\r\n_Originally posted by @andrew-draper in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/512#pullrequestreview-3563169253_\r\n            ",
       "createdAt": "2025-12-10T15:46:08Z",
-      "updatedAt": "2025-12-10T15:46:31Z",
+      "updatedAt": "2026-01-15T16:30:42Z",
       "closedAt": null,
       "comments": [
         {
@@ -13019,10 +13102,12 @@
       "author": "fdamato",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "## Summary\n\nCurrently, Section 9.3.4.5 \"Processing Domain Membership\" requires verifiers to scan all Domain Membership ECTs in the staging area against evidence environments to find matches. This approach works but can be computationally expensive, especially for resource-constrained verifiers (e.g., embedded verifiers behind a BMC).\n\nThis issue proposes an optimization to allow evidence to optionally assert a `domain-id`, providing a hint to the verifier about which DMT(s) to process, significantly reducing the search space.\n\n---\n\n## Current Behavior\n\nPer Section 9.3.4.5, the verifier must:\n\n1. Iterate through every Domain Membership ECT in the staging area\n2. For each DMT, check if all members match corresponding ACS entries\n3. Repeat until no new DMTs are added to ACS\n\n**Complexity:** O(D \u00d7 M \u00d7 E) where:\n- D = number of Domain Membership ECTs in staging area\n- M = average number of members per DMT\n- E = number of evidence entries in ACS\n\nFor large deployments with hundreds of DMTs and environments, this can be prohibitively expensive for constrained verifiers.\n\n---\n\n## Proposed Enhancement\n\nAllow evidence to optionally include a `domain-id` assertion that hints which DMT(s) the attester claims membership in. The verifier would:\n\n1. **If domain-id is present in evidence:** Prioritize processing only the DMT(s) matching that domain-id\n2. **If domain-id is not present:** Fall back to the current algorithm (Section 9.3.4.5)\n\n**Benefits:**\n- **Performance:** Reduces search space from all DMTs to specific DMT(s)\n- **Resource efficiency:** Enables deployment on constrained verifiers\n- **Backward compatibility:** Existing evidence without domain-id continues to work\n- **Security:** Domain-id assertion is still corroborated against authoritative Endorser DMTs (no trust boundary violation)\n\n---\n\n## Security Considerations\n\nThe `domain-id` in evidence is a **hint, not authoritative**. The verifier must still:\n\n- Corroborate the domain-id assertion against Endorser-provided DMTs\n- Reject evidence if the claimed domain-id doesn't match Endorser DMTs\n- Validate all domain membership per existing security model\n\nThe Endorser remains the authoritative source for domain composition.\n\n---\n\n## Evidence Profile Option\n\nFor strict resource-constrained deployments, an evidence profile could specify:\n\n- **MUST include domain-id:** Evidence without domain-id is rejected\n- **Verifier MAY skip fallback:** Verifier is not required to implement the full scan algorithm\n\nThis allows adoption in environments where the full algorithm is not feasible.",
       "createdAt": "2026-01-07T23:34:30Z",
-      "updatedAt": "2026-01-07T23:34:30Z",
+      "updatedAt": "2026-01-15T16:29:39Z",
       "closedAt": null,
       "comments": []
     },
@@ -13035,10 +13120,12 @@
       "author": "DhanusML",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "Claims which are not present in the Reference Values Triples may get added to ACS with the reference value provider's authority.\n\nThe section titled 'Reference Values Corroboration and Augmentation' (9.3.3) states,\n>... the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`. If satisfied, for the `rv` entry, the following three steps are performed:\n>\n>1.\tThe `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`\n>2.\tThe `element-list` from ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT\n>3.\tThe `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority.\n\nIn step 2, the `element-list` from ACS ECT, which gets copied to the `element-list` of `addition` ECT might contain more claims than those present in the actual reference values triple. This is because the matching condition for `element-list` of ECT (section 9.4.4) is\n\n>If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field, then the element lists match.\n\nSo it is possible to have element-maps in the matching ACS entry that do no not have corresponding entries in the `condition` ECT. But these element-maps are also added to ACS with the reference value provider's authority.\n\n---\n\nSection 9.3.3 also says\n>Each reference value triple describes a single possible Attester state.\n\nThis does not align with the discussion about `ref-claims` multiplicity in section 5.1.4.2, which states \n>Each `ref-claims` entry can represent a different possible state of the Environment\n\nImplying, a single Reference Values Triple can describe multiple possible attester states. \n\nFurthermore, transforming a Reference Values Triple containing multiple states, according to section 9.2.3.3, would result in a (possibly invalid) condition ECT describing multiple states of the environment, which cannot match any evidence ACS entries. Hence, some clarification is needed on how to split such a Reference Values Triple into multiple ECTs, each describing a single state of the environment.\n\n---\n\nFinally, an unrelated issue: The term 'Reference Value Triple' being used in a few places inside the document. I assume this was a typo and is referring to 'Reference Values Triple'.\n\nRelated: https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506, https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/442",
       "createdAt": "2026-01-12T11:39:35Z",
-      "updatedAt": "2026-01-12T11:39:35Z",
+      "updatedAt": "2026-01-15T16:45:39Z",
       "closedAt": null,
       "comments": []
     },
@@ -13051,10 +13138,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "Issue raised by @mcr.\n\n>An internal representation of attestation Evidence uses the `ae` relation.\n\nCould be attestation evidence?",
       "createdAt": "2026-01-13T19:21:19Z",
-      "updatedAt": "2026-01-13T19:21:19Z",
+      "updatedAt": "2026-01-15T16:45:56Z",
       "closedAt": null,
       "comments": []
     },
@@ -13067,12 +13156,23 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix",
+        "Info_or_Data_Model"
+      ],
       "body": "Issue raised by @mcr.\n\n>Optional parameters: \"profile\" (CoRIM profile in string format. OIDs MUST use the dotted-decimal notation.)\n\nWhat does \"string format\" mean?\n",
       "createdAt": "2026-01-13T20:31:01Z",
-      "updatedAt": "2026-01-13T20:31:01Z",
+      "updatedAt": "2026-01-16T15:59:43Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@mcr The terminology is same as RFC 9782. We do not intend to change this!!",
+          "createdAt": "2026-01-16T15:59:43Z",
+          "updatedAt": "2026-01-16T15:59:43Z"
+        }
+      ]
     },
     {
       "number": 527,
@@ -13082,13 +13182,26 @@
       "state": "OPEN",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "mustfix",
+        "Info_or_Data_Model"
+      ],
       "body": "Issue raised by @mcr.\n\nhttps://datatracker.ietf.org/doc/html/rfc9164 defines tags and CDDL for IP addresses in CBOR. CoRIM can leverage this instead of defining its own analogous structures.",
       "createdAt": "2026-01-13T22:58:49Z",
-      "updatedAt": "2026-01-13T22:58:49Z",
+      "updatedAt": "2026-01-16T18:07:47Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "#529 is a prerequisite for this, so that we can simply `;# import rfc9164`",
+          "createdAt": "2026-01-16T18:07:01Z",
+          "updatedAt": "2026-01-16T18:07:47Z"
+        }
+      ]
     },
     {
       "number": 528,
@@ -13099,12 +13212,30 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "mustfix",
+        "Info_or_Data_Model"
+      ],
       "body": "Issue raised by @mcr.\n\nAre there any restrictions on combinations of the `flags-map` booleans? Or are they all completely independent of one another?",
       "createdAt": "2026-01-14T00:30:18Z",
-      "updatedAt": "2026-01-14T00:30:18Z",
+      "updatedAt": "2026-01-16T23:46:23Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "CoRIM Authors  discussed this in CoRIM Meeting 16th Jan 2026,  that the document cannot and shall not mandate specific settings of Flags and their restrictions of inter-operability. It is for the Endorser to define this.\n\nVerifier would simply compare what is present in the Evidence and then what is provided in the Reference Value\n\n",
+          "createdAt": "2026-01-16T17:14:39Z",
+          "updatedAt": "2026-01-16T17:14:39Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Note: while addressing this, let's add a `non-empty` wrapper around the map.",
+          "createdAt": "2026-01-16T23:46:22Z",
+          "updatedAt": "2026-01-16T23:46:22Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -81996,7 +82127,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-11-26T18:13:33Z",
-      "updatedAt": "2025-11-26T18:13:33Z",
+      "updatedAt": "2026-01-16T17:17:32Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fbe8b7561048a66d0d01c9c67bb67d1a3de2d677",
@@ -82007,7 +82138,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR is deferred until, the decision of Document Shape and Structure is finalised!!!",
+          "createdAt": "2026-01-16T17:17:32Z",
+          "updatedAt": "2026-01-16T17:17:32Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -82169,7 +82308,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2025-12-10T14:46:06Z",
-      "updatedAt": "2025-12-10T15:03:13Z",
+      "updatedAt": "2026-01-16T17:16:44Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fbe8b7561048a66d0d01c9c67bb67d1a3de2d677",
@@ -82180,7 +82319,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR is deferred till there is a conclusion of shape and form of CoRIM Document!!!",
+          "createdAt": "2026-01-16T17:16:44Z",
+          "updatedAt": "2026-01-16T17:16:44Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI87UXzyg",
@@ -82707,24 +82854,26 @@
       "id": "PR_kwDOH6-tI868565A",
       "title": "reuse the digest type from EAT MC",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/524",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Reuse the `digest` type defined in [Section 4.2 of EAT-MC](https://www.ietf.org/archive/id/draft-ietf-rats-eat-measured-component-10.html#section-4.2)",
       "createdAt": "2026-01-13T11:12:20Z",
-      "updatedAt": "2026-01-14T15:47:06Z",
+      "updatedAt": "2026-01-16T16:35:16Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "b91c1792a11de73a962cbe399806a117596bb5a4",
+      "baseRefOid": "a762794f4b6ce371771fd9ee054023548bd8386a",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "digest-ref",
-      "headRefOid": "b621397628009bf042af18ee9ff620b4529fdfdc",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "ba111b8588e013dbd2895976fffdca3789d51933",
+      "closedAt": "2026-01-16T16:35:11Z",
+      "mergedAt": "2026-01-16T16:35:11Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "fef3fb59afa83399a5e7884acb5ade1b1a836c40"
+      },
       "comments": [],
       "reviews": [
         {
@@ -82752,8 +82901,73 @@
           "createdAt": "2026-01-14T15:47:06Z",
           "updatedAt": "2026-01-14T15:47:06Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI87ai7as",
+          "commit": {
+            "abbreviatedOid": "b621397"
+          },
+          "author": "achamayou",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-01-15T16:42:28Z",
+          "updatedAt": "2026-01-15T16:42:28Z",
+          "comments": []
         }
       ]
+    },
+    {
+      "number": 529,
+      "id": "PR_kwDOH6-tI869rCFq",
+      "title": "use `import` in CDDL",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/529",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "* Use the `import` feature in `cddlc` rather than assembling the collated CDDL by hand ([ba1d531](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/529/commits/ba1d5311c1d21408bdc49aa175f234960f206e9f));\r\n* Use the embedded CoSWID module rather than downloading it from the SACM repo ([94dd6fb](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/529/commits/94dd6fbcc5c2d900667a508fc147a65b65dcec5a));\r\n* Import `digest` from EAT MC rather than redefining it ([973576d](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/529/commits/973576d4af6b98cc033385402e7bd08dfe3ae555)).",
+      "createdAt": "2026-01-16T18:03:26Z",
+      "updatedAt": "2026-01-17T16:32:27Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "fef3fb59afa83399a5e7884acb5ade1b1a836c40",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "cddlc",
+      "headRefOid": "973576d4af6b98cc033385402e7bd08dfe3ae555",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 530,
+      "id": "PR_kwDOH6-tI869t6xj",
+      "title": "reuse RFC9164 IP types",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/530",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "(This PR sits on top of #529; the commit to review is [cde8f92](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/530/commits/cde8f92579ba5c4af746fecbb763eff0d4e7360b))\r\n\r\nFix #527 ",
+      "createdAt": "2026-01-16T22:41:37Z",
+      "updatedAt": "2026-01-16T22:43:27Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "fef3fb59afa83399a5e7884acb5ade1b1a836c40",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "ip",
+      "headRefOid": "cde8f92579ba5c4af746fecbb763eff0d4e7360b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
