@@ -1417,14 +1417,9 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
-Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
-For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
-
-These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
-Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
-
+The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
+The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
+The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding probelmatic repetition of search criteria.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1446,6 +1441,24 @@ The `conditional-series-record` has the following parameters:
 * `selection`: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's `condition` result.
 
 * `addition`: Endorsements that are added if the `selection` criteria are satisfied.
+
+##### Condition Matching
+
+The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., `environment-map`) and optionally measurements (i.e., `claims-list`) or authority (i.e., `authorized-by`).
+Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.
+
+Note that `measurement-map` can also specify authority criteria. To avoid conflicting criteria, the `authorized-by` in `condition` takes precedence over the `authorized-by` in `measurement-map`.
+
+##### Selection Matching
+
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
+For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
+
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
+
+##### Processing the Addition
 
 To process a `conditional-endorsement-series-record` the selection criteria in `condition` entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
 If the selection criteria are satisfied, the `series` tuples are processed.
