@@ -145,18 +145,39 @@ Table of Contents
      7.8.  Tagged Bytes Type
    8.  Appraisal of CoRIM-based Inputs
      8.1.  Appraisal Procedure
-   9.  Reference Verifier Algorithm
-     9.1.  Internal Representation of Conceptual Messages
+   9.  Reference Verifier Sequence
+     9.1.  Processing of Conceptual Messages
        9.1.1.  Internal structure of ECT
-       9.1.2.  Internal Representation of Cryptographic Keys
-       9.1.3.  Internal Representation of Evidence
-       9.1.4.  Internal Representation of Reference Values
-       9.1.5.  Internal Representation of Endorsed Values
-       9.1.6.  Internal Representation of Domain Membership
-       9.1.7.  Internal Representation of Domain Dependency
-       9.1.8.  Internal Representation of Policy Statements
-       9.1.9.  Internal Representation of Attestation Results
-       9.1.10. Internal Representation of Appraisal Claims Set (ACS)
+       9.1.2.  Common Conventions for Input Transformation
+       9.1.3.  Processing of Evidence
+         9.1.3.1.  Internal Representation of Evidence
+         9.1.3.2.  Evidence Transformation
+       9.1.4.  Processing of Reference Value Triples
+         9.1.4.1.  Internal Representation of Reference Values
+         9.1.4.2.  Reference Triples Transformation
+       9.1.5.  Processing of Endorsed Value Triple, Conditional
+               Endorsement Triple & Conditional Endorsement Series
+               Triples
+         9.1.5.1.  Internal Representation of Endorsed Values
+         9.1.5.2.  Endorsement Triples Transformations
+           9.1.5.2.1.  Endorsed Values Triple Transformation
+           9.1.5.2.2.  Conditional Endorsement Triple Transformation
+           9.1.5.2.3.  Conditional Endorsement Series Triple
+                   Transformation
+       9.1.6.  Processing of Attest Key and Device Identity Key
+               Triples
+         9.1.6.1.  Internal Representation of Cryptographic Keys
+         9.1.6.2.  Key Verification Triples Transformation
+       9.1.7.  Processing of Domain Membership Triples
+         9.1.7.1.  Internal Representation of Domain Membership
+         9.1.7.2.  Domain Membership Triples Transformation
+       9.1.8.  Processing of Domain Dependency Triples
+         9.1.8.1.  Internal Representation of Domain Dependency
+         9.1.8.2.  Domain Dependency Triples Transformation
+       9.1.9.  Processing of Policies
+         9.1.9.1.  Internal Representation of Policy Statements
+       9.1.10. Processing of Attestation Results
+         9.1.10.1.  Internal Representation of Attestation Results
        9.1.11. Internal Representation of Attestation Results Set
                (ARS)
      9.2.  Input Validation and Transformation (Phase 1)
@@ -169,15 +190,7 @@ Table of Contents
          9.2.2.1.  Cryptographic Validation of Evidence
        9.2.3.  Input Transformation
          9.2.3.1.  Appraisal Context Construction
-         9.2.3.2.  Evidence Tranformation
-         9.2.3.3.  Reference Triples Transformation
-         9.2.3.4.  Endorsement Triples Transformations
-           9.2.3.4.1.  Endorsed Values Triple Transformation
-           9.2.3.4.2.  Conditional Endorsement Triple Transformation
-           9.2.3.4.3.  Conditional Endorsement Triple Transformation
-           9.2.3.4.4.  Key Verification Triples Transformation
-         9.2.3.5.  Domain Membership Triples Transformation
-         9.2.3.6.  Domain Dependency Triples Transformation
+       9.2.4.  Internal Representation of Appraisal Claims Set (ACS)
      9.3.  ACS Augmentation - Phases 2, 3, and 4
        9.3.1.  ACS Requirements
          9.3.1.1.  ACS Processing Requirements
@@ -290,7 +303,11 @@ Table of Contents
    capitals, as shown here.
 
    This document uses terms and concepts defined by the RATS
-   architecture.  For a complete glossary, see Section 4 of [RFC9334].
+   architecture.  Specifically the terms Attester, Reference Value
+   Provider, Endorser, Verifier Owner, and Relying Party are taken from
+   Section 4 of [RFC9334].
+
+   For a complete glossary, see Section 4 of [RFC9334].
 
    This document uses the terms _"actual state"_ and _"reference state"_
    as defined in Section 2 of [I-D.ietf-rats-endorsements].
@@ -443,6 +460,7 @@ Table of Contents
    conflict with the Reference Values provided by a Reference Value
    Provider (RVP).  In essence, if Evidence is not corroborated by an
    RVP's Claims, then the RVP's Claims are not included in the ACS.
+   Please see Figure 1.
 
    A Verifier relies on input from appraisal policy to identify relevant
    assertions included in the ACS.  For example, if a policy requires
@@ -480,10 +498,13 @@ Table of Contents
 
    Conceptual Messages interact with an ACS by specifying criteria that
    should be met by the ACS and by presenting the assertions that should
-   be added to the ACS if the criteria are satisfied.  Internal
-   representations of Conceptual Messages, ACS, and Attestation Results
-   Set (ARS) SHOULD satisfy the following requirements for Verifier
-   reconciliation and appraisal processing:
+   be added to the ACS if the criteria are satisfied.  The processing
+   sequence of Conceptual Message interaction with ACS is guided by
+   Section 8.1.
+
+   Internal representations of Conceptual Messages, ACS, and Attestation
+   Results Set (ARS) SHOULD satisfy the following requirements for
+   Verifier reconciliation and appraisal processing:
 
    +==============+====================+==============================+
    | CM Type      | Structure          | Description                  |
@@ -511,7 +532,7 @@ Table of Contents
    |              | series of          | is satisfied, then add the   |
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
-   |              |                    | See Section 9.1.5            |
+   |              |                    | See Section 9.1.5.1          |
    +--------------+--------------------+------------------------------+
    | Verifier     | List of expected   | If the list of expected      |
    |              | actual state       | claims are in the ACS, then  |
@@ -801,9 +822,11 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
      signature: bstr
    ]
+
+   hash-envelope-digest = bstr
 
    The following describes each child element of this type.
 
@@ -814,18 +837,32 @@ Table of Contents
    *  unprotected: A COSE header that is not protected by COSE
       signature.
 
-   *  payload: A CBOR encoded tagged CoRIM.
+   *  payload: When the payload is signed directly, either a CBOR-
+      encoded tagged CoRIM, or nil if it is detached.  When the payload
+      is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
-   *  signature: A COSE signature block which is the signature over the
-      protected and payload components of the signed CoRIM.
+   *  signature: A COSE signature block, as defined in Section 4 of
+      [STD96].
 
 4.2.1.  Protected Header Map
 
-   ; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-   protected-corim-header-map =
+   ; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
+   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+
+   protected-corim-header-map-inline =
      {
        &(alg: 1) => int,
        &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   protected-corim-header-map-hash-envelope =
+     {
+       &(alg: 1) => int,
+       &(payload_hash_alg: 258) => int
+       &(payload_preimage_content_type: 259) => "application/rim+cbor",
+       ? &(payload_location: 260) => tstr
        meta-group,
        * cose-label => cose-value
      }
@@ -848,8 +885,24 @@ Table of Contents
 
    *  alg (index 1): An integer that identifies a signature algorithm.
 
+   Either, when the payload is signed directly:
+
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
+
+   Or, when the payload is signed indirectly using a Hash Envelope
+   ([I-D.ietf-cose-hash-envelope]):
+
+   *  payload_hash_alg (index 258): The hash algorithm used to produce
+      the payload.
+
+   *  payload_preimage_content_type (index 259): A string that
+      represents the "MIME Content type" of the CoRIM document used as
+      the pre-image of the payload.
+
+   *  payload_location (index 260): An optional identifier enabling
+      retrieval of the original resource (preimage) identified by the
+      payload.
 
    At least one of:
 
@@ -975,7 +1028,9 @@ Table of Contents
    protected-header parameter.  These metadata containers ensure that
    each CoRIM in the collection has an identified signer.  The COSE
    protected header can include a Collection CMW type name by using the
-   cmwc_t content type parameter for the &(content-type: 3) COSE header.
+   cmwc_t content type parameter for the &(content-type: 3) COSE header,
+   or &(payload_preimage_content_type: 259) in the case of hash
+   envelopes.
 
    If using other signing envelope formats, the CoRIM signing authority
    MUST be specified.  For example, this can be accomplished by adding
@@ -1706,8 +1761,8 @@ Table of Contents
       is in a debug enabled mode.
 
    *  is-replay-protected (index 4): If the flag is true, the measured
-      environment is protected from replay by a previous image that
-      differs from the current image.
+      environment is protected from rollback to previous software
+      images.
 
    *  is-integrity-protected (index 5): If the flag is true, the
       measured environment is protected from unauthorized update.
@@ -1796,9 +1851,11 @@ Table of Contents
 
    A cryptographic key digest can be one of the following formats:
 
-   *  tagged-key-thumbprint-type: a digest of a raw public key.  The
-      digest value may be used to find the public key if contained in a
-      lookup table.
+   *  tagged-key-thumbprint-type: a digest (e.g., the SHA-2 hash) of a
+      raw public key.  For example, the digest value can be used to
+      locate a public key contained in a lookup table.  Ultimately, the
+      discovered keys have to be successfully byte-by-byte compared with
+      the corresponding keys.
 
    *  tagged-cert-thumbprint-type: a digest of a certificate.  The
       digest value may be used to find the certificate if contained in a
@@ -1894,12 +1951,16 @@ Table of Contents
 
 5.1.5.  Reference Values Triple
 
-   A Reference Values Triple provides reference measurements or
-   reference claims pertaining to a Target Environment.  For a Reference
-   Value triple, the subject identifies a Target Environment, the object
-   contains reference measurements associated to one or more measured
-   elements of the Environment, and the predicate asserts that these are
-   expected (i.e., reference) measurements for the Target Environment.
+   Reference Values Triples describe the possible intended states of an
+   Attester.  At any given point in time, an Attester is expected to
+   match only one of these states.
+
+   A Reference Values Triple provides reference values pertaining to a
+   Target Environment.  In a Reference Value triple, the subject
+   identifies a Target Environment, the object contains reference
+   measurements associated with one or more measured elements of the
+   Environment, and the predicate asserts that these represent the
+   expected state of the Target Environment.
 
    The Reference Values Triple has the following structure:
 
@@ -1912,21 +1973,47 @@ Table of Contents
 
    *  ref-env: Identifies the Target Environment
 
-   *  ref-claims: One or more measurement claims for the Target
-      Environment
+   *  ref-claims: Contains one or more reference measurements for the
+      Target Environment
 
-   To process reference-triple-record both the ref-env and ref-claims
-   criteria are compared with Evidence entries.  First ref-env is used
-   as a search criterion to locate the Evidence environment that matches
-   the reference environment.  Subsequently, the ref-claims from this
-   triple are used to match against the Evidence measurements for the
-   matched environment.  If the search criteria are satisfied, the
-   matching entry is re-asserted, except with the Reference Value
-   Provider's authority.  By re-asserting Evidence using the RVP's
-   authority, the Verifier can avoid mixing Reference Values (reference
-   state) with Evidence (actual state).  See
-   [I-D.ietf-rats-endorsements].  Re-asserted Evidence using RVP
-   authority is said to be "corroborated".
+   CoMID triples (Section 5.1.4) may contain multiple reference-triple-
+   record entries, each of which describes one or more possible states
+   for a particular Target Environment.
+
+   The ref-claims in a reference-triple-record can contain one or more
+   entries.  This multiplicity can have different meanings:
+
+   1.  Each ref-claims entry can represent a different possible state of
+       the Environment.
+
+   2.  Each ref-claims entry can represent a possible state of a
+       different measured element (identified by its mkey) within the
+       Environment.
+
+   Note that the same semantics can be expressed using multiple
+   Reference Value Triples.
+
+   Note also that a measurement key-value pair could be defined to have
+   multiple values or use "wild carding" to describe a range of
+   acceptable values, for example when using int-range and min-svn.
+
+   Any of these multiplicities could be used in the context of Reference
+   Values Triples.
+
+   To process a reference-triple-record, the ref-env and ref-claims
+   criteria are compared with Evidence entries.  First, ref-env is used
+   as search criteria to locate matching Evidence environments.  Then,
+   the ref-claims from this triple are used to match against the
+   Evidence measurements for a matched environment.  If the search
+   criteria are satisfied, the matching entry is added to the body of
+   Attester state, except these Claims are asserted with the Reference
+   Value Provider's authority.  By re-asserting Evidence matched with
+   Reference Values using the RVP's authority, the Verifier avoids
+   confusing Reference Values (reference / possible state) with Evidence
+   (actual state).  See [I-D.ietf-rats-endorsements].  Evidence Claims
+   that are re-asserted using RVP authority are said to be "corroborated
+   Evidence" because the actual state in Evidence was found within the
+   corpus of the RVP's possible state.
 
 5.1.5.1.  Endorsed Values Triple
 
@@ -2444,13 +2531,12 @@ Table of Contents
 7.7.  Digest
 
    A digest represents the value of a hashing operation together with
-   the hash algorithm used.  The type of the digest algorithm identifier
-   can be either int or text and is interpreted according to the
-   [IANA.named-information] registry.  Specifically, int values are
-   matched against "ID" entries, text values are matched against "Hash
-   Name String" entries.  Whenever possible, using the int encoding is
-   RECOMMENDED.
+   the hash algorithm used.  This specification reuses the digest type
+   defined in Section 4.2 of [I-D.ietf-rats-eat-measured-component].
+   Only the CBOR serialization is used.
 
+   ; This definition of 'digest' is equivalent to the one in
+   ; I-D.ietf-rats-eat-measured-component
    digest = [
      alg: (int / text),
      val: bytes
@@ -2495,9 +2581,9 @@ Table of Contents
    behavior for each of those well-defined points.
 
    Verifier implementations MUST provide the specified information model
-   of the ACS at the end of phase 4 as described in this specification.
-   They are not required to use the same internal representation or
-   evaluation order described by this specification.
+   of the Appraisal Context at the end of phase 4 as described in this
+   specification.  They are not required to use the same internal
+   representation or evaluation order described by this specification.
 
 8.1.  Appraisal Procedure
 
@@ -2565,7 +2651,7 @@ Table of Contents
    an external representation suitable for consumption by a Relying
    Party.
 
-9.  Reference Verifier Algorithm
+9.  Reference Verifier Sequence
 
    This document presumes that Verifier implementations will differ.  To
    facilitate the description of normative Verifier behavior, this
@@ -2578,16 +2664,64 @@ Table of Contents
    Claims Set (ACS), Appraisal Policy, and Attestation Results Set (ARS)
    are used with the meaning defined in Section 1.1.1.
 
-9.1.  Internal Representation of Conceptual Messages
+                                                .-------------------.
+                                              .-+-----------------. |
+                                            .-+-----------------. +-'
+                                            |   CoRIM file(s)   +-'
+                                            '---------+---------'
+                                                      |
+                              .-----------------------+------------.
+                             | CoRIM Processor        v             |
+                             |                .--------------.      |
+                             |               | Validation &   |     |
+                             |               | Internal Repr. |     |
+                             |               | Transformation |     |
+                             |                '-------+------'      |
+       .----------------.    |                        |             |
+       |    Evidence    |    |                        v             |
+       '-------+--------'    |             .---------------------.  |
+               |             |             |    Staging Area     |  |
+               v             |             | .-----.     .-----. |  |
+        .--------------.     |             | | ECT | ... | ECT | |  |
+       | Validation &   |    |             | '-----'     '-----' |  |
+       | Internal Repr. |    |             '----------+----------'  |
+       | Transformation |    |                        |             |
+        '------+-------'     |  .---------.           v             |
+               |             |  | .-----. |      .---------.        |
+                '------------+->| | ECT | +---->|           |       |
+                             |  | '-----' |     | ACS       |       |
+                             |  |   ...   |     | Condition |       |
+                             |  | .-----. |     | Matching  |       |
+                             |  | | ECT | |<----+           |       |
+                             |  | '-----' |      '---------'        |
+                             |  |   ACS   |                         |
+                             |  '----+----'                         |
+                             |       |                              |
+                              '------+-----------------------------'
+                                     v
+                            .-----------------.       .-------------.
+                           | Subsequent Phases +----->| Attestation |
+                            '-----------------'       | Results     |
+                                                      '-------------'
+
+
+        Legend:                                  .-------.   .------.
+          ACS = Appraisal Claims Set            | Process |  | Data |
+          ECT = Environment-Claims Tuple         '-------'   '------'
+
+                      Figure 1: CoRIM Processing Flow
+
+9.1.  Processing of Conceptual Messages
 
    Conceptual Messages are Verifier input and output values such as
    Evidence, Reference Values, Endorsed Values, Appraisal Policy, and
    Attestation Results.
 
-   The internal representation of Conceptual Messages, as well as the
-   ACS (Section 9.1.10) and ARS (Section 9.1.11), are constructed from a
-   common building block structure called Environment-Claims Tuple
-   (ECT).
+   All the Conceptual Messages once fully processed are transformed into
+   a common internal representation known as Environment Claims
+   Tuple(ECT).  This section describes the internal structure of ECT and
+   explains the process of transformation of external conceptual
+   messages into ECTs.
 
 9.1.1.  Internal structure of ECT
 
@@ -2646,32 +2780,31 @@ Table of Contents
      trustee: 7
    )
 
-   The Conceptual Message type determines which attributes are
+   The Conceptual Message type (cmtype) determines which attributes are
    mandatory.
 
-9.1.2.  Internal Representation of Cryptographic Keys
+9.1.2.  Common Conventions for Input Transformation
 
-   The internal representation for keys use the extension slot within
-   measurement-values-map with the intrep-keys claim that consists of a
-   list of typed-crypto-key. typed-crypto-key consists of a key and an
-   optional key-type.  There are two types of keys attest-key and
-   identity-key.
+   The following mapping conventions apply to all forms of input
+   transformation:
 
-   $$measurement-values-map-extension //= (
-     &(intrep-keys: 65534) => [ + typed-crypto-key ]
-   )
+      -  The environment field is populated with a Target Environment
+         identifier.
 
-   typed-crypto-key = {
-     key: $crypto-key-type-choice
-     ? key-type: uint .bits key-type
-   }
+      -  The element-list field is populated with the measurements
+         collected by an Attesting Environment.
 
-   key-type = &(
-     attest-key: 0
-     identity-key: 1
-   )
+      -  The authority field is populated with the identity of the
+         entity that asserted (e.g., signed) the Conceptual Message.
 
-9.1.3.  Internal Representation of Evidence
+      -  The cmtype field is set based on the type of Conceptual Message
+         inputted or to be output.
+
+      -  The profile field is set based on the corim-map profile value.
+
+9.1.3.  Processing of Evidence
+
+9.1.3.1.  Internal Representation of Evidence
 
    An internal representation of attestation Evidence uses the ae
    relation.
@@ -2710,7 +2843,25 @@ Table of Contents
 
                     Table 3: Evidence tuple requirements
 
-9.1.4.  Internal Representation of Reference Values
+9.1.3.2.  Evidence Transformation
+
+   Evidence is transformed from an external representation to an
+   internal representation based on the ae relation Section 9.1.3.1.
+   The Evidence is mapped into one or more addition ECTs.  If the
+   Evidence does not have a value for the mandatory ae fields, the
+   Verifier MUST NOT process the Evidence.
+
+   Evidence transformation algorithms may be well-known, defined by a
+   CoRIM profile (Section 4.1.4), or supplied dynamically.  The handling
+   of Evidence transformation algorithms is out of scope for this
+   document.
+
+9.1.4.  Processing of Reference Value Triples
+
+   Upon processing of CoRIMs containing Reference Value Triples, the RV
+   Triples are transformed to an internal representation.
+
+9.1.4.1.  Internal Representation of Reference Values
 
    An internal representation of Reference Values uses the rv relation,
    which is a list of ECTs that contains possible states and a list of
@@ -2770,11 +2921,47 @@ Table of Contents
                      Table 4: Reference Values tuple
                                requirements
 
-9.1.5.  Internal Representation of Endorsed Values
+9.1.4.2.  Reference Triples Transformation
+
+   Step 1.  An rv list entry (Section 9.1.4.1) is allocated.
+
+   Step 2.  The cmtype of the addition ECT in the rv entry is set to
+            reference-values.
+
+   Step 3.  The Reference Values Triple (RVT) (Section 5.1.5) populates
+            the rv ECTs.
+
+   i  RVT.ref-env
+
+      *copy*(environment-map, rv.condition.environment.environment-
+         map)
+
+      *copy*(environment-map, rv.addition.environment.environment-
+         map)
+
+   ii For each e in RVT.ref-claims:
+
+      *copy*(e.measurement-map, rv.condition.element-list.element-
+         map)
+
+   Step 4.  The signer of the Reference Values conceptual message is
+            copied to the rv.addition.authority field.
+
+   Step 5.  If the Reference Values conceptual message has a profile,
+            the profile identifier is copied to the rv.addition.profile
+            field.
+
+9.1.5.  Processing of Endorsed Value Triple, Conditional Endorsement
+        Triple & Conditional Endorsement Series Triples
+
+9.1.5.1.  Internal Representation of Endorsed Values
 
    An internal representation of Endorsed Values uses the ev and evs
    relations, which are lists of ECTs that describe matching conditions
    and the additions that are added if the conditions are satisfied.
+   The ev relation is applicable to Endorsed Values (EV) and Conditional
+   Endorsement (CE) Triple.  The evs relation is applicable to the
+   Conditional Endorsement Series Triples.
 
    ev = [
      condition: [ + ECT ]
@@ -2791,7 +2978,8 @@ Table of Contents
 
    The ev relation compares the condition ECTs to the ACS and if all of
    the ECTs are found in the ACS then the addition ECTs are added to the
-   ACS.
+   ACS.  Note, when ev relation is for EV Triple, then the element-list
+   inside condition is Optional while it is Mandatory for CE Triple.
 
    The evs relation compares the condition ECTs to the ACS and if all of
    the ECTs are found in the ACS then each entry in the series list is
@@ -2853,7 +3041,182 @@ Table of Contents
                   Table 5: Endorsed Values and Endorsed
                     Values Series tuples requirements
 
-9.1.6.  Internal Representation of Domain Membership
+9.1.5.2.  Endorsement Triples Transformations
+
+9.1.5.2.1.  Endorsed Values Triple Transformation
+
+   Step 1.  An ev entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.5.1) populates
+            the ev ECTs.
+
+   i  EVT.condition
+
+      *copy*(environment-map, ev.condition.environment.environment-
+         map)
+
+      *copy*(environment-map, ev.addition.environment.environment-
+         map)
+
+   ii For each e in EVT.endorsement:
+
+      *copy*(e.endorsement.measurement-map, ev.addition.element-
+         list.element-map)
+
+   Step 4.  The signer of the Endorsement conceptual message is copied
+            to the ev.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
+
+9.1.5.2.2.  Conditional Endorsement Triple Transformation
+
+   Step 1.  An ev entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Entries in the Conditional Endorsement Triple (CET)
+            (Section 5.1.5.2) conditions list are copied to a suitable
+            ECT in the internal representation.
+
+   i  For each e in CET.conditions:
+
+      *copy*(e.stateful-environment-record.environment.environment-
+         map, ev.condition.environment.environment-map)
+
+      *copy*(e.stateful-environment-record.claims-list.measurement-
+         map, ev.condition.element-list.element-map)
+
+   ii For each e in CET.endorsements:
+
+      *copy*(e.endorsed-triple-record.condition.environment-map,
+         ev.addition.environment.environment-map)
+
+      *copy*(e.endorsed-triple-record.endorsement.measurement-map,
+         ev.addition.element-list.element-map)
+
+   Step 4.  The signer of the Conditional Endorsement conceptual message
+            is copied to the ev.addition.authority field.
+
+   Step 5.  If the Conditional Endorsement conceptual message has a
+            profile, the profile is copied to the ev.addition.profile
+            field.
+
+9.1.5.2.3.  Conditional Endorsement Series Triple Transformation
+
+   Step 1.  An evs entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the evs entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Populate the evs ECTs using the Conditional Endorsement
+            Series Triple (CEST) (Section 5.1.5.3).
+
+   i.  CEST.condition:
+
+      *copy*(stateful-environment-record.environment.environment-map,
+         evs.condition.environment.environment-map)
+
+      *copy*(stateful-environment-record.claims-list.measurement-map,
+         evs.condition.element-list.element-map)
+
+   ii. For each e in CEST.series:
+
+      *copy*(evs.condition.environment.environment-map,
+         evs.series.selection.environment.environment-map)
+
+      *copy*(e.conditional-series-
+         record.selection.measurement.measurement-map,
+         evs.series.selection.element-list.element-map)
+
+      *copy*(evs.condition.environment.environment-map,
+         evs.series.addition.environment.environment-map)
+
+      *copy*(e.conditional-series-record.addition.measurement-map,
+         evs.series.addition.element-list.element-map)
+
+   Step 4.  The signer of the Conditional Endorsement Series conceptual
+            message is copied to the evs.series.addition.authority
+            field.
+
+   Step 5.  If the Conditional Endorsement Series conceptual message has
+            a profile, the profile is copied to the
+            evs.series.addition.profile field.
+
+9.1.6.  Processing of Attest Key and Device Identity Key Triples
+
+9.1.6.1.  Internal Representation of Cryptographic Keys
+
+   The internal representation for keys use the extension slot within
+   measurement-values-map with the intrep-keys claim that consists of a
+   list of typed-crypto-key. typed-crypto-key consists of a key and an
+   optional key-type.  There are two types of keys attest-key and
+   identity-key.
+
+   $$measurement-values-map-extension //= (
+     &(intrep-keys: 65534) => [ + typed-crypto-key ]
+   )
+
+   typed-crypto-key = {
+     key: $crypto-key-type-choice
+     ? key-type: uint .bits key-type
+   }
+
+   key-type = &(
+     attest-key: 0
+     identity-key: 1
+   )
+
+9.1.6.2.  Key Verification Triples Transformation
+
+   The following transformation steps are applied for both the identity-
+   triples and attest-key-triples with noted exceptions:
+
+   Step 1.  An ev entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Populate the ev condition ECT using either the identity-
+            triple-record or attest-key-triple-record (Section 5.1.5.4)
+            as follows:
+
+   i.    *copy*(environment-map, ev.condition.environment.environment-
+         map).
+
+   ii.   Foreach _key_ in keylist.$crypto-key-type-choice, *copy*(_key_,
+         ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key).
+
+   iii.  If key-list originated from attest-key-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = attest-
+         key).
+
+   iv.   Else if key-list originated from identity-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = identity-
+         key).
+
+   v.    If populated, *copy*(mkey, ev.condition.element-list.element-
+         map.element-id).
+
+   vi.   If populated, *copy*(authorized-by, ev.condition.authority).
+
+   Step 4.  The signer of the Identity or Attest Key Endorsement
+            conceptual message is copied to the ev.addition.authority
+            field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
+
+9.1.7.  Processing of Domain Membership Triples
+
+9.1.7.1.  Internal Representation of Domain Membership
 
    An internal representation of Domain Membership is expressed in a
    single ECT, where the domain identifier is set in the environment
@@ -2886,7 +3249,41 @@ Table of Contents
                       Table 6: Domain Membership tuple
                                 requirements
 
-9.1.7.  Internal Representation of Domain Dependency
+9.1.7.2.  Domain Membership Triples Transformation
+
+   This section describes how the external representation of a Domain
+   Membership Triple (DMT) (Section 5.1.5.6.1) is transformed into its
+   CoRIM internal representation dm (see Section 9.1.7.1).
+
+   Step 1.  Allocate a domain ECT entry.
+
+   Step 2.  Set the conceptual message type for the domain ECT to 6
+            (domain-member).
+
+   i  *copy*(domain-member, domain.cmtype)
+
+   Step 3.  Set the authority for the domain ECT to the DMT signer
+            (Section 4.2.3.1).
+
+   i  *copy*(DMT.signer, domain.authority)
+
+   Step 4.  Use the DMT to populate the dm internal representation.
+
+   i  *copy*(DMT.domain-id, domain.environment)
+
+   ii For each environment *e* in DMT.members:
+
+      *copy*(DMT.members[_e_].environment,
+         domain.members[_e_].environment)
+
+   Step 5.  If the conceptual message containing the DMT has a profile,
+            it is used to populate the profile for the domain ECT.
+
+   i  *copy*(DMT.profile, domain.profile)
+
+9.1.8.  Processing of Domain Dependency Triples
+
+9.1.8.1.  Internal Representation of Domain Dependency
 
    An internal representation of trust dependency is a directed acyclic
    graph where each node in the graph identifies a member domain and
@@ -2921,7 +3318,51 @@ Table of Contents
                       Table 7: Domain Dependency tuple
                                 requirements
 
-9.1.8.  Internal Representation of Policy Statements
+9.1.8.2.  Domain Dependency Triples Transformation
+
+   This section describes how the external representation of a Domain
+   Dependency Triple (DDT) (Section 5.1.5.6.2) is transformed into its
+   CoRIM internal representation of a domain dependency graph (ddg) (see
+   Section 9.1.8.1).
+
+   For each domain-dependency-triple-record (ddtr) in the DDT list,
+   perform the following steps:
+
+   Step 1.  Allocate a domain dependency edge dde ECT entry.
+
+   Step 2.  Set the conceptual message type cmtype for the dde ECT to
+            trustee).
+
+   i  *assign*(trustee, dde.cmtype)
+
+   Step 3.  Set the authority for the domain ECT to the ddt signer
+            (Section 4.2.3.1).
+
+   i  *copy*(ddtr.signer, dde.authority)
+
+   Step 4.  Populate the environment using the domain identifier.
+
+   i  *copy*(ddtr.domain-id, dde.environment)
+
+   Step 5.  Populate the trustees.
+
+   i  For each environment _e_ in ddtr.trustees:
+
+      *copy*([_e_].environment, dde.trustees[_e_].environment)
+
+   Step 6.  If the conceptual message containing the DDT has a profile,
+            it is used to populate the profile for the dde ECT.
+
+   i  *copy*(ddtr.profile, dde.profile)
+
+   Append the domain dependency edge (dde) to the domain dependency
+   graph (ddg) internal representation.
+
+   Process the next ddtr until all entries have been processed.
+
+9.1.9.  Processing of Policies
+
+9.1.9.1.  Internal Representation of Policy Statements
 
    The policy relation compares the condition ECTs to the ACS.
 
@@ -2970,7 +3411,9 @@ Table of Contents
 
                     Table 8: Policy tuple requirements
 
-9.1.9.  Internal Representation of Attestation Results
+9.1.10.  Processing of Attestation Results
+
+9.1.10.1.  Internal Representation of Attestation Results
 
    The ar relation compares the acs-condition to the ACS.
 
@@ -3021,28 +3464,6 @@ Table of Contents
                     Table 9: Attestation Results tuple
                                requirements
 
-9.1.10.  Internal Representation of Appraisal Claims Set (ACS)
-
-   An ACS is a list of ECTs that describe an Attester's actual state.
-
-   For ECTs present in the ACS, the cmtype field is mandatory.
-   Table Table 10 shows the minimum required mandatory fields applicable
-   to all ECTs in an ACS.
-
-                 +==========+=============+=============+
-                 | ECT type | ECT Field   | Requirement |
-                 +==========+=============+=============+
-                 | n/a      | environment | Mandatory   |
-                 +----------+-------------+-------------+
-                 |          | authority   | Mandatory   |
-                 +----------+-------------+-------------+
-                 |          | cmtype      | Mandatory   |
-                 +----------+-------------+-------------+
-
-                 Table 10: ACS tuple minimum requirements
-
-   ACS = [ + ECT ]
-
 9.1.11.  Internal Representation of Attestation Results Set (ARS)
 
    An ARS is a list of ECTs that describe ACS entries that are selected
@@ -3071,9 +3492,9 @@ Table of Contents
 
    All available CoRIMs are collected.
 
-   CoRIMs that are not within their validity period, or that cannot be
-   associated with an authenticated and authorized source MUST be
-   discarded.
+   CoRIM tags MUST be discarded if they are expired, or if they are not
+   associated with an authenticated and authorized source, or if they
+   have been revoked by an authorized source.
 
    Any CoRIM that has been secured by a cryptographic mechanism that
    fails validation MUST be discarded.  An example of such a mechanism
@@ -3135,26 +3556,26 @@ Table of Contents
 9.2.2.  Evidence Collection
 
    During the Evidence collection phase, the Verifier communicates with
-   Attesters to gather Evidence.  The first part of this phase does not
-   require any cryptographic validation.  This means that Verifiers can
-   use untrusted code to discover Evidence sources.  Attesters are
-   Evidence sources.
-
-   Verifiers may rely on conveyance protocol specific context to
-   identify an Evidence source, which is the Evidence input oracle for
-   appraisal.
+   Attesters to gather Evidence.  Discovery of Evidence sources is
+   untrusted.  Verifiers may rely on conveyance protocol specific
+   context to identify an Evidence source, which is the Evidence input
+   oracle for appraisal.
 
    The collected Evidence is then transformed to an internal
    representation, making it suitable for appraisal processing.
+
+   The exact protocol used to collect Evidence is out of scope of this
+   specification.
 
 9.2.2.1.  Cryptographic Validation of Evidence
 
    If Evidence is cryptographically signed, its validation is applied
    before transforming Evidence to an internal representation.
 
-   If Evidence is not cryptographically signed, the security context of
-   the conveyance protocol that collected it is used to
-   cryptographically validate Evidence.
+   If Evidence is not cryptographically signed, the underlying
+   conveyance protocol that collected it, should provide the required
+   security.  In such cases, the cryptographic validation of Evidence is
+   determined by the security offered by the conveyance protocol.
 
    The way cryptographic signature validation works depends on the
    specific Evidence collection method used.  For example, in DICE, a
@@ -3174,28 +3595,14 @@ Table of Contents
    Verifier MUST NOT process Evidence which is not successfully
    validated.
 
+   Once Evidence is validated it is transformed into an internal
+   representation as given in Section 9.1.3.
+
 9.2.3.  Input Transformation
 
    Input Conceptual Messages, whether Evidence, Reference Values,
    Endorsements, or Policies, are transformed to an internal
    representation that is based on ECTs (Section 9.1).
-
-   The following mapping conventions apply to all forms of input
-   transformation:
-
-      -  The environment field is populated with a Target Environment
-         identifier.
-
-      -  The element-list field is populated with the measurements
-         collected by an Attesting Environment.
-
-      -  The authority field is populated with the identity of the
-         entity that asserted (e.g., signed) the Conceptual Message.
-
-      -  The cmtype field is set based on the type of Conceptual Message
-         inputted or to be output.
-
-      -  The profile field is set based on the corim-map profile value.
 
 9.2.3.1.  Appraisal Context Construction
 
@@ -3203,273 +3610,31 @@ Table of Contents
    context_. The Appraisal Context contains an internal representation
    of the inputted Conceptual Messages.  The selected tags are mapped to
    an internal representation, making them suitable for appraisal
-   processing.
-
-9.2.3.2.  Evidence Tranformation
-
-   Evidence is transformed from an external representation to an
-   internal representation based on the ae relation (Section 9.1.3).
-   The Evidence is mapped into one or more addition ECTs.  If the
-   Evidence does not have a value for the mandatory ae fields, the
-   Verifier MUST NOT process the Evidence.
-
-   Evidence transformation algorithms may be well-known, defined by a
-   CoRIM profile (Section 4.1.4), or supplied dynamically.  The handling
-   of dynamic Evidence transformation algorithms is out of scope for
-   this document.
-
-9.2.3.3.  Reference Triples Transformation
-
-   Step 1.  An rv list entry (Section 9.1.4) is allocated.
-
-   Step 2.  The cmtype of the addition ECT in the rv entry is set to
-            reference-values.
-
-   Step 3.  The Reference Values Triple (RVT) (Section 5.1.5) populates
-            the rv ECTs.
-
-   i  RVT.ref-env
-
-      *copy*(environment-map, rv.condition.environment.environment-
-         map)
-
-      *copy*(environment-map, rv.addition.environment.environment-
-         map)
-
-   ii For each e in RVT.ref-claims:
-
-      *copy*(e.measurement-map, rv.condition.element-list.element-
-         map)
-
-   Step 4.  The signer of the Endorsement conceptual message is copied
-            to the rv.addition.authority field.
-
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile identifier is copied to the rv.addition.profile
-            field.
-
-9.2.3.4.  Endorsement Triples Transformations
-
-9.2.3.4.1.  Endorsed Values Triple Transformation
-
-   Step 1.  An ev entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the ev entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.5.1) populates
-            the ev ECTs.
-
-   i  EVT.condition
-
-      *copy*(environment-map, ev.condition.environment.environment-
-         map)
-
-      *copy*(environment-map, ev.addition.environment.environment-
-         map)
-
-   ii For each e in EVT.endorsement:
-
-      *copy*(e.endorsement.measurement-map, ev.addition.element-
-         list.element-map)
-
-   Step 4.  The signer of the Endorsement conceptual message is copied
-            to the ev.addition.authority field.
-
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev.addition.profile field.
-
-9.2.3.4.2.  Conditional Endorsement Triple Transformation
-
-   Step 1.  An ev entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the ev entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  Entries in the Conditional Endorsement Triple (CET)
-            (Section 5.1.5.2) conditions list are copied to a suitable
-            ECT in the internal representation.
-
-   i  For each e in CET.conditions:
-
-      *copy*(e.stateful-environment-record.environment.environment-
-         map, ev.condition.environment.environment-map)
-
-      *copy*(e.stateful-environment-record.claims-list.measurement-
-         map, ev.condition.element-list.element-map)
-
-   ii For each e in CET.endorsements:
-
-      *copy*(e.endorsed-triple-record.condition.environment-map,
-         ev.addition.environment.environment-map)
-
-      *copy*(e.endorsed-triple-record.endorsement.measurement-map,
-         ev.addition.element-list.element-map)
-
-   Step 4.  The signer of the Conditional Endorsement conceptual message
-            is copied to the ev.addition.authority field.
-
-   Step 5.  If the Conditional Endorsement conceptual message has a
-            profile, the profile is copied to the ev.addition.profile
-            field.
-
-9.2.3.4.3.  Conditional Endorsement Triple Transformation
-
-   Step 1.  An evs entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the evs entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  Populate the evs ECTs using the Conditional Endorsement
-            Series Triple (CEST) (Section 5.1.5.3).
-
-   i.  CEST.condition:
-
-      *copy*(stateful-environment-record.environment.environment-map,
-         evs.condition.environment.environment-map)
-
-      *copy*(stateful-environment-record.claims-list.measurement-map,
-         evs.condition.element-list.element-map)
-
-   ii. For each e in CEST.series:
-
-      *copy*(evs.condition.environment.environment-map,
-         evs.series.selection.environment.environment-map)
-
-      *copy*(e.conditional-series-
-         record.selection.measurement.measurement-map,
-         evs.series.selection.element-list.element-map)
-
-      *copy*(evs.condition.environment.environment-map,
-         evs.series.addition.environment.environment-map)
-
-      *copy*(e.conditional-series-record.addition.measurement-map,
-         evs.series.addition.element-list.element-map)
-
-   Step 4.  The signer of the Conditional Endorsement Series conceptual
-            message is copied to the evs.series.addition.authority
-            field.
-
-   Step 5.  If the Conditional Endorsement Series conceptual message has
-            a profile, the profile is copied to the
-            evs.series.addition.profile field.
-
-9.2.3.4.4.  Key Verification Triples Transformation
-
-   The following transformation steps are applied for both the identity-
-   triples and attest-key-triples with noted exceptions:
-
-   Step 1.  An ev entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the ev entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  Populate the ev condition ECT using either the identity-
-            triple-record or attest-key-triple-record (Section 5.1.5.4)
-            as follows:
-
-   i.    *copy*(environment-map, ev.condition.environment.environment-
-         map).
-
-   ii.   Foreach _key_ in keylist.$crypto-key-type-choice, *copy*(_key_,
-         ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.intrep-keys.key).
-
-   iii.  If key-list originated from attest-key-triples,
-         *set*(ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.intrep-keys.key-type = attest-
-         key).
-
-   iv.   Else if key-list originated from identity-triples,
-         *set*(ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.intrep-keys.key-type = identity-
-         key).
-
-   v.    If populated, *copy*(mkey, ev.condition.element-list.element-
-         map.element-id).
-
-   vi.   If populated, *copy*(authorized-by, ev.condition.authority).
-
-   Step 4.  The signer of the Identity or Attest Key Endorsement
-            conceptual message is copied to the ev.addition.authority
-            field.
-
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev.addition.profile field.
-
-9.2.3.5.  Domain Membership Triples Transformation
-
-   This section describes how the external representation of a Domain
-   Membership Triple (DMT) (Section 5.1.5.6.1) is transformed into its
-   CoRIM internal representation dm (see Section 9.1.6).
-
-   Step 1.  Allocate a domain ECT entry.
-
-   Step 2.  Set the conceptual message type for the domain ECT to 6
-            (domain-member).
-
-   i  *copy*(domain-member, domain.cmtype)
-
-   Step 3.  Set the authority for the domain ECT to the DMT signer
-            (Section 4.2.3.1).
-
-   i  *copy*(DMT.signer, domain.authority)
-
-   Step 4.  Use the DMT to populate the dm internal representation.
-
-   i  *copy*(DMT.domain-id, domain.environment)
-
-   ii For each environment *e* in DMT.members:
-
-      *copy*(DMT.members[_e_].environment,
-         domain.members[_e_].environment)
-
-   Step 5.  If the conceptual message containing the DMT has a profile,
-            it is used to populate the profile for the domain ECT.
-
-   i  *copy*(DMT.profile, domain.profile)
-
-9.2.3.6.  Domain Dependency Triples Transformation
-
-   This section describes how the external representation of a Domain
-   Dependency Triple (DDT) (Section 5.1.5.6.2) is transformed into its
-   CoRIM internal representation of a domain dependency graph (ddg) (see
-   Section 9.1.7).
-
-   For each domain-dependency-triple-record (ddtr) in the DDT list,
-   perform the following steps:
-
-   Step 1.  Allocate a domain dependency edge dde ECT entry.
-
-   Step 2.  Set the conceptual message type cmtype for the dde ECT to
-            trustee).
-
-   i  *assign*(trustee, dde.cmtype)
-
-   Step 3.  Set the authority for the domain ECT to the ddt signer
-            (Section 4.2.3.1).
-
-   i  *copy*(ddtr.signer, dde.authority)
-
-   Step 4.  Populate the environment using the domain identifier.
-
-   i  *copy*(ddtr.domain-id, dde.environment)
-
-   Step 5.  Populate the trustees.
-
-   i  For each environment _e_ in ddtr.trustees:
-
-      *copy*([_e_].environment, dde.trustees[_e_].environment)
-
-   Step 6.  If the conceptual message containing the DDT has a profile,
-            it is used to populate the profile for the dde ECT.
-
-   i  *copy*(ddtr.profile, dde.profile)
-
-   Append the domain dependency edge (dde) to the domain dependency
-   graph (ddg) internal representation.
-
-   Process the next ddtr until all entries have been processed.
+   processing.  As the Conceptual Messages are processed during
+   Appraisal, the _appraisal context_ starts to get populated using a
+   data structure as given below.  See Section 9.2.4
+
+9.2.4.  Internal Representation of Appraisal Claims Set (ACS)
+
+   An ACS is a list of ECTs that describe an Attester's actual state.
+
+   For ECTs present in the ACS, the cmtype field is mandatory.
+   Table Table 10 shows the minimum required mandatory fields applicable
+   to all ECTs in an ACS.
+
+                 +==========+=============+=============+
+                 | ECT type | ECT Field   | Requirement |
+                 +==========+=============+=============+
+                 | n/a      | environment | Mandatory   |
+                 +----------+-------------+-------------+
+                 |          | authority   | Mandatory   |
+                 +----------+-------------+-------------+
+                 |          | cmtype      | Mandatory   |
+                 +----------+-------------+-------------+
+
+                 Table 10: ACS tuple minimum requirements
+
+   ACS = [ + ECT ]
 
 9.3.  ACS Augmentation - Phases 2, 3, and 4
 
@@ -3501,9 +3666,7 @@ Table of Contents
    Endorsement ECTs (e.g. from endorsed-triple-record).
 
    CoMID Reference Values will be matched against the ACS following the
-   comparison rules in Section 9.4.  This document describes an example
-   evidence structure which can be matched against these Reference
-   Values.
+   comparison rules in Section 9.4.
 
    Each Endorsement ECT contains the environment and internal
    representation of measurement-maps as extracted from an endorsed-
@@ -3628,7 +3791,7 @@ Table of Contents
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.5) which are transformed
-   (Section 9.2.3.3) into an internal representation (Section 9.1.4).
+   (Section 9.1.4.2) into an internal representation (Section 9.1.4.1).
    Each Reference Value Triple describes a single possible Attester
    state.
 
@@ -3642,7 +3805,7 @@ Table of Contents
    If satisfied, for the rv entry, the following three steps are
    performed:
 
-   1.  The addition ECT is moved to the ACS, with cm-type set to
+   1.  The addition ECT is moved to the ACS, with cmtype set to
        reference-values
 
    2.  The claims, i.e., the element-list from the ACS ECT with cmtype
@@ -3655,8 +3818,8 @@ Table of Contents
 
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.5.1), Section 5.1.5.2, and Section 5.1.5.3) which are
-   transformed (Section 9.2.3.4) into an internal representation
-   (Section 9.1.5).  Endorsements describe actual Attester state.
+   transformed (Section 9.1.5.2) into an internal representation
+   (Section 9.1.5.1).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
    satisifed by the ACS.
 
@@ -3735,8 +3898,8 @@ Table of Contents
 
    This section assumes that each Domain Membership Triple has been
    transformed into an internal representation following the steps
-   described in Section 9.2.3.5, resulting in the representation
-   specified in Section 9.1.6.
+   described in Section 9.1.7.2, resulting in the representation
+   specified in Section 9.1.7.1.
 
    Domain Membership ECTs (cmtype: domain-member) in the staging area
    are matched with ACS entries (of cmtype: evidence) OR (of cmtype:
@@ -3770,8 +3933,8 @@ Table of Contents
 
    This section assumes that each Domain Dependency Triple (see
    Section 5.1.5.6.2) has been transformed into an internal
-   representation following the steps described in Section 9.2.3.6,
-   resulting in the representation specified in Section 9.1.7.
+   representation following the steps described in Section 9.1.8.2,
+   resulting in the representation specified in Section 9.1.8.1.
 
    Processing a domain dependency graph (DDG) has the following
    objectives:
@@ -3844,7 +4007,7 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the applied
    policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 9.1.8,
+   details, based on the policy ECT, as described in Section 9.1.9.1,
    contains the environments affected by the policy with policy
    identifiers as Claims.
 
@@ -3908,8 +4071,8 @@ Table of Contents
    Requirements [STD94].
 
    If all fields which are present in the condition ECT environment-map
-   are present in the ACS entry and are binary identical, then the
-   environments match.
+   (e.g., instance-id or group-id) are also present in the ACS entry and
+   are binary identical, then the environments match.
 
    If any field which is present in the condition ECT environment-map is
    not present in the ACS entry, then the environments do not match.
@@ -3924,13 +4087,13 @@ Table of Contents
 
 9.4.3.  Authority comparison
 
-   The Verifier SHALL compare the condition ECT's authority value to the
-   candidate entry's authority value.
+   The Verifier MUST compare byte-by-byte the condition ECT's authority
+   value to the candidate entry's authority value.
 
-   If every entry in the condition ECT authority has a matching entry in
-   the ACS entry authority field, then the authorities match.  The order
-   of the fields in each authority field do not affect the result of the
-   comparison.
+   If every entry in the condition ECT authority matches byte-by-byte a
+   corresponding entry in the ACS entry authority field, then the
+   authorities match.  The order of the fields in each authority field
+   do not affect the result of the comparison.
 
    If any entry in the condition ECT authority does not have a matching
    entry in the ACS entry authority field then the authorities do not
@@ -4076,8 +4239,8 @@ Table of Contents
    different algorithm acceptable to the condition ECT author.
 
    In the simple case, a condition ECT digests entry containing one
-   digest matches matches a candidate entry containing a single entry
-   with the same algorithm and value.
+   digest matches a candidate entry containing a single entry with the
+   same algorithm and value.
 
    If there are multiple algorithms in common between the condition ECT
    and candidate entry, then the bytes paired with common algorithms
@@ -4155,14 +4318,14 @@ Table of Contents
    The CBOR tag of the first entry of the condition ECT cryptokeys array
    is compared with the CBOR tag of the first entry of the candidate
    entry cryptokeys value.  If the CBOR tags match, then the bytes
-   following the CBOR tag from the condition ECT entry are compared with
-   the bytes following the CBOR tag from the candidate entry.  If the
-   byte strings match, and there is another array entry, then the next
-   entry from the condition ECTs array is likewise compared with the
-   next entry of the ACS array.  If all entries of the condition ECTs
-   array match a corresponding entry in the ACS array, then the
-   cryptokeys condition ECT matches.  Otherwise, cryptokeys does not
-   match.
+   following the CBOR tag from the condition ECT entry are compared
+   byte-by-byte with the bytes following the CBOR tag from the candidate
+   entry.  If the byte strings match and there is another array entry,
+   then the next entry from the condition ECTs array is likewise
+   compared with the next entry of the ACS array.  If all entries of the
+   condition ECTs array match a corresponding entry in the ACS array,
+   then the cryptokeys condition ECT matches.  Otherwise, cryptokeys
+   does not match.
 
 9.4.6.1.6.  Comparison for Integrity Registers
 
@@ -4989,6 +5152,20 @@ Table of Contents
 
 13.1.  Normative References
 
+   [I-D.ietf-cose-hash-envelope]
+              Steele, O., Lasker, S., and H. Birkholz, "COSE Hash
+              Envelope", Work in Progress, Internet-Draft, draft-ietf-
+              cose-hash-envelope-10, 15 November 2025,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
+              hash-envelope-10>.
+
+   [I-D.ietf-rats-eat-measured-component]
+              Frost, S., Fossati, T., Tschofenig, H., and H. Birkholz,
+              "EAT Measured Component", Work in Progress, Internet-
+              Draft, draft-ietf-rats-eat-measured-component-10, 12
+              January 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-measured-component-10>.
+
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
@@ -5013,10 +5190,6 @@ Table of Contents
    [IANA.media-types]
               IANA, "Media Types",
               <https://www.iana.org/assignments/media-types>.
-
-   [IANA.named-information]
-              IANA, "Named Information",
-              <https://www.iana.org/assignments/named-information>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -5236,9 +5409,11 @@ Appendix A.  Base CoRIM CDDL
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
      signature: bstr
    ]
+
+   hash-envelope-digest = bstr
 
    $profile-type-choice /= uri
    $profile-type-choice /= tagged-oid-type
@@ -5251,10 +5426,22 @@ Appendix A.  Base CoRIM CDDL
      * int => any
    }
 
-   protected-corim-header-map =
+   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+
+   protected-corim-header-map-inline =
      {
        &(alg: 1) => int,
        &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   protected-corim-header-map-hash-envelope =
+     {
+       &(alg: 1) => int,
+       &(payload_hash_alg: 258) => int
+       &(payload_preimage_content_type: 259) => "application/rim+cbor",
+       ? &(payload_location: 260) => tstr
        meta-group,
        * cose-label => cose-value
      }
