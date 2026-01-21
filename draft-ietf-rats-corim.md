@@ -2666,28 +2666,24 @@ Otherwise, do not add the `addition` ECT to the ACS.
 
 #### Processing Domain Membership {#sec-process-dm}
 
-This section assumes that each Domain Membership Triple (see {{sec-comid-triple-domain-membership}}) has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
-Domain Membership ECTs (i.e., `cmtype` equals `domain-member`) in the `dm` staging area are matched with ACS entries where `cmtype` is set to `evidence`, `reference-values`, or `domain-member` using the following algorithm:
 
-For each `domain` in the `dm` staging area, which has not been processed (outer loop):
+Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
 
-For each member `m` in `domain`.`members` (inner loop):
+For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:
 
-* Check that there is a corresponding ACS entry `environment` that matches `m`.`environment`.
-* Check that the ACS entry `cmtype` is one of `evidence`, `reference-values`, or `domain-member`.
+For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
 
-Outer loop resumes:
-
-* If all `domain`.`members` matched a corresponding ACS entry, add the `domain` ECT to the ACS.
-* If none of the `domain`.`members` matched, proceed to next `dm` entry.
-* If some, but not all of the `domain`.`members` matched, proceed to the next `dm` entry.
-If the previous execution of the outer loop added any `domain` entry to the ACS, then run the outer loop again
-Else STOP processing `dm` entries.
+* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
+* If none of the members match, proceed to next Domain Membership ECT in the staging area
+* If there is a partial match, proceed to the next Domain Membership ECT in the staging area
+If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
+Else STOP processing Domain Membership ECTs
 
 The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
 
-If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.
+If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
 
 #### Processing Domain Dependency {#sec-process-dd}
 
