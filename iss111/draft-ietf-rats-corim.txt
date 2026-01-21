@@ -2287,31 +2287,49 @@ Table of Contents
 
 5.1.5.6.2.  Domain Dependency Triple
 
-   A Domain Dependency Triple (DDT) links a domain (Environment) to a
-   set of trustee domains (Environments).  A trustee is an Environment
-   to which the trust assessment of a domain is prefaced.
+   A Domain Dependency Triple (DDT) links a domain to a set of _trustee_
+   domains.  The trustworthiness of trustee domains MUST be appraised
+   before the trustworthiness of the subject domain can be justified.
 
-   The domain dependency triple subject domain-id identifies a member
-   domain (see sec-comid-triple-domain-membership}).  The triple object
-   trustees is a list of member domains that are the trustees for the
-   domain.  The triple predicate asserts that a trust assessment of
-   domain-id is not complete without also doing a trust assessment of
-   the trustees.
+   For example, trust in an operating system (OS) might depend on
+   trustworthy loading of the OS image.  Consequently, the OS loader is
+   a trustee domain of the OS.  Or trust in a peripheral device might
+   depend on trustworthy operation of a perpheral device bus controller.
+   The bus controller is therefore a trustee domain of the peripheral
+   device.
+
+   Endorsement of domain dependency is necessary to address omission of
+   trustee domains from collected Evidence.  For example, if a
+   peripheral device only reports Evidence about itself and omits
+   Evidence about the bus controller, Verifiers may not recognize the
+   need to include the bus controller Claims in the appraisal.  Domain
+   dependency triples define a graph representation of trust dependency
+   semantics between the various components of an Attester.
+
+   Domains are represented using environment-map containers where domain
+   membership triples are used to populate domain containers.  Domain
+   dependency triples rely on domain membership triples to introduce new
+   domains into the accepted set of Claims.
+
+   The domain dependency triple subject (domain-id) identifies the
+   member domains (see Section 5.1.5.6.1) that have trustees.  The
+   triple object trustees lists the domains that are trustees of the
+   subject domain.  The triple predicate asserts that a trust appraisal
+   of domain-id is not complete without appraisal of the trustees.
 
    domain-dependency-triple-record = [
      domain-id: domain-type
      trustees: [ + domain-type ]
    ]
 
-   The dependency domain-id and trustees MUST be members of the
-   Attesters composition to be a valid expression.  Dependency graphs
-   are acyclic, meaning a domain-id MUST NOT appear in the trustees list
-   or a trustee of a domain member subtree.  A terminating "leaf"
-   trustee is a "root of trust" for that subtree.  Root of trust
-   trustees SHOULD have a corresponding Endorsement.  Verifiers MAY use
-   DDTs to assess the veracity of domain-to-trustee linkages.
-   Appraisals that don't satifiy the veracity requirements are omitted
-   from the dependency graph.
+   All of the domain-id and trustees MUST be members of the Attesters
+   composition to be a valid expression.  Dependency graphs are acyclic,
+   meaning a domain-id MUST NOT appear in the trustees list or a trustee
+   of a domain member's subtree.  A terminating "leaf" trustee is a
+   "root of trust" for that subtree.  "Root of trust" trustees SHOULD
+   have a corresponding Endorsement.  Verifiers MAY use DDTs with
+   appraisal policies to assess the veracity of domain-to-trustee
+   linkages.
 
    Trust dependency typically exists if any of the following are true:
 
