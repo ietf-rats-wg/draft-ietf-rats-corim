@@ -2216,6 +2216,7 @@ The `cmtype` is set to domain-member.
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | Mandatory   |
+|           | `trustees`      | Optional    |
 {: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
 
 #### Domain Membership Triples Transformation {#sec-ir-dm-trans}
@@ -2263,6 +2264,87 @@ This section describes how the external representation of a Domain Membership Tr
 {: dmt3-enum}
 * **copy**(DMT.`profile`, `domain`.`profile`)
 
+### Processing of Domain Dependency Triples
+
+#### Internal Representation of Domain Dependency {#sec-ir-dd}
+
+An internal representation of trust dependency is a directed acyclic graph where each node in the graph identifies a member domain and contains edges to dependent, or "trustee" domains.
+An ECT structure `environment` field contains the domain identifier, and the ECT trustees list are the edges.
+The `cmtype` is inclusive of `trustee` to indicate the ECT is being used to model a trust dependency graph.
+
+~~~ cddl
+{::include cddl/intrep-domain-dep.cddl}
+~~~
+
+{{tbl-dd-ect-optionality}} contains the requirements for the ECT fields of the Domain Dependency tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| domain    | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | Mandatory   |
+|           | `trustees`      | Mandatory   |
+{: #tbl-dd-ect-optionality title="Domain Dependency tuple requirements"}
+
+#### Domain Dependency Triples Transformation {#sec-ir-dd-trans}
+
+This section describes how the external representation of a Domain Dependency Triple (DDT) ({{sec-comid-triple-domain-dependency}}) is transformed into its CoRIM internal representation of a domain dependency graph (`ddg`) (see {{sec-ir-dd}}).
+
+For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the following steps:
+
+{:ddt1-enum: counter="ddt1" style="format Step %d."}
+
+{: ddt1-enum}
+* Allocate a domain dependency edge `dde` ECT entry.
+
+* Set the conceptual message type `cmtype` for the `dde` ECT to `trustee`).
+
+{:ddt2-enum: counter="ddt2" style="format %i"}
+
+{: ddt2-enum}
+* **assign**(`trustee`, `dde`.`cmtype`)
+
+{: ddt1-enum}
+* Set the authority for the domain ECT to the ddt signer ({{sec-corim-signer}}).
+
+{:ddt3-enum: counter="ddt3" style="format %i"}
+
+{: ddt3-enum}
+* **copy**(`ddtr`.`signer`, `dde`.`authority`)
+
+{: ddt1-enum}
+* Populate the `environment` using the domain identifier.
+
+{:ddt4-enum: counter="ddt4" style="format %i"}
+
+{: ddt4-enum}
+* **copy**(`ddtr`.`domain-id`, `dde`.`environment`)
+
+{: ddt1-enum}
+* Populate the `trustees`.
+
+{:ddt5-enum: counter="ddt5" style="format %i"}
+
+{: ddt5-enum}
+* For each `environment` *e* in `ddtr`.`trustees`:
+
+> > **copy**(\[*e*\].`environment`, `dde`.`trustees`\[*e*\].`environment`)
+
+{: ddt1-enum}
+* If the conceptual message containing the DDT has a profile, it is used to populate the profile for the `dde` ECT.
+
+{:ddt6-enum: counter="ddt6" style="format %i"}
+
+{: ddt6-enum}
+* **copy**(`ddtr`.`profile`, `dde`.`profile`)
+
+Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`) internal representation.
+
+Process the next `ddtr` until all entries have been processed.
+
 ### Processing of Policies
 
 #### Internal Representation of Policy Statements {#sec-ir-policy}
@@ -2285,12 +2367,14 @@ If all of the ECTs are found in the ACS then the `addition` ECTs are added to th
 |           | `cmtype`        | n/a         |
 |           | `profile`       | n/a         |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 | addition  | `environment`   | Mandatory   |
 |           | `element-list`  | Mandatory   |
 |           | `authority`     | Mandatory   |
 |           | `cmtype`        | Mandatory   |
 |           | `profile`       | Optional    |
 |           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
 {: #tbl-policy-ect-optionality title="Policy tuple requirements"}
 
 ### Processing of Attestation Results
@@ -2316,12 +2400,14 @@ If any of the `ars-additions` are not found in the ACS then these ACS entries ar
 |               | `cmtype`        | n/a         |
 |               | `profile`       | n/a         |
 |               | `members`       | n/a         |
+|               | `trustees`      | n/a         |
 | ars-addition  | `environment`   | Mandatory   |
 |               | `element-list`  | Mandatory   |
 |               | `authority`     | Mandatory   |
 |               | `cmtype`        | Mandatory   |
 |               | `profile`       | Optional    |
 |               | `members`       | Optional    |
+|               | `trustees`      | n/a         |
 {: #tbl-ar-ect-optionality title="Attestation Results tuple requirements"}
 
 ### Internal Representation of Attestation Results Set (ARS) {#sec-ir-ars}
