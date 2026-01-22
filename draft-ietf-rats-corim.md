@@ -1226,9 +1226,9 @@ For IP addresses, it reuses the "Address Format" types defined in {{-cbor-ip}} w
 All the types represent a single address.
 
 ~~~ cddl
-{::include cddl/ip-addr-type-choice.cddl}
-
 {::include cddl/mac-addr-type-choice.cddl}
+
+{::include cddl/ip-addr-type-choice.cddl}
 ~~~
 
 ##### Crypto Keys {#sec-crypto-keys}
