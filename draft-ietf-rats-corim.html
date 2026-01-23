@@ -1336,6 +1336,17 @@ This document specifies the information elements for representing Endorsements a
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.5">
                         <p id="section-toc.1-1.5.2.1.2.4.2.5.1"><a href="#section-5.1.4.5" class="auto internal xref">5.1.4.5</a>.  <a href="#name-conditional-endorsement-ser" class="internal xref">Conditional Endorsement Series Triple</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.5.2.1">
+                            <p id="section-toc.1-1.5.2.1.2.4.2.5.2.1.1"><a href="#section-5.1.4.5.1" class="auto internal xref">5.1.4.5.1</a>.  <a href="#name-condition-matching" class="internal xref">Condition Matching</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.5.2.2">
+                            <p id="section-toc.1-1.5.2.1.2.4.2.5.2.2.1"><a href="#section-5.1.4.5.2" class="auto internal xref">5.1.4.5.2</a>.  <a href="#name-selection-matching" class="internal xref">Selection Matching</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.5.2.3">
+                            <p id="section-toc.1-1.5.2.1.2.4.2.5.2.3.1"><a href="#section-5.1.4.5.3" class="auto internal xref">5.1.4.5.3</a>.  <a href="#name-processing-the-addition" class="internal xref">Processing the Addition</a></p>
+</li>
+                        </ul>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4.2.6">
                         <p id="section-toc.1-1.5.2.1.2.4.2.6.1"><a href="#section-5.1.4.6" class="auto internal xref">5.1.4.6</a>.  <a href="#name-device-identity-triple" class="internal xref">Device Identity Triple</a></p>
@@ -3005,7 +3016,7 @@ Described in <a href="#sec-comid-triple-domain-membership" class="auto internal 
 Described in <a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.4.9</a>.<a href="#section-5.1.4-5.7.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-5.8">
-              <p id="section-5.1.4-5.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
+              <p id="section-5.1.4-5.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of Endorsements that are applicable based on the acceptance of a condition.
 Described in <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.4.5</a>.<a href="#section-5.1.4-5.8.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-5.9">
@@ -3784,17 +3795,18 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
             <h5 id="name-conditional-endorsement-ser">
 <a href="#section-5.1.4.5" class="section-number selfRef">5.1.4.5. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
             </h5>
-<p id="section-5.1.4.5-1">The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in <code>condition:</code>) followed by a series condition match (specified in <code>selection:</code> inside <code>conditional-series-record</code>).
-Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each <code>conditional-series-record</code>.
-For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
-Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-3">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-3" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5-4">
+<p id="section-5.1.4.5-1">The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
+The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
+The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding probelmatic repetition of search criteria.<a href="#section-5.1.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-2">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.4.5-2" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5-3">
 <pre>
 conditional-endorsement-series-triple-record = [
-  condition: stateful-environment-record
+  condition: [
+    environment: environment-map
+    claims-list: [ * measurement-map ]
+    ? authorized-by: [ + $crypto-key-type-choice ]
+  ]
   series: [ + conditional-series-record ]
 ]
 
@@ -3802,33 +3814,63 @@ conditional-series-record = [
   selection: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
-</pre><a href="#section-5.1.4.5-4" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.5-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.5-5">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-4">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.4.5-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.5-6.1">
-                <p id="section-5.1.4.5-6.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.4.5-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.5-5.1">
+                <p id="section-5.1.4.5-5.1.1"><code>condition</code>: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
+The condition consists of an <code>environment-map</code>, a (possibly empty) <code>claims-list</code>, and an optional <code>authorized-by</code>.<a href="#section-5.1.4.5-5.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-5.1.4.5-6.2">
-                <p id="section-5.1.4.5-6.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.4.5-6.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-5.1.4.5-5.2">
+                <p id="section-5.1.4.5-5.2.1"><code>series</code>: A sequence of selection-addition tuples.<a href="#section-5.1.4.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.5-7">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5-6">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.4.5-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.4.5-8.1">
-                <p id="section-5.1.4.5-8.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.4.5-8.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.4.5-7.1">
+                <p id="section-5.1.4.5-7.1.1"><code>selection</code>: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's <code>condition</code> result.<a href="#section-5.1.4.5-7.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-5.1.4.5-8.2">
-                <p id="section-5.1.4.5-8.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-8.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-5.1.4.5-7.2">
+                <p id="section-5.1.4.5-7.2.1"><code>addition</code>: Endorsements that are added if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.4.5-7.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.5-9">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5-9" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-10">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
-Evaluation order begins at list position 0.<a href="#section-5.1.4.5-10" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-11">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5-11" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.5-12">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5-12" class="pilcrow">¶</a></p>
+<div id="condition-matching">
+<section id="section-5.1.4.5.1">
+              <h6 id="name-condition-matching">
+<a href="#section-5.1.4.5.1" class="section-number selfRef">5.1.4.5.1. </a><a href="#name-condition-matching" class="section-name selfRef">Condition Matching</a>
+              </h6>
+<p id="section-5.1.4.5.1-1">The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., <code>environment-map</code>) and optionally measurements (i.e., <code>claims-list</code>) or authority (i.e., <code>authorized-by</code>).
+Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.<a href="#section-5.1.4.5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5.1-2">Note that <code>measurement-map</code> can also specify authority criteria. To avoid conflicting criteria, the <code>authorized-by</code> in <code>condition</code> takes precedence over the <code>authorized-by</code> in <code>measurement-map</code>.<a href="#section-5.1.4.5.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="selection-matching">
+<section id="section-5.1.4.5.2">
+              <h6 id="name-selection-matching">
+<a href="#section-5.1.4.5.2" class="section-number selfRef">5.1.4.5.2. </a><a href="#name-selection-matching" class="section-name selfRef">Selection Matching</a>
+              </h6>
+<p id="section-5.1.4.5.2-1">Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each <code>conditional-series-record</code>.
+For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.4.5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5.2-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.4.5.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="processing-the-addition">
+<section id="section-5.1.4.5.3">
+              <h6 id="name-processing-the-addition">
+<a href="#section-5.1.4.5.3" class="section-number selfRef">5.1.4.5.3. </a><a href="#name-processing-the-addition" class="section-name selfRef">Processing the Addition</a>
+              </h6>
+<p id="section-5.1.4.5.3-1">To process a <code>conditional-endorsement-series-record</code> the selection criteria in <code>condition</code> entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
+If the selection criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.4.5.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5.3-2">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
+Evaluation order begins at list position 0.<a href="#section-5.1.4.5.3-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5.3-3">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.<a href="#section-5.1.4.5.3-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5.3-4">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.4.5.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="sec-comid-triple-identity">
@@ -5321,7 +5363,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-2">
 <dt>i.</dt>
 <dd id="section-9.1.5.2.3-2.1">
-                  <p id="section-9.1.5.2.3-2.1.1">CEST.<code>condition</code>:<a href="#section-9.1.5.2.3-2.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-9.1.5.2.3-2.1.1">For <code>c</code> in CEST.<code>condition</code>:<a href="#section-9.1.5.2.3-2.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
@@ -5329,7 +5371,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-3.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-3.1.1.1">
-                      <p id="section-9.1.5.2.3-3.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-9.1.5.2.3-3.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-3.1.1.1.1"><strong>copy</strong>(<code>c</code>.<code>environment</code>, <code>evs</code>.<code>condition</code>.<code>environment</code>)<a href="#section-9.1.5.2.3-3.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
@@ -5338,32 +5380,32 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-4.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-4.1.1.1">
-                      <p id="section-9.1.5.2.3-4.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>claims-list</code>.<code>measurement-map</code>, <code>evs</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.1.5.2.3-4.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-4.1.1.1.1">If the <code>c</code>.<code>claims-list</code> is not empty then <strong>copy</strong>(<code>c</code>.<code>claims-list</code>, <code>evs</code>.<code>condition</code>.<code>element-list</code>)<a href="#section-9.1.5.2.3-4.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
               </ul>
-<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-5">
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-5.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-5.1.1.1">
+                      <p id="section-9.1.5.2.3-5.1.1.1.1">If <code>c</code>.<code>authorized-by</code> is present then <strong>copy</strong>(<code>c</code>.<code>authorized-by</code>, <code>evs</code>.<code>condition</code>.<code>authority</code>)<a href="#section-9.1.5.2.3-5.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-6">
 <dt>ii.</dt>
-<dd id="section-9.1.5.2.3-5.1">
-                  <p id="section-9.1.5.2.3-5.1.1">For each e in CEST.<code>series</code>:<a href="#section-9.1.5.2.3-5.1.1" class="pilcrow">¶</a></p>
+<dd id="section-9.1.5.2.3-6.1">
+                  <p id="section-9.1.5.2.3-6.1.1">For each <code>s</code> in CEST.<code>series</code>:<a href="#section-9.1.5.2.3-6.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-9.1.5.2.3-6.1">
-                  <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-9.1.5.2.3-6.1.1.1">
-                      <p id="section-9.1.5.2.3-6.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-9.1.5.2.3-6.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                  </ul>
-</li>
-              </ul>
-<ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-7.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-7.1.1.1">
-                      <p id="section-9.1.5.2.3-7.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>selection</code>.<code>measurement</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.1.5.2.3-7.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-7.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>, <code>evs</code>.<code>series[s]</code>.<code>selection</code>.<code>environment</code>)<a href="#section-9.1.5.2.3-7.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
@@ -5372,7 +5414,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-8.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-8.1.1.1">
-                      <p id="section-9.1.5.2.3-8.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-9.1.5.2.3-8.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-8.1.1.1.1"><strong>copy</strong>(<code>s</code>.<code>selection</code>, <code>evs</code>.<code>series[s]</code>.<code>selection</code>.<code>element-list</code>)<a href="#section-9.1.5.2.3-8.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
@@ -5381,20 +5423,29 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-9.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-9.1.1.1">
-                      <p id="section-9.1.5.2.3-9.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>addition</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.1.5.2.3-9.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-9.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>, <code>evs</code>.<code>series[s]</code>.<code>addition</code>.<code>environment</code>)<a href="#section-9.1.5.2.3-9.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
               </ul>
-<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-10">
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-10.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-10.1.1.1">
+                      <p id="section-9.1.5.2.3-10.1.1.1.1"><strong>copy</strong>(<code>s</code>.<code>addition</code>, <code>evs</code>.<code>series[s]</code>.<code>addition</code>.<code>element-list</code>)<a href="#section-9.1.5.2.3-10.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-11">
 <dt>Step 4.</dt>
-<dd id="section-9.1.5.2.3-10.1">
-                  <p id="section-9.1.5.2.3-10.1.1">The signer of the Conditional Endorsement Series conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-9.1.5.2.3-10.1.1" class="pilcrow">¶</a></p>
+<dd id="section-9.1.5.2.3-11.1">
+                  <p id="section-9.1.5.2.3-11.1.1">The signer of the Conditional Endorsement Series conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field for each addition.<a href="#section-9.1.5.2.3-11.1.1" class="pilcrow">¶</a></p>
 </dd>
                 <dd class="break"></dd>
 <dt>Step 5.</dt>
-<dd id="section-9.1.5.2.3-10.2">
-                  <p id="section-9.1.5.2.3-10.2.1">If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-9.1.5.2.3-10.2.1" class="pilcrow">¶</a></p>
+<dd id="section-9.1.5.2.3-11.2">
+                  <p id="section-9.1.5.2.3-11.2.1">If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field for each addition.<a href="#section-9.1.5.2.3-11.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
@@ -8481,7 +8532,11 @@ comid-entity-map = entity-map&lt;$comid-role-type-choice, $$comid-\
 $comid-role-type-choice /= &amp;(tag-creator: 0) / &amp;(creator: 1) / &amp;(\
                                                        maintainer: 2)
 conditional-endorsement-series-triple-record = [
-  condition: stateful-environment-record,
+  condition: [
+        environment: environment-map,
+        claims-list: [* measurement-map],
+        ? authorized-by: [+ $crypto-key-type-choice],
+],
   series: [+ conditional-series-record],
 ]
 conditional-series-record = [
