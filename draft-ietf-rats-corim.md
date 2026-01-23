@@ -2601,32 +2601,51 @@ where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series iteration terminates after the first matching series entry is processed or when no series entries match.
 
-#### Processing Key Verification Endorsements {#sec-process-keys}
+#### Processing Key Verifications {#sec-process-keys}
 
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), for each _key_ in `ev`.`condition`.`element-claims`.`measurement-values-map`.`intrep-keys`:
+To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
+If the `key-type` field is set, the Verifier will apply the verification steps defined below.
+If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
 
-* Verify the certificate signatures for the certification path.
+For each ECT from endorsed value (`ev`) or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence` or `endorsements`.
+If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key_ in the C-ECT.`element-claims`.`measurement-values-map`.`intrep-keys`, do the following steps:
 
-* Verify certificate revocation status for the certification path.
+{:kvp-enum: counter="kvp" style="format Step %d."}
 
-* Verify key usage restrictions appropriate for the type of key.
+{: kvp-enum}
 
-* If key verification succeeds, **append**(_key_, `ev`.`addition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`).
+* Verify the certificate signatures for each certificate in the certification path.
 
-If key verification succeeds for any _key_:
+* Verify certificate revocation status for each certificate in the certification path.
 
-* **copy**(`ev`.`condition`.`environment`, `ev`.`addition`.`environment`).
+* Verify key usage restrictions appropriate for the type of key in `key-type`.
 
-* **copy**(`ev`.`condition`.`element-list`.`element-map`.`element-id`, `ev`.`addition`.`element-list`.`element-map`.`element-id`).
+* If key verification succeeds for any _key_, allocate an addition ECT (ADDITION).
 
-* Set `ev`.`addition`.`cmtype` to `endorsements`.
+* For each verified _key_ in C-ECT:
 
-* Add the Verifier authority `$crypto-key-type-choice` to the `ev`.`addition`.`authority` field.
+{:kvp2-enum: counter="kvp2" style="format %i"}
 
-* Add the `addition` ECT to the ACS.
+{: kvp2-enum}
 
-Otherwise, do not add the `addition` ECT to the ACS.
+* **append**(_key_, ADDITION.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`).
+
+{: kvp-enum}
+
+* **copy**(ACS-ECT`.`environment`, ADDITION.`environment`).
+
+* **copy**(ACS-ECT.`element-list`.`element-map`.`element-id`, ADDITION.`element-list`.`element-map`.`element-id`).
+
+* Set ADDITION.`cmtype` to `endorsements`.
+
+* Add the Verifier authority `$crypto-key-type-choice` to the ADDITION.`authority` field.
+
+* Add the ADDITION to the ACS.
+
+Otherwise, do not add the ADDITION to the ACS.
+
+It is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
+Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.
 
 #### Processing Domain Membership {#sec-process-dm}
 
