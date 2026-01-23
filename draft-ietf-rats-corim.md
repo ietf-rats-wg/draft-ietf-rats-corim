@@ -885,7 +885,7 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
   Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsements that are applicable based on the acceptance of a condition.
   Described in {{sec-comid-triple-cond-series}}.
 
 * `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
@@ -1411,14 +1411,9 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 #### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
-Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
-For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
-
-These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
-Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
-
+The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
+The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
+The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding probelmatic repetition of search criteria.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1430,16 +1425,37 @@ The Conditional Endorsement Series Triple has the following structure:
 
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
-* `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
-* `series`: A set of selection-addition tuples.
+* `condition`: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
+The condition consists of an `environment-map`, a (possibly empty) `claims-list`, and an optional `authorized-by`.
+
+* `series`: A sequence of selection-addition tuples.
 
 The `conditional-series-record` has the following parameters:
 
-* `selection`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the `condition` result.
-* `addition`: Additional Endorsements if the `selection` criteria are satisfied.
+* `selection`: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's `condition` result.
 
-To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the `series` tuples are processed.
+* `addition`: Endorsements that are added if the `selection` criteria are satisfied.
+
+##### Condition Matching
+
+The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., `environment-map`) and optionally measurements (i.e., `claims-list`) or authority (i.e., `authorized-by`).
+Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.
+
+Note that `measurement-map` can also specify authority criteria. To avoid conflicting criteria, the `authorized-by` in `condition` takes precedence over the `authorized-by` in `measurement-map`.
+
+##### Selection Matching
+
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
+For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
+
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
+
+##### Processing the Addition
+
+To process a `conditional-endorsement-series-record` the selection criteria in `condition` entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
+If the selection criteria are satisfied, the `series` tuples are processed.
 
 The `series` array contains an ordered list of `conditional-series-record` entries.
 Evaluation order begins at list position 0.
@@ -2100,27 +2116,29 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 {:cestt2-enum: counter="cestt2" style="format %i."}
 
 {: cestt2-enum}
-* CEST.`condition`:
+* For `c` in CEST.`condition`:
 
-> > **copy**(`stateful-environment-record`.`environment`.`environment-map`, `evs`.`condition`.`environment`.`environment-map`)
+> > **copy**(`c`.`environment`, `evs`.`condition`.`environment`)
 
-> > **copy**(`stateful-environment-record`.`claims-list`.`measurement-map`, `evs`.`condition`.`element-list`.`element-map`)
+> > If the `c`.`claims-list` is not empty then **copy**(`c`.`claims-list`, `evs`.`condition`.`element-list`)
+
+> > If `c`.`authorized-by` is present then **copy**(`c`.`authorized-by`, `evs`.`condition`.`authority`)
 
 {: cestt2-enum}
-* For each e in CEST.`series`:
+* For each `s` in CEST.`series`:
 
-> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`selection`.`environment`.`environment-map`)
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`selection`.`environment`)
 
-> > **copy**(e.`conditional-series-record`.`selection`.`measurement`.`measurement-map`, `evs`.`series`.`selection`.`element-list`.`element-map`)
+> > **copy**(`s`.`selection`, `evs`.`series[s]`.`selection`.`element-list`)
 
-> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`addition`.`environment`.`environment-map`)
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`addition`.`environment`)
 
-> > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
+> > **copy**(`s`.`addition`, `evs`.`series[s]`.`addition`.`element-list`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field for each addition.
 
-* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field for each addition.
 
 ### Processing of Attest Key and Device Identity Key Triples
 
