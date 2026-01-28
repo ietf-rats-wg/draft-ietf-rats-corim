@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 27 July 2026                                             Linaro
+Expires: 1 August 2026                                            Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         23 January 2026
+                                                         28 January 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 July 2026.
+   This Internet-Draft will expire on 1 August 2026.
 
 Copyright Notice
 
@@ -3802,38 +3802,44 @@ Table of Contents
 
 9.3.4.5.  Processing Domain Membership
 
-   This section assumes that each Domain Membership Triple has been
-   transformed into an internal representation following the steps
-   described in Section 9.1.7.2, resulting in the representation
-   specified in Section 9.1.7.1.
+   This section assumes that each Domain Membership Triple (see
+   Section 5.1.4.8.1) has been transformed into an internal
+   representation following the steps described in Section 9.1.7.2,
+   resulting in the representation specified in Section 9.1.7.1.
 
-   Domain Membership ECTs (cmtype: domain-member) in the staging area
-   are matched with ACS entries (of cmtype: evidence) OR (of cmtype:
-   domain-member) using the following algorithm:
+   Domain Membership ECTs (i.e., cmtype equals domain-member) in the dm
+   staging area are matched with ACS entries where cmtype is set to
+   evidence, reference-values i.e. corroborated evidence, or domain-
+   member using the following algorithm:
 
-   For every Domain Membership ECT entry (cmtype: domain-member) in
-   staging area, which has not been processed:
+   For each domain in the dm staging area, which has not been processed
+   (outer loop):
 
-   For each i in members, check that there is a corresponding ACS entry
-   with a matching environment and (cmtype:evidence OR cmtype: domain-
-   member)
+   For each member m in domain.members (inner loop):
 
-   *  If all members match a corresponding ACS entry, add the Domain
-      Membership ECT to ACS
+   *  Check that there is a corresponding ACS entry environment that
+      matches m.environment.
 
-   *  If none of the members match, proceed to next Domain Membership
-      ECT in the staging area
+   *  Check that the ACS entry cmtype is one of evidence, reference-
+      values, or domain-member.
 
-   *  If there is a partial match, proceed to the next Domain Membership
-      ECT in the staging area If the previous execution of the loop
-      added any Domain Membership ECTs to the ACS, then run the loop
-      again Else STOP processing Domain Membership ECTs
+   Outer loop resumes:
+
+   *  If all domain.members matched a corresponding ACS entry, add the
+      domain ECT to the ACS.
+
+   *  If none of the domain.members matched, proceed to next dm entry.
+
+   *  If some, but not all of the domain.members matched, proceed to the
+      next dm entry.  If the previous execution of the outer loop added
+      any domain entry to the ACS, then run the outer loop again Else
+      STOP processing dm entries.
 
    The processing terminates, when all the Domain Membership ECTs which
    are appropriate to the Evidence have been added to the ACS.
 
-   If expected Domain Membership ECTs have not been added, then this may
-   affect the processing in a later phase.
+   If any of the expected Domain Membership ECTs have not been added to
+   the ACS, then this may affect outcomes in subsequent phases.
 
 9.3.5.  Examples for optional phases 5, 6, and 7
 
