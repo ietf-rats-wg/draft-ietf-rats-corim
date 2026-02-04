@@ -2924,22 +2924,26 @@ groups to use this information as they see fit".
 * Implementation's web page:
   [https://github.com/veraison/corim/README.md](https://github.com/veraison/corim/blob/main/README.md)
 
-* Brief general description: The `corim/corim` and `corim/comid` packages
+* Brief general description: There are two CoRIM libraries under project Veraison.
+  1. [CoRIM golang library](https://github.com/veraison/corim) The `corim/corim` and `corim/comid` packages
   provide a golang API for low-level manipulation of Concise Reference
   Integrity Manifest (CoRIM) and Concise Module Identifier (CoMID) tags
-  respectively.  The `corim/cocli` package uses the API above (as well as the
+  respectively.
+  2. [CoRIM rust library](https://github.com/veraison/corim-rs) provide a rust implementation of
+  CoRIM specification.
+
+  In addition to the base CoRIM Libraries, the [cocli package](https://github.com/veraison/cocli) uses the golang API above (as well as the
   API from the `veraison/swid` package) to provide a user command line
   interface for working with CoRIM, CoMID and CoSWID. Specifically, it allows
   creating, signing, verifying, displaying, uploading, and more. See
-  [https://github.com/veraison/cocli/README.md](https://github.com/veraison/cocli/README.md) for
-  further details.
+  [https://github.com/veraison/cocli/README.md](https://github.com/veraison/cocli/README.md) for further details.
 
 * Implementation's level of maturity: alpha.
 
 * Coverage: the whole protocol is implemented, including PSA-specific
   extensions {{-psa-endorsements}}.
 
-* Version compatibility: Version -02 of the draft
+* Version compatibility: Version -06 of the draft
 
 * Licensing: Apache 2.0
   [https://github.com/veraison/corim/blob/main/LICENSE](https://github.com/veraison/corim/blob/main/LICENSE)
