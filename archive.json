@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-02-05T02:42:25.920178+00:00",
+  "timestamp": "2026-02-08T03:21:44.273191+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -13236,15 +13236,25 @@
       "state": "OPEN",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
       "labels": [
         "Verifier_Processing"
       ],
       "body": "Issue raised by @mcr.\n\n>An internal representation of attestation Evidence uses the `ae` relation.\n\nCould be attestation evidence?",
       "createdAt": "2026-01-13T19:21:19Z",
-      "updatedAt": "2026-01-15T16:45:56Z",
+      "updatedAt": "2026-02-06T15:11:26Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Scan through all the CDDL acronyms and see if any clarification is required...",
+          "createdAt": "2026-02-06T15:11:26Z",
+          "updatedAt": "2026-02-06T15:11:26Z"
+        }
+      ]
     },
     {
       "number": 526,
@@ -13317,14 +13327,16 @@
       "state": "OPEN",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "steven-bellock"
+      ],
       "labels": [
         "mustfix",
         "Info_or_Data_Model"
       ],
       "body": "Issue raised by @mcr.\n\nAre there any restrictions on combinations of the `flags-map` booleans? Or are they all completely independent of one another?",
       "createdAt": "2026-01-14T00:30:18Z",
-      "updatedAt": "2026-01-16T23:46:23Z",
+      "updatedAt": "2026-02-06T15:10:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -13390,6 +13402,30 @@
       "updatedAt": "2026-02-04T17:51:50Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 537,
+      "id": "I_kwDOH6-tI87o9lc1",
+      "title": "Endorsement triples could automatically instantiate domains",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/537",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The current spec says that the only way to instantiate a domain is through domain membership triples (DMT). It is also been discussed that an environment ID can double as a domain ID which means any Endorsement triple that is accepted into the ACS could also instantiate a DMT in the ACS. The current spec only describes instantiation of the ECT with cm-type = 'endorsement'. It could be updated to also allow instantiation of an ECT with cm-type = 'domain-member'.\n\nThe value to the corim author is they don't have to maintain as many DMT triples. Additionally, when a DDT is authored, there needs to be an already instantiated domain ID since DDT doesn't allow domain ID instantiation. \n\nFor example, if there was a trust dependency from D1 to D0. Before the DDT [D1, [D0]] can be written, the DMTs: [D0, [D0]] and [D1, [D1]] must first be written. But if there ware endorsement triples that generated ECTs for E0 and E1 plush D0 and D1, where the environment-map for E0 = the environment-map for D0 and also for E1 = D1, then the DMT triples can be omitted from the corim. \n\nI.e., given the Endorsement triples:\n```\n[ Env-0, Meas-0 ]\n[ Env-1, Meas-1 ]\n```\nThe ACS would contain the following ECTs:\n```\n[ Env: E0, Meas: M0, cm-type: 'endorsement' ]\n[ Env: E1, Meas: M1, cm-type: 'endorsement' ]\n[ DomID: E0, Member: E0, cm-type: 'domain-member' ]\n[ DomID: E1, Member: E1, cm-type: 'domain-member' ]\n```\nIf there was a DDT that revealed a dependency from E1 to E0, the following triple can be added without also adding DMT triples.\n```\n[ DomID: E1, trustee: E0, cm-type: 'trust-dep' ]\n```\nNote that it wouldn't be forbidden to include the DMTs that enable the DDT to work:\n```\n[ DomID: E0, Member: E0, cm-type: 'domain-member' ]\n[ DomID: E1, Member: E1, cm-type: 'domain-member' ]\n```\nHowever, the Verifier would observe that these ACS entries already exist, so would politely ignore the DMTs that add them again.\n\nNote that E0 need not be a member of E1 for a trust dependency to exist. The only expectation is that E0 and E1 exist in the ACS. In otherwords, membership and trust relationships are intended to be orthogonal. This issue doesn't try to change that. \n\nNote also that RVPs are \"possible state\" so wouldn't automatically generate domain membership ECTs. But corroborated RVPs/Evidence could generate domain member ECTs since this represents Attester actual state. \n",
+      "createdAt": "2026-02-06T21:17:38Z",
+      "updatedAt": "2026-02-06T22:21:17Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Now that you have written it down, this seems reasonable to support and specify.",
+          "createdAt": "2026-02-06T22:21:17Z",
+          "updatedAt": "2026-02-06T22:21:17Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -81123,7 +81159,7 @@
       "labels": [],
       "body": "Fleshed out sections describing how to process domain dependency / trust dependency endorsements. ",
       "createdAt": "2025-10-08T00:28:42Z",
-      "updatedAt": "2026-01-21T19:50:19Z",
+      "updatedAt": "2026-02-06T15:25:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "fef3fb59afa83399a5e7884acb5ade1b1a836c40",
