@@ -1579,7 +1579,7 @@ Verifiers MAY use DDTs with appraisal policies to assess the veracity of domain-
 
 Trust dependency typically exists if any of the following are true:
 
-* A trustee performs any Attesting Environment functions on behalf of its `domain-id` (a.k.a, the Target Environment); such as Claims collection, Claims signing, loading or initialization of the TE; provisioning TE secrets, cryptographic keys, or other security significant material.
+* A trustee performs any Attesting Environment functions on behalf of its `domain-id`, a.k.a, the Target Environment(TE); such as Claims collection, Claims signing, loading or initialization of the TE; provisioning TE secrets, cryptographic keys, or other security significant material.
 * A trustee executes security relevant code in response to execution originating from its `domain-id` environment.
 * A trustee is embedded within the `domain-id` environment.
 
