@@ -1551,7 +1551,7 @@ Representing members of a DMT as domains enables the recursive construction of a
 A Domain Dependency Triple (DDT) links a domain to a set of *trustee* domains.
 The trustworthiness of trustee domains MUST be appraised before the trustworthiness of the subject domain can be justified.
 
-For example, trust in an operating system (OS) might depend on trustworthy loading of the OS image.
+For example, trust in an operating system (OS) might depend on trustworthy loading of the OS loader image.
 Consequently, the OS loader is a trustee domain of the OS.
 Or trust in a peripheral device might depend on trustworthy operation of a perpheral device bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
