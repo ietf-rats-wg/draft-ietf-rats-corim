@@ -2788,7 +2788,7 @@ Outer loop resumes:
 * If the `dde`.`environment` record AND all `dde`.`trustees` matched an ACS `domain-member` entry.
 Then add the `dde` to the ACS.
 
-* Continue to the next `dde` untill all are processed.
+* Continue to the next `dde` until all are processed.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
