@@ -73,6 +73,7 @@ normative:
   RFC7468: pkix-text
   RFC8610: cddl
   RFC9090: cbor-oids
+  RFC9164: cbor-ip
   STD96:
     -: cose
     =: RFC9052
@@ -89,19 +90,8 @@ normative:
   I-D.ietf-rats-msg-wrap: cmw
   I-D.ietf-rats-eat-measured-component: eat-mc
   IANA.language-subtag-registry: language-subtag
-  X.690:
-    title: >
-      Information technology — ASN.1 encoding rules:
-      Specification of Basic Encoding Rules (BER), Canonical Encoding
-      Rules (CER) and Distinguished Encoding Rules (DER)
-    author:
-      org: International Telecommunications Union
-    date: 2015-08
-    seriesinfo:
-      ITU-T: Recommendation X.690
-    target: https://www.itu.int/rec/T-REC-X.690
+  X.690: CCITT.X690.2002
   I-D.ietf-cose-hash-envelope: cose-hash-envelope
-
 
 informative:
   RFC7519: jwt
@@ -141,6 +131,7 @@ informative:
     seriesinfo: Family "2.0", Level 00, Revision 01.83
     date: January 24, 2024,
     target: https://trustedcomputinggroup.org/resource/tpm-library-specification/
+  IEEE-802.OandA: DOI.10.1109/IEEESTD.2014.6847097
 
 entity:
   SELF: "RFCthis"
@@ -894,7 +885,7 @@ The following describes each member of the `triples-map`:
 * `coswid-triples` (index 6): Triples associating modules with existing CoSWID tags.
   Described in {{sec-comid-triple-coswid}}.
 
-* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
+* `conditional-endorsement-series-triples` (index 8): Triples describing a series of Endorsements that are applicable based on the acceptance of a condition.
   Described in {{sec-comid-triple-cond-series}}.
 
 * `conditional-endorsement-triples` (index 10): Triples describing a series of conditional Endorsements based on the acceptance of a stateful environment.
@@ -1090,7 +1081,7 @@ The following describes each member of the `measurement-values-map`.
 
 * `raw-value-mask-DEPRECATED` (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the `tagged-masked-raw-value` on index 4 instead of using index 5.
 
-* `mac-addr` (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
+* `mac-addr` (index 6): An EUI-48 (Extended Unique Identifier 48) or EUI-64 MAC address {{IEEE-802.OandA}} associated with the measured environment.
   Described in {{sec-comid-address-types}}.
 
 * `ip-addr` (index 7): An IPv4 or IPv6 address associated with the measured environment.
@@ -1229,12 +1220,15 @@ This code point may be removed in a future revision of this specification.
 
 ##### Address Types {#sec-comid-address-types}
 
-The types or associating addressing information to a measured environment are:
+This specification defines types for 48-bit and 64-bit MAC identifiers.
+For IP addresses, it reuses the "Address Format" types defined in {{-cbor-ip}} with the CBOR tag removed.
+
+All the types represent a single address.
 
 ~~~ cddl
-{::include cddl/ip-addr-type-choice.cddl}
-
 {::include cddl/mac-addr-type-choice.cddl}
+
+{::include cddl/ip-addr-type-choice.cddl}
 ~~~
 
 #### Crypto Keys {#sec-crypto-keys}
@@ -1417,14 +1411,9 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 ### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
-Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
-For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
-
-These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
-Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
-
+The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
+The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
+The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding probelmatic repetition of search criteria.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1436,16 +1425,37 @@ The Conditional Endorsement Series Triple has the following structure:
 
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
-* `condition`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
-* `series`: A set of selection-addition tuples.
+* `condition`: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
+The condition consists of an `environment-map`, a (possibly empty) `claims-list`, and an optional `authorized-by`.
+
+* `series`: A sequence of selection-addition tuples.
 
 The `conditional-series-record` has the following parameters:
 
-* `selection`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the `condition` result.
-* `addition`: Additional Endorsements if the `selection` criteria are satisfied.
+* `selection`: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's `condition` result.
 
-To process a `conditional-endorsement-series-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the `series` tuples are processed.
+* `addition`: Endorsements that are added if the `selection` criteria are satisfied.
+
+##### Condition Matching
+
+The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., `environment-map`) and optionally measurements (i.e., `claims-list`) or authority (i.e., `authorized-by`).
+Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.
+
+Note that `measurement-map` can also specify authority criteria. To avoid conflicting criteria, the `authorized-by` in `condition` takes precedence over the `authorized-by` in `measurement-map`.
+
+##### Selection Matching
+
+Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
+For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
+
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
+
+##### Processing the Addition
+
+To process a `conditional-endorsement-series-record` the selection criteria in `condition` entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
+If the selection criteria are satisfied, the `series` tuples are processed.
 
 The `series` array contains an ordered list of `conditional-series-record` entries.
 Evaluation order begins at list position 0.
@@ -2151,27 +2161,29 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 {:cestt2-enum: counter="cestt2" style="format %i."}
 
 {: cestt2-enum}
-* CEST.`condition`:
+* For `c` in CEST.`condition`:
 
-> > **copy**(`stateful-environment-record`.`environment`.`environment-map`, `evs`.`condition`.`environment`.`environment-map`)
+> > **copy**(`c`.`environment`, `evs`.`condition`.`environment`)
 
-> > **copy**(`stateful-environment-record`.`claims-list`.`measurement-map`, `evs`.`condition`.`element-list`.`element-map`)
+> > If the `c`.`claims-list` is not empty then **copy**(`c`.`claims-list`, `evs`.`condition`.`element-list`)
+
+> > If `c`.`authorized-by` is present then **copy**(`c`.`authorized-by`, `evs`.`condition`.`authority`)
 
 {: cestt2-enum}
-* For each e in CEST.`series`:
+* For each `s` in CEST.`series`:
 
-> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`selection`.`environment`.`environment-map`)
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`selection`.`environment`)
 
-> > **copy**(e.`conditional-series-record`.`selection`.`measurement`.`measurement-map`, `evs`.`series`.`selection`.`element-list`.`element-map`)
+> > **copy**(`s`.`selection`, `evs`.`series[s]`.`selection`.`element-list`)
 
-> > **copy**(`evs`.`condition`.`environment`.`environment-map`, `evs`.`series`.`addition`.`environment`.`environment-map`)
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`addition`.`environment`)
 
-> > **copy**(e.`conditional-series-record`.`addition`.`measurement-map`, `evs`.`series`.`addition`.`element-list`.`element-map`)
+> > **copy**(`s`.`addition`, `evs`.`series[s]`.`addition`.`element-list`)
 
 {: cestt-enum}
-* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field.
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field for each addition.
 
-* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field.
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field for each addition.
 
 ### Processing of Attest Key and Device Identity Key Triples
 
@@ -2751,24 +2763,28 @@ Otherwise, do not add the `addition` ECT to the ACS.
 
 #### Processing Domain Membership {#sec-process-dm}
 
-This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+This section assumes that each Domain Membership Triple (see {{sec-comid-triple-domain-membership}}) has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
 
+Domain Membership ECTs (i.e., `cmtype` equals `domain-member`) in the `dm` staging area are matched with ACS entries where `cmtype` is set to `evidence`, `reference-values` i.e. corroborated evidence,  or `domain-member` using the following algorithm:
 
-Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:
+For each `domain` in the `dm` staging area, which has not been processed (outer loop):
 
-For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:
+For each member `m` in `domain`.`members` (inner loop):
 
-For each i in members, check that there is a corresponding ACS entry with a matching `environment` and (cmtype:evidence OR cmtype: domain-member)
+* Check that there is a corresponding ACS entry `environment` that matches `m`.`environment`.
+* Check that the ACS entry `cmtype` is one of `evidence`, `reference-values`, or `domain-member`.
 
-* If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS
-* If none of the members match, proceed to next Domain Membership ECT in the staging area
-* If there is a partial match, proceed to the next Domain Membership ECT in the staging area
-If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
-Else STOP processing Domain Membership ECTs
+Outer loop resumes:
+
+* If all `domain`.`members` matched a corresponding ACS entry, add the `domain` ECT to the ACS.
+* If none of the `domain`.`members` matched, proceed to next `dm` entry.
+* If some, but not all of the `domain`.`members` matched, proceed to the next `dm` entry.
+If the previous execution of the outer loop added any `domain` entry to the ACS, then run the outer loop again
+Else STOP processing `dm` entries.
 
 The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
 
-If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.
+If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.
 
 #### Processing Domain Dependency {#sec-process-dd}
 
@@ -3591,7 +3607,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 # Base CoRIM CDDL {#sec-corim-cddl}
 
 ~~~ cddl
-{::include cddl/corim-autogen.cddl}
+{::include-fold cddl/corim-autogen.cddl}
 ~~~
 
 # Acknowledgments
