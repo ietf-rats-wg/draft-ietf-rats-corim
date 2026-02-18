@@ -1564,7 +1564,7 @@ Domain dependency triples define a graph representation of trust dependency sema
 Domains are represented using `environment-map` containers where domain membership triples are used to populate domain containers.
 Domain dependency triples rely on domain membership triples to introduce new domains into the accepted set of Claims.
 
-The domain dependency triple subject (`domain-id`) identifies the member domains (see {{sec-comid-triple-domain-membership}}) that have trustees.
+The domain dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
 The triple predicate asserts that a trust appraisal of `domain-id` is not complete without appraisal of the `trustees`.
 
