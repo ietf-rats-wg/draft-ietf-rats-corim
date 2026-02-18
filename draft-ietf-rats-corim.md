@@ -1573,7 +1573,7 @@ The triple predicate asserts that a trust appraisal of `domain-id` is not comple
 ~~~
 
 All of the `domain-id` and `trustees` MUST be members of the Attesters composition to be a valid expression.
-Dependency graphs are acyclic, meaning a `domain-id` MUST NOT appear in the `trustees` list or a trustee of a domain member's subtree.
+Dependency graphs are acyclic, meaning a `domain-id` MUST NOT appear in the `trustees` list or within a trustee of a domain member's subtree.
 A terminating "leaf" trustee is a "root of trust" for that subtree.
 "Root of trust" trustees SHOULD have a corresponding Endorsement.
 Verifiers MAY use DDTs with appraisal policies to assess the veracity of domain-to-trustee linkages.
