@@ -120,15 +120,15 @@ Table of Contents
          5.1.4.7.  Integrity Registers
          5.1.4.8.  Int Range
        5.1.5.  Reference Values Triple
-         5.1.5.1.  Endorsed Values Triple
-         5.1.5.2.  Conditional Endorsement Triple
-         5.1.5.3.  Conditional Endorsement Series Triple
-         5.1.5.4.  Device Identity Triple
-         5.1.5.5.  Attest Key Triple
-         5.1.5.6.  Triples for domain definitions
-           5.1.5.6.1.  Domain Membership Triple
-           5.1.5.6.2.  Domain Dependency Triple
-         5.1.5.7.  CoMID-CoSWID Linking Triple
+       5.1.6.  Endorsed Values Triple
+       5.1.7.  Conditional Endorsement Triple
+       5.1.8.  Conditional Endorsement Series Triple
+       5.1.9.  Device Identity Triple
+       5.1.10. Attest Key Triple
+       5.1.11. Triples for domain definitions
+         5.1.11.1.  Domain Membership Triple
+         5.1.11.2.  Domain Dependency Triple
+       5.1.12. CoMID-CoSWID Linking Triple
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
@@ -1145,38 +1145,38 @@ Table of Contents
    *  Endorsed Values triples: containing "Endorsed Values", i.e.,
       features about an Environment that do not appear in Evidence.
       Specific examples include testing or certification data pertaining
-      to a module (Section 5.1.5.1).
+      to a module (Section 5.1.6).
 
    *  Conditional Endorsement triples: describing one or more conditions
       that, once matched, result in augmenting the Attester's actual
-      state with the supplied Endorsed Values (Section 5.1.5.2).
+      state with the supplied Endorsed Values (Section 5.1.7).
 
    OTI Triples:
 
    *  Conditional Endorsement Series triples: describing conditional
       endorsements that are evaluated using a special matching algorithm
-      (Section 5.1.5.2).
+      (Section 5.1.7).
 
    *  Device Identity triples: containing cryptographic credentials -
       for example, an IDevID - uniquely identifying a device
-      (Section 5.1.5.4).
+      (Section 5.1.9).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
-      from the Attester (Section 5.1.5.5).
+      from the Attester (Section 5.1.10).
 
    *  Domain dependency triples: describing trust relationships between
       domains, i.e., collection of related environments and their
-      measurements (Section 5.1.5.6.2).
+      measurements (Section 5.1.11.2).
 
    *  Domain membership triples: describing topological relationships
       between (sub-)modules.  For example, in a composite Attester
       comprising multiple sub-Attesters (sub-modules), this triple can
       be used to define the topological relationship between lead- and
-      sub- Attester environments (Section 5.1.5.6.1).
+      sub- Attester environments (Section 5.1.11.1).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID Payload tags (Section 5.1.5.7).
+      with existing CoSWID Payload tags (Section 5.1.12).
 
    CoMID triples are extensible (Section 5.1.4).  Triples added via the
    extensibility feature MUST be OTI class triples.  This document
@@ -1370,33 +1370,33 @@ Table of Contents
       Described in Section 5.1.5.
 
    *  endorsed-triples (index 1): Triples containing endorsed values.
-      Described in Section 5.1.5.1.
+      Described in Section 5.1.6.
 
    *  identity-triples (index 2): Triples containing identity
-      credentials.  Described in Section 5.1.5.4.
+      credentials.  Described in Section 5.1.9.
 
    *  attest-key-triples (index 3): Triples containing verification keys
       associated with attesting environments.  Described in
-      Section 5.1.5.5.
+      Section 5.1.10.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in Section 5.1.5.6.2.
+      relationships between domains.  Described in Section 5.1.11.2.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      Section 5.1.5.6.1.
+      Section 5.1.11.1.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in Section 5.1.5.7.
+      existing CoSWID tags.  Described in Section 5.1.12.
 
    *  conditional-endorsement-series-triples (index 8): Triples
       describing a series of Endorsement that are applicable based on
       the acceptance of a series of stateful environment records.
-      Described in Section 5.1.5.3.
+      Described in Section 5.1.8.
 
    *  conditional-endorsement-triples (index 10): Triples describing a
       series of conditional Endorsements based on the acceptance of a
-      stateful environment.  Described in Section 5.1.5.2.
+      stateful environment.  Described in Section 5.1.7.
 
 5.1.4.1.  Environments
 
@@ -2015,7 +2015,7 @@ Table of Contents
    Evidence" because the actual state in Evidence was found within the
    corpus of the RVP's possible state.
 
-5.1.5.1.  Endorsed Values Triple
+5.1.6.  Endorsed Values Triple
 
    An Endorsed Values triple provides additional Endorsements - i.e.,
    claims reflecting the actual state - for an existing Target
@@ -2045,7 +2045,7 @@ Table of Contents
    entry.  The new entry is added to the existing set of entries using
    the Endorser's authority.
 
-5.1.5.2.  Conditional Endorsement Triple
+5.1.7.  Conditional Endorsement Triple
 
    A Conditional Endorsement Triple declares one or more conditions
    that, once matched, results in augmenting the Attester's actual state
@@ -2079,7 +2079,7 @@ Table of Contents
    entries are asserted with the Endorser's authority as new
    Endorsements.
 
-5.1.5.3.  Conditional Endorsement Series Triple
+5.1.8.  Conditional Endorsement Series Triple
 
    The Conditional Endorsement Series Triple is used to assert endorsed
    values based on an initial condition match (specified in condition:)
@@ -2147,7 +2147,7 @@ Table of Contents
    The first series entry that successfully matches the selection
    criteria terminates series processing.
 
-5.1.5.4.  Device Identity Triple
+5.1.9.  Device Identity Triple
 
    Device Identity triples (see identity-triples in Section 5.1.4)
    endorse that the keys were securely provisioned to the named Target
@@ -2202,7 +2202,7 @@ Table of Contents
       that identifies the authorities that asserted the key-list in the
       target Evidence or Reference Values.
 
-5.1.5.5.  Attest Key Triple
+5.1.10.  Attest Key Triple
 
    Attest Key triples (see attest-key-triples in Section 5.1.4) endorse
    that the keys were securely provisioned to the named Attesting
@@ -2243,9 +2243,9 @@ Table of Contents
      }>
    ]
 
-   See Section 5.1.5.4 for additional details.
+   See Section 5.1.9 for additional details.
 
-5.1.5.6.  Triples for domain definitions
+5.1.11.  Triples for domain definitions
 
    A domain is a hierarchical description of a Composite Attester in
    terms of its constituent Environments and their compositional
@@ -2257,7 +2257,7 @@ Table of Contents
 
    Domain structure is defined with the following types of triples.
 
-5.1.5.6.1.  Domain Membership Triple
+5.1.11.1.  Domain Membership Triple
 
    A Domain Membership Triple (DMT) links a domain identifier to its
    member Environments.  The triple's subject is the domain identifier
@@ -2285,40 +2285,46 @@ Table of Contents
      members: [ +  domain-type ]
    ]
 
-5.1.5.6.2.  Domain Dependency Triple
+5.1.11.2.  Domain Dependency Triple
 
    A Domain Dependency Triple (DDT) links a domain to a set of _trustee_
-   domains.  A domain dependency triple is used when an Endorser has to
-   assert a trust dependency between components.  This triple can point
-   from one environment that still has to be appraised to one or more
-   other environments (trustees).  It is only possible to appraise that
-   environment, if the trustees it depends on exist and are already
-   appraised as trustworthy by the Verifier.  In consequence, the
-   trustworthiness of trustee domains MUST be appraised before the
-   trustworthiness of the subject domain can be justified.
+   domains.  A domain dependency triple is used by an Endorser to assert
+   that trust dependency exists between various components.  A DDT
+   specifies which component (identified by domain-id) depends on which
+   other components (identified by trustees) for proper operation.  A
+   series of DDTs can describe a graph of anticipated trust dependencies
+   in a system of components.  CoRIM uses environment-map to identify
+   components and groupings of components (i.e., domains).
 
+   Trust dependency means that appraisal of an environment also depends
+   on the appraisal of one or more _trustee_ environments before the
+   environment in question can be fully trusted.  It is only possible to
+   trust a candidate environment, if the trustees it depends on exist,
+   have been appraised, and found to be trustworthy.
+
+   The first four phases of appraisal (see Section 8.1) might not
+   determine whether a component is trustworthy.  Subsequent Verifier
+   stages or Relying Party processing might be needed to finalize
+   trustworthiness.  Therefore, the trustworthiness of trustee domains
+   MUST be appraised before the trustworthiness of the subject domain
+   can be finalized.  Consequently, trust dependency semantics may need
+   to be represented in Attestation Results if Relying Parties play a
+   role in finalizing which components are trustworthy.
+
+   There are a variety of use cases where trust dependency might exist.
    For example, trust in an operating system (OS) might depend on
    trustworthy loading of the OS loader image.  Consequently, the OS
-   loader is a trustee domain of the OS.  Or trust in a peripheral
-   device might depend on trustworthy operation of a perpheral device
-   bus controller.  The bus controller is therefore a trustee domain of
-   the peripheral device.
+   loader is a trustee domain of the OS.  Alternatively, trust in a
+   peripheral device might depend on trustworthy operation of a
+   perpheral device's bus controller.  The bus controller is therefore a
+   trustee domain of the peripheral device.
 
-   Endorsement of domain dependency is necessary to address omission of
-   trustee domains from collected Evidence.  For example, if a
-   peripheral device only reports Evidence about itself and omits
-   Evidence about the bus controller, Verifiers may not recognize the
-   need to include the bus controller Claims in the appraisal.  Domain
-   dependency triples define a graph representation of trust dependency
-   semantics between the various components of an Attester.
-
-   Domains are represented using environment-map containers where domain
-   membership triples are used to populate domain containers.  Domain
-   dependency triples rely on domain membership triples to introduce new
-   domains into the accepted set of Claims.
+   DDTs cannot create domains.  Instead, DDT processing first checks
+   that a domain-id has already been accepted into the Attester's set of
+   Claims before adding trust dependencies.
 
    The domain dependency triple subject (domain-id) identifies the
-   member domain (see Section 5.1.5.6.1) that has trustees.  The triple
+   member domain (see Section 5.1.11.1) that has trustees.  The triple
    object trustees lists the domains that are trustees of the subject
    domain.  The triple predicate asserts that a trust appraisal of
    domain-id is not complete without appraisal of the trustees.
@@ -2328,14 +2334,16 @@ Table of Contents
      trustees: [ + domain-type ]
    ]
 
-   All of the domain-id and trustees MUST be members of the Attesters
-   composition to be a valid expression.  Dependency graphs are acyclic,
-   meaning a domain-id MUST NOT appear in the trustees list or within a
-   trustee of a domain member's subtree.  A terminating "leaf" trustee
-   is a "root of trust" for that subtree.  "Root of trust" trustees
-   SHOULD have a corresponding Endorsement.  Verifiers MAY use DDTs with
-   appraisal policies to assess the veracity of domain-to-trustee
-   linkages.
+   All of the DDT subjects (domain-id) and objects (trustees) MUST also
+   be domain members for the DDT expression to be processed.
+
+   Trust dependency graphs are acyclic, meaning a domain-id MUST NOT
+   appear in the trustees list or within a trustee's subtree.
+
+   A terminating "leaf" trustee is a "root of trust" for that subtree.
+   Leaf trustees SHOULD have a corresponding Endorsement triple.
+   Verifiers MAY use DDTs with appraisal policies to assess the veracity
+   of domain-to-trustee linkages.
 
    Trust dependency typically exists if any of the following are true:
 
@@ -2350,7 +2358,9 @@ Table of Contents
 
    *  A trustee is embedded within the domain-id environment.
 
-5.1.5.7.  CoMID-CoSWID Linking Triple
+   Trust dependency processing is described in Section 9.1.8.
+
+5.1.12.  CoMID-CoSWID Linking Triple
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
@@ -3074,7 +3084,7 @@ Table of Contents
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
 
-   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.5.1) populates
+   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.6) populates
             the ev ECTs.
 
    i  EVT.condition
@@ -3104,8 +3114,8 @@ Table of Contents
             endorsements.
 
    Step 3.  Entries in the Conditional Endorsement Triple (CET)
-            (Section 5.1.5.2) conditions list are copied to a suitable
-            ECT in the internal representation.
+            (Section 5.1.7) conditions list are copied to a suitable ECT
+            in the internal representation.
 
    i  For each e in CET.conditions:
 
@@ -3138,7 +3148,7 @@ Table of Contents
             endorsements.
 
    Step 3.  Populate the evs ECTs using the Conditional Endorsement
-            Series Triple (CEST) (Section 5.1.5.3).
+            Series Triple (CEST) (Section 5.1.8).
 
    i.  CEST.condition:
 
@@ -3206,8 +3216,8 @@ Table of Contents
             endorsements.
 
    Step 3.  Populate the ev condition ECT using either the identity-
-            triple-record or attest-key-triple-record (Section 5.1.5.4)
-            as follows:
+            triple-record or attest-key-triple-record (Section 5.1.9) as
+            follows:
 
    i.    *copy*(environment-map, ev.condition.environment.environment-
          map).
@@ -3276,7 +3286,7 @@ Table of Contents
 9.1.7.2.  Domain Membership Triples Transformation
 
    This section describes how the external representation of a Domain
-   Membership Triple (DMT) (Section 5.1.5.6.1) is transformed into its
+   Membership Triple (DMT) (Section 5.1.11.1) is transformed into its
    CoRIM internal representation dm (see Section 9.1.7.1).
 
    Step 1.  Allocate a domain ECT entry.
@@ -3345,7 +3355,7 @@ Table of Contents
 9.1.8.2.  Domain Dependency Triples Transformation
 
    This section describes how the external representation of a Domain
-   Dependency Triple (DDT) (Section 5.1.5.6.2) is transformed into its
+   Dependency Triple (DDT) (Section 5.1.11.2) is transformed into its
    CoRIM internal representation of a domain dependency graph (ddg) (see
    Section 9.1.8.1).
 
@@ -3355,20 +3365,20 @@ Table of Contents
    Step 1.  Allocate a domain dependency edge dde ECT entry.
 
    Step 2.  Set the conceptual message type cmtype for the dde ECT to
-            trustee).
+            trustee.
 
    i  *assign*(trustee, dde.cmtype)
 
-   Step 3.  Set the authority for the domain ECT to the ddt signer
+   Step 3.  Set the authority for the trust domain ECT to the ddt signer
             (Section 4.2.3.1).
 
    i  *copy*(ddtr.signer, dde.authority)
 
-   Step 4.  Populate the environment using the domain identifier.
+   Step 4.  Populate the ECT environment using the domain identifier.
 
    i  *copy*(ddtr.domain-id, dde.environment)
 
-   Step 5.  Populate the trustees.
+   Step 5.  Populate the ECT trustees.
 
    i  For each environment _e_ in ddtr.trustees:
 
@@ -3382,7 +3392,11 @@ Table of Contents
    Append the domain dependency edge (dde) to the domain dependency
    graph (ddg) internal representation.
 
-   Process the next ddtr until all entries have been processed.
+   Process the next ddtr until all DDT entries have been transformed to
+   the internal representation.
+
+   The ddg becomes input to domain dependency processing steps in
+   Section 9.3.4.6.
 
 9.1.9.  Processing of Policies
 
@@ -3841,7 +3855,7 @@ Table of Contents
 9.3.4.  Endorsed Values Augmentation (Phase 4)
 
    Endorsers publish Endorsements using endorsement triples (see
-   Section 5.1.5.1), Section 5.1.5.2, and Section 5.1.5.3) which are
+   Section 5.1.6), Section 5.1.7, and Section 5.1.8) which are
    transformed (Section 9.1.5.2) into an internal representation
    (Section 9.1.5.1).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
@@ -3956,7 +3970,7 @@ Table of Contents
 9.3.4.6.  Processing Domain Dependency
 
    This section assumes that each Domain Dependency Triple (see
-   Section 5.1.5.6.2) has been transformed into an internal
+   Section 5.1.11.2) has been transformed into an internal
    representation following the steps described in Section 9.1.8.2,
    resulting in the representation specified in Section 9.1.8.1.
 
@@ -3999,6 +4013,11 @@ Table of Contents
       domain-member entry.  Then add the dde to the ACS.
 
    *  Continue to the next dde until all are processed.
+
+   Subsequent Verifier stages or Relying Party processing of the ACS can
+   be impacted when Domain Dependency ECTs are not added to the ACS.
+   For example, trust in an ACS entry that depends on trustee ACS
+   entries might not be considered.
 
 9.3.5.  Examples for optional phases 5, 6, and 7
 
