@@ -2376,11 +2376,11 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 {: ddt6-enum}
 * **copy**(`ddtr`.`profile`, `dde`.`profile`)
 
-Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`) internal representation.
+Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`).
 
-Process the next `ddtr` until all DDT entries have been transformed to the internal representation.
+Process each domain dependency triple record (`ddtr`) in the DDT list until every entry has been transformed to the internal representation and is contained in the domain dependency graph.
 
-The `ddg` becomes input to domain dependency processing steps in {{sec-process-dd}}.
+The domain dependency graph becomes input to domain dependency processing steps in {{sec-process-dd}}.
 
 ### Processing of Policies
 
