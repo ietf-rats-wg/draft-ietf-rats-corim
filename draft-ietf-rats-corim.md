@@ -1549,7 +1549,7 @@ Representing members of a DMT as domains enables the recursive construction of a
 ##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
 A Domain Dependency Triple (DDT) links a domain to a set of *trustee* domains.
-A domain dependency triple is used when an Endorser has to assert a trust dependency between components. This triple can point from one environment that still has to be appraised to one or more other environments (trustees). It is only possible to appraise that environment, if the other environments it depends on exist and are already appraised as trustworthy by the Verifier.
+A domain dependency triple is used when an Endorser has to assert a trust dependency between components. This triple can point from one environment that still has to be appraised to one or more other environments (trustees). It is only possible to appraise that environment, if the trustees it depends on exist and are already appraised as trustworthy by the Verifier.
 In consequence, the trustworthiness of trustee domains MUST be appraised before the trustworthiness of the subject domain can be justified.
 
 For example, trust in an operating system (OS) might depend on trustworthy loading of the OS loader image.
