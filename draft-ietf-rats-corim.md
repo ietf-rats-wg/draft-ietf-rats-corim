@@ -2772,7 +2772,7 @@ If expected Domain Membership ECTs have not been added, then this may affect the
 
 #### Processing Domain Dependency {#sec-process-dd}
 
-This section assumes that each Domain Dependency Triple (see {{sec-comid-triple-domain-dependency}}) has been transformed into an internal representation following the steps described in {{sec-ir-dd-trans}}, resulting in the representation specified in {{sec-ir-dd}}.
+This section assumes that each Domain Dependency Triple (see {{sec-comid-triple-domain-dependency}}) has been transformed into domain dependency graph (see {{sec-ir-dd}}) following the steps described in {{sec-ir-dd-trans}}.
 
 Processing a domain dependency graph (DDG) has the following objectives:
 
