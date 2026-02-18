@@ -1374,7 +1374,7 @@ By re-asserting Evidence matched with Reference Values using the RVP's authority
 See {{-rats-endorsements}}.
 Evidence Claims that are re-asserted using RVP authority are said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVP's possible state.
 
-#### Endorsed Values Triple {#sec-comid-triple-endval}
+### Endorsed Values Triple {#sec-comid-triple-endval}
 
 An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
 For Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.
@@ -1394,7 +1394,7 @@ To process a `endorsed-triple-record` the `condition` is compared with existing 
 If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
 The new entry is added to the existing set of entries using the Endorser's authority.
 
-#### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
+### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
 A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
 The conditions are expressed via `stateful-environment-records`, which match Target Environments from Evidence in certain reference state.
@@ -1415,7 +1415,7 @@ The `conditional-endorsement-triple-record` has the following parameters:
 To process a `conditional-endorsement-triple-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criteria are satisfied, the `endorsements` entries are asserted with the Endorser's authority as new Endorsements.
 
-#### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
+### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in `condition:`) followed by a series condition match (specified in `selection:` inside `conditional-series-record`).
 Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
@@ -1455,7 +1455,7 @@ The new entry is added to the existing set of Endorsements.
 
 The first `series` entry that successfully matches the `selection` criteria terminates `series` processing.
 
-#### Device Identity Triple {#sec-comid-triple-identity}
+### Device Identity Triple {#sec-comid-triple-identity}
 
 Device Identity triples (see `identity-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Target Environment.
 A single Target Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
@@ -1491,7 +1491,7 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 * `authorized-by`: An optional list of `$crypto-key-type-choice` keys that identifies the authorities that asserted the `key-list` in the target Evidence or Reference Values.
 
-#### Attest Key Triple {#sec-comid-triple-attest-key}
+### Attest Key Triple {#sec-comid-triple-attest-key}
 
 Attest Key triples (see `attest-key-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Attesting Environment.
 An Attesting Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
@@ -1518,7 +1518,7 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 See {{sec-comid-triple-identity}} for additional details.
 
-#### Triples for domain definitions {#sec-comid-domains}
+### Triples for domain definitions {#sec-comid-domains}
 
 A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
@@ -1530,7 +1530,7 @@ The following CDDL describes domain type.
 
 Domain structure is defined with the following types of triples.
 
-##### Domain Membership Triple {#sec-comid-triple-domain-membership}
+#### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
 The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
@@ -1546,23 +1546,30 @@ Representing members of a DMT as domains enables the recursive construction of a
 {::include cddl/domain-membership-triple-record.cddl}
 ~~~
 
-##### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+#### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
 A Domain Dependency Triple (DDT) links a domain to a set of *trustee* domains.
-A domain dependency triple is used when an Endorser has to assert a trust dependency between components. This triple can point from one environment that still has to be appraised to one or more other environments (trustees). It is only possible to appraise that environment, if the trustees it depends on exist and are already appraised as trustworthy by the Verifier.
-In consequence, the trustworthiness of trustee domains MUST be appraised before the trustworthiness of the subject domain can be justified.
+A domain dependency triple is used by an Endorser to assert that trust dependency exists between various components.
+A DDT specifies which component (identified by `domain-id`) depends on which other components (identified by `trustees`) for proper operation.
+A series of DDTs can describe a graph of anticipated trust dependencies in a system of components.
+CoRIM uses `environment-map` to identify components and groupings of components (i.e., domains).
 
+ Trust dependency means that appraisal of an environment also depends on the appraisal of one or more *trustee* environments before the environment in question can be fully trusted.
+It is only possible to trust a candidate environment, if the trustees it depends on exist, have been appraised, and found to be trustworthy.
+
+The first four phases of appraisal (see {{sec-appraisal-procedure}}) might not determine whether a component is trustworthy.
+Subsequent Verifier stages or Relying Party processing might be needed to finalize trustworthiness.
+Therefore, the trustworthiness of trustee domains MUST be appraised before the trustworthiness of the subject domain can be finalized.
+Consequently, trust dependency semantics may need to be represented in Attestation Results if Relying Parties play a role in finalizing which components are trustworthy.
+
+There are a variety of use cases where trust dependency might exist.
 For example, trust in an operating system (OS) might depend on trustworthy loading of the OS loader image.
 Consequently, the OS loader is a trustee domain of the OS.
-Or trust in a peripheral device might depend on trustworthy operation of a perpheral device bus controller.
+Alternatively, trust in a peripheral device might depend on trustworthy operation of a perpheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
 
-Endorsement of domain dependency is necessary to address omission of trustee domains from collected Evidence.
-For example, if a peripheral device only reports Evidence about itself and omits Evidence about the bus controller, Verifiers may not recognize the need to include the bus controller Claims in the appraisal.
-Domain dependency triples define a graph representation of trust dependency semantics between the various components of an Attester.
-
-Domains are represented using `environment-map` containers where domain membership triples are used to populate domain containers.
-Domain dependency triples rely on domain membership triples to introduce new domains into the accepted set of Claims.
+DDTs cannot create domains.
+Instead, DDT processing first checks that a `domain-id` has already been accepted into the Attester's set of Claims before adding trust dependencies.
 
 The domain dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
@@ -1572,10 +1579,12 @@ The triple predicate asserts that a trust appraisal of `domain-id` is not comple
 {::include cddl/domain-dependency-triple-record.cddl}
 ~~~
 
-All of the `domain-id` and `trustees` MUST be members of the Attesters composition to be a valid expression.
-Dependency graphs are acyclic, meaning a `domain-id` MUST NOT appear in the `trustees` list or within a trustee of a domain member's subtree.
+All of the DDT subjects (`domain-id`) and objects (`trustees`) MUST also be domain members for the DDT expression to be processed.
+
+Trust dependency graphs are acyclic, meaning a `domain-id` MUST NOT appear in the `trustees` list or within a trustee's subtree.
+
 A terminating "leaf" trustee is a "root of trust" for that subtree.
-"Root of trust" trustees SHOULD have a corresponding Endorsement.
+Leaf trustees SHOULD have a corresponding Endorsement triple.
 Verifiers MAY use DDTs with appraisal policies to assess the veracity of domain-to-trustee linkages.
 
 Trust dependency typically exists if any of the following are true:
@@ -1584,7 +1593,9 @@ Trust dependency typically exists if any of the following are true:
 * A trustee executes security relevant code in response to execution originating from its `domain-id` environment.
 * A trustee is embedded within the `domain-id` environment.
 
-#### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
+Trust dependency processing is described in {{processing-domain-dependency}}.
+
+### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
 A CoSWID triple relates reference measurements contained in one or more CoSWIDs
 to a Target Environment. The subject identifies a Target Environment, the
@@ -2276,7 +2287,7 @@ This section describes how the external representation of a Domain Membership Tr
 {: dmt3-enum}
 * **copy**(DMT.`profile`, `domain`.`profile`)
 
-### Processing of Domain Dependency Triples
+### Processing of Domain Dependency Triples {#processing-domain-dependency}
 
 #### Internal Representation of Domain Dependency {#sec-ir-dd}
 
@@ -2312,7 +2323,7 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 {: ddt1-enum}
 * Allocate a domain dependency edge `dde` ECT entry.
 
-* Set the conceptual message type `cmtype` for the `dde` ECT to `trustee`).
+* Set the conceptual message type `cmtype` for the `dde` ECT to `trustee`.
 
 {:ddt2-enum: counter="ddt2" style="format %i"}
 
@@ -2320,7 +2331,7 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 * **assign**(`trustee`, `dde`.`cmtype`)
 
 {: ddt1-enum}
-* Set the authority for the domain ECT to the ddt signer ({{sec-corim-signer}}).
+* Set the authority for the trust domain ECT to the ddt signer ({{sec-corim-signer}}).
 
 {:ddt3-enum: counter="ddt3" style="format %i"}
 
@@ -2328,7 +2339,7 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 * **copy**(`ddtr`.`signer`, `dde`.`authority`)
 
 {: ddt1-enum}
-* Populate the `environment` using the domain identifier.
+* Populate the ECT `environment` using the domain identifier.
 
 {:ddt4-enum: counter="ddt4" style="format %i"}
 
@@ -2336,7 +2347,7 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 * **copy**(`ddtr`.`domain-id`, `dde`.`environment`)
 
 {: ddt1-enum}
-* Populate the `trustees`.
+* Populate the ECT `trustees`.
 
 {:ddt5-enum: counter="ddt5" style="format %i"}
 
@@ -2355,7 +2366,9 @@ For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the
 
 Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`) internal representation.
 
-Process the next `ddtr` until all entries have been processed.
+Process the next `ddtr` until all DDT entries have been transformed to the internal representation.
+
+The `ddg` becomes input to domain dependency processing steps in {{sec-process-dd}}.
 
 ### Processing of Policies
 
@@ -2789,6 +2802,9 @@ Outer loop resumes:
 Then add the `dde` to the ACS.
 
 * Continue to the next `dde` until all are processed.
+
+Subsequent Verifier stages or Relying Party processing of the ACS can be impacted when Domain Dependency ECTs are not added to the ACS.
+For example, trust in an ACS entry that depends on `trustee` ACS entries might not be considered.
 
 ### Examples for optional phases 5, 6, and 7 {#sec-phases567}
 
