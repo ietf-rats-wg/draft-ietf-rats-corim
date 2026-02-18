@@ -1337,6 +1337,19 @@ This document specifies the information elements for representing Endorsements a
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.8">
                     <p id="section-toc.1-1.5.2.1.2.8.1"><a href="#section-5.1.8" class="auto internal xref">5.1.8</a>.  <a href="#name-conditional-endorsement-ser" class="internal xref">Conditional Endorsement Series Triple</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.8.2.1">
+                        <p id="section-toc.1-1.5.2.1.2.8.2.1.1"><a href="#section-5.1.8.1" class="auto internal xref">5.1.8.1</a>.  <a href="#name-condition-matching" class="internal xref">Condition Matching</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.8.2.1.2.1">
+                            <p id="section-toc.1-1.5.2.1.2.8.2.1.2.1.1"><a href="#section-5.1.8.1.1" class="auto internal xref">5.1.8.1.1</a>.  <a href="#name-selection-matching" class="internal xref">Selection Matching</a></p>
+</li>
+                          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.8.2.1.2.2">
+                            <p id="section-toc.1-1.5.2.1.2.8.2.1.2.2.1"><a href="#section-5.1.8.1.2" class="auto internal xref">5.1.8.1.2</a>.  <a href="#name-processing-the-addition" class="internal xref">Processing the Addition</a></p>
+</li>
+                        </ul>
+</li>
+                    </ul>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.9">
                     <p id="section-toc.1-1.5.2.1.2.9.1"><a href="#section-5.1.9" class="auto internal xref">5.1.9</a>.  <a href="#name-device-identity-triple" class="internal xref">Device Identity Triple</a></p>
@@ -2291,9 +2304,11 @@ $concise-tag-type-choice /= tagged-concise-tl-tag
 certificates, or other relevant information can be retrieved by the Verifier.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.1.3-2">
 <pre>
+;# import measured-component as eatmc
+
 corim-locator-map = {
   &amp;(href: 0) =&gt; uri / [ + uri ]
-  ? &amp;(thumbprint: 1) =&gt; digest / [digest]
+  ? &amp;(thumbprint: 1) =&gt; eatmc.digest / [ eatmc.digest ]
 }
 </pre><a href="#section-4.1.3-2" class="pilcrow">¶</a>
 </div>
@@ -2388,6 +2403,7 @@ COSE-Sign1-corim = [
 ]
 
 hash-envelope-digest = bstr
+
 </pre><a href="#section-4.2-4" class="pilcrow">¶</a>
 </div>
 <p id="section-4.2-5">The following describes each child element of this type.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
@@ -3015,7 +3031,7 @@ Described in <a href="#sec-comid-triple-domain-membership" class="auto internal 
 Described in <a href="#sec-comid-triple-coswid" class="auto internal xref">Section 5.1.12</a>.<a href="#section-5.1.4-5.7.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-5.8">
-              <p id="section-5.1.4-5.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of Endorsement that are applicable based on the acceptance of a series of stateful environment records.
+              <p id="section-5.1.4-5.8.1"><code>conditional-endorsement-series-triples</code> (index 8): Triples describing a series of Endorsements that are applicable based on the acceptance of a condition.
 Described in <a href="#sec-comid-triple-cond-series" class="auto internal xref">Section 5.1.8</a>.<a href="#section-5.1.4-5.8.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.4-5.9">
@@ -3257,7 +3273,7 @@ measurement-values-map = non-empty&lt;{
       ? &amp;(raw-value-mask-DEPRECATED: 5) =&gt; raw-value-mask-type
     )
   ? &amp;(mac-addr: 6) =&gt; mac-addr-type-choice
-  ? &amp;(ip-addr: 7) =&gt;  ip-addr-type-choice
+  ? &amp;(ip-addr: 7) =&gt; ip-addr-type-choice
   ? &amp;(serial-number: 8) =&gt; text
   ? &amp;(ueid: 9) =&gt; ueid-type
   ? &amp;(uuid: 10) =&gt; uuid-type
@@ -3302,7 +3318,7 @@ Described in <a href="#sec-comid-raw-value-types" class="auto internal xref">Sec
                   <p id="section-5.1.4.5.2-5.6.1"><code>raw-value-mask-DEPRECATED</code> (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the <code>tagged-masked-raw-value</code> on index 4 instead of using index 5.<a href="#section-5.1.4.5.2-5.6.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.5.2-5.7">
-                  <p id="section-5.1.4.5.2-5.7.1"><code>mac-addr</code> (index 6): A EUI-48 or EUI-64 MAC address associated with the measured environment.
+                  <p id="section-5.1.4.5.2-5.7.1"><code>mac-addr</code> (index 6): An EUI-48 (Extended Unique Identifier 48) or EUI-64 MAC address <span>[<a href="#IEEE-802.OandA" class="cite xref">IEEE-802.OandA</a>]</span> associated with the measured environment.
 Described in <a href="#sec-comid-address-types" class="auto internal xref">Section 5.1.4.5.7</a>.<a href="#section-5.1.4.5.2-5.7.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.5.2-5.8">
@@ -3345,9 +3361,11 @@ Matching is described in <a href="#sec-cryptokeys-matching" class="auto internal
 environment.<a href="#section-5.1.4.5.3-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.5.3-2">
 <pre>
+;# import rfc9393 as coswid
+
 version-map = {
   &amp;(version: 0) =&gt; text
-  ? &amp;(version-scheme: 1) =&gt; $version-scheme
+  ? &amp;(version-scheme: 1) =&gt; coswid.$version-scheme
 }
 </pre><a href="#section-5.1.4.5.3-2" class="pilcrow">¶</a>
 </div>
@@ -3509,17 +3527,20 @@ tagged-masked-raw-value = #6.563([
               <h6 id="name-address-types">
 <a href="#section-5.1.4.5.7" class="section-number selfRef">5.1.4.5.7. </a><a href="#name-address-types" class="section-name selfRef">Address Types</a>
               </h6>
-<p id="section-5.1.4.5.7-1">The types or associating addressing information to a measured environment are:<a href="#section-5.1.4.5.7-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.5.7-2">
+<p id="section-5.1.4.5.7-1">This specification defines types for 48-bit and 64-bit MAC identifiers.
+For IP addresses, it reuses the "Address Format" types defined in <span>[<a href="#RFC9164" class="cite xref">RFC9164</a>]</span> with the CBOR tag removed.<a href="#section-5.1.4.5.7-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.5.7-2">All the types represent a single address.<a href="#section-5.1.4.5.7-2" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.5.7-3">
 <pre>
-ip-addr-type-choice = ip4-addr-type / ip6-addr-type
-ip4-addr-type = bytes .size 4
-ip6-addr-type = bytes .size 16
-
 mac-addr-type-choice = eui48-addr-type / eui64-addr-type
 eui48-addr-type = bytes .size 6
 eui64-addr-type = bytes .size 8
-</pre><a href="#section-5.1.4.5.7-2" class="pilcrow">¶</a>
+
+;# import rfc9164 as cbor-ip
+
+ip-addr-type-choice /= cbor-ip.ipv4-address
+ip-addr-type-choice /= cbor-ip.ipv6-address
+</pre><a href="#section-5.1.4.5.7-3" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -3576,6 +3597,8 @@ The digest value may be used to find the certificate path if contained in a look
             </ul>
 <div class="lang-cddl sourcecode" id="section-5.1.4.6-5">
 <pre>
+;# import measured-component as eatmc
+
 $crypto-key-type-choice /= tagged-pkix-base64-key-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-type
 $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
@@ -3588,10 +3611,10 @@ $crypto-key-type-choice /= tagged-bytes
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
 tagged-pkix-base64-cert-path-type = #6.556(tstr)
-tagged-key-thumbprint-type = #6.557(digest)
+tagged-key-thumbprint-type = #6.557(eatmc.digest)
 tagged-cose-key-type = #6.558(COSE_Key)
-tagged-cert-thumbprint-type = #6.559(digest)
-tagged-cert-path-thumbprint-type = #6.561(digest)
+tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
 tagged-pkix-asn1der-cert-type = #6.562(bstr)
 </pre><a href="#section-5.1.4.6-5" class="pilcrow">¶</a>
 </div>
@@ -3789,17 +3812,18 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
           <h4 id="name-conditional-endorsement-ser">
 <a href="#section-5.1.8" class="section-number selfRef">5.1.8. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
           </h4>
-<p id="section-5.1.8-1">The Conditional Endorsement Series Triple is used to assert endorsed values based on an initial condition match (specified in <code>condition:</code>) followed by a series condition match (specified in <code>selection:</code> inside <code>conditional-series-record</code>).
-Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each <code>conditional-series-record</code>.
-For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.8-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.8-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
-Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.8-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.8-3">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.8-3" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.8-4">
+<p id="section-5.1.8-1">The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
+The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
+The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding probelmatic repetition of search criteria.<a href="#section-5.1.8-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-2">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.8-2" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.8-3">
 <pre>
 conditional-endorsement-series-triple-record = [
-  condition: stateful-environment-record
+  condition: [
+    environment: environment-map
+    claims-list: [ * measurement-map ]
+    ? authorized-by: [ + $crypto-key-type-choice ]
+  ]
   series: [ + conditional-series-record ]
 ]
 
@@ -3807,33 +3831,63 @@ conditional-series-record = [
   selection: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
-</pre><a href="#section-5.1.8-4" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.8-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.8-5">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.8-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-4">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.8-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.8-6.1">
-              <p id="section-5.1.8-6.1.1"><code>condition</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.<a href="#section-5.1.8-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.8-5.1">
+              <p id="section-5.1.8-5.1.1"><code>condition</code>: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
+The condition consists of an <code>environment-map</code>, a (possibly empty) <code>claims-list</code>, and an optional <code>authorized-by</code>.<a href="#section-5.1.8-5.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.8-6.2">
-              <p id="section-5.1.8-6.2.1"><code>series</code>: A set of selection-addition tuples.<a href="#section-5.1.8-6.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.8-5.2">
+              <p id="section-5.1.8-5.2.1"><code>series</code>: A sequence of selection-addition tuples.<a href="#section-5.1.8-5.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.8-7">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.8-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-6">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.8-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.8-8.1">
-              <p id="section-5.1.8-8.1.1"><code>selection</code>: Search criteria that locates Evidence, corroborated Evidence, or Endorsements from the <code>condition</code> result.<a href="#section-5.1.8-8.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.8-7.1">
+              <p id="section-5.1.8-7.1.1"><code>selection</code>: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's <code>condition</code> result.<a href="#section-5.1.8-7.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.8-8.2">
-              <p id="section-5.1.8-8.2.1"><code>addition</code>: Additional Endorsements if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.8-8.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.8-7.2">
+              <p id="section-5.1.8-7.2.1"><code>addition</code>: Endorsements that are added if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.8-7.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.8-9">To process a <code>conditional-endorsement-series-record</code> the <code>conditions</code> are compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.8-9" class="pilcrow">¶</a></p>
-<p id="section-5.1.8-10">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
-Evaluation order begins at list position 0.<a href="#section-5.1.8-10" class="pilcrow">¶</a></p>
-<p id="section-5.1.8-11">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.<a href="#section-5.1.8-11" class="pilcrow">¶</a></p>
-<p id="section-5.1.8-12">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.8-12" class="pilcrow">¶</a></p>
+<div id="condition-matching">
+<section id="section-5.1.8.1">
+            <h5 id="name-condition-matching">
+<a href="#section-5.1.8.1" class="section-number selfRef">5.1.8.1. </a><a href="#name-condition-matching" class="section-name selfRef">Condition Matching</a>
+            </h5>
+<p id="section-5.1.8.1-1">The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., <code>environment-map</code>) and optionally measurements (i.e., <code>claims-list</code>) or authority (i.e., <code>authorized-by</code>).
+Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.<a href="#section-5.1.8.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.8.1-2">Note that <code>measurement-map</code> can also specify authority criteria. To avoid conflicting criteria, the <code>authorized-by</code> in <code>condition</code> takes precedence over the <code>authorized-by</code> in <code>measurement-map</code>.<a href="#section-5.1.8.1-2" class="pilcrow">¶</a></p>
+<div id="selection-matching">
+<section id="section-5.1.8.1.1">
+              <h6 id="name-selection-matching">
+<a href="#section-5.1.8.1.1" class="section-number selfRef">5.1.8.1.1. </a><a href="#name-selection-matching" class="section-name selfRef">Selection Matching</a>
+              </h6>
+<p id="section-5.1.8.1.1-1">Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each <code>conditional-series-record</code>.
+For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.8.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.8.1.1-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.8.1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="processing-the-addition">
+<section id="section-5.1.8.1.2">
+              <h6 id="name-processing-the-addition">
+<a href="#section-5.1.8.1.2" class="section-number selfRef">5.1.8.1.2. </a><a href="#name-processing-the-addition" class="section-name selfRef">Processing the Addition</a>
+              </h6>
+<p id="section-5.1.8.1.2-1">To process a <code>conditional-endorsement-series-record</code> the selection criteria in <code>condition</code> entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
+If the selection criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.8.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.8.1.2-2">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
+Evaluation order begins at list position 0.<a href="#section-5.1.8.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.8.1.2-3">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
+The new entry is added to the existing set of Endorsements.<a href="#section-5.1.8.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.8.1.2-4">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.8.1.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
 </section>
 </div>
 <div id="sec-comid-triple-identity">
@@ -4019,12 +4073,12 @@ predicate asserts that these contain the expected (i.e., reference)
 measurements for the Target Environment.<a href="#section-5.1.12-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.12-2">
 <pre>
+;# import rfc9393 as coswid
+
 coswid-triple-record = [
   environment-map
-  [ + concise-swid-tag-id ]
+  [ + coswid.tag-id ]
 ]
-
-concise-swid-tag-id = text / bstr .size 16
 </pre><a href="#section-5.1.12-2" class="pilcrow">¶</a>
 </div>
 </section>
@@ -4281,14 +4335,9 @@ This specification reuses the <code>digest</code> type defined in <span><a href=
 Only the CBOR serialization is used.<a href="#section-7.7-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-7.7-2">
 <pre>
-; This definition of 'digest' is equivalent to the one in
-; I-D.ietf-rats-eat-measured-component
-digest = [
-  alg: (int / text),
-  val: bytes
-]
+;# import measured-component as eatmc
 
-digests-type = [ + digest ]
+digests-type = [ + eatmc.digest ]
 </pre><a href="#section-7.7-2" class="pilcrow">¶</a>
 </div>
 <p id="section-7.7-3">A measurement can be obtained using different hash algorithms.
@@ -5409,7 +5458,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-2">
 <dt>i.</dt>
 <dd id="section-9.1.5.2.3-2.1">
-                  <p id="section-9.1.5.2.3-2.1.1">CEST.<code>condition</code>:<a href="#section-9.1.5.2.3-2.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-9.1.5.2.3-2.1.1">For <code>c</code> in CEST.<code>condition</code>:<a href="#section-9.1.5.2.3-2.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
@@ -5417,7 +5466,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-3.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-3.1.1.1">
-                      <p id="section-9.1.5.2.3-3.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-9.1.5.2.3-3.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-3.1.1.1.1"><strong>copy</strong>(<code>c</code>.<code>environment</code>, <code>evs</code>.<code>condition</code>.<code>environment</code>)<a href="#section-9.1.5.2.3-3.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
@@ -5426,32 +5475,32 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-4.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-4.1.1.1">
-                      <p id="section-9.1.5.2.3-4.1.1.1.1"><strong>copy</strong>(<code>stateful-environment-record</code>.<code>claims-list</code>.<code>measurement-map</code>, <code>evs</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.1.5.2.3-4.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-4.1.1.1.1">If the <code>c</code>.<code>claims-list</code> is not empty then <strong>copy</strong>(<code>c</code>.<code>claims-list</code>, <code>evs</code>.<code>condition</code>.<code>element-list</code>)<a href="#section-9.1.5.2.3-4.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
               </ul>
-<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-5">
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-5.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-5.1.1.1">
+                      <p id="section-9.1.5.2.3-5.1.1.1.1">If <code>c</code>.<code>authorized-by</code> is present then <strong>copy</strong>(<code>c</code>.<code>authorized-by</code>, <code>evs</code>.<code>condition</code>.<code>authority</code>)<a href="#section-9.1.5.2.3-5.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-6">
 <dt>ii.</dt>
-<dd id="section-9.1.5.2.3-5.1">
-                  <p id="section-9.1.5.2.3-5.1.1">For each e in CEST.<code>series</code>:<a href="#section-9.1.5.2.3-5.1.1" class="pilcrow">¶</a></p>
+<dd id="section-9.1.5.2.3-6.1">
+                  <p id="section-9.1.5.2.3-6.1.1">For each <code>s</code> in CEST.<code>series</code>:<a href="#section-9.1.5.2.3-6.1.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
 <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-9.1.5.2.3-6.1">
-                  <ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-9.1.5.2.3-6.1.1.1">
-                      <p id="section-9.1.5.2.3-6.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-9.1.5.2.3-6.1.1.1.1" class="pilcrow">¶</a></p>
-</li>
-                  </ul>
-</li>
-              </ul>
-<ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-7.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-7.1.1.1">
-                      <p id="section-9.1.5.2.3-7.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>selection</code>.<code>measurement</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>selection</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.1.5.2.3-7.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-7.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>, <code>evs</code>.<code>series[s]</code>.<code>selection</code>.<code>environment</code>)<a href="#section-9.1.5.2.3-7.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
@@ -5460,7 +5509,7 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-8.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-8.1.1.1">
-                      <p id="section-9.1.5.2.3-8.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>.<code>environment-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>environment</code>.<code>environment-map</code>)<a href="#section-9.1.5.2.3-8.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-8.1.1.1.1"><strong>copy</strong>(<code>s</code>.<code>selection</code>, <code>evs</code>.<code>series[s]</code>.<code>selection</code>.<code>element-list</code>)<a href="#section-9.1.5.2.3-8.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
@@ -5469,20 +5518,29 @@ If the <code>selection</code> criteria is not satisfied, then evaluation procede
 <li class="normal ulEmpty" id="section-9.1.5.2.3-9.1">
                   <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-9.1.5.2.3-9.1.1.1">
-                      <p id="section-9.1.5.2.3-9.1.1.1.1"><strong>copy</strong>(e.<code>conditional-series-record</code>.<code>addition</code>.<code>measurement-map</code>, <code>evs</code>.<code>series</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>)<a href="#section-9.1.5.2.3-9.1.1.1.1" class="pilcrow">¶</a></p>
+                      <p id="section-9.1.5.2.3-9.1.1.1.1"><strong>copy</strong>(<code>evs</code>.<code>condition</code>.<code>environment</code>, <code>evs</code>.<code>series[s]</code>.<code>addition</code>.<code>environment</code>)<a href="#section-9.1.5.2.3-9.1.1.1.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
               </ul>
-<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-10">
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-10.1">
+                  <ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-9.1.5.2.3-10.1.1.1">
+                      <p id="section-9.1.5.2.3-10.1.1.1.1"><strong>copy</strong>(<code>s</code>.<code>addition</code>, <code>evs</code>.<code>series[s]</code>.<code>addition</code>.<code>element-list</code>)<a href="#section-9.1.5.2.3-10.1.1.1.1" class="pilcrow">¶</a></p>
+</li>
+                  </ul>
+</li>
+              </ul>
+<span class="break"></span><dl class="olPercent" id="section-9.1.5.2.3-11">
 <dt>Step 4.</dt>
-<dd id="section-9.1.5.2.3-10.1">
-                  <p id="section-9.1.5.2.3-10.1.1">The signer of the Conditional Endorsement Series conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-9.1.5.2.3-10.1.1" class="pilcrow">¶</a></p>
+<dd id="section-9.1.5.2.3-11.1">
+                  <p id="section-9.1.5.2.3-11.1.1">The signer of the Conditional Endorsement Series conceptual message is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>authority</code> field for each addition.<a href="#section-9.1.5.2.3-11.1.1" class="pilcrow">¶</a></p>
 </dd>
                 <dd class="break"></dd>
 <dt>Step 5.</dt>
-<dd id="section-9.1.5.2.3-10.2">
-                  <p id="section-9.1.5.2.3-10.2.1">If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field.<a href="#section-9.1.5.2.3-10.2.1" class="pilcrow">¶</a></p>
+<dd id="section-9.1.5.2.3-11.2">
+                  <p id="section-9.1.5.2.3-11.2.1">If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the <code>evs</code>.<code>series</code>.<code>addition</code>.<code>profile</code> field for each addition.<a href="#section-9.1.5.2.3-11.2.1" class="pilcrow">¶</a></p>
 </dd>
               <dd class="break"></dd>
 </dl>
@@ -6670,25 +6728,34 @@ If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref"
             <h5 id="name-processing-domain-membershi">
 <a href="#section-9.3.4.5" class="section-number selfRef">9.3.4.5. </a><a href="#name-processing-domain-membershi" class="section-name selfRef">Processing Domain Membership</a>
             </h5>
-<p id="section-9.3.4.5-1">This section assumes that each Domain Membership Triple has been transformed into an internal representation following the steps described in <a href="#sec-ir-dm-trans" class="auto internal xref">Section 9.1.7.2</a>, resulting in the representation specified in <a href="#sec-ir-dm" class="auto internal xref">Section 9.1.7.1</a>.<a href="#section-9.3.4.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-2">Domain Membership ECTs (cmtype: domain-member) in the staging area are matched with ACS entries (of cmtype: evidence) OR (of cmtype: domain-member) using the following algorithm:<a href="#section-9.3.4.5-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-3">For every Domain Membership ECT entry (cmtype: domain-member) in staging area, which has not been processed:<a href="#section-9.3.4.5-3" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-4">For each i in members, check that there is a corresponding ACS entry with a matching <code>environment</code> and (cmtype:evidence OR cmtype: domain-member)<a href="#section-9.3.4.5-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-1">This section assumes that each Domain Membership Triple (see <a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.11.1</a>) has been transformed into an internal representation following the steps described in <a href="#sec-ir-dm-trans" class="auto internal xref">Section 9.1.7.2</a>, resulting in the representation specified in <a href="#sec-ir-dm" class="auto internal xref">Section 9.1.7.1</a>.<a href="#section-9.3.4.5-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-2">Domain Membership ECTs (i.e., <code>cmtype</code> equals <code>domain-member</code>) in the <code>dm</code> staging area are matched with ACS entries where <code>cmtype</code> is set to <code>evidence</code>, <code>reference-values</code> i.e. corroborated evidence,  or <code>domain-member</code> using the following algorithm:<a href="#section-9.3.4.5-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-3">For each <code>domain</code> in the <code>dm</code> staging area, which has not been processed (outer loop):<a href="#section-9.3.4.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-4">For each member <code>m</code> in <code>domain</code>.<code>members</code> (inner loop):<a href="#section-9.3.4.5-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-9.3.4.5-5.1">
-                <p id="section-9.3.4.5-5.1.1">If all members match a corresponding ACS entry, add the Domain Membership ECT to ACS<a href="#section-9.3.4.5-5.1.1" class="pilcrow">¶</a></p>
+                <p id="section-9.3.4.5-5.1.1">Check that there is a corresponding ACS entry <code>environment</code> that matches <code>m</code>.<code>environment</code>.<a href="#section-9.3.4.5-5.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-9.3.4.5-5.2">
-                <p id="section-9.3.4.5-5.2.1">If none of the members match, proceed to next Domain Membership ECT in the staging area<a href="#section-9.3.4.5-5.2.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.5-5.3">
-                <p id="section-9.3.4.5-5.3.1">If there is a partial match, proceed to the next Domain Membership ECT in the staging area
-If the previous execution of the loop added any Domain Membership ECTs to the ACS, then run the loop again
-Else STOP processing Domain Membership ECTs<a href="#section-9.3.4.5-5.3.1" class="pilcrow">¶</a></p>
+                <p id="section-9.3.4.5-5.2.1">Check that the ACS entry <code>cmtype</code> is one of <code>evidence</code>, <code>reference-values</code>, or <code>domain-member</code>.<a href="#section-9.3.4.5-5.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-9.3.4.5-6">The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.<a href="#section-9.3.4.5-6" class="pilcrow">¶</a></p>
-<p id="section-9.3.4.5-7">If expected Domain Membership ECTs have not been added, then this may affect the processing in a later phase.<a href="#section-9.3.4.5-7" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-6">Outer loop resumes:<a href="#section-9.3.4.5-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9.3.4.5-7.1">
+                <p id="section-9.3.4.5-7.1.1">If all <code>domain</code>.<code>members</code> matched a corresponding ACS entry, add the <code>domain</code> ECT to the ACS.<a href="#section-9.3.4.5-7.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-9.3.4.5-7.2">
+                <p id="section-9.3.4.5-7.2.1">If none of the <code>domain</code>.<code>members</code> matched, proceed to next <code>dm</code> entry.<a href="#section-9.3.4.5-7.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-9.3.4.5-7.3">
+                <p id="section-9.3.4.5-7.3.1">If some, but not all of the <code>domain</code>.<code>members</code> matched, proceed to the next <code>dm</code> entry.
+If the previous execution of the outer loop added any <code>domain</code> entry to the ACS, then run the outer loop again
+Else STOP processing <code>dm</code> entries.<a href="#section-9.3.4.5-7.3.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-9.3.4.5-8">The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.<a href="#section-9.3.4.5-8" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.5-9">If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.<a href="#section-9.3.4.5-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-process-dd">
@@ -8605,6 +8672,10 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
         <dd>
 <span class="refAuthor">Bormann, C.</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR) Tags for Object Identifiers"</span>, <span class="seriesInfo">RFC 9090</span>, <span class="seriesInfo">DOI 10.17487/RFC9090</span>, <time datetime="2021-07" class="refDate">July 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9090">https://www.rfc-editor.org/rfc/rfc9090</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC9164">[RFC9164]</dt>
+        <dd>
+<span class="refAuthor">Richardson, M.</span> and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR) Tags for IPv4 and IPv6 Addresses and Prefixes"</span>, <span class="seriesInfo">RFC 9164</span>, <span class="seriesInfo">DOI 10.17487/RFC9164</span>, <time datetime="2021-12" class="refDate">December 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9164">https://www.rfc-editor.org/rfc/rfc9164</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9393">[RFC9393]</dt>
         <dd>
 <span class="refAuthor">Birkholz, H.</span>, <span class="refAuthor">Fitzgerald-McKay, J.</span>, <span class="refAuthor">Schmidt, C.</span>, and <span class="refAuthor">D. Waltermire</span>, <span class="refTitle">"Concise Software Identification Tags"</span>, <span class="seriesInfo">RFC 9393</span>, <span class="seriesInfo">DOI 10.17487/RFC9393</span>, <time datetime="2023-06" class="refDate">June 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9393">https://www.rfc-editor.org/rfc/rfc9393</a>&gt;</span>. </dd>
@@ -8635,7 +8706,7 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dd class="break"></dd>
 <dt id="X.690">[X.690]</dt>
       <dd>
-<span class="refAuthor">International Telecommunications Union</span>, <span class="refTitle">"Information technology — ASN.1 encoding rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)"</span>, <span class="seriesInfo">ITU-T Recommendation X.690</span>, <time datetime="2015-08" class="refDate">August 2015</time>, <span>&lt;<a href="https://www.itu.int/rec/T-REC-X.690">https://www.itu.int/rec/T-REC-X.690</a>&gt;</span>. </dd>
+<span class="refAuthor">International Telephone and Telegraph Consultative Committee</span>, <span class="refTitle">"ASN.1 encoding rules: Specification of basic encoding Rules (BER), Canonical encoding rules (CER) and Distinguished encoding rules (DER)"</span>, <span class="seriesInfo">CCITT Recommendation X.690</span>, <time datetime="2002-07" class="refDate">July 2002</time>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -8673,6 +8744,10 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
 <dt id="IANA.coswid">[IANA.coswid]</dt>
         <dd>
 <span class="refAuthor">IANA</span>, <span class="refTitle">"Concise Software Identifier (CoSWID)"</span>, <span>&lt;<a href="https://www.iana.org/assignments/coswid">https://www.iana.org/assignments/coswid</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IEEE-802.OandA">[IEEE-802.OandA]</dt>
+        <dd>
+<span class="refTitle">"IEEE Standard for Local and Metropolitan Area Networks: Overview and Architecture"</span>, <span class="refContent">IEEE</span>, <span class="seriesInfo">DOI 10.1109/ieeestd.2014.6847097</span>, <span class="seriesInfo">ISBN ["9780738192192"]</span>, <time datetime="2014-07" class="refDate">July 2014</time>, <span>&lt;<a href="https://doi.org/10.1109/ieeestd.2014.6847097">https://doi.org/10.1109/ieeestd.2014.6847097</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC7519">[RFC7519]</dt>
         <dd>
@@ -8718,698 +8793,593 @@ Environments (CoRE) Parameters" Registry <span>[<a href="#IANA.core-parameters" 
       </h2>
 <div class="breakable lang-cddl sourcecode" id="appendix-A-1">
 <pre>
+=============== NOTE: '\' line wrapping per RFC 8792 ================
+
 corim = concise-rim-type-choice
-
-concise-rim-type-choice /= tagged-unsigned-corim-map
-concise-rim-type-choice /= signed-corim
-
+concise-rim-type-choice /= tagged-unsigned-corim-map / signed-corim
 concise-tl-tag = {
-  &amp;(tag-identity: 0) =&gt; tag-identity-map
-  &amp;(tags-list: 1) =&gt; [ + tag-identity-map ],
-  &amp;(tl-validity: 2) =&gt; validity-map
+  &amp;(tag-identity: 0) =&gt; tag-identity-map,
+  &amp;(tags-list: 1) =&gt; [+ tag-identity-map],
+  &amp;(tl-validity: 2) =&gt; validity-map,
 }
-
-$concise-tag-type-choice /= tagged-concise-swid-tag
-$concise-tag-type-choice /= tagged-concise-mid-tag
-$concise-tag-type-choice /= tagged-concise-tl-tag
-
-corim-entity-map =
-  entity-map&lt;$corim-role-type-choice, $$corim-entity-map-extension&gt;
-
-$corim-id-type-choice /= tstr
-$corim-id-type-choice /= uuid-type
-
+$concise-tag-type-choice /= tagged-concise-swid-tag / tagged-concise\
+                                     -mid-tag / tagged-concise-tl-tag
+corim-entity-map = entity-map&lt;$corim-role-type-choice, $$corim-\
+                                                entity-map-extension&gt;
+$corim-id-type-choice /= tstr / uuid-type
 corim-locator-map = {
-  &amp;(href: 0) =&gt; uri / [ + uri ]
-  ? &amp;(thumbprint: 1) =&gt; digest / [digest]
+  &amp;(href: 0) =&gt; uri / [+ uri],
+  ? &amp;(thumbprint: 1) =&gt; eatmc.digest / [eatmc.digest],
 }
-
 corim-map = {
-  &amp;(id: 0) =&gt; $corim-id-type-choice
-  &amp;(tags: 1) =&gt; [ + $concise-tag-type-choice ]
-  ? &amp;(dependent-rims: 2) =&gt; [ + corim-locator-map ]
-  ? &amp;(profile: 3) =&gt; $profile-type-choice
-  ? &amp;(rim-validity: 4) =&gt; validity-map
-  ? &amp;(entities: 5) =&gt; [ + corim-entity-map ]
-  * $$corim-map-extension
+  &amp;(id: 0) =&gt; $corim-id-type-choice,
+  &amp;(tags: 1) =&gt; [+ $concise-tag-type-choice],
+  ? &amp;(dependent-rims: 2) =&gt; [+ corim-locator-map],
+  ? &amp;(profile: 3) =&gt; $profile-type-choice,
+  ? &amp;(rim-validity: 4) =&gt; validity-map,
+  ? &amp;(entities: 5) =&gt; [+ corim-entity-map],
+  * $$corim-map-extension,
 }
 unsigned-corim-map = corim-map
-
 corim-meta-map = {
-  &amp;(signer: 0) =&gt; corim-signer-map
-  ? &amp;(signature-validity: 1) =&gt; validity-map
+  &amp;(signer: 0) =&gt; corim-signer-map,
+  ? &amp;(signature-validity: 1) =&gt; validity-map,
 }
-
-$corim-role-type-choice /= &amp;(manifest-creator: 1)
-$corim-role-type-choice /= &amp;(manifest-signer: 2)
-
+$corim-role-type-choice /= &amp;(manifest-creator: 1) / &amp;(manifest-\
+                                                           signer: 2)
 corim-signer-map = {
-  &amp;(signer-name: 0) =&gt; $entity-name-type-choice
-  ? &amp;(signer-uri: 1) =&gt; uri
-  * $$corim-signer-map-extension
+  &amp;(signer-name: 0) =&gt; $entity-name-type-choice,
+  ? &amp;(signer-uri: 1) =&gt; uri,
+  * $$corim-signer-map-extension,
 }
-
 COSE-Sign1-corim = [
-  protected: bstr .cbor protected-corim-header-map
-  unprotected: unprotected-corim-header-map
-  payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
-  signature: bstr
+  protected: bstr .cbor protected-corim-header-map,
+  unprotected: unprotected-corim-header-map,
+  payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
+                                                        digest / nil,
+  signature: bstr,
 ]
-
 hash-envelope-digest = bstr
-
-$profile-type-choice /= uri
-$profile-type-choice /= tagged-oid-type
-
+$profile-type-choice /= uri / tagged-oid-type
 cwt-claims = {
-  &amp;(iss: 1) =&gt; tstr
-  ? &amp;(sub: 2) =&gt; tstr
-  ? &amp;(exp: 4) =&gt; int / float
-  ? &amp;(nbf: 5) =&gt; int / float
-  * int =&gt; any
+  &amp;(iss: 1) =&gt; tstr,
+  ? &amp;(sub: 2) =&gt; tstr,
+  ? &amp;(exp: 4) =&gt; int / float,
+  ? &amp;(nbf: 5) =&gt; int / float,
+  * int =&gt; any,
 }
-
-protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
-
-protected-corim-header-map-inline =
-  {
-    &amp;(alg: 1) =&gt; int,
-    &amp;(content-type: 3) =&gt; "application/rim+cbor",
-    meta-group,
-    * cose-label =&gt; cose-value
-  }
-
-protected-corim-header-map-hash-envelope =
-  {
-    &amp;(alg: 1) =&gt; int,
-    &amp;(payload_hash_alg: 258) =&gt; int
-    &amp;(payload_preimage_content_type: 259) =&gt; "application/rim+cbor",
-    ? &amp;(payload_location: 260) =&gt; tstr
-    meta-group,
-    * cose-label =&gt; cose-value
-  }
-
+protected-corim-header-map = protected-corim-header-map-inline / \
+                             protected-corim-header-map-hash-envelope
+protected-corim-header-map-inline = {
+  &amp;(alg: 1) =&gt; int,
+  &amp;(content-type: 3) =&gt; "application/rim+cbor",
+  meta-group,
+  * cose-label =&gt; cose-value,
+}
+protected-corim-header-map-hash-envelope = {
+  &amp;(alg: 1) =&gt; int,
+  &amp;(payload_hash_alg: 258) =&gt; int,
+  &amp;(payload_preimage_content_type: 259) =&gt; "application/rim+cbor",
+  ? &amp;(payload_location: 260) =&gt; tstr,
+  meta-group,
+  * cose-label =&gt; cose-value,
+}
 meta-group = ((
         corim-meta-identity,
         ? cwt-claims-identity,
       ) // cwt-claims-identity)
-
 corim-meta-identity = (&amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map)
 cwt-claims-identity = (&amp;(CWT-Claims: 15) =&gt; cwt-claims)
-
 signed-corim = #6.18(COSE-Sign1-corim)
-
-tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
-
+tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
 tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
-
 tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
-
 tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
-
-unprotected-corim-header-map = {
-  * cose-label =&gt; cose-value
-}
-
+unprotected-corim-header-map = {* cose-label =&gt; cose-value}
 validity-map = {
-  ? &amp;(not-before: 0) =&gt; time
-  &amp;(not-after: 1) =&gt; time
+  ? &amp;(not-before: 0) =&gt; time,
+  &amp;(not-after: 1) =&gt; time,
 }
-
 concise-mid-tag = {
-  ? &amp;(language: 0) =&gt; text
-  &amp;(tag-identity: 1) =&gt; tag-identity-map
-  ? &amp;(entities: 2) =&gt; [ + comid-entity-map ]
-  ? &amp;(linked-tags: 3) =&gt; [ + linked-tag-map ]
-  &amp;(triples: 4) =&gt; triples-map
-  * $$concise-mid-tag-extension
+  ? &amp;(language: 0) =&gt; text,
+  &amp;(tag-identity: 1) =&gt; tag-identity-map,
+  ? &amp;(entities: 2) =&gt; [+ comid-entity-map],
+  ? &amp;(linked-tags: 3) =&gt; [+ linked-tag-map],
+  &amp;(triples: 4) =&gt; triples-map,
+  * $$concise-mid-tag-extension,
 }
-
 attest-key-triple-record = [
-  environment: environment-map
-  key-list: [ + $crypto-key-type-choice ]
-  ? conditions: non-empty&lt; {
-    ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
-    ? &amp;(authorized-by: 1) =&gt; [ + $crypto-key-type-choice ]
-  }&gt;
+  environment: environment-map,
+  key-list: [+ $crypto-key-type-choice],
+  ? conditions: non-empty&lt;{
+            ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+            ? &amp;(authorized-by: 1) =&gt; [+ $crypto-key-type-choice],
+}&gt;,
 ]
-
-$class-id-type-choice /= tagged-oid-type
-$class-id-type-choice /= tagged-uuid-type
-$class-id-type-choice /= tagged-bytes
-
+$class-id-type-choice /= tagged-oid-type / tagged-uuid-type / tagged\
+                                                               -bytes
 class-map = non-empty&lt;{
-  ? &amp;(class-id: 0) =&gt; $class-id-type-choice
-  ? &amp;(vendor: 1) =&gt; tstr
-  ? &amp;(model: 2) =&gt; tstr
-  ? &amp;(layer: 3) =&gt; uint
-  ? &amp;(index: 4) =&gt; uint
+    ? &amp;(class-id: 0) =&gt; $class-id-type-choice,
+    ? &amp;(vendor: 1) =&gt; tstr,
+    ? &amp;(model: 2) =&gt; tstr,
+    ? &amp;(layer: 3) =&gt; uint,
+    ? &amp;(index: 4) =&gt; uint,
 }&gt;
-
-comid-entity-map =
-  entity-map&lt;$comid-role-type-choice, $$comid-entity-map-extension&gt;
-
-$comid-role-type-choice /= &amp;(tag-creator: 0)
-$comid-role-type-choice /= &amp;(creator: 1)
-$comid-role-type-choice /= &amp;(maintainer: 2)
-
+comid-entity-map = entity-map&lt;$comid-role-type-choice, $$comid-\
+                                                entity-map-extension&gt;
+$comid-role-type-choice /= &amp;(tag-creator: 0) / &amp;(creator: 1) / &amp;(\
+                                                       maintainer: 2)
 conditional-endorsement-series-triple-record = [
-  condition: stateful-environment-record
-  series: [ + conditional-series-record ]
+  condition: [
+        environment: environment-map,
+        claims-list: [* measurement-map],
+        ? authorized-by: [+ $crypto-key-type-choice],
+],
+  series: [+ conditional-series-record],
 ]
-
 conditional-series-record = [
-  selection: [ + measurement-map]
-  addition: [ + measurement-map ]
+  selection: [+ measurement-map],
+  addition: [+ measurement-map],
 ]
-
 COSE_Key = {
-    1 =&gt; tstr / int
-    ? 2 =&gt; bstr
-    ? 3 =&gt; tstr / int
-    ? 4 =&gt; [+ (tstr / int) ]
-    ? 5 =&gt; bstr
-    * cose-label =&gt; cose-value
+  1 =&gt; tstr / int,
+  ? 2 =&gt; bstr,
+  ? 3 =&gt; tstr / int,
+  ? 4 =&gt; [+ tstr / int],
+  ? 5 =&gt; bstr,
+  * cose-label =&gt; cose-value,
 }
-
 cose-label = int / tstr
 cose-value = any
-
 coswid-triple-record = [
-  environment-map
-  [ + concise-swid-tag-id ]
+  environment-map,
+  [+ coswid.tag-id],
 ]
-
-concise-swid-tag-id = text / bstr .size 16
-
-$crypto-key-type-choice /= tagged-pkix-base64-key-type
-$crypto-key-type-choice /= tagged-pkix-base64-cert-type
-$crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
-$crypto-key-type-choice /= tagged-cose-key-type
-$crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
-$crypto-key-type-choice /= tagged-key-thumbprint-type
-$crypto-key-type-choice /= tagged-cert-thumbprint-type
-$crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-$crypto-key-type-choice /= tagged-bytes
+$crypto-key-type-choice /= tagged-pkix-base64-key-type / tagged-pkix\
+-base64-cert-type / tagged-pkix-base64-cert-path-type / tagged-cose-\
+key-type / tagged-pkix-asn1der-cert-type / tagged-key-thumbprint-\
+type / tagged-cert-thumbprint-type / tagged-cert-path-thumbprint-\
+                                                  type / tagged-bytes
 tagged-pkix-base64-key-type = #6.554(tstr)
 tagged-pkix-base64-cert-type = #6.555(tstr)
 tagged-pkix-base64-cert-path-type = #6.556(tstr)
-tagged-key-thumbprint-type = #6.557(digest)
+tagged-key-thumbprint-type = #6.557(eatmc.digest)
 tagged-cose-key-type = #6.558(COSE_Key)
-tagged-cert-thumbprint-type = #6.559(digest)
-tagged-cert-path-thumbprint-type = #6.561(digest)
+tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
 tagged-pkix-asn1der-cert-type = #6.562(bstr)
-
 domain-dependency-triple-record = [
-  domain-id: domain-type
-  trustees: [ + domain-type ]
+  domain-id: domain-type,
+  trustees: [+ domain-type],
 ]
-
 domain-membership-triple-record = [
-  domain-id: domain-type
-  members: [ +  domain-type ]
+  domain-id: domain-type,
+  members: [+ domain-type],
 ]
-
 conditional-endorsement-triple-record = [
-  conditions: [ + stateful-environment-record ]
-  endorsements: [ + endorsed-triple-record ]
+  conditions: [+ stateful-environment-record],
+  endorsements: [+ endorsed-triple-record],
 ]
-
 domain-type = environment-map
-
 endorsed-triple-record = [
-  condition: environment-map
-  endorsement: [ + measurement-map ]
+  condition: environment-map,
+  endorsement: [+ measurement-map],
 ]
-
 entity-map&lt;role-type-choice, extension-socket&gt; = {
-  &amp;(entity-name: 0) =&gt; $entity-name-type-choice
-  ? &amp;(reg-id: 1) =&gt; uri
-  &amp;(role: 2) =&gt; [ + role-type-choice ]
-  * extension-socket
+    &amp;(entity-name: 0) =&gt; $entity-name-type-choice,
+    ? &amp;(reg-id: 1) =&gt; uri,
+    &amp;(role: 2) =&gt; [+ role-type-choice],
+    * extension-socket,
 }
-
 $entity-name-type-choice /= text
-
 environment-map = non-empty&lt;{
-  ? &amp;(class: 0) =&gt; class-map
-  ? &amp;(instance: 1) =&gt; $instance-id-type-choice
-  ? &amp;(group: 2) =&gt; $group-id-type-choice
+    ? &amp;(class: 0) =&gt; class-map,
+    ? &amp;(instance: 1) =&gt; $instance-id-type-choice,
+    ? &amp;(group: 2) =&gt; $group-id-type-choice,
 }&gt;
-
 flags-map = {
-  ? &amp;(is-configured: 0) =&gt; bool
-  ? &amp;(is-secure: 1) =&gt; bool
-  ? &amp;(is-recovery: 2) =&gt; bool
-  ? &amp;(is-debug: 3) =&gt; bool
-  ? &amp;(is-replay-protected: 4) =&gt; bool
-  ? &amp;(is-integrity-protected: 5) =&gt; bool
-  ? &amp;(is-runtime-meas: 6) =&gt; bool
-  ? &amp;(is-immutable: 7) =&gt; bool
-  ? &amp;(is-tcb: 8) =&gt; bool
-  ? &amp;(is-confidentiality-protected: 9) =&gt; bool
-  * $$flags-map-extension
+  ? &amp;(is-configured: 0) =&gt; bool,
+  ? &amp;(is-secure: 1) =&gt; bool,
+  ? &amp;(is-recovery: 2) =&gt; bool,
+  ? &amp;(is-debug: 3) =&gt; bool,
+  ? &amp;(is-replay-protected: 4) =&gt; bool,
+  ? &amp;(is-integrity-protected: 5) =&gt; bool,
+  ? &amp;(is-runtime-meas: 6) =&gt; bool,
+  ? &amp;(is-immutable: 7) =&gt; bool,
+  ? &amp;(is-tcb: 8) =&gt; bool,
+  ? &amp;(is-confidentiality-protected: 9) =&gt; bool,
+  * $$flags-map-extension,
 }
-
-$group-id-type-choice /= tagged-uuid-type
-$group-id-type-choice /= tagged-bytes
-
+$group-id-type-choice /= tagged-uuid-type / tagged-bytes
 identity-triple-record = [
-  environment: environment-map
-  key-list: [ + $crypto-key-type-choice ]
+  environment: environment-map,
+  key-list: [+ $crypto-key-type-choice],
   ? conditions: non-empty&lt;{
-    ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
-    ? &amp;(authorized-by: 1) =&gt; [ + $crypto-key-type-choice ]
-  }&gt;
+            ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+            ? &amp;(authorized-by: 1) =&gt; [+ $crypto-key-type-choice],
+}&gt;,
 ]
-
-$instance-id-type-choice /= tagged-ueid-type
-$instance-id-type-choice /= tagged-uuid-type
-$instance-id-type-choice /= tagged-bytes
-$instance-id-type-choice /= tagged-pkix-base64-key-type
-$instance-id-type-choice /= tagged-pkix-base64-cert-type
-$instance-id-type-choice /= tagged-cose-key-type
-$instance-id-type-choice /= tagged-key-thumbprint-type
-$instance-id-type-choice /= tagged-cert-thumbprint-type
-$instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-
-ip-addr-type-choice = ip4-addr-type / ip6-addr-type
-ip4-addr-type = bytes .size 4
-ip6-addr-type = bytes .size 16
-
+$instance-id-type-choice /= tagged-ueid-type / tagged-uuid-type / \
+tagged-bytes / tagged-pkix-base64-key-type / tagged-pkix-base64-cert\
+-type / tagged-cose-key-type / tagged-key-thumbprint-type / tagged-\
+                 cert-thumbprint-type / tagged-pkix-asn1der-cert-type
+ip-addr-type-choice /= cbor-ip.ipv4-address / cbor-ip.ipv6-address
 int-range-type-choice = int / tagged-int-range
-int-range = [min: int / negative-inf, max: int / positive-inf]
+int-range = [
+  min: int / negative-inf,
+  max: int / positive-inf,
+]
 tagged-int-range = #6.564(int-range)
 positive-inf = null
 negative-inf = null
-
 linked-tag-map = {
-  &amp;(linked-tag-id: 0) =&gt; $tag-id-type-choice
-  &amp;(tag-rel: 1) =&gt; $tag-rel-type-choice
+  &amp;(linked-tag-id: 0) =&gt; $tag-id-type-choice,
+  &amp;(tag-rel: 1) =&gt; $tag-rel-type-choice,
 }
-
 mac-addr-type-choice = eui48-addr-type / eui64-addr-type
 eui48-addr-type = bytes .size 6
 eui64-addr-type = bytes .size 8
-
-$measured-element-type-choice /= tagged-oid-type
-$measured-element-type-choice /= tagged-uuid-type
-$measured-element-type-choice /= uint
-$measured-element-type-choice /= tstr
-
+$measured-element-type-choice /= tagged-oid-type / tagged-uuid-type \
+                                                        / uint / tstr
 measurement-map = {
-  ? &amp;(mkey: 0) =&gt; $measured-element-type-choice
-  &amp;(mval: 1) =&gt; measurement-values-map
-  ? &amp;(authorized-by: 2) =&gt; [ + $crypto-key-type-choice ]
+  ? &amp;(mkey: 0) =&gt; $measured-element-type-choice,
+  &amp;(mval: 1) =&gt; measurement-values-map,
+  ? &amp;(authorized-by: 2) =&gt; [+ $crypto-key-type-choice],
 }
-
 measurement-values-map = non-empty&lt;{
-  ? &amp;(version: 0) =&gt; version-map
-  ? &amp;(svn: 1) =&gt; svn-type-choice
-  ? &amp;(digests: 2) =&gt; digests-type
-  ? &amp;(flags: 3) =&gt; flags-map
-  ? (
-      &amp;(raw-value: 4) =&gt; $raw-value-type-choice,
-      ? &amp;(raw-value-mask-DEPRECATED: 5) =&gt; raw-value-mask-type
-    )
-  ? &amp;(mac-addr: 6) =&gt; mac-addr-type-choice
-  ? &amp;(ip-addr: 7) =&gt;  ip-addr-type-choice
-  ? &amp;(serial-number: 8) =&gt; text
-  ? &amp;(ueid: 9) =&gt; ueid-type
-  ? &amp;(uuid: 10) =&gt; uuid-type
-  ? &amp;(name: 11) =&gt; text
-  ? &amp;(cryptokeys: 13) =&gt; [ + $crypto-key-type-choice ]
-  ? &amp;(integrity-registers: 14) =&gt; integrity-registers
-  ? &amp;(int-range: 15) =&gt; int-range-type-choice
-  * $$measurement-values-map-extension
+    ? &amp;(version: 0) =&gt; version-map,
+    ? &amp;(svn: 1) =&gt; svn-type-choice,
+    ? &amp;(digests: 2) =&gt; digests-type,
+    ? &amp;(flags: 3) =&gt; flags-map,
+    ? (
+                  &amp;(raw-value: 4) =&gt; $raw-value-type-choice,
+                  ? &amp;(raw-value-mask-DEPRECATED: 5) =&gt; raw-value-\
+                                                           mask-type,
+          ),
+    ? &amp;(mac-addr: 6) =&gt; mac-addr-type-choice,
+    ? &amp;(ip-addr: 7) =&gt; ip-addr-type-choice,
+    ? &amp;(serial-number: 8) =&gt; text,
+    ? &amp;(ueid: 9) =&gt; ueid-type,
+    ? &amp;(uuid: 10) =&gt; uuid-type,
+    ? &amp;(name: 11) =&gt; text,
+    ? &amp;(cryptokeys: 13) =&gt; [+ $crypto-key-type-choice],
+    ? &amp;(integrity-registers: 14) =&gt; integrity-registers,
+    ? &amp;(int-range: 15) =&gt; int-range-type-choice,
+    * $$measurement-values-map-extension,
 }&gt;
-
-non-empty&lt;M&gt; = (M) .and ({ + any =&gt; any })
-
+non-empty&lt;M&gt; = M .and ({+ any =&gt; any})
 oid-type = bytes
 tagged-oid-type = #6.111(oid-type)
-
-$raw-value-type-choice /= tagged-bytes
-$raw-value-type-choice /= tagged-masked-raw-value
-
+$raw-value-type-choice /= tagged-bytes / tagged-masked-raw-value
 raw-value-mask-type = bytes
-
 tagged-masked-raw-value = #6.563([
-  value: bytes
-  mask : bytes
+    value: bytes,
+    mask: bytes,
 ])
-
 reference-triple-record = [
-  ref-env: environment-map
-  ref-claims: [ + measurement-map ]
+  ref-env: environment-map,
+  ref-claims: [+ measurement-map],
 ]
-
 stateful-environment-record = [
   environment: environment-map,
-  claims-list: [ + measurement-map ]
+  claims-list: [+ measurement-map],
 ]
-
 svn-type = uint
 svn = svn-type
 min-svn = svn-type
 tagged-svn = #6.552(svn)
 tagged-min-svn = #6.553(min-svn)
 svn-type-choice = svn / tagged-svn / tagged-min-svn
-
-$tag-id-type-choice /= tstr
-$tag-id-type-choice /= uuid-type
-
+$tag-id-type-choice /= tstr / uuid-type
 tag-identity-map = {
-  &amp;(tag-id: 0) =&gt; $tag-id-type-choice
-  ? &amp;(tag-version: 1) =&gt; tag-version-type
+  &amp;(tag-id: 0) =&gt; $tag-id-type-choice,
+  ? &amp;(tag-version: 1) =&gt; tag-version-type,
 }
-
-$tag-rel-type-choice /= &amp;(supplements: 0)
-$tag-rel-type-choice /= &amp;(replaces: 1)
-
+$tag-rel-type-choice /= &amp;(supplements: 0) / &amp;(replaces: 1)
 tag-version-type = uint .default 0
-
 tagged-bytes = #6.560(bytes)
-
 triples-map = non-empty&lt;{
-  ? &amp;(reference-triples: 0) =&gt;
-    [ + reference-triple-record ]
-  ? &amp;(endorsed-triples: 1) =&gt;
-    [ + endorsed-triple-record ]
-  ? &amp;(identity-triples: 2) =&gt;
-    [ + identity-triple-record ]
-  ? &amp;(attest-key-triples: 3) =&gt;
-    [ + attest-key-triple-record ]
-  ? &amp;(dependency-triples: 4) =&gt;
-    [ + domain-dependency-triple-record ]
-  ? &amp;(membership-triples: 5) =&gt;
-    [ + domain-membership-triple-record ]
-  ? &amp;(coswid-triples: 6) =&gt;
-    [ + coswid-triple-record ]
-  ? &amp;(conditional-endorsement-series-triples: 8) =&gt;
-    [ + conditional-endorsement-series-triple-record ]
-  ? &amp;(conditional-endorsement-triples: 10) =&gt;
-    [ + conditional-endorsement-triple-record ]
-  * $$triples-map-extension
+    ? &amp;(reference-triples: 0) =&gt; [+ reference-triple-record],
+    ? &amp;(endorsed-triples: 1) =&gt; [+ endorsed-triple-record],
+    ? &amp;(identity-triples: 2) =&gt; [+ identity-triple-record],
+    ? &amp;(attest-key-triples: 3) =&gt; [+ attest-key-triple-record],
+    ? &amp;(dependency-triples: 4) =&gt; [+ domain-dependency-triple-record\
+                                                                   ],
+    ? &amp;(membership-triples: 5) =&gt; [+ domain-membership-triple-record\
+                                                                   ],
+    ? &amp;(coswid-triples: 6) =&gt; [+ coswid-triple-record],
+    ? &amp;(conditional-endorsement-series-triples: 8) =&gt; [+ conditional\
+                                  -endorsement-series-triple-record],
+    ? &amp;(conditional-endorsement-triples: 10) =&gt; [+ conditional-\
+                                          endorsement-triple-record],
+    * $$triples-map-extension,
 }&gt;
-
-ueid-type = bytes .size (7..33)
+ueid-type = bytes .size (7 .. 33)
 tagged-ueid-type = #6.550(ueid-type)
-
 uuid-type = bytes .size 16
 tagged-uuid-type = #6.37(uuid-type)
-
 version-map = {
-  &amp;(version: 0) =&gt; text
-  ? &amp;(version-scheme: 1) =&gt; $version-scheme
+  &amp;(version: 0) =&gt; text,
+  ? &amp;(version-scheme: 1) =&gt; coswid.$version-scheme,
 }
-
-digest = [
-  alg: (int / text),
-  val: bytes
-]
-
-digests-type = [ + digest ]
-
+digests-type = [+ eatmc.digest]
 integrity-register-id-type-choice = uint / text
-
-integrity-registers = {
-  + integrity-register-id-type-choice =&gt; digests-type
+integrity-registers = {+ integrity-register-id-type-choice =&gt; \
+                                                        digests-type}
+eatmc.measured-component = {
+  eatmc.component-id-label =&gt; eatmc.component-id,
+  eatmc.measurement,
+  ? eatmc.authorities-label =&gt; [+ eatmc.authority-id-type],
+  ? eatmc.flags-label =&gt; eatmc.flags-type,
 }
-
-concise-swid-tag = {
-  tag-id =&gt; text / bstr .size 16,
-  tag-version =&gt; integer,
-  ? corpus =&gt; bool,
-  ? patch =&gt; bool,
-  ? supplemental =&gt; bool,
-  software-name =&gt; text,
-  ? software-version =&gt; text,
-  ? version-scheme =&gt; $version-scheme,
-  ? media =&gt; text,
-  ? software-meta =&gt; one-or-more&lt;software-meta-entry&gt;,
-  entity =&gt; one-or-more&lt;entity-entry&gt;,
-  ? link =&gt; one-or-more&lt;link-entry&gt;,
-  ? payload-or-evidence,
+eatmc.measurement //= (eatmc.digested-measurement-label =&gt; eatmc.\
+                      digest // eatmc.raw-measurement-label =&gt; bytes)
+eatmc.authority-id-type = eatmc.eat.JC&lt;eatmc.bytes-b64u, bytes&gt;
+eatmc.flags-type = eatmc.eat.JC&lt;eatmc.bytes8-b64u, eatmc.bytes8&gt;
+eatmc.component-id = [
+  name: text,
+  ? version: eatmc.version,
+]
+eatmc.version = [
+  val: text,
+  ? scheme: eatmc.coswid.$version-scheme,
+]
+eatmc.digest = [
+  alg: int / text,
+  val: eatmc.digest-value-type,
+]
+eatmc.digest-value-type = eatmc.eat.JC&lt;eatmc.bytes-b64u, bytes&gt;
+eatmc.bytes-b64u = text .b64u bytes
+eatmc.bytes8 = bytes .size 8
+eatmc.bytes8-b64u = text .b64u eatmc.bytes8
+eatmc.component-id-label = eatmc.eat.JC&lt;"id", 1&gt;
+eatmc.digested-measurement-label = eatmc.eat.JC&lt;"digested-\
+                                                     measurement", 2&gt;
+eatmc.raw-measurement-label = eatmc.eat.JC&lt;"raw-measurement", 5&gt;
+eatmc.authorities-label = eatmc.eat.JC&lt;"authorities", 3&gt;
+eatmc.flags-label = eatmc.eat.JC&lt;"flags", 4&gt;
+eatmc.mc-cbor = bytes .cbor eatmc.measured-component
+eatmc.mc-json = text .json eatmc.measured-component
+eatmc.$measurements-body-cbor /= eatmc.mc-cbor / eatmc.mc-json
+eatmc.$measurements-body-json /= eatmc.mc-json / text .b64u eatmc.mc\
+                                                                -cbor
+eatmc.eat.JSON-ONLY&lt;J&gt; = J .feature "json"
+eatmc.eat.CBOR-ONLY&lt;C&gt; = C .feature "cbor"
+eatmc.eat.JC&lt;J, C&gt; = eatmc.eat.JSON-ONLY&lt;J&gt; / eatmc.eat.CBOR-ONLY&lt;C&gt;
+eatmc.coswid.$version-scheme /= eatmc.coswid.multipartnumeric / \
+eatmc.coswid.multipartnumeric-suffix / eatmc.coswid.alphanumeric / \
+              eatmc.coswid.decimal / eatmc.coswid.semver / int / text
+eatmc.coswid.multipartnumeric = 1
+eatmc.coswid.multipartnumeric-suffix = 2
+eatmc.coswid.alphanumeric = 3
+eatmc.coswid.decimal = 4
+eatmc.coswid.semver = 16384
+coswid.concise-swid-tag = {
+  coswid.tag-id =&gt; text / bstr .size 16,
+  coswid.tag-version =&gt; integer,
+  ? coswid.corpus =&gt; bool,
+  ? coswid.patch =&gt; bool,
+  ? coswid.supplemental =&gt; bool,
+  coswid.software-name =&gt; text,
+  ? coswid.software-version =&gt; text,
+  ? coswid.version-scheme =&gt; coswid.$version-scheme,
+  ? coswid.media =&gt; text,
+  ? coswid.software-meta =&gt; coswid.one-or-more&lt;coswid.software-meta-\
+                                                              entry&gt;,
+  coswid.entity =&gt; coswid.one-or-more&lt;coswid.entity-entry&gt;,
+  ? coswid.link =&gt; coswid.one-or-more&lt;coswid.link-entry&gt;,
+  ? coswid.payload-or-evidence,
   * $$coswid-extension,
-  global-attributes,
+  coswid.global-attributes,
 }
-
-payload-or-evidence //= ( payload =&gt; payload-entry )
-payload-or-evidence //= ( evidence =&gt; evidence-entry )
-
-any-uri = uri
-label = text / int
-
-$version-scheme /= multipartnumeric
-$version-scheme /= multipartnumeric-suffix
-$version-scheme /= alphanumeric
-$version-scheme /= decimal
-$version-scheme /= semver
-$version-scheme /= int / text
-
-any-attribute = (
-  label =&gt; one-or-more&lt;text&gt; / one-or-more&lt;int&gt;
-)
-
-one-or-more&lt;T&gt; = T / [ 2* T ]
-
-global-attributes = (
-  ? lang =&gt; text,
-  * any-attribute,
-)
-
-hash-entry = [
+coswid.tag-id = 0
+coswid.$version-scheme /= coswid.multipartnumeric / coswid.\
+multipartnumeric-suffix / coswid.alphanumeric / coswid.decimal / \
+                                           coswid.semver / int / text
+coswid.one-or-more&lt;T&gt; = T / [2*T]
+coswid.tag-version = 12
+coswid.corpus = 8
+coswid.patch = 9
+coswid.supplemental = 11
+coswid.software-name = 1
+coswid.software-version = 13
+coswid.version-scheme = 14
+coswid.media = 10
+coswid.software-meta = 5
+coswid.software-meta-entry = {
+  ? coswid.activation-status =&gt; text,
+  ? coswid.channel-type =&gt; text,
+  ? coswid.colloquial-version =&gt; text,
+  ? coswid.description =&gt; text,
+  ? coswid.edition =&gt; text,
+  ? coswid.entitlement-data-required =&gt; bool,
+  ? coswid.entitlement-key =&gt; text,
+  ? coswid.generator =&gt; text / bstr .size 16,
+  ? coswid.persistent-id =&gt; text,
+  ? coswid.product =&gt; text,
+  ? coswid.product-family =&gt; text,
+  ? coswid.revision =&gt; text,
+  ? coswid.summary =&gt; text,
+  ? coswid.unspsc-code =&gt; text,
+  ? coswid.unspsc-version =&gt; text,
+  * $$software-meta-extension,
+  coswid.global-attributes,
+}
+coswid.entity = 2
+coswid.entity-entry = {
+  coswid.entity-name =&gt; text,
+  ? coswid.reg-id =&gt; coswid.any-uri,
+  coswid.role =&gt; coswid.one-or-more&lt;coswid.$role&gt;,
+  ? coswid.thumbprint =&gt; coswid.hash-entry,
+  * $$entity-extension,
+  coswid.global-attributes,
+}
+coswid.link = 4
+coswid.link-entry = {
+  ? coswid.artifact =&gt; text,
+  coswid.href =&gt; coswid.any-uri,
+  ? coswid.media =&gt; text,
+  ? coswid.ownership =&gt; coswid.$ownership,
+  coswid.rel =&gt; coswid.$rel,
+  ? coswid.media-type =&gt; text,
+  ? coswid.use =&gt; coswid.$use,
+  * $$link-extension,
+  coswid.global-attributes,
+}
+coswid.payload-or-evidence //= (coswid.payload =&gt; coswid.payload-\
+                   entry // coswid.evidence =&gt; coswid.evidence-entry)
+coswid.global-attributes = (
+  ? coswid.lang =&gt; text,
+  * coswid.any-attribute,
+  )
+coswid.multipartnumeric = 1
+coswid.multipartnumeric-suffix = 2
+coswid.alphanumeric = 3
+coswid.decimal = 4
+coswid.semver = 16384
+coswid.activation-status = 43
+coswid.channel-type = 44
+coswid.colloquial-version = 45
+coswid.description = 46
+coswid.edition = 47
+coswid.entitlement-data-required = 48
+coswid.entitlement-key = 49
+coswid.generator = 50
+coswid.persistent-id = 51
+coswid.product = 52
+coswid.product-family = 53
+coswid.revision = 54
+coswid.summary = 55
+coswid.unspsc-code = 56
+coswid.unspsc-version = 57
+coswid.entity-name = 31
+coswid.reg-id = 32
+coswid.any-uri = uri
+coswid.role = 33
+coswid.$role /= coswid.tag-creator / coswid.software-creator / \
+coswid.aggregator / coswid.distributor / coswid.licensor / coswid.\
+                                              maintainer / int / text
+coswid.thumbprint = 34
+coswid.hash-entry = [
   hash-alg-id: int,
   hash-value: bytes,
 ]
-
-entity-entry = {
-  entity-name =&gt; text,
-  ? reg-id =&gt; any-uri,
-  role =&gt; one-or-more&lt;$role&gt;,
-  ? thumbprint =&gt; hash-entry,
-  * $$entity-extension,
-  global-attributes,
-}
-
-$role /= tag-creator
-$role /= software-creator
-$role /= aggregator
-$role /= distributor
-$role /= licensor
-$role /= maintainer
-$role /= int / text
-
-link-entry = {
-  ? artifact =&gt; text,
-  href =&gt; any-uri,
-  ? media =&gt; text,
-  ? ownership =&gt; $ownership,
-  rel =&gt; $rel,
-  ? media-type =&gt; text,
-  ? use =&gt; $use,
-  * $$link-extension,
-  global-attributes,
-}
-
-$ownership /= shared
-$ownership /= private
-$ownership /= abandon
-$ownership /= int / text
-
-$rel /= ancestor
-$rel /= component
-$rel /= feature
-$rel /= installationmedia
-$rel /= packageinstaller
-$rel /= parent
-$rel /= patches
-$rel /= requires
-$rel /= see-also
-$rel /= supersedes
-$rel /= supplemental
-$rel /= -256..64436 / text
-
-$use /= optional
-$use /= required
-$use /= recommended
-$use /= int / text
-
-software-meta-entry = {
-  ? activation-status =&gt; text,
-  ? channel-type =&gt; text,
-  ? colloquial-version =&gt; text,
-  ? description =&gt; text,
-  ? edition =&gt; text,
-  ? entitlement-data-required =&gt; bool,
-  ? entitlement-key =&gt; text,
-  ? generator =&gt;  text / bstr .size 16,
-  ? persistent-id =&gt; text,
-  ? product =&gt; text,
-  ? product-family =&gt; text,
-  ? revision =&gt; text,
-  ? summary =&gt; text,
-  ? unspsc-code =&gt; text,
-  ? unspsc-version =&gt; text,
-  * $$software-meta-extension,
-  global-attributes,
-}
-
-path-elements-group = ( ? directory =&gt; one-or-more&lt;directory-entry&gt;,
-                        ? file =&gt; one-or-more&lt;file-entry&gt;,
-                      )
-
-resource-collection = (
-  path-elements-group,
-  ? process =&gt; one-or-more&lt;process-entry&gt;,
-  ? resource =&gt; one-or-more&lt;resource-entry&gt;,
-  * $$resource-collection-extension,
-)
-
-file-entry = {
-  filesystem-item,
-  ? size =&gt; uint,
-  ? file-version =&gt; text,
-  ? hash =&gt; hash-entry,
-  * $$file-extension,
-  global-attributes,
-}
-
-directory-entry = {
-  filesystem-item,
-  ? path-elements =&gt; { path-elements-group },
-  * $$directory-extension,
-  global-attributes,
-}
-
-process-entry = {
-  process-name =&gt; text,
-  ? pid =&gt; integer,
-  * $$process-extension,
-  global-attributes,
-}
-
-resource-entry = {
-  type =&gt; text,
-  * $$resource-extension,
-  global-attributes,
-}
-
-filesystem-item = (
-  ? key =&gt; bool,
-  ? location =&gt; text,
-  fs-name =&gt; text,
-  ? root =&gt; text,
-)
-
-payload-entry = {
-  resource-collection,
+coswid.artifact = 37
+coswid.href = 38
+coswid.ownership = 39
+coswid.$ownership /= coswid.shared / coswid.private / coswid.\
+                                                 abandon / int / text
+coswid.rel = 40
+coswid.$rel /= coswid.ancestor / coswid.component / coswid.feature \
+/ coswid.installationmedia / coswid.packageinstaller / coswid.\
+parent / coswid.patches / coswid.requires / coswid.see-also / coswid\
+             .supersedes / coswid.supplemental / -256 .. 65536 / text
+coswid.media-type = 41
+coswid.use = 42
+coswid.$use /= coswid.optional / coswid.required / coswid.\
+                                             recommended / int / text
+coswid.payload = 6
+coswid.payload-entry = {
+  coswid.resource-collection,
   * $$payload-extension,
-  global-attributes,
+  coswid.global-attributes,
 }
-
-evidence-entry = {
-  resource-collection,
-  ? date =&gt; integer-time,
-  ? device-id =&gt; text,
-  ? location =&gt; text,
+coswid.evidence = 3
+coswid.evidence-entry = {
+  coswid.resource-collection,
+  ? coswid.date =&gt; coswid.integer-time,
+  ? coswid.device-id =&gt; text,
+  ? coswid.location =&gt; text,
   * $$evidence-extension,
-  global-attributes,
+  coswid.global-attributes,
 }
-
-integer-time = #6.1(int)
-
-tag-id = 0
-software-name = 1
-entity = 2
-evidence = 3
-link = 4
-software-meta = 5
-payload = 6
-hash = 7
-corpus = 8
-patch = 9
-media = 10
-supplemental = 11
-tag-version = 12
-software-version = 13
-version-scheme = 14
-lang = 15
-directory = 16
-file = 17
-process = 18
-resource = 19
-size = 20
-file-version = 21
-key = 22
-location = 23
-fs-name = 24
-root = 25
-path-elements = 26
-process-name = 27
-pid = 28
-type = 29
-entity-name = 31
-reg-id = 32
-role = 33
-thumbprint = 34
-date = 35
-device-id = 36
-artifact = 37
-href = 38
-ownership = 39
-rel = 40
-media-type = 41
-use = 42
-activation-status = 43
-channel-type = 44
-colloquial-version = 45
-description = 46
-edition = 47
-entitlement-data-required = 48
-entitlement-key = 49
-generator = 50
-persistent-id = 51
-product = 52
-product-family = 53
-revision = 54
-summary = 55
-unspsc-code = 56
-unspsc-version = 57
-
-multipartnumeric = 1
-multipartnumeric-suffix = 2
-alphanumeric = 3
-decimal = 4
-semver = 16384
-
-tag-creator=1
-software-creator=2
-aggregator=3
-distributor=4
-licensor=5
-maintainer=6
-
-abandon=1
-private=2
-shared=3
-
-ancestor=1
-component=2
-feature=3
-installationmedia=4
-packageinstaller=5
-parent=6
-patches=7
-requires=8
-see-also=9
-supersedes=10
-
-optional=1
-required=2
-recommended=3
-
+coswid.lang = 15
+coswid.any-attribute = (coswid.label =&gt; coswid.one-or-more&lt;text&gt; / \
+                                             coswid.one-or-more&lt;int&gt;)
+coswid.tag-creator = 1
+coswid.software-creator = 2
+coswid.aggregator = 3
+coswid.distributor = 4
+coswid.licensor = 5
+coswid.maintainer = 6
+coswid.shared = 3
+coswid.private = 2
+coswid.abandon = 1
+coswid.ancestor = 1
+coswid.component = 2
+coswid.feature = 3
+coswid.installationmedia = 4
+coswid.packageinstaller = 5
+coswid.parent = 6
+coswid.patches = 7
+coswid.requires = 8
+coswid.see-also = 9
+coswid.supersedes = 10
+coswid.optional = 1
+coswid.required = 2
+coswid.recommended = 3
+coswid.resource-collection = (
+  coswid.path-elements-group,
+  ? coswid.process =&gt; coswid.one-or-more&lt;coswid.process-entry&gt;,
+  ? coswid.resource =&gt; coswid.one-or-more&lt;coswid.resource-entry&gt;,
+  * $$resource-collection-extension,
+  )
+coswid.date = 35
+coswid.integer-time = #6.1(int)
+coswid.device-id = 36
+coswid.location = 23
+coswid.label = text / int
+coswid.path-elements-group = (
+  ? coswid.directory =&gt; coswid.one-or-more&lt;coswid.directory-entry&gt;,
+  ? coswid.file =&gt; coswid.one-or-more&lt;coswid.file-entry&gt;,
+  )
+coswid.process = 18
+coswid.process-entry = {
+  coswid.process-name =&gt; text,
+  ? coswid.pid =&gt; integer,
+  * $$process-extension,
+  coswid.global-attributes,
+}
+coswid.resource = 19
+coswid.resource-entry = {
+  coswid.type =&gt; text,
+  * $$resource-extension,
+  coswid.global-attributes,
+}
+coswid.directory = 16
+coswid.directory-entry = {
+  coswid.filesystem-item,
+  ? coswid.path-elements =&gt; {coswid.path-elements-group},
+  * $$directory-extension,
+  coswid.global-attributes,
+}
+coswid.file = 17
+coswid.file-entry = {
+  coswid.filesystem-item,
+  ? coswid.size =&gt; uint,
+  ? coswid.file-version =&gt; text,
+  ? coswid.hash =&gt; coswid.hash-entry,
+  * $$file-extension,
+  coswid.global-attributes,
+}
+coswid.process-name = 27
+coswid.pid = 28
+coswid.type = 29
+coswid.filesystem-item = (
+  ? coswid.key =&gt; bool,
+  ? coswid.location =&gt; text,
+  coswid.fs-name =&gt; text,
+  ? coswid.root =&gt; text,
+  )
+coswid.path-elements = 26
+coswid.size = 20
+coswid.file-version = 21
+coswid.hash = 7
+coswid.key = 22
+coswid.fs-name = 24
+coswid.root = 25
+cbor-ip.ipv4-address = bytes .size 4
+cbor-ip.ipv6-address = bytes .size 16
 </pre><a href="#appendix-A-1" class="pilcrow">¶</a>
 </div>
 </section>

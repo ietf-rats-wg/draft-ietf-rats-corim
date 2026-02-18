@@ -123,6 +123,9 @@ Table of Contents
        5.1.6.  Endorsed Values Triple
        5.1.7.  Conditional Endorsement Triple
        5.1.8.  Conditional Endorsement Series Triple
+         5.1.8.1.  Condition Matching
+           5.1.8.1.1.  Selection Matching
+           5.1.8.1.2.  Processing the Addition
        5.1.9.  Device Identity Triple
        5.1.10. Attest Key Triple
        5.1.11. Triples for domain definitions
@@ -732,9 +735,11 @@ Table of Contents
    manifests, certificates, or other relevant information can be
    retrieved by the Verifier.
 
+   ;# import measured-component as eatmc
+
    corim-locator-map = {
      &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest / [digest]
+     ? &(thumbprint: 1) => eatmc.digest / [ eatmc.digest ]
    }
 
    The following describes each child element of this type.
@@ -1390,9 +1395,8 @@ Table of Contents
       existing CoSWID tags.  Described in Section 5.1.12.
 
    *  conditional-endorsement-series-triples (index 8): Triples
-      describing a series of Endorsement that are applicable based on
-      the acceptance of a series of stateful environment records.
-      Described in Section 5.1.8.
+      describing a series of Endorsements that are applicable based on
+      the acceptance of a condition.  Described in Section 5.1.8.
 
    *  conditional-endorsement-triples (index 10): Triples describing a
       series of conditional Endorsements based on the acceptance of a
@@ -1598,7 +1602,7 @@ Table of Contents
          ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type
        )
      ? &(mac-addr: 6) => mac-addr-type-choice
-     ? &(ip-addr: 7) =>  ip-addr-type-choice
+     ? &(ip-addr: 7) => ip-addr-type-choice
      ? &(serial-number: 8) => text
      ? &(ueid: 9) => ueid-type
      ? &(uuid: 10) => uuid-type
@@ -1640,8 +1644,9 @@ Table of Contents
       should use the tagged-masked-raw-value on index 4 instead of using
       index 5.
 
-   *  mac-addr (index 6): A EUI-48 or EUI-64 MAC address associated with
-      the measured environment.  Described in Section 5.1.4.5.7.
+   *  mac-addr (index 6): An EUI-48 (Extended Unique Identifier 48) or
+      EUI-64 MAC address [IEEE-802.OandA] associated with the measured
+      environment.  Described in Section 5.1.4.5.7.
 
    *  ip-addr (index 7): An IPv4 or IPv6 address associated with the
       measured environment.  Described in Section 5.1.4.5.7.
@@ -1673,9 +1678,11 @@ Table of Contents
    A version-map contains details about the versioning of a measured
    environment.
 
+   ;# import rfc9393 as coswid
+
    version-map = {
      &(version: 0) => text
-     ? &(version-scheme: 1) => $version-scheme
+     ? &(version-scheme: 1) => coswid.$version-scheme
    }
 
    The following describes each member of the version-map:
@@ -1817,16 +1824,20 @@ Table of Contents
 
 5.1.4.5.7.  Address Types
 
-   The types or associating addressing information to a measured
-   environment are:
+   This specification defines types for 48-bit and 64-bit MAC
+   identifiers.  For IP addresses, it reuses the "Address Format" types
+   defined in [RFC9164] with the CBOR tag removed.
 
-   ip-addr-type-choice = ip4-addr-type / ip6-addr-type
-   ip4-addr-type = bytes .size 4
-   ip6-addr-type = bytes .size 16
+   All the types represent a single address.
 
    mac-addr-type-choice = eui48-addr-type / eui64-addr-type
    eui48-addr-type = bytes .size 6
    eui64-addr-type = bytes .size 8
+
+   ;# import rfc9164 as cbor-ip
+
+   ip-addr-type-choice /= cbor-ip.ipv4-address
+   ip-addr-type-choice /= cbor-ip.ipv6-address
 
 5.1.4.6.  Crypto Keys
 
@@ -1868,6 +1879,8 @@ Table of Contents
    *  tagged-bytes: a key identifier with no prescribed construction
       method.
 
+   ;# import measured-component as eatmc
+
    $crypto-key-type-choice /= tagged-pkix-base64-key-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
@@ -1880,10 +1893,10 @@ Table of Contents
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-key-thumbprint-type = #6.557(eatmc.digest)
    tagged-cose-key-type = #6.558(COSE_Key)
-   tagged-cert-thumbprint-type = #6.559(digest)
-   tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+   tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
 5.1.4.7.  Integrity Registers
@@ -2081,31 +2094,27 @@ Table of Contents
 
 5.1.8.  Conditional Endorsement Series Triple
 
-   The Conditional Endorsement Series Triple is used to assert endorsed
-   values based on an initial condition match (specified in condition:)
-   followed by a series condition match (specified in selection: inside
-   conditional-series-record).  Every conditional-series-record
-   selection MUST select the same mkeys where every selected mkey's
-   corresponding set of code points represented as mval.key MUST be the
-   same across each conditional-series-record.  For example, if a
-   selection matches on 3 measurement-map statements; mkey is the same
-   for all 3 statements and mval contains only A= variable-X, B=
-   variable-Y, and C= variable-Z (exactly the set of code points A, B,
-   and C) respectively for every conditional-series-record in the
-   series.
-
-   These restrictions ensure that evaluation order does not change the
-   meaning of the triple during the appraisal process.  Series entries
-   are ordered such that the most precise match is evaluated first and
-   least precise match is evaluated last.  The first series condition
-   that matches terminates series matching and the endorsement values
-   are added to the Attester's actual state.
+   The Conditional Endorsement Series Triple employs a 2-stage matching
+   convention to assert endorsed values based on an initial condition
+   match followed by a series selection match.  If both the condition
+   and selection criteria are satisfied, a set of endorsed values are
+   added to the matching triple records.  The condition match identifies
+   the set of Claims to which the selection criteria are applied.  The
+   selection specifies a pattern of measurements that, if present,
+   controls when a focused set of endorsed values are to be asserted.
+   The 2-stage approach enables Endorsement authors the ability to craft
+   powerful search criteria while avoiding probelmatic repetition of
+   search criteria.
 
    The Conditional Endorsement Series Triple has the following
    structure:
 
    conditional-endorsement-series-triple-record = [
-     condition: stateful-environment-record
+     condition: [
+       environment: environment-map
+       claims-list: [ * measurement-map ]
+       ? authorized-by: [ + $crypto-key-type-choice ]
+     ]
      series: [ + conditional-series-record ]
    ]
 
@@ -2117,23 +2126,59 @@ Table of Contents
    The conditional-endorsement-series-triple-record has the following
    parameters:
 
-   *  condition: Search criteria that locates Evidence, corroborated
-      Evidence, or Endorsements.
+   *  condition: Initial selection criteria that locates Evidence,
+      corroborated Evidence, or Endorsements from the current set of
+      accepted Claims.  The condition consists of an environment-map, a
+      (possibly empty) claims-list, and an optional authorized-by.
 
-   *  series: A set of selection-addition tuples.
+   *  series: A sequence of selection-addition tuples.
 
    The conditional-series-record has the following parameters:
 
-   *  selection: Search criteria that locates Evidence, corroborated
-      Evidence, or Endorsements from the condition result.
+   *  selection: Secondary selection criteria that locates Evidence,
+      corroborated Evidence, or Endorsements from the initial selection
+      criteria's condition result.
 
-   *  addition: Additional Endorsements if the selection criteria are
-      satisfied.
+   *  addition: Endorsements that are added if the selection criteria
+      are satisfied.
 
-   To process a conditional-endorsement-series-record the conditions are
-   compared with existing Evidence, corroborated Evidence, and
-   Endorsements.  If the search criteria are satisfied, the series
-   tuples are processed.
+5.1.8.1.  Condition Matching
+
+   The condition matching criteria is applied to the set of Claims the
+   Verifier has previously accepted.  The criteria is expressed in terms
+   of environments (i.e., environment-map) and optionally measurements
+   (i.e., claims-list) or authority (i.e., authorized-by).  Condition
+   matching is intended to powerfully enable broad or narrow searches
+   that serve as staging for subsequent selection matching.
+
+   Note that measurement-map can also specify authority criteria.  To
+   avoid conflicting criteria, the authorized-by in condition takes
+   precedence over the authorized-by in measurement-map.
+
+5.1.8.1.1.  Selection Matching
+
+   Every conditional-series-record selection MUST select the same mkeys
+   where every selected mkey's corresponding set of code points
+   represented as mval.key MUST be the same across each conditional-
+   series-record.  For example, if a selection matches on 3 measurement-
+   map statements; mkey is the same for all 3 statements and mval
+   contains only A= variable-X, B= variable-Y, and C= variable-Z
+   (exactly the set of code points A, B, and C) respectively for every
+   conditional-series-record in the series.
+
+   These restrictions ensure that evaluation order does not change the
+   meaning of the triple during the appraisal process.  Series entries
+   are ordered such that the most precise match is evaluated first and
+   least precise match is evaluated last.  The first series condition
+   that matches terminates series matching and the endorsement values
+   are added to the Attester's actual state.
+
+5.1.8.1.2.  Processing the Addition
+
+   To process a conditional-endorsement-series-record the selection
+   criteria in condition entries are matched with existing Evidence,
+   corroborated Evidence, and Endorsements.  If the selection criteria
+   are satisfied, the series tuples are processed.
 
    The series array contains an ordered list of conditional-series-
    record entries.  Evaluation order begins at list position 0.
@@ -2368,12 +2413,12 @@ Table of Contents
    existing CoSWIDs, and the predicate asserts that these contain the
    expected (i.e., reference) measurements for the Target Environment.
 
+   ;# import rfc9393 as coswid
+
    coswid-triple-record = [
      environment-map
-     [ + concise-swid-tag-id ]
+     [ + coswid.tag-id ]
    ]
-
-   concise-swid-tag-id = text / bstr .size 16
 
 5.2.  Extensibility
 
@@ -2569,14 +2614,9 @@ Table of Contents
    defined in Section 4.2 of [I-D.ietf-rats-eat-measured-component].
    Only the CBOR serialization is used.
 
-   ; This definition of 'digest' is equivalent to the one in
-   ; I-D.ietf-rats-eat-measured-component
-   digest = [
-     alg: (int / text),
-     val: bytes
-   ]
+   ;# import measured-component as eatmc
 
-   digests-type = [ + digest ]
+   digests-type = [ + eatmc.digest ]
 
    A measurement can be obtained using different hash algorithms.  A
    digests-type can be used to collect multiple digest values obtained
@@ -3150,36 +3190,35 @@ Table of Contents
    Step 3.  Populate the evs ECTs using the Conditional Endorsement
             Series Triple (CEST) (Section 5.1.8).
 
-   i.  CEST.condition:
+   i.  For c in CEST.condition:
 
-      *copy*(stateful-environment-record.environment.environment-map,
-         evs.condition.environment.environment-map)
+      *copy*(c.environment, evs.condition.environment)
 
-      *copy*(stateful-environment-record.claims-list.measurement-map,
-         evs.condition.element-list.element-map)
+      If the c.claims-list is not empty then *copy*(c.claims-list,
+         evs.condition.element-list)
 
-   ii. For each e in CEST.series:
+      If c.authorized-by is present then *copy*(c.authorized-by,
+         evs.condition.authority)
 
-      *copy*(evs.condition.environment.environment-map,
-         evs.series.selection.environment.environment-map)
+   ii. For each s in CEST.series:
 
-      *copy*(e.conditional-series-
-         record.selection.measurement.measurement-map,
-         evs.series.selection.element-list.element-map)
+      *copy*(evs.condition.environment,
+         evs.series[s].selection.environment)
 
-      *copy*(evs.condition.environment.environment-map,
-         evs.series.addition.environment.environment-map)
+      *copy*(s.selection, evs.series[s].selection.element-list)
 
-      *copy*(e.conditional-series-record.addition.measurement-map,
-         evs.series.addition.element-list.element-map)
+      *copy*(evs.condition.environment,
+         evs.series[s].addition.environment)
+
+      *copy*(s.addition, evs.series[s].addition.element-list)
 
    Step 4.  The signer of the Conditional Endorsement Series conceptual
-            message is copied to the evs.series.addition.authority
-            field.
+            message is copied to the evs.series.addition.authority field
+            for each addition.
 
    Step 5.  If the Conditional Endorsement Series conceptual message has
             a profile, the profile is copied to the
-            evs.series.addition.profile field.
+            evs.series.addition.profile field for each addition.
 
 9.1.6.  Processing of Attest Key and Device Identity Key Triples
 
@@ -3934,38 +3973,44 @@ Table of Contents
 
 9.3.4.5.  Processing Domain Membership
 
-   This section assumes that each Domain Membership Triple has been
-   transformed into an internal representation following the steps
-   described in Section 9.1.7.2, resulting in the representation
-   specified in Section 9.1.7.1.
+   This section assumes that each Domain Membership Triple (see
+   Section 5.1.11.1) has been transformed into an internal
+   representation following the steps described in Section 9.1.7.2,
+   resulting in the representation specified in Section 9.1.7.1.
 
-   Domain Membership ECTs (cmtype: domain-member) in the staging area
-   are matched with ACS entries (of cmtype: evidence) OR (of cmtype:
-   domain-member) using the following algorithm:
+   Domain Membership ECTs (i.e., cmtype equals domain-member) in the dm
+   staging area are matched with ACS entries where cmtype is set to
+   evidence, reference-values i.e. corroborated evidence, or domain-
+   member using the following algorithm:
 
-   For every Domain Membership ECT entry (cmtype: domain-member) in
-   staging area, which has not been processed:
+   For each domain in the dm staging area, which has not been processed
+   (outer loop):
 
-   For each i in members, check that there is a corresponding ACS entry
-   with a matching environment and (cmtype:evidence OR cmtype: domain-
-   member)
+   For each member m in domain.members (inner loop):
 
-   *  If all members match a corresponding ACS entry, add the Domain
-      Membership ECT to ACS
+   *  Check that there is a corresponding ACS entry environment that
+      matches m.environment.
 
-   *  If none of the members match, proceed to next Domain Membership
-      ECT in the staging area
+   *  Check that the ACS entry cmtype is one of evidence, reference-
+      values, or domain-member.
 
-   *  If there is a partial match, proceed to the next Domain Membership
-      ECT in the staging area If the previous execution of the loop
-      added any Domain Membership ECTs to the ACS, then run the loop
-      again Else STOP processing Domain Membership ECTs
+   Outer loop resumes:
+
+   *  If all domain.members matched a corresponding ACS entry, add the
+      domain ECT to the ACS.
+
+   *  If none of the domain.members matched, proceed to next dm entry.
+
+   *  If some, but not all of the domain.members matched, proceed to the
+      next dm entry.  If the previous execution of the outer loop added
+      any domain entry to the ACS, then run the outer loop again Else
+      STOP processing dm entries.
 
    The processing terminates, when all the Domain Membership ECTs which
    are appropriate to the Evidence have been added to the ACS.
 
-   If expected Domain Membership ECTs have not been added, then this may
-   affect the processing in a later phase.
+   If any of the expected Domain Membership ECTs have not been added to
+   the ACS, then this may affect outcomes in subsequent phases.
 
 9.3.4.6.  Processing Domain Dependency
 
@@ -5268,6 +5313,11 @@ Table of Contents
               DOI 10.17487/RFC9090, July 2021,
               <https://www.rfc-editor.org/rfc/rfc9090>.
 
+   [RFC9164]  Richardson, M. and C. Bormann, "Concise Binary Object
+              Representation (CBOR) Tags for IPv4 and IPv6 Addresses and
+              Prefixes", RFC 9164, DOI 10.17487/RFC9164, December 2021,
+              <https://www.rfc-editor.org/rfc/rfc9164>.
+
    [RFC9393]  Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
               Waltermire, "Concise Software Identification Tags",
               RFC 9393, DOI 10.17487/RFC9393, June 2023,
@@ -5301,11 +5351,11 @@ Table of Contents
               DOI 10.17487/RFC9052, August 2022,
               <https://www.rfc-editor.org/rfc/rfc9052>.
 
-   [X.690]    International Telecommunications Union, "Information
-              technology — ASN.1 encoding rules: Specification of Basic
-              Encoding Rules (BER), Canonical Encoding Rules (CER) and
-              Distinguished Encoding Rules (DER)", ITU-T Recommendation
-              X.690, August 2015, <https://www.itu.int/rec/T-REC-X.690>.
+   [X.690]    International Telephone and Telegraph Consultative
+              Committee, "ASN.1 encoding rules: Specification of basic
+              encoding Rules (BER), Canonical encoding rules (CER) and
+              Distinguished encoding rules (DER)", CCITT Recommendation
+              X.690, July 2002.
 
 13.2.  Informative References
 
@@ -5355,6 +5405,12 @@ Table of Contents
               IANA, "Concise Software Identifier (CoSWID)",
               <https://www.iana.org/assignments/coswid>.
 
+   [IEEE-802.OandA]
+              "IEEE Standard for Local and Metropolitan Area Networks:
+              Overview and Architecture", IEEE,
+              DOI 10.1109/ieeestd.2014.6847097, ISBN ["9780738192192"],
+              July 2014, <https://doi.org/10.1109/ieeestd.2014.6847097>.
+
    [RFC7519]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web Token
               (JWT)", RFC 7519, DOI 10.17487/RFC7519, May 2015,
               <https://www.rfc-editor.org/rfc/rfc7519>.
@@ -5398,697 +5454,593 @@ Table of Contents
 
 Appendix A.  Base CoRIM CDDL
 
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
    corim = concise-rim-type-choice
-
-   concise-rim-type-choice /= tagged-unsigned-corim-map
-   concise-rim-type-choice /= signed-corim
-
+   concise-rim-type-choice /= tagged-unsigned-corim-map / signed-corim
    concise-tl-tag = {
-     &(tag-identity: 0) => tag-identity-map
-     &(tags-list: 1) => [ + tag-identity-map ],
-     &(tl-validity: 2) => validity-map
+     &(tag-identity: 0) => tag-identity-map,
+     &(tags-list: 1) => [+ tag-identity-map],
+     &(tl-validity: 2) => validity-map,
    }
-
-   $concise-tag-type-choice /= tagged-concise-swid-tag
-   $concise-tag-type-choice /= tagged-concise-mid-tag
-   $concise-tag-type-choice /= tagged-concise-tl-tag
-
-   corim-entity-map =
-     entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
-
-   $corim-id-type-choice /= tstr
-   $corim-id-type-choice /= uuid-type
-
+   $concise-tag-type-choice /= tagged-concise-swid-tag / tagged-concise\
+                                        -mid-tag / tagged-concise-tl-tag
+   corim-entity-map = entity-map<$corim-role-type-choice, $$corim-\
+                                                   entity-map-extension>
+   $corim-id-type-choice /= tstr / uuid-type
    corim-locator-map = {
-     &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest / [digest]
+     &(href: 0) => uri / [+ uri],
+     ? &(thumbprint: 1) => eatmc.digest / [eatmc.digest],
    }
-
    corim-map = {
-     &(id: 0) => $corim-id-type-choice
-     &(tags: 1) => [ + $concise-tag-type-choice ]
-     ? &(dependent-rims: 2) => [ + corim-locator-map ]
-     ? &(profile: 3) => $profile-type-choice
-     ? &(rim-validity: 4) => validity-map
-     ? &(entities: 5) => [ + corim-entity-map ]
-     * $$corim-map-extension
+     &(id: 0) => $corim-id-type-choice,
+     &(tags: 1) => [+ $concise-tag-type-choice],
+     ? &(dependent-rims: 2) => [+ corim-locator-map],
+     ? &(profile: 3) => $profile-type-choice,
+     ? &(rim-validity: 4) => validity-map,
+     ? &(entities: 5) => [+ corim-entity-map],
+     * $$corim-map-extension,
    }
    unsigned-corim-map = corim-map
-
    corim-meta-map = {
-     &(signer: 0) => corim-signer-map
-     ? &(signature-validity: 1) => validity-map
+     &(signer: 0) => corim-signer-map,
+     ? &(signature-validity: 1) => validity-map,
    }
-
-   $corim-role-type-choice /= &(manifest-creator: 1)
-   $corim-role-type-choice /= &(manifest-signer: 2)
-
+   $corim-role-type-choice /= &(manifest-creator: 1) / &(manifest-\
+                                                              signer: 2)
    corim-signer-map = {
-     &(signer-name: 0) => $entity-name-type-choice
-     ? &(signer-uri: 1) => uri
-     * $$corim-signer-map-extension
+     &(signer-name: 0) => $entity-name-type-choice,
+     ? &(signer-uri: 1) => uri,
+     * $$corim-signer-map-extension,
    }
-
    COSE-Sign1-corim = [
-     protected: bstr .cbor protected-corim-header-map
-     unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
-     signature: bstr
+     protected: bstr .cbor protected-corim-header-map,
+     unprotected: unprotected-corim-header-map,
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
+                                                           digest / nil,
+     signature: bstr,
    ]
-
    hash-envelope-digest = bstr
-
-   $profile-type-choice /= uri
-   $profile-type-choice /= tagged-oid-type
-
+   $profile-type-choice /= uri / tagged-oid-type
    cwt-claims = {
-     &(iss: 1) => tstr
-     ? &(sub: 2) => tstr
-     ? &(exp: 4) => int / float
-     ? &(nbf: 5) => int / float
-     * int => any
+     &(iss: 1) => tstr,
+     ? &(sub: 2) => tstr,
+     ? &(exp: 4) => int / float,
+     ? &(nbf: 5) => int / float,
+     * int => any,
    }
-
-   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
-
-   protected-corim-header-map-inline =
-     {
-       &(alg: 1) => int,
-       &(content-type: 3) => "application/rim+cbor",
-       meta-group,
-       * cose-label => cose-value
-     }
-
-   protected-corim-header-map-hash-envelope =
-     {
-       &(alg: 1) => int,
-       &(payload_hash_alg: 258) => int
-       &(payload_preimage_content_type: 259) => "application/rim+cbor",
-       ? &(payload_location: 260) => tstr
-       meta-group,
-       * cose-label => cose-value
-     }
-
+   protected-corim-header-map = protected-corim-header-map-inline / \
+                                protected-corim-header-map-hash-envelope
+   protected-corim-header-map-inline = {
+     &(alg: 1) => int,
+     &(content-type: 3) => "application/rim+cbor",
+     meta-group,
+     * cose-label => cose-value,
+   }
+   protected-corim-header-map-hash-envelope = {
+     &(alg: 1) => int,
+     &(payload_hash_alg: 258) => int,
+     &(payload_preimage_content_type: 259) => "application/rim+cbor",
+     ? &(payload_location: 260) => tstr,
+     meta-group,
+     * cose-label => cose-value,
+   }
    meta-group = ((
            corim-meta-identity,
            ? cwt-claims-identity,
          ) // cwt-claims-identity)
-
    corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
-
    signed-corim = #6.18(COSE-Sign1-corim)
-
-   tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
-
+   tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
-
    tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
-
    tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
-
-   unprotected-corim-header-map = {
-     * cose-label => cose-value
-   }
-
+   unprotected-corim-header-map = {* cose-label => cose-value}
    validity-map = {
-     ? &(not-before: 0) => time
-     &(not-after: 1) => time
+     ? &(not-before: 0) => time,
+     &(not-after: 1) => time,
    }
-
    concise-mid-tag = {
-     ? &(language: 0) => text
-     &(tag-identity: 1) => tag-identity-map
-     ? &(entities: 2) => [ + comid-entity-map ]
-     ? &(linked-tags: 3) => [ + linked-tag-map ]
-     &(triples: 4) => triples-map
-     * $$concise-mid-tag-extension
+     ? &(language: 0) => text,
+     &(tag-identity: 1) => tag-identity-map,
+     ? &(entities: 2) => [+ comid-entity-map],
+     ? &(linked-tags: 3) => [+ linked-tag-map],
+     &(triples: 4) => triples-map,
+     * $$concise-mid-tag-extension,
    }
-
    attest-key-triple-record = [
-     environment: environment-map
-     key-list: [ + $crypto-key-type-choice ]
-     ? conditions: non-empty< {
-       ? &(mkey: 0) => $measured-element-type-choice,
-       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
-     }>
+     environment: environment-map,
+     key-list: [+ $crypto-key-type-choice],
+     ? conditions: non-empty<{
+               ? &(mkey: 0) => $measured-element-type-choice,
+               ? &(authorized-by: 1) => [+ $crypto-key-type-choice],
+   }>,
    ]
-
-   $class-id-type-choice /= tagged-oid-type
-   $class-id-type-choice /= tagged-uuid-type
-   $class-id-type-choice /= tagged-bytes
-
+   $class-id-type-choice /= tagged-oid-type / tagged-uuid-type / tagged\
+                                                                  -bytes
    class-map = non-empty<{
-     ? &(class-id: 0) => $class-id-type-choice
-     ? &(vendor: 1) => tstr
-     ? &(model: 2) => tstr
-     ? &(layer: 3) => uint
-     ? &(index: 4) => uint
+       ? &(class-id: 0) => $class-id-type-choice,
+       ? &(vendor: 1) => tstr,
+       ? &(model: 2) => tstr,
+       ? &(layer: 3) => uint,
+       ? &(index: 4) => uint,
    }>
-
-   comid-entity-map =
-     entity-map<$comid-role-type-choice, $$comid-entity-map-extension>
-
-   $comid-role-type-choice /= &(tag-creator: 0)
-   $comid-role-type-choice /= &(creator: 1)
-   $comid-role-type-choice /= &(maintainer: 2)
-
+   comid-entity-map = entity-map<$comid-role-type-choice, $$comid-\
+                                                   entity-map-extension>
+   $comid-role-type-choice /= &(tag-creator: 0) / &(creator: 1) / &(\
+                                                          maintainer: 2)
    conditional-endorsement-series-triple-record = [
-     condition: stateful-environment-record
-     series: [ + conditional-series-record ]
+     condition: [
+           environment: environment-map,
+           claims-list: [* measurement-map],
+           ? authorized-by: [+ $crypto-key-type-choice],
+   ],
+     series: [+ conditional-series-record],
    ]
-
    conditional-series-record = [
-     selection: [ + measurement-map]
-     addition: [ + measurement-map ]
+     selection: [+ measurement-map],
+     addition: [+ measurement-map],
    ]
-
    COSE_Key = {
-       1 => tstr / int
-       ? 2 => bstr
-       ? 3 => tstr / int
-       ? 4 => [+ (tstr / int) ]
-       ? 5 => bstr
-       * cose-label => cose-value
+     1 => tstr / int,
+     ? 2 => bstr,
+     ? 3 => tstr / int,
+     ? 4 => [+ tstr / int],
+     ? 5 => bstr,
+     * cose-label => cose-value,
    }
-
    cose-label = int / tstr
    cose-value = any
-
    coswid-triple-record = [
-     environment-map
-     [ + concise-swid-tag-id ]
+     environment-map,
+     [+ coswid.tag-id],
    ]
-
-   concise-swid-tag-id = text / bstr .size 16
-
-   $crypto-key-type-choice /= tagged-pkix-base64-key-type
-   $crypto-key-type-choice /= tagged-pkix-base64-cert-type
-   $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
-   $crypto-key-type-choice /= tagged-cose-key-type
-   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
-   $crypto-key-type-choice /= tagged-key-thumbprint-type
-   $crypto-key-type-choice /= tagged-cert-thumbprint-type
-   $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-   $crypto-key-type-choice /= tagged-bytes
+   $crypto-key-type-choice /= tagged-pkix-base64-key-type / tagged-pkix\
+   -base64-cert-type / tagged-pkix-base64-cert-path-type / tagged-cose-\
+   key-type / tagged-pkix-asn1der-cert-type / tagged-key-thumbprint-\
+   type / tagged-cert-thumbprint-type / tagged-cert-path-thumbprint-\
+                                                     type / tagged-bytes
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-key-thumbprint-type = #6.557(eatmc.digest)
    tagged-cose-key-type = #6.558(COSE_Key)
-   tagged-cert-thumbprint-type = #6.559(digest)
-   tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+   tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
-
    domain-dependency-triple-record = [
-     domain-id: domain-type
-     trustees: [ + domain-type ]
+     domain-id: domain-type,
+     trustees: [+ domain-type],
    ]
-
    domain-membership-triple-record = [
-     domain-id: domain-type
-     members: [ +  domain-type ]
+     domain-id: domain-type,
+     members: [+ domain-type],
    ]
-
    conditional-endorsement-triple-record = [
-     conditions: [ + stateful-environment-record ]
-     endorsements: [ + endorsed-triple-record ]
+     conditions: [+ stateful-environment-record],
+     endorsements: [+ endorsed-triple-record],
    ]
-
    domain-type = environment-map
-
    endorsed-triple-record = [
-     condition: environment-map
-     endorsement: [ + measurement-map ]
+     condition: environment-map,
+     endorsement: [+ measurement-map],
    ]
-
    entity-map<role-type-choice, extension-socket> = {
-     &(entity-name: 0) => $entity-name-type-choice
-     ? &(reg-id: 1) => uri
-     &(role: 2) => [ + role-type-choice ]
-     * extension-socket
+       &(entity-name: 0) => $entity-name-type-choice,
+       ? &(reg-id: 1) => uri,
+       &(role: 2) => [+ role-type-choice],
+       * extension-socket,
    }
-
    $entity-name-type-choice /= text
-
    environment-map = non-empty<{
-     ? &(class: 0) => class-map
-     ? &(instance: 1) => $instance-id-type-choice
-     ? &(group: 2) => $group-id-type-choice
+       ? &(class: 0) => class-map,
+       ? &(instance: 1) => $instance-id-type-choice,
+       ? &(group: 2) => $group-id-type-choice,
    }>
-
    flags-map = {
-     ? &(is-configured: 0) => bool
-     ? &(is-secure: 1) => bool
-     ? &(is-recovery: 2) => bool
-     ? &(is-debug: 3) => bool
-     ? &(is-replay-protected: 4) => bool
-     ? &(is-integrity-protected: 5) => bool
-     ? &(is-runtime-meas: 6) => bool
-     ? &(is-immutable: 7) => bool
-     ? &(is-tcb: 8) => bool
-     ? &(is-confidentiality-protected: 9) => bool
-     * $$flags-map-extension
+     ? &(is-configured: 0) => bool,
+     ? &(is-secure: 1) => bool,
+     ? &(is-recovery: 2) => bool,
+     ? &(is-debug: 3) => bool,
+     ? &(is-replay-protected: 4) => bool,
+     ? &(is-integrity-protected: 5) => bool,
+     ? &(is-runtime-meas: 6) => bool,
+     ? &(is-immutable: 7) => bool,
+     ? &(is-tcb: 8) => bool,
+     ? &(is-confidentiality-protected: 9) => bool,
+     * $$flags-map-extension,
    }
-
-   $group-id-type-choice /= tagged-uuid-type
-   $group-id-type-choice /= tagged-bytes
-
+   $group-id-type-choice /= tagged-uuid-type / tagged-bytes
    identity-triple-record = [
-     environment: environment-map
-     key-list: [ + $crypto-key-type-choice ]
+     environment: environment-map,
+     key-list: [+ $crypto-key-type-choice],
      ? conditions: non-empty<{
-       ? &(mkey: 0) => $measured-element-type-choice,
-       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
-     }>
+               ? &(mkey: 0) => $measured-element-type-choice,
+               ? &(authorized-by: 1) => [+ $crypto-key-type-choice],
+   }>,
    ]
-
-   $instance-id-type-choice /= tagged-ueid-type
-   $instance-id-type-choice /= tagged-uuid-type
-   $instance-id-type-choice /= tagged-bytes
-   $instance-id-type-choice /= tagged-pkix-base64-key-type
-   $instance-id-type-choice /= tagged-pkix-base64-cert-type
-   $instance-id-type-choice /= tagged-cose-key-type
-   $instance-id-type-choice /= tagged-key-thumbprint-type
-   $instance-id-type-choice /= tagged-cert-thumbprint-type
-   $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-
-   ip-addr-type-choice = ip4-addr-type / ip6-addr-type
-   ip4-addr-type = bytes .size 4
-   ip6-addr-type = bytes .size 16
-
+   $instance-id-type-choice /= tagged-ueid-type / tagged-uuid-type / \
+   tagged-bytes / tagged-pkix-base64-key-type / tagged-pkix-base64-cert\
+   -type / tagged-cose-key-type / tagged-key-thumbprint-type / tagged-\
+                    cert-thumbprint-type / tagged-pkix-asn1der-cert-type
+   ip-addr-type-choice /= cbor-ip.ipv4-address / cbor-ip.ipv6-address
    int-range-type-choice = int / tagged-int-range
-   int-range = [min: int / negative-inf, max: int / positive-inf]
+   int-range = [
+     min: int / negative-inf,
+     max: int / positive-inf,
+   ]
    tagged-int-range = #6.564(int-range)
    positive-inf = null
    negative-inf = null
-
    linked-tag-map = {
-     &(linked-tag-id: 0) => $tag-id-type-choice
-     &(tag-rel: 1) => $tag-rel-type-choice
+     &(linked-tag-id: 0) => $tag-id-type-choice,
+     &(tag-rel: 1) => $tag-rel-type-choice,
    }
-
    mac-addr-type-choice = eui48-addr-type / eui64-addr-type
    eui48-addr-type = bytes .size 6
    eui64-addr-type = bytes .size 8
-
-   $measured-element-type-choice /= tagged-oid-type
-   $measured-element-type-choice /= tagged-uuid-type
-   $measured-element-type-choice /= uint
-   $measured-element-type-choice /= tstr
-
+   $measured-element-type-choice /= tagged-oid-type / tagged-uuid-type \
+                                                           / uint / tstr
    measurement-map = {
-     ? &(mkey: 0) => $measured-element-type-choice
-     &(mval: 1) => measurement-values-map
-     ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+     ? &(mkey: 0) => $measured-element-type-choice,
+     &(mval: 1) => measurement-values-map,
+     ? &(authorized-by: 2) => [+ $crypto-key-type-choice],
    }
-
    measurement-values-map = non-empty<{
-     ? &(version: 0) => version-map
-     ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => digests-type
-     ? &(flags: 3) => flags-map
-     ? (
-         &(raw-value: 4) => $raw-value-type-choice,
-         ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type
-       )
-     ? &(mac-addr: 6) => mac-addr-type-choice
-     ? &(ip-addr: 7) =>  ip-addr-type-choice
-     ? &(serial-number: 8) => text
-     ? &(ueid: 9) => ueid-type
-     ? &(uuid: 10) => uuid-type
-     ? &(name: 11) => text
-     ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
-     ? &(integrity-registers: 14) => integrity-registers
-     ? &(int-range: 15) => int-range-type-choice
-     * $$measurement-values-map-extension
+       ? &(version: 0) => version-map,
+       ? &(svn: 1) => svn-type-choice,
+       ? &(digests: 2) => digests-type,
+       ? &(flags: 3) => flags-map,
+       ? (
+                     &(raw-value: 4) => $raw-value-type-choice,
+                     ? &(raw-value-mask-DEPRECATED: 5) => raw-value-\
+                                                              mask-type,
+             ),
+       ? &(mac-addr: 6) => mac-addr-type-choice,
+       ? &(ip-addr: 7) => ip-addr-type-choice,
+       ? &(serial-number: 8) => text,
+       ? &(ueid: 9) => ueid-type,
+       ? &(uuid: 10) => uuid-type,
+       ? &(name: 11) => text,
+       ? &(cryptokeys: 13) => [+ $crypto-key-type-choice],
+       ? &(integrity-registers: 14) => integrity-registers,
+       ? &(int-range: 15) => int-range-type-choice,
+       * $$measurement-values-map-extension,
    }>
-
-   non-empty<M> = (M) .and ({ + any => any })
-
+   non-empty<M> = M .and ({+ any => any})
    oid-type = bytes
    tagged-oid-type = #6.111(oid-type)
-
-   $raw-value-type-choice /= tagged-bytes
-   $raw-value-type-choice /= tagged-masked-raw-value
-
+   $raw-value-type-choice /= tagged-bytes / tagged-masked-raw-value
    raw-value-mask-type = bytes
-
    tagged-masked-raw-value = #6.563([
-     value: bytes
-     mask : bytes
+       value: bytes,
+       mask: bytes,
    ])
-
    reference-triple-record = [
-     ref-env: environment-map
-     ref-claims: [ + measurement-map ]
+     ref-env: environment-map,
+     ref-claims: [+ measurement-map],
    ]
-
    stateful-environment-record = [
      environment: environment-map,
-     claims-list: [ + measurement-map ]
+     claims-list: [+ measurement-map],
    ]
-
    svn-type = uint
    svn = svn-type
    min-svn = svn-type
    tagged-svn = #6.552(svn)
    tagged-min-svn = #6.553(min-svn)
    svn-type-choice = svn / tagged-svn / tagged-min-svn
-
-   $tag-id-type-choice /= tstr
-   $tag-id-type-choice /= uuid-type
-
+   $tag-id-type-choice /= tstr / uuid-type
    tag-identity-map = {
-     &(tag-id: 0) => $tag-id-type-choice
-     ? &(tag-version: 1) => tag-version-type
+     &(tag-id: 0) => $tag-id-type-choice,
+     ? &(tag-version: 1) => tag-version-type,
    }
-
-   $tag-rel-type-choice /= &(supplements: 0)
-   $tag-rel-type-choice /= &(replaces: 1)
-
+   $tag-rel-type-choice /= &(supplements: 0) / &(replaces: 1)
    tag-version-type = uint .default 0
-
    tagged-bytes = #6.560(bytes)
-
    triples-map = non-empty<{
-     ? &(reference-triples: 0) =>
-       [ + reference-triple-record ]
-     ? &(endorsed-triples: 1) =>
-       [ + endorsed-triple-record ]
-     ? &(identity-triples: 2) =>
-       [ + identity-triple-record ]
-     ? &(attest-key-triples: 3) =>
-       [ + attest-key-triple-record ]
-     ? &(dependency-triples: 4) =>
-       [ + domain-dependency-triple-record ]
-     ? &(membership-triples: 5) =>
-       [ + domain-membership-triple-record ]
-     ? &(coswid-triples: 6) =>
-       [ + coswid-triple-record ]
-     ? &(conditional-endorsement-series-triples: 8) =>
-       [ + conditional-endorsement-series-triple-record ]
-     ? &(conditional-endorsement-triples: 10) =>
-       [ + conditional-endorsement-triple-record ]
-     * $$triples-map-extension
+       ? &(reference-triples: 0) => [+ reference-triple-record],
+       ? &(endorsed-triples: 1) => [+ endorsed-triple-record],
+       ? &(identity-triples: 2) => [+ identity-triple-record],
+       ? &(attest-key-triples: 3) => [+ attest-key-triple-record],
+       ? &(dependency-triples: 4) => [+ domain-dependency-triple-record\
+                                                                      ],
+       ? &(membership-triples: 5) => [+ domain-membership-triple-record\
+                                                                      ],
+       ? &(coswid-triples: 6) => [+ coswid-triple-record],
+       ? &(conditional-endorsement-series-triples: 8) => [+ conditional\
+                                     -endorsement-series-triple-record],
+       ? &(conditional-endorsement-triples: 10) => [+ conditional-\
+                                             endorsement-triple-record],
+       * $$triples-map-extension,
    }>
-
-   ueid-type = bytes .size (7..33)
+   ueid-type = bytes .size (7 .. 33)
    tagged-ueid-type = #6.550(ueid-type)
-
    uuid-type = bytes .size 16
    tagged-uuid-type = #6.37(uuid-type)
-
    version-map = {
-     &(version: 0) => text
-     ? &(version-scheme: 1) => $version-scheme
+     &(version: 0) => text,
+     ? &(version-scheme: 1) => coswid.$version-scheme,
    }
-
-   digest = [
-     alg: (int / text),
-     val: bytes
-   ]
-
-   digests-type = [ + digest ]
-
+   digests-type = [+ eatmc.digest]
    integrity-register-id-type-choice = uint / text
-
-   integrity-registers = {
-     + integrity-register-id-type-choice => digests-type
+   integrity-registers = {+ integrity-register-id-type-choice => \
+                                                           digests-type}
+   eatmc.measured-component = {
+     eatmc.component-id-label => eatmc.component-id,
+     eatmc.measurement,
+     ? eatmc.authorities-label => [+ eatmc.authority-id-type],
+     ? eatmc.flags-label => eatmc.flags-type,
    }
-
-   concise-swid-tag = {
-     tag-id => text / bstr .size 16,
-     tag-version => integer,
-     ? corpus => bool,
-     ? patch => bool,
-     ? supplemental => bool,
-     software-name => text,
-     ? software-version => text,
-     ? version-scheme => $version-scheme,
-     ? media => text,
-     ? software-meta => one-or-more<software-meta-entry>,
-     entity => one-or-more<entity-entry>,
-     ? link => one-or-more<link-entry>,
-     ? payload-or-evidence,
+   eatmc.measurement //= (eatmc.digested-measurement-label => eatmc.\
+                         digest // eatmc.raw-measurement-label => bytes)
+   eatmc.authority-id-type = eatmc.eat.JC<eatmc.bytes-b64u, bytes>
+   eatmc.flags-type = eatmc.eat.JC<eatmc.bytes8-b64u, eatmc.bytes8>
+   eatmc.component-id = [
+     name: text,
+     ? version: eatmc.version,
+   ]
+   eatmc.version = [
+     val: text,
+     ? scheme: eatmc.coswid.$version-scheme,
+   ]
+   eatmc.digest = [
+     alg: int / text,
+     val: eatmc.digest-value-type,
+   ]
+   eatmc.digest-value-type = eatmc.eat.JC<eatmc.bytes-b64u, bytes>
+   eatmc.bytes-b64u = text .b64u bytes
+   eatmc.bytes8 = bytes .size 8
+   eatmc.bytes8-b64u = text .b64u eatmc.bytes8
+   eatmc.component-id-label = eatmc.eat.JC<"id", 1>
+   eatmc.digested-measurement-label = eatmc.eat.JC<"digested-\
+                                                        measurement", 2>
+   eatmc.raw-measurement-label = eatmc.eat.JC<"raw-measurement", 5>
+   eatmc.authorities-label = eatmc.eat.JC<"authorities", 3>
+   eatmc.flags-label = eatmc.eat.JC<"flags", 4>
+   eatmc.mc-cbor = bytes .cbor eatmc.measured-component
+   eatmc.mc-json = text .json eatmc.measured-component
+   eatmc.$measurements-body-cbor /= eatmc.mc-cbor / eatmc.mc-json
+   eatmc.$measurements-body-json /= eatmc.mc-json / text .b64u eatmc.mc\
+                                                                   -cbor
+   eatmc.eat.JSON-ONLY<J> = J .feature "json"
+   eatmc.eat.CBOR-ONLY<C> = C .feature "cbor"
+   eatmc.eat.JC<J, C> = eatmc.eat.JSON-ONLY<J> / eatmc.eat.CBOR-ONLY<C>
+   eatmc.coswid.$version-scheme /= eatmc.coswid.multipartnumeric / \
+   eatmc.coswid.multipartnumeric-suffix / eatmc.coswid.alphanumeric / \
+                 eatmc.coswid.decimal / eatmc.coswid.semver / int / text
+   eatmc.coswid.multipartnumeric = 1
+   eatmc.coswid.multipartnumeric-suffix = 2
+   eatmc.coswid.alphanumeric = 3
+   eatmc.coswid.decimal = 4
+   eatmc.coswid.semver = 16384
+   coswid.concise-swid-tag = {
+     coswid.tag-id => text / bstr .size 16,
+     coswid.tag-version => integer,
+     ? coswid.corpus => bool,
+     ? coswid.patch => bool,
+     ? coswid.supplemental => bool,
+     coswid.software-name => text,
+     ? coswid.software-version => text,
+     ? coswid.version-scheme => coswid.$version-scheme,
+     ? coswid.media => text,
+     ? coswid.software-meta => coswid.one-or-more<coswid.software-meta-\
+                                                                 entry>,
+     coswid.entity => coswid.one-or-more<coswid.entity-entry>,
+     ? coswid.link => coswid.one-or-more<coswid.link-entry>,
+     ? coswid.payload-or-evidence,
      * $$coswid-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-
-   payload-or-evidence //= ( payload => payload-entry )
-   payload-or-evidence //= ( evidence => evidence-entry )
-
-   any-uri = uri
-   label = text / int
-
-   $version-scheme /= multipartnumeric
-   $version-scheme /= multipartnumeric-suffix
-   $version-scheme /= alphanumeric
-   $version-scheme /= decimal
-   $version-scheme /= semver
-   $version-scheme /= int / text
-
-   any-attribute = (
-     label => one-or-more<text> / one-or-more<int>
-   )
-
-   one-or-more<T> = T / [ 2* T ]
-
-   global-attributes = (
-     ? lang => text,
-     * any-attribute,
-   )
-
-   hash-entry = [
+   coswid.tag-id = 0
+   coswid.$version-scheme /= coswid.multipartnumeric / coswid.\
+   multipartnumeric-suffix / coswid.alphanumeric / coswid.decimal / \
+                                              coswid.semver / int / text
+   coswid.one-or-more<T> = T / [2*T]
+   coswid.tag-version = 12
+   coswid.corpus = 8
+   coswid.patch = 9
+   coswid.supplemental = 11
+   coswid.software-name = 1
+   coswid.software-version = 13
+   coswid.version-scheme = 14
+   coswid.media = 10
+   coswid.software-meta = 5
+   coswid.software-meta-entry = {
+     ? coswid.activation-status => text,
+     ? coswid.channel-type => text,
+     ? coswid.colloquial-version => text,
+     ? coswid.description => text,
+     ? coswid.edition => text,
+     ? coswid.entitlement-data-required => bool,
+     ? coswid.entitlement-key => text,
+     ? coswid.generator => text / bstr .size 16,
+     ? coswid.persistent-id => text,
+     ? coswid.product => text,
+     ? coswid.product-family => text,
+     ? coswid.revision => text,
+     ? coswid.summary => text,
+     ? coswid.unspsc-code => text,
+     ? coswid.unspsc-version => text,
+     * $$software-meta-extension,
+     coswid.global-attributes,
+   }
+   coswid.entity = 2
+   coswid.entity-entry = {
+     coswid.entity-name => text,
+     ? coswid.reg-id => coswid.any-uri,
+     coswid.role => coswid.one-or-more<coswid.$role>,
+     ? coswid.thumbprint => coswid.hash-entry,
+     * $$entity-extension,
+     coswid.global-attributes,
+   }
+   coswid.link = 4
+   coswid.link-entry = {
+     ? coswid.artifact => text,
+     coswid.href => coswid.any-uri,
+     ? coswid.media => text,
+     ? coswid.ownership => coswid.$ownership,
+     coswid.rel => coswid.$rel,
+     ? coswid.media-type => text,
+     ? coswid.use => coswid.$use,
+     * $$link-extension,
+     coswid.global-attributes,
+   }
+   coswid.payload-or-evidence //= (coswid.payload => coswid.payload-\
+                      entry // coswid.evidence => coswid.evidence-entry)
+   coswid.global-attributes = (
+     ? coswid.lang => text,
+     * coswid.any-attribute,
+     )
+   coswid.multipartnumeric = 1
+   coswid.multipartnumeric-suffix = 2
+   coswid.alphanumeric = 3
+   coswid.decimal = 4
+   coswid.semver = 16384
+   coswid.activation-status = 43
+   coswid.channel-type = 44
+   coswid.colloquial-version = 45
+   coswid.description = 46
+   coswid.edition = 47
+   coswid.entitlement-data-required = 48
+   coswid.entitlement-key = 49
+   coswid.generator = 50
+   coswid.persistent-id = 51
+   coswid.product = 52
+   coswid.product-family = 53
+   coswid.revision = 54
+   coswid.summary = 55
+   coswid.unspsc-code = 56
+   coswid.unspsc-version = 57
+   coswid.entity-name = 31
+   coswid.reg-id = 32
+   coswid.any-uri = uri
+   coswid.role = 33
+   coswid.$role /= coswid.tag-creator / coswid.software-creator / \
+   coswid.aggregator / coswid.distributor / coswid.licensor / coswid.\
+                                                 maintainer / int / text
+   coswid.thumbprint = 34
+   coswid.hash-entry = [
      hash-alg-id: int,
      hash-value: bytes,
    ]
-
-   entity-entry = {
-     entity-name => text,
-     ? reg-id => any-uri,
-     role => one-or-more<$role>,
-     ? thumbprint => hash-entry,
-     * $$entity-extension,
-     global-attributes,
-   }
-
-   $role /= tag-creator
-   $role /= software-creator
-   $role /= aggregator
-   $role /= distributor
-   $role /= licensor
-   $role /= maintainer
-   $role /= int / text
-
-   link-entry = {
-     ? artifact => text,
-     href => any-uri,
-     ? media => text,
-     ? ownership => $ownership,
-     rel => $rel,
-     ? media-type => text,
-     ? use => $use,
-     * $$link-extension,
-     global-attributes,
-   }
-
-   $ownership /= shared
-   $ownership /= private
-   $ownership /= abandon
-   $ownership /= int / text
-
-   $rel /= ancestor
-   $rel /= component
-   $rel /= feature
-   $rel /= installationmedia
-   $rel /= packageinstaller
-   $rel /= parent
-   $rel /= patches
-   $rel /= requires
-   $rel /= see-also
-   $rel /= supersedes
-   $rel /= supplemental
-   $rel /= -256..64436 / text
-
-   $use /= optional
-   $use /= required
-   $use /= recommended
-   $use /= int / text
-
-   software-meta-entry = {
-     ? activation-status => text,
-     ? channel-type => text,
-     ? colloquial-version => text,
-     ? description => text,
-     ? edition => text,
-     ? entitlement-data-required => bool,
-     ? entitlement-key => text,
-     ? generator =>  text / bstr .size 16,
-     ? persistent-id => text,
-     ? product => text,
-     ? product-family => text,
-     ? revision => text,
-     ? summary => text,
-     ? unspsc-code => text,
-     ? unspsc-version => text,
-     * $$software-meta-extension,
-     global-attributes,
-   }
-
-   path-elements-group = ( ? directory => one-or-more<directory-entry>,
-                           ? file => one-or-more<file-entry>,
-                         )
-
-   resource-collection = (
-     path-elements-group,
-     ? process => one-or-more<process-entry>,
-     ? resource => one-or-more<resource-entry>,
-     * $$resource-collection-extension,
-   )
-
-   file-entry = {
-     filesystem-item,
-     ? size => uint,
-     ? file-version => text,
-     ? hash => hash-entry,
-     * $$file-extension,
-     global-attributes,
-   }
-
-   directory-entry = {
-     filesystem-item,
-     ? path-elements => { path-elements-group },
-     * $$directory-extension,
-     global-attributes,
-   }
-
-   process-entry = {
-     process-name => text,
-     ? pid => integer,
-     * $$process-extension,
-     global-attributes,
-   }
-
-   resource-entry = {
-     type => text,
-     * $$resource-extension,
-     global-attributes,
-   }
-
-   filesystem-item = (
-     ? key => bool,
-     ? location => text,
-     fs-name => text,
-     ? root => text,
-   )
-
-   payload-entry = {
-     resource-collection,
+   coswid.artifact = 37
+   coswid.href = 38
+   coswid.ownership = 39
+   coswid.$ownership /= coswid.shared / coswid.private / coswid.\
+                                                    abandon / int / text
+   coswid.rel = 40
+   coswid.$rel /= coswid.ancestor / coswid.component / coswid.feature \
+   / coswid.installationmedia / coswid.packageinstaller / coswid.\
+   parent / coswid.patches / coswid.requires / coswid.see-also / coswid\
+                .supersedes / coswid.supplemental / -256 .. 65536 / text
+   coswid.media-type = 41
+   coswid.use = 42
+   coswid.$use /= coswid.optional / coswid.required / coswid.\
+                                                recommended / int / text
+   coswid.payload = 6
+   coswid.payload-entry = {
+     coswid.resource-collection,
      * $$payload-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-
-   evidence-entry = {
-     resource-collection,
-     ? date => integer-time,
-     ? device-id => text,
-     ? location => text,
+   coswid.evidence = 3
+   coswid.evidence-entry = {
+     coswid.resource-collection,
+     ? coswid.date => coswid.integer-time,
+     ? coswid.device-id => text,
+     ? coswid.location => text,
      * $$evidence-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-
-   integer-time = #6.1(int)
-
-   tag-id = 0
-   software-name = 1
-   entity = 2
-   evidence = 3
-   link = 4
-   software-meta = 5
-   payload = 6
-   hash = 7
-   corpus = 8
-   patch = 9
-   media = 10
-   supplemental = 11
-   tag-version = 12
-   software-version = 13
-   version-scheme = 14
-   lang = 15
-   directory = 16
-   file = 17
-   process = 18
-   resource = 19
-   size = 20
-   file-version = 21
-   key = 22
-   location = 23
-   fs-name = 24
-   root = 25
-   path-elements = 26
-   process-name = 27
-   pid = 28
-   type = 29
-   entity-name = 31
-   reg-id = 32
-   role = 33
-   thumbprint = 34
-   date = 35
-   device-id = 36
-   artifact = 37
-   href = 38
-   ownership = 39
-   rel = 40
-   media-type = 41
-   use = 42
-   activation-status = 43
-   channel-type = 44
-   colloquial-version = 45
-   description = 46
-   edition = 47
-   entitlement-data-required = 48
-   entitlement-key = 49
-   generator = 50
-   persistent-id = 51
-   product = 52
-   product-family = 53
-   revision = 54
-   summary = 55
-   unspsc-code = 56
-   unspsc-version = 57
-
-   multipartnumeric = 1
-   multipartnumeric-suffix = 2
-   alphanumeric = 3
-   decimal = 4
-   semver = 16384
-
-   tag-creator=1
-   software-creator=2
-   aggregator=3
-   distributor=4
-   licensor=5
-   maintainer=6
-
-   abandon=1
-   private=2
-   shared=3
-
-   ancestor=1
-   component=2
-   feature=3
-   installationmedia=4
-   packageinstaller=5
-   parent=6
-   patches=7
-   requires=8
-   see-also=9
-   supersedes=10
-
-   optional=1
-   required=2
-   recommended=3
+   coswid.lang = 15
+   coswid.any-attribute = (coswid.label => coswid.one-or-more<text> / \
+                                                coswid.one-or-more<int>)
+   coswid.tag-creator = 1
+   coswid.software-creator = 2
+   coswid.aggregator = 3
+   coswid.distributor = 4
+   coswid.licensor = 5
+   coswid.maintainer = 6
+   coswid.shared = 3
+   coswid.private = 2
+   coswid.abandon = 1
+   coswid.ancestor = 1
+   coswid.component = 2
+   coswid.feature = 3
+   coswid.installationmedia = 4
+   coswid.packageinstaller = 5
+   coswid.parent = 6
+   coswid.patches = 7
+   coswid.requires = 8
+   coswid.see-also = 9
+   coswid.supersedes = 10
+   coswid.optional = 1
+   coswid.required = 2
+   coswid.recommended = 3
+   coswid.resource-collection = (
+     coswid.path-elements-group,
+     ? coswid.process => coswid.one-or-more<coswid.process-entry>,
+     ? coswid.resource => coswid.one-or-more<coswid.resource-entry>,
+     * $$resource-collection-extension,
+     )
+   coswid.date = 35
+   coswid.integer-time = #6.1(int)
+   coswid.device-id = 36
+   coswid.location = 23
+   coswid.label = text / int
+   coswid.path-elements-group = (
+     ? coswid.directory => coswid.one-or-more<coswid.directory-entry>,
+     ? coswid.file => coswid.one-or-more<coswid.file-entry>,
+     )
+   coswid.process = 18
+   coswid.process-entry = {
+     coswid.process-name => text,
+     ? coswid.pid => integer,
+     * $$process-extension,
+     coswid.global-attributes,
+   }
+   coswid.resource = 19
+   coswid.resource-entry = {
+     coswid.type => text,
+     * $$resource-extension,
+     coswid.global-attributes,
+   }
+   coswid.directory = 16
+   coswid.directory-entry = {
+     coswid.filesystem-item,
+     ? coswid.path-elements => {coswid.path-elements-group},
+     * $$directory-extension,
+     coswid.global-attributes,
+   }
+   coswid.file = 17
+   coswid.file-entry = {
+     coswid.filesystem-item,
+     ? coswid.size => uint,
+     ? coswid.file-version => text,
+     ? coswid.hash => coswid.hash-entry,
+     * $$file-extension,
+     coswid.global-attributes,
+   }
+   coswid.process-name = 27
+   coswid.pid = 28
+   coswid.type = 29
+   coswid.filesystem-item = (
+     ? coswid.key => bool,
+     ? coswid.location => text,
+     coswid.fs-name => text,
+     ? coswid.root => text,
+     )
+   coswid.path-elements = 26
+   coswid.size = 20
+   coswid.file-version = 21
+   coswid.hash = 7
+   coswid.key = 22
+   coswid.fs-name = 24
+   coswid.root = 25
+   cbor-ip.ipv4-address = bytes .size 4
+   cbor-ip.ipv6-address = bytes .size 16
 
 Acknowledgments
 
