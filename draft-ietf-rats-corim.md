@@ -2797,7 +2797,7 @@ Processing a domain dependency graph (DDG) has the following objectives:
 DDGs need not be isomorphic to domain membership graphs.
 * Verify the DDG is acyclic.
 
-If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be furthur evaluated.
+If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
 For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
 
 Domain Dependency ECTs are processed using the following algorithm:
