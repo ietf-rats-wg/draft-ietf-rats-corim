@@ -3113,13 +3113,14 @@ groups to use this information as they see fit".
 * Implementation's web page:
   [https://github.com/veraison/corim/README.md](https://github.com/veraison/corim/blob/main/README.md)
 
-* Brief general description: There are two CoRIM libraries under project Veraison.
+* Brief general description: There are three CoRIM libraries under project Veraison.
   1. [CoRIM golang library](https://github.com/veraison/corim) The `corim/corim` and `corim/comid` packages
   provide a golang API for low-level manipulation of Concise Reference
   Integrity Manifest (CoRIM) and Concise Module Identifier (CoMID) tags
   respectively.
   2. [CoRIM rust library](https://github.com/veraison/corim-rs) provide a rust implementation of
   CoRIM specification.
+  3. [CoRIM based Verifier](https://github.com/veraison/cover) provides a CoRIM based Verifier as outlined in section 9 of this specification.
 
   In addition to the base CoRIM Libraries, the [cocli package](https://github.com/veraison/cocli) uses the golang API above (as well as the
   API from the `veraison/swid` package) to provide a user command line
@@ -3144,6 +3145,9 @@ groups to use this information as they see fit".
 
 * Last updated:
   [https://github.com/veraison/corim/commits/main](https://github.com/veraison/corim/commits/main)
+  [https://github.com/veraison/corim-rs/commits/master/](https://github.com/veraison/corim-rs/commits/master/)
+  [https://github.com/veraison/cover/commits/main/](https://github.com/veraison/cover/commits/main/)
+
 
 # Security and Privacy Considerations {#sec-sec}
 
