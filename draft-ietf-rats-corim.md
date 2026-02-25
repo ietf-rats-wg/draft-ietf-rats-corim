@@ -1559,13 +1559,13 @@ Representing members of a DMT as domains enables the recursive construction of a
 #### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
 
 A Domain Dependency Triple (DDT) links a domain to a set of *trustee* domains.
-A domain dependency triple is used by an Endorser to assert that trust dependency exists between various components.
+A domain dependency triple is used by an Endorser to assert that a trust dependency exists between various components.
 A DDT specifies which component (identified by `domain-id`) depends on which other components (identified by `trustees`) for proper operation.
-A series of DDTs can describe a graph of anticipated trust dependencies in a system of components.
+A series of DDTs can be used to describe the trust dependencies of a system of components as a graph.
 CoRIM uses `environment-map` to identify components and groupings of components (i.e., domains).
 
- Trust dependency means that appraisal of an environment also depends on the appraisal of one or more *trustee* environments before the environment in question can be fully trusted.
-It is only possible to trust a candidate environment, if the trustees it depends on exist, have been appraised, and found to be trustworthy.
+Trust dependency means that an environment can only be fully trusted if one or more trustee environments have been appraised and found to be trustworthy.
+A candidate environment can only be trusted if the trustee environments it depends on exist, have been appraised and are found to be trustworthy.
 
 The first four phases of appraisal (see {{sec-appraisal-procedure}}) might not determine whether a component is trustworthy.
 Subsequent Verifier stages or Relying Party processing might be needed to finalize trustworthiness.
@@ -1579,7 +1579,7 @@ Alternatively, trust in a peripheral device might depend on trustworthy operatio
 The bus controller is therefore a trustee domain of the peripheral device.
 
 DDTs cannot create domains.
-Instead, DDT processing first checks that a `domain-id` has already been accepted into the Attester's set of Claims before adding trust dependencies.
+Instead, DDT processing first checks that a `domain-id` has already been accepted into the ACS before adding trust dependencies.
 
 The domain dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
@@ -1599,9 +1599,8 @@ Verifiers MAY use DDTs with appraisal policies to assess the veracity of domain-
 
 Trust dependency typically exists if any of the following are true:
 
-* A trustee performs any Attesting Environment functions relating to a Target Environment(TE);
- such as Claims collection, Claims signing, loading or initialization of the TE; provisioning TE secrets, cryptographic keys, or other security significant material.
-* A trustee executes security relevant code in response to an execution thread that originates from the `domain-id` environment.
+* A trustee performs any Attesting Environment functions relating to a Target Environment (TE), such as Claims collection, Claims signing, loading or initialization of the TE, provisioning TE secrets - including cryptographic keys or other security-relevant material.
+* A trustee executes security-relevant code in response to an execution thread that originates from the `domain-id` environment.
 * A trustee is a component embedded within another component identified by `domain-id`.
 
 Trust dependency processing is described in {{processing-domain-dependency}}.
@@ -2815,7 +2814,7 @@ For each trustee *t* in `dde`.`trustees` (inner loop):
 
 Outer loop resumes:
 
-* If the `dde`.`environment` record AND all `dde`.`trustees` matched an ACS `domain-member` entry.
+* If the `dde`.`environment` record AND all `dde`.`trustees` matched an ACS with `cmtype` `domain-member` entry.
 Then add the `dde` to the ACS.
 
 * Continue to the next `dde` until all are processed.
