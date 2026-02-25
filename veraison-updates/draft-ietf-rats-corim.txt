@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 8 August 2026                                            Linaro
+Expires: 29 August 2026                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         4 February 2026
+                                                        25 February 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 August 2026.
+   This Internet-Draft will expire on 29 August 2026.
 
 Copyright Notice
 
@@ -105,33 +105,33 @@ Table of Contents
        5.1.3.  Linked Tag
        5.1.4.  Triples
          5.1.4.1.  Environments
-           5.1.4.1.1.  Environment Class
-           5.1.4.1.2.  Environment Instance
-           5.1.4.1.3.   Environment Group
-           5.1.4.1.4.  Measurements
-             5.1.4.1.4.1.  Measurement Keys
-             5.1.4.1.4.2.  Measurement Values
-             5.1.4.1.4.3.  Version
-             5.1.4.1.4.4.  Security Version Number
-             5.1.4.1.4.5.  Flags
-             5.1.4.1.4.6.  Raw Values Types
-             5.1.4.1.4.7.  Address Types
-           5.1.4.1.5.  Crypto Keys
-           5.1.4.1.6.  Integrity Registers
-           5.1.4.1.7.  Int Range
-         5.1.4.2.  Reference Values Triple
-         5.1.4.3.  Endorsed Values Triple
-         5.1.4.4.  Conditional Endorsement Triple
-         5.1.4.5.  Conditional Endorsement Series Triple
-           5.1.4.5.1.  Condition Matching
-           5.1.4.5.2.  Selection Matching
-           5.1.4.5.3.  Processing the Addition
-         5.1.4.6.  Device Identity Triple
-         5.1.4.7.  Attest Key Triple
-         5.1.4.8.  Triples for domain definitions
-           5.1.4.8.1.  Domain Membership Triple
-           5.1.4.8.2.  Domain Dependency Triple
-         5.1.4.9.  CoMID-CoSWID Linking Triple
+         5.1.4.2.  Environment Class
+         5.1.4.3.  Environment Instance
+         5.1.4.4.   Environment Group
+         5.1.4.5.  Measurements
+           5.1.4.5.1.  Measurement Keys
+           5.1.4.5.2.  Measurement Values
+           5.1.4.5.3.  Version
+           5.1.4.5.4.  Security Version Number
+           5.1.4.5.5.  Flags
+           5.1.4.5.6.  Raw Values Types
+           5.1.4.5.7.  Address Types
+         5.1.4.6.  Crypto Keys
+         5.1.4.7.  Integrity Registers
+         5.1.4.8.  Int Range
+       5.1.5.  Reference Values Triple
+       5.1.6.  Endorsed Values Triple
+       5.1.7.  Conditional Endorsement Triple
+       5.1.8.  Conditional Endorsement Series Triple
+         5.1.8.1.  Condition Matching
+           5.1.8.1.1.  Selection Matching
+           5.1.8.1.2.  Processing the Addition
+       5.1.9.  Device Identity Triple
+       5.1.10. Attest Key Triple
+       5.1.11. Triples for domain definitions
+         5.1.11.1.  Domain Membership Triple
+         5.1.11.2.  Domain Dependency Triple
+       5.1.12. CoMID-CoSWID Linking Triple
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
@@ -174,11 +174,14 @@ Table of Contents
        9.1.7.  Processing of Domain Membership Triples
          9.1.7.1.  Internal Representation of Domain Membership
          9.1.7.2.  Domain Membership Triples Transformation
-       9.1.8.  Processing of Policies
-         9.1.8.1.  Internal Representation of Policy Statements
-       9.1.9.  Processing of Attestation Results
-         9.1.9.1.  Internal Representation of Attestation Results
-       9.1.10. Internal Representation of Attestation Results Set
+       9.1.8.  Processing of Domain Dependency Triples
+         9.1.8.1.  Internal Representation of Domain Dependency
+         9.1.8.2.  Domain Dependency Triples Transformation
+       9.1.9.  Processing of Policies
+         9.1.9.1.  Internal Representation of Policy Statements
+       9.1.10. Processing of Attestation Results
+         9.1.10.1.  Internal Representation of Attestation Results
+       9.1.11. Internal Representation of Attestation Results Set
                (ARS)
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
@@ -206,8 +209,9 @@ Table of Contents
          9.3.4.1.  Processing Endorsements
          9.3.4.2.  Processing Conditional Endorsements
          9.3.4.3.  Processing Conditional Endorsement Series
-         9.3.4.4.  Processing Key Verification Endorsements
+         9.3.4.4.  Processing Key Verifications
          9.3.4.5.  Processing Domain Membership
+         9.3.4.6.  Processing Domain Dependency
        9.3.5.  Examples for optional phases 5, 6, and 7
      9.4.  Comparing a condition ECT against the ACS
        9.4.1.  Comparing a condition ECT against a single ACS entry
@@ -549,7 +553,7 @@ Table of Contents
    | Results      | actual state       | claims are in the ACS, then  |
    |              | claims, List of    | copy the list of Attestation |
    |              | expected           | Results claims into the ARS. |
-   |              | Attestation        | See Section 9.1.10           |
+   |              | Attestation        | See Section 9.1.11           |
    |              | Results claims     |                              |
    +--------------+--------------------+------------------------------+
 
@@ -1141,43 +1145,43 @@ Table of Contents
 
    *  Reference Values triples: containing Reference Values that are
       expected to match Evidence for a given Target Environment
-      (Section 5.1.4.2).
+      (Section 5.1.5).
 
    *  Endorsed Values triples: containing "Endorsed Values", i.e.,
       features about an Environment that do not appear in Evidence.
       Specific examples include testing or certification data pertaining
-      to a module (Section 5.1.4.3).
+      to a module (Section 5.1.6).
 
    *  Conditional Endorsement triples: describing one or more conditions
       that, once matched, result in augmenting the Attester's actual
-      state with the supplied Endorsed Values (Section 5.1.4.4).
+      state with the supplied Endorsed Values (Section 5.1.7).
 
    OTI Triples:
 
    *  Conditional Endorsement Series triples: describing conditional
       endorsements that are evaluated using a special matching algorithm
-      (Section 5.1.4.4).
+      (Section 5.1.7).
 
    *  Device Identity triples: containing cryptographic credentials -
       for example, an IDevID - uniquely identifying a device
-      (Section 5.1.4.6).
+      (Section 5.1.9).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
-      from the Attester (Section 5.1.4.7).
+      from the Attester (Section 5.1.10).
 
    *  Domain dependency triples: describing trust relationships between
       domains, i.e., collection of related environments and their
-      measurements (Section 5.1.4.8.2).
+      measurements (Section 5.1.11.2).
 
    *  Domain membership triples: describing topological relationships
       between (sub-)modules.  For example, in a composite Attester
       comprising multiple sub-Attesters (sub-modules), this triple can
       be used to define the topological relationship between lead- and
-      sub- Attester environments (Section 5.1.4.8.1).
+      sub- Attester environments (Section 5.1.11.1).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID Payload tags (Section 5.1.4.9).
+      with existing CoSWID Payload tags (Section 5.1.12).
 
    CoMID triples are extensible (Section 5.1.4).  Triples added via the
    extensibility feature MUST be OTI class triples.  This document
@@ -1341,7 +1345,7 @@ Table of Contents
    default the CoRIM signer.  The signer of a triple is said to be its
    _authority_. However, multiple authorities may be involved in signing
    triples.  See [STD96].  Consequently, authority may differ for search
-   criteria.  See Section 5.1.4.1.4.
+   criteria.  See Section 5.1.4.5.
 
    triples-map = non-empty<{
      ? &(reference-triples: 0) =>
@@ -1368,35 +1372,35 @@ Table of Contents
    The following describes each member of the triples-map:
 
    *  reference-triples (index 0): Triples containing reference values.
-      Described in Section 5.1.4.2.
+      Described in Section 5.1.5.
 
    *  endorsed-triples (index 1): Triples containing endorsed values.
-      Described in Section 5.1.4.3.
+      Described in Section 5.1.6.
 
    *  identity-triples (index 2): Triples containing identity
-      credentials.  Described in Section 5.1.4.6.
+      credentials.  Described in Section 5.1.9.
 
    *  attest-key-triples (index 3): Triples containing verification keys
       associated with attesting environments.  Described in
-      Section 5.1.4.7.
+      Section 5.1.10.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in Section 5.1.4.8.2.
+      relationships between domains.  Described in Section 5.1.11.2.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      Section 5.1.4.8.1.
+      Section 5.1.11.1.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in Section 5.1.4.9.
+      existing CoSWID tags.  Described in Section 5.1.12.
 
    *  conditional-endorsement-series-triples (index 8): Triples
       describing a series of Endorsements that are applicable based on
-      the acceptance of a condition.  Described in Section 5.1.4.5.
+      the acceptance of a condition.  Described in Section 5.1.8.
 
    *  conditional-endorsement-triples (index 10): Triples describing a
       series of conditional Endorsements based on the acceptance of a
-      stateful environment.  Described in Section 5.1.4.4.
+      stateful environment.  Described in Section 5.1.7.
 
 5.1.4.1.  Environments
 
@@ -1419,15 +1423,15 @@ Table of Contents
    The following describes each member of the environment-map:
 
    *  class (index 0): Contains "class" attributes associated with the
-      module.  Described in Section 5.1.4.1.1.
+      module.  Described in Section 5.1.4.2.
 
    *  instance (index 1): Contains a unique identifier of a module's
-      instance.  Described in Section 5.1.4.1.2.
+      instance.  Described in Section 5.1.4.3.
 
    *  group (index 2): identifier for a group of instances, e.g., if an
-      anonymization scheme is used.  Described in Section 5.1.4.1.3.
+      anonymization scheme is used.  Described in Section 5.1.4.4.
 
-5.1.4.1.1.  Environment Class
+5.1.4.2.  Environment Class
 
    The Class name consists of class attributes that distinguish the
    class of environment from other classes.  The class attributes
@@ -1470,7 +1474,7 @@ Table of Contents
       For example, given a chassis with several network interface
       controllers (NIC), each NIC can be given a different index value.
 
-5.1.4.1.2.  Environment Instance
+5.1.4.3.  Environment Instance
 
    An instance-id is a unique value that identifies a Target Environment
    instance.  The identifier is reliably bound to the Target
@@ -1497,7 +1501,7 @@ Table of Contents
    $instance-id-type-choice /= tagged-cert-thumbprint-type
    $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
 
-5.1.4.1.3.   Environment Group
+5.1.4.4.   Environment Group
 
    A group carries a unique identifier that is reliably bound to a group
    of Attesters, for example when a number of Attester are hidden in the
@@ -1509,7 +1513,7 @@ Table of Contents
    $group-id-type-choice /= tagged-uuid-type
    $group-id-type-choice /= tagged-bytes
 
-5.1.4.1.4.  Measurements
+5.1.4.5.  Measurements
 
    Measurements can be of a variety of things including software,
    firmware, configuration files, read-only memory, fuses, IO ring
@@ -1547,19 +1551,19 @@ Table of Contents
    The following describes each member of the measurement-map:
 
    *  mkey (index 0): An optional measurement key.  Described in
-      Section 5.1.4.1.4.1.  A measurement-map without an mkey is said to
+      Section 5.1.4.5.1.  A measurement-map without an mkey is said to
       be anonymous.
 
    *  mval (index 1): The measurements associated with the environment.
-      Described in Section 5.1.4.1.4.2.
+      Described in Section 5.1.4.5.2.
 
    *  authorized-by (index 2): The cryptographic identity of the entity
       (individual or organization) that is the designated authority for
       measurement Claims.  For example, the signer of a CoMID triple.
-      See Section 5.1.4.1.5.  An entity is authoritative when it makes
+      See Section 5.1.4.6.  An entity is authoritative when it makes
       Claims that are inside its area of competence.
 
-5.1.4.1.4.1.  Measurement Keys
+5.1.4.5.1.  Measurement Keys
 
    Measurement keys SHALL be unique within the scope of the environment-
    map they are associated with.  The initial types defined are OID,
@@ -1575,7 +1579,7 @@ Table of Contents
    $measured-element-type-choice /= uint
    $measured-element-type-choice /= tstr
 
-5.1.4.1.4.2.  Measurement Values
+5.1.4.5.2.  Measurement Values
 
    A measurement-values-map contains measurements associated with a
    certain environment.  Depending on the context (triple) in which they
@@ -1612,11 +1616,11 @@ Table of Contents
    The following describes each member of the measurement-values-map.
 
    *  version (index 0): Typically changes whenever the measured
-      environment is updated.  Described in Section 5.1.4.1.4.3.
+      environment is updated.  Described in Section 5.1.4.5.3.
 
    *  svn (index 1): The security version number typically changes only
       when a security relevant change is made to the measured
-      environment.  Described in Section 5.1.4.1.4.4.
+      environment.  Described in Section 5.1.4.5.4.
 
    *  digests (index 2): Contains the digest(s) of the measured
       environment together with the respective hash algorithm used in
@@ -1627,13 +1631,13 @@ Table of Contents
       mode, not fully configured, not secure, not replay protected or
       not integrity protected.  The flags field indicates which
       operational modes are currently associated with measured
-      environment.  Described in Section 5.1.4.1.4.5.
+      environment.  Described in Section 5.1.4.5.5.
 
    *  raw-value (index 4): Contains the actual (not hashed) value of the
       element.  The vendor determines the encoding of raw-value.  When
       used for comparison, the tagged-masked-raw-value variant includes
       a mask indicating which bits in the value to compare.  Described
-      in Section 5.1.4.1.4.6
+      in Section 5.1.4.5.6
 
    *  raw-value-mask-DEPRECATED (index 5): Is an obsolete method of
       indicating which bits in a raw value to compare.  New CoMID files
@@ -1642,10 +1646,10 @@ Table of Contents
 
    *  mac-addr (index 6): An EUI-48 (Extended Unique Identifier 48) or
       EUI-64 MAC address [IEEE-802.OandA] associated with the measured
-      environment.  Described in Section 5.1.4.1.4.7.
+      environment.  Described in Section 5.1.4.5.7.
 
    *  ip-addr (index 7): An IPv4 or IPv6 address associated with the
-      measured environment.  Described in Section 5.1.4.1.4.7.
+      measured environment.  Described in Section 5.1.4.5.7.
 
    *  serial-number (index 8): A text string representing the product
       serial number.
@@ -1659,7 +1663,7 @@ Table of Contents
    *  name (index 11): a name associated with the measured environment.
 
    *  cryptokeys (index 13): identifies cryptographic keys that are
-      protected by the Target Environment See Section 5.1.4.1.5 for the
+      protected by the Target Environment See Section 5.1.4.6 for the
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
@@ -1667,9 +1671,9 @@ Table of Contents
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
-      Section 5.1.4.1.6.
+      Section 5.1.4.7.
 
-5.1.4.1.4.3.  Version
+5.1.4.5.3.  Version
 
    A version-map contains details about the versioning of a measured
    environment.
@@ -1696,7 +1700,7 @@ Table of Contents
    $version-scheme /= &(semver: 16384)
    $version-scheme /= int / text
 
-5.1.4.1.4.4.  Security Version Number
+5.1.4.5.4.  Security Version Number
 
    The following details the security version number (svn) and the
    minimum security version number (min-svn) statements.  A security
@@ -1729,7 +1733,7 @@ Table of Contents
    tagged-min-svn = #6.553(min-svn)
    svn-type-choice = svn / tagged-svn / tagged-min-svn
 
-5.1.4.1.4.5.  Flags
+5.1.4.5.5.  Flags
 
    The flags-map measurement describes a number of boolean operational
    modes.  If a flags-map value is not specified, then the operational
@@ -1784,7 +1788,7 @@ Table of Contents
       if the measured environment consists of memory, the sensitive
       values in memory are encrypted.
 
-5.1.4.1.4.6.  Raw Values Types
+5.1.4.5.6.  Raw Values Types
 
    Raw value measurements are typically vendor defined values that are
    checked by Verifiers for consistency only, since the security
@@ -1818,7 +1822,7 @@ Table of Contents
      mask : bytes
    ])
 
-5.1.4.1.4.7.  Address Types
+5.1.4.5.7.  Address Types
 
    This specification defines types for 48-bit and 64-bit MAC
    identifiers.  For IP addresses, it reuses the "Address Format" types
@@ -1835,7 +1839,7 @@ Table of Contents
    ip-addr-type-choice /= cbor-ip.ipv4-address
    ip-addr-type-choice /= cbor-ip.ipv6-address
 
-5.1.4.1.5.  Crypto Keys
+5.1.4.6.  Crypto Keys
 
    A cryptographic key can be one of the following formats:
 
@@ -1895,7 +1899,7 @@ Table of Contents
    tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
-5.1.4.1.6.  Integrity Registers
+5.1.4.7.  Integrity Registers
 
    An Integrity Registers map groups together one or more measured
    "objects".  Each measured object has a unique identifier and one or
@@ -1942,7 +1946,7 @@ Table of Contents
    in which case the identifier is the register index, or other kinds of
    vendor-specific measured objects.
 
-5.1.4.1.7.  Int Range
+5.1.4.8.  Int Range
 
    An int range describes an integer value that can be compared with
    linear order in the target environment.  An int range is represented
@@ -1958,7 +1962,7 @@ Table of Contents
    either min or max are infinite as represented by null, in which case,
    each infinity is necessarily exclusive.
 
-5.1.4.2.  Reference Values Triple
+5.1.5.  Reference Values Triple
 
    Reference Values Triples describe the possible intended states of an
    Attester.  At any given point in time, an Attester is expected to
@@ -2024,7 +2028,7 @@ Table of Contents
    Evidence" because the actual state in Evidence was found within the
    corpus of the RVP's possible state.
 
-5.1.4.3.  Endorsed Values Triple
+5.1.6.  Endorsed Values Triple
 
    An Endorsed Values triple provides additional Endorsements - i.e.,
    claims reflecting the actual state - for an existing Target
@@ -2054,7 +2058,7 @@ Table of Contents
    entry.  The new entry is added to the existing set of entries using
    the Endorser's authority.
 
-5.1.4.4.  Conditional Endorsement Triple
+5.1.7.  Conditional Endorsement Triple
 
    A Conditional Endorsement Triple declares one or more conditions
    that, once matched, results in augmenting the Attester's actual state
@@ -2088,7 +2092,7 @@ Table of Contents
    entries are asserted with the Endorser's authority as new
    Endorsements.
 
-5.1.4.5.  Conditional Endorsement Series Triple
+5.1.8.  Conditional Endorsement Series Triple
 
    The Conditional Endorsement Series Triple employs a 2-stage matching
    convention to assert endorsed values based on an initial condition
@@ -2138,7 +2142,7 @@ Table of Contents
    *  addition: Endorsements that are added if the selection criteria
       are satisfied.
 
-5.1.4.5.1.  Condition Matching
+5.1.8.1.  Condition Matching
 
    The condition matching criteria is applied to the set of Claims the
    Verifier has previously accepted.  The criteria is expressed in terms
@@ -2151,7 +2155,7 @@ Table of Contents
    avoid conflicting criteria, the authorized-by in condition takes
    precedence over the authorized-by in measurement-map.
 
-5.1.4.5.2.  Selection Matching
+5.1.8.1.1.  Selection Matching
 
    Every conditional-series-record selection MUST select the same mkeys
    where every selected mkey's corresponding set of code points
@@ -2169,7 +2173,7 @@ Table of Contents
    that matches terminates series matching and the endorsement values
    are added to the Attester's actual state.
 
-5.1.4.5.3.  Processing the Addition
+5.1.8.1.2.  Processing the Addition
 
    To process a conditional-endorsement-series-record the selection
    criteria in condition entries are matched with existing Evidence,
@@ -2188,7 +2192,7 @@ Table of Contents
    The first series entry that successfully matches the selection
    criteria terminates series processing.
 
-5.1.4.6.  Device Identity Triple
+5.1.9.  Device Identity Triple
 
    Device Identity triples (see identity-triples in Section 5.1.4)
    endorse that the keys were securely provisioned to the named Target
@@ -2233,17 +2237,17 @@ Table of Contents
       target Evidence or Reference Value.  See Section 5.1.4.1.
 
    *  key-list: A list of $crypto-key-type-choice keys that identifies
-      which keys are to be verified.  See Section 5.1.4.1.5.
+      which keys are to be verified.  See Section 5.1.4.6.
 
    *  mkey: An optional $measured-element-type-choice condition used to
       identify the element within the target Evidence or Reference
-      Value.  See Section 5.1.4.1.4.1.
+      Value.  See Section 5.1.4.5.1.
 
    *  authorized-by: An optional list of $crypto-key-type-choice keys
       that identifies the authorities that asserted the key-list in the
       target Evidence or Reference Values.
 
-5.1.4.7.  Attest Key Triple
+5.1.10.  Attest Key Triple
 
    Attest Key triples (see attest-key-triples in Section 5.1.4) endorse
    that the keys were securely provisioned to the named Attesting
@@ -2284,9 +2288,9 @@ Table of Contents
      }>
    ]
 
-   See Section 5.1.4.6 for additional details.
+   See Section 5.1.9 for additional details.
 
-5.1.4.8.  Triples for domain definitions
+5.1.11.  Triples for domain definitions
 
    A domain is a hierarchical description of a Composite Attester in
    terms of its constituent Environments and their compositional
@@ -2298,7 +2302,7 @@ Table of Contents
 
    Domain structure is defined with the following types of triples.
 
-5.1.4.8.1.  Domain Membership Triple
+5.1.11.1.  Domain Membership Triple
 
    A Domain Membership Triple (DMT) links a domain identifier to its
    member Environments.  The triple's subject is the domain identifier
@@ -2326,22 +2330,83 @@ Table of Contents
      members: [ +  domain-type ]
    ]
 
-5.1.4.8.2.  Domain Dependency Triple
+5.1.11.2.  Domain Dependency Triple
 
-   A Domain Dependency triple defines trust dependencies between
-   measurement sources.  The subject identifies a domain
-   (Section 5.1.4.8.1) that has a predicate relationship to the object
-   containing one or more dependent domains.  Dependency means the
-   subject domain’s trustworthiness properties rely on the object
-   domain(s) trustworthiness having been established before the
-   trustworthiness properties of the subject domain exist.
+   A Domain Dependency Triple (DDT) links a domain to a set of _trustee_
+   domains.  A domain dependency triple is used by an Endorser to assert
+   that a trust dependency exists between various components.  A DDT
+   specifies which component (identified by domain-id) depends on which
+   other components (identified by trustees) for proper operation.  A
+   series of DDTs can be used to describe the trust dependencies of a
+   system of components as a graph.  CoRIM uses environment-map to
+   identify components and groupings of components (i.e., domains).
+
+   Trust dependency means that an environment can only be fully trusted
+   if one or more trustee environments have been appraised and found to
+   be trustworthy.  A candidate environment can only be trusted if the
+   trustee environments it depends on exist, have been appraised and are
+   found to be trustworthy.
+
+   The first four phases of appraisal (see Section 8.1) might not
+   determine whether a component is trustworthy.  Subsequent Verifier
+   stages or Relying Party processing might be needed to finalize
+   trustworthiness.  Therefore, the trustworthiness of trustee domains
+   MUST be appraised before the trustworthiness of the subject domain
+   can be finalized.  Consequently, trust dependency semantics may need
+   to be represented in Attestation Results if Relying Parties play a
+   role in finalizing which components are trustworthy.
+
+   There are a variety of use cases where trust dependency might exist.
+   For example, trust in an operating system (OS) might depend on
+   trustworthy loading of the OS loader image.  Consequently, the OS
+   loader is a trustee domain of the OS.  Alternatively, trust in a
+   peripheral device might depend on trustworthy operation of a
+   perpheral device's bus controller.  The bus controller is therefore a
+   trustee domain of the peripheral device.
+
+   DDTs cannot create domains.  Instead, DDT processing first checks
+   that a domain-id has already been accepted into the ACS before adding
+   trust dependencies.
+
+   The domain dependency triple subject (domain-id) identifies the
+   member domain (see Section 5.1.11.1) that has trustees.  The triple
+   object trustees lists the domains that are trustees of the subject
+   domain.  The triple predicate asserts that a trust appraisal of
+   domain-id is not complete without appraisal of the trustees.
 
    domain-dependency-triple-record = [
-     domain-type
-     [ + domain-type ]
+     domain-id: domain-type
+     trustees: [ + domain-type ]
    ]
 
-5.1.4.9.  CoMID-CoSWID Linking Triple
+   All of the DDT subjects (domain-id) and objects (trustees) MUST also
+   be domain members for the DDT expression to be processed.
+
+   Trust dependency graphs are acyclic, meaning a domain-id MUST NOT
+   appear in the trustees list or within a trustee's subtree.
+
+   A terminating "leaf" trustee is a "root of trust" for that subtree.
+   Leaf trustees SHOULD have a corresponding Endorsement triple.
+   Verifiers MAY use DDTs with appraisal policies to assess the veracity
+   of domain-to-trustee linkages.
+
+   Trust dependency typically exists if any of the following are true:
+
+   *  A trustee performs any Attesting Environment functions relating to
+      a Target Environment (TE), such as Claims collection, Claims
+      signing, loading or initialization of the TE, provisioning TE
+      secrets - including cryptographic keys or other security-relevant
+      material.
+
+   *  A trustee executes security-relevant code in response to an
+      execution thread that originates from the domain-id environment.
+
+   *  A trustee is a component embedded within another component
+      identified by domain-id.
+
+   Trust dependency processing is described in Section 9.1.8.
+
+5.1.12.  CoMID-CoSWID Linking Triple
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
@@ -2769,6 +2834,7 @@ Table of Contents
      ? element-list: [ + element-map ]
      ? authority: [ + $crypto-key-type-choice ]
      ? members: [ + environment-map ]
+     ? trustees: [ + environment-map ]
      ? cmtype: cm-type
      ? profile: $profile-type-choice
    }
@@ -2786,6 +2852,7 @@ Table of Contents
      verifier: 4
      policy: 5
      domain-member: 6
+     trustee: 7
    )
 
    The Conceptual Message type (cmtype) determines which attributes are
@@ -2845,6 +2912,8 @@ Table of Contents
                  |          | profile      | Optional    |
                  +----------+--------------+-------------+
                  |          | members      | n/a         |
+                 +----------+--------------+-------------+
+                 |          | trustees     | n/a         |
                  +----------+--------------+-------------+
 
                     Table 3: Evidence tuple requirements
@@ -2907,6 +2976,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2919,6 +2990,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
 
                      Table 4: Reference Values tuple
                                requirements
@@ -2930,8 +3003,8 @@ Table of Contents
    Step 2.  The cmtype of the addition ECT in the rv entry is set to
             reference-values.
 
-   Step 3.  The Reference Values Triple (RVT) (Section 5.1.4.2)
-            populates the rv ECTs.
+   Step 3.  The Reference Values Triple (RVT) (Section 5.1.5) populates
+            the rv ECTs.
 
    i  RVT.ref-env
 
@@ -3009,6 +3082,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | selection | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -3021,6 +3096,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -3032,6 +3109,8 @@ Table of Contents
                 |           | profile      | Optional    |
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
+                +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
                 +-----------+--------------+-------------+
 
                   Table 5: Endorsed Values and Endorsed
@@ -3046,7 +3125,7 @@ Table of Contents
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
 
-   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.4.3) populates
+   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.6) populates
             the ev ECTs.
 
    i  EVT.condition
@@ -3076,8 +3155,8 @@ Table of Contents
             endorsements.
 
    Step 3.  Entries in the Conditional Endorsement Triple (CET)
-            (Section 5.1.4.4) conditions list are copied to a suitable
-            ECT in the internal representation.
+            (Section 5.1.7) conditions list are copied to a suitable ECT
+            in the internal representation.
 
    i  For each e in CET.conditions:
 
@@ -3110,7 +3189,7 @@ Table of Contents
             endorsements.
 
    Step 3.  Populate the evs ECTs using the Conditional Endorsement
-            Series Triple (CEST) (Section 5.1.4.5).
+            Series Triple (CEST) (Section 5.1.8).
 
    i.  For c in CEST.condition:
 
@@ -3177,8 +3256,8 @@ Table of Contents
             endorsements.
 
    Step 3.  Populate the ev condition ECT using either the identity-
-            triple-record or attest-key-triple-record (Section 5.1.4.6)
-            as follows:
+            triple-record or attest-key-triple-record (Section 5.1.9) as
+            follows:
 
    i.    *copy*(environment-map, ev.condition.environment.environment-
          map).
@@ -3238,6 +3317,8 @@ Table of Contents
                  +----------+--------------+-------------+
                  |          | members      | Mandatory   |
                  +----------+--------------+-------------+
+                 |          | trustees     | Optional    |
+                 +----------+--------------+-------------+
 
                       Table 6: Domain Membership tuple
                                 requirements
@@ -3245,7 +3326,7 @@ Table of Contents
 9.1.7.2.  Domain Membership Triples Transformation
 
    This section describes how the external representation of a Domain
-   Membership Triple (DMT) (Section 5.1.4.8.1) is transformed into its
+   Membership Triple (DMT) (Section 5.1.11.1) is transformed into its
    CoRIM internal representation dm (see Section 9.1.7.1).
 
    Step 1.  Allocate a domain ECT entry.
@@ -3264,19 +3345,103 @@ Table of Contents
 
    i  *copy*(DMT.domain-id, domain.environment)
 
-   ii For each environment e in DMT.members:
+   ii For each environment *e* in DMT.members:
 
-      *copy*(DMT.members[e].environment,
-         domain.members[e].environment)
+      *copy*(DMT.members[_e_].environment,
+         domain.members[_e_].environment)
 
    Step 5.  If the conceptual message containing the DMT has a profile,
             it is used to populate the profile for the domain ECT.
 
    i  *copy*(DMT.profile, domain.profile)
 
-9.1.8.  Processing of Policies
+9.1.8.  Processing of Domain Dependency Triples
 
-9.1.8.1.  Internal Representation of Policy Statements
+9.1.8.1.  Internal Representation of Domain Dependency
+
+   An internal representation of trust dependency is a directed acyclic
+   graph where each node in the graph identifies a member domain and
+   contains edges to dependent, or "trustee" domains.  An ECT structure
+   environment field contains the domain identifier, and the ECT
+   trustees list are the edges.  The cmtype is inclusive of trustee to
+   indicate the ECT is being used to model a trust dependency graph.
+
+   ddg = [ + ( dde: ECT ) ]
+
+   Table 7 contains the requirements for the ECT fields of the Domain
+   Dependency tuple:
+
+                 +==========+==============+=============+
+                 | ECT type | ECT Field    | Requirement |
+                 +==========+==============+=============+
+                 | domain   | environment  | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | element-list | Optional    |
+                 +----------+--------------+-------------+
+                 |          | authority    | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | cmtype       | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | profile      | Optional    |
+                 +----------+--------------+-------------+
+                 |          | members      | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | trustees     | Mandatory   |
+                 +----------+--------------+-------------+
+
+                      Table 7: Domain Dependency tuple
+                                requirements
+
+9.1.8.2.  Domain Dependency Triples Transformation
+
+   This section describes how the external representation of a Domain
+   Dependency Triple (DDT) (Section 5.1.11.2) is transformed into its
+   CoRIM internal representation of a domain dependency graph (ddg) (see
+   Section 9.1.8.1).
+
+   For each domain-dependency-triple-record (ddtr) in the DDT list,
+   perform the following steps:
+
+   Step 1.  Allocate a domain dependency edge dde ECT entry.
+
+   Step 2.  Set the conceptual message type cmtype for the dde ECT to
+            trustee.
+
+   i  *assign*(trustee, dde.cmtype)
+
+   Step 3.  Set the authority for the trust domain ECT to the ddt signer
+            (Section 4.2.3.1).
+
+   i  *copy*(ddtr.signer, dde.authority)
+
+   Step 4.  Populate the ECT environment using the domain identifier.
+
+   i  *copy*(ddtr.domain-id, dde.environment)
+
+   Step 5.  Populate the ECT trustees.
+
+   i  For each environment _e_ in ddtr.trustees:
+
+      *copy*([_e_].environment, dde.trustees[_e_].environment)
+
+   Step 6.  If the conceptual message containing the DDT has a profile,
+            it is used to populate the profile for the dde ECT.
+
+   i  *copy*(ddtr.profile, dde.profile)
+
+   Append the domain dependency edge (dde) to the domain dependency
+   graph (ddg).
+
+   Process each domain dependency triple record (ddtr) in the DDT list
+   until every entry has been transformed to the internal representation
+   and is contained in the domain dependency graph.
+
+   The domain dependency graph becomes input to domain dependency
+   processing steps in Section 9.3.4.6.
+
+9.1.9.  Processing of Policies
+
+9.1.9.1.  Internal Representation of Policy Statements
 
    The policy relation compares the condition ECTs to the ACS.
 
@@ -3288,7 +3453,7 @@ Table of Contents
    If all of the ECTs are found in the ACS then the addition ECTs are
    added to the ACS with the policy author's authority.
 
-   Table 7 contains the requirements for the ECT fields of the Policy
+   Table 8 contains the requirements for the ECT fields of the Policy
    tuple:
 
                 +===========+==============+=============+
@@ -3306,6 +3471,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -3318,12 +3485,14 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
 
-                    Table 7: Policy tuple requirements
+                    Table 8: Policy tuple requirements
 
-9.1.9.  Processing of Attestation Results
+9.1.10.  Processing of Attestation Results
 
-9.1.9.1.  Internal Representation of Attestation Results
+9.1.10.1.  Internal Representation of Attestation Results
 
    The ar relation compares the acs-condition to the ACS.
 
@@ -3336,7 +3505,7 @@ Table of Contents
    ACS to the ARS.  If any of the ars-additions are not found in the ACS
    then these ACS entries are not copied to the ARS.
 
-   Table 8 contains the requirements for the ECT fields of the
+   Table 9 contains the requirements for the ECT fields of the
    Attestation Results tuple:
 
               +===============+==============+=============+
@@ -3354,6 +3523,8 @@ Table of Contents
               +---------------+--------------+-------------+
               |               | members      | n/a         |
               +---------------+--------------+-------------+
+              |               | trustees     | n/a         |
+              +---------------+--------------+-------------+
               | ars-addition  | environment  | Mandatory   |
               +---------------+--------------+-------------+
               |               | element-list | Mandatory   |
@@ -3366,11 +3537,13 @@ Table of Contents
               +---------------+--------------+-------------+
               |               | members      | Optional    |
               +---------------+--------------+-------------+
+              |               | trustees     | n/a         |
+              +---------------+--------------+-------------+
 
-                    Table 8: Attestation Results tuple
+                    Table 9: Attestation Results tuple
                                requirements
 
-9.1.10.  Internal Representation of Attestation Results Set (ARS)
+9.1.11.  Internal Representation of Attestation Results Set (ARS)
 
    An ARS is a list of ECTs that describe ACS entries that are selected
    for use as Attestation Results.
@@ -3525,7 +3698,7 @@ Table of Contents
    An ACS is a list of ECTs that describe an Attester's actual state.
 
    For ECTs present in the ACS, the cmtype field is mandatory.
-   Table Table 9 shows the minimum required mandatory fields applicable
+   Table Table 10 shows the minimum required mandatory fields applicable
    to all ECTs in an ACS.
 
                  +==========+=============+=============+
@@ -3538,7 +3711,7 @@ Table of Contents
                  |          | cmtype      | Mandatory   |
                  +----------+-------------+-------------+
 
-                 Table 9: ACS tuple minimum requirements
+                 Table 10: ACS tuple minimum requirements
 
    ACS = [ + ECT ]
 
@@ -3696,7 +3869,7 @@ Table of Contents
 9.3.3.  Reference Values Corroboration and Augmentation (Phase 3)
 
    Reference Value Providers (RVP) publish Reference Values using the
-   Reference Values Triple (Section 5.1.4.2) which are transformed
+   Reference Values Triple (Section 5.1.5) which are transformed
    (Section 9.1.4.2) into an internal representation (Section 9.1.4.1).
    Each Reference Value Triple describes a single possible Attester
    state.
@@ -3723,7 +3896,7 @@ Table of Contents
 9.3.4.  Endorsed Values Augmentation (Phase 4)
 
    Endorsers publish Endorsements using endorsement triples (see
-   Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
+   Section 5.1.6), Section 5.1.7, and Section 5.1.8) which are
    transformed (Section 9.1.5.2) into an internal representation
    (Section 9.1.5.1).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
@@ -3767,43 +3940,66 @@ Table of Contents
    ACS.  Series iteration terminates after the first matching series
    entry is processed or when no series entries match.
 
-9.3.4.4.  Processing Key Verification Endorsements
+9.3.4.4.  Processing Key Verifications
 
-   For each ev entry, the condition ECT is compared with an ACS ECT,
-   where the ACS ECT cmtype contains either evidence, reference-values,
-   or endorsements.  If the ECTs match (Section 9.4), for each _key_ in
-   ev.condition.element-claims.measurement-values-map.intrep-keys:
+   To process key verification triples, the internal representation of
+   ECTs containing intrep-keys is used to identify ACS entries
+   containing $crypto-key-type-choice values that require additional key
+   verification steps.  If the key-type field is set, the Verifier will
+   apply the verification steps defined below.  If the key verification
+   check succeeds, the key is re-asserted by the Verifier as an
+   Endorsement by constructing an ECT that contains the verified key
+   using the authority of the Verifier.  Note that, in this case, the
+   Verifier is acting in the role of an Endorser.
 
-   *  Verify the certificate signatures for the certification path.
+   For each ECT from endorsed value (ev) or attestation evidence (ae)
+   entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-
+   ECT), where the ACS-ECT cmtype contains either evidence or
+   endorsements.  If the C-ECT and ACS-ECT match (Section 9.4), then for
+   each _key_ in the C-ECT.element-claims.measurement-values-map.intrep-
+   keys, do the following steps:
 
-   *  Verify certificate revocation status for the certification path.
+   Step 1.  Verify the certificate signatures for each certificate in
+            the certification path.
 
-   *  Verify key usage restrictions appropriate for the type of key.
+   Step 2.  Verify certificate revocation status for each certificate in
+            the certification path.
 
-   *  If key verification succeeds, *append*(_key_, ev.addition.element-
-      list.element-map.element-claims.measurement-values-map.intrep-
-      keys).
+   Step 3.  Verify key usage restrictions appropriate for the type of
+            key in key-type.
 
-   If key verification succeeds for any _key_:
+   Step 4.  If key verification succeeds for any _key_, allocate an
+            addition ECT (ADDITION).
 
-   *  *copy*(ev.condition.environment, ev.addition.environment).
+   Step 5.  For each verified _key_ in C-ECT:
 
-   *  *copy*(ev.condition.element-list.element-map.element-id,
-      ev.addition.element-list.element-map.element-id).
+   i  *append*(_key_, ADDITION.element-list.element-map.element-
+      claims.measurement-values-map.intrep-keys).
 
-   *  Set ev.addition.cmtype to endorsements.
+   Step 6.  *copy*(ACS-ECT.environment, ADDITION.environment`).
 
-   *  Add the Verifier authority $crypto-key-type-choice to the
-      ev.addition.authority field.
+   Step 7.  *copy*(ACS-ECT.element-list.element-map.element-id,
+            ADDITION.element-list.element-map.element-id).
 
-   *  Add the addition ECT to the ACS.
+   Step 8.  Set ADDITION.cmtype to endorsements.
 
-   Otherwise, do not add the addition ECT to the ACS.
+   Step 9.  Add the Verifier authority $crypto-key-type-choice to the
+            ADDITION.authority field.
+
+   Step 10. Add the ADDITION to the ACS.
+
+   Otherwise, do not add the ADDITION to the ACS.
+
+   It is possible that a candidate key has been verified during Phase 1
+   processing (Section 9.2) or is replicated across Evidence or
+   Endorsement ECTs.  Implementations might optimize processing of key
+   verifications by checking whether a key has already been verified by
+   the Verifier.
 
 9.3.4.5.  Processing Domain Membership
 
    This section assumes that each Domain Membership Triple (see
-   Section 5.1.4.8.1) has been transformed into an internal
+   Section 5.1.11.1) has been transformed into an internal
    representation following the steps described in Section 9.1.7.2,
    resulting in the representation specified in Section 9.1.7.1.
 
@@ -3841,6 +4037,58 @@ Table of Contents
    If any of the expected Domain Membership ECTs have not been added to
    the ACS, then this may affect outcomes in subsequent phases.
 
+9.3.4.6.  Processing Domain Dependency
+
+   This section assumes that each Domain Dependency Triple (see
+   Section 5.1.11.2) has been transformed into domain dependency graph
+   (see Section 9.1.8.1) following the steps described in
+   Section 9.1.8.2.
+
+   Processing a domain dependency graph (DDG) has the following
+   objectives:
+
+   *  Verify each edge in a DDG has a corresponding edge in a domain
+      membership graph.  DDGs need not be isomorphic to domain
+      membership graphs.
+
+   *  Verify the DDG is acyclic.
+
+   If, in a later processing phase, an appraisal policy for trust
+   dependency exists, the DDG can be further evaluated.  For example, a
+   trust dependency policy might specify a strength of function
+   requirement for how Evidence about a TE is integrity protected by its
+   AE.
+
+   Domain Dependency ECTs are processed using the following algorithm:
+
+   For each dde in the ddg staging array (outer loop):
+
+   *  Check that the ACS.cmtype contains domain-member.
+
+   *  Check that the dde.environment matches a domain member ACS entry
+      environment.
+
+   *  OR that the dde.environment matches one of it's
+      ACS.members.environment.
+
+   For each trustee _t_ in dde.trustees (inner loop):
+
+   *  Check that the ACS.cmtype contains domain-member.
+
+   *  Check that _t_ matches an ACS.environment.
+
+   Outer loop resumes:
+
+   *  If the dde.environment record AND all dde.trustees matched an ACS
+      with cmtype domain-member entry.  Then add the dde to the ACS.
+
+   *  Continue to the next dde until all are processed.
+
+   Subsequent Verifier stages or Relying Party processing of the ACS can
+   be impacted when Domain Dependency ECTs are not added to the ACS.
+   For example, trust in an ACS entry that depends on trustee ACS
+   entries might not be considered.
+
 9.3.5.  Examples for optional phases 5, 6, and 7
 
    Phases 5, 6, and 7 are optional depending on implementation design.
@@ -3872,7 +4120,7 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the applied
    policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 9.1.8.1,
+   details, based on the policy ECT, as described in Section 9.1.9.1,
    contains the environments affected by the policy with policy
    identifiers as Claims.
 
@@ -3885,7 +4133,7 @@ Table of Contents
    Claims may be specific to a particular Relying Party.  Hence, the
    Verifier may need to maintain multiple Attestation Results contexts.
    An internal representation of Attestation Results as separate
-   contexts (Section 9.1.10) ensures Relying Party–specific processing
+   contexts (Section 9.1.11) ensures Relying Party–specific processing
    does not modify the ACS, which is common to all Relying Parties.
    Attestation Results contexts are the inputs to Attestation Results
    procedures that produce external representations.
@@ -4200,7 +4448,7 @@ Table of Contents
    candidate entry.  If no entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
    as defined in Section 9.4.6.1.3 after equivalence has been found
-   according to Section 5.1.4.1.6.  Note that it is not required for all
+   according to Section 5.1.4.7.  Note that it is not required for all
    the entries in the candidate entry to be used during matching: the
    condition ECT could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
@@ -4416,8 +4664,8 @@ Table of Contents
    +---------+-------------+-------------------------------+-----------+
    | 502-504 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
-   | 505     | bytes       | A tagged-concise-swid-tag,    | RFCthis   |
-   |         |             | see Section 4.1.2             |           |
+   | 505     | bytes       | A tagged-concise-swid-        | RFCthis   |
+   |         |             | tag, see Section 4.1.2        |           |
    +---------+-------------+-------------------------------+-----------+
    | 506     | bytes       | A tagged-concise-mid-tag,     | RFCthis   |
    |         |             | see Section 4.1.2             |           |
@@ -4433,51 +4681,51 @@ Table of Contents
    |         | (7..33)     | Section 7.5                   |           |
    +---------+-------------+-------------------------------+-----------+
    | 552     | uint        | tagged-svn, see               | RFCthis   |
-   |         |             | Section 5.1.4.1.4.4           |           |
+   |         |             | Section 5.1.4.5.4             |           |
    +---------+-------------+-------------------------------+-----------+
    | 553     | uint        | tagged-min-svn, see           | RFCthis   |
-   |         |             | Section 5.1.4.1.4.4           |           |
+   |         |             | Section 5.1.4.5.4             |           |
    +---------+-------------+-------------------------------+-----------+
    | 554     | text        | tagged-pkix-base64-key-       | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 555     | text        | tagged-pkix-base64-cert-      | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 556     | text        | tagged-pkix-base64-cert-      | RFCthis   |
    |         |             | path-type, see                |           |
-   |         |             | Section 5.1.4.1.5             |           |
+   |         |             | Section 5.1.4.6               |           |
    +---------+-------------+-------------------------------+-----------+
-   | 557     | [int/text,  | tagged-key-thumbprint-type,   | RFCthis   |
-   |         | bytes]      | see Section 7.7               |           |
+   | 557     | [int/text,  | tagged-key-thumbprint-        | RFCthis   |
+   |         | bytes]      | type, see Section 7.7         |           |
    +---------+-------------+-------------------------------+-----------+
    | 558     | COSE_Key    | tagged-cose-key-type, see     | RFCthis   |
-   |         |             | Section 5.1.4.1.5             |           |
+   |         |             | Section 5.1.4.6               |           |
    +---------+-------------+-------------------------------+-----------+
    | 559     | digest      | tagged-cert-thumbprint-       | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 560     | bytes       | tagged-bytes, see             | RFCthis   |
    |         |             | Section 7.8                   |           |
    +---------+-------------+-------------------------------+-----------+
    | 561     | digest      | tagged-cert-path-             | RFCthis   |
    |         |             | thumbprint-type, see          |           |
-   |         |             | Section 5.1.4.1.5             |           |
+   |         |             | Section 5.1.4.6               |           |
    +---------+-------------+-------------------------------+-----------+
    | 562     | bytes       | tagged-pkix-asn1der-cert-     | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 563     | tagged-     | tagged-masked-raw-value,      | RFCthis   |
-   |         | masked-raw- | see Section 5.1.4.1.4.6       |           |
+   |         | masked-raw- | see Section 5.1.4.5.6         |           |
    |         | value       |                               |           |
    +---------+-------------+-------------------------------+-----------+
    | 564     | array       | tagged-int-range, see         | RFCthis   |
-   |         |             | Section 5.1.4.1.7             |           |
+   |         |             | Section 5.1.4.8               |           |
    +---------+-------------+-------------------------------+-----------+
    | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
-                                  Table 10
+                                  Table 11
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -4500,7 +4748,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 11: CoRIM Map Items
+                         Table 12: CoRIM Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4527,7 +4775,7 @@ Table of Contents
                 | 3-255 | Unassigned     |               |
                 +-------+----------------+---------------+
 
-                    Table 12: CoRIM Map Items Initial
+                    Table 13: CoRIM Map Items Initial
                               Registrations
 
 12.4.  CoRIM Entity Map Registry
@@ -4547,7 +4795,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 13: CoRIM Entity Map Items
+                      Table 14: CoRIM Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4574,7 +4822,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 14: CoRIM Entity Map Items Initial Registrations
+           Table 15: CoRIM Entity Map Items Initial Registrations
 
 12.5.  CoRIM Signer Map Registry
 
@@ -4593,7 +4841,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 15: CoRIM Signer Map Items
+                      Table 16: CoRIM Signer Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4612,7 +4860,7 @@ Table of Contents
                   | 2-255 | Unassigned  |               |
                   +-------+-------------+---------------+
 
-                      Table 16: CoRIM Signer Map Items
+                      Table 17: CoRIM Signer Map Items
                            Initial Registrations
 
 12.6.  CoMID Map Registry
@@ -4632,7 +4880,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 17: CoMID Map Items
+                         Table 18: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4657,7 +4905,7 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 18: CoMID Map Items Initial
+                    Table 19: CoMID Map Items Initial
                               Registrations
 
 12.7.  CoMID Entity Map Registry
@@ -4677,7 +4925,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 19: CoMID Entity Map Items
+                      Table 20: CoMID Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4704,7 +4952,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 20: CoMID Entity Map Items Initial Registrations
+           Table 21: CoMID Entity Map Items Initial Registrations
 
 12.8.  CoMID Triples Map Registry
 
@@ -4725,7 +4973,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-              Table 21: CoMID Triples Map Items Registration
+              Table 22: CoMID Triples Map Items Registration
                                 Procedures
 
    All negative values are reserved for Private Use.
@@ -4772,7 +5020,7 @@ Table of Contents
        | 11-18446744073709551616 | Unassigned     |               |
        +-------------------------+----------------+---------------+
 
-         Table 22: CoMID Triples Map Items Initial Registrations
+         Table 23: CoMID Triples Map Items Initial Registrations
 
 12.9.  CoMID Measurement Values Map Registry
 
@@ -4793,7 +5041,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-               Table 23: CoMID Measurement Values Map Items
+               Table 24: CoMID Measurement Values Map Items
                          Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4840,7 +5088,7 @@ Table of Contents
     |16-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
-        Table 24: Measurement Values Map Items Initial Registrations
+        Table 25: Measurement Values Map Items Initial Registrations
 
 12.10.  CoMID Flags Map Registry
 
@@ -4861,7 +5109,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-         Table 25: CoMID Flags Map Items Registration Procedures
+         Table 26: CoMID Flags Map Items Registration Procedures
 
    All negative values are reserved for Private Use.
 
@@ -4895,7 +5143,7 @@ Table of Contents
    |10-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
-             Table 26: Flags Map Items Initial Registrations
+             Table 27: Flags Map Items Initial Registrations
 
 12.11.  CoTL Map Registry
 
@@ -4914,7 +5162,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 27: CoTL Map Items
+                          Table 28: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4935,7 +5183,7 @@ Table of Contents
                  | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 28: CoTL Map Items Initial
+                     Table 29: CoTL Map Items Initial
                               Registrations
 
 12.12.  New Media Types
@@ -4951,7 +5199,7 @@ Table of Contents
    | rim+cose | application/rim+cose | RFCthis, (Section 12.12.2) |
    +----------+----------------------+----------------------------+
 
-                      Table 29: New Media Types
+                      Table 30: New Media Types
 
 12.12.1.  rim+cbor
 
@@ -5021,7 +5269,7 @@ Table of Contents
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 30: New Content-Formats
+                  Table 31: New Content-Formats
 
 13.  References
 
@@ -5036,10 +5284,11 @@ Table of Contents
 
    [I-D.ietf-rats-eat-measured-component]
               Frost, S., Fossati, T., Tschofenig, H., and H. Birkholz,
-              "EAT Measured Component", Work in Progress, Internet-
-              Draft, draft-ietf-rats-eat-measured-component-10, 12
-              January 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-eat-measured-component-10>.
+              "Entity Attestation Token (EAT) Measured Component", Work
+              in Progress, Internet-Draft, draft-ietf-rats-eat-measured-
+              component-12, 20 February 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
+              eat-measured-component-12>.
 
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
@@ -5397,8 +5646,8 @@ Appendix A.  Base CoRIM CDDL
    tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
    domain-dependency-triple-record = [
-     domain-type,
-     [+ domain-type],
+     domain-id: domain-type,
+     trustees: [+ domain-type],
    ]
    domain-membership-triple-record = [
      domain-id: domain-type,
