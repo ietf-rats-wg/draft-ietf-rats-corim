@@ -101,6 +101,7 @@ INTREP_FRAGS += intrep-ars.cddl
 INTREP_FRAGS += intrep-ect.cddl
 INTREP_FRAGS += intrep-ev.cddl
 INTREP_FRAGS += intrep-domain-mem.cddl
+INTREP_FRAGS += intrep-domain-dep.cddl
 INTREP_FRAGS += intrep-policy.cddl
 INTREP_FRAGS += intrep-rv.cddl
 INTREP_FRAGS += intrep-claims-map.cddl
