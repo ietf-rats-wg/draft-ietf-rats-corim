@@ -1631,7 +1631,7 @@ This document specifies the information elements for representing Endorsements a
                         <p id="section-toc.1-1.9.2.3.2.4.2.3.1"><a href="#section-9.3.4.3" class="auto internal xref">9.3.4.3</a>.  <a href="#name-processing-conditional-endor" class="internal xref">Processing Conditional Endorsement Series</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.4">
-                        <p id="section-toc.1-1.9.2.3.2.4.2.4.1"><a href="#section-9.3.4.4" class="auto internal xref">9.3.4.4</a>.  <a href="#name-processing-key-verification" class="internal xref">Processing Key Verification Endorsements</a></p>
+                        <p id="section-toc.1-1.9.2.3.2.4.2.4.1"><a href="#section-9.3.4.4" class="auto internal xref">9.3.4.4</a>.  <a href="#name-processing-key-verification" class="internal xref">Processing Key Verifications</a></p>
 </li>
                       <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.4.2.5">
                         <p id="section-toc.1-1.9.2.3.2.4.2.5.1"><a href="#section-9.3.4.5" class="auto internal xref">9.3.4.5</a>.  <a href="#name-processing-domain-membershi" class="internal xref">Processing Domain Membership</a></p>
@@ -6684,43 +6684,78 @@ Series iteration terminates after the first matching series entry is processed o
 <div id="sec-process-keys">
 <section id="section-9.3.4.4">
             <h5 id="name-processing-key-verification">
-<a href="#section-9.3.4.4" class="section-number selfRef">9.3.4.4. </a><a href="#name-processing-key-verification" class="section-name selfRef">Processing Key Verification Endorsements</a>
+<a href="#section-9.3.4.4" class="section-number selfRef">9.3.4.4. </a><a href="#name-processing-key-verification" class="section-name selfRef">Processing Key Verifications</a>
             </h5>
-<p id="section-9.3.4.4-1">For each <code>ev</code> entry, the <code>condition</code> ECT is compared with an ACS ECT, where the ACS ECT <code>cmtype</code> contains either <code>evidence</code>, <code>reference-values</code>, or <code>endorsements</code>.
-If the ECTs match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), for each <em>key</em> in <code>ev</code>.<code>condition</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>:<a href="#section-9.3.4.4-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-9.3.4.4-2.1">
-                <p id="section-9.3.4.4-2.1.1">Verify the certificate signatures for the certification path.<a href="#section-9.3.4.4-2.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-2.2">
-                <p id="section-9.3.4.4-2.2.1">Verify certificate revocation status for the certification path.<a href="#section-9.3.4.4-2.2.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-2.3">
-                <p id="section-9.3.4.4-2.3.1">Verify key usage restrictions appropriate for the type of key.<a href="#section-9.3.4.4-2.3.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-2.4">
-                <p id="section-9.3.4.4-2.4.1">If key verification succeeds, <strong>append</strong>(<em>key</em>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>).<a href="#section-9.3.4.4-2.4.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<p id="section-9.3.4.4-3">If key verification succeeds for any <em>key</em>:<a href="#section-9.3.4.4-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-9.3.4.4-4.1">
-                <p id="section-9.3.4.4-4.1.1"><strong>copy</strong>(<code>ev</code>.<code>condition</code>.<code>environment</code>, <code>ev</code>.<code>addition</code>.<code>environment</code>).<a href="#section-9.3.4.4-4.1.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-4.2">
-                <p id="section-9.3.4.4-4.2.1"><strong>copy</strong>(<code>ev</code>.<code>condition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>, <code>ev</code>.<code>addition</code>.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>).<a href="#section-9.3.4.4-4.2.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-4.3">
-                <p id="section-9.3.4.4-4.3.1">Set <code>ev</code>.<code>addition</code>.<code>cmtype</code> to <code>endorsements</code>.<a href="#section-9.3.4.4-4.3.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-4.4">
-                <p id="section-9.3.4.4-4.4.1">Add the Verifier authority <code>$crypto-key-type-choice</code> to the <code>ev</code>.<code>addition</code>.<code>authority</code> field.<a href="#section-9.3.4.4-4.4.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-9.3.4.4-4.5">
-                <p id="section-9.3.4.4-4.5.1">Add the <code>addition</code> ECT to the ACS.<a href="#section-9.3.4.4-4.5.1" class="pilcrow">¶</a></p>
-</li>
-            </ul>
-<p id="section-9.3.4.4-5">Otherwise, do not add the <code>addition</code> ECT to the ACS.<a href="#section-9.3.4.4-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.4-1">To process key verification triples, the internal representation of ECTs containing <code>intrep-keys</code> is used to identify ACS entries containing <code>$crypto-key-type-choice</code> values that require additional key verification steps.
+If the <code>key-type</code> field is set, the Verifier will apply the verification steps defined below.
+If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the <code>authority</code> of the Verifier.
+Note that, in this case, the Verifier is acting in the role of an Endorser.<a href="#section-9.3.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.4-2">For each ECT from endorsed value (<code>ev</code>) or attestation evidence (<code>ae</code>) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT <code>cmtype</code> contains either <code>evidence</code> or <code>endorsements</code>.
+If the C-ECT and ACS-ECT match (<a href="#sec-match-condition-ect" class="auto internal xref">Section 9.4</a>), then for each <em>key</em> in the C-ECT.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>, do the following steps:<a href="#section-9.3.4.4-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.4-3">
+<dt>Step 1.</dt>
+<dd id="section-9.3.4.4-3.1">
+                <p id="section-9.3.4.4-3.1.1">Verify the certificate signatures for each certificate in the certification path.<a href="#section-9.3.4.4-3.1.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 2.</dt>
+<dd id="section-9.3.4.4-3.2">
+                <p id="section-9.3.4.4-3.2.1">Verify certificate revocation status for each certificate in the certification path.<a href="#section-9.3.4.4-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 3.</dt>
+<dd id="section-9.3.4.4-3.3">
+                <p id="section-9.3.4.4-3.3.1">Verify key usage restrictions appropriate for the type of key in <code>key-type</code>.<a href="#section-9.3.4.4-3.3.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 4.</dt>
+<dd id="section-9.3.4.4-3.4">
+                <p id="section-9.3.4.4-3.4.1">If key verification succeeds for any <em>key</em>, allocate an addition ECT (ADDITION).<a href="#section-9.3.4.4-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 5.</dt>
+<dd id="section-9.3.4.4-3.5">
+                <p id="section-9.3.4.4-3.5.1">For each verified <em>key</em> in C-ECT:<a href="#section-9.3.4.4-3.5.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.4-4">
+<dt>i</dt>
+<dd id="section-9.3.4.4-4.1">
+                <p id="section-9.3.4.4-4.1.1"><strong>append</strong>(<em>key</em>, ADDITION.<code>element-list</code>.<code>element-map</code>.<code>element-claims</code>.<code>measurement-values-map</code>.<code>intrep-keys</code>).<a href="#section-9.3.4.4-4.1.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<span class="break"></span><dl class="olPercent" id="section-9.3.4.4-5">
+<dt>Step 6.</dt>
+<dd id="section-9.3.4.4-5.1">
+                <p id="section-9.3.4.4-5.1.1"><strong>copy</strong>(ACS-ECT<code>.</code>environment<code>, ADDITION.</code>environment`).<a href="#section-9.3.4.4-5.1.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 7.</dt>
+<dd id="section-9.3.4.4-5.2">
+                <p id="section-9.3.4.4-5.2.1"><strong>copy</strong>(ACS-ECT.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>, ADDITION.<code>element-list</code>.<code>element-map</code>.<code>element-id</code>).<a href="#section-9.3.4.4-5.2.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 8.</dt>
+<dd id="section-9.3.4.4-5.3">
+                <p id="section-9.3.4.4-5.3.1">Set ADDITION.<code>cmtype</code> to <code>endorsements</code>.<a href="#section-9.3.4.4-5.3.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 9.</dt>
+<dd id="section-9.3.4.4-5.4">
+                <p id="section-9.3.4.4-5.4.1">Add the Verifier authority <code>$crypto-key-type-choice</code> to the ADDITION.<code>authority</code> field.<a href="#section-9.3.4.4-5.4.1" class="pilcrow">¶</a></p>
+</dd>
+              <dd class="break"></dd>
+<dt>Step 10.</dt>
+<dd id="section-9.3.4.4-5.5">
+                <p id="section-9.3.4.4-5.5.1">Add the ADDITION to the ACS.<a href="#section-9.3.4.4-5.5.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<p id="section-9.3.4.4-6">Otherwise, do not add the ADDITION to the ACS.<a href="#section-9.3.4.4-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.4.4-7">It is possible that a candidate key has been verified during Phase 1 processing (<a href="#sec-phase1" class="auto internal xref">Section 9.2</a>) or is replicated across Evidence or Endorsement ECTs.
+Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.<a href="#section-9.3.4.4-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-process-dm">
