@@ -105,30 +105,33 @@ Table of Contents
        5.1.3.  Linked Tag
        5.1.4.  Triples
          5.1.4.1.  Environments
-           5.1.4.1.1.  Environment Class
-           5.1.4.1.2.  Environment Instance
-           5.1.4.1.3.   Environment Group
-           5.1.4.1.4.  Measurements
-             5.1.4.1.4.1.  Measurement Keys
-             5.1.4.1.4.2.  Measurement Values
-             5.1.4.1.4.3.  Version
-             5.1.4.1.4.4.  Security Version Number
-             5.1.4.1.4.5.  Flags
-             5.1.4.1.4.6.  Raw Values Types
-             5.1.4.1.4.7.  Address Types
-           5.1.4.1.5.  Crypto Keys
-           5.1.4.1.6.  Integrity Registers
-           5.1.4.1.7.  Int Range
-         5.1.4.2.  Reference Values Triple
-         5.1.4.3.  Endorsed Values Triple
-         5.1.4.4.  Conditional Endorsement Triple
-         5.1.4.5.  Conditional Endorsement Series Triple
-         5.1.4.6.  Device Identity Triple
-         5.1.4.7.  Attest Key Triple
-         5.1.4.8.  Triples for domain definitions
-           5.1.4.8.1.  Domain Membership Triple
-           5.1.4.8.2.  Domain Dependency Triple
-         5.1.4.9.  CoMID-CoSWID Linking Triple
+         5.1.4.2.  Environment Class
+         5.1.4.3.  Environment Instance
+         5.1.4.4.   Environment Group
+         5.1.4.5.  Measurements
+           5.1.4.5.1.  Measurement Keys
+           5.1.4.5.2.  Measurement Values
+           5.1.4.5.3.  Version
+           5.1.4.5.4.  Security Version Number
+           5.1.4.5.5.  Flags
+           5.1.4.5.6.  Raw Values Types
+           5.1.4.5.7.  Address Types
+         5.1.4.6.  Crypto Keys
+         5.1.4.7.  Integrity Registers
+         5.1.4.8.  Int Range
+       5.1.5.  Reference Values Triple
+       5.1.6.  Endorsed Values Triple
+       5.1.7.  Conditional Endorsement Triple
+       5.1.8.  Conditional Endorsement Series Triple
+         5.1.8.1.  Condition Matching
+           5.1.8.1.1.  Selection Matching
+           5.1.8.1.2.  Processing the Addition
+       5.1.9.  Device Identity Triple
+       5.1.10. Attest Key Triple
+       5.1.11. Triples for domain definitions
+         5.1.11.1.  Domain Membership Triple
+         5.1.11.2.  Domain Dependency Triple
+       5.1.12. CoMID-CoSWID Linking Triple
      5.2.  Extensibility
        5.2.1.  Map Extensions
        5.2.2.  Data Type Extensions
@@ -145,18 +148,40 @@ Table of Contents
      7.8.  Tagged Bytes Type
    8.  Appraisal of CoRIM-based Inputs
      8.1.  Appraisal Procedure
-   9.  Reference Verifier Algorithm
-     9.1.  Internal Representation of Conceptual Messages
+   9.  Reference Verifier Sequence
+     9.1.  Processing of Conceptual Messages
        9.1.1.  Internal structure of ECT
-       9.1.2.  Internal Representation of Cryptographic Keys
-       9.1.3.  Internal Representation of Evidence
-       9.1.4.  Internal Representation of Reference Values
-       9.1.5.  Internal Representation of Endorsed Values
-       9.1.6.  Internal Representation of Domain Membership
-       9.1.7.  Internal Representation of Policy Statements
-       9.1.8.  Internal Representation of Attestation Results
-       9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
-       9.1.10. Internal Representation of Attestation Results Set
+       9.1.2.  Common Conventions for Input Transformation
+       9.1.3.  Processing of Evidence
+         9.1.3.1.  Internal Representation of Evidence
+         9.1.3.2.  Evidence Transformation
+       9.1.4.  Processing of Reference Value Triples
+         9.1.4.1.  Internal Representation of Reference Values
+         9.1.4.2.  Reference Triples Transformation
+       9.1.5.  Processing of Endorsed Value Triple, Conditional
+               Endorsement Triple & Conditional Endorsement Series
+               Triples
+         9.1.5.1.  Internal Representation of Endorsed Values
+         9.1.5.2.  Endorsement Triples Transformations
+           9.1.5.2.1.  Endorsed Values Triple Transformation
+           9.1.5.2.2.  Conditional Endorsement Triple Transformation
+           9.1.5.2.3.  Conditional Endorsement Series Triple
+                   Transformation
+       9.1.6.  Processing of Attest Key and Device Identity Key
+               Triples
+         9.1.6.1.  Internal Representation of Cryptographic Keys
+         9.1.6.2.  Key Verification Triples Transformation
+       9.1.7.  Processing of Domain Membership Triples
+         9.1.7.1.  Internal Representation of Domain Membership
+         9.1.7.2.  Domain Membership Triples Transformation
+       9.1.8.  Processing of Domain Dependency Triples
+         9.1.8.1.  Internal Representation of Domain Dependency
+         9.1.8.2.  Domain Dependency Triples Transformation
+       9.1.9.  Processing of Policies
+         9.1.9.1.  Internal Representation of Policy Statements
+       9.1.10. Processing of Attestation Results
+         9.1.10.1.  Internal Representation of Attestation Results
+       9.1.11. Internal Representation of Attestation Results Set
                (ARS)
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
@@ -168,15 +193,7 @@ Table of Contents
          9.2.2.1.  Cryptographic Validation of Evidence
        9.2.3.  Input Transformation
          9.2.3.1.  Appraisal Context Construction
-         9.2.3.2.  Evidence Tranformation
-         9.2.3.3.  Reference Triples Transformation
-         9.2.3.4.  Endorsement Triples Transformations
-           9.2.3.4.1.  Endorsed Values Triple Transformation
-           9.2.3.4.2.  Conditional Endorsement Triple Transformation
-           9.2.3.4.3.  Conditional Endorsement Series Triple
-                   Transformation
-           9.2.3.4.4.  Key Verification Triples Transformation
-         9.2.3.5.  Domain Membership Triples Transformation
+       9.2.4.  Internal Representation of Appraisal Claims Set (ACS)
      9.3.  ACS Augmentation - Phases 2, 3, and 4
        9.3.1.  ACS Requirements
          9.3.1.1.  ACS Processing Requirements
@@ -194,6 +211,7 @@ Table of Contents
          9.3.4.3.  Processing Conditional Endorsement Series
          9.3.4.4.  Processing Key Verifications
          9.3.4.5.  Processing Domain Membership
+         9.3.4.6.  Processing Domain Dependency
        9.3.5.  Examples for optional phases 5, 6, and 7
      9.4.  Comparing a condition ECT against the ACS
        9.4.1.  Comparing a condition ECT against a single ACS entry
@@ -517,7 +535,7 @@ Table of Contents
    |              | series of          | is satisfied, then add the   |
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
-   |              |                    | See Section 9.1.5            |
+   |              |                    | See Section 9.1.5.1          |
    +--------------+--------------------+------------------------------+
    | Verifier     | List of expected   | If the list of expected      |
    |              | actual state       | claims are in the ACS, then  |
@@ -535,7 +553,7 @@ Table of Contents
    | Results      | actual state       | claims are in the ACS, then  |
    |              | claims, List of    | copy the list of Attestation |
    |              | expected           | Results claims into the ARS. |
-   |              | Attestation        | See Section 9.1.10           |
+   |              | Attestation        | See Section 9.1.11           |
    |              | Results claims     |                              |
    +--------------+--------------------+------------------------------+
 
@@ -717,9 +735,11 @@ Table of Contents
    manifests, certificates, or other relevant information can be
    retrieved by the Verifier.
 
+   ;# import measured-component as eatmc
+
    corim-locator-map = {
      &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest / [digest]
+     ? &(thumbprint: 1) => eatmc.digest / [ eatmc.digest ]
    }
 
    The following describes each child element of this type.
@@ -807,9 +827,11 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
      signature: bstr
    ]
+
+   hash-envelope-digest = bstr
 
    The following describes each child element of this type.
 
@@ -820,18 +842,32 @@ Table of Contents
    *  unprotected: A COSE header that is not protected by COSE
       signature.
 
-   *  payload: A CBOR encoded tagged CoRIM.
+   *  payload: When the payload is signed directly, either a CBOR-
+      encoded tagged CoRIM, or nil if it is detached.  When the payload
+      is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
-   *  signature: A COSE signature block which is the signature over the
-      protected and payload components of the signed CoRIM.
+   *  signature: A COSE signature block, as defined in Section 4 of
+      [STD96].
 
 4.2.1.  Protected Header Map
 
-   ; protected header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-   protected-corim-header-map =
+   ; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
+   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+
+   protected-corim-header-map-inline =
      {
        &(alg: 1) => int,
        &(content-type: 3) => "application/rim+cbor",
+       meta-group,
+       * cose-label => cose-value
+     }
+
+   protected-corim-header-map-hash-envelope =
+     {
+       &(alg: 1) => int,
+       &(payload_hash_alg: 258) => int
+       &(payload_preimage_content_type: 259) => "application/rim+cbor",
+       ? &(payload_location: 260) => tstr
        meta-group,
        * cose-label => cose-value
      }
@@ -854,8 +890,24 @@ Table of Contents
 
    *  alg (index 1): An integer that identifies a signature algorithm.
 
+   Either, when the payload is signed directly:
+
    *  content-type (index 3): A string that represents the "MIME Content
       type" carried in the CoRIM payload.
+
+   Or, when the payload is signed indirectly using a Hash Envelope
+   ([I-D.ietf-cose-hash-envelope]):
+
+   *  payload_hash_alg (index 258): The hash algorithm used to produce
+      the payload.
+
+   *  payload_preimage_content_type (index 259): A string that
+      represents the "MIME Content type" of the CoRIM document used as
+      the pre-image of the payload.
+
+   *  payload_location (index 260): An optional identifier enabling
+      retrieval of the original resource (preimage) identified by the
+      payload.
 
    At least one of:
 
@@ -981,7 +1033,9 @@ Table of Contents
    protected-header parameter.  These metadata containers ensure that
    each CoRIM in the collection has an identified signer.  The COSE
    protected header can include a Collection CMW type name by using the
-   cmwc_t content type parameter for the &(content-type: 3) COSE header.
+   cmwc_t content type parameter for the &(content-type: 3) COSE header,
+   or &(payload_preimage_content_type: 259) in the case of hash
+   envelopes.
 
    If using other signing envelope formats, the CoRIM signing authority
    MUST be specified.  For example, this can be accomplished by adding
@@ -1091,43 +1145,43 @@ Table of Contents
 
    *  Reference Values triples: containing Reference Values that are
       expected to match Evidence for a given Target Environment
-      (Section 5.1.4.2).
+      (Section 5.1.5).
 
    *  Endorsed Values triples: containing "Endorsed Values", i.e.,
       features about an Environment that do not appear in Evidence.
       Specific examples include testing or certification data pertaining
-      to a module (Section 5.1.4.3).
+      to a module (Section 5.1.6).
 
    *  Conditional Endorsement triples: describing one or more conditions
       that, once matched, result in augmenting the Attester's actual
-      state with the supplied Endorsed Values (Section 5.1.4.4).
+      state with the supplied Endorsed Values (Section 5.1.7).
 
    OTI Triples:
 
    *  Conditional Endorsement Series triples: describing conditional
       endorsements that are evaluated using a special matching algorithm
-      (Section 5.1.4.4).
+      (Section 5.1.7).
 
    *  Device Identity triples: containing cryptographic credentials -
       for example, an IDevID - uniquely identifying a device
-      (Section 5.1.4.6).
+      (Section 5.1.9).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
-      from the Attester (Section 5.1.4.7).
+      from the Attester (Section 5.1.10).
 
    *  Domain dependency triples: describing trust relationships between
       domains, i.e., collection of related environments and their
-      measurements (Section 5.1.4.8.2).
+      measurements (Section 5.1.11.2).
 
    *  Domain membership triples: describing topological relationships
       between (sub-)modules.  For example, in a composite Attester
       comprising multiple sub-Attesters (sub-modules), this triple can
       be used to define the topological relationship between lead- and
-      sub- Attester environments (Section 5.1.4.8.1).
+      sub- Attester environments (Section 5.1.11.1).
 
    *  CoMID-CoSWID linking triples: associating a Target Environment
-      with existing CoSWID Payload tags (Section 5.1.4.9).
+      with existing CoSWID Payload tags (Section 5.1.12).
 
    CoMID triples are extensible (Section 5.1.4).  Triples added via the
    extensibility feature MUST be OTI class triples.  This document
@@ -1291,7 +1345,7 @@ Table of Contents
    default the CoRIM signer.  The signer of a triple is said to be its
    _authority_. However, multiple authorities may be involved in signing
    triples.  See [STD96].  Consequently, authority may differ for search
-   criteria.  See Section 5.1.4.1.4.
+   criteria.  See Section 5.1.4.5.
 
    triples-map = non-empty<{
      ? &(reference-triples: 0) =>
@@ -1318,36 +1372,35 @@ Table of Contents
    The following describes each member of the triples-map:
 
    *  reference-triples (index 0): Triples containing reference values.
-      Described in Section 5.1.4.2.
+      Described in Section 5.1.5.
 
    *  endorsed-triples (index 1): Triples containing endorsed values.
-      Described in Section 5.1.4.3.
+      Described in Section 5.1.6.
 
    *  identity-triples (index 2): Triples containing identity
-      credentials.  Described in Section 5.1.4.6.
+      credentials.  Described in Section 5.1.9.
 
    *  attest-key-triples (index 3): Triples containing verification keys
       associated with attesting environments.  Described in
-      Section 5.1.4.7.
+      Section 5.1.10.
 
    *  dependency-triples (index 4): Triples describing trust
-      relationships between domains.  Described in Section 5.1.4.8.2.
+      relationships between domains.  Described in Section 5.1.11.2.
 
    *  membership-triples (index 5): Triples describing topological
       relationships between (sub-)modules.  Described in
-      Section 5.1.4.8.1.
+      Section 5.1.11.1.
 
    *  coswid-triples (index 6): Triples associating modules with
-      existing CoSWID tags.  Described in Section 5.1.4.9.
+      existing CoSWID tags.  Described in Section 5.1.12.
 
    *  conditional-endorsement-series-triples (index 8): Triples
-      describing a series of Endorsement that are applicable based on
-      the acceptance of a series of stateful environment records.
-      Described in Section 5.1.4.5.
+      describing a series of Endorsements that are applicable based on
+      the acceptance of a condition.  Described in Section 5.1.8.
 
    *  conditional-endorsement-triples (index 10): Triples describing a
       series of conditional Endorsements based on the acceptance of a
-      stateful environment.  Described in Section 5.1.4.4.
+      stateful environment.  Described in Section 5.1.7.
 
 5.1.4.1.  Environments
 
@@ -1370,15 +1423,15 @@ Table of Contents
    The following describes each member of the environment-map:
 
    *  class (index 0): Contains "class" attributes associated with the
-      module.  Described in Section 5.1.4.1.1.
+      module.  Described in Section 5.1.4.2.
 
    *  instance (index 1): Contains a unique identifier of a module's
-      instance.  Described in Section 5.1.4.1.2.
+      instance.  Described in Section 5.1.4.3.
 
    *  group (index 2): identifier for a group of instances, e.g., if an
-      anonymization scheme is used.  Described in Section 5.1.4.1.3.
+      anonymization scheme is used.  Described in Section 5.1.4.4.
 
-5.1.4.1.1.  Environment Class
+5.1.4.2.  Environment Class
 
    The Class name consists of class attributes that distinguish the
    class of environment from other classes.  The class attributes
@@ -1421,7 +1474,7 @@ Table of Contents
       For example, given a chassis with several network interface
       controllers (NIC), each NIC can be given a different index value.
 
-5.1.4.1.2.  Environment Instance
+5.1.4.3.  Environment Instance
 
    An instance-id is a unique value that identifies a Target Environment
    instance.  The identifier is reliably bound to the Target
@@ -1448,7 +1501,7 @@ Table of Contents
    $instance-id-type-choice /= tagged-cert-thumbprint-type
    $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
 
-5.1.4.1.3.   Environment Group
+5.1.4.4.   Environment Group
 
    A group carries a unique identifier that is reliably bound to a group
    of Attesters, for example when a number of Attester are hidden in the
@@ -1460,7 +1513,7 @@ Table of Contents
    $group-id-type-choice /= tagged-uuid-type
    $group-id-type-choice /= tagged-bytes
 
-5.1.4.1.4.  Measurements
+5.1.4.5.  Measurements
 
    Measurements can be of a variety of things including software,
    firmware, configuration files, read-only memory, fuses, IO ring
@@ -1498,19 +1551,19 @@ Table of Contents
    The following describes each member of the measurement-map:
 
    *  mkey (index 0): An optional measurement key.  Described in
-      Section 5.1.4.1.4.1.  A measurement-map without an mkey is said to
+      Section 5.1.4.5.1.  A measurement-map without an mkey is said to
       be anonymous.
 
    *  mval (index 1): The measurements associated with the environment.
-      Described in Section 5.1.4.1.4.2.
+      Described in Section 5.1.4.5.2.
 
    *  authorized-by (index 2): The cryptographic identity of the entity
       (individual or organization) that is the designated authority for
       measurement Claims.  For example, the signer of a CoMID triple.
-      See Section 5.1.4.1.5.  An entity is authoritative when it makes
+      See Section 5.1.4.6.  An entity is authoritative when it makes
       Claims that are inside its area of competence.
 
-5.1.4.1.4.1.  Measurement Keys
+5.1.4.5.1.  Measurement Keys
 
    Measurement keys SHALL be unique within the scope of the environment-
    map they are associated with.  The initial types defined are OID,
@@ -1526,7 +1579,7 @@ Table of Contents
    $measured-element-type-choice /= uint
    $measured-element-type-choice /= tstr
 
-5.1.4.1.4.2.  Measurement Values
+5.1.4.5.2.  Measurement Values
 
    A measurement-values-map contains measurements associated with a
    certain environment.  Depending on the context (triple) in which they
@@ -1549,7 +1602,7 @@ Table of Contents
          ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type
        )
      ? &(mac-addr: 6) => mac-addr-type-choice
-     ? &(ip-addr: 7) =>  ip-addr-type-choice
+     ? &(ip-addr: 7) => ip-addr-type-choice
      ? &(serial-number: 8) => text
      ? &(ueid: 9) => ueid-type
      ? &(uuid: 10) => uuid-type
@@ -1563,11 +1616,11 @@ Table of Contents
    The following describes each member of the measurement-values-map.
 
    *  version (index 0): Typically changes whenever the measured
-      environment is updated.  Described in Section 5.1.4.1.4.3.
+      environment is updated.  Described in Section 5.1.4.5.3.
 
    *  svn (index 1): The security version number typically changes only
       when a security relevant change is made to the measured
-      environment.  Described in Section 5.1.4.1.4.4.
+      environment.  Described in Section 5.1.4.5.4.
 
    *  digests (index 2): Contains the digest(s) of the measured
       environment together with the respective hash algorithm used in
@@ -1578,24 +1631,25 @@ Table of Contents
       mode, not fully configured, not secure, not replay protected or
       not integrity protected.  The flags field indicates which
       operational modes are currently associated with measured
-      environment.  Described in Section 5.1.4.1.4.5.
+      environment.  Described in Section 5.1.4.5.5.
 
    *  raw-value (index 4): Contains the actual (not hashed) value of the
       element.  The vendor determines the encoding of raw-value.  When
       used for comparison, the tagged-masked-raw-value variant includes
       a mask indicating which bits in the value to compare.  Described
-      in Section 5.1.4.1.4.6
+      in Section 5.1.4.5.6
 
    *  raw-value-mask-DEPRECATED (index 5): Is an obsolete method of
       indicating which bits in a raw value to compare.  New CoMID files
       should use the tagged-masked-raw-value on index 4 instead of using
       index 5.
 
-   *  mac-addr (index 6): A EUI-48 or EUI-64 MAC address associated with
-      the measured environment.  Described in Section 5.1.4.1.4.7.
+   *  mac-addr (index 6): An EUI-48 (Extended Unique Identifier 48) or
+      EUI-64 MAC address [IEEE-802.OandA] associated with the measured
+      environment.  Described in Section 5.1.4.5.7.
 
    *  ip-addr (index 7): An IPv4 or IPv6 address associated with the
-      measured environment.  Described in Section 5.1.4.1.4.7.
+      measured environment.  Described in Section 5.1.4.5.7.
 
    *  serial-number (index 8): A text string representing the product
       serial number.
@@ -1609,7 +1663,7 @@ Table of Contents
    *  name (index 11): a name associated with the measured environment.
 
    *  cryptokeys (index 13): identifies cryptographic keys that are
-      protected by the Target Environment See Section 5.1.4.1.5 for the
+      protected by the Target Environment See Section 5.1.4.6 for the
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
@@ -1617,16 +1671,18 @@ Table of Contents
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
-      Section 5.1.4.1.6.
+      Section 5.1.4.7.
 
-5.1.4.1.4.3.  Version
+5.1.4.5.3.  Version
 
    A version-map contains details about the versioning of a measured
    environment.
 
+   ;# import rfc9393 as coswid
+
    version-map = {
      &(version: 0) => text
-     ? &(version-scheme: 1) => $version-scheme
+     ? &(version-scheme: 1) => coswid.$version-scheme
    }
 
    The following describes each member of the version-map:
@@ -1644,7 +1700,7 @@ Table of Contents
    $version-scheme /= &(semver: 16384)
    $version-scheme /= int / text
 
-5.1.4.1.4.4.  Security Version Number
+5.1.4.5.4.  Security Version Number
 
    The following details the security version number (svn) and the
    minimum security version number (min-svn) statements.  A security
@@ -1677,7 +1733,7 @@ Table of Contents
    tagged-min-svn = #6.553(min-svn)
    svn-type-choice = svn / tagged-svn / tagged-min-svn
 
-5.1.4.1.4.5.  Flags
+5.1.4.5.5.  Flags
 
    The flags-map measurement describes a number of boolean operational
    modes.  If a flags-map value is not specified, then the operational
@@ -1732,7 +1788,7 @@ Table of Contents
       if the measured environment consists of memory, the sensitive
       values in memory are encrypted.
 
-5.1.4.1.4.6.  Raw Values Types
+5.1.4.5.6.  Raw Values Types
 
    Raw value measurements are typically vendor defined values that are
    checked by Verifiers for consistency only, since the security
@@ -1766,20 +1822,24 @@ Table of Contents
      mask : bytes
    ])
 
-5.1.4.1.4.7.  Address Types
+5.1.4.5.7.  Address Types
 
-   The types or associating addressing information to a measured
-   environment are:
+   This specification defines types for 48-bit and 64-bit MAC
+   identifiers.  For IP addresses, it reuses the "Address Format" types
+   defined in [RFC9164] with the CBOR tag removed.
 
-   ip-addr-type-choice = ip4-addr-type / ip6-addr-type
-   ip4-addr-type = bytes .size 4
-   ip6-addr-type = bytes .size 16
+   All the types represent a single address.
 
    mac-addr-type-choice = eui48-addr-type / eui64-addr-type
    eui48-addr-type = bytes .size 6
    eui64-addr-type = bytes .size 8
 
-5.1.4.1.5.  Crypto Keys
+   ;# import rfc9164 as cbor-ip
+
+   ip-addr-type-choice /= cbor-ip.ipv4-address
+   ip-addr-type-choice /= cbor-ip.ipv6-address
+
+5.1.4.6.  Crypto Keys
 
    A cryptographic key can be one of the following formats:
 
@@ -1819,6 +1879,8 @@ Table of Contents
    *  tagged-bytes: a key identifier with no prescribed construction
       method.
 
+   ;# import measured-component as eatmc
+
    $crypto-key-type-choice /= tagged-pkix-base64-key-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-type
    $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
@@ -1831,13 +1893,13 @@ Table of Contents
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-key-thumbprint-type = #6.557(eatmc.digest)
    tagged-cose-key-type = #6.558(COSE_Key)
-   tagged-cert-thumbprint-type = #6.559(digest)
-   tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+   tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
 
-5.1.4.1.6.  Integrity Registers
+5.1.4.7.  Integrity Registers
 
    An Integrity Registers map groups together one or more measured
    "objects".  Each measured object has a unique identifier and one or
@@ -1884,7 +1946,7 @@ Table of Contents
    in which case the identifier is the register index, or other kinds of
    vendor-specific measured objects.
 
-5.1.4.1.7.  Int Range
+5.1.4.8.  Int Range
 
    An int range describes an integer value that can be compared with
    linear order in the target environment.  An int range is represented
@@ -1900,7 +1962,7 @@ Table of Contents
    either min or max are infinite as represented by null, in which case,
    each infinity is necessarily exclusive.
 
-5.1.4.2.  Reference Values Triple
+5.1.5.  Reference Values Triple
 
    Reference Values Triples describe the possible intended states of an
    Attester.  At any given point in time, an Attester is expected to
@@ -1966,7 +2028,7 @@ Table of Contents
    Evidence" because the actual state in Evidence was found within the
    corpus of the RVP's possible state.
 
-5.1.4.3.  Endorsed Values Triple
+5.1.6.  Endorsed Values Triple
 
    An Endorsed Values triple provides additional Endorsements - i.e.,
    claims reflecting the actual state - for an existing Target
@@ -1996,7 +2058,7 @@ Table of Contents
    entry.  The new entry is added to the existing set of entries using
    the Endorser's authority.
 
-5.1.4.4.  Conditional Endorsement Triple
+5.1.7.  Conditional Endorsement Triple
 
    A Conditional Endorsement Triple declares one or more conditions
    that, once matched, results in augmenting the Attester's actual state
@@ -2030,33 +2092,29 @@ Table of Contents
    entries are asserted with the Endorser's authority as new
    Endorsements.
 
-5.1.4.5.  Conditional Endorsement Series Triple
+5.1.8.  Conditional Endorsement Series Triple
 
-   The Conditional Endorsement Series Triple is used to assert endorsed
-   values based on an initial condition match (specified in condition:)
-   followed by a series condition match (specified in selection: inside
-   conditional-series-record).  Every conditional-series-record
-   selection MUST select the same mkeys where every selected mkey's
-   corresponding set of code points represented as mval.key MUST be the
-   same across each conditional-series-record.  For example, if a
-   selection matches on 3 measurement-map statements; mkey is the same
-   for all 3 statements and mval contains only A= variable-X, B=
-   variable-Y, and C= variable-Z (exactly the set of code points A, B,
-   and C) respectively for every conditional-series-record in the
-   series.
-
-   These restrictions ensure that evaluation order does not change the
-   meaning of the triple during the appraisal process.  Series entries
-   are ordered such that the most precise match is evaluated first and
-   least precise match is evaluated last.  The first series condition
-   that matches terminates series matching and the endorsement values
-   are added to the Attester's actual state.
+   The Conditional Endorsement Series Triple employs a 2-stage matching
+   convention to assert endorsed values based on an initial condition
+   match followed by a series selection match.  If both the condition
+   and selection criteria are satisfied, a set of endorsed values are
+   added to the matching triple records.  The condition match identifies
+   the set of Claims to which the selection criteria are applied.  The
+   selection specifies a pattern of measurements that, if present,
+   controls when a focused set of endorsed values are to be asserted.
+   The 2-stage approach enables Endorsement authors the ability to craft
+   powerful search criteria while avoiding probelmatic repetition of
+   search criteria.
 
    The Conditional Endorsement Series Triple has the following
    structure:
 
    conditional-endorsement-series-triple-record = [
-     condition: stateful-environment-record
+     condition: [
+       environment: environment-map
+       claims-list: [ * measurement-map ]
+       ? authorized-by: [ + $crypto-key-type-choice ]
+     ]
      series: [ + conditional-series-record ]
    ]
 
@@ -2068,23 +2126,59 @@ Table of Contents
    The conditional-endorsement-series-triple-record has the following
    parameters:
 
-   *  condition: Search criteria that locates Evidence, corroborated
-      Evidence, or Endorsements.
+   *  condition: Initial selection criteria that locates Evidence,
+      corroborated Evidence, or Endorsements from the current set of
+      accepted Claims.  The condition consists of an environment-map, a
+      (possibly empty) claims-list, and an optional authorized-by.
 
-   *  series: A set of selection-addition tuples.
+   *  series: A sequence of selection-addition tuples.
 
    The conditional-series-record has the following parameters:
 
-   *  selection: Search criteria that locates Evidence, corroborated
-      Evidence, or Endorsements from the condition result.
+   *  selection: Secondary selection criteria that locates Evidence,
+      corroborated Evidence, or Endorsements from the initial selection
+      criteria's condition result.
 
-   *  addition: Additional Endorsements if the selection criteria are
-      satisfied.
+   *  addition: Endorsements that are added if the selection criteria
+      are satisfied.
 
-   To process a conditional-endorsement-series-record the conditions are
-   compared with existing Evidence, corroborated Evidence, and
-   Endorsements.  If the search criteria are satisfied, the series
-   tuples are processed.
+5.1.8.1.  Condition Matching
+
+   The condition matching criteria is applied to the set of Claims the
+   Verifier has previously accepted.  The criteria is expressed in terms
+   of environments (i.e., environment-map) and optionally measurements
+   (i.e., claims-list) or authority (i.e., authorized-by).  Condition
+   matching is intended to powerfully enable broad or narrow searches
+   that serve as staging for subsequent selection matching.
+
+   Note that measurement-map can also specify authority criteria.  To
+   avoid conflicting criteria, the authorized-by in condition takes
+   precedence over the authorized-by in measurement-map.
+
+5.1.8.1.1.  Selection Matching
+
+   Every conditional-series-record selection MUST select the same mkeys
+   where every selected mkey's corresponding set of code points
+   represented as mval.key MUST be the same across each conditional-
+   series-record.  For example, if a selection matches on 3 measurement-
+   map statements; mkey is the same for all 3 statements and mval
+   contains only A= variable-X, B= variable-Y, and C= variable-Z
+   (exactly the set of code points A, B, and C) respectively for every
+   conditional-series-record in the series.
+
+   These restrictions ensure that evaluation order does not change the
+   meaning of the triple during the appraisal process.  Series entries
+   are ordered such that the most precise match is evaluated first and
+   least precise match is evaluated last.  The first series condition
+   that matches terminates series matching and the endorsement values
+   are added to the Attester's actual state.
+
+5.1.8.1.2.  Processing the Addition
+
+   To process a conditional-endorsement-series-record the selection
+   criteria in condition entries are matched with existing Evidence,
+   corroborated Evidence, and Endorsements.  If the selection criteria
+   are satisfied, the series tuples are processed.
 
    The series array contains an ordered list of conditional-series-
    record entries.  Evaluation order begins at list position 0.
@@ -2098,7 +2192,7 @@ Table of Contents
    The first series entry that successfully matches the selection
    criteria terminates series processing.
 
-5.1.4.6.  Device Identity Triple
+5.1.9.  Device Identity Triple
 
    Device Identity triples (see identity-triples in Section 5.1.4)
    endorse that the keys were securely provisioned to the named Target
@@ -2143,17 +2237,17 @@ Table of Contents
       target Evidence or Reference Value.  See Section 5.1.4.1.
 
    *  key-list: A list of $crypto-key-type-choice keys that identifies
-      which keys are to be verified.  See Section 5.1.4.1.5.
+      which keys are to be verified.  See Section 5.1.4.6.
 
    *  mkey: An optional $measured-element-type-choice condition used to
       identify the element within the target Evidence or Reference
-      Value.  See Section 5.1.4.1.4.1.
+      Value.  See Section 5.1.4.5.1.
 
    *  authorized-by: An optional list of $crypto-key-type-choice keys
       that identifies the authorities that asserted the key-list in the
       target Evidence or Reference Values.
 
-5.1.4.7.  Attest Key Triple
+5.1.10.  Attest Key Triple
 
    Attest Key triples (see attest-key-triples in Section 5.1.4) endorse
    that the keys were securely provisioned to the named Attesting
@@ -2194,9 +2288,9 @@ Table of Contents
      }>
    ]
 
-   See Section 5.1.4.6 for additional details.
+   See Section 5.1.9 for additional details.
 
-5.1.4.8.  Triples for domain definitions
+5.1.11.  Triples for domain definitions
 
    A domain is a hierarchical description of a Composite Attester in
    terms of its constituent Environments and their compositional
@@ -2208,7 +2302,7 @@ Table of Contents
 
    Domain structure is defined with the following types of triples.
 
-5.1.4.8.1.  Domain Membership Triple
+5.1.11.1.  Domain Membership Triple
 
    A Domain Membership Triple (DMT) links a domain identifier to its
    member Environments.  The triple's subject is the domain identifier
@@ -2236,22 +2330,83 @@ Table of Contents
      members: [ +  domain-type ]
    ]
 
-5.1.4.8.2.  Domain Dependency Triple
+5.1.11.2.  Domain Dependency Triple
 
-   A Domain Dependency triple defines trust dependencies between
-   measurement sources.  The subject identifies a domain
-   (Section 5.1.4.8.1) that has a predicate relationship to the object
-   containing one or more dependent domains.  Dependency means the
-   subject domain’s trustworthiness properties rely on the object
-   domain(s) trustworthiness having been established before the
-   trustworthiness properties of the subject domain exist.
+   A Domain Dependency Triple (DDT) links a domain to a set of _trustee_
+   domains.  A domain dependency triple is used by an Endorser to assert
+   that a trust dependency exists between various components.  A DDT
+   specifies which component (identified by domain-id) depends on which
+   other components (identified by trustees) for proper operation.  A
+   series of DDTs can be used to describe the trust dependencies of a
+   system of components as a graph.  CoRIM uses environment-map to
+   identify components and groupings of components (i.e., domains).
+
+   Trust dependency means that an environment can only be fully trusted
+   if one or more trustee environments have been appraised and found to
+   be trustworthy.  A candidate environment can only be trusted if the
+   trustee environments it depends on exist, have been appraised and are
+   found to be trustworthy.
+
+   The first four phases of appraisal (see Section 8.1) might not
+   determine whether a component is trustworthy.  Subsequent Verifier
+   stages or Relying Party processing might be needed to finalize
+   trustworthiness.  Therefore, the trustworthiness of trustee domains
+   MUST be appraised before the trustworthiness of the subject domain
+   can be finalized.  Consequently, trust dependency semantics may need
+   to be represented in Attestation Results if Relying Parties play a
+   role in finalizing which components are trustworthy.
+
+   There are a variety of use cases where trust dependency might exist.
+   For example, trust in an operating system (OS) might depend on
+   trustworthy loading of the OS loader image.  Consequently, the OS
+   loader is a trustee domain of the OS.  Alternatively, trust in a
+   peripheral device might depend on trustworthy operation of a
+   perpheral device's bus controller.  The bus controller is therefore a
+   trustee domain of the peripheral device.
+
+   DDTs cannot create domains.  Instead, DDT processing first checks
+   that a domain-id has already been accepted into the ACS before adding
+   trust dependencies.
+
+   The domain dependency triple subject (domain-id) identifies the
+   member domain (see Section 5.1.11.1) that has trustees.  The triple
+   object trustees lists the domains that are trustees of the subject
+   domain.  The triple predicate asserts that a trust appraisal of
+   domain-id is not complete without appraisal of the trustees.
 
    domain-dependency-triple-record = [
-     domain-type
-     [ + domain-type ]
+     domain-id: domain-type
+     trustees: [ + domain-type ]
    ]
 
-5.1.4.9.  CoMID-CoSWID Linking Triple
+   All of the DDT subjects (domain-id) and objects (trustees) MUST also
+   be domain members for the DDT expression to be processed.
+
+   Trust dependency graphs are acyclic, meaning a domain-id MUST NOT
+   appear in the trustees list or within a trustee's subtree.
+
+   A terminating "leaf" trustee is a "root of trust" for that subtree.
+   Leaf trustees SHOULD have a corresponding Endorsement triple.
+   Verifiers MAY use DDTs with appraisal policies to assess the veracity
+   of domain-to-trustee linkages.
+
+   Trust dependency typically exists if any of the following are true:
+
+   *  A trustee performs any Attesting Environment functions relating to
+      a Target Environment (TE), such as Claims collection, Claims
+      signing, loading or initialization of the TE, provisioning TE
+      secrets - including cryptographic keys or other security-relevant
+      material.
+
+   *  A trustee executes security-relevant code in response to an
+      execution thread that originates from the domain-id environment.
+
+   *  A trustee is a component embedded within another component
+      identified by domain-id.
+
+   Trust dependency processing is described in Section 9.1.8.
+
+5.1.12.  CoMID-CoSWID Linking Triple
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
@@ -2259,12 +2414,12 @@ Table of Contents
    existing CoSWIDs, and the predicate asserts that these contain the
    expected (i.e., reference) measurements for the Target Environment.
 
+   ;# import rfc9393 as coswid
+
    coswid-triple-record = [
      environment-map
-     [ + concise-swid-tag-id ]
+     [ + coswid.tag-id ]
    ]
-
-   concise-swid-tag-id = text / bstr .size 16
 
 5.2.  Extensibility
 
@@ -2456,19 +2611,13 @@ Table of Contents
 7.7.  Digest
 
    A digest represents the value of a hashing operation together with
-   the hash algorithm used.  The type of the digest algorithm identifier
-   can be either int or text and is interpreted according to the
-   [IANA.named-information] registry.  Specifically, int values are
-   matched against "ID" entries, text values are matched against "Hash
-   Name String" entries.  Whenever possible, using the int encoding is
-   RECOMMENDED.
+   the hash algorithm used.  This specification reuses the digest type
+   defined in Section 4.2 of [I-D.ietf-rats-eat-measured-component].
+   Only the CBOR serialization is used.
 
-   digest = [
-     alg: (int / text),
-     val: bytes
-   ]
+   ;# import measured-component as eatmc
 
-   digests-type = [ + digest ]
+   digests-type = [ + eatmc.digest ]
 
    A measurement can be obtained using different hash algorithms.  A
    digests-type can be used to collect multiple digest values obtained
@@ -2507,9 +2656,9 @@ Table of Contents
    behavior for each of those well-defined points.
 
    Verifier implementations MUST provide the specified information model
-   of the ACS at the end of phase 4 as described in this specification.
-   They are not required to use the same internal representation or
-   evaluation order described by this specification.
+   of the Appraisal Context at the end of phase 4 as described in this
+   specification.  They are not required to use the same internal
+   representation or evaluation order described by this specification.
 
 8.1.  Appraisal Procedure
 
@@ -2577,7 +2726,7 @@ Table of Contents
    an external representation suitable for consumption by a Relying
    Party.
 
-9.  Reference Verifier Algorithm
+9.  Reference Verifier Sequence
 
    This document presumes that Verifier implementations will differ.  To
    facilitate the description of normative Verifier behavior, this
@@ -2590,63 +2739,64 @@ Table of Contents
    Claims Set (ACS), Appraisal Policy, and Attestation Results Set (ARS)
    are used with the meaning defined in Section 1.1.1.
 
-          +-----------+ +----------+
-          | Reference | | Endorsed |
-          |  Values   | |  Values  |
-          +---+-------+ +---+------+
-              |             |
-+-------------+-------------+-------------------------+
-|             |      CORIM  | PROCESSING              |
-|             v             v                         |
-|     +------------------------------------+          |    +-----------+
-|     |          Input Validation          |          |    |           |
-|     +-----------------+------------------+          |    | Evidence  |
-|                       |                             |    |           |
-|                       v                             |    +-----+-----+
-|     +-----------------+-------------------+         |          |
-|     |          Input Transformation       |         |          v
-|     |      (Internal Representation)      |         |    +-----+------+
-|     +-----------------+-------------------+         |    |            |
-|                       |                             |    | Validation |
-|                       v                             |    |   &        |
-|    +------------------+------------------------+    |    | Internal   |
-|    |          Staging Area                     |    |    | Transform  |
-|    | +---------+  +---------+     +---------+  |    |    |            |
-|    | |  ECT    |  |  ECT    |     |  ECT    |  |    |    +-----+------+
-|    | |(ct= Rv) |  |(ct=End) | ..  |(ct=CEV) |  |    |          |
-|    | +---------+  +---------+     +---------+  |    |          |
-|    +------------------+------------------------+    |          |
-|                       |                             |          |
-|             +--------+    +----------------------+  |          |
-|             |             | Appraisal Claims Set |  |          |
-|             v             |    (ACS)             |  |          |
-|     +-------+--------+    |  +------+            |  |          |
-|     + ACS  Matching  +<---+  | ECT  | ...        |  |          |
-|     | Condition      |    |  |      |            +<-+----------+
-|     +-------+--------+    |  +------+            |  |
-|             |             |  ECT =               |  |
-|             +------------>|  Env. Claims Tuple   |  |
-|                           +-----------+----------+  |
-|                                       |             |
-|                             +--------+              |
-+-----------------------------+-----------------------+
-                              V
-           +------------------+--------------------+
-           |         OUTPUT TRANSFORMATION         |
-           +---------------------------------------+
+                                                .-------------------.
+                                              .-+-----------------. |
+                                            .-+-----------------. +-'
+                                            |   CoRIM file(s)   +-'
+                                            '---------+---------'
+                                                      |
+                              .-----------------------+------------.
+                             | CoRIM Processor        v             |
+                             |                .--------------.      |
+                             |               | Validation &   |     |
+                             |               | Internal Repr. |     |
+                             |               | Transformation |     |
+                             |                '-------+------'      |
+       .----------------.    |                        |             |
+       |    Evidence    |    |                        v             |
+       '-------+--------'    |             .---------------------.  |
+               |             |             |    Staging Area     |  |
+               v             |             | .-----.     .-----. |  |
+        .--------------.     |             | | ECT | ... | ECT | |  |
+       | Validation &   |    |             | '-----'     '-----' |  |
+       | Internal Repr. |    |             '----------+----------'  |
+       | Transformation |    |                        |             |
+        '------+-------'     |  .---------.           v             |
+               |             |  | .-----. |      .---------.        |
+                '------------+->| | ECT | +---->|           |       |
+                             |  | '-----' |     | ACS       |       |
+                             |  |   ...   |     | Condition |       |
+                             |  | .-----. |     | Matching  |       |
+                             |  | | ECT | |<----+           |       |
+                             |  | '-----' |      '---------'        |
+                             |  |   ACS   |                         |
+                             |  '----+----'                         |
+                             |       |                              |
+                              '------+-----------------------------'
+                                     v
+                            .-----------------.       .-------------.
+                           | Subsequent Phases +----->| Attestation |
+                            '-----------------'       | Results     |
+                                                      '-------------'
 
-                    Figure 1: CoRIM Verifier Flow
 
-9.1.  Internal Representation of Conceptual Messages
+        Legend:                                  .-------.   .------.
+          ACS = Appraisal Claims Set            | Process |  | Data |
+          ECT = Environment-Claims Tuple         '-------'   '------'
+
+                      Figure 1: CoRIM Processing Flow
+
+9.1.  Processing of Conceptual Messages
 
    Conceptual Messages are Verifier input and output values such as
    Evidence, Reference Values, Endorsed Values, Appraisal Policy, and
    Attestation Results.
 
-   The internal representation of Conceptual Messages, as well as the
-   ACS (Section 9.1.9) and ARS (Section 9.1.10), are constructed from a
-   common building block structure called Environment-Claims Tuple
-   (ECT).
+   All the Conceptual Messages once fully processed are transformed into
+   a common internal representation known as Environment Claims
+   Tuple(ECT).  This section describes the internal structure of ECT and
+   explains the process of transformation of external conceptual
+   messages into ECTs.
 
 9.1.1.  Internal structure of ECT
 
@@ -2684,6 +2834,7 @@ Table of Contents
      ? element-list: [ + element-map ]
      ? authority: [ + $crypto-key-type-choice ]
      ? members: [ + environment-map ]
+     ? trustees: [ + environment-map ]
      ? cmtype: cm-type
      ? profile: $profile-type-choice
    }
@@ -2701,35 +2852,34 @@ Table of Contents
      verifier: 4
      policy: 5
      domain-member: 6
+     trustee: 7
    )
 
    The Conceptual Message type (cmtype) determines which attributes are
-   mandatory.  See Section 9.1.3 through to Section 9.1.10 for ECTs of
-   various conceptual messages.
+   mandatory.
 
-9.1.2.  Internal Representation of Cryptographic Keys
+9.1.2.  Common Conventions for Input Transformation
 
-   The internal representation for keys use the extension slot within
-   measurement-values-map with the intrep-keys claim that consists of a
-   list of typed-crypto-key. typed-crypto-key consists of a key and an
-   optional key-type.  There are two types of keys attest-key and
-   identity-key.
+   The following mapping conventions apply to all forms of input
+   transformation:
 
-   $$measurement-values-map-extension //= (
-     &(intrep-keys: 65534) => [ + typed-crypto-key ]
-   )
+      -  The environment field is populated with a Target Environment
+         identifier.
 
-   typed-crypto-key = {
-     key: $crypto-key-type-choice
-     ? key-type: uint .bits key-type
-   }
+      -  The element-list field is populated with the measurements
+         collected by an Attesting Environment.
 
-   key-type = &(
-     attest-key: 0
-     identity-key: 1
-   )
+      -  The authority field is populated with the identity of the
+         entity that asserted (e.g., signed) the Conceptual Message.
 
-9.1.3.  Internal Representation of Evidence
+      -  The cmtype field is set based on the type of Conceptual Message
+         inputted or to be output.
+
+      -  The profile field is set based on the corim-map profile value.
+
+9.1.3.  Processing of Evidence
+
+9.1.3.1.  Internal Representation of Evidence
 
    An internal representation of attestation Evidence uses the ae
    relation.
@@ -2763,10 +2913,30 @@ Table of Contents
                  +----------+--------------+-------------+
                  |          | members      | n/a         |
                  +----------+--------------+-------------+
+                 |          | trustees     | n/a         |
+                 +----------+--------------+-------------+
 
                     Table 3: Evidence tuple requirements
 
-9.1.4.  Internal Representation of Reference Values
+9.1.3.2.  Evidence Transformation
+
+   Evidence is transformed from an external representation to an
+   internal representation based on the ae relation Section 9.1.3.1.
+   The Evidence is mapped into one or more addition ECTs.  If the
+   Evidence does not have a value for the mandatory ae fields, the
+   Verifier MUST NOT process the Evidence.
+
+   Evidence transformation algorithms may be well-known, defined by a
+   CoRIM profile (Section 4.1.4), or supplied dynamically.  The handling
+   of Evidence transformation algorithms is out of scope for this
+   document.
+
+9.1.4.  Processing of Reference Value Triples
+
+   Upon processing of CoRIMs containing Reference Value Triples, the RV
+   Triples are transformed to an internal representation.
+
+9.1.4.1.  Internal Representation of Reference Values
 
    An internal representation of Reference Values uses the rv relation,
    which is a list of ECTs that contains possible states and a list of
@@ -2806,6 +2976,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2818,15 +2990,53 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
 
                      Table 4: Reference Values tuple
                                requirements
 
-9.1.5.  Internal Representation of Endorsed Values
+9.1.4.2.  Reference Triples Transformation
+
+   Step 1.  An rv list entry (Section 9.1.4.1) is allocated.
+
+   Step 2.  The cmtype of the addition ECT in the rv entry is set to
+            reference-values.
+
+   Step 3.  The Reference Values Triple (RVT) (Section 5.1.5) populates
+            the rv ECTs.
+
+   i  RVT.ref-env
+
+      *copy*(environment-map, rv.condition.environment.environment-
+         map)
+
+      *copy*(environment-map, rv.addition.environment.environment-
+         map)
+
+   ii For each e in RVT.ref-claims:
+
+      *copy*(e.measurement-map, rv.condition.element-list.element-
+         map)
+
+   Step 4.  The signer of the Reference Values conceptual message is
+            copied to the rv.addition.authority field.
+
+   Step 5.  If the Reference Values conceptual message has a profile,
+            the profile identifier is copied to the rv.addition.profile
+            field.
+
+9.1.5.  Processing of Endorsed Value Triple, Conditional Endorsement
+        Triple & Conditional Endorsement Series Triples
+
+9.1.5.1.  Internal Representation of Endorsed Values
 
    An internal representation of Endorsed Values uses the ev and evs
    relations, which are lists of ECTs that describe matching conditions
    and the additions that are added if the conditions are satisfied.
+   The ev relation is applicable to Endorsed Values (EV) and Conditional
+   Endorsement (CE) Triple.  The evs relation is applicable to the
+   Conditional Endorsement Series Triples.
 
    ev = [
      condition: [ + ECT ]
@@ -2843,7 +3053,8 @@ Table of Contents
 
    The ev relation compares the condition ECTs to the ACS and if all of
    the ECTs are found in the ACS then the addition ECTs are added to the
-   ACS.
+   ACS.  Note, when ev relation is for EV Triple, then the element-list
+   inside condition is Optional while it is Mandatory for CE Triple.
 
    The evs relation compares the condition ECTs to the ACS and if all of
    the ECTs are found in the ACS then each entry in the series list is
@@ -2871,6 +3082,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | selection | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2882,6 +3095,8 @@ Table of Contents
                 |           | profile      | n/a         |
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
+                +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
                 +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
@@ -2895,11 +3110,187 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
 
                   Table 5: Endorsed Values and Endorsed
                     Values Series tuples requirements
 
-9.1.6.  Internal Representation of Domain Membership
+9.1.5.2.  Endorsement Triples Transformations
+
+9.1.5.2.1.  Endorsed Values Triple Transformation
+
+   Step 1.  An ev entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.6) populates
+            the ev ECTs.
+
+   i  EVT.condition
+
+      *copy*(environment-map, ev.condition.environment.environment-
+         map)
+
+      *copy*(environment-map, ev.addition.environment.environment-
+         map)
+
+   ii For each e in EVT.endorsement:
+
+      *copy*(e.endorsement.measurement-map, ev.addition.element-
+         list.element-map)
+
+   Step 4.  The signer of the Endorsement conceptual message is copied
+            to the ev.addition.authority field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
+
+9.1.5.2.2.  Conditional Endorsement Triple Transformation
+
+   Step 1.  An ev entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Entries in the Conditional Endorsement Triple (CET)
+            (Section 5.1.7) conditions list are copied to a suitable ECT
+            in the internal representation.
+
+   i  For each e in CET.conditions:
+
+      *copy*(e.stateful-environment-record.environment.environment-
+         map, ev.condition.environment.environment-map)
+
+      *copy*(e.stateful-environment-record.claims-list.measurement-
+         map, ev.condition.element-list.element-map)
+
+   ii For each e in CET.endorsements:
+
+      *copy*(e.endorsed-triple-record.condition.environment-map,
+         ev.addition.environment.environment-map)
+
+      *copy*(e.endorsed-triple-record.endorsement.measurement-map,
+         ev.addition.element-list.element-map)
+
+   Step 4.  The signer of the Conditional Endorsement conceptual message
+            is copied to the ev.addition.authority field.
+
+   Step 5.  If the Conditional Endorsement conceptual message has a
+            profile, the profile is copied to the ev.addition.profile
+            field.
+
+9.1.5.2.3.  Conditional Endorsement Series Triple Transformation
+
+   Step 1.  An evs entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the evs entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Populate the evs ECTs using the Conditional Endorsement
+            Series Triple (CEST) (Section 5.1.8).
+
+   i.  For c in CEST.condition:
+
+      *copy*(c.environment, evs.condition.environment)
+
+      If the c.claims-list is not empty then *copy*(c.claims-list,
+         evs.condition.element-list)
+
+      If c.authorized-by is present then *copy*(c.authorized-by,
+         evs.condition.authority)
+
+   ii. For each s in CEST.series:
+
+      *copy*(evs.condition.environment,
+         evs.series[s].selection.environment)
+
+      *copy*(s.selection, evs.series[s].selection.element-list)
+
+      *copy*(evs.condition.environment,
+         evs.series[s].addition.environment)
+
+      *copy*(s.addition, evs.series[s].addition.element-list)
+
+   Step 4.  The signer of the Conditional Endorsement Series conceptual
+            message is copied to the evs.series.addition.authority field
+            for each addition.
+
+   Step 5.  If the Conditional Endorsement Series conceptual message has
+            a profile, the profile is copied to the
+            evs.series.addition.profile field for each addition.
+
+9.1.6.  Processing of Attest Key and Device Identity Key Triples
+
+9.1.6.1.  Internal Representation of Cryptographic Keys
+
+   The internal representation for keys use the extension slot within
+   measurement-values-map with the intrep-keys claim that consists of a
+   list of typed-crypto-key. typed-crypto-key consists of a key and an
+   optional key-type.  There are two types of keys attest-key and
+   identity-key.
+
+   $$measurement-values-map-extension //= (
+     &(intrep-keys: 65534) => [ + typed-crypto-key ]
+   )
+
+   typed-crypto-key = {
+     key: $crypto-key-type-choice
+     ? key-type: uint .bits key-type
+   }
+
+   key-type = &(
+     attest-key: 0
+     identity-key: 1
+   )
+
+9.1.6.2.  Key Verification Triples Transformation
+
+   The following transformation steps are applied for both the identity-
+   triples and attest-key-triples with noted exceptions:
+
+   Step 1.  An ev entry (Section 9.1.5.1) is allocated.
+
+   Step 2.  The cmtype of the ev entry's addition ECT is set to
+            endorsements.
+
+   Step 3.  Populate the ev condition ECT using either the identity-
+            triple-record or attest-key-triple-record (Section 5.1.9) as
+            follows:
+
+   i.    *copy*(environment-map, ev.condition.environment.environment-
+         map).
+
+   ii.   Foreach _key_ in keylist.$crypto-key-type-choice, *copy*(_key_,
+         ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key).
+
+   iii.  If key-list originated from attest-key-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = attest-
+         key).
+
+   iv.   Else if key-list originated from identity-triples,
+         *set*(ev.condition.element-list.element-map.element-
+         claims.measurement-values-map.intrep-keys.key-type = identity-
+         key).
+
+   v.    If populated, *copy*(mkey, ev.condition.element-list.element-
+         map.element-id).
+
+   vi.   If populated, *copy*(authorized-by, ev.condition.authority).
+
+   Step 4.  The signer of the Identity or Attest Key Endorsement
+            conceptual message is copied to the ev.addition.authority
+            field.
+
+   Step 5.  If the Endorsement conceptual message has a profile, the
+            profile is copied to the ev.addition.profile field.
+
+9.1.7.  Processing of Domain Membership Triples
+
+9.1.7.1.  Internal Representation of Domain Membership
 
    An internal representation of Domain Membership is expressed in a
    single ECT, where the domain identifier is set in the environment
@@ -2926,11 +3317,131 @@ Table of Contents
                  +----------+--------------+-------------+
                  |          | members      | Mandatory   |
                  +----------+--------------+-------------+
+                 |          | trustees     | Optional    |
+                 +----------+--------------+-------------+
 
                       Table 6: Domain Membership tuple
                                 requirements
 
-9.1.7.  Internal Representation of Policy Statements
+9.1.7.2.  Domain Membership Triples Transformation
+
+   This section describes how the external representation of a Domain
+   Membership Triple (DMT) (Section 5.1.11.1) is transformed into its
+   CoRIM internal representation dm (see Section 9.1.7.1).
+
+   Step 1.  Allocate a domain ECT entry.
+
+   Step 2.  Set the conceptual message type for the domain ECT to 6
+            (domain-member).
+
+   i  *copy*(domain-member, domain.cmtype)
+
+   Step 3.  Set the authority for the domain ECT to the DMT signer
+            (Section 4.2.3.1).
+
+   i  *copy*(DMT.signer, domain.authority)
+
+   Step 4.  Use the DMT to populate the dm internal representation.
+
+   i  *copy*(DMT.domain-id, domain.environment)
+
+   ii For each environment *e* in DMT.members:
+
+      *copy*(DMT.members[_e_].environment,
+         domain.members[_e_].environment)
+
+   Step 5.  If the conceptual message containing the DMT has a profile,
+            it is used to populate the profile for the domain ECT.
+
+   i  *copy*(DMT.profile, domain.profile)
+
+9.1.8.  Processing of Domain Dependency Triples
+
+9.1.8.1.  Internal Representation of Domain Dependency
+
+   An internal representation of trust dependency is a directed acyclic
+   graph where each node in the graph identifies a member domain and
+   contains edges to dependent, or "trustee" domains.  An ECT structure
+   environment field contains the domain identifier, and the ECT
+   trustees list are the edges.  The cmtype is inclusive of trustee to
+   indicate the ECT is being used to model a trust dependency graph.
+
+   ddg = [ + ( dde: ECT ) ]
+
+   Table 7 contains the requirements for the ECT fields of the Domain
+   Dependency tuple:
+
+                 +==========+==============+=============+
+                 | ECT type | ECT Field    | Requirement |
+                 +==========+==============+=============+
+                 | domain   | environment  | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | element-list | Optional    |
+                 +----------+--------------+-------------+
+                 |          | authority    | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | cmtype       | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | profile      | Optional    |
+                 +----------+--------------+-------------+
+                 |          | members      | Mandatory   |
+                 +----------+--------------+-------------+
+                 |          | trustees     | Mandatory   |
+                 +----------+--------------+-------------+
+
+                      Table 7: Domain Dependency tuple
+                                requirements
+
+9.1.8.2.  Domain Dependency Triples Transformation
+
+   This section describes how the external representation of a Domain
+   Dependency Triple (DDT) (Section 5.1.11.2) is transformed into its
+   CoRIM internal representation of a domain dependency graph (ddg) (see
+   Section 9.1.8.1).
+
+   For each domain-dependency-triple-record (ddtr) in the DDT list,
+   perform the following steps:
+
+   Step 1.  Allocate a domain dependency edge dde ECT entry.
+
+   Step 2.  Set the conceptual message type cmtype for the dde ECT to
+            trustee.
+
+   i  *assign*(trustee, dde.cmtype)
+
+   Step 3.  Set the authority for the trust domain ECT to the ddt signer
+            (Section 4.2.3.1).
+
+   i  *copy*(ddtr.signer, dde.authority)
+
+   Step 4.  Populate the ECT environment using the domain identifier.
+
+   i  *copy*(ddtr.domain-id, dde.environment)
+
+   Step 5.  Populate the ECT trustees.
+
+   i  For each environment _e_ in ddtr.trustees:
+
+      *copy*([_e_].environment, dde.trustees[_e_].environment)
+
+   Step 6.  If the conceptual message containing the DDT has a profile,
+            it is used to populate the profile for the dde ECT.
+
+   i  *copy*(ddtr.profile, dde.profile)
+
+   Append the domain dependency edge (dde) to the domain dependency
+   graph (ddg).
+
+   Process each domain dependency triple record (ddtr) in the DDT list
+   until every entry has been transformed to the internal representation
+   and is contained in the domain dependency graph.
+
+   The domain dependency graph becomes input to domain dependency
+   processing steps in Section 9.3.4.6.
+
+9.1.9.  Processing of Policies
+
+9.1.9.1.  Internal Representation of Policy Statements
 
    The policy relation compares the condition ECTs to the ACS.
 
@@ -2942,7 +3453,7 @@ Table of Contents
    If all of the ECTs are found in the ACS then the addition ECTs are
    added to the ACS with the policy author's authority.
 
-   Table 7 contains the requirements for the ECT fields of the Policy
+   Table 8 contains the requirements for the ECT fields of the Policy
    tuple:
 
                 +===========+==============+=============+
@@ -2960,6 +3471,8 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
                 | addition  | environment  | Mandatory   |
                 +-----------+--------------+-------------+
                 |           | element-list | Mandatory   |
@@ -2972,10 +3485,14 @@ Table of Contents
                 +-----------+--------------+-------------+
                 |           | members      | n/a         |
                 +-----------+--------------+-------------+
+                |           | trustees     | n/a         |
+                +-----------+--------------+-------------+
 
-                    Table 7: Policy tuple requirements
+                    Table 8: Policy tuple requirements
 
-9.1.8.  Internal Representation of Attestation Results
+9.1.10.  Processing of Attestation Results
+
+9.1.10.1.  Internal Representation of Attestation Results
 
    The ar relation compares the acs-condition to the ACS.
 
@@ -2988,7 +3505,7 @@ Table of Contents
    ACS to the ARS.  If any of the ars-additions are not found in the ACS
    then these ACS entries are not copied to the ARS.
 
-   Table 8 contains the requirements for the ECT fields of the
+   Table 9 contains the requirements for the ECT fields of the
    Attestation Results tuple:
 
               +===============+==============+=============+
@@ -3006,6 +3523,8 @@ Table of Contents
               +---------------+--------------+-------------+
               |               | members      | n/a         |
               +---------------+--------------+-------------+
+              |               | trustees     | n/a         |
+              +---------------+--------------+-------------+
               | ars-addition  | environment  | Mandatory   |
               +---------------+--------------+-------------+
               |               | element-list | Mandatory   |
@@ -3018,33 +3537,13 @@ Table of Contents
               +---------------+--------------+-------------+
               |               | members      | Optional    |
               +---------------+--------------+-------------+
+              |               | trustees     | n/a         |
+              +---------------+--------------+-------------+
 
-                    Table 8: Attestation Results tuple
+                    Table 9: Attestation Results tuple
                                requirements
 
-9.1.9.  Internal Representation of Appraisal Claims Set (ACS)
-
-   An ACS is a list of ECTs that describe an Attester's actual state.
-
-   For ECTs present in the ACS, the cmtype field is mandatory.
-   Table Table 9 shows the minimum required mandatory fields applicable
-   to all ECTs in an ACS.
-
-                 +==========+=============+=============+
-                 | ECT type | ECT Field   | Requirement |
-                 +==========+=============+=============+
-                 | n/a      | environment | Mandatory   |
-                 +----------+-------------+-------------+
-                 |          | authority   | Mandatory   |
-                 +----------+-------------+-------------+
-                 |          | cmtype      | Mandatory   |
-                 +----------+-------------+-------------+
-
-                 Table 9: ACS tuple minimum requirements
-
-   ACS = [ + ECT ]
-
-9.1.10.  Internal Representation of Attestation Results Set (ARS)
+9.1.11.  Internal Representation of Attestation Results Set (ARS)
 
    An ARS is a list of ECTs that describe ACS entries that are selected
    for use as Attestation Results.
@@ -3175,28 +3674,14 @@ Table of Contents
    Verifier MUST NOT process Evidence which is not successfully
    validated.
 
+   Once Evidence is validated it is transformed into an internal
+   representation as given in Section 9.1.3.
+
 9.2.3.  Input Transformation
 
    Input Conceptual Messages, whether Evidence, Reference Values,
    Endorsements, or Policies, are transformed to an internal
    representation that is based on ECTs (Section 9.1).
-
-   The following mapping conventions apply to all forms of input
-   transformation:
-
-      -  The environment field is populated with a Target Environment
-         identifier.
-
-      -  The element-list field is populated with the measurements
-         collected by an Attesting Environment.
-
-      -  The authority field is populated with the identity of the
-         entity that asserted (e.g., signed) the Conceptual Message.
-
-      -  The cmtype field is set based on the type of Conceptual Message
-         inputted or to be output.
-
-      -  The profile field is set based on the corim-map profile value.
 
 9.2.3.1.  Appraisal Context Construction
 
@@ -3204,231 +3689,31 @@ Table of Contents
    context_. The Appraisal Context contains an internal representation
    of the inputted Conceptual Messages.  The selected tags are mapped to
    an internal representation, making them suitable for appraisal
-   processing.
-
-9.2.3.2.  Evidence Tranformation
-
-   Evidence is transformed from an external representation to an
-   internal representation based on the ae relation (Section 9.1.3).
-   The Evidence is mapped into one or more addition ECTs.  If the
-   Evidence does not have a value for the mandatory ae fields, the
-   Verifier MUST NOT process the Evidence.
-
-   Evidence transformation algorithms may be well-known, defined by a
-   CoRIM profile (Section 4.1.4), or supplied dynamically.  The handling
-   of dynamic Evidence transformation algorithms is out of scope for
-   this document.
-
-9.2.3.3.  Reference Triples Transformation
-
-   Step 1.  An rv list entry (Section 9.1.4) is allocated.
-
-   Step 2.  The cmtype of the addition ECT in the rv entry is set to
-            reference-values.
-
-   Step 3.  The Reference Values Triple (RVT) (Section 5.1.4.2)
-            populates the rv ECTs.
-
-   i  RVT.ref-env
-
-      *copy*(environment-map, rv.condition.environment.environment-
-         map)
-
-      *copy*(environment-map, rv.addition.environment.environment-
-         map)
-
-   ii For each e in RVT.ref-claims:
-
-      *copy*(e.measurement-map, rv.condition.element-list.element-
-         map)
-
-   Step 4.  The signer of the Reference Values conceptual message is
-            copied to the rv.addition.authority field.
-
-   Step 5.  If the Reference Values conceptual message has a profile,
-            the profile identifier is copied to the rv.addition.profile
-            field.
-
-9.2.3.4.  Endorsement Triples Transformations
-
-9.2.3.4.1.  Endorsed Values Triple Transformation
-
-   Step 1.  An ev entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the ev entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  The Endorsed Values Triple (EVT) (Section 5.1.4.3) populates
-            the ev ECTs.
-
-   i  EVT.condition
-
-      *copy*(environment-map, ev.condition.environment.environment-
-         map)
-
-      *copy*(environment-map, ev.addition.environment.environment-
-         map)
-
-   ii For each e in EVT.endorsement:
-
-      *copy*(e.endorsement.measurement-map, ev.addition.element-
-         list.element-map)
-
-   Step 4.  The signer of the Endorsement conceptual message is copied
-            to the ev.addition.authority field.
-
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev.addition.profile field.
-
-9.2.3.4.2.  Conditional Endorsement Triple Transformation
-
-   Step 1.  An ev entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the ev entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  Entries in the Conditional Endorsement Triple (CET)
-            (Section 5.1.4.4) conditions list are copied to a suitable
-            ECT in the internal representation.
-
-   i  For each e in CET.conditions:
-
-      *copy*(e.stateful-environment-record.environment.environment-
-         map, ev.condition.environment.environment-map)
-
-      *copy*(e.stateful-environment-record.claims-list.measurement-
-         map, ev.condition.element-list.element-map)
-
-   ii For each e in CET.endorsements:
-
-      *copy*(e.endorsed-triple-record.condition.environment-map,
-         ev.addition.environment.environment-map)
-
-      *copy*(e.endorsed-triple-record.endorsement.measurement-map,
-         ev.addition.element-list.element-map)
-
-   Step 4.  The signer of the Conditional Endorsement conceptual message
-            is copied to the ev.addition.authority field.
-
-   Step 5.  If the Conditional Endorsement conceptual message has a
-            profile, the profile is copied to the ev.addition.profile
-            field.
-
-9.2.3.4.3.  Conditional Endorsement Series Triple Transformation
-
-   Step 1.  An evs entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the evs entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  Populate the evs ECTs using the Conditional Endorsement
-            Series Triple (CEST) (Section 5.1.4.5).
-
-   i.  CEST.condition:
-
-      *copy*(stateful-environment-record.environment.environment-map,
-         evs.condition.environment.environment-map)
-
-      *copy*(stateful-environment-record.claims-list.measurement-map,
-         evs.condition.element-list.element-map)
-
-   ii. For each e in CEST.series:
-
-      *copy*(evs.condition.environment.environment-map,
-         evs.series.selection.environment.environment-map)
-
-      *copy*(e.conditional-series-
-         record.selection.measurement.measurement-map,
-         evs.series.selection.element-list.element-map)
-
-      *copy*(evs.condition.environment.environment-map,
-         evs.series.addition.environment.environment-map)
-
-      *copy*(e.conditional-series-record.addition.measurement-map,
-         evs.series.addition.element-list.element-map)
-
-   Step 4.  The signer of the Conditional Endorsement Series conceptual
-            message is copied to the evs.series.addition.authority
-            field.
-
-   Step 5.  If the Conditional Endorsement Series conceptual message has
-            a profile, the profile is copied to the
-            evs.series.addition.profile field.
-
-9.2.3.4.4.  Key Verification Triples Transformation
-
-   The following transformation steps are applied for both the identity-
-   triples and attest-key-triples with noted exceptions:
-
-   Step 1.  An ev entry (Section 9.1.5) is allocated.
-
-   Step 2.  The cmtype of the ev entry's addition ECT is set to
-            endorsements.
-
-   Step 3.  Populate the ev condition ECT using either the identity-
-            triple-record or attest-key-triple-record (Section 5.1.4.6)
-            as follows:
-
-   i.    *copy*(environment-map, ev.condition.environment.environment-
-         map).
-
-   ii.   Foreach _key_ in keylist.$crypto-key-type-choice, *copy*(_key_,
-         ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.intrep-keys.key).
-
-   iii.  If key-list originated from attest-key-triples,
-         *set*(ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.intrep-keys.key-type = attest-
-         key).
-
-   iv.   Else if key-list originated from identity-triples,
-         *set*(ev.condition.element-list.element-map.element-
-         claims.measurement-values-map.intrep-keys.key-type = identity-
-         key).
-
-   v.    If populated, *copy*(mkey, ev.condition.element-list.element-
-         map.element-id).
-
-   vi.   If populated, *copy*(authorized-by, ev.condition.authority).
-
-   Step 4.  The signer of the Identity or Attest Key Endorsement
-            conceptual message is copied to the ev.addition.authority
-            field.
-
-   Step 5.  If the Endorsement conceptual message has a profile, the
-            profile is copied to the ev.addition.profile field.
-
-9.2.3.5.  Domain Membership Triples Transformation
-
-   This section describes how the external representation of a Domain
-   Membership Triple (DMT) (Section 5.1.4.8.1) is transformed into its
-   CoRIM internal representation dm (see Section 9.1.6).
-
-   Step 1.  Allocate a domain ECT entry.
-
-   Step 2.  Set the conceptual message type for the domain ECT to 6
-            (domain-member).
-
-   i  *copy*(domain-member, domain.cmtype)
-
-   Step 3.  Set the authority for the domain ECT to the DMT signer
-            (Section 4.2.3.1).
-
-   i  *copy*(DMT.signer, domain.authority)
-
-   Step 4.  Use the DMT to populate the dm internal representation.
-
-   i  *copy*(DMT.domain-id, domain.environment)
-
-   ii For each environment e in DMT.members:
-
-      *copy*(DMT.members[e].environment,
-         domain.members[e].environment)
-
-   Step 5.  If the conceptual message containing the DMT has a profile,
-            it is used to populate the profile for the domain ECT.
-
-   i  *copy*(DMT.profile, domain.profile)
+   processing.  As the Conceptual Messages are processed during
+   Appraisal, the _appraisal context_ starts to get populated using a
+   data structure as given below.  See Section 9.2.4
+
+9.2.4.  Internal Representation of Appraisal Claims Set (ACS)
+
+   An ACS is a list of ECTs that describe an Attester's actual state.
+
+   For ECTs present in the ACS, the cmtype field is mandatory.
+   Table Table 10 shows the minimum required mandatory fields applicable
+   to all ECTs in an ACS.
+
+                 +==========+=============+=============+
+                 | ECT type | ECT Field   | Requirement |
+                 +==========+=============+=============+
+                 | n/a      | environment | Mandatory   |
+                 +----------+-------------+-------------+
+                 |          | authority   | Mandatory   |
+                 +----------+-------------+-------------+
+                 |          | cmtype      | Mandatory   |
+                 +----------+-------------+-------------+
+
+                 Table 10: ACS tuple minimum requirements
+
+   ACS = [ + ECT ]
 
 9.3.  ACS Augmentation - Phases 2, 3, and 4
 
@@ -3460,9 +3745,7 @@ Table of Contents
    Endorsement ECTs (e.g. from endorsed-triple-record).
 
    CoMID Reference Values will be matched against the ACS following the
-   comparison rules in Section 9.4.  This document describes an example
-   evidence structure which can be matched against these Reference
-   Values.
+   comparison rules in Section 9.4.
 
    Each Endorsement ECT contains the environment and internal
    representation of measurement-maps as extracted from an endorsed-
@@ -3586,8 +3869,8 @@ Table of Contents
 9.3.3.  Reference Values Corroboration and Augmentation (Phase 3)
 
    Reference Value Providers (RVP) publish Reference Values using the
-   Reference Values Triple (Section 5.1.4.2) which are transformed
-   (Section 9.2.3.3) into an internal representation (Section 9.1.4).
+   Reference Values Triple (Section 5.1.5) which are transformed
+   (Section 9.1.4.2) into an internal representation (Section 9.1.4.1).
    Each Reference Value Triple describes a single possible Attester
    state.
 
@@ -3613,9 +3896,9 @@ Table of Contents
 9.3.4.  Endorsed Values Augmentation (Phase 4)
 
    Endorsers publish Endorsements using endorsement triples (see
-   Section 5.1.4.3), Section 5.1.4.4, and Section 5.1.4.5) which are
-   transformed (Section 9.2.3.4) into an internal representation
-   (Section 9.1.5).  Endorsements describe actual Attester state.
+   Section 5.1.6), Section 5.1.7, and Section 5.1.8) which are
+   transformed (Section 9.1.5.2) into an internal representation
+   (Section 9.1.5.1).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
    satisifed by the ACS.
 
@@ -3715,38 +3998,96 @@ Table of Contents
 
 9.3.4.5.  Processing Domain Membership
 
-   This section assumes that each Domain Membership Triple has been
-   transformed into an internal representation following the steps
-   described in Section 9.2.3.5, resulting in the representation
-   specified in Section 9.1.6.
+   This section assumes that each Domain Membership Triple (see
+   Section 5.1.11.1) has been transformed into an internal
+   representation following the steps described in Section 9.1.7.2,
+   resulting in the representation specified in Section 9.1.7.1.
 
-   Domain Membership ECTs (cmtype: domain-member) in the staging area
-   are matched with ACS entries (of cmtype: evidence) OR (of cmtype:
-   domain-member) using the following algorithm:
+   Domain Membership ECTs (i.e., cmtype equals domain-member) in the dm
+   staging area are matched with ACS entries where cmtype is set to
+   evidence, reference-values i.e. corroborated evidence, or domain-
+   member using the following algorithm:
 
-   For every Domain Membership ECT entry (cmtype: domain-member) in
-   staging area, which has not been processed:
+   For each domain in the dm staging area, which has not been processed
+   (outer loop):
 
-   For each i in members, check that there is a corresponding ACS entry
-   with a matching environment and (cmtype:evidence OR cmtype: domain-
-   member)
+   For each member m in domain.members (inner loop):
 
-   *  If all members match a corresponding ACS entry, add the Domain
-      Membership ECT to ACS
+   *  Check that there is a corresponding ACS entry environment that
+      matches m.environment.
 
-   *  If none of the members match, proceed to next Domain Membership
-      ECT in the staging area
+   *  Check that the ACS entry cmtype is one of evidence, reference-
+      values, or domain-member.
 
-   *  If there is a partial match, proceed to the next Domain Membership
-      ECT in the staging area If the previous execution of the loop
-      added any Domain Membership ECTs to the ACS, then run the loop
-      again Else STOP processing Domain Membership ECTs
+   Outer loop resumes:
+
+   *  If all domain.members matched a corresponding ACS entry, add the
+      domain ECT to the ACS.
+
+   *  If none of the domain.members matched, proceed to next dm entry.
+
+   *  If some, but not all of the domain.members matched, proceed to the
+      next dm entry.  If the previous execution of the outer loop added
+      any domain entry to the ACS, then run the outer loop again Else
+      STOP processing dm entries.
 
    The processing terminates, when all the Domain Membership ECTs which
    are appropriate to the Evidence have been added to the ACS.
 
-   If expected Domain Membership ECTs have not been added, then this may
-   affect the processing in a later phase.
+   If any of the expected Domain Membership ECTs have not been added to
+   the ACS, then this may affect outcomes in subsequent phases.
+
+9.3.4.6.  Processing Domain Dependency
+
+   This section assumes that each Domain Dependency Triple (see
+   Section 5.1.11.2) has been transformed into domain dependency graph
+   (see Section 9.1.8.1) following the steps described in
+   Section 9.1.8.2.
+
+   Processing a domain dependency graph (DDG) has the following
+   objectives:
+
+   *  Verify each edge in a DDG has a corresponding edge in a domain
+      membership graph.  DDGs need not be isomorphic to domain
+      membership graphs.
+
+   *  Verify the DDG is acyclic.
+
+   If, in a later processing phase, an appraisal policy for trust
+   dependency exists, the DDG can be further evaluated.  For example, a
+   trust dependency policy might specify a strength of function
+   requirement for how Evidence about a TE is integrity protected by its
+   AE.
+
+   Domain Dependency ECTs are processed using the following algorithm:
+
+   For each dde in the ddg staging array (outer loop):
+
+   *  Check that the ACS.cmtype contains domain-member.
+
+   *  Check that the dde.environment matches a domain member ACS entry
+      environment.
+
+   *  OR that the dde.environment matches one of it's
+      ACS.members.environment.
+
+   For each trustee _t_ in dde.trustees (inner loop):
+
+   *  Check that the ACS.cmtype contains domain-member.
+
+   *  Check that _t_ matches an ACS.environment.
+
+   Outer loop resumes:
+
+   *  If the dde.environment record AND all dde.trustees matched an ACS
+      with cmtype domain-member entry.  Then add the dde to the ACS.
+
+   *  Continue to the next dde until all are processed.
+
+   Subsequent Verifier stages or Relying Party processing of the ACS can
+   be impacted when Domain Dependency ECTs are not added to the ACS.
+   For example, trust in an ACS entry that depends on trustee ACS
+   entries might not be considered.
 
 9.3.5.  Examples for optional phases 5, 6, and 7
 
@@ -3779,7 +4120,7 @@ Table of Contents
    Verifier might generate an Endorsement ECT for the top-level
    component that asserts a quality metric.  Details about the applied
    policy may augment the ACS.  An internal representation of policy
-   details, based on the policy ECT, as described in Section 9.1.7,
+   details, based on the policy ECT, as described in Section 9.1.9.1,
    contains the environments affected by the policy with policy
    identifiers as Claims.
 
@@ -3792,7 +4133,7 @@ Table of Contents
    Claims may be specific to a particular Relying Party.  Hence, the
    Verifier may need to maintain multiple Attestation Results contexts.
    An internal representation of Attestation Results as separate
-   contexts (Section 9.1.10) ensures Relying Party–specific processing
+   contexts (Section 9.1.11) ensures Relying Party–specific processing
    does not modify the ACS, which is common to all Relying Parties.
    Attestation Results contexts are the inputs to Attestation Results
    procedures that produce external representations.
@@ -4107,7 +4448,7 @@ Table of Contents
    candidate entry.  If no entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
    as defined in Section 9.4.6.1.3 after equivalence has been found
-   according to Section 5.1.4.1.6.  Note that it is not required for all
+   according to Section 5.1.4.7.  Note that it is not required for all
    the entries in the candidate entry to be used during matching: the
    condition ECT could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
@@ -4313,8 +4654,8 @@ Table of Contents
    +---------+-------------+-------------------------------+-----------+
    | 502-504 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
-   | 505     | bytes       | A tagged-concise-swid-tag,    | RFCthis   |
-   |         |             | see Section 4.1.2             |           |
+   | 505     | bytes       | A tagged-concise-swid-        | RFCthis   |
+   |         |             | tag, see Section 4.1.2        |           |
    +---------+-------------+-------------------------------+-----------+
    | 506     | bytes       | A tagged-concise-mid-tag,     | RFCthis   |
    |         |             | see Section 4.1.2             |           |
@@ -4330,51 +4671,51 @@ Table of Contents
    |         | (7..33)     | Section 7.5                   |           |
    +---------+-------------+-------------------------------+-----------+
    | 552     | uint        | tagged-svn, see               | RFCthis   |
-   |         |             | Section 5.1.4.1.4.4           |           |
+   |         |             | Section 5.1.4.5.4             |           |
    +---------+-------------+-------------------------------+-----------+
    | 553     | uint        | tagged-min-svn, see           | RFCthis   |
-   |         |             | Section 5.1.4.1.4.4           |           |
+   |         |             | Section 5.1.4.5.4             |           |
    +---------+-------------+-------------------------------+-----------+
    | 554     | text        | tagged-pkix-base64-key-       | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 555     | text        | tagged-pkix-base64-cert-      | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 556     | text        | tagged-pkix-base64-cert-      | RFCthis   |
    |         |             | path-type, see                |           |
-   |         |             | Section 5.1.4.1.5             |           |
+   |         |             | Section 5.1.4.6               |           |
    +---------+-------------+-------------------------------+-----------+
-   | 557     | [int/text,  | tagged-key-thumbprint-type,   | RFCthis   |
-   |         | bytes]      | see Section 7.7               |           |
+   | 557     | [int/text,  | tagged-key-thumbprint-        | RFCthis   |
+   |         | bytes]      | type, see Section 7.7         |           |
    +---------+-------------+-------------------------------+-----------+
    | 558     | COSE_Key    | tagged-cose-key-type, see     | RFCthis   |
-   |         |             | Section 5.1.4.1.5             |           |
+   |         |             | Section 5.1.4.6               |           |
    +---------+-------------+-------------------------------+-----------+
    | 559     | digest      | tagged-cert-thumbprint-       | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 560     | bytes       | tagged-bytes, see             | RFCthis   |
    |         |             | Section 7.8                   |           |
    +---------+-------------+-------------------------------+-----------+
    | 561     | digest      | tagged-cert-path-             | RFCthis   |
    |         |             | thumbprint-type, see          |           |
-   |         |             | Section 5.1.4.1.5             |           |
+   |         |             | Section 5.1.4.6               |           |
    +---------+-------------+-------------------------------+-----------+
    | 562     | bytes       | tagged-pkix-asn1der-cert-     | RFCthis   |
-   |         |             | type, see Section 5.1.4.1.5   |           |
+   |         |             | type, see Section 5.1.4.6     |           |
    +---------+-------------+-------------------------------+-----------+
    | 563     | tagged-     | tagged-masked-raw-value,      | RFCthis   |
-   |         | masked-raw- | see Section 5.1.4.1.4.6       |           |
+   |         | masked-raw- | see Section 5.1.4.5.6         |           |
    |         | value       |                               |           |
    +---------+-------------+-------------------------------+-----------+
    | 564     | array       | tagged-int-range, see         | RFCthis   |
-   |         |             | Section 5.1.4.1.7             |           |
+   |         |             | Section 5.1.4.8               |           |
    +---------+-------------+-------------------------------+-----------+
    | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
-                                  Table 10
+                                  Table 11
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -4397,7 +4738,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 11: CoRIM Map Items
+                         Table 12: CoRIM Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4424,7 +4765,7 @@ Table of Contents
                 | 3-255 | Unassigned     |               |
                 +-------+----------------+---------------+
 
-                    Table 12: CoRIM Map Items Initial
+                    Table 13: CoRIM Map Items Initial
                               Registrations
 
 12.4.  CoRIM Entity Map Registry
@@ -4444,7 +4785,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 13: CoRIM Entity Map Items
+                      Table 14: CoRIM Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4471,7 +4812,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 14: CoRIM Entity Map Items Initial Registrations
+           Table 15: CoRIM Entity Map Items Initial Registrations
 
 12.5.  CoRIM Signer Map Registry
 
@@ -4490,7 +4831,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 15: CoRIM Signer Map Items
+                      Table 16: CoRIM Signer Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4509,7 +4850,7 @@ Table of Contents
                   | 2-255 | Unassigned  |               |
                   +-------+-------------+---------------+
 
-                      Table 16: CoRIM Signer Map Items
+                      Table 17: CoRIM Signer Map Items
                            Initial Registrations
 
 12.6.  CoMID Map Registry
@@ -4529,7 +4870,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 17: CoMID Map Items
+                         Table 18: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4554,7 +4895,7 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 18: CoMID Map Items Initial
+                    Table 19: CoMID Map Items Initial
                               Registrations
 
 12.7.  CoMID Entity Map Registry
@@ -4574,7 +4915,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 19: CoMID Entity Map Items
+                      Table 20: CoMID Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4601,7 +4942,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 20: CoMID Entity Map Items Initial Registrations
+           Table 21: CoMID Entity Map Items Initial Registrations
 
 12.8.  CoMID Triples Map Registry
 
@@ -4622,7 +4963,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-              Table 21: CoMID Triples Map Items Registration
+              Table 22: CoMID Triples Map Items Registration
                                 Procedures
 
    All negative values are reserved for Private Use.
@@ -4669,7 +5010,7 @@ Table of Contents
        | 11-18446744073709551616 | Unassigned     |               |
        +-------------------------+----------------+---------------+
 
-         Table 22: CoMID Triples Map Items Initial Registrations
+         Table 23: CoMID Triples Map Items Initial Registrations
 
 12.9.  CoMID Measurement Values Map Registry
 
@@ -4690,7 +5031,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-               Table 23: CoMID Measurement Values Map Items
+               Table 24: CoMID Measurement Values Map Items
                          Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4737,7 +5078,7 @@ Table of Contents
     |16-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
-        Table 24: Measurement Values Map Items Initial Registrations
+        Table 25: Measurement Values Map Items Initial Registrations
 
 12.10.  CoMID Flags Map Registry
 
@@ -4758,7 +5099,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-         Table 25: CoMID Flags Map Items Registration Procedures
+         Table 26: CoMID Flags Map Items Registration Procedures
 
    All negative values are reserved for Private Use.
 
@@ -4792,7 +5133,7 @@ Table of Contents
    |10-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
-             Table 26: Flags Map Items Initial Registrations
+             Table 27: Flags Map Items Initial Registrations
 
 12.11.  CoTL Map Registry
 
@@ -4811,7 +5152,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 27: CoTL Map Items
+                          Table 28: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -4832,7 +5173,7 @@ Table of Contents
                  | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 28: CoTL Map Items Initial
+                     Table 29: CoTL Map Items Initial
                               Registrations
 
 12.12.  New Media Types
@@ -4848,7 +5189,7 @@ Table of Contents
    | rim+cose | application/rim+cose | RFCthis, (Section 12.12.2) |
    +----------+----------------------+----------------------------+
 
-                      Table 29: New Media Types
+                      Table 30: New Media Types
 
 12.12.1.  rim+cbor
 
@@ -4918,11 +5259,26 @@ Table of Contents
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 30: New Content-Formats
+                  Table 31: New Content-Formats
 
 13.  References
 
 13.1.  Normative References
+
+   [I-D.ietf-cose-hash-envelope]
+              Steele, O., Lasker, S., and H. Birkholz, "COSE Hash
+              Envelope", Work in Progress, Internet-Draft, draft-ietf-
+              cose-hash-envelope-10, 15 November 2025,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
+              hash-envelope-10>.
+
+   [I-D.ietf-rats-eat-measured-component]
+              Frost, S., Fossati, T., Tschofenig, H., and H. Birkholz,
+              "Entity Attestation Token (EAT) Measured Component", Work
+              in Progress, Internet-Draft, draft-ietf-rats-eat-measured-
+              component-12, 20 February 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
+              eat-measured-component-12>.
 
    [I-D.ietf-rats-msg-wrap]
               Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
@@ -4948,10 +5304,6 @@ Table of Contents
    [IANA.media-types]
               IANA, "Media Types",
               <https://www.iana.org/assignments/media-types>.
-
-   [IANA.named-information]
-              IANA, "Named Information",
-              <https://www.iana.org/assignments/named-information>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -4987,6 +5339,11 @@ Table of Contents
               DOI 10.17487/RFC9090, July 2021,
               <https://www.rfc-editor.org/rfc/rfc9090>.
 
+   [RFC9164]  Richardson, M. and C. Bormann, "Concise Binary Object
+              Representation (CBOR) Tags for IPv4 and IPv6 Addresses and
+              Prefixes", RFC 9164, DOI 10.17487/RFC9164, December 2021,
+              <https://www.rfc-editor.org/rfc/rfc9164>.
+
    [RFC9393]  Birkholz, H., Fitzgerald-McKay, J., Schmidt, C., and D.
               Waltermire, "Concise Software Identification Tags",
               RFC 9393, DOI 10.17487/RFC9393, June 2023,
@@ -5020,11 +5377,11 @@ Table of Contents
               DOI 10.17487/RFC9052, August 2022,
               <https://www.rfc-editor.org/rfc/rfc9052>.
 
-   [X.690]    International Telecommunications Union, "Information
-              technology — ASN.1 encoding rules: Specification of Basic
-              Encoding Rules (BER), Canonical Encoding Rules (CER) and
-              Distinguished Encoding Rules (DER)", ITU-T Recommendation
-              X.690, August 2015, <https://www.itu.int/rec/T-REC-X.690>.
+   [X.690]    International Telephone and Telegraph Consultative
+              Committee, "ASN.1 encoding rules: Specification of basic
+              encoding Rules (BER), Canonical encoding rules (CER) and
+              Distinguished encoding rules (DER)", CCITT Recommendation
+              X.690, July 2002.
 
 13.2.  Informative References
 
@@ -5074,6 +5431,12 @@ Table of Contents
               IANA, "Concise Software Identifier (CoSWID)",
               <https://www.iana.org/assignments/coswid>.
 
+   [IEEE-802.OandA]
+              "IEEE Standard for Local and Metropolitan Area Networks:
+              Overview and Architecture", IEEE,
+              DOI 10.1109/ieeestd.2014.6847097, ISBN ["9780738192192"],
+              July 2014, <https://doi.org/10.1109/ieeestd.2014.6847097>.
+
    [RFC7519]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web Token
               (JWT)", RFC 7519, DOI 10.17487/RFC7519, May 2015,
               <https://www.rfc-editor.org/rfc/rfc7519>.
@@ -5117,683 +5480,593 @@ Table of Contents
 
 Appendix A.  Base CoRIM CDDL
 
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
    corim = concise-rim-type-choice
-
-   concise-rim-type-choice /= tagged-unsigned-corim-map
-   concise-rim-type-choice /= signed-corim
-
+   concise-rim-type-choice /= tagged-unsigned-corim-map / signed-corim
    concise-tl-tag = {
-     &(tag-identity: 0) => tag-identity-map
-     &(tags-list: 1) => [ + tag-identity-map ],
-     &(tl-validity: 2) => validity-map
+     &(tag-identity: 0) => tag-identity-map,
+     &(tags-list: 1) => [+ tag-identity-map],
+     &(tl-validity: 2) => validity-map,
    }
-
-   $concise-tag-type-choice /= tagged-concise-swid-tag
-   $concise-tag-type-choice /= tagged-concise-mid-tag
-   $concise-tag-type-choice /= tagged-concise-tl-tag
-
-   corim-entity-map =
-     entity-map<$corim-role-type-choice, $$corim-entity-map-extension>
-
-   $corim-id-type-choice /= tstr
-   $corim-id-type-choice /= uuid-type
-
+   $concise-tag-type-choice /= tagged-concise-swid-tag / tagged-concise\
+                                        -mid-tag / tagged-concise-tl-tag
+   corim-entity-map = entity-map<$corim-role-type-choice, $$corim-\
+                                                   entity-map-extension>
+   $corim-id-type-choice /= tstr / uuid-type
    corim-locator-map = {
-     &(href: 0) => uri / [ + uri ]
-     ? &(thumbprint: 1) => digest / [digest]
+     &(href: 0) => uri / [+ uri],
+     ? &(thumbprint: 1) => eatmc.digest / [eatmc.digest],
    }
-
    corim-map = {
-     &(id: 0) => $corim-id-type-choice
-     &(tags: 1) => [ + $concise-tag-type-choice ]
-     ? &(dependent-rims: 2) => [ + corim-locator-map ]
-     ? &(profile: 3) => $profile-type-choice
-     ? &(rim-validity: 4) => validity-map
-     ? &(entities: 5) => [ + corim-entity-map ]
-     * $$corim-map-extension
+     &(id: 0) => $corim-id-type-choice,
+     &(tags: 1) => [+ $concise-tag-type-choice],
+     ? &(dependent-rims: 2) => [+ corim-locator-map],
+     ? &(profile: 3) => $profile-type-choice,
+     ? &(rim-validity: 4) => validity-map,
+     ? &(entities: 5) => [+ corim-entity-map],
+     * $$corim-map-extension,
    }
    unsigned-corim-map = corim-map
-
    corim-meta-map = {
-     &(signer: 0) => corim-signer-map
-     ? &(signature-validity: 1) => validity-map
+     &(signer: 0) => corim-signer-map,
+     ? &(signature-validity: 1) => validity-map,
    }
-
-   $corim-role-type-choice /= &(manifest-creator: 1)
-   $corim-role-type-choice /= &(manifest-signer: 2)
-
+   $corim-role-type-choice /= &(manifest-creator: 1) / &(manifest-\
+                                                              signer: 2)
    corim-signer-map = {
-     &(signer-name: 0) => $entity-name-type-choice
-     ? &(signer-uri: 1) => uri
-     * $$corim-signer-map-extension
+     &(signer-name: 0) => $entity-name-type-choice,
+     ? &(signer-uri: 1) => uri,
+     * $$corim-signer-map-extension,
    }
-
    COSE-Sign1-corim = [
-     protected: bstr .cbor protected-corim-header-map
-     unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map
-     signature: bstr
+     protected: bstr .cbor protected-corim-header-map,
+     unprotected: unprotected-corim-header-map,
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
+                                                           digest / nil,
+     signature: bstr,
    ]
-
-   $profile-type-choice /= uri
-   $profile-type-choice /= tagged-oid-type
-
+   hash-envelope-digest = bstr
+   $profile-type-choice /= uri / tagged-oid-type
    cwt-claims = {
-     &(iss: 1) => tstr
-     ? &(sub: 2) => tstr
-     ? &(exp: 4) => int / float
-     ? &(nbf: 5) => int / float
-     * int => any
+     &(iss: 1) => tstr,
+     ? &(sub: 2) => tstr,
+     ? &(exp: 4) => int / float,
+     ? &(nbf: 5) => int / float,
+     * int => any,
    }
-
-   protected-corim-header-map =
-     {
-       &(alg: 1) => int,
-       &(content-type: 3) => "application/rim+cbor",
-       meta-group,
-       * cose-label => cose-value
-     }
-
+   protected-corim-header-map = protected-corim-header-map-inline / \
+                                protected-corim-header-map-hash-envelope
+   protected-corim-header-map-inline = {
+     &(alg: 1) => int,
+     &(content-type: 3) => "application/rim+cbor",
+     meta-group,
+     * cose-label => cose-value,
+   }
+   protected-corim-header-map-hash-envelope = {
+     &(alg: 1) => int,
+     &(payload_hash_alg: 258) => int,
+     &(payload_preimage_content_type: 259) => "application/rim+cbor",
+     ? &(payload_location: 260) => tstr,
+     meta-group,
+     * cose-label => cose-value,
+   }
    meta-group = ((
            corim-meta-identity,
            ? cwt-claims-identity,
          ) // cwt-claims-identity)
-
    corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
-
    signed-corim = #6.18(COSE-Sign1-corim)
-
-   tagged-concise-swid-tag = #6.505(bytes .cbor concise-swid-tag)
-
+   tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
-
    tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
-
    tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
-
-   unprotected-corim-header-map = {
-     * cose-label => cose-value
-   }
-
+   unprotected-corim-header-map = {* cose-label => cose-value}
    validity-map = {
-     ? &(not-before: 0) => time
-     &(not-after: 1) => time
+     ? &(not-before: 0) => time,
+     &(not-after: 1) => time,
    }
-
    concise-mid-tag = {
-     ? &(language: 0) => text
-     &(tag-identity: 1) => tag-identity-map
-     ? &(entities: 2) => [ + comid-entity-map ]
-     ? &(linked-tags: 3) => [ + linked-tag-map ]
-     &(triples: 4) => triples-map
-     * $$concise-mid-tag-extension
+     ? &(language: 0) => text,
+     &(tag-identity: 1) => tag-identity-map,
+     ? &(entities: 2) => [+ comid-entity-map],
+     ? &(linked-tags: 3) => [+ linked-tag-map],
+     &(triples: 4) => triples-map,
+     * $$concise-mid-tag-extension,
    }
-
    attest-key-triple-record = [
-     environment: environment-map
-     key-list: [ + $crypto-key-type-choice ]
-     ? conditions: non-empty< {
-       ? &(mkey: 0) => $measured-element-type-choice,
-       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
-     }>
+     environment: environment-map,
+     key-list: [+ $crypto-key-type-choice],
+     ? conditions: non-empty<{
+               ? &(mkey: 0) => $measured-element-type-choice,
+               ? &(authorized-by: 1) => [+ $crypto-key-type-choice],
+   }>,
    ]
-
-   $class-id-type-choice /= tagged-oid-type
-   $class-id-type-choice /= tagged-uuid-type
-   $class-id-type-choice /= tagged-bytes
-
+   $class-id-type-choice /= tagged-oid-type / tagged-uuid-type / tagged\
+                                                                  -bytes
    class-map = non-empty<{
-     ? &(class-id: 0) => $class-id-type-choice
-     ? &(vendor: 1) => tstr
-     ? &(model: 2) => tstr
-     ? &(layer: 3) => uint
-     ? &(index: 4) => uint
+       ? &(class-id: 0) => $class-id-type-choice,
+       ? &(vendor: 1) => tstr,
+       ? &(model: 2) => tstr,
+       ? &(layer: 3) => uint,
+       ? &(index: 4) => uint,
    }>
-
-   comid-entity-map =
-     entity-map<$comid-role-type-choice, $$comid-entity-map-extension>
-
-   $comid-role-type-choice /= &(tag-creator: 0)
-   $comid-role-type-choice /= &(creator: 1)
-   $comid-role-type-choice /= &(maintainer: 2)
-
+   comid-entity-map = entity-map<$comid-role-type-choice, $$comid-\
+                                                   entity-map-extension>
+   $comid-role-type-choice /= &(tag-creator: 0) / &(creator: 1) / &(\
+                                                          maintainer: 2)
    conditional-endorsement-series-triple-record = [
-     condition: stateful-environment-record
-     series: [ + conditional-series-record ]
+     condition: [
+           environment: environment-map,
+           claims-list: [* measurement-map],
+           ? authorized-by: [+ $crypto-key-type-choice],
+   ],
+     series: [+ conditional-series-record],
    ]
-
    conditional-series-record = [
-     selection: [ + measurement-map]
-     addition: [ + measurement-map ]
+     selection: [+ measurement-map],
+     addition: [+ measurement-map],
    ]
-
    COSE_Key = {
-       1 => tstr / int
-       ? 2 => bstr
-       ? 3 => tstr / int
-       ? 4 => [+ (tstr / int) ]
-       ? 5 => bstr
-       * cose-label => cose-value
+     1 => tstr / int,
+     ? 2 => bstr,
+     ? 3 => tstr / int,
+     ? 4 => [+ tstr / int],
+     ? 5 => bstr,
+     * cose-label => cose-value,
    }
-
    cose-label = int / tstr
    cose-value = any
-
    coswid-triple-record = [
-     environment-map
-     [ + concise-swid-tag-id ]
+     environment-map,
+     [+ coswid.tag-id],
    ]
-
-   concise-swid-tag-id = text / bstr .size 16
-
-   $crypto-key-type-choice /= tagged-pkix-base64-key-type
-   $crypto-key-type-choice /= tagged-pkix-base64-cert-type
-   $crypto-key-type-choice /= tagged-pkix-base64-cert-path-type
-   $crypto-key-type-choice /= tagged-cose-key-type
-   $crypto-key-type-choice /= tagged-pkix-asn1der-cert-type
-   $crypto-key-type-choice /= tagged-key-thumbprint-type
-   $crypto-key-type-choice /= tagged-cert-thumbprint-type
-   $crypto-key-type-choice /= tagged-cert-path-thumbprint-type
-   $crypto-key-type-choice /= tagged-bytes
+   $crypto-key-type-choice /= tagged-pkix-base64-key-type / tagged-pkix\
+   -base64-cert-type / tagged-pkix-base64-cert-path-type / tagged-cose-\
+   key-type / tagged-pkix-asn1der-cert-type / tagged-key-thumbprint-\
+   type / tagged-cert-thumbprint-type / tagged-cert-path-thumbprint-\
+                                                     type / tagged-bytes
    tagged-pkix-base64-key-type = #6.554(tstr)
    tagged-pkix-base64-cert-type = #6.555(tstr)
    tagged-pkix-base64-cert-path-type = #6.556(tstr)
-   tagged-key-thumbprint-type = #6.557(digest)
+   tagged-key-thumbprint-type = #6.557(eatmc.digest)
    tagged-cose-key-type = #6.558(COSE_Key)
-   tagged-cert-thumbprint-type = #6.559(digest)
-   tagged-cert-path-thumbprint-type = #6.561(digest)
+   tagged-cert-thumbprint-type = #6.559(eatmc.digest)
+   tagged-cert-path-thumbprint-type = #6.561(eatmc.digest)
    tagged-pkix-asn1der-cert-type = #6.562(bstr)
-
    domain-dependency-triple-record = [
-     domain-type
-     [ + domain-type ]
+     domain-id: domain-type,
+     trustees: [+ domain-type],
    ]
-
    domain-membership-triple-record = [
-     domain-id: domain-type
-     members: [ +  domain-type ]
+     domain-id: domain-type,
+     members: [+ domain-type],
    ]
-
    conditional-endorsement-triple-record = [
-     conditions: [ + stateful-environment-record ]
-     endorsements: [ + endorsed-triple-record ]
+     conditions: [+ stateful-environment-record],
+     endorsements: [+ endorsed-triple-record],
    ]
-
    domain-type = environment-map
-
    endorsed-triple-record = [
-     condition: environment-map
-     endorsement: [ + measurement-map ]
+     condition: environment-map,
+     endorsement: [+ measurement-map],
    ]
-
    entity-map<role-type-choice, extension-socket> = {
-     &(entity-name: 0) => $entity-name-type-choice
-     ? &(reg-id: 1) => uri
-     &(role: 2) => [ + role-type-choice ]
-     * extension-socket
+       &(entity-name: 0) => $entity-name-type-choice,
+       ? &(reg-id: 1) => uri,
+       &(role: 2) => [+ role-type-choice],
+       * extension-socket,
    }
-
    $entity-name-type-choice /= text
-
    environment-map = non-empty<{
-     ? &(class: 0) => class-map
-     ? &(instance: 1) => $instance-id-type-choice
-     ? &(group: 2) => $group-id-type-choice
+       ? &(class: 0) => class-map,
+       ? &(instance: 1) => $instance-id-type-choice,
+       ? &(group: 2) => $group-id-type-choice,
    }>
-
    flags-map = {
-     ? &(is-configured: 0) => bool
-     ? &(is-secure: 1) => bool
-     ? &(is-recovery: 2) => bool
-     ? &(is-debug: 3) => bool
-     ? &(is-replay-protected: 4) => bool
-     ? &(is-integrity-protected: 5) => bool
-     ? &(is-runtime-meas: 6) => bool
-     ? &(is-immutable: 7) => bool
-     ? &(is-tcb: 8) => bool
-     ? &(is-confidentiality-protected: 9) => bool
-     * $$flags-map-extension
+     ? &(is-configured: 0) => bool,
+     ? &(is-secure: 1) => bool,
+     ? &(is-recovery: 2) => bool,
+     ? &(is-debug: 3) => bool,
+     ? &(is-replay-protected: 4) => bool,
+     ? &(is-integrity-protected: 5) => bool,
+     ? &(is-runtime-meas: 6) => bool,
+     ? &(is-immutable: 7) => bool,
+     ? &(is-tcb: 8) => bool,
+     ? &(is-confidentiality-protected: 9) => bool,
+     * $$flags-map-extension,
    }
-
-   $group-id-type-choice /= tagged-uuid-type
-   $group-id-type-choice /= tagged-bytes
-
+   $group-id-type-choice /= tagged-uuid-type / tagged-bytes
    identity-triple-record = [
-     environment: environment-map
-     key-list: [ + $crypto-key-type-choice ]
+     environment: environment-map,
+     key-list: [+ $crypto-key-type-choice],
      ? conditions: non-empty<{
-       ? &(mkey: 0) => $measured-element-type-choice,
-       ? &(authorized-by: 1) => [ + $crypto-key-type-choice ]
-     }>
+               ? &(mkey: 0) => $measured-element-type-choice,
+               ? &(authorized-by: 1) => [+ $crypto-key-type-choice],
+   }>,
    ]
-
-   $instance-id-type-choice /= tagged-ueid-type
-   $instance-id-type-choice /= tagged-uuid-type
-   $instance-id-type-choice /= tagged-bytes
-   $instance-id-type-choice /= tagged-pkix-base64-key-type
-   $instance-id-type-choice /= tagged-pkix-base64-cert-type
-   $instance-id-type-choice /= tagged-cose-key-type
-   $instance-id-type-choice /= tagged-key-thumbprint-type
-   $instance-id-type-choice /= tagged-cert-thumbprint-type
-   $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
-
-   ip-addr-type-choice = ip4-addr-type / ip6-addr-type
-   ip4-addr-type = bytes .size 4
-   ip6-addr-type = bytes .size 16
-
+   $instance-id-type-choice /= tagged-ueid-type / tagged-uuid-type / \
+   tagged-bytes / tagged-pkix-base64-key-type / tagged-pkix-base64-cert\
+   -type / tagged-cose-key-type / tagged-key-thumbprint-type / tagged-\
+                    cert-thumbprint-type / tagged-pkix-asn1der-cert-type
+   ip-addr-type-choice /= cbor-ip.ipv4-address / cbor-ip.ipv6-address
    int-range-type-choice = int / tagged-int-range
-   int-range = [min: int / negative-inf, max: int / positive-inf]
+   int-range = [
+     min: int / negative-inf,
+     max: int / positive-inf,
+   ]
    tagged-int-range = #6.564(int-range)
    positive-inf = null
    negative-inf = null
-
    linked-tag-map = {
-     &(linked-tag-id: 0) => $tag-id-type-choice
-     &(tag-rel: 1) => $tag-rel-type-choice
+     &(linked-tag-id: 0) => $tag-id-type-choice,
+     &(tag-rel: 1) => $tag-rel-type-choice,
    }
-
    mac-addr-type-choice = eui48-addr-type / eui64-addr-type
    eui48-addr-type = bytes .size 6
    eui64-addr-type = bytes .size 8
-
-   $measured-element-type-choice /= tagged-oid-type
-   $measured-element-type-choice /= tagged-uuid-type
-   $measured-element-type-choice /= uint
-   $measured-element-type-choice /= tstr
-
+   $measured-element-type-choice /= tagged-oid-type / tagged-uuid-type \
+                                                           / uint / tstr
    measurement-map = {
-     ? &(mkey: 0) => $measured-element-type-choice
-     &(mval: 1) => measurement-values-map
-     ? &(authorized-by: 2) => [ + $crypto-key-type-choice ]
+     ? &(mkey: 0) => $measured-element-type-choice,
+     &(mval: 1) => measurement-values-map,
+     ? &(authorized-by: 2) => [+ $crypto-key-type-choice],
    }
-
    measurement-values-map = non-empty<{
-     ? &(version: 0) => version-map
-     ? &(svn: 1) => svn-type-choice
-     ? &(digests: 2) => digests-type
-     ? &(flags: 3) => flags-map
-     ? (
-         &(raw-value: 4) => $raw-value-type-choice,
-         ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type
-       )
-     ? &(mac-addr: 6) => mac-addr-type-choice
-     ? &(ip-addr: 7) =>  ip-addr-type-choice
-     ? &(serial-number: 8) => text
-     ? &(ueid: 9) => ueid-type
-     ? &(uuid: 10) => uuid-type
-     ? &(name: 11) => text
-     ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
-     ? &(integrity-registers: 14) => integrity-registers
-     ? &(int-range: 15) => int-range-type-choice
-     * $$measurement-values-map-extension
+       ? &(version: 0) => version-map,
+       ? &(svn: 1) => svn-type-choice,
+       ? &(digests: 2) => digests-type,
+       ? &(flags: 3) => flags-map,
+       ? (
+                     &(raw-value: 4) => $raw-value-type-choice,
+                     ? &(raw-value-mask-DEPRECATED: 5) => raw-value-\
+                                                              mask-type,
+             ),
+       ? &(mac-addr: 6) => mac-addr-type-choice,
+       ? &(ip-addr: 7) => ip-addr-type-choice,
+       ? &(serial-number: 8) => text,
+       ? &(ueid: 9) => ueid-type,
+       ? &(uuid: 10) => uuid-type,
+       ? &(name: 11) => text,
+       ? &(cryptokeys: 13) => [+ $crypto-key-type-choice],
+       ? &(integrity-registers: 14) => integrity-registers,
+       ? &(int-range: 15) => int-range-type-choice,
+       * $$measurement-values-map-extension,
    }>
-
-   non-empty<M> = (M) .and ({ + any => any })
-
+   non-empty<M> = M .and ({+ any => any})
    oid-type = bytes
    tagged-oid-type = #6.111(oid-type)
-
-   $raw-value-type-choice /= tagged-bytes
-   $raw-value-type-choice /= tagged-masked-raw-value
-
+   $raw-value-type-choice /= tagged-bytes / tagged-masked-raw-value
    raw-value-mask-type = bytes
-
    tagged-masked-raw-value = #6.563([
-     value: bytes
-     mask : bytes
+       value: bytes,
+       mask: bytes,
    ])
-
    reference-triple-record = [
-     ref-env: environment-map
-     ref-claims: [ + measurement-map ]
+     ref-env: environment-map,
+     ref-claims: [+ measurement-map],
    ]
-
    stateful-environment-record = [
      environment: environment-map,
-     claims-list: [ + measurement-map ]
+     claims-list: [+ measurement-map],
    ]
-
    svn-type = uint
    svn = svn-type
    min-svn = svn-type
    tagged-svn = #6.552(svn)
    tagged-min-svn = #6.553(min-svn)
    svn-type-choice = svn / tagged-svn / tagged-min-svn
-
-   $tag-id-type-choice /= tstr
-   $tag-id-type-choice /= uuid-type
-
+   $tag-id-type-choice /= tstr / uuid-type
    tag-identity-map = {
-     &(tag-id: 0) => $tag-id-type-choice
-     ? &(tag-version: 1) => tag-version-type
+     &(tag-id: 0) => $tag-id-type-choice,
+     ? &(tag-version: 1) => tag-version-type,
    }
-
-   $tag-rel-type-choice /= &(supplements: 0)
-   $tag-rel-type-choice /= &(replaces: 1)
-
+   $tag-rel-type-choice /= &(supplements: 0) / &(replaces: 1)
    tag-version-type = uint .default 0
-
    tagged-bytes = #6.560(bytes)
-
    triples-map = non-empty<{
-     ? &(reference-triples: 0) =>
-       [ + reference-triple-record ]
-     ? &(endorsed-triples: 1) =>
-       [ + endorsed-triple-record ]
-     ? &(identity-triples: 2) =>
-       [ + identity-triple-record ]
-     ? &(attest-key-triples: 3) =>
-       [ + attest-key-triple-record ]
-     ? &(dependency-triples: 4) =>
-       [ + domain-dependency-triple-record ]
-     ? &(membership-triples: 5) =>
-       [ + domain-membership-triple-record ]
-     ? &(coswid-triples: 6) =>
-       [ + coswid-triple-record ]
-     ? &(conditional-endorsement-series-triples: 8) =>
-       [ + conditional-endorsement-series-triple-record ]
-     ? &(conditional-endorsement-triples: 10) =>
-       [ + conditional-endorsement-triple-record ]
-     * $$triples-map-extension
+       ? &(reference-triples: 0) => [+ reference-triple-record],
+       ? &(endorsed-triples: 1) => [+ endorsed-triple-record],
+       ? &(identity-triples: 2) => [+ identity-triple-record],
+       ? &(attest-key-triples: 3) => [+ attest-key-triple-record],
+       ? &(dependency-triples: 4) => [+ domain-dependency-triple-record\
+                                                                      ],
+       ? &(membership-triples: 5) => [+ domain-membership-triple-record\
+                                                                      ],
+       ? &(coswid-triples: 6) => [+ coswid-triple-record],
+       ? &(conditional-endorsement-series-triples: 8) => [+ conditional\
+                                     -endorsement-series-triple-record],
+       ? &(conditional-endorsement-triples: 10) => [+ conditional-\
+                                             endorsement-triple-record],
+       * $$triples-map-extension,
    }>
-
-   ueid-type = bytes .size (7..33)
+   ueid-type = bytes .size (7 .. 33)
    tagged-ueid-type = #6.550(ueid-type)
-
    uuid-type = bytes .size 16
    tagged-uuid-type = #6.37(uuid-type)
-
    version-map = {
-     &(version: 0) => text
-     ? &(version-scheme: 1) => $version-scheme
+     &(version: 0) => text,
+     ? &(version-scheme: 1) => coswid.$version-scheme,
    }
-
-   digest = [
-     alg: (int / text),
-     val: bytes
-   ]
-
-   digests-type = [ + digest ]
-
+   digests-type = [+ eatmc.digest]
    integrity-register-id-type-choice = uint / text
-
-   integrity-registers = {
-     + integrity-register-id-type-choice => digests-type
+   integrity-registers = {+ integrity-register-id-type-choice => \
+                                                           digests-type}
+   eatmc.measured-component = {
+     eatmc.component-id-label => eatmc.component-id,
+     eatmc.measurement,
+     ? eatmc.authorities-label => [+ eatmc.authority-id-type],
+     ? eatmc.flags-label => eatmc.flags-type,
    }
-
-   concise-swid-tag = {
-     tag-id => text / bstr .size 16,
-     tag-version => integer,
-     ? corpus => bool,
-     ? patch => bool,
-     ? supplemental => bool,
-     software-name => text,
-     ? software-version => text,
-     ? version-scheme => $version-scheme,
-     ? media => text,
-     ? software-meta => one-or-more<software-meta-entry>,
-     entity => one-or-more<entity-entry>,
-     ? link => one-or-more<link-entry>,
-     ? payload-or-evidence,
+   eatmc.measurement //= (eatmc.digested-measurement-label => eatmc.\
+                         digest // eatmc.raw-measurement-label => bytes)
+   eatmc.authority-id-type = eatmc.eat.JC<eatmc.bytes-b64u, bytes>
+   eatmc.flags-type = eatmc.eat.JC<eatmc.bytes8-b64u, eatmc.bytes8>
+   eatmc.component-id = [
+     name: text,
+     ? version: eatmc.version,
+   ]
+   eatmc.version = [
+     val: text,
+     ? scheme: eatmc.coswid.$version-scheme,
+   ]
+   eatmc.digest = [
+     alg: int / text,
+     val: eatmc.digest-value-type,
+   ]
+   eatmc.digest-value-type = eatmc.eat.JC<eatmc.bytes-b64u, bytes>
+   eatmc.bytes-b64u = text .b64u bytes
+   eatmc.bytes8 = bytes .size 8
+   eatmc.bytes8-b64u = text .b64u eatmc.bytes8
+   eatmc.component-id-label = eatmc.eat.JC<"id", 1>
+   eatmc.digested-measurement-label = eatmc.eat.JC<"digested-\
+                                                        measurement", 2>
+   eatmc.raw-measurement-label = eatmc.eat.JC<"raw-measurement", 5>
+   eatmc.authorities-label = eatmc.eat.JC<"authorities", 3>
+   eatmc.flags-label = eatmc.eat.JC<"flags", 4>
+   eatmc.mc-cbor = bytes .cbor eatmc.measured-component
+   eatmc.mc-json = text .json eatmc.measured-component
+   eatmc.$measurements-body-cbor /= eatmc.mc-cbor / eatmc.mc-json
+   eatmc.$measurements-body-json /= eatmc.mc-json / text .b64u eatmc.mc\
+                                                                   -cbor
+   eatmc.eat.JSON-ONLY<J> = J .feature "json"
+   eatmc.eat.CBOR-ONLY<C> = C .feature "cbor"
+   eatmc.eat.JC<J, C> = eatmc.eat.JSON-ONLY<J> / eatmc.eat.CBOR-ONLY<C>
+   eatmc.coswid.$version-scheme /= eatmc.coswid.multipartnumeric / \
+   eatmc.coswid.multipartnumeric-suffix / eatmc.coswid.alphanumeric / \
+                 eatmc.coswid.decimal / eatmc.coswid.semver / int / text
+   eatmc.coswid.multipartnumeric = 1
+   eatmc.coswid.multipartnumeric-suffix = 2
+   eatmc.coswid.alphanumeric = 3
+   eatmc.coswid.decimal = 4
+   eatmc.coswid.semver = 16384
+   coswid.concise-swid-tag = {
+     coswid.tag-id => text / bstr .size 16,
+     coswid.tag-version => integer,
+     ? coswid.corpus => bool,
+     ? coswid.patch => bool,
+     ? coswid.supplemental => bool,
+     coswid.software-name => text,
+     ? coswid.software-version => text,
+     ? coswid.version-scheme => coswid.$version-scheme,
+     ? coswid.media => text,
+     ? coswid.software-meta => coswid.one-or-more<coswid.software-meta-\
+                                                                 entry>,
+     coswid.entity => coswid.one-or-more<coswid.entity-entry>,
+     ? coswid.link => coswid.one-or-more<coswid.link-entry>,
+     ? coswid.payload-or-evidence,
      * $$coswid-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-
-   payload-or-evidence //= ( payload => payload-entry )
-   payload-or-evidence //= ( evidence => evidence-entry )
-
-   any-uri = uri
-   label = text / int
-
-   $version-scheme /= multipartnumeric
-   $version-scheme /= multipartnumeric-suffix
-   $version-scheme /= alphanumeric
-   $version-scheme /= decimal
-   $version-scheme /= semver
-   $version-scheme /= int / text
-
-   any-attribute = (
-     label => one-or-more<text> / one-or-more<int>
-   )
-
-   one-or-more<T> = T / [ 2* T ]
-
-   global-attributes = (
-     ? lang => text,
-     * any-attribute,
-   )
-
-   hash-entry = [
+   coswid.tag-id = 0
+   coswid.$version-scheme /= coswid.multipartnumeric / coswid.\
+   multipartnumeric-suffix / coswid.alphanumeric / coswid.decimal / \
+                                              coswid.semver / int / text
+   coswid.one-or-more<T> = T / [2*T]
+   coswid.tag-version = 12
+   coswid.corpus = 8
+   coswid.patch = 9
+   coswid.supplemental = 11
+   coswid.software-name = 1
+   coswid.software-version = 13
+   coswid.version-scheme = 14
+   coswid.media = 10
+   coswid.software-meta = 5
+   coswid.software-meta-entry = {
+     ? coswid.activation-status => text,
+     ? coswid.channel-type => text,
+     ? coswid.colloquial-version => text,
+     ? coswid.description => text,
+     ? coswid.edition => text,
+     ? coswid.entitlement-data-required => bool,
+     ? coswid.entitlement-key => text,
+     ? coswid.generator => text / bstr .size 16,
+     ? coswid.persistent-id => text,
+     ? coswid.product => text,
+     ? coswid.product-family => text,
+     ? coswid.revision => text,
+     ? coswid.summary => text,
+     ? coswid.unspsc-code => text,
+     ? coswid.unspsc-version => text,
+     * $$software-meta-extension,
+     coswid.global-attributes,
+   }
+   coswid.entity = 2
+   coswid.entity-entry = {
+     coswid.entity-name => text,
+     ? coswid.reg-id => coswid.any-uri,
+     coswid.role => coswid.one-or-more<coswid.$role>,
+     ? coswid.thumbprint => coswid.hash-entry,
+     * $$entity-extension,
+     coswid.global-attributes,
+   }
+   coswid.link = 4
+   coswid.link-entry = {
+     ? coswid.artifact => text,
+     coswid.href => coswid.any-uri,
+     ? coswid.media => text,
+     ? coswid.ownership => coswid.$ownership,
+     coswid.rel => coswid.$rel,
+     ? coswid.media-type => text,
+     ? coswid.use => coswid.$use,
+     * $$link-extension,
+     coswid.global-attributes,
+   }
+   coswid.payload-or-evidence //= (coswid.payload => coswid.payload-\
+                      entry // coswid.evidence => coswid.evidence-entry)
+   coswid.global-attributes = (
+     ? coswid.lang => text,
+     * coswid.any-attribute,
+     )
+   coswid.multipartnumeric = 1
+   coswid.multipartnumeric-suffix = 2
+   coswid.alphanumeric = 3
+   coswid.decimal = 4
+   coswid.semver = 16384
+   coswid.activation-status = 43
+   coswid.channel-type = 44
+   coswid.colloquial-version = 45
+   coswid.description = 46
+   coswid.edition = 47
+   coswid.entitlement-data-required = 48
+   coswid.entitlement-key = 49
+   coswid.generator = 50
+   coswid.persistent-id = 51
+   coswid.product = 52
+   coswid.product-family = 53
+   coswid.revision = 54
+   coswid.summary = 55
+   coswid.unspsc-code = 56
+   coswid.unspsc-version = 57
+   coswid.entity-name = 31
+   coswid.reg-id = 32
+   coswid.any-uri = uri
+   coswid.role = 33
+   coswid.$role /= coswid.tag-creator / coswid.software-creator / \
+   coswid.aggregator / coswid.distributor / coswid.licensor / coswid.\
+                                                 maintainer / int / text
+   coswid.thumbprint = 34
+   coswid.hash-entry = [
      hash-alg-id: int,
      hash-value: bytes,
    ]
-
-   entity-entry = {
-     entity-name => text,
-     ? reg-id => any-uri,
-     role => one-or-more<$role>,
-     ? thumbprint => hash-entry,
-     * $$entity-extension,
-     global-attributes,
-   }
-
-   $role /= tag-creator
-   $role /= software-creator
-   $role /= aggregator
-   $role /= distributor
-   $role /= licensor
-   $role /= maintainer
-   $role /= int / text
-
-   link-entry = {
-     ? artifact => text,
-     href => any-uri,
-     ? media => text,
-     ? ownership => $ownership,
-     rel => $rel,
-     ? media-type => text,
-     ? use => $use,
-     * $$link-extension,
-     global-attributes,
-   }
-
-   $ownership /= shared
-   $ownership /= private
-   $ownership /= abandon
-   $ownership /= int / text
-
-   $rel /= ancestor
-   $rel /= component
-   $rel /= feature
-   $rel /= installationmedia
-   $rel /= packageinstaller
-   $rel /= parent
-   $rel /= patches
-   $rel /= requires
-   $rel /= see-also
-   $rel /= supersedes
-   $rel /= supplemental
-   $rel /= -256..64436 / text
-
-   $use /= optional
-   $use /= required
-   $use /= recommended
-   $use /= int / text
-
-   software-meta-entry = {
-     ? activation-status => text,
-     ? channel-type => text,
-     ? colloquial-version => text,
-     ? description => text,
-     ? edition => text,
-     ? entitlement-data-required => bool,
-     ? entitlement-key => text,
-     ? generator =>  text / bstr .size 16,
-     ? persistent-id => text,
-     ? product => text,
-     ? product-family => text,
-     ? revision => text,
-     ? summary => text,
-     ? unspsc-code => text,
-     ? unspsc-version => text,
-     * $$software-meta-extension,
-     global-attributes,
-   }
-
-   path-elements-group = ( ? directory => one-or-more<directory-entry>,
-                           ? file => one-or-more<file-entry>,
-                         )
-
-   resource-collection = (
-     path-elements-group,
-     ? process => one-or-more<process-entry>,
-     ? resource => one-or-more<resource-entry>,
-     * $$resource-collection-extension,
-   )
-
-   file-entry = {
-     filesystem-item,
-     ? size => uint,
-     ? file-version => text,
-     ? hash => hash-entry,
-     * $$file-extension,
-     global-attributes,
-   }
-
-   directory-entry = {
-     filesystem-item,
-     ? path-elements => { path-elements-group },
-     * $$directory-extension,
-     global-attributes,
-   }
-
-   process-entry = {
-     process-name => text,
-     ? pid => integer,
-     * $$process-extension,
-     global-attributes,
-   }
-
-   resource-entry = {
-     type => text,
-     * $$resource-extension,
-     global-attributes,
-   }
-
-   filesystem-item = (
-     ? key => bool,
-     ? location => text,
-     fs-name => text,
-     ? root => text,
-   )
-
-   payload-entry = {
-     resource-collection,
+   coswid.artifact = 37
+   coswid.href = 38
+   coswid.ownership = 39
+   coswid.$ownership /= coswid.shared / coswid.private / coswid.\
+                                                    abandon / int / text
+   coswid.rel = 40
+   coswid.$rel /= coswid.ancestor / coswid.component / coswid.feature \
+   / coswid.installationmedia / coswid.packageinstaller / coswid.\
+   parent / coswid.patches / coswid.requires / coswid.see-also / coswid\
+                .supersedes / coswid.supplemental / -256 .. 65536 / text
+   coswid.media-type = 41
+   coswid.use = 42
+   coswid.$use /= coswid.optional / coswid.required / coswid.\
+                                                recommended / int / text
+   coswid.payload = 6
+   coswid.payload-entry = {
+     coswid.resource-collection,
      * $$payload-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-
-   evidence-entry = {
-     resource-collection,
-     ? date => integer-time,
-     ? device-id => text,
-     ? location => text,
+   coswid.evidence = 3
+   coswid.evidence-entry = {
+     coswid.resource-collection,
+     ? coswid.date => coswid.integer-time,
+     ? coswid.device-id => text,
+     ? coswid.location => text,
      * $$evidence-extension,
-     global-attributes,
+     coswid.global-attributes,
    }
-
-   integer-time = #6.1(int)
-
-   tag-id = 0
-   software-name = 1
-   entity = 2
-   evidence = 3
-   link = 4
-   software-meta = 5
-   payload = 6
-   hash = 7
-   corpus = 8
-   patch = 9
-   media = 10
-   supplemental = 11
-   tag-version = 12
-   software-version = 13
-   version-scheme = 14
-   lang = 15
-   directory = 16
-   file = 17
-   process = 18
-   resource = 19
-   size = 20
-   file-version = 21
-   key = 22
-   location = 23
-   fs-name = 24
-   root = 25
-   path-elements = 26
-   process-name = 27
-   pid = 28
-   type = 29
-   entity-name = 31
-   reg-id = 32
-   role = 33
-   thumbprint = 34
-   date = 35
-   device-id = 36
-   artifact = 37
-   href = 38
-   ownership = 39
-   rel = 40
-   media-type = 41
-   use = 42
-   activation-status = 43
-   channel-type = 44
-   colloquial-version = 45
-   description = 46
-   edition = 47
-   entitlement-data-required = 48
-   entitlement-key = 49
-   generator = 50
-   persistent-id = 51
-   product = 52
-   product-family = 53
-   revision = 54
-   summary = 55
-   unspsc-code = 56
-   unspsc-version = 57
-
-   multipartnumeric = 1
-   multipartnumeric-suffix = 2
-   alphanumeric = 3
-   decimal = 4
-   semver = 16384
-
-   tag-creator=1
-   software-creator=2
-   aggregator=3
-   distributor=4
-   licensor=5
-   maintainer=6
-
-   abandon=1
-   private=2
-   shared=3
-
-   ancestor=1
-   component=2
-   feature=3
-   installationmedia=4
-   packageinstaller=5
-   parent=6
-   patches=7
-   requires=8
-   see-also=9
-   supersedes=10
-
-   optional=1
-   required=2
-   recommended=3
+   coswid.lang = 15
+   coswid.any-attribute = (coswid.label => coswid.one-or-more<text> / \
+                                                coswid.one-or-more<int>)
+   coswid.tag-creator = 1
+   coswid.software-creator = 2
+   coswid.aggregator = 3
+   coswid.distributor = 4
+   coswid.licensor = 5
+   coswid.maintainer = 6
+   coswid.shared = 3
+   coswid.private = 2
+   coswid.abandon = 1
+   coswid.ancestor = 1
+   coswid.component = 2
+   coswid.feature = 3
+   coswid.installationmedia = 4
+   coswid.packageinstaller = 5
+   coswid.parent = 6
+   coswid.patches = 7
+   coswid.requires = 8
+   coswid.see-also = 9
+   coswid.supersedes = 10
+   coswid.optional = 1
+   coswid.required = 2
+   coswid.recommended = 3
+   coswid.resource-collection = (
+     coswid.path-elements-group,
+     ? coswid.process => coswid.one-or-more<coswid.process-entry>,
+     ? coswid.resource => coswid.one-or-more<coswid.resource-entry>,
+     * $$resource-collection-extension,
+     )
+   coswid.date = 35
+   coswid.integer-time = #6.1(int)
+   coswid.device-id = 36
+   coswid.location = 23
+   coswid.label = text / int
+   coswid.path-elements-group = (
+     ? coswid.directory => coswid.one-or-more<coswid.directory-entry>,
+     ? coswid.file => coswid.one-or-more<coswid.file-entry>,
+     )
+   coswid.process = 18
+   coswid.process-entry = {
+     coswid.process-name => text,
+     ? coswid.pid => integer,
+     * $$process-extension,
+     coswid.global-attributes,
+   }
+   coswid.resource = 19
+   coswid.resource-entry = {
+     coswid.type => text,
+     * $$resource-extension,
+     coswid.global-attributes,
+   }
+   coswid.directory = 16
+   coswid.directory-entry = {
+     coswid.filesystem-item,
+     ? coswid.path-elements => {coswid.path-elements-group},
+     * $$directory-extension,
+     coswid.global-attributes,
+   }
+   coswid.file = 17
+   coswid.file-entry = {
+     coswid.filesystem-item,
+     ? coswid.size => uint,
+     ? coswid.file-version => text,
+     ? coswid.hash => coswid.hash-entry,
+     * $$file-extension,
+     coswid.global-attributes,
+   }
+   coswid.process-name = 27
+   coswid.pid = 28
+   coswid.type = 29
+   coswid.filesystem-item = (
+     ? coswid.key => bool,
+     ? coswid.location => text,
+     coswid.fs-name => text,
+     ? coswid.root => text,
+     )
+   coswid.path-elements = 26
+   coswid.size = 20
+   coswid.file-version = 21
+   coswid.hash = 7
+   coswid.key = 22
+   coswid.fs-name = 24
+   coswid.root = 25
+   cbor-ip.ipv4-address = bytes .size 4
+   cbor-ip.ipv6-address = bytes .size 16
 
 Acknowledgments
 
