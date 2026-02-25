@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 28 August 2026                                           Linaro
+Expires: 29 August 2026                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        24 February 2026
+                                                        25 February 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 August 2026.
+   This Internet-Draft will expire on 29 August 2026.
 
 Copyright Notice
 
@@ -2334,18 +2334,18 @@ Table of Contents
 
    A Domain Dependency Triple (DDT) links a domain to a set of _trustee_
    domains.  A domain dependency triple is used by an Endorser to assert
-   that trust dependency exists between various components.  A DDT
+   that a trust dependency exists between various components.  A DDT
    specifies which component (identified by domain-id) depends on which
    other components (identified by trustees) for proper operation.  A
-   series of DDTs can describe a graph of anticipated trust dependencies
-   in a system of components.  CoRIM uses environment-map to identify
-   components and groupings of components (i.e., domains).
+   series of DDTs can be used to describe the trust dependencies of a
+   system of components as a graph.  CoRIM uses environment-map to
+   identify components and groupings of components (i.e., domains).
 
-   Trust dependency means that appraisal of an environment also depends
-   on the appraisal of one or more _trustee_ environments before the
-   environment in question can be fully trusted.  It is only possible to
-   trust a candidate environment, if the trustees it depends on exist,
-   have been appraised, and found to be trustworthy.
+   Trust dependency means that an environment can only be fully trusted
+   if one or more trustee environments have been appraised and found to
+   be trustworthy.  A candidate environment can only be trusted if the
+   trustee environments it depends on exist, have been appraised and are
+   found to be trustworthy.
 
    The first four phases of appraisal (see Section 8.1) might not
    determine whether a component is trustworthy.  Subsequent Verifier
@@ -2365,8 +2365,8 @@ Table of Contents
    trustee domain of the peripheral device.
 
    DDTs cannot create domains.  Instead, DDT processing first checks
-   that a domain-id has already been accepted into the Attester's set of
-   Claims before adding trust dependencies.
+   that a domain-id has already been accepted into the ACS before adding
+   trust dependencies.
 
    The domain dependency triple subject (domain-id) identifies the
    member domain (see Section 5.1.11.1) that has trustees.  The triple
@@ -2393,12 +2393,12 @@ Table of Contents
    Trust dependency typically exists if any of the following are true:
 
    *  A trustee performs any Attesting Environment functions relating to
-      a Target Environment(TE); such as Claims collection, Claims
-      signing, loading or initialization of the TE; provisioning TE
-      secrets, cryptographic keys, or other security significant
+      a Target Environment (TE), such as Claims collection, Claims
+      signing, loading or initialization of the TE, provisioning TE
+      secrets - including cryptographic keys or other security-relevant
       material.
 
-   *  A trustee executes security relevant code in response to an
+   *  A trustee executes security-relevant code in response to an
       execution thread that originates from the domain-id environment.
 
    *  A trustee is a component embedded within another component
@@ -4057,7 +4057,7 @@ Table of Contents
    Outer loop resumes:
 
    *  If the dde.environment record AND all dde.trustees matched an ACS
-      domain-member entry.  Then add the dde to the ACS.
+      with cmtype domain-member entry.  Then add the dde to the ACS.
 
    *  Continue to the next dde until all are processed.
 
