@@ -2563,6 +2563,7 @@ Series iteration terminates after the first matching series entry is processed o
 To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
 If the `key-type` field is set, the Verifier will apply the verification steps defined below.
 If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
+Note that, in this case, the Verifier is acting in the role of an Endorser.
 
 For each ECT from endorsed value (`ev`) or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence` or `endorsements`.
 If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key_ in the C-ECT.`element-claims`.`measurement-values-map`.`intrep-keys`, do the following steps:
