@@ -3120,7 +3120,7 @@ groups to use this information as they see fit".
   respectively.
   2. [CoRIM rust library](https://github.com/veraison/corim-rs) provide a rust implementation of
   CoRIM specification.
-  3. [CoRIM based Verifier](https://github.com/veraison/cover) provides a CoRIM based Verifier as outlined in section 9 of this specification.
+  3. [CoRIM Processor](https://github.com/veraison/cover) provides a library for appraisal of Evidence by processing CoRIMs as outlined in {{sec-verifier-abstraction}}} of this specification.
 
   In addition to the base CoRIM Libraries, the [cocli package](https://github.com/veraison/cocli) uses the golang API above (as well as the
   API from the `veraison/swid` package) to provide a user command line
