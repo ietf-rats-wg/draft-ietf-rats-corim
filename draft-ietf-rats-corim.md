@@ -18,7 +18,7 @@ pi:
   toc: yes
   sortrefs: yes
   symrefs: yes
-  tocdepth: 6
+  tocdepth: 3
 
 author:
 - ins: H. Birkholz
