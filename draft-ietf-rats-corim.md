@@ -1938,7 +1938,7 @@ The following mapping conventions apply to all forms of input transformation:
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
 An internal representation of Attestation Evidence uses the `ae` relation.
-`ae`, implies Attestation Evidence and refers to a collection of evidence ECTs.
+`ae` implies Attestation Evidence and refers to a collection of evidence ECTs.
 
 ~~~ cddl
 {::include cddl/intrep-ae.cddl}
