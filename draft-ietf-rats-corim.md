@@ -1937,7 +1937,8 @@ The following mapping conventions apply to all forms of input transformation:
 
 #### Internal Representation of Evidence {#sec-ir-evidence}
 
-An internal representation of attestation Evidence uses the `ae` relation.
+An internal representation of Attestation Evidence uses the `ae` relation.
+`ae`, implies Attestation Evidence and refers to a collection of evidence ECTs.
 
 ~~~ cddl
 {::include cddl/intrep-ae.cddl}
@@ -1964,7 +1965,7 @@ The `addition` is added to the ACS for a specific Attester.
 
 #### Evidence Transformation
 
-Evidence is transformed from an external representation to an internal representation based on the ae relation {{sec-ir-evidence}}. The Evidence is mapped into one or more addition ECTs. If the Evidence does not have a value for the mandatory ae fields, the Verifier MUST NOT process the Evidence.
+Evidence is transformed from an external representation to an internal representation as specified in {{sec-ir-evidence}}. The Evidence is mapped into one or more addition ECTs. If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
 
 Evidence transformation algorithms may be well-known, defined by a CoRIM profile (Section 4.1.4), or supplied dynamically.
 The handling of Evidence transformation algorithms is out of scope for this document.
