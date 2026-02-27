@@ -1669,9 +1669,13 @@ Table of Contents
 
    The flags-map measurement describes a number of boolean operational
    modes.  If a flags-map value is not specified, then the operational
-   mode is unknown.
+   mode is unknown.  Note that, while the fields may not be completely
+   independent of one another, this specification imposes no
+   restrictions on combinations of the flags-map booleans.  However, a
+   profile may restrict the possible flags-map booleans and their valid
+   combinations.
 
-   flags-map = {
+   flags-map = non-empty<{
      ? &(is-configured: 0) => bool
      ? &(is-secure: 1) => bool
      ? &(is-recovery: 2) => bool
@@ -1683,7 +1687,7 @@ Table of Contents
      ? &(is-tcb: 8) => bool
      ? &(is-confidentiality-protected: 9) => bool
      * $$flags-map-extension
-   }
+   }>
 
    The following describes each member of the flags-map:
 
@@ -5596,19 +5600,19 @@ Appendix A.  Base CoRIM CDDL
        ? &(instance: 1) => $instance-id-type-choice,
        ? &(group: 2) => $group-id-type-choice,
    }>
-   flags-map = {
-     ? &(is-configured: 0) => bool,
-     ? &(is-secure: 1) => bool,
-     ? &(is-recovery: 2) => bool,
-     ? &(is-debug: 3) => bool,
-     ? &(is-replay-protected: 4) => bool,
-     ? &(is-integrity-protected: 5) => bool,
-     ? &(is-runtime-meas: 6) => bool,
-     ? &(is-immutable: 7) => bool,
-     ? &(is-tcb: 8) => bool,
-     ? &(is-confidentiality-protected: 9) => bool,
-     * $$flags-map-extension,
-   }
+   flags-map = non-empty<{
+       ? &(is-configured: 0) => bool,
+       ? &(is-secure: 1) => bool,
+       ? &(is-recovery: 2) => bool,
+       ? &(is-debug: 3) => bool,
+       ? &(is-replay-protected: 4) => bool,
+       ? &(is-integrity-protected: 5) => bool,
+       ? &(is-runtime-meas: 6) => bool,
+       ? &(is-immutable: 7) => bool,
+       ? &(is-tcb: 8) => bool,
+       ? &(is-confidentiality-protected: 9) => bool,
+       * $$flags-map-extension,
+   }>
    $group-id-type-choice /= tagged-uuid-type / tagged-bytes
    identity-triple-record = [
      environment: environment-map,
