@@ -1669,9 +1669,13 @@ Table of Contents
 
    The flags-map measurement describes a number of boolean operational
    modes.  If a flags-map value is not specified, then the operational
-   mode is unknown.
+   mode is unknown.  Note that, while the fields may not be completely
+   independent of one another, this specification imposes no
+   restrictions on combinations of the flags-map booleans.  However, a
+   profile may restrict the possible flags-map booleans and their valid
+   combinations.
 
-   flags-map = {
+   flags-map = non-empty<{
      ? &(is-configured: 0) => bool
      ? &(is-secure: 1) => bool
      ? &(is-recovery: 2) => bool
@@ -1683,7 +1687,7 @@ Table of Contents
      ? &(is-tcb: 8) => bool
      ? &(is-confidentiality-protected: 9) => bool
      * $$flags-map-extension
-   }
+   }>
 
    The following describes each member of the flags-map:
 
@@ -4467,23 +4471,37 @@ Table of Contents
    *  Implementation's web page: https://github.com/veraison/corim/
       README.md (https://github.com/veraison/corim/blob/main/README.md)
 
-   *  Brief general description: The corim/corim and corim/comid
-      packages provide a golang API for low-level manipulation of
-      Concise Reference Integrity Manifest (CoRIM) and Concise Module
-      Identifier (CoMID) tags respectively.  The corim/cocli package
-      uses the API above (as well as the API from the veraison/swid
-      package) to provide a user command line interface for working with
-      CoRIM, CoMID and CoSWID.  Specifically, it allows creating,
-      signing, verifying, displaying, uploading, and more.  See
-      https://github.com/veraison/cocli/README.md
-      (https://github.com/veraison/cocli/README.md) for further details.
+   *  Brief general description: There are three CoRIM libraries under
+      project Veraison.
+
+      1.  CoRIM golang library (https://github.com/veraison/corim) The
+          corim/corim and corim/comid packages provide a golang API for
+          low-level manipulation of Concise Reference Integrity Manifest
+          (CoRIM) and Concise Module Identifier (CoMID) tags
+          respectively.
+
+      2.  CoRIM rust library (https://github.com/veraison/corim-rs)
+          provide a rust implementation of CoRIM specification.
+
+      3.  CoRIM Processor (https://github.com/veraison/cover) provides a
+          library for appraisal of Evidence by processing CoRIMs as
+          outlined in Section 9} of this specification.
+
+      In addition to the base CoRIM Libraries, the cocli package
+      (https://github.com/veraison/cocli) uses the golang API above (as
+      well as the API from the veraison/swid package) to provide a user
+      command line interface for working with CoRIM, CoMID and CoSWID.
+      Specifically, it allows creating, signing, verifying, displaying,
+      uploading, and more.  See https://github.com/veraison/cocli/
+      README.md (https://github.com/veraison/cocli/README.md) for
+      further details.
 
    *  Implementation's level of maturity: alpha.
 
    *  Coverage: the whole protocol is implemented, including PSA-
       specific extensions [I-D.fdb-rats-psa-endorsements].
 
-   *  Version compatibility: Version -02 of the draft
+   *  Version compatibility: Version -06 of the draft
 
    *  Licensing: Apache 2.0 https://github.com/veraison/corim/blob/main/
       LICENSE (https://github.com/veraison/corim/blob/main/LICENSE)
@@ -4495,6 +4513,10 @@ Table of Contents
 
    *  Last updated: https://github.com/veraison/corim/commits/main
       (https://github.com/veraison/corim/commits/main)
+      https://github.com/veraison/corim-rs/commits/master/
+      (https://github.com/veraison/corim-rs/commits/master/)
+      https://github.com/veraison/cover/commits/main/
+      (https://github.com/veraison/cover/commits/main/)
 
 11.  Security and Privacy Considerations
 
@@ -5580,19 +5602,19 @@ Appendix A.  Base CoRIM CDDL
        ? &(instance: 1) => $instance-id-type-choice,
        ? &(group: 2) => $group-id-type-choice,
    }>
-   flags-map = {
-     ? &(is-configured: 0) => bool,
-     ? &(is-secure: 1) => bool,
-     ? &(is-recovery: 2) => bool,
-     ? &(is-debug: 3) => bool,
-     ? &(is-replay-protected: 4) => bool,
-     ? &(is-integrity-protected: 5) => bool,
-     ? &(is-runtime-meas: 6) => bool,
-     ? &(is-immutable: 7) => bool,
-     ? &(is-tcb: 8) => bool,
-     ? &(is-confidentiality-protected: 9) => bool,
-     * $$flags-map-extension,
-   }
+   flags-map = non-empty<{
+       ? &(is-configured: 0) => bool,
+       ? &(is-secure: 1) => bool,
+       ? &(is-recovery: 2) => bool,
+       ? &(is-debug: 3) => bool,
+       ? &(is-replay-protected: 4) => bool,
+       ? &(is-integrity-protected: 5) => bool,
+       ? &(is-runtime-meas: 6) => bool,
+       ? &(is-immutable: 7) => bool,
+       ? &(is-tcb: 8) => bool,
+       ? &(is-confidentiality-protected: 9) => bool,
+       * $$flags-map-extension,
+   }>
    $group-id-type-choice /= tagged-uuid-type / tagged-bytes
    identity-triple-record = [
      environment: environment-map,
