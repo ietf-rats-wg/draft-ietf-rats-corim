@@ -1157,6 +1157,8 @@ The `tagged-svn` and `tagged-min-svn` tags are CBOR tags with the values `#6.552
 
 The `flags-map` measurement describes a number of boolean operational modes.
 If a `flags-map` value is not specified, then the operational mode is unknown.
+Note that, while the fields may not be completely independent of one another, this specification imposes no restrictions on combinations of the `flags-map` booleans.
+However, a profile may restrict the possible `flags-map` booleans and their valid combinations.
 
 ~~~ cddl
 {::include cddl/flags-map.cddl}
