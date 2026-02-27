@@ -3180,10 +3180,12 @@ svn-type-choice = svn / tagged-svn / tagged-min-svn
 <a href="#section-5.1.4.5.5" class="section-number selfRef">5.1.4.5.5. </a><a href="#name-flags" class="section-name selfRef">Flags</a>
               </h6>
 <p id="section-5.1.4.5.5-1">The <code>flags-map</code> measurement describes a number of boolean operational modes.
-If a <code>flags-map</code> value is not specified, then the operational mode is unknown.<a href="#section-5.1.4.5.5-1" class="pilcrow">¶</a></p>
+If a <code>flags-map</code> value is not specified, then the operational mode is unknown.
+Note that, while the fields may not be completely independent of one another, this specification imposes no restrictions on combinations of the <code>flags-map</code> booleans.
+However, a profile may restrict the possible <code>flags-map</code> booleans and their valid combinations.<a href="#section-5.1.4.5.5-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.5.5-2">
 <pre>
-flags-map = {
+flags-map = non-empty&lt;{
   ? &amp;(is-configured: 0) =&gt; bool
   ? &amp;(is-secure: 1) =&gt; bool
   ? &amp;(is-recovery: 2) =&gt; bool
@@ -3195,7 +3197,7 @@ flags-map = {
   ? &amp;(is-tcb: 8) =&gt; bool
   ? &amp;(is-confidentiality-protected: 9) =&gt; bool
   * $$flags-map-extension
-}
+}&gt;
 </pre><a href="#section-5.1.4.5.5-2" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.4.5.5-3">The following describes each member of the <code>flags-map</code>:<a href="#section-5.1.4.5.5-3" class="pilcrow">¶</a></p>
@@ -8779,19 +8781,19 @@ environment-map = non-empty&lt;{
     ? &amp;(instance: 1) =&gt; $instance-id-type-choice,
     ? &amp;(group: 2) =&gt; $group-id-type-choice,
 }&gt;
-flags-map = {
-  ? &amp;(is-configured: 0) =&gt; bool,
-  ? &amp;(is-secure: 1) =&gt; bool,
-  ? &amp;(is-recovery: 2) =&gt; bool,
-  ? &amp;(is-debug: 3) =&gt; bool,
-  ? &amp;(is-replay-protected: 4) =&gt; bool,
-  ? &amp;(is-integrity-protected: 5) =&gt; bool,
-  ? &amp;(is-runtime-meas: 6) =&gt; bool,
-  ? &amp;(is-immutable: 7) =&gt; bool,
-  ? &amp;(is-tcb: 8) =&gt; bool,
-  ? &amp;(is-confidentiality-protected: 9) =&gt; bool,
-  * $$flags-map-extension,
-}
+flags-map = non-empty&lt;{
+    ? &amp;(is-configured: 0) =&gt; bool,
+    ? &amp;(is-secure: 1) =&gt; bool,
+    ? &amp;(is-recovery: 2) =&gt; bool,
+    ? &amp;(is-debug: 3) =&gt; bool,
+    ? &amp;(is-replay-protected: 4) =&gt; bool,
+    ? &amp;(is-integrity-protected: 5) =&gt; bool,
+    ? &amp;(is-runtime-meas: 6) =&gt; bool,
+    ? &amp;(is-immutable: 7) =&gt; bool,
+    ? &amp;(is-tcb: 8) =&gt; bool,
+    ? &amp;(is-confidentiality-protected: 9) =&gt; bool,
+    * $$flags-map-extension,
+}&gt;
 $group-id-type-choice /= tagged-uuid-type / tagged-bytes
 identity-triple-record = [
   environment: environment-map,
