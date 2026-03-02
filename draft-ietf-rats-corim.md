@@ -1785,7 +1785,21 @@ These inputs are added with the Reference Value Provider's authority.
 During Phase 4, Endorsed Values inputs containing conditions that describe expected Attester state are processed.
 If the comparison is satisfied, then additional Claims about the Attester are added to the ACS.
 These inputs are added with the Endorser's authority.
++ **Subsequent Phases**: A Verifier during its Appraisal Procedure may have subsequent phases before producing an Attestation Result.
 
+For example, the Verifier may perform consistency, integrity, or additional validity checks.
+These checks may result in additional Claims about the Attester that are added to the ACS.
+These Claims are added with the Verifier's authority.
+
+Verifier applies appraisal policy for Evidence on the ACS that describe Attester states that are desirable or undesirable.
+If these conditions exist, the policy may add additional Claims about the Attester, to the ACS.
+These Claims are added with the policy author's authority.
+
+Finally, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
+The Claims in the output staging area and other Verifier related metadata are transformed into an external representation, suitable for consumption by a Relying Party. The external representation is the Attestation Result message {{Section 8.4 of -rats-arch}}.
+
+Please note, a detail description of Subsequent Phases is out of scope of this document. 
+They are just mentioned here to provide an overall context to the Appraisal procedure.
 # Reference Verifier Algorithm {#sec-verifier-abstraction}
 
 This document presumes that Verifier implementations will differ.
