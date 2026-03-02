@@ -1861,7 +1861,7 @@ Finally, the outcome of Appraisal and the set of Attester Claims of interest to 
 The Claims in the output staging area and other Verifier-related metadata are transformed into an external representation, suitable for consumption by a Relying Party. This external representation is the Attestation Result message {{Section 8.4 of -rats-arch}}.
 
 Please note, a detail description of Subsequent Phases is out of scope of this document.
-They are just mentioned here to provide an overall context to the Appraisal procedure.
+They are mentioned here to provide an overall context to the Appraisal procedure.
 
 # Reference Verifier Sequence {#sec-verifier-abstraction}
 
