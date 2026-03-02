@@ -301,7 +301,7 @@ The internal representations used by this document are defined in {{sec-conc-mes
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
 The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
 
-The internal representations of Conceptual Messages and ACS should satisfy the requirements in {{tbl-cmrr}} for Verifier reconciliation and appraisal processing:
+The internal representations of Conceptual Messages and ACS SHOULD satisfy the requirements in {{tbl-cmrr}} for Verifier reconciliation and appraisal processing:
 
 | CM Type | Structure | Description |
 |---
