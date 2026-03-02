@@ -301,7 +301,7 @@ The internal representations used by this document are defined in {{sec-conc-mes
 Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
 The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-appraisal-procedure}}.
 
-Internal representations of Conceptual Messages, and ACS SHOULD satisfy the following requirements for Verifier reconciliation and appraisal processing:
+The internal representations of Conceptual Messages and ACS should satisfy the requirements in {{tbl-cmrr}} for Verifier reconciliation and appraisal processing:
 
 | CM Type | Structure | Description |
 |---
@@ -1846,18 +1846,19 @@ During Phase 4, Endorsed Values inputs containing conditions that describe expec
 If the comparison is satisfied, then additional Claims about the Attester are added to the ACS.
 These inputs are added with the Endorser's authority.
 
-+ **Subsequent Phases**: A Verifier during its Appraisal Procedure may have subsequent phases before producing an Attestation Result.
++ **Subsequent Phases**: Before producing an Attestation Result, a Verifier may go through subsequent phases of the appraisal procedure.
+
 
 For example, the Verifier may perform consistency, integrity, or additional validity checks.
 These checks may result in additional Claims about the Attester that are added to the ACS.
 These Claims are added with the Verifier's authority.
 
-Verifier applies appraisal policy for Evidence on the ACS that describe Attester states that are desirable or undesirable.
+Typically, a Verifier applies Appraisal Policy for Evidence on the ACS that describes desirable or undesirable Attester states.
 If these conditions exist, the policy may add additional Claims about the Attester, to the ACS.
 These Claims are added with the policy author's authority.
 
-Finally, the outcome of Appraisal and the set of Attester Claims that are interesting to a Relying Party are copied from the Attester state to an output staging area.
-The Claims in the output staging area and other Verifier related metadata are transformed into an external representation, suitable for consumption by a Relying Party. The external representation is the Attestation Result message {{Section 8.4 of -rats-arch}}.
+Finally, the outcome of Appraisal and the set of Attester Claims of interest to a Relying Party are copied from the Attester state to an output staging area.
+The Claims in the output staging area and other Verifier-related metadata are transformed into an external representation, suitable for consumption by a Relying Party. This external representation is the Attestation Result message {{Section 8.4 of -rats-arch}}.
 
 Please note, a detail description of Subsequent Phases is out of scope of this document.
 They are just mentioned here to provide an overall context to the Appraisal procedure.
