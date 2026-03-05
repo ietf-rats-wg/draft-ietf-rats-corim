@@ -117,6 +117,13 @@ informative:
     seriesinfo: Version 1.0, Revision 0.01
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
+  DICE.endorsement:
+    title: DICE Endorsement Architecture for Devices
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.0, Revision 0.38
+    date: November 2022
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf
   TNC.Arch:
     title: "TCG Trusted Network Connect TNC Architecture for Interoperability"
     author:
