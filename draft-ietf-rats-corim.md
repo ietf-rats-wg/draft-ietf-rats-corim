@@ -114,9 +114,9 @@ informative:
     title: DICE Certificate Profiles
     author:
       org: Trusted Computing Group
-    seriesinfo: Version 1.0, Revision 0.01
-    date: July 2020
-    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
+    seriesinfo: Version 1.1
+    date: April 2025
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-v1.1_pub.pdf
   TNC.Arch:
     title: "TCG Trusted Network Connect TNC Architecture for Interoperability"
     author:
@@ -1512,8 +1512,8 @@ The Verifier SHOULD verify keys contained in Attest Key triples.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in {{DICE.cert}}).
-The Verifier SHOULD enforce key use restrictions.
+If a key has usage restrictions that limits its use to Evidence signing, the Verifier SHOULD enforce key use restrictions.
+For example, see Section 5.1.5.3 in {{DICE.cert}}).
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
