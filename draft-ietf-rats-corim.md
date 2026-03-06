@@ -1512,7 +1512,7 @@ The Verifier SHOULD verify keys contained in Attest Key triples.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-If a key has usage restrictions that limits its use to Evidence signing the Verifier SHOULD enforce key use restrictions.
+If a key has usage restrictions that limits its use to Evidence signing, the Verifier SHOULD enforce key use restrictions.
 For example, see Section 5.1.5.3 in {{DICE.cert}}).
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
