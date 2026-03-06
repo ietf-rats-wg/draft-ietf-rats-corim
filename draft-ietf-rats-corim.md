@@ -377,6 +377,8 @@ The following CDDL describes the top-level CoRIM.
 {::include cddl/corim.cddl}
 ~~~
 
+See Sections 4 and 5 of {{DICE.endorsement}} for diagrams and additional information on CoRIM structure.
+
 ## CoRIM Map {#sec-corim-map}
 
 The CDDL specification for the `corim-map` is as follows and this rule and its
