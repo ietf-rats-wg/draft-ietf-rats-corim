@@ -1898,7 +1898,7 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 All the Conceptual Messages once fully processed are transformed into a common internal representation known as Environment Claims Tuple(ECT).
 
-Please follow Section XXX to YYY to understand how various Conceptual Messages are transformed from external representation to internal representation.
+Please follow section {{sec-conc-mess}} to understand how various Conceptual Messages are transformed from external representation to internal representation.
 
 This section describes the internal structure of ECT and Appraisal Claims Set (ACS). These structures are used in the Appraisal phases
 described in detail in the following section.
@@ -1960,16 +1960,6 @@ Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields ap
 ~~~ cddl
 {::include cddl/intrep-acs.cddl}
 ~~~
-
-
-### Common Conventions for Input Transformation
-The following mapping conventions apply to all forms of input transformation:
-
-> * The `environment` field is populated with a Target Environment identifier.
-> * The `element-list` field is populated with the measurements collected by an Attesting Environment.
-> * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
-> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
-> * The `profile` field is set based on the `corim-map` `profile` value.
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
@@ -2548,6 +2538,17 @@ The profile MUST specify how to compare the CBOR tagged Reference Value against 
 Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
 # Mapping of Conceptual Messages {#sec-conc-mess}
+
+This section describes various RATS Conceptual Messages that interact with a Verifier are transformed and represented internally using ECTs.
+
+### Common Conventions for Input Transformation
+The following mapping conventions apply to all forms of input transformation:
+
+> * The `environment` field is populated with a Target Environment identifier.
+> * The `element-list` field is populated with the measurements collected by an Attesting Environment.
+> * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
+> * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
+> * The `profile` field is set based on the `corim-map` `profile` value.
 
 ## Evidence {#sec-ev-processing}
 
