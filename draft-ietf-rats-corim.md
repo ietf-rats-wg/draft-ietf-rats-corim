@@ -2547,7 +2547,7 @@ The profile MUST specify how to compare the CBOR tagged Reference Value against 
 
 Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
-# Mapping of Conceptual Messages{#sec-conc-mess}
+# Mapping of Conceptual Messages {#sec-conc-mess}
 
 ## Evidence {#sec-ev-processing}
 
