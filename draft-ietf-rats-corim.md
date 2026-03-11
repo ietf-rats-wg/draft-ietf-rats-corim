@@ -1892,12 +1892,16 @@ are used with the meaning defined in {{sec-glossary}}.
 ~~~
 {: #fig-verifier-internal artwork-align="center" title="CoRIM Processing Flow"}
 
-### Processing of Conceptual Messages {#sec-conc-mess}
+### Verifier processing
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
 All the Conceptual Messages once fully processed are transformed into a common internal representation known as Environment Claims Tuple(ECT).
-This section describes the internal structure of ECT and explains the process of transformation of external conceptual messages into ECTs.
+
+Please follow Section XXX to YYY to understand how various Conceptual Messages are transformed from external representation to internal representation.
+
+This section describes the internal structure of ECT and Appraisal Claims Set (ACS). These structures are used in the Appraisal phases
+described in detail in the following section.
 
 ### Internal structure of ECT {#sec-ir-ect}
 
@@ -1927,6 +1931,37 @@ The following CDDL describes the ECT structure in more detail.
 
 The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
 
+### Appraisal Context
+
+The core function of a Verifier is to perform Appraisal of Evidence. Upon initiation of Appraisal procedure, an Appriasal Context known as ACS, is constructed from the ECTs.
+
+#### Appraisal Context Construction
+
+All of the extracted and validated tags are loaded into an *appraisal context*.
+The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
+The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
+As the Conceptual Messages are processed during Appraisal, the *appraisal context* starts to get populated using a data structure
+as given below. See {{sec-ir-acs}}
+
+### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
+
+An ACS is a list of ECTs that describe an Attester's actual state.
+
+For ECTs present in the ACS, the `cmtype` field is mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| n/a       | `environment`   | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
+
+~~~ cddl
+{::include cddl/intrep-acs.cddl}
+~~~
+
+
 ### Common Conventions for Input Transformation
 The following mapping conventions apply to all forms of input transformation:
 
@@ -1935,458 +1970,6 @@ The following mapping conventions apply to all forms of input transformation:
 > * The `authority` field is populated with the identity of the entity that asserted (e.g., signed) the Conceptual Message.
 > * The `cmtype` field is set based on the type of Conceptual Message inputted or to be output.
 > * The `profile` field is set based on the `corim-map` `profile` value.
-
-### Processing of Evidence {#sec-ev-processing}
-
-#### Internal Representation of Evidence {#sec-ir-evidence}
-
-An internal representation of Attestation Evidence uses the `ae` relation.
-`ae` implies Attestation Evidence and refers to a collection of evidence ECTs.
-
-~~~ cddl
-{::include cddl/intrep-ae.cddl}
-~~~
-
-The `addition` is a list of ECTs with Evidence to be appraised.
-
-A Verifier may maintain multiple simultaneous sessions to different Attesters.
-Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
-The `addition` is added to the ACS for a specific Attester.
-
-{{tbl-ae-ect-optionality}} contains the requirements for the ECT fields of the Evidence tuple:
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-{: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
-
-#### Evidence Transformation
-
-Evidence is transformed from an external representation to an internal representation as specified in {{sec-ir-evidence}}. The Evidence is mapped into one or more addition ECTs. If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
-
-Evidence transformation algorithms may be well-known, defined by a CoRIM profile (Section 4.1.4), or supplied dynamically.
-The handling of Evidence transformation algorithms is out of scope for this document.
-
-### Processing of Reference Value Triples
-
-Upon processing of CoRIMs containing Reference Value Triples, the RV Triples are transformed to an internal representation.
-
-#### Internal Representation of Reference Values {#sec-ir-ref-val}
-
-An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
-
-~~~ cddl
-{::include cddl/intrep-rv.cddl}
-~~~
-
-The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
-If the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype` set to `reference-values`.
-
-The reference ECTs define the matching conditions that are applied to Evidence ECTs.
-If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
-Refer to {{sec-phase3}} for how the `rv` entries are processed.
-
-{{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| condition | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-{: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
-
-#### Reference Triples Transformation {#sec-ref-trans}
-
-{:rtt-enum: counter="foo" style="format Step %d."}
-
-{: rtt-enum}
-* An `rv` list entry ({{sec-ir-ref-val}}) is allocated.
-
-* The `cmtype` of the `addition` ECT in the `rv` entry is set to `reference-values`.
-
-* The Reference Values Triple (RVT) ({{sec-comid-triple-refval}}) populates the `rv` ECTs.
-
-{:rtt2-enum: counter="rtt2" style="format %i"}
-
-{: rtt2-enum}
-* RVT.`ref-env`
-
-> > **copy**(`environment-map`, `rv`.`condition`.`environment`.`environment-map`)
-
-> > **copy**(`environment-map`, `rv`.`addition`.`environment`.`environment-map`)
-
-{: rtt2-enum}
-* For each e in RVT.`ref-claims`:
-
-> > **copy**(e.`measurement-map`, `rv`.`condition`.`element-list`.`element-map`)
-
-{: rtt-enum}
-* The signer of the Reference Values conceptual message is copied to the `rv`.`addition`.`authority` field.
-
-* If the Reference Values conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
-
-### Processing of Endorsed Value Triple, Conditional Endorsement Triple & Conditional Endorsement Series Triples
-
-#### Internal Representation of Endorsed Values {#sec-ir-end-val}
-
-An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
-The `ev` relation is applicable to Endorsed Values  (EV) and Conditional Endorsement (CE) Triple.
-The `evs` relation is applicable to the Conditional Endorsement Series Triples.
-
-~~~ cddl
-{::include cddl/intrep-ev.cddl}
-~~~
-
-The `ev` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS.
-Note, when `ev` relation is for EV Triple, then the `element-list` inside `condition` is Optional while it is Mandatory for CE Triple.
-
-The `evs` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
-The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
-If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
-
-{{tbl-ev-ect-optionality}} contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| condition | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-| selection | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-{: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
-
-#### Endorsement Triples Transformations {#sec-end-trans}
-
-##### Endorsed Values Triple Transformation {#sec-end-trans-evt}
-
-{:ett-enum: counter="ett" style="format Step %d."}
-
-{: ett-enum}
-* An `ev` entry ({{sec-ir-end-val}}) is allocated.
-
-* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
-
-* The Endorsed Values Triple (EVT) ({{sec-comid-triple-endval}}) populates the `ev` ECTs.
-
-{:ett2-enum: counter="ett2" style="format %i"}
-
-{: ett2-enum}
-* EVT.`condition`
-
-> > **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
-
-> > **copy**(`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
-
-{: ett2-enum}
-* For each e in EVT.`endorsement`:
-
-> > **copy**(e.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
-
-{: ett-enum}
-* The signer of the Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
-
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
-
-##### Conditional Endorsement Triple Transformation {#sec-end-trans-cet}
-
-{:cett-enum: counter="cett" style="format Step %d."}
-
-{: cett-enum}
-* An `ev` entry ({{sec-ir-end-val}}) is allocated.
-
-* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
-
-* Entries in the Conditional Endorsement Triple (CET) ({{sec-comid-triple-cond-endors}}) `conditions` list are copied to a suitable ECT in the internal representation.
-
-{:cett2-enum: counter="cett2" style="format %i"}
-
-{: cett2-enum}
-
- * For each e in CET.`conditions`:
-
-> > **copy**(e.`stateful-environment-record`.`environment`.`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
-
-> > **copy**(e.`stateful-environment-record`.`claims-list`.`measurement-map`, `ev`.`condition`.`element-list`.`element-map`)
-
-{: cett2-enum}
-* For each e in CET.`endorsements`:
-
-> > **copy**(e.`endorsed-triple-record`.`condition`.`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
-
-> > **copy**(e.`endorsed-triple-record`.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
-
-{: cett-enum}
-* The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
-
-* If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
-
-##### Conditional Endorsement Series Triple Transformation {#sec-end-trans-cest}
-
-{:cestt-enum: counter="cestt" style="format Step %d."}
-
-{: cestt-enum}
-* An `evs` entry ({{sec-ir-end-val}}) is allocated.
-
-* The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
-
-* Populate the `evs` ECTs using the Conditional Endorsement Series Triple (CEST) ({{sec-comid-triple-cond-series}}).
-
-{:cestt2-enum: counter="cestt2" style="format %i."}
-
-{: cestt2-enum}
-* For `c` in CEST.`condition`:
-
-> > **copy**(`c`.`environment`, `evs`.`condition`.`environment`)
-
-> > If the `c`.`claims-list` is not empty then **copy**(`c`.`claims-list`, `evs`.`condition`.`element-list`)
-
-> > If `c`.`authorized-by` is present then **copy**(`c`.`authorized-by`, `evs`.`condition`.`authority`)
-
-{: cestt2-enum}
-* For each `s` in CEST.`series`:
-
-> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`selection`.`environment`)
-
-> > **copy**(`s`.`selection`, `evs`.`series[s]`.`selection`.`element-list`)
-
-> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`addition`.`environment`)
-
-> > **copy**(`s`.`addition`, `evs`.`series[s]`.`addition`.`element-list`)
-
-{: cestt-enum}
-* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field for each addition.
-
-* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field for each addition.
-
-### Processing of Attest Key and Device Identity Key Triples
-
-#### Internal Representation of Cryptographic Keys {#sec-ir-ext}
-
-The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
-`typed-crypto-key` consists of a `key` and an optional `key-type`.
-There are two types of keys `attest-key` and `identity-key`.
-
-~~~ cddl
-{::include cddl/intrep-key.cddl}
-~~~
-
-#### Key Verification Triples Transformation {#sec-end-trans-kvt}
-
-The following transformation steps are applied for both the `identity-triples` and `attest-key-triples` with noted exceptions:
-
-{:kvt-enum: counter="ckvt" style="format Step %d."}
-
-{: kvt-enum}
-* An `ev` entry ({{sec-ir-end-val}}) is allocated.
-
-* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
-
-* Populate the `ev` `condition` ECT using either the `identity-triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:
-
-{:kvt2-enum: counter="kvt2" style="format %i."}
-
-{: kvt2-enum}
-* **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`).
-
-* Foreach _key_ in `keylist`.`$crypto-key-type-choice`, **copy**(_key_, `ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key`).
-
-* If `key-list` originated from `attest-key-triples`, **set**(`ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key-type` = `attest-key`).
-
-* Else if `key-list` originated from `identity-triples`, **set**(`ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key-type` = `identity-key`).
-
-* If populated, **copy**(`mkey`, `ev`.`condition`.`element-list`.`element-map`.`element-id`).
-
-* If populated, **copy**(`authorized-by`, `ev`.`condition`.`authority`).
-
-{: kvt-enum}
-* The signer of the Identity or Attest Key Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
-
-* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
-
-### Processing of Domain Membership Triples
-
-#### Internal Representation of Domain Membership {#sec-ir-dm}
-
-An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.
-The `cmtype` is set to domain-member.
-
-~~~ cddl
-{::include cddl/intrep-domain-mem.cddl}
-~~~
-
-{{tbl-dm-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| domain    | `environment`   | Mandatory   |
-|           | `element-list`  | Optional    |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | Mandatory   |
-|           | `trustees`      | Optional    |
-{: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
-
-#### Domain Membership Triples Transformation {#sec-ir-dm-trans}
-
-This section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation `dm` (see {{sec-ir-dm}}).
-
-{:dmt-enum: counter="dmt1" style="format Step %d."}
-
-{: dmt-enum}
-* Allocate a `domain` ECT entry.
-
-* Set the conceptual message type for the `domain` ECT to 6 (`domain-member`).
-
-{:dmt4-enum: counter="dmt4" style="format %i"}
-
-{: dmt4-enum}
-* **copy**(`domain-member`, `domain`.`cmtype`)
-
-{: dmt-enum}
-* Set the authority for the domain ECT to the DMT signer ({{sec-corim-signer}}).
-
-{:dmt5-enum: counter="dmt5" style="format %i"}
-
-{: dmt5-enum}
-* **copy**(DMT.`signer`, `domain`.`authority`)
-
-{: dmt-enum}
-* Use the DMT to populate the `dm` internal representation.
-
-{:dmt2-enum: counter="dmt2" style="format %i"}
-
-{: dmt2-enum}
-* **copy**(DMT.`domain-id`, `domain`.`environment`)
-
-{: dmt2-enum}
-* For each `environment` `*e*` in DMT.`members`:
-
-> > **copy**(DMT.`members`\[*e*\].`environment`, `domain`.`members`\[*e*\].`environment`)
-
-{: dmt-enum}
-* If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
-
-{:dmt3-enum: counter="dmt3" style="format %i"}
-
-{: dmt3-enum}
-* **copy**(DMT.`profile`, `domain`.`profile`)
-
-### Processing of Domain Dependency Triples {#processing-domain-dependency}
-
-#### Internal Representation of Domain Dependency {#sec-ir-dd}
-
-An internal representation of trust dependency is a directed acyclic graph where each node in the graph identifies a member domain and contains edges to dependent, or "trustee" domains.
-An ECT structure `environment` field contains the domain identifier, and the ECT trustees list are the edges.
-The `cmtype` is inclusive of `trustee` to indicate the ECT is being used to model a trust dependency graph.
-
-~~~ cddl
-{::include cddl/intrep-domain-dep.cddl}
-~~~
-
-{{tbl-dd-ect-optionality}} contains the requirements for the ECT fields of the Domain Dependency tuple:
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| domain    | `environment`   | Mandatory   |
-|           | `element-list`  | Optional    |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | Mandatory   |
-|           | `trustees`      | Mandatory   |
-{: #tbl-dd-ect-optionality title="Domain Dependency tuple requirements"}
-
-#### Domain Dependency Triples Transformation {#sec-ir-dd-trans}
-
-This section describes how the external representation of a Domain Dependency Triple (DDT) ({{sec-comid-triple-domain-dependency}}) is transformed into its CoRIM internal representation of a domain dependency graph (`ddg`) (see {{sec-ir-dd}}).
-
-For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the following steps:
-
-{:ddt1-enum: counter="ddt1" style="format Step %d."}
-
-{: ddt1-enum}
-* Allocate a domain dependency edge `dde` ECT entry.
-
-* Set the conceptual message type `cmtype` for the `dde` ECT to `trustee`.
-
-{:ddt2-enum: counter="ddt2" style="format %i"}
-
-{: ddt2-enum}
-* **assign**(`trustee`, `dde`.`cmtype`)
-
-{: ddt1-enum}
-* Set the authority for the trust domain ECT to the ddt signer ({{sec-corim-signer}}).
-
-{:ddt3-enum: counter="ddt3" style="format %i"}
-
-{: ddt3-enum}
-* **copy**(`ddtr`.`signer`, `dde`.`authority`)
-
-{: ddt1-enum}
-* Populate the ECT `environment` using the domain identifier.
-
-{:ddt4-enum: counter="ddt4" style="format %i"}
-
-{: ddt4-enum}
-* **copy**(`ddtr`.`domain-id`, `dde`.`environment`)
-
-{: ddt1-enum}
-* Populate the ECT `trustees`.
-
-{:ddt5-enum: counter="ddt5" style="format %i"}
-
-{: ddt5-enum}
-* For each `environment` *e* in `ddtr`.`trustees`:
-
-> > **copy**(\[*e*\].`environment`, `dde`.`trustees`\[*e*\].`environment`)
-
-{: ddt1-enum}
-* If the conceptual message containing the DDT has a profile, it is used to populate the profile for the `dde` ECT.
-
-{:ddt6-enum: counter="ddt6" style="format %i"}
-
-{: ddt6-enum}
-* **copy**(`ddtr`.`profile`, `dde`.`profile`)
-
-Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`).
-
-Process each domain dependency triple record (`ddtr`) in the DDT list until every entry has been transformed to the internal representation and is contained in the domain dependency graph.
-
-The domain dependency graph becomes input to domain dependency processing steps in {{sec-process-dd}}.
 
 ## Input Validation and Transformation (Phase 1) {#sec-phase1}
 
@@ -2475,31 +2058,6 @@ Once Evidence is validated it is transformed into an internal representation as 
 
 Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-conc-mess}}).
 
-#### Appraisal Context Construction
-
-All of the extracted and validated tags are loaded into an *appraisal context*.
-The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
-The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
-As the Conceptual Messages are processed during Appraisal, the *appraisal context* starts to get populated using a data structure
-as given below. See {{sec-ir-acs}}
-
-### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
-
-An ACS is a list of ECTs that describe an Attester's actual state.
-
-For ECTs present in the ACS, the `cmtype` field is mandatory.
-Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
-
-| ECT type  | ECT Field       | Requirement |
-|---
-| n/a       | `environment`   | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
-
-~~~ cddl
-{::include cddl/intrep-acs.cddl}
-~~~
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2988,6 +2546,460 @@ A profile MUST specify comparison algorithms for its additions to `$`-prefixed C
 The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.
 
 Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
+
+# Mapping of Conceptual Messages
+
+## Evidence {#sec-ev-processing}
+
+### Internal Representation of Evidence {#sec-ir-evidence}
+
+An internal representation of Attestation Evidence uses the `ae` relation.
+`ae` implies Attestation Evidence and refers to a collection of evidence ECTs.
+
+~~~ cddl
+{::include cddl/intrep-ae.cddl}
+~~~
+
+The `addition` is a list of ECTs with Evidence to be appraised.
+
+A Verifier may maintain multiple simultaneous sessions to different Attesters.
+Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
+The `addition` is added to the ACS for a specific Attester.
+
+{{tbl-ae-ect-optionality}} contains the requirements for the ECT fields of the Evidence tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
+{: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
+
+### Evidence Transformation
+
+Evidence is transformed from an external representation to an internal representation as specified in {{sec-ir-evidence}}. The Evidence is mapped into one or more addition ECTs. If the Evidence does not have a value for the mandatory `ae` fields, the Verifier MUST NOT process the Evidence.
+
+Evidence transformation algorithms may be well-known, defined by a CoRIM profile (Section 4.1.4), or supplied dynamically.
+The handling of Evidence transformation algorithms is out of scope for this document.
+
+## Reference Value Triples
+
+Upon processing of CoRIMs containing Reference Value Triples, the RV Triples are transformed to an internal representation.
+
+### Internal Representation of Reference Values {#sec-ir-ref-val}
+
+An internal representation of Reference Values uses the `rv` relation, which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.
+
+~~~ cddl
+{::include cddl/intrep-rv.cddl}
+~~~
+
+The `rv` relation is a list of condition-addition pairings where each pairing is evaluated together.
+If the `condition` containing reference ECTs matches Evidence ECTs then the Evidence ECTs are re-asserted, but with RVP authority as contained in the `addition` and `cmtype` set to `reference-values`.
+
+The reference ECTs define the matching conditions that are applied to Evidence ECTs.
+If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
+Refer to {{sec-phase3}} for how the `rv` entries are processed.
+
+{{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| condition | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+|           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
+{: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
+
+### Reference Triples Transformation {#sec-ref-trans}
+
+{:rtt-enum: counter="foo" style="format Step %d."}
+
+{: rtt-enum}
+* An `rv` list entry ({{sec-ir-ref-val}}) is allocated.
+
+* The `cmtype` of the `addition` ECT in the `rv` entry is set to `reference-values`.
+
+* The Reference Values Triple (RVT) ({{sec-comid-triple-refval}}) populates the `rv` ECTs.
+
+{:rtt2-enum: counter="rtt2" style="format %i"}
+
+{: rtt2-enum}
+* RVT.`ref-env`
+
+> > **copy**(`environment-map`, `rv`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(`environment-map`, `rv`.`addition`.`environment`.`environment-map`)
+
+{: rtt2-enum}
+* For each e in RVT.`ref-claims`:
+
+> > **copy**(e.`measurement-map`, `rv`.`condition`.`element-list`.`element-map`)
+
+{: rtt-enum}
+* The signer of the Reference Values conceptual message is copied to the `rv`.`addition`.`authority` field.
+
+* If the Reference Values conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
+
+## Endorsed Value Triple, Conditional Endorsement Triple & Conditional Endorsement Series Triples
+
+### Internal Representation of Endorsed Values {#sec-ir-end-val}
+
+An internal representation of Endorsed Values uses the `ev` and `evs` relations, which are lists of ECTs that describe matching conditions and the additions that are added if the conditions are satisfied.
+The `ev` relation is applicable to Endorsed Values  (EV) and Conditional Endorsement (CE) Triple.
+The `evs` relation is applicable to the Conditional Endorsement Series Triples.
+
+~~~ cddl
+{::include cddl/intrep-ev.cddl}
+~~~
+
+The `ev` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then the `addition` ECTs are added to the ACS.
+Note, when `ev` relation is for EV Triple, then the `element-list` inside `condition` is Optional while it is Mandatory for CE Triple.
+
+The `evs` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
+The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
+If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
+
+{{tbl-ev-ect-optionality}} contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| condition | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+|           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
+| selection | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Optional    |
+|           | `cmtype`        | n/a         |
+|           | `profile`       | n/a         |
+|           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
+| addition  | `environment`   | Mandatory   |
+|           | `element-list`  | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | n/a         |
+|           | `trustees`      | n/a         |
+{: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
+
+### Endorsement Triples Transformations {#sec-end-trans}
+
+#### Endorsed Values Triple Transformation {#sec-end-trans-evt}
+
+{:ett-enum: counter="ett" style="format Step %d."}
+
+{: ett-enum}
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+
+* The Endorsed Values Triple (EVT) ({{sec-comid-triple-endval}}) populates the `ev` ECTs.
+
+{:ett2-enum: counter="ett2" style="format %i"}
+
+{: ett2-enum}
+* EVT.`condition`
+
+> > **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
+
+{: ett2-enum}
+* For each e in EVT.`endorsement`:
+
+> > **copy**(e.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
+
+{: ett-enum}
+* The signer of the Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+
+##### Conditional Endorsement Triple Transformation {#sec-end-trans-cet}
+
+{:cett-enum: counter="cett" style="format Step %d."}
+
+{: cett-enum}
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+
+* Entries in the Conditional Endorsement Triple (CET) ({{sec-comid-triple-cond-endors}}) `conditions` list are copied to a suitable ECT in the internal representation.
+
+{:cett2-enum: counter="cett2" style="format %i"}
+
+{: cett2-enum}
+
+ * For each e in CET.`conditions`:
+
+> > **copy**(e.`stateful-environment-record`.`environment`.`environment-map`, `ev`.`condition`.`environment`.`environment-map`)
+
+> > **copy**(e.`stateful-environment-record`.`claims-list`.`measurement-map`, `ev`.`condition`.`element-list`.`element-map`)
+
+{: cett2-enum}
+* For each e in CET.`endorsements`:
+
+> > **copy**(e.`endorsed-triple-record`.`condition`.`environment-map`, `ev`.`addition`.`environment`.`environment-map`)
+
+> > **copy**(e.`endorsed-triple-record`.`endorsement`.`measurement-map`, `ev`.`addition`.`element-list`.`element-map`)
+
+{: cett-enum}
+* The signer of the Conditional Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Conditional Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+
+##### Conditional Endorsement Series Triple Transformation {#sec-end-trans-cest}
+
+{:cestt-enum: counter="cestt" style="format Step %d."}
+
+{: cestt-enum}
+* An `evs` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `evs` entry's `addition` ECT is set to `endorsements`.
+
+* Populate the `evs` ECTs using the Conditional Endorsement Series Triple (CEST) ({{sec-comid-triple-cond-series}}).
+
+{:cestt2-enum: counter="cestt2" style="format %i."}
+
+{: cestt2-enum}
+* For `c` in CEST.`condition`:
+
+> > **copy**(`c`.`environment`, `evs`.`condition`.`environment`)
+
+> > If the `c`.`claims-list` is not empty then **copy**(`c`.`claims-list`, `evs`.`condition`.`element-list`)
+
+> > If `c`.`authorized-by` is present then **copy**(`c`.`authorized-by`, `evs`.`condition`.`authority`)
+
+{: cestt2-enum}
+* For each `s` in CEST.`series`:
+
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`selection`.`environment`)
+
+> > **copy**(`s`.`selection`, `evs`.`series[s]`.`selection`.`element-list`)
+
+> > **copy**(`evs`.`condition`.`environment`, `evs`.`series[s]`.`addition`.`environment`)
+
+> > **copy**(`s`.`addition`, `evs`.`series[s]`.`addition`.`element-list`)
+
+{: cestt-enum}
+* The signer of the Conditional Endorsement Series conceptual message is copied to the `evs`.`series`.`addition`.`authority` field for each addition.
+
+* If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field for each addition.
+
+### Attest Key and Device Identity Key Triples
+
+#### Internal Representation of Cryptographic Keys {#sec-ir-ext}
+
+The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
+`typed-crypto-key` consists of a `key` and an optional `key-type`.
+There are two types of keys `attest-key` and `identity-key`.
+
+~~~ cddl
+{::include cddl/intrep-key.cddl}
+~~~
+
+#### Key Verification Triples Transformation {#sec-end-trans-kvt}
+
+The following transformation steps are applied for both the `identity-triples` and `attest-key-triples` with noted exceptions:
+
+{:kvt-enum: counter="ckvt" style="format Step %d."}
+
+{: kvt-enum}
+* An `ev` entry ({{sec-ir-end-val}}) is allocated.
+
+* The `cmtype` of the `ev` entry's `addition` ECT is set to `endorsements`.
+
+* Populate the `ev` `condition` ECT using either the `identity-triple-record` or `attest-key-triple-record` ({{sec-comid-triple-identity}}) as follows:
+
+{:kvt2-enum: counter="kvt2" style="format %i."}
+
+{: kvt2-enum}
+* **copy**(`environment-map`, `ev`.`condition`.`environment`.`environment-map`).
+
+* Foreach _key_ in `keylist`.`$crypto-key-type-choice`, **copy**(_key_, `ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key`).
+
+* If `key-list` originated from `attest-key-triples`, **set**(`ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key-type` = `attest-key`).
+
+* Else if `key-list` originated from `identity-triples`, **set**(`ev`.`condition`.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`.`key-type` = `identity-key`).
+
+* If populated, **copy**(`mkey`, `ev`.`condition`.`element-list`.`element-map`.`element-id`).
+
+* If populated, **copy**(`authorized-by`, `ev`.`condition`.`authority`).
+
+{: kvt-enum}
+* The signer of the Identity or Attest Key Endorsement conceptual message is copied to the `ev`.`addition`.`authority` field.
+
+* If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
+
+## Processing of Domain Membership Triples
+
+### Internal Representation of Domain Membership {#sec-ir-dm}
+
+An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.
+The `cmtype` is set to domain-member.
+
+~~~ cddl
+{::include cddl/intrep-domain-mem.cddl}
+~~~
+
+{{tbl-dm-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| domain    | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | Mandatory   |
+|           | `trustees`      | Optional    |
+{: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
+
+### Domain Membership Triples Transformation {#sec-ir-dm-trans}
+
+This section describes how the external representation of a Domain Membership Triple (DMT) ({{sec-comid-triple-domain-membership}}) is transformed into its CoRIM internal representation `dm` (see {{sec-ir-dm}}).
+
+{:dmt-enum: counter="dmt1" style="format Step %d."}
+
+{: dmt-enum}
+* Allocate a `domain` ECT entry.
+
+* Set the conceptual message type for the `domain` ECT to 6 (`domain-member`).
+
+{:dmt4-enum: counter="dmt4" style="format %i"}
+
+{: dmt4-enum}
+* **copy**(`domain-member`, `domain`.`cmtype`)
+
+{: dmt-enum}
+* Set the authority for the domain ECT to the DMT signer ({{sec-corim-signer}}).
+
+{:dmt5-enum: counter="dmt5" style="format %i"}
+
+{: dmt5-enum}
+* **copy**(DMT.`signer`, `domain`.`authority`)
+
+{: dmt-enum}
+* Use the DMT to populate the `dm` internal representation.
+
+{:dmt2-enum: counter="dmt2" style="format %i"}
+
+{: dmt2-enum}
+* **copy**(DMT.`domain-id`, `domain`.`environment`)
+
+{: dmt2-enum}
+* For each `environment` `*e*` in DMT.`members`:
+
+> > **copy**(DMT.`members`\[*e*\].`environment`, `domain`.`members`\[*e*\].`environment`)
+
+{: dmt-enum}
+* If the conceptual message containing the DMT has a profile, it is used to populate the profile for the `domain` ECT.
+
+{:dmt3-enum: counter="dmt3" style="format %i"}
+
+{: dmt3-enum}
+* **copy**(DMT.`profile`, `domain`.`profile`)
+
+## Domain Dependency Triples {#processing-domain-dependency}
+
+### Internal Representation of Domain Dependency {#sec-ir-dd}
+
+An internal representation of trust dependency is a directed acyclic graph where each node in the graph identifies a member domain and contains edges to dependent, or "trustee" domains.
+An ECT structure `environment` field contains the domain identifier, and the ECT trustees list are the edges.
+The `cmtype` is inclusive of `trustee` to indicate the ECT is being used to model a trust dependency graph.
+
+~~~ cddl
+{::include cddl/intrep-domain-dep.cddl}
+~~~
+
+{{tbl-dd-ect-optionality}} contains the requirements for the ECT fields of the Domain Dependency tuple:
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| domain    | `environment`   | Mandatory   |
+|           | `element-list`  | Optional    |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+|           | `profile`       | Optional    |
+|           | `members`       | Mandatory   |
+|           | `trustees`      | Mandatory   |
+{: #tbl-dd-ect-optionality title="Domain Dependency tuple requirements"}
+
+### Domain Dependency Triples Transformation {#sec-ir-dd-trans}
+
+This section describes how the external representation of a Domain Dependency Triple (DDT) ({{sec-comid-triple-domain-dependency}}) is transformed into its CoRIM internal representation of a domain dependency graph (`ddg`) (see {{sec-ir-dd}}).
+
+For each `domain-dependency-triple-record` (`ddtr`) in the DDT list, perform the following steps:
+
+{:ddt1-enum: counter="ddt1" style="format Step %d."}
+
+{: ddt1-enum}
+* Allocate a domain dependency edge `dde` ECT entry.
+
+* Set the conceptual message type `cmtype` for the `dde` ECT to `trustee`.
+
+{:ddt2-enum: counter="ddt2" style="format %i"}
+
+{: ddt2-enum}
+* **assign**(`trustee`, `dde`.`cmtype`)
+
+{: ddt1-enum}
+* Set the authority for the trust domain ECT to the ddt signer ({{sec-corim-signer}}).
+
+{:ddt3-enum: counter="ddt3" style="format %i"}
+
+{: ddt3-enum}
+* **copy**(`ddtr`.`signer`, `dde`.`authority`)
+
+{: ddt1-enum}
+* Populate the ECT `environment` using the domain identifier.
+
+{:ddt4-enum: counter="ddt4" style="format %i"}
+
+{: ddt4-enum}
+* **copy**(`ddtr`.`domain-id`, `dde`.`environment`)
+
+{: ddt1-enum}
+* Populate the ECT `trustees`.
+
+{:ddt5-enum: counter="ddt5" style="format %i"}
+
+{: ddt5-enum}
+* For each `environment` *e* in `ddtr`.`trustees`:
+
+> > **copy**(\[*e*\].`environment`, `dde`.`trustees`\[*e*\].`environment`)
+
+{: ddt1-enum}
+* If the conceptual message containing the DDT has a profile, it is used to populate the profile for the `dde` ECT.
+
+{:ddt6-enum: counter="ddt6" style="format %i"}
+
+{: ddt6-enum}
+* **copy**(`ddtr`.`profile`, `dde`.`profile`)
+
+Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`).
+
+Process each domain dependency triple record (`ddtr`) in the DDT list until every entry has been transformed to the internal representation and is contained in the domain dependency graph.
+
+The domain dependency graph becomes input to domain dependency processing steps in {{sec-process-dd}}.
 
 # Implementation Status
 
