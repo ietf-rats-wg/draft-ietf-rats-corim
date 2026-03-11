@@ -129,7 +129,6 @@ Table of Contents
        9.1.1.  Internal structure of ECT
        9.1.2.  Appraisal Context
        9.1.3.  Internal Representation of Appraisal Claims Set (ACS)
-       9.1.4.  Common Conventions for Input Transformation
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
        9.2.2.  Evidence Collection
@@ -149,23 +148,24 @@ Table of Contents
        9.4.6.  Measurement values map map Comparison
        9.4.7.  Profile-directed Comparison
    10. Mapping of Conceptual Messages
-     10.1.  Evidence
-       10.1.1.  Internal Representation of Evidence
-       10.1.2.  Evidence Transformation
-     10.2.  Reference Value Triples
-       10.2.1.  Internal Representation of Reference Values
-       10.2.2.  Reference Triples Transformation
-     10.3.  Endorsed Value Triple, Conditional Endorsement Triple &
+     10.1.  Common Conventions for Input Transformation
+     10.2.  Evidence
+       10.2.1.  Internal Representation of Evidence
+       10.2.2.  Evidence Transformation
+     10.3.  Reference Value Triples
+       10.3.1.  Internal Representation of Reference Values
+       10.3.2.  Reference Triples Transformation
+     10.4.  Endorsed Value Triple, Conditional Endorsement Triple &
             Conditional Endorsement Series Triples
-       10.3.1.  Internal Representation of Endorsed Values
-       10.3.2.  Endorsement Triples Transformations
-       10.3.3.  Attest Key and Device Identity Key Triples
-     10.4.  Processing of Domain Membership Triples
-       10.4.1.  Internal Representation of Domain Membership
-       10.4.2.  Domain Membership Triples Transformation
-     10.5.  Domain Dependency Triples
-       10.5.1.  Internal Representation of Domain Dependency
-       10.5.2.  Domain Dependency Triples Transformation
+       10.4.1.  Internal Representation of Endorsed Values
+       10.4.2.  Endorsement Triples Transformations
+       10.4.3.  Attest Key and Device Identity Key Triples
+     10.5.  Processing of Domain Membership Triples
+       10.5.1.  Internal Representation of Domain Membership
+       10.5.2.  Domain Membership Triples Transformation
+     10.6.  Domain Dependency Triples
+       10.6.1.  Internal Representation of Domain Dependency
+       10.6.2.  Domain Dependency Triples Transformation
    11. Implementation Status
      11.1.  Veraison
    12. Security and Privacy Considerations
@@ -471,7 +471,7 @@ Table of Contents
    |              | series of          | is satisfied, then add the   |
    |              | selection-addition | additional claims to the ACS |
    |              | tuples             | with Endorser authority.     |
-   |              |                    | See Section 10.3.1           |
+   |              |                    | See Section 10.4.1           |
    +--------------+--------------------+------------------------------+
 
          Table 1: Conceptual Message Representation Requirements
@@ -2322,7 +2322,7 @@ Table of Contents
    *  A trustee is a component embedded within another component
       identified by domain-id.
 
-   Trust dependency processing is described in Section 10.5.
+   Trust dependency processing is described in Section 10.6.
 
 5.1.12.  CoMID-CoSWID Linking Triple
 
@@ -2715,7 +2715,7 @@ Table of Contents
    a common internal representation known as Environment Claims
    Tuple(ECT).
 
-   Please follow Section XXX to YYY to understand how various Conceptual
+   Please follow section Section 10 to understand how various Conceptual
    Messages are transformed from external representation to internal
    representation.
 
@@ -2820,25 +2820,6 @@ Table of Contents
                  Table 3: ACS tuple minimum requirements
 
    ACS = [ + ECT ]
-
-9.1.4.  Common Conventions for Input Transformation
-
-   The following mapping conventions apply to all forms of input
-   transformation:
-
-      -  The environment field is populated with a Target Environment
-         identifier.
-
-      -  The element-list field is populated with the measurements
-         collected by an Attesting Environment.
-
-      -  The authority field is populated with the identity of the
-         entity that asserted (e.g., signed) the Conceptual Message.
-
-      -  The cmtype field is set based on the type of Conceptual Message
-         inputted or to be output.
-
-      -  The profile field is set based on the corim-map profile value.
 
 9.2.  Input Validation and Transformation (Phase 1)
 
@@ -2965,7 +2946,7 @@ Table of Contents
    validated.
 
    Once Evidence is validated it is transformed into an internal
-   representation as given in Section 10.1.
+   representation as given in Section 10.2.
 
 9.2.3.  Input Transformation
 
@@ -3128,7 +3109,7 @@ Table of Contents
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.5) which are transformed
-   (Section 10.2.2) into an internal representation (Section 10.2.1).
+   (Section 10.3.2) into an internal representation (Section 10.3.1).
    Each Reference Value Triple describes a single possible Attester
    state.
 
@@ -3155,8 +3136,8 @@ Table of Contents
 
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.6), Section 5.1.7, and Section 5.1.8) which are
-   transformed (Section 10.3.2) into an internal representation
-   (Section 10.3.1).  Endorsements describe actual Attester state.
+   transformed (Section 10.4.2) into an internal representation
+   (Section 10.4.1).  Endorsements describe actual Attester state.
    Endorsements are added to the ACS if the Endorsement condition is
    satisifed by the ACS.
 
@@ -3258,8 +3239,8 @@ Table of Contents
 
    This section assumes that each Domain Membership Triple (see
    Section 5.1.11.1) has been transformed into an internal
-   representation following the steps described in Section 10.4.2,
-   resulting in the representation specified in Section 10.4.1.
+   representation following the steps described in Section 10.5.2,
+   resulting in the representation specified in Section 10.5.1.
 
    Domain Membership ECTs (i.e., cmtype equals domain-member) in the dm
    staging area are matched with ACS entries where cmtype is set to
@@ -3299,7 +3280,7 @@ Table of Contents
 
    This section assumes that each Domain Dependency Triple (see
    Section 5.1.11.2) has been transformed into domain dependency graph
-   (see Section 10.5.1) following the steps described in Section 10.5.2.
+   (see Section 10.6.1) following the steps described in Section 10.6.2.
 
    Processing a domain dependency graph (DDG) has the following
    objectives:
@@ -3715,9 +3696,32 @@ Table of Contents
 
 10.  Mapping of Conceptual Messages
 
-10.1.  Evidence
+   This section describes various RATS Conceptual Messages that interact
+   with a Verifier are transformed and represented internally using
+   ECTs.
 
-10.1.1.  Internal Representation of Evidence
+10.1.  Common Conventions for Input Transformation
+
+   The following mapping conventions apply to all forms of input
+   transformation:
+
+      -  The environment field is populated with a Target Environment
+         identifier.
+
+      -  The element-list field is populated with the measurements
+         collected by an Attesting Environment.
+
+      -  The authority field is populated with the identity of the
+         entity that asserted (e.g., signed) the Conceptual Message.
+
+      -  The cmtype field is set based on the type of Conceptual Message
+         inputted or to be output.
+
+      -  The profile field is set based on the corim-map profile value.
+
+10.2.  Evidence
+
+10.2.1.  Internal Representation of Evidence
 
    An internal representation of Attestation Evidence uses the ae
    relation. ae implies Attestation Evidence and refers to a collection
@@ -3757,10 +3761,10 @@ Table of Contents
 
                     Table 4: Evidence tuple requirements
 
-10.1.2.  Evidence Transformation
+10.2.2.  Evidence Transformation
 
    Evidence is transformed from an external representation to an
-   internal representation as specified in Section 10.1.1.  The Evidence
+   internal representation as specified in Section 10.2.1.  The Evidence
    is mapped into one or more addition ECTs.  If the Evidence does not
    have a value for the mandatory ae fields, the Verifier MUST NOT
    process the Evidence.
@@ -3770,12 +3774,12 @@ Table of Contents
    of Evidence transformation algorithms is out of scope for this
    document.
 
-10.2.  Reference Value Triples
+10.3.  Reference Value Triples
 
    Upon processing of CoRIMs containing Reference Value Triples, the RV
    Triples are transformed to an internal representation.
 
-10.2.1.  Internal Representation of Reference Values
+10.3.1.  Internal Representation of Reference Values
 
    An internal representation of Reference Values uses the rv relation,
    which is a list of ECTs that contains possible states and a list of
@@ -3835,9 +3839,9 @@ Table of Contents
                      Table 5: Reference Values tuple
                                requirements
 
-10.2.2.  Reference Triples Transformation
+10.3.2.  Reference Triples Transformation
 
-   Step 1.  An rv list entry (Section 10.2.1) is allocated.
+   Step 1.  An rv list entry (Section 10.3.1) is allocated.
 
    Step 2.  The cmtype of the addition ECT in the rv entry is set to
             reference-values.
@@ -3865,10 +3869,10 @@ Table of Contents
             the profile identifier is copied to the rv.addition.profile
             field.
 
-10.3.  Endorsed Value Triple, Conditional Endorsement Triple &
+10.4.  Endorsed Value Triple, Conditional Endorsement Triple &
        Conditional Endorsement Series Triples
 
-10.3.1.  Internal Representation of Endorsed Values
+10.4.1.  Internal Representation of Endorsed Values
 
    An internal representation of Endorsed Values uses the ev and evs
    relations, which are lists of ECTs that describe matching conditions
@@ -3955,11 +3959,11 @@ Table of Contents
                   Table 6: Endorsed Values and Endorsed
                     Values Series tuples requirements
 
-10.3.2.  Endorsement Triples Transformations
+10.4.2.  Endorsement Triples Transformations
 
-10.3.2.1.  Endorsed Values Triple Transformation
+10.4.2.1.  Endorsed Values Triple Transformation
 
-   Step 1.  An ev entry (Section 10.3.1) is allocated.
+   Step 1.  An ev entry (Section 10.4.1) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -3986,9 +3990,9 @@ Table of Contents
    Step 5.  If the Endorsement conceptual message has a profile, the
             profile is copied to the ev.addition.profile field.
 
-10.3.2.1.1.  Conditional Endorsement Triple Transformation
+10.4.2.1.1.  Conditional Endorsement Triple Transformation
 
-   Step 1.  An ev entry (Section 10.3.1) is allocated.
+   Step 1.  An ev entry (Section 10.4.1) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -4020,9 +4024,9 @@ Table of Contents
             profile, the profile is copied to the ev.addition.profile
             field.
 
-10.3.2.1.2.  Conditional Endorsement Series Triple Transformation
+10.4.2.1.2.  Conditional Endorsement Series Triple Transformation
 
-   Step 1.  An evs entry (Section 10.3.1) is allocated.
+   Step 1.  An evs entry (Section 10.4.1) is allocated.
 
    Step 2.  The cmtype of the evs entry's addition ECT is set to
             endorsements.
@@ -4060,9 +4064,9 @@ Table of Contents
             a profile, the profile is copied to the
             evs.series.addition.profile field for each addition.
 
-10.3.3.  Attest Key and Device Identity Key Triples
+10.4.3.  Attest Key and Device Identity Key Triples
 
-10.3.3.1.  Internal Representation of Cryptographic Keys
+10.4.3.1.  Internal Representation of Cryptographic Keys
 
    The internal representation for keys use the extension slot within
    measurement-values-map with the intrep-keys claim that consists of a
@@ -4084,12 +4088,12 @@ Table of Contents
      identity-key: 1
    )
 
-10.3.3.2.  Key Verification Triples Transformation
+10.4.3.2.  Key Verification Triples Transformation
 
    The following transformation steps are applied for both the identity-
    triples and attest-key-triples with noted exceptions:
 
-   Step 1.  An ev entry (Section 10.3.1) is allocated.
+   Step 1.  An ev entry (Section 10.4.1) is allocated.
 
    Step 2.  The cmtype of the ev entry's addition ECT is set to
             endorsements.
@@ -4127,9 +4131,9 @@ Table of Contents
    Step 5.  If the Endorsement conceptual message has a profile, the
             profile is copied to the ev.addition.profile field.
 
-10.4.  Processing of Domain Membership Triples
+10.5.  Processing of Domain Membership Triples
 
-10.4.1.  Internal Representation of Domain Membership
+10.5.1.  Internal Representation of Domain Membership
 
    An internal representation of Domain Membership is expressed in a
    single ECT, where the domain identifier is set in the environment
@@ -4162,11 +4166,11 @@ Table of Contents
                       Table 7: Domain Membership tuple
                                 requirements
 
-10.4.2.  Domain Membership Triples Transformation
+10.5.2.  Domain Membership Triples Transformation
 
    This section describes how the external representation of a Domain
    Membership Triple (DMT) (Section 5.1.11.1) is transformed into its
-   CoRIM internal representation dm (see Section 10.4.1).
+   CoRIM internal representation dm (see Section 10.5.1).
 
    Step 1.  Allocate a domain ECT entry.
 
@@ -4194,9 +4198,9 @@ Table of Contents
 
    i  *copy*(DMT.profile, domain.profile)
 
-10.5.  Domain Dependency Triples
+10.6.  Domain Dependency Triples
 
-10.5.1.  Internal Representation of Domain Dependency
+10.6.1.  Internal Representation of Domain Dependency
 
    An internal representation of trust dependency is a directed acyclic
    graph where each node in the graph identifies a member domain and
@@ -4231,12 +4235,12 @@ Table of Contents
                       Table 8: Domain Dependency tuple
                                 requirements
 
-10.5.2.  Domain Dependency Triples Transformation
+10.6.2.  Domain Dependency Triples Transformation
 
    This section describes how the external representation of a Domain
    Dependency Triple (DDT) (Section 5.1.11.2) is transformed into its
    CoRIM internal representation of a domain dependency graph (ddg) (see
-   Section 10.5.1).
+   Section 10.6.1).
 
    For each domain-dependency-triple-record (ddtr) in the DDT list,
    perform the following steps:
