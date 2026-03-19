@@ -1898,7 +1898,7 @@ Conceptual Messages are Verifier input and output values such as Evidence, Refer
 
 All the Conceptual Messages once fully processed are transformed into a common internal representation known as Environment Claims Tuple(ECT).
 
-Please follow section {{sec-conc-mess}} to understand how various Conceptual Messages are transformed from external representation to internal representation.
+See section {{sec-conc-mess}} for how Conceptual Messages are transformed from external representations to internal representations.
 
 This section describes the internal structure of ECT and Appraisal Claims Set (ACS). These structures are used in the Appraisal phases
 described in detail in the following section.
