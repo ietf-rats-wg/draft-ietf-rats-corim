@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 7 September 2026                                         Linaro
+Expires: 20 September 2026                                        Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            6 March 2026
+                                                           19 March 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 September 2026.
+   This Internet-Draft will expire on 20 September 2026.
 
 Copyright Notice
 
@@ -582,8 +582,8 @@ Table of Contents
 
    The following describes each child item of this map.
 
-   *  id (index 0): A globally unique identifier to identify a CoRIM.
-      Described in Section 4.1.1.
+   *  id (index 0): A unique identifier to identify a CoRIM.  Described
+      in Section 4.1.1.
 
    *  tags (index 1): An array of one or more CoMID, CoSWID or CoTL
       tags.  Described in Section 4.1.2.
@@ -614,11 +614,11 @@ Table of Contents
 4.1.1.  CoRIM Identifier
 
    A CoRIM Identifier uniquely identifies a CoRIM instance within the
-   context of a CoRIM issuer.  In other words the CoRIM identifier is
-   not guaranteed to be globally unique, but can be used to distinguish
-   CoRIMs that come from the same issuer.  The base CDDL definition
-   allows UUID and text identifiers.  Other types of identifiers could
-   be defined as needed.
+   context of a CoRIM issuer.  In other words the CoRIM identifier can
+   be used to distinguish CoRIMs that come from the same issuer.
+
+   The base CDDL definition allows UUID and text identifiers.  Other
+   types of identifiers could be defined as needed.
 
    $corim-id-type-choice /= tstr
    $corim-id-type-choice /= uuid-type
@@ -1469,14 +1469,15 @@ Table of Contents
 
 5.1.4.5.1.  Measurement Keys
 
-   Measurement keys SHALL be unique within the scope of the environment-
-   map they are associated with.  The initial types defined are OID,
-   UUID, uint, and tstr. mkey may be necessary to disambiguate multiple
-   measurements of the same type or to distinguish multiple measured
-   elements within the same environment.  A single anonymous
-   measurement-map is allowed within the same environment.  Two or more
-   measurement-map entries within the same environment MUST populate
-   mkey.
+   A Measurement Key is an identifier for a measured element.  It can be
+   used to identify the type of measured element (see
+   [I-D.draft-ydb-rats-cca-endorsement]) or to identify multiple
+   measured element instances within the same environment.  The initial
+   types defined are OID, UUID, uint, and tstr.
+
+   A single anonymous measurement-map is allowed within the same
+   environment.  Two or more measurement-map entries within the same
+   environment MUST populate mkey.
 
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
@@ -5155,6 +5156,9 @@ Table of Contents
               <https://trustedcomputinggroup.org/wp-content/uploads/
               DICE-Layering-Architecture-r19_pub.pdf>.
 
+   [I-D.draft-ydb-rats-cca-endorsement]
+              "*** BROKEN REFERENCE ***".
+
    [I-D.fdb-rats-psa-endorsements]
               Fossati, T., Deshpande, Y., and H. Birkholz, "A CoRIM
               Profile for Arm's Platform Security Architecture (PSA)
@@ -5162,14 +5166,6 @@ Table of Contents
               fdb-rats-psa-endorsements-09, 5 January 2026,
               <https://datatracker.ietf.org/doc/html/draft-fdb-rats-psa-
               endorsements-09>.
-
-   [I-D.ietf-rats-ar4si]
-              Voit, E., Birkholz, H., Hardjono, T., Fossati, T., and V.
-              Scarlata, "Attestation Results for Secure Interactions",
-              Work in Progress, Internet-Draft, draft-ietf-rats-ar4si-
-              09, 15 August 2025,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              ar4si-09>.
 
    [I-D.ietf-rats-concise-ta-stores]
               Wallace, C., Housley, R., Fossati, T., and Y. Deshpande,
