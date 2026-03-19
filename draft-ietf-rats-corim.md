@@ -1250,9 +1250,9 @@ A cryptographic key can be one of the following formats:
 * `tagged-pkix-base64-cert-type`: PEM encoded X.509 public key certificate.
   Defined in {{Section 5 of -pkix-text}}.
 
-* `tagged-pkix-base64-cert-path-type`: X.509 certificate chain created by the
-  concatenation of as many PEM encoded X.509 certificates as needed.  The
-  certificates MUST be concatenated in order so that each directly certifies
+* `tagged-pkix-base64-cert-path-type`: certificate chain created by the
+  concatenation of as many PEM encoded certificates, in {{Section 3.2 of -pkix-text}} as needed.
+  The certificates MUST be concatenated in order so that each directly certifies
   the one preceding.
 
 * `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
@@ -2465,7 +2465,7 @@ The way cryptographic signature validation works depends on the specific Evidenc
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
 If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
 See Section 9.2.1 of {{DICE.Layer}}.
-If a trusted root certificate is found, X.509 certificate validation is performed.
+If a trusted root certificate is found, certificate validation is performed as described in {{Section 6 of -pkix-cert}}.
 
 As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed accordingly.
