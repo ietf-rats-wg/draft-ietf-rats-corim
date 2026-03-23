@@ -321,7 +321,7 @@ The internal representations of Conceptual Messages and ACS SHOULD satisfy the r
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
-The CDDL definitions in this document follows the naming conventions illustrated in {{tbl-typography}}.
+The CDDL definitions in this document follows the naming conventions illustrated in {{tbl-typography}}, according to CDDL {{-cddl}}
 
 | Type trait | Example | Typographical convention |
 |---
@@ -3054,6 +3054,13 @@ groups to use this information as they see fit".
   [https://github.com/veraison/corim-rs/commits/master/](https://github.com/veraison/corim-rs/commits/master/)
   [https://github.com/veraison/cover/commits/main/](https://github.com/veraison/cover/commits/main/)
 
+# Operations Considerations {#sec-ops}
+CoRIM Data Model, promotes inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values. The intention is that
+CoRIMs created by any Vendor for any product can be processed by any Verifier in the attestation ecosystem.
+In order to accomplish this, it is recommended that the Vendor profiles describing CoRIMs
+for their products should use CBOR types and code points natively defined in this specification. Extensions should be avoided as much as possible.
+
+In order to avoid excessive network traffic, it is recommended that the Endorsements with huge payloads should be conveyed as COSE Detached or COSE Nil Envelopes.
 
 # Security and Privacy Considerations {#sec-sec}
 
