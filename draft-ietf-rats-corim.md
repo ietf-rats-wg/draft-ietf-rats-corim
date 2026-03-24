@@ -109,7 +109,7 @@ informative:
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf
   IANA.coswid: coswid-reg
   I-D.ietf-rats-concise-ta-stores: ta-store
-  I-D.ietf-rats-ar4si: ar4si
+  I-D.draft-ydb-rats-cca-endorsement: cca-profile
   DICE.cert:
     title: DICE Certificate Profiles
     author:
@@ -117,6 +117,13 @@ informative:
     seriesinfo: Version 1.0, Revision 0.01
     date: July 2020
     target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
+  DICE.endorsement:
+    title: DICE Endorsement Architecture for Devices
+    author:
+      org: Trusted Computing Group
+    seriesinfo: Version 1.0, Revision 0.38
+    date: November 2022
+    target: https://trustedcomputinggroup.org/wp-content/uploads/TCG-Endorsement-Architecture-for-Devices-V1-R38_pub.pdf
   TNC.Arch:
     title: "TCG Trusted Network Connect TNC Architecture for Interoperability"
     author:
@@ -370,6 +377,8 @@ The following CDDL describes the top-level CoRIM.
 {::include cddl/corim.cddl}
 ~~~
 
+See Sections 4 and 5 of {{DICE.endorsement}} for diagrams and additional information on CoRIM structure.
+
 ## CoRIM Map {#sec-corim-map}
 
 The CDDL specification for the `corim-map` is as follows and this rule and its
@@ -381,7 +390,7 @@ constraints MUST be followed when creating or validating a CoRIM map.
 
 The following describes each child item of this map.
 
-* `id` (index 0): A globally unique identifier to identify a CoRIM. Described
+* `id` (index 0): A unique identifier to identify a CoRIM. Described
   in {{sec-corim-id}}.
 
 * `tags` (index 1):  An array of one or more CoMID, CoSWID or CoTL tags.  Described
@@ -415,7 +424,8 @@ A `corim-map` is unsigned, and its tagged form is an entrypoint for parsing a Co
 ### CoRIM Identifier {#sec-corim-id}
 
 A CoRIM Identifier uniquely identifies a CoRIM instance within the context of a CoRIM issuer.
-In other words the CoRIM identifier is not guaranteed to be globally unique, but can be used to distinguish CoRIMs that come from the same issuer.
+In other words the CoRIM identifier can be used to distinguish CoRIMs that come from the same issuer.
+
 The base CDDL definition allows UUID and text identifiers.
 Other types of identifiers could be defined as needed.
 
@@ -1025,9 +1035,11 @@ competence.
 
 ##### Measurement Keys {#sec-comid-mkey}
 
-Measurement keys SHALL be unique within the scope of the `environment-map` they are associated with.
+A Measurement Key is an identifier for a measured element.
+It can be used to identify the type of measured element (see {{-cca-profile}}) or to identify
+multiple measured element instances within the same environment.
 The initial types defined are OID, UUID, uint, and tstr.
-`mkey` may be necessary to disambiguate multiple measurements of the same type or to distinguish multiple measured elements within the same environment.
+
 A single anonymous `measurement-map` is allowed within the same environment.
 Two or more measurement-map entries within the same environment MUST populate `mkey`.
 
