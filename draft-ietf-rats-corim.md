@@ -2020,7 +2020,7 @@ During the Evidence collection phase, the Verifier communicates with Attesters t
 Discovery of Evidence sources is untrusted.
 Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
 
-The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
+The collected Evidence is then transformed to an internal representation {{sec-ir-evidence}}, making it suitable for appraisal processing.
 
 The exact protocol used to collect Evidence is out of scope of this specification.
 
@@ -2061,7 +2061,7 @@ At the end of the Evidence collection process, the Evidence has been converted i
 See {{sec-conc-mess}}.
 
 Verifiers are not required to use this as their internal representation.
-For the purposes of this document, appraisal is described in terms of the above cited internal representation.
+For the purpose of this document, appraisal is described in terms of the above cited internal representation.
 
 #### ACS Processing Requirements
 
