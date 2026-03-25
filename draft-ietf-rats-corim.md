@@ -2185,7 +2185,7 @@ After transformation into an `ev` entry, the processing steps of both triples ar
 Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
 Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
 
-### Processing of OTI Triples (Phase 4)
+### Processing OTI Triples (Phase 4) {#sec-process-oti}
 Upon complete processing of MTI Triples in the staging area the Appraisal proceeds to the
 triples, which may need to be appraised based on the Appraisal Policy.
 
@@ -2330,7 +2330,7 @@ If satisfied, for the `rv` entry, the following three steps are performed:
 2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
 3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
 
-Once all the `rv` entries are exhuasted the Appraisal processing moves to next phase.
+Once all the `rv` entries are exhuasted the Appraisal processing moves to next phase, i.e {{sec-phase4}}.
 
 ## Endorsed Value Triple, Conditional Endorsement Triple & Conditional Endorsement Series Triples
 
@@ -2501,6 +2501,8 @@ If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is ite
 where for each `series` entry, if the `selection` ECT matches an ACS ECT,
 the `addition` ECT is added to the ACS.
 Series iteration terminates after the first matching series entry is processed or when no series entries match.
+
+Upon completion of Endorsed Value corroboration, appraisal proceeds to processing various Phase 4 OTI triples, as mentioned in {{{#sec-process-oti}}}.
 
 ### Attest Key and Device Identity Key Triples
 
