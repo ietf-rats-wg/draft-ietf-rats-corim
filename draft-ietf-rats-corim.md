@@ -1896,7 +1896,7 @@ are used with the meaning defined in {{sec-glossary}}.
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
-All the Conceptual Messages once fully processed are transformed into a common internal representation known as Environment Claims Tuple(ECT).
+All the Conceptual Messages once fully processed are transformed into a common internal representation known as Environment Claims Tuple(ECT){{sec-ir-ect}}. The ECT is the root data structure, used to represent all Conceptual Messages and active Appraisal in the Verifier.  The ECTs are stored in a staging area prior to initiation of Appraisal.
 
 See section {{sec-conc-mess}} for how Conceptual Messages are transformed from external representations to internal representations.
 
@@ -2042,26 +2042,29 @@ If found, COSE Sign1 verification is performed accordingly.
 
 Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
-Once Evidence is validated it is transformed into an internal representation as given in {{sec-ev-processing}}.
+### Evidence Augmentation (Phase 2) {#sec-phase2}
 
+#### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
-## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
+The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
+See {{sec-acs-aug}}.
+
+### General Principles of Appraisal processing
+
+#### ACS Augmentation {#sec-acs-aug}
 
 In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
-Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
+Triples that specify an ACS matching condition will augment the ACS with  ECTs if the condition is met.
 
 Each triple is processed independently of other triples.
 However, the ACS state may change as a result of processing a triple.
 If a triple condition does not match, then the Verifier continues to process other triples.
 
+The ordering of ECTs in the ACS is not significant.
+Logically, the ACS represents the conjunction of all claims, so adding an ECT entry to the existing ACS at the end is equivalent to inserting it anywhere else.
+Implementations may optimize ECT order to achieve better performance.
+Additions to the ACS MUST be atomic.
 
-### ACS Requirements {#sec-acs-reqs}
-
-At the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.
-See {{sec-conc-mess}}.
-
-Verifiers are not required to use this as their internal representation.
-For the purpose of this document, appraisal is described in terms of the above cited internal representation.
 
 #### ACS Processing Requirements
 
@@ -2126,7 +2129,7 @@ the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` 
 When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
 
-##### Ordering of triple processing
+#### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
 Most triples use an `environment-map` field to select the ACS entries to match or modify.
@@ -2139,26 +2142,6 @@ The Verifier MUST ensure that a triple including a matching condition is process
 
 This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
 
-#### ACS Augmentation Requirements {#sec-acs-aug-req}
-
-The ordering of ECTs in the ACS is not significant.
-Logically, the ACS represents the conjunction of all claims, so adding an ECT entry to the existing ACS at the end is equivalent to inserting it anywhere else.
-Implementations may optimize ECT order to achieve better performance.
-Additions to the ACS MUST be atomic.
-
-In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
-Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
-
-Each triple is processed independently of other triples.
-However, the ACS state may change as a result of processing a triple.
-If a triple condition does not match, then the Verifier continues to process other triples.
-
-### Evidence Augmentation (Phase 2) {#sec-phase2}
-
-#### Appraisal Claims Set Initialization {#sec-acs-initialization}
-
-The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
-See {{sec-acs-aug}}.
 
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
@@ -2202,7 +2185,7 @@ A Verifier Appraisal policy may require to appraise a chain of trust among Evide
 
 # Mapping of Conceptual Messages {#sec-conc-mess}
 
-This section describes various RATS Conceptual Messages that interact with a Verifier are transformed and represented internally using ECTs.
+This section describes various RATS Conceptual Messages that upon processing in a Verifier are transformed and represented internally using ECTs.
 
 ### Common Conventions for Input Transformation
 The following mapping conventions apply to all forms of input transformation:
