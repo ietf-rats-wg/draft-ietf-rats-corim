@@ -2044,10 +2044,6 @@ Regardless of the specific integrity protection method used, the Verifier MUST N
 
 Once Evidence is validated it is transformed into an internal representation as given in {{sec-ev-processing}}.
 
-### Input Transformation {#sec-phase1-trans}
-
-Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-conc-mess}}).
-
 
 ## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
 
@@ -2057,6 +2053,7 @@ Triples that specify an ACS matching condition will augment the ACS with Endorse
 Each triple is processed independently of other triples.
 However, the ACS state may change as a result of processing a triple.
 If a triple condition does not match, then the Verifier continues to process other triples.
+
 
 ### ACS Requirements {#sec-acs-reqs}
 
@@ -2113,6 +2110,22 @@ If the merged `measurement-values-map` contains duplicate codepoints and the
 measurement values are not equivalent, then the Verifier SHALL report
 an error and stop validation processing.
 
+##### The authority field in the ACS {#sec-authority}
+
+The `authority` field in an ACS ECT indicates the entity whose authority backs the Claims.
+
+The Verifier keeps track of authority so that it can satisfy appraisal policy that specifies authority.
+
+When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the Evidence.
+
+If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
+
+When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing,
+the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
+
+When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
+The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
+
 ##### Ordering of triple processing
 
 Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
@@ -2133,31 +2146,6 @@ Logically, the ACS represents the conjunction of all claims, so adding an ECT en
 Implementations may optimize ECT order to achieve better performance.
 Additions to the ACS MUST be atomic.
 
-### Evidence Augmentation (Phase 2) {#sec-phase2}
-
-#### Appraisal Claims Set Initialization {#sec-acs-initialization}
-
-The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
-See {{sec-acs-aug}}.
-
-#### The authority field in the ACS {#sec-authority}
-
-The `authority` field in an ACS ECT indicates the entity whose authority backs the Claims.
-
-The Verifier keeps track of authority so that it can satisfy appraisal policy that specifies authority.
-
-When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the Evidence.
-
-If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
-
-When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing,
-the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
-
-When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
-The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
-
-#### ACS augmentation using CoMID triples
-
 In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
 Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
 
@@ -2165,377 +2153,52 @@ Each triple is processed independently of other triples.
 However, the ACS state may change as a result of processing a triple.
 If a triple condition does not match, then the Verifier continues to process other triples.
 
+### Evidence Augmentation (Phase 2) {#sec-phase2}
+
+#### Appraisal Claims Set Initialization {#sec-acs-initialization}
+
+The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
+See {{sec-acs-aug}}.
+
 ### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
 Each Reference Value Triple describes a single possible Attester state.
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
-
-Reference Values are matched with ACS entries by iterating through the `rv` list.
-For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
-
-If satisfied, for the `rv` entry, the following three steps are performed:
-
-1. The `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`
-2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
-3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
+The algorithm for corroboration is detailed in {{sec-ref-corrob}}.
 
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
+The exact corroboration of Endorsed Values prior to addition to ACS is given in {{sec-comid-triple-endval}}.
 
 #### Processing Endorsements {#sec-process-end}
 
 Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
 
-After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
-Each `ev` entry is processed independently of other `ev`s.
-
-Endorsements are matched with ACS entries by iterating through the `ev` list.
-For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
-
-Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
-If there are multiple matches, then each match is processed independently from the others.
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described in {{sec-end-val-aug}}.
 
 #### Processing Conditional Endorsements {#sec-process-cond-end}
 
 Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
 Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
 
-#### Processing Conditional Endorsement Series {#sec-process-series}
+### Processing of OTI Triples (Phase 4)
+Upon complete processing of MTI Triples in the staging area the Appraisal proceeds to the
+triples, which may need to be appraised based on the Appraisal Policy.
 
-Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
-Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
-where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
-If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
-where for each `series` entry, if the `selection` ECT matches an ACS ECT,
-the `addition` ECT is added to the ACS.
-Series iteration terminates after the first matching series entry is processed or when no series entries match.
+Conditional Endorsement Series Triples are processed as given in section {{sec-process-series}}.
 
-#### Processing Key Verifications {#sec-process-keys}
+The Keys processed by Attest Key Triples and Identity triples are added to ACS, based on certain matching condition as in {{sec-process-keys}}.
+Once the condition is matched, they are added as Endorsements to the ACS.
+The exact steps of processing Key Verification is documented in {{sec-process-keys}}.
 
-To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
-If the `key-type` field is set, the Verifier will apply the verification steps defined below.
-If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
-Note that, in this case, the Verifier is acting in the role of an Endorser.
+Verifier Appraisal policy may require processing of Domain Membership to fully apppraise a list of Environments, that must be present in the
+Evidence. The exact processing is documented in {{sec-process-dm}}.
 
-For each ECT from endorsed value (`ev`) or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence` or `endorsements`.
-If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key_ in the C-ECT.`element-claims`.`measurement-values-map`.`intrep-keys`, do the following steps:
-
-{:kvp-enum: counter="kvp" style="format Step %d."}
-
-{: kvp-enum}
-
-* Verify the certificate signatures for each certificate in the certification path.
-
-* Verify certificate revocation status for each certificate in the certification path.
-
-* Verify key usage restrictions appropriate for the type of key in `key-type`.
-
-* If key verification succeeds for any _key_, allocate an addition ECT (ADDITION).
-
-* For each verified _key_ in C-ECT:
-
-{:kvp2-enum: counter="kvp2" style="format %i"}
-
-{: kvp2-enum}
-
-* **append**(_key_, ADDITION.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`).
-
-{: kvp-enum}
-
-* **copy**(ACS-ECT`.`environment`, ADDITION.`environment`).
-
-* **copy**(ACS-ECT.`element-list`.`element-map`.`element-id`, ADDITION.`element-list`.`element-map`.`element-id`).
-
-* Set ADDITION.`cmtype` to `endorsements`.
-
-* Add the Verifier authority `$crypto-key-type-choice` to the ADDITION.`authority` field.
-
-* Add the ADDITION to the ACS.
-
-Otherwise, do not add the ADDITION to the ACS.
-
-It is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
-Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.
-
-#### Processing Domain Membership {#sec-process-dm}
-
-This section assumes that each Domain Membership Triple (see {{sec-comid-triple-domain-membership}}) has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
-
-Domain Membership ECTs (i.e., `cmtype` equals `domain-member`) in the `dm` staging area are matched with ACS entries where `cmtype` is set to `evidence`, `reference-values` i.e. corroborated evidence,  or `domain-member` using the following algorithm:
-
-For each `domain` in the `dm` staging area, which has not been processed (outer loop):
-
-For each member `m` in `domain`.`members` (inner loop):
-
-* Check that there is a corresponding ACS entry `environment` that matches `m`.`environment`.
-* Check that the ACS entry `cmtype` is one of `evidence`, `reference-values`, or `domain-member`.
-
-Outer loop resumes:
-
-* If all `domain`.`members` matched a corresponding ACS entry, add the `domain` ECT to the ACS.
-* If none of the `domain`.`members` matched, proceed to next `dm` entry.
-* If some, but not all of the `domain`.`members` matched, proceed to the next `dm` entry.
-If the previous execution of the outer loop added any `domain` entry to the ACS, then run the outer loop again
-Else STOP processing `dm` entries.
-
-The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
-
-If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.
-
-#### Processing Domain Dependency {#sec-process-dd}
-
-This section assumes that each Domain Dependency Triple (see {{sec-comid-triple-domain-dependency}}) has been transformed into domain dependency graph (see {{sec-ir-dd}}) following the steps described in {{sec-ir-dd-trans}}.
-
-Processing a domain dependency graph (DDG) has the following objectives:
-
-* Verify each edge in a DDG has a corresponding edge in a domain membership graph.
-DDGs need not be isomorphic to domain membership graphs.
-* Verify the DDG is acyclic.
-
-If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
-For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
-
-Domain Dependency ECTs are processed using the following algorithm:
-
-For each `dde` in the `ddg` staging array (outer loop):
-
-* Check that the ACS.`cmtype` contains `domain-member`.
-* Check that the `dde`.`environment` matches a domain member ACS entry `environment`.
-* OR that the `dde`.`environment` matches one of it's ACS.`members`.`environment`.
-
-For each trustee *t* in `dde`.`trustees` (inner loop):
-
-* Check that the ACS.`cmtype` contains `domain-member`.
-* Check that *t* matches an ACS.`environment`.
-
-Outer loop resumes:
-
-* If the `dde`.`environment` record AND all `dde`.`trustees` matched an ACS with `cmtype` `domain-member` entry.
-Then add the `dde` to the ACS.
-
-* Continue to the next `dde` until all are processed.
-
-Subsequent Verifier stages or Relying Party processing of the ACS can be impacted when Domain Dependency ECTs are not added to the ACS.
-For example, trust in an ACS entry that depends on `trustee` ACS entries might not be considered.
-
-## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
-
-The Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
-The Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
-
-If the matched entries array is not empty, then the condition ECT matches the ACS.
-
-If the matched entries array is empty, then the condition ECT does not match the ACS.
-
-### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
-
-If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then the Verifier MUST use the algorithm defined by the profile, or it MUST use a standard algorithm if the profile defines that.
-If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
-
-The Verifier SHALL perform all of the comparisons defined in {{sec-compare-environment}}, {{sec-compare-authority}}, and {{sec-compare-element-list}}.
-
-Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
-
-If all of the fields match, then the condition ECT matches the ACS entry.
-
-If any of the fields does not match, then the condition ECT does not match the ACS entry.
-
-### Environment Comparison {#sec-compare-environment}
-
-The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
-Before performing the binary comparison, the Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
-
-If all fields which are present in the condition ECT `environment-map` (e.g., instance-id or group-id) are also present in the ACS entry and are binary identical, then the environments match.
-
-If any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.
-
-If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
-
-If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
-
-### Authority comparison {#sec-compare-authority}
-
-The Verifier MUST compare byte-by-byte the condition ECT's `authority` value to the candidate entry's `authority` value.
-
-If every entry in the condition ECT `authority` matches byte-by-byte a corresponding entry in the ACS entry `authority` field, then the authorities match.
-The order of the fields in each `authority` field do not affect the result of the comparison.
-
-If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
-
-When comparing two `$crypto-key-type-choice` fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
-
-### Element list comparison {#sec-compare-element-list}
-
-The Verifier SHALL iterate over all the entries in the condition ECT `element-list` and compare each one against the corresponding entry in the ACS entry `element-list`.
-
-If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field then the element lists match.
-
-The order of the fields in each `element-list` field do not affect the result of the comparison.
-
-If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the `element-list` do not match.
-
-### Element map comparison {#sec-compare-element-map}
-
-The Verifier SHALL compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
-
-First, the Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
-Two `element-id` fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.
-
-Before performing the binary comparison, the Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
-
-If any condition ECT entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.
-
-If any condition ECT entry has multiple corresponding `element-id`s then the element map does not match.
-
-Second, the Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
-See {{sec-compare-mvm}}.
-
-### Measurement values map map Comparison {#sec-compare-mvm}
-
-The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
-Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
-
-If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
-
-If any codepoint present in the condition ECT `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
-
-#### Comparison of a single measurement-values-map codepoint {#sec-match-one-codepoint}
-
-The Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
-
-Non-negative codepoints represent standard data representations.
-The comparison algorithms for these are defined in this document (in the sections below) or in other specifications.
-For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
-
-Negative codepoints represent profile defined data representations.
-The Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and, if present, the tag value to select the comparison algorithm.
-
-If the Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
-
-Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
-
-The following subsections define the comparison algorithms for the `measurement-values-map` codepoints defined by this specification.
-
-##### Comparison for version entries
-
-The value stored under `measurement-values-map` codepoint 0 is an version label, which MUST have type `version-map`.
-Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
-
-##### Comparison for svn entries
-
-The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which MUST have type `svn-type`.
-
-If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
-
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed on the `uint` components.
-The comparison MUST return true if the value of SVN is equal to the `uint` value in the condition ECT.
-
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
-The comparison MUST return true if the `uint` value in the condition ECT is less than or equal to the value of SVN.
-
-If the entry `svn-type` is a `uint` tagged with #6.553, then comparison with the `uint` named as MINSVN is as follows.
-
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then the comparison MUST return false.
-
-*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then an equality comparison is performed.
-The comparison MUST return true if the value of MINSVN is equal to the `uint` value in the condition ECT.
-
-The meaning of a minimum SVN as an entry value is only meaningful as an endorsed value that has been added to the ACS.
-The condition therefore treats the minimum SVN as an exact state and not one to compare with inequality.
-
-##### Comparison for digests entries {#sec-cmp-digests}
-
-A `digests` entry contains one or more digests, each measuring the same object.
-When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
-
-In the simple case, a condition ECT digests entry containing one digest matches a candidate entry containing a single entry with the same algorithm and value.
-
-If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
-This is to prevent downgrade attacks.
-The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
-If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
-If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
-
-The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
-
-The comparison MUST return false if the condition ECT digests entry does not contain any digests.
-
-The comparison MUST return false if either digests entry contains multiple values for the same hash algorithm.
-
-The Verifier MUST iterate over the condition ECT `digests` array, locating the common hash algorithm identifiers which are present in both the condition ECT and in the candidate entry.
-If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
-
-The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.
-
-##### Comparison for raw-value entries
-
-A `raw-value` entry contains binary data.
-
-The value stored under `measurement-values-map` codepoint 4 in an ACS entry MUST be a `raw-value` entry, which MUST be tagged and have type `bytes`.
-
-The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
-
-If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
-The standard comparison function defined in this document removes the tag before performing the comparison.
-
-For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
-
-The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
-
-The comparison MUST return false if the lengths of the condition ECT mask and value are different.
-
-The comparison MUST use the mask to determine which bits to compare.
-If a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.
-If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
-
-##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
-
-The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
-If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.
-If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
-If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the `cryptokeys` condition ECT matches.
-Otherwise, `cryptokeys` does not match.
-
-##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
-
-For each Integrity Register entry in the condition ECT, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in the candidate entry.
-If no entry is found, the comparison MUST return false.
-Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
-Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
-
-##### Comparison for int-range entries
-
-The ACS entry value stored under `measurement-values-map` codepoint 15 is an int range value, which MUST have type `int-range-type-choice`.
-
-Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
-
-*  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
-
-*  If CONDITION is an `int-range` (CBOR tag 564), then a range inclusion comparison is performed.
-The comparison MUST return true if and only if all the following conditions are true:
-    + CONDITION.min is `null` or ENTRY is greater than or equal to CONDITION.min.
-    + CONDITION.max is `null` or ENTRY is less than or equal to CONDITION.max.
-
-Consider an `int-range` or `int-range` (CBOR tag 564) value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing an `int-range` against either another `int-range` or an `int` named CONDITION.
-
-*  If CONDITION is an `int`, then the comparison MUST return true if and only if ENTRY.min and ENTRY.max are both equal to CONDITION.
-
-*  If CONDITION is an `int-range` (CBOR tag 564), then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).
-The comparison MUST return true if and only if all the following conditions are true:
-    + CONDITION.min is `null` or ENTRY.min is an `int` that is greater than or equal to CONDITION.min
-    + CONDITION.max is `null` or ENTRY.max is an `int` that is less than or equal to CONDITION.max.
-
-### Profile-directed Comparison {#sec-compare-profile}
-
-A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
-The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.
-
-Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
+A Verifier Appraisal policy may require to appraise a chain of trust among Evidence domains (environments). The exact processing is documented in {{sec-process-dd}}.
 
 # Mapping of Conceptual Messages {#sec-conc-mess}
 
@@ -2655,6 +2318,19 @@ Refer to {{sec-phase3}} for how the `rv` entries are processed.
 * The signer of the Reference Values conceptual message is copied to the `rv`.`addition`.`authority` field.
 
 * If the Reference Values conceptual message has a profile, the profile identifier is copied to the `rv`.`addition`.`profile` field.
+
+### Corroboration of Reference Values {#sec-ref-corrob}
+Reference Values are matched with ACS entries by iterating through the `rv` list.
+
+For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
+
+If satisfied, for the `rv` entry, the following three steps are performed:
+
+1. The `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`
+2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
+3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
+
+Once all the `rv` entries are exhuasted the Appraisal processing moves to next phase.
 
 ## Endorsed Value Triple, Conditional Endorsement Triple & Conditional Endorsement Series Triples
 
@@ -2805,6 +2481,27 @@ If the `selection` criteria is not satisfied, then evaluation procedes to the ne
 
 * If the Conditional Endorsement Series conceptual message has a profile, the profile is copied to the `evs`.`series`.`addition`.`profile` field for each addition.
 
+#### Endorsed Value Augmentation {#sec-end-val-aug}
+Each `ev` entry is processed independently of other `ev`s.
+
+Endorsements are matched with ACS entries by iterating through the `ev` list.
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+
+Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches, then each match is processed independently from the others.
+
+
+#### Processing Conditional Endorsement Series {#sec-process-series}
+
+Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
+Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
+where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
+where for each `series` entry, if the `selection` ECT matches an ACS ECT,
+the `addition` ECT is added to the ACS.
+Series iteration terminates after the first matching series entry is processed or when no series entries match.
+
 ### Attest Key and Device Identity Key Triples
 
 #### Internal Representation of Cryptographic Keys {#sec-ir-ext}
@@ -2850,7 +2547,55 @@ The following transformation steps are applied for both the `identity-triples` a
 
 * If the Endorsement conceptual message has a profile, the profile is copied to the `ev`.`addition`.`profile` field.
 
-## Processing of Domain Membership Triples
+#### Processing Key Verifications {#sec-process-keys}
+
+To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
+If the `key-type` field is set, the Verifier will apply the verification steps defined below.
+If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
+Note that, in this case, the Verifier is acting in the role of an Endorser.
+
+For each ECT from endorsed value (`ev`) or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence` or `endorsements`.
+If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key_ in the C-ECT.`element-claims`.`measurement-values-map`.`intrep-keys`, do the following steps:
+
+{:kvp-enum: counter="kvp" style="format Step %d."}
+
+{: kvp-enum}
+
+* Verify the certificate signatures for each certificate in the certification path.
+
+* Verify certificate revocation status for each certificate in the certification path.
+
+* Verify key usage restrictions appropriate for the type of key in `key-type`.
+
+* If key verification succeeds for any _key_, allocate an addition ECT (ADDITION).
+
+* For each verified _key_ in C-ECT:
+
+{:kvp2-enum: counter="kvp2" style="format %i"}
+
+{: kvp2-enum}
+
+* **append**(_key_, ADDITION.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`).
+
+{: kvp-enum}
+
+* **copy**(ACS-ECT`.`environment`, ADDITION.`environment`).
+
+* **copy**(ACS-ECT.`element-list`.`element-map`.`element-id`, ADDITION.`element-list`.`element-map`.`element-id`).
+
+* Set ADDITION.`cmtype` to `endorsements`.
+
+* Add the Verifier authority `$crypto-key-type-choice` to the ADDITION.`authority` field.
+
+* Add the ADDITION to the ACS.
+
+Otherwise, do not add the ADDITION to the ACS.
+
+It is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
+Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.
+
+
+## Domain Membership Triples
 
 ### Internal Representation of Domain Membership {#sec-ir-dm}
 
@@ -2918,6 +2663,33 @@ This section describes how the external representation of a Domain Membership Tr
 
 {: dmt3-enum}
 * **copy**(DMT.`profile`, `domain`.`profile`)
+
+
+### Processing Domain Membership {#sec-process-dm}
+
+This section assumes that each Domain Membership Triple (see {{sec-comid-triple-domain-membership}}) has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+
+Domain Membership ECTs (i.e., `cmtype` equals `domain-member`) in the `dm` staging area are matched with ACS entries where `cmtype` is set to `evidence`, `reference-values` i.e. corroborated evidence,  or `domain-member` using the following algorithm:
+
+For each `domain` in the `dm` staging area, which has not been processed (outer loop):
+
+For each member `m` in `domain`.`members` (inner loop):
+
+* Check that there is a corresponding ACS entry `environment` that matches `m`.`environment`.
+* Check that the ACS entry `cmtype` is one of `evidence`, `reference-values`, or `domain-member`.
+
+Outer loop resumes:
+
+* If all `domain`.`members` matched a corresponding ACS entry, add the `domain` ECT to the ACS.
+* If none of the `domain`.`members` matched, proceed to next `dm` entry.
+* If some, but not all of the `domain`.`members` matched, proceed to the next `dm` entry.
+If the previous execution of the outer loop added any `domain` entry to the ACS, then run the outer loop again
+Else STOP processing `dm` entries.
+
+The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
+
+If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.
+
 
 ## Domain Dependency Triples {#processing-domain-dependency}
 
@@ -3001,6 +2773,260 @@ Append the domain dependency edge (`dde`) to the domain dependency graph (`ddg`)
 Process each domain dependency triple record (`ddtr`) in the DDT list until every entry has been transformed to the internal representation and is contained in the domain dependency graph.
 
 The domain dependency graph becomes input to domain dependency processing steps in {{sec-process-dd}}.
+
+
+### Processing Domain Dependency {#sec-process-dd}
+
+This section assumes that each Domain Dependency Triple (see {{sec-comid-triple-domain-dependency}}) has been transformed into domain dependency graph (see {{sec-ir-dd}}) following the steps described in {{sec-ir-dd-trans}}.
+
+Processing a domain dependency graph (DDG) has the following objectives:
+
+* Verify each edge in a DDG has a corresponding edge in a domain membership graph.
+DDGs need not be isomorphic to domain membership graphs.
+* Verify the DDG is acyclic.
+
+If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
+For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
+
+Domain Dependency ECTs are processed using the following algorithm:
+
+For each `dde` in the `ddg` staging array (outer loop):
+
+* Check that the ACS.`cmtype` contains `domain-member`.
+* Check that the `dde`.`environment` matches a domain member ACS entry `environment`.
+* OR that the `dde`.`environment` matches one of it's ACS.`members`.`environment`.
+
+For each trustee *t* in `dde`.`trustees` (inner loop):
+
+* Check that the ACS.`cmtype` contains `domain-member`.
+* Check that *t* matches an ACS.`environment`.
+
+Outer loop resumes:
+
+* If the `dde`.`environment` record AND all `dde`.`trustees` matched an ACS with `cmtype` `domain-member` entry.
+Then add the `dde` to the ACS.
+
+* Continue to the next `dde` until all are processed.
+
+Subsequent Verifier stages or Relying Party processing of the ACS can be impacted when Domain Dependency ECTs are not added to the ACS.
+For example, trust in an ACS entry that depends on `trustee` ACS entries might not be considered.
+
+# Rules of Comparison
+Triples in the Staging Area (in the form of ECTs) are compared with ECTs in the ACS. The exact comparison depends on the type of element been compared. This section provides a normative description of rules when comparing ECT elements with identical elements in ACS.
+
+## Comparing a condition ECT against the ACS {#sec-match-condition-ect}
+
+The Verifier SHALL iterate over all ACS entries and SHALL attempt to match the condition ECT against each ACS entry. See {{sec-match-one-condition-ect}}.
+The Verifier SHALL create a "matched entries" set, and SHALL populate it with all ACS entries which matched the condition ECT.
+
+If the matched entries array is not empty, then the condition ECT matches the ACS.
+
+If the matched entries array is empty, then the condition ECT does not match the ACS.
+
+### Comparing a condition ECT against a single ACS entry {#sec-match-one-condition-ect}
+
+If the condition ECT contains a profile and the profile defines an algorithm for a codepoint and `environment-map` then the Verifier MUST use the algorithm defined by the profile, or it MUST use a standard algorithm if the profile defines that.
+If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint and `environment-map` then the verifier MUST use the standard algorithm described in this document to compare the data at that codepoint.
+
+The Verifier SHALL perform all of the comparisons defined in {{sec-compare-environment}}, {{sec-compare-authority}}, and {{sec-compare-element-list}}.
+
+Each of these comparisons compares one field in the condition ECT against the same field in the ACS entry.
+
+If all of the fields match, then the condition ECT matches the ACS entry.
+
+If any of the fields does not match, then the condition ECT does not match the ACS entry.
+
+### Environment Comparison {#sec-compare-environment}
+
+The Verifier SHALL compare each field which is present in the condition ECT `environment-map` against the corresponding field in the ACS entry `environment-map` using binary comparison.
+Before performing the binary comparison, the Verifier SHOULD convert both `environment-map` fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+
+If all fields which are present in the condition ECT `environment-map` (e.g., instance-id or group-id) are also present in the ACS entry and are binary identical, then the environments match.
+
+If any field which is present in the condition ECT `environment-map` is not present in the ACS entry, then the environments do not match.
+
+If any field which is present in the condition ECT `environment-map` is not binary identical to the corresponding ACS entry field, then the environments do not match.
+
+If a field is not present in the condition ECT `environment-map` then the presence of, and value of, the corresponding ACS entry field SHALL NOT affect whether the environments match.
+
+### Authority comparison {#sec-compare-authority}
+
+The Verifier MUST compare byte-by-byte the condition ECT's `authority` value to the candidate entry's `authority` value.
+
+If every entry in the condition ECT `authority` matches byte-by-byte a corresponding entry in the ACS entry `authority` field, then the authorities match.
+The order of the fields in each `authority` field do not affect the result of the comparison.
+
+If any entry in the condition ECT `authority` does not have a matching entry in the ACS entry `authority` field then the authorities do not match.
+
+When comparing two `$crypto-key-type-choice` fields for equality, the Verifier SHALL treat them as equal if their deterministic CBOR encoding is binary equal.
+
+### Element list comparison {#sec-compare-element-list}
+
+The Verifier SHALL iterate over all the entries in the condition ECT `element-list` and compare each one against the corresponding entry in the ACS entry `element-list`.
+
+If every entry in the condition ECT `element-list` has a matching entry in the ACS entry `element-list` field then the element lists match.
+
+The order of the fields in each `element-list` field do not affect the result of the comparison.
+
+If any entry in the condition ECT `element-list` does not have a matching entry in the ACS entry `element-list` field then the `element-list` do not match.
+
+### Element map comparison {#sec-compare-element-map}
+
+The Verifier SHALL compare each `element-map` within the condition ECT `element-list` against the ACS entry `element-list`.
+
+First, the Verifier SHALL locate the entries in the ACS entry `element-list` which have a matching `element-id` as the condition ECT `element-map`.
+Two `element-id` fields are the same if they are either both omitted, or both present with binary identical deterministic encodings.
+
+Before performing the binary comparison, the Verifier SHOULD convert both fields into a form which meets CBOR Core Deterministic Encoding Requirements {{-cbor}}.
+
+If any condition ECT entry `element-id` does not have a corresponding `element-id` in the ACS entry then the element map does not match.
+
+If any condition ECT entry has multiple corresponding `element-id`s then the element map does not match.
+
+Second, the Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
+See {{sec-compare-mvm}}.
+
+### Measurement values map Comparison {#sec-compare-mvm}
+
+The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
+Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
+
+If any codepoint present in the condition ECT `measurement-values-map` does not have a corresponding codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
+
+If any codepoint present in the condition ECT `measurement-values-map` does not match the same codepoint within the candidate entry `measurement-values-map` then Verifier SHALL remove that candidate entry from the candidate entries array.
+
+#### Comparison of a single measurement-values-map codepoint {#sec-match-one-codepoint}
+
+The Verifier SHALL compare each condition ECT `measurement-values-map` value against the corresponding ACS entry value using the appropriate algorithm.
+
+Non-negative codepoints represent standard data representations.
+The comparison algorithms for these are defined in this document (in the sections below) or in other specifications.
+For some non-negative codepoints their behavior is modified by the CBOR tag at the start of the condition ECT `measurement-values-map` value.
+
+Negative codepoints represent profile defined data representations.
+The Verifier SHALL use the codepoint number, the profile associated with the condition ECT, and, if present, the tag value to select the comparison algorithm.
+
+If the Verifier is unable to determine the comparison algorithm which applies to a codepoint then it SHALL behave as though the candidate entry does not match the condition ECT.
+
+Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
+
+The following subsections define the comparison algorithms for the `measurement-values-map` codepoints defined by this specification.
+
+##### Comparison for version entries
+
+The value stored under `measurement-values-map` codepoint 0 is an version label, which MUST have type `version-map`.
+Two `version-map` values can only be compared for equality, as they are colloquial versions that cannot specify ordering.
+
+##### Comparison for svn entries
+
+The ACS entry value stored under `measurement-values-map` codepoint 1 is a security version number, which MUST have type `svn-type`.
+
+If the entry `svn-type` is a `uint` or a `uint` tagged with #6.552, then comparison with the `uint` named as SVN is as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then an equality comparison is performed on the `uint` components.
+The comparison MUST return true if the value of SVN is equal to the `uint` value in the condition ECT.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then a minimum comparison is performed.
+The comparison MUST return true if the `uint` value in the condition ECT is less than or equal to the value of SVN.
+
+If the entry `svn-type` is a `uint` tagged with #6.553, then comparison with the `uint` named as MINSVN is as follows.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is an untagged `uint` or a `uint` tagged with #6.552 then the comparison MUST return false.
+
+*  If the condition ECT value for `measurement-values-map` codepoint 1 is a `uint` tagged with #6.553 then an equality comparison is performed.
+The comparison MUST return true if the value of MINSVN is equal to the `uint` value in the condition ECT.
+
+The meaning of a minimum SVN as an entry value is only meaningful as an endorsed value that has been added to the ACS.
+The condition therefore treats the minimum SVN as an exact state and not one to compare with inequality.
+
+##### Comparison for digests entries {#sec-cmp-digests}
+
+A `digests` entry contains one or more digests, each measuring the same object.
+When multiple digests are provided, each represents a different algorithm acceptable to the condition ECT author.
+
+In the simple case, a condition ECT digests entry containing one digest matches a candidate entry containing a single entry with the same algorithm and value.
+
+If there are multiple algorithms in common between the condition ECT and candidate entry, then the bytes paired with common algorithms MUST be equal.
+This is to prevent downgrade attacks.
+The Verifier SHALL treat two algorithm identifiers as equal if they have the same deterministic binary encoding.
+If both an integer and a string representation are defined for an algorithm then entities creating ECTs SHOULD use the integer representation.
+If condition ECT and ACS entry use different names for the same algorithm, and the Verifier does not recognize that they are the same, then a downgrade attack is possible.
+
+The comparison MUST return false if the CBOR encoding of the `digests` entry in the condition ECT or the ACS value with the same codepoint is incorrect. For example, if fields are missing or if they are the wrong type.
+
+The comparison MUST return false if the condition ECT digests entry does not contain any digests.
+
+The comparison MUST return false if either digests entry contains multiple values for the same hash algorithm.
+
+The Verifier MUST iterate over the condition ECT `digests` array, locating the common hash algorithm identifiers which are present in both the condition ECT and in the candidate entry.
+If the value associated with any common hash algorithm identifier in the condition ECT differs from the value for the same algorithm identifier in the candidate entry then the comparison MUST return false.
+
+The comparison MUST return false if there are no hash algorithms from the condition ECT in common with the hash algorithms from the candidate entry ECT.
+
+##### Comparison for raw-value entries
+
+A `raw-value` entry contains binary data.
+
+The value stored under `measurement-values-map` codepoint 4 in an ACS entry MUST be a `raw-value` entry, which MUST be tagged and have type `bytes`.
+
+The value stored under the condition ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
+
+If the condition ECT `measurement-value-map` codepoint 4 is of `tagged-bytes`, and there is no value stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value with all bits set.
+The standard comparison function defined in this document removes the tag before performing the comparison.
+
+For backwards compatibility, if the condition ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, then the Verifier treats it in the same way as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+
+The comparison MUST return false if the lengths of the candidate entry value and the condition ECT value are different.
+
+The comparison MUST return false if the lengths of the condition ECT mask and value are different.
+
+The comparison MUST use the mask to determine which bits to compare.
+If a bit in the mask is 0 then this indicates that the corresponding bit in the ACS Entry value may have either value.
+If, for every bit position in the mask whose value is 1, the corresponding bits in both values are equal then the comparison MUST return true.
+
+##### Comparison for cryptokeys entries {#sec-cryptokeys-matching}
+
+The CBOR tag of the first entry of the condition ECT `cryptokeys` array is compared with the CBOR tag of the first entry of the candidate entry `cryptokeys` value.
+If the CBOR tags match, then the bytes following the CBOR tag from the condition ECT entry are compared byte-by-byte with the bytes following the CBOR tag from the candidate entry.
+If the byte strings match and there is another array entry, then the next entry from the condition ECTs array is likewise compared with the next entry of the ACS array.
+If all entries of the condition ECTs array match a corresponding entry in the ACS array, then the `cryptokeys` condition ECT matches.
+Otherwise, `cryptokeys` does not match.
+
+##### Comparison for Integrity Registers {#sec-cmp-integrity-registers}
+
+For each Integrity Register entry in the condition ECT, the Verifier will use the associated identifier (i.e., `integrity-register-id-type-choice`) to look up the matching Integrity Register entry in the candidate entry.
+If no entry is found, the comparison MUST return false.
+Instead, if an entry is found, the digest comparison proceeds as defined in {{sec-cmp-digests}} after equivalence has been found according to {{sec-comid-integrity-registers}}.
+Note that it is not required for all the entries in the candidate entry to be used during matching: the condition ECT could consist of a subset of the device's register space. In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a condition ECT could describe a subset of PCRs.
+
+##### Comparison for int-range entries
+
+The ACS entry value stored under `measurement-values-map` codepoint 15 is an int range value, which MUST have type `int-range-type-choice`.
+
+Consider an `int` ACS entry value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
+
+*  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
+
+*  If CONDITION is an `int-range` (CBOR tag 564), then a range inclusion comparison is performed.
+The comparison MUST return true if and only if all the following conditions are true:
+    + CONDITION.min is `null` or ENTRY is greater than or equal to CONDITION.min.
+    + CONDITION.max is `null` or ENTRY is less than or equal to CONDITION.max.
+
+Consider an `int-range` or `int-range` (CBOR tag 564) value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing an `int-range` against either another `int-range` or an `int` named CONDITION.
+
+*  If CONDITION is an `int`, then the comparison MUST return true if and only if ENTRY.min and ENTRY.max are both equal to CONDITION.
+
+*  If CONDITION is an `int-range` (CBOR tag 564), then a range subsumption comparison is performed (i.e., the condition range includes all values of the entry range).
+The comparison MUST return true if and only if all the following conditions are true:
+    + CONDITION.min is `null` or ENTRY.min is an `int` that is greater than or equal to CONDITION.min
+    + CONDITION.max is `null` or ENTRY.max is an `int` that is less than or equal to CONDITION.max.
+
+### Profile-directed Comparison {#sec-compare-profile}
+
+A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
+The profile MUST specify how to compare the CBOR tagged Reference Value against the ACS.
+
+Note that the Verifier may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
 # Implementation Status
 
