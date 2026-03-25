@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 25 September 2026                                        Linaro
+Expires: 26 September 2026                                        Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           24 March 2026
+                                                           25 March 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 September 2026.
+   This Internet-Draft will expire on 26 September 2026.
 
 Copyright Notice
 
@@ -899,21 +899,21 @@ Table of Contents
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
    An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping
-   signed document, or it may be conveyed unsigned within the protection
-   scope of a secure channel.  The CoRIM signer authority is taken from
-   the authenticated credential (e.g., OAUTH token) of the entity that
-   originates the CoRIM.  For example, this entity could be the sending
-   peer in a secure channel.  A CoRIM role entry expressing the origin
-   of the unsigned CoRIM (i.e., the enveloping signed document or the
-   origin endpoint of the secure channel) via the manifest-signer role
-   MUST be added to corim-entity-map.  If the authority cannot be
-   expressed directly via the existing authority types, the receiver
-   SHOULD establish a local authority in one of the supported authority
-   formats (e.g., if an unsigned CoRIM is received over a secure channel
-   where authentication is token- or password-based).  If it is
-   impossible to assert the authority of the origin, the Verifier's
-   appraisal policy MAY assert the Verifier’s authority as the CoRIM
-   origin.
+   signed document, [RFC5280] or it may be conveyed unsigned within the
+   protection scope of a secure channel.  The CoRIM signer authority is
+   taken from the authenticated credential (e.g., OAUTH token) of the
+   entity that originates the CoRIM.  For example, this entity could be
+   the sending peer in a secure channel.  A CoRIM role entry expressing
+   the origin of the unsigned CoRIM (i.e., the enveloping signed
+   document or the origin endpoint of the secure channel) via the
+   manifest-signer role MUST be added to corim-entity-map.  If the
+   authority cannot be expressed directly via the existing authority
+   types, the receiver SHOULD establish a local authority in one of the
+   supported authority formats (e.g., if an unsigned CoRIM is received
+   over a secure channel where authentication is token- or password-
+   based).  If it is impossible to assert the authority of the origin,
+   the Verifier's appraisal policy MAY assert the Verifier’s authority
+   as the CoRIM origin.
 
    It is out of scope of this document to specify a method of delegating
    the signer role in the case that an unsigned CoRIM is conveyed
@@ -940,10 +940,10 @@ Table of Contents
    or &(payload_preimage_content_type: 259) in the case of hash
    envelopes.
 
-   If using other signing envelope formats, the CoRIM signing authority
-   MUST be specified.  For example, this can be accomplished by adding
-   the manifest-signer role to every CoRIM, or by using a protected
-   header analogous to corim-meta.
+   If using other signing envelope formats, (Section 4.3) the CoRIM
+   signing authority MUST be specified.  For example, this can be
+   accomplished by adding the manifest-signer role to every CoRIM, or by
+   using a protected header analogous to corim-meta.
 
    corim-cbor-collection = {
      "__cmwc_t" => "tag:{{&SELF}}:corim",
