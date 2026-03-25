@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 20 September 2026                                        Linaro
+Expires: 26 September 2026                                        Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           19 March 2026
+                                                           25 March 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 September 2026.
+   This Internet-Draft will expire on 26 September 2026.
 
 Copyright Notice
 
@@ -3748,11 +3748,17 @@ Table of Contents
    ECTs containing intrep-keys is used to identify ACS entries
    containing $crypto-key-type-choice values that require additional key
    verification steps.  If the key-type field is set, the Verifier will
-   apply the verification steps defined below.  If the key verification
-   check succeeds, the key is re-asserted by the Verifier as an
-   Endorsement by constructing an ECT that contains the verified key
-   using the authority of the Verifier.  Note that, in this case, the
-   Verifier is acting in the role of an Endorser.
+   apply the verification steps depending upon the type of key, i.e. the
+   selected choice from $crypto-key-type-choice.  If the key is set to
+   tagged-pkix-base64-cert-type or tagged-pkix-asn1der-cert-type,
+   certificate validation is performed as described in Section 6 of
+   [RFC5280].  For other types of keys, the key validation steps should
+   be defined by a CoRIM author in a profile document.
+
+   If the key verification check succeeds, the key is re-asserted by the
+   Verifier as an Endorsement by constructing an ECT that contains the
+   verified key using the authority of the Verifier.  Note that, in this
+   case, the Verifier is acting in the role of an Endorser.
 
    For each ECT from endorsed value (ev) or attestation evidence (ae)
    entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-
@@ -3761,34 +3767,25 @@ Table of Contents
    each _key_ in the C-ECT.element-claims.measurement-values-map.intrep-
    keys, do the following steps:
 
-   Step 1.  Verify the certificate signatures for each certificate in
-            the certification path.
-
-   Step 2.  Verify certificate revocation status for each certificate in
-            the certification path.
-
-   Step 3.  Verify key usage restrictions appropriate for the type of
-            key in key-type.
-
-   Step 4.  If key verification succeeds for any _key_, allocate an
+   Step 1.  If key verification succeeds for any _key_, allocate an
             addition ECT (ADDITION).
 
-   Step 5.  For each verified _key_ in C-ECT:
+   Step 2.  For each verified _key_ in C-ECT:
 
    i  *append*(_key_, ADDITION.element-list.element-map.element-
       claims.measurement-values-map.intrep-keys).
 
-   Step 6.  *copy*(ACS-ECT.environment, ADDITION.environment`).
+   Step 3.  *copy*(ACS-ECT.environment, ADDITION.environment`).
 
-   Step 7.  *copy*(ACS-ECT.element-list.element-map.element-id,
+   Step 4.  *copy*(ACS-ECT.element-list.element-map.element-id,
             ADDITION.element-list.element-map.element-id).
 
-   Step 8.  Set ADDITION.cmtype to endorsements.
+   Step 5.  Set ADDITION.cmtype to endorsements.
 
-   Step 9.  Add the Verifier authority $crypto-key-type-choice to the
+   Step 6.  Add the Verifier authority $crypto-key-type-choice to the
             ADDITION.authority field.
 
-   Step 10. Add the ADDITION to the ACS.
+   Step 7.  Add the ADDITION to the ACS.
 
    Otherwise, do not add the ADDITION to the ACS.
 
