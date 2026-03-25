@@ -132,13 +132,12 @@ Table of Contents
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
        9.2.2.  Evidence Collection
-     9.3.  ACS Augmentation - Phases 2, 3, and 4
-       9.3.1.  ACS Requirements
-       9.3.2.  Evidence Augmentation (Phase 2)
-       9.3.3.  Reference Values Corroboration and Augmentation (Phase
+       9.2.3.  Evidence Augmentation (Phase 2)
+       9.2.4.  General Principles of Appraisal processing
+       9.2.5.  Reference Values Corroboration and Augmentation (Phase
                3)
-       9.3.4.  Endorsed Values Augmentation (Phase 4)
-       9.3.5.  Processing OTI Triples (Phase 4)
+       9.2.6.  Endorsed Values Augmentation (Phase 4)
+       9.2.7.  Processing OTI Triples (Phase 4)
    10. Mapping of Conceptual Messages
      10.1.  Common Conventions for Input Transformation
      10.2.  Evidence
@@ -2717,7 +2716,10 @@ Table of Contents
 
    All the Conceptual Messages once fully processed are transformed into
    a common internal representation known as Environment Claims
-   Tuple(ECT).
+   Tuple(ECT)Section 9.1.1.  The ECT is the root data structure, used to
+   represent all Conceptual Messages and active Appraisal in the
+   Verifier.  The ECTs are stored in a staging area prior to initiation
+   of Appraisal.
 
    See section Section 10 for how Conceptual Messages are transformed
    from external representations to internal representations.
@@ -2949,33 +2951,34 @@ Table of Contents
    Verifier MUST NOT process Evidence which is not successfully
    validated.
 
-   Once Evidence is validated it is transformed into an internal
-   representation as given in Section 10.2.
+9.2.3.  Evidence Augmentation (Phase 2)
 
-9.3.  ACS Augmentation - Phases 2, 3, and 4
+9.2.3.1.  Appraisal Claims Set Initialization
+
+   The ACS is initialized by copying the internal representation of
+   Evidence claims to the ACS.  See Section 9.2.4.1.
+
+9.2.4.  General Principles of Appraisal processing
+
+9.2.4.1.  ACS Augmentation
 
    In the ACS augmentation phase, a CoRIM Appraisal Context and an
    Evidence Appraisal Policy are used by the Verifier to find CoMID
    triples which match the ACS.  Triples that specify an ACS matching
-   condition will augment the ACS with Endorsements if the condition is
-   met.
+   condition will augment the ACS with ECTs if the condition is met.
 
    Each triple is processed independently of other triples.  However,
    the ACS state may change as a result of processing a triple.  If a
    triple condition does not match, then the Verifier continues to
    process other triples.
 
-9.3.1.  ACS Requirements
+   The ordering of ECTs in the ACS is not significant.  Logically, the
+   ACS represents the conjunction of all claims, so adding an ECT entry
+   to the existing ACS at the end is equivalent to inserting it anywhere
+   else.  Implementations may optimize ECT order to achieve better
+   performance.  Additions to the ACS MUST be atomic.
 
-   At the end of the Evidence collection process, the Evidence has been
-   converted into an internal representation suitable for appraisal.
-   See Section 10.
-
-   Verifiers are not required to use this as their internal
-   representation.  For the purpose of this document, appraisal is
-   described in terms of the above cited internal representation.
-
-9.3.1.1.  ACS Processing Requirements
+9.2.4.2.  ACS Processing Requirements
 
    The ACS contains the actual state of Attester's Target Environments
    (TEs).  The ACS contains Evidence ECTs (from Attesters) and
@@ -3015,7 +3018,7 @@ Table of Contents
 
    The ACS MUST maintain the authority information for each ECT.  There
    can be multiple entries in state-triples which have the same
-   environment-map and a different authority.  See Section 9.3.1.1.1.
+   environment-map and a different authority.  See Section 9.2.4.2.1.
 
    If the merged measurement-values-map contains duplicate codepoints
    and the measurement values are equivalent, then duplicate claims
@@ -3026,7 +3029,7 @@ Table of Contents
    and the measurement values are not equivalent, then the Verifier
    SHALL report an error and stop validation processing.
 
-9.3.1.1.1.  The authority field in the ACS
+9.2.4.2.1.  The authority field in the ACS
 
    The authority field in an ACS ECT indicates the entity whose
    authority backs the Claims.
@@ -3055,7 +3058,7 @@ Table of Contents
    match ACS entries if all of the entries present in the condition
    authorized-by field are present in the ACS authority field.
 
-9.3.1.1.2.  Ordering of triple processing
+9.2.4.3.  Ordering of triple processing
 
    Triples interface with the ACS by either adding new ACS entries or by
    matching existing ACS entries before updating the ACS.  Most triples
@@ -3075,33 +3078,7 @@ Table of Contents
    repeating processing of some triples after ACS modifications or by
    other algorithms.
 
-9.3.1.2.  ACS Augmentation Requirements
-
-   The ordering of ECTs in the ACS is not significant.  Logically, the
-   ACS represents the conjunction of all claims, so adding an ECT entry
-   to the existing ACS at the end is equivalent to inserting it anywhere
-   else.  Implementations may optimize ECT order to achieve better
-   performance.  Additions to the ACS MUST be atomic.
-
-   In the ACS augmentation phase, a CoRIM Appraisal Context and an
-   Evidence Appraisal Policy are used by the Verifier to find CoMID
-   triples which match the ACS.  Triples that specify an ACS matching
-   condition will augment the ACS with Endorsements if the condition is
-   met.
-
-   Each triple is processed independently of other triples.  However,
-   the ACS state may change as a result of processing a triple.  If a
-   triple condition does not match, then the Verifier continues to
-   process other triples.
-
-9.3.2.  Evidence Augmentation (Phase 2)
-
-9.3.2.1.  Appraisal Claims Set Initialization
-
-   The ACS is initialized by copying the internal representation of
-   Evidence claims to the ACS.  See Section 9.3.
-
-9.3.3.  Reference Values Corroboration and Augmentation (Phase 3)
+9.2.5.  Reference Values Corroboration and Augmentation (Phase 3)
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.5) which are transformed
@@ -3113,7 +3090,7 @@ Table of Contents
    state (as contained in the ACS) can be satisfied by Reference Values.
    The algorithm for corroboration is detailed in Section 10.3.3.
 
-9.3.4.  Endorsed Values Augmentation (Phase 4)
+9.2.6.  Endorsed Values Augmentation (Phase 4)
 
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.6), Section 5.1.7, and Section 5.1.8) which are
@@ -3123,7 +3100,7 @@ Table of Contents
    satisifed by the ACS.  The exact corroboration of Endorsed Values
    prior to addition to ACS is given in Section 5.1.6.
 
-9.3.4.1.  Processing Endorsements
+9.2.6.1.  Processing Endorsements
 
    Endorsed Values Triple and Conditional Endorsement Triple share the
    same internal representation.
@@ -3131,13 +3108,13 @@ Table of Contents
    After transformation into an ev entry, the processing steps of both
    triples are the same, as described in Section 10.4.2.2.
 
-9.3.4.2.  Processing Conditional Endorsements
+9.2.6.2.  Processing Conditional Endorsements
 
    Conditional Endorsement Triples are transformed into an internal
    representation based on ev.  Conditional endorsements have the same
-   processing steps as shown in (Section 9.3.4.1).
+   processing steps as shown in (Section 9.2.6.1).
 
-9.3.5.  Processing OTI Triples (Phase 4)
+9.2.7.  Processing OTI Triples (Phase 4)
 
    Upon complete processing of MTI Triples in the staging area the
    Appraisal proceeds to the triples, which may need to be appraised
@@ -3162,9 +3139,9 @@ Table of Contents
 
 10.  Mapping of Conceptual Messages
 
-   This section describes various RATS Conceptual Messages that interact
-   with a Verifier are transformed and represented internally using
-   ECTs.
+   This section describes various RATS Conceptual Messages that upon
+   processing in a Verifier are transformed and represented internally
+   using ECTs.
 
 10.1.  Common Conventions for Input Transformation
 
@@ -3264,7 +3241,7 @@ Table of Contents
 
    The reference ECTs define the matching conditions that are applied to
    Evidence ECTs.  If the matching condition is satisfied, then the re-
-   asserted ECTs are added to the ACS.  Refer to Section 9.3.3 for how
+   asserted ECTs are added to the ACS.  Refer to Section 9.2.5 for how
    the rv entries are processed.
 
    Table 5 contains the requirements for the ECT fields of the Reference
@@ -3356,7 +3333,7 @@ Table of Contents
        being set correctly to the RVP authority
 
    Once all the rv entries are exhuasted the Appraisal processing moves
-   to next phase, i.e Section 9.3.4.
+   to next phase, i.e Section 9.2.6.
 
 10.4.  Endorsed Value Triple, Conditional Endorsement Triple &
        Conditional Endorsement Series Triples
