@@ -2673,7 +2673,11 @@ Series iteration terminates after the first matching series entry is processed o
 #### Processing Key Verifications {#sec-process-keys}
 
 To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
-If the `key-type` field is set, the Verifier will apply the verification steps defined below.
+If the `key-type` field is set, the Verifier will apply the verification steps depending upon the type of `key`, i.e.
+the selected choice from `$crypto-key-type-choice`.
+If the `key` is set to `tagged-pkix-base64-cert-type` or `tagged-pkix-asn1der-cert-type`, certificate validation is performed as described in {{Section 6 of -pkix-cert}}.
+For other types of keys, the key validation steps should be defined by a CoRIM author in a profile document.
+
 If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
 Note that, in this case, the Verifier is acting in the role of an Endorser.
 
@@ -2683,12 +2687,6 @@ If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key
 {:kvp-enum: counter="kvp" style="format Step %d."}
 
 {: kvp-enum}
-
-* Verify the certificate signatures for each certificate in the certification path.
-
-* Verify certificate revocation status for each certificate in the certification path.
-
-* Verify key usage restrictions appropriate for the type of key in `key-type`.
 
 * If key verification succeeds for any _key_, allocate an addition ECT (ADDITION).
 
