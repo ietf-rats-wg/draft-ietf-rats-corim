@@ -1933,7 +1933,7 @@ The Conceptual Message type (`cmtype`) determines which attributes are mandatory
 
 ### Appraisal Context
 
-The core function of a Verifier is to perform Appraisal of Evidence. Upon initiation of Appraisal procedure, an Appriasal Context known as ACS, is constructed from the ECTs.
+The core function of a Verifier is to perform Appraisal of Evidence. Upon initiation of Appraisal procedure, an Appriasal Context, is constructed from the ECTs.
 
 #### Appraisal Context Construction
 
