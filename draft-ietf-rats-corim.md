@@ -633,7 +633,7 @@ Signer map.
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
-An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, or it may be conveyed unsigned within the protection scope of a secure channel.
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, {{-pkix-cert}} or it may be conveyed unsigned within the protection scope of a secure channel.
 The CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.
 For example, this entity could be the sending peer in a secure channel.
 A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
@@ -653,7 +653,7 @@ The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and M
 These metadata containers ensure that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.
 
-If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
+If using other signing envelope formats, ({{sec-conveyed-signer}}) the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
 ~~~ cddl
 {::include cddl/cmw-corim-collection.cddl}
