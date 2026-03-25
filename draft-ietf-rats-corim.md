@@ -114,9 +114,9 @@ informative:
     title: DICE Certificate Profiles
     author:
       org: Trusted Computing Group
-    seriesinfo: Version 1.0, Revision 0.01
-    date: July 2020
-    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-r01_pub.pdf
+    seriesinfo: Version 1.1
+    date: April 2025
+    target: https://trustedcomputinggroup.org/wp-content/uploads/DICE-Certificate-Profiles-v1.1_pub.pdf
   DICE.endorsement:
     title: DICE Endorsement Architecture for Devices
     author:
@@ -162,7 +162,7 @@ This information is used by a Verifier to appraise Evidence received from an Att
 
 In a complex supply chain, multiple actors will likely produce these values over several points in time.
 As such, one supply chain actor might only supply a portion of the Reference Values or Endorsements that otherwise fully characterizes an Attester.
-Ideally, only the supply chain actor who is the most knowledgable entity regarding a particular component will supply Reference Values or Endorsements for that component.
+Ideally, only the supply chain actor who is the most knowledgeable entity regarding a particular component will supply Reference Values or Endorsements for that component.
 
 Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
@@ -455,7 +455,7 @@ The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
 
-* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See {{sec-common-hash-entry}}.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -633,7 +633,7 @@ Signer map.
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
-An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, or it may be conveyed unsigned within the protection scope of a secure channel.
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, {{-pkix-cert}} or it may be conveyed unsigned within the protection scope of a secure channel.
 The CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.
 For example, this entity could be the sending peer in a secure channel.
 A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
@@ -653,7 +653,7 @@ The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and M
 These metadata containers ensure that each CoRIM in the collection has an identified signer.
 The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.
 
-If using other signing envelope formats, the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
+If using other signing envelope formats, ({{sec-conveyed-signer}}) the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
 ~~~ cddl
 {::include cddl/cmw-corim-collection.cddl}
@@ -982,7 +982,7 @@ A group carries a unique identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
-The types defined for a group identified are UUID and variable-length opaque byte string ({{sec-common-tagged-bytes}}).
+The types defined for a group identifier are UUID and variable-length opaque byte string ({{sec-common-tagged-bytes}}).
 
 ~~~ cddl
 {::include cddl/group-id-type-choice.cddl}
@@ -1422,7 +1422,7 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
 The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
-The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding probelmatic repetition of search criteria.
+The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding problematic repetition of search criteria.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1524,8 +1524,8 @@ The Verifier SHOULD verify keys contained in Attest Key triples.
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
-If a key has usage restrictions that limits its use to Evidence signing (e.g., see Section 5.1.5.3 in {{DICE.cert}}).
-The Verifier SHOULD enforce key use restrictions.
+If a key has usage restrictions that limits its use to Evidence signing, the Verifier SHOULD enforce key use restrictions.
+For example, see Section 5.1.5.3 in {{DICE.cert}}).
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
@@ -1584,7 +1584,7 @@ Consequently, trust dependency semantics may need to be represented in Attestati
 There are a variety of use cases where trust dependency might exist.
 For example, trust in an operating system (OS) might depend on trustworthy loading of the OS loader image.
 Consequently, the OS loader is a trustee domain of the OS.
-Alternatively, trust in a peripheral device might depend on trustworthy operation of a perpheral device's bus controller.
+Alternatively, trust in a peripheral device might depend on trustworthy operation of a peripheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
 
 DDTs cannot create domains.
@@ -2062,7 +2062,7 @@ Note, when `ev` relation is for EV Triple, then the `element-list` inside `condi
 
 The `evs` relation compares the `condition` ECTs to the ACS and if all of the ECTs are found in the ACS then each entry in the series list is evaluated.
 The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
-If the `selection` criteria is not satisfied, then evaluation procedes to the next series list entry.
+If the `selection` criteria is not satisfied, then evaluation proceeds to the next series list entry.
 
 {{tbl-ev-ect-optionality}} contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:
 
@@ -2579,7 +2579,7 @@ Processing a triple may result in ACS modifications that affect matching behavio
 
 The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
 
-This can be acheived by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
+This can be achieved by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
 
 #### ACS Augmentation Requirements {#sec-acs-aug-req}
 
@@ -2639,7 +2639,7 @@ If satisfied, for the `rv` entry, the following three steps are performed:
 ### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
-Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
+Endorsements are added to the ACS if the Endorsement condition is satisfied by the ACS.
 
 #### Processing Endorsements {#sec-process-end}
 
@@ -2848,7 +2848,7 @@ If any condition ECT entry has multiple corresponding `element-id`s then the ele
 Second, the Verifier SHALL compare the `element-claims` field within the condition ECT `element-list` and the corresponding field from the ACS entry.
 See {{sec-compare-mvm}}.
 
-### Measurement values map map Comparison {#sec-compare-mvm}
+### Measurement values map Comparison {#sec-compare-mvm}
 
 The Verifier SHALL iterate over the codepoints which are present in the condition ECT element's `measurement-values-map`.
 Each of the codepoints present in the condition ECT `measurement-values-map` is compared against the same codepoint in the candidate entry `measurement-values-map`.
