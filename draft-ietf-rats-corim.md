@@ -1962,7 +1962,10 @@ Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields ap
 
 #### ACS Augmentation {#sec-acs-aug}
 
-In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
+The ACS gets initialised with Evidence ECTs and as the Appraisal proceeds through further phases the ACS is augmented with ECTs.
+More details to follow in subsequence sections.
+
+A CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
 Triples that specify an ACS matching condition will augment the ACS with ECTs if the condition is met.
 
 Each triple is processed independently of other triples.
