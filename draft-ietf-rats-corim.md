@@ -2135,14 +2135,14 @@ If found, COSE Sign1 verification is performed accordingly.
 
 Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
 
-### Evidence Augmentation (Phase 2) {#sec-phase2}
+## Evidence Augmentation (Phase 2) {#sec-phase2}
 
-#### Appraisal Claims Set Initialization {#sec-acs-initialization}
+### Appraisal Claims Set Initialization {#sec-acs-initialization}
 
 The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
 See {{sec-acs-aug}}.
 
-### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
+## Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
 
 Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
 Each Reference Value Triple describes a single possible Attester state.
@@ -2150,19 +2150,19 @@ Each Reference Value Triple describes a single possible Attester state.
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 The algorithm for corroboration is detailed in {{sec-ref-corrob}}.
 
-### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
+## Endorsed Values Augmentation (Phase 4) {#sec-phase4}
 Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
 Endorsements describe actual Attester state.
 Endorsements are added to the ACS if the Endorsement condition is satisifed by the ACS.
 The exact corroboration of Endorsed Values prior to addition to ACS is given in {{sec-comid-triple-endval}}.
 
-#### Processing Endorsements {#sec-process-end}
+### Processing Endorsements {#sec-process-end}
 
 Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
 
 After transformation into an `ev` entry, the processing steps of both triples are the same, as described in {{sec-end-val-aug}}.
 
-#### Processing Conditional Endorsements {#sec-process-cond-end}
+### Processing Conditional Endorsements {#sec-process-cond-end}
 
 Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
 Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
