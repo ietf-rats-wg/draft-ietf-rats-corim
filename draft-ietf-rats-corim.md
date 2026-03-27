@@ -1891,7 +1891,7 @@ are used with the meaning defined in {{sec-glossary}}.
 ~~~
 {: #fig-verifier-internal artwork-align="center" title="CoRIM Processing Flow"}
 
-### Verifier processing
+### Verifier Processing
 
 Conceptual Messages are Verifier input and output values such as Evidence, Reference Values, Endorsed Values, Appraisal Policy, and Attestation Results.
 
