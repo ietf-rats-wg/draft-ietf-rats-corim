@@ -1926,6 +1926,7 @@ The following CDDL describes the ECT structure in more detail.
 
 ~~~ cddl
 {::include cddl/intrep-ect.cddl}
+{::include cddl/intrep-d-ect.cddl}
 ~~~
 
 The Conceptual Message type (`cmtype`) determines which attributes are mandatory.
@@ -2212,18 +2213,18 @@ A Verifier may maintain multiple simultaneous sessions to different Attesters.
 Each Attester has a different ACS. The Verifier ensures the Evidence inputs are associated with the correct ACS.
 The `addition` is added to the ACS for a specific Attester.
 
-{{tbl-ae-ect-optionality}} contains the requirements for the ECT fields of the Evidence tuple:
+{{tbl-ae-ect-optionality}} contains the profiled ECT for an Evidence tuple:
 
-| ECT type  | ECT Field       | Requirement |
-|---
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-{: #tbl-ae-ect-optionality title="Evidence tuple requirements"}
+~~~ cddl
+evidence-ECT = {
+  environment: environment-map
+  element-list: [ + element-map ]
+  authority: [ + $crypto-key-type-choice ]
+  cmtype: 2
+  ? profile: $profile-type-choice
+}
+~~~
+{: #tbl-ae-ect-optionality title="Profiled ECT for Evidence"}
 
 ### Evidence Transformation
 
@@ -2251,25 +2252,27 @@ The reference ECTs define the matching conditions that are applied to Evidence E
 If the matching condition is satisfied, then the re-asserted ECTs are added to the ACS.
 Refer to {{sec-phase3}} for how the `rv` entries are processed.
 
-{{tbl-rv-ect-optionality}} contains the requirements for the ECT fields of the Reference Values tuple:
+{{tbl-rv-ect-optionality-cond}} and {{tbl-rv-ect-optionality-add}} contain the profiled ECTs for a Reference Values tuple:
 
-| ECT type  | ECT Field       | Requirement |
-|---
-| condition | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-{: #tbl-rv-ect-optionality title="Reference Values tuple requirements"}
+~~~ cddl
+reference-value-condition-ECT = {
+  environment: environment-map
+  element-list: [ + element-map ]
+  ? authority: [ + $crypto-key-type-choice ]
+}
+~~~
+{: #tbl-rv-ect-optionality-cond title="Profiled ECT for Reference Values (condition)"}
+
+~~~ cddl
+reference-value-addition-ECT = {
+  environment: environment-map
+  element-list: [ + element-map ]
+  authority: [ + $crypto-key-type-choice ]
+  cmtype: reference-values
+  ? profile: $profile-type-choice
+}
+~~~
+{: #tbl-rv-ect-optionality-add title="Profiled ECT for Reference Values (addition)"}
 
 ### Reference Triples Transformation {#sec-ref-trans}
 
@@ -2333,32 +2336,36 @@ The `evs` relation compares the `condition` ECTs to the ACS and if all of the EC
 The `selection` ECTs are compared with the ACS and if the selection criteria is satisfied, then the `addition` ECTs are added to the ACS and evaluation of the series ends.
 If the `selection` criteria is not satisfied, then evaluation proceeds to the next series list entry.
 
-{{tbl-ev-ect-optionality}} contains the requirements for the ECT fields of the Endorsed Values and Endorsed Values Series tuples:
+{{tbl-ev-ect-optionality-cond}}, {{tbl-ev-ect-optionality-sel}} and {{tbl-ev-ect-optionality-add}} contain the profiled ECTs for a Endorsed Values, Conditional Endorsements and Endorsed Values Series tuples.
 
-| ECT type  | ECT Field       | Requirement |
-|---
-| condition | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-| selection | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Optional    |
-|           | `cmtype`        | n/a         |
-|           | `profile`       | n/a         |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-| addition  | `environment`   | Mandatory   |
-|           | `element-list`  | Mandatory   |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | n/a         |
-|           | `trustees`      | n/a         |
-{: #tbl-ev-ect-optionality title="Endorsed Values and Endorsed Values Series tuples requirements"}
+~~~ cddl
+endorsement-condition-ECT = {
+  environment: environment-map
+  element-list: [ + element-map ]
+  ? authority: [ + $crypto-key-type-choice ]
+}
+~~~
+{: #tbl-ev-ect-optionality-cond title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (condition)"}
+
+~~~ cddl
+endorsement-selection-ECT = {
+  environment: environment-map
+  element-list: [ + element-map ]
+  ? authority: [ + $crypto-key-type-choice ]
+}
+~~~
+{: #tbl-ev-ect-optionality-sel title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (selection)"}
+
+~~~ cddl
+endorsement-addition-ECT = {
+  environment: environment-map
+  element-list: [ + element-map ]
+  authority: [ + $crypto-key-type-choice ]
+  cmtype: 1
+  ? profile: $profile-type-choice
+}
+~~~
+{: #tbl-ev-ect-optionality-add title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (addition)"}
 
 ### Endorsement Triples Transformations {#sec-end-trans}
 
@@ -2488,6 +2495,12 @@ Upon completion of Endorsed Value corroboration, appraisal proceeds to processin
 
 ### Attest Key and Device Identity Key Triples
 
+TODO prose
+
+~~~ cddl
+{::include cddl/intrep-k-ect.cddl}
+~~~
+
 #### Internal Representation of Cryptographic Keys {#sec-ir-ext}
 
 The internal representation for keys use the extension slot within `measurement-values-map` with the `intrep-keys` claim that consists of a list of `typed-crypto-key`.
@@ -2581,6 +2594,10 @@ Implementations might optimize processing of key verifications by checking wheth
 
 ## Domain Membership Triples
 
+~~~ cddl
+{::include cddl/intrep-d-ect.cddl}
+~~~
+
 ### Internal Representation of Domain Membership {#sec-ir-dm}
 
 An internal representation of Domain Membership is expressed in a single ECT, where the domain identifier is set in the `environment` field of the ECT, and the domain members are expressed in the `members` field.
@@ -2592,16 +2609,16 @@ The `cmtype` is set to domain-member.
 
 {{tbl-dm-ect-optionality}} contains the requirements for the ECT fields of the Domain Membership tuple:
 
-| ECT type  | ECT Field       | Requirement |
-|---
-| domain    | `environment`   | Mandatory   |
-|           | `element-list`  | Optional    |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | Mandatory   |
-|           | `trustees`      | Optional    |
-{: #tbl-dm-ect-optionality title="Domain Membership tuple requirements"}
+~~~ cddl
+domain-membership-ECT = {
+  domain-id: domain-type
+  authority: [ + $crypto-key-type-choice ]
+  children: [ + environment-map ]
+  kind: 0
+  ? profile: $profile-type-choice
+}
+~~~
+{: #tbl-dm-ect-optionality title="Profiled ECT for Domain Membership"}
 
 ### Domain Membership Triples Transformation {#sec-ir-dm-trans}
 
@@ -2689,16 +2706,16 @@ The `cmtype` is inclusive of `trustee` to indicate the ECT is being used to mode
 
 {{tbl-dd-ect-optionality}} contains the requirements for the ECT fields of the Domain Dependency tuple:
 
-| ECT type  | ECT Field       | Requirement |
-|---
-| domain    | `environment`   | Mandatory   |
-|           | `element-list`  | Optional    |
-|           | `authority`     | Mandatory   |
-|           | `cmtype`        | Mandatory   |
-|           | `profile`       | Optional    |
-|           | `members`       | Mandatory   |
-|           | `trustees`      | Mandatory   |
-{: #tbl-dd-ect-optionality title="Domain Dependency tuple requirements"}
+~~~ cddl
+domain-membership-ECT = {
+  domain-id: domain-type
+  authority: [ + $crypto-key-type-choice ]
+  children: [ + environment-map ]
+  kind: 1
+  ? profile: $profile-type-choice
+}
+~~~
+{: #tbl-dd-ect-optionality title="Profiled ECT for Domain Dependency"}
 
 ### Domain Dependency Triples Transformation {#sec-ir-dd-trans}
 

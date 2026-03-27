@@ -99,6 +99,8 @@ INTREP_FRAGS += intrep-ae.cddl
 INTREP_FRAGS += intrep-ar.cddl
 INTREP_FRAGS += intrep-ars.cddl
 INTREP_FRAGS += intrep-ect.cddl
+INTREP_FRAGS += intrep-d-ect.cddl
+INTREP_FRAGS += intrep-k-ect.cddl
 INTREP_FRAGS += intrep-ev.cddl
 INTREP_FRAGS += intrep-domain-mem.cddl
 INTREP_FRAGS += intrep-domain-dep.cddl
@@ -130,6 +132,7 @@ INTREP_FRAGS += cose-key.cddl
 INTREP_FRAGS += cose-label-and-value.cddl
 INTREP_FRAGS += class-id-type-choice.cddl
 INTREP_FRAGS += oid.cddl
+INTREP_FRAGS += domain-type.cddl
 
 INTREP_IMPORTS += eatmc=measured-component
 
