@@ -133,11 +133,13 @@ Table of Contents
      9.2.  Input Validation and Transformation (Phase 1)
        9.2.1.  Input Validation
        9.2.2.  Evidence Collection
-       9.2.3.  Evidence Augmentation (Phase 2)
-       9.2.4.  Reference Values Corroboration and Augmentation (Phase
-               3)
-       9.2.5.  Endorsed Values Augmentation (Phase 4)
-       9.2.6.  Processing OTI Triples (Phase 4)
+     9.3.  Evidence Augmentation (Phase 2)
+       9.3.1.  Appraisal Claims Set Initialization
+     9.4.  Reference Values Corroboration and Augmentation (Phase 3)
+     9.5.  Endorsed Values Augmentation (Phase 4)
+       9.5.1.  Processing Endorsements
+       9.5.2.  Processing Conditional Endorsements
+       9.5.3.  Processing OTI Triples (Phase 4)
    10. Mapping of Conceptual Messages
      10.1.  Common Conventions for Input Transformation
      10.2.  Evidence
@@ -3068,14 +3070,14 @@ Table of Contents
    Verifier MUST NOT process Evidence which is not successfully
    validated.
 
-9.2.3.  Evidence Augmentation (Phase 2)
+9.3.  Evidence Augmentation (Phase 2)
 
-9.2.3.1.  Appraisal Claims Set Initialization
+9.3.1.  Appraisal Claims Set Initialization
 
    The ACS is initialized by copying the internal representation of
    Evidence claims to the ACS.  See Section 9.1.4.1.
 
-9.2.4.  Reference Values Corroboration and Augmentation (Phase 3)
+9.4.  Reference Values Corroboration and Augmentation (Phase 3)
 
    Reference Value Providers (RVP) publish Reference Values using the
    Reference Values Triple (Section 5.1.5) which are transformed
@@ -3087,7 +3089,7 @@ Table of Contents
    state (as contained in the ACS) can be satisfied by Reference Values.
    The algorithm for corroboration is detailed in Section 10.3.3.
 
-9.2.5.  Endorsed Values Augmentation (Phase 4)
+9.5.  Endorsed Values Augmentation (Phase 4)
 
    Endorsers publish Endorsements using endorsement triples (see
    Section 5.1.6), Section 5.1.7, and Section 5.1.8) which are
@@ -3097,7 +3099,7 @@ Table of Contents
    satisifed by the ACS.  The exact corroboration of Endorsed Values
    prior to addition to ACS is given in Section 5.1.6.
 
-9.2.5.1.  Processing Endorsements
+9.5.1.  Processing Endorsements
 
    Endorsed Values Triple and Conditional Endorsement Triple share the
    same internal representation.
@@ -3105,13 +3107,13 @@ Table of Contents
    After transformation into an ev entry, the processing steps of both
    triples are the same, as described in Section 10.4.2.2.
 
-9.2.5.2.  Processing Conditional Endorsements
+9.5.2.  Processing Conditional Endorsements
 
    Conditional Endorsement Triples are transformed into an internal
    representation based on ev.  Conditional endorsements have the same
-   processing steps as shown in (Section 9.2.5.1).
+   processing steps as shown in (Section 9.5.1).
 
-9.2.6.  Processing OTI Triples (Phase 4)
+9.5.3.  Processing OTI Triples (Phase 4)
 
    Upon complete processing of MTI Triples in the staging area the
    Appraisal proceeds to the triples, which may need to be appraised
@@ -3238,8 +3240,8 @@ Table of Contents
 
    The reference ECTs define the matching conditions that are applied to
    Evidence ECTs.  If the matching condition is satisfied, then the re-
-   asserted ECTs are added to the ACS.  Refer to Section 9.2.4 for how
-   the rv entries are processed.
+   asserted ECTs are added to the ACS.  Refer to Section 9.4 for how the
+   rv entries are processed.
 
    Table 5 contains the requirements for the ECT fields of the Reference
    Values tuple:
@@ -3330,7 +3332,7 @@ Table of Contents
        being set correctly to the RVP authority
 
    Once all the rv entries are exhuasted the Appraisal processing moves
-   to next phase, i.e Section 9.2.5.
+   to next phase, i.e Section 9.5.
 
 10.4.  Endorsed Value Triple, Conditional Endorsement Triple &
        Conditional Endorsement Series Triples
