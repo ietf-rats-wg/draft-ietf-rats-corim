@@ -93,21 +93,35 @@ CORIM_FRAGS += $(COMID_FRAGS)
 
 CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
 
-INTREP_FRAGS := intrep-start.cddl
 INTREP_FRAGS += intrep-acs.cddl
 INTREP_FRAGS += intrep-ae.cddl
 INTREP_FRAGS += intrep-ar.cddl
 INTREP_FRAGS += intrep-ars.cddl
 INTREP_FRAGS += intrep-ect.cddl
+INTREP_FRAGS += intrep-ect-evidence-addition.cddl
+INTREP_FRAGS += intrep-e-ect.cddl
 INTREP_FRAGS += intrep-d-ect.cddl
 INTREP_FRAGS += intrep-k-ect.cddl
+INTREP_FRAGS += intrep-ect-common.cddl
 INTREP_FRAGS += intrep-ev.cddl
+INTREP_FRAGS += intrep-evs.cddl
+INTREP_FRAGS += intrep-domain-item.cddl
 INTREP_FRAGS += intrep-domain-mem.cddl
 INTREP_FRAGS += intrep-domain-dep.cddl
 INTREP_FRAGS += intrep-policy.cddl
 INTREP_FRAGS += intrep-rv.cddl
+INTREP_FRAGS += intrep-ect-refval-condition.cddl
+INTREP_FRAGS += intrep-ect-refval-addition.cddl
+INTREP_FRAGS += intrep-ect-endval-condition.cddl
+INTREP_FRAGS += intrep-ect-endval-addition.cddl
+INTREP_FRAGS += intrep-ect-endval-selection.cddl
+INTREP_FRAGS += intrep-ect-domain-condition.cddl
+INTREP_FRAGS += intrep-ect-domain-addition.cddl
+INTREP_FRAGS += intrep-ect-key-condition.cddl
+INTREP_FRAGS += intrep-ect-key-addition.cddl
 INTREP_FRAGS += intrep-claims-map.cddl
 INTREP_FRAGS += intrep-key.cddl
+INTREP_FRAGS += stagingarea.cddl
 # deps
 INTREP_FRAGS += non-empty.cddl
 INTREP_FRAGS += environment-map.cddl
@@ -136,4 +150,12 @@ INTREP_FRAGS += domain-type.cddl
 
 INTREP_IMPORTS += eatmc=measured-component
 
-INTREP_EXAMPLES := $(wildcard examples/intrep-*.diag)
+INTREP_ACS_FRAGS := intrep-acs-start.cddl
+INTREP_ACS_FRAGS += $(INTREP_FRAGS)
+INTREP_ACS_IMPORTS += $(INTREP_IMPORTS)
+INTREP_ACS_EXAMPLES := $(wildcard examples/intrep-acs*.diag)
+
+INTREP_REL_FRAGS := intrep-rel-start.cddl
+INTREP_REL_FRAGS += $(INTREP_FRAGS)
+INTREP_REL_IMPORTS += $(INTREP_IMPORTS)
+INTREP_REL_EXAMPLES := $(wildcard examples/intrep-rel*.diag)
