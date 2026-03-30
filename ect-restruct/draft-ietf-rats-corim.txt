@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 28 September 2026                                        Linaro
+Expires: 1 October 2026                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           27 March 2026
+                                                           30 March 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 September 2026.
+   This Internet-Draft will expire on 1 October 2026.
 
 Copyright Notice
 
@@ -126,7 +126,7 @@ Table of Contents
      8.1.  Appraisal Procedure
    9.  Reference Verifier Sequence
      9.1.  Verifier Processing
-       9.1.1.  Internal structure of ECT
+       9.1.1.  Environment-Claim Tuple (ECT)
        9.1.2.  Appraisal Context
        9.1.3.  Internal Representation of Appraisal Claims Set (ACS)
        9.1.4.  General Principles of Appraisal processing
@@ -1480,9 +1480,9 @@ Table of Contents
 
    A Measurement Key is an identifier for a measured element.  It can be
    used to identify the type of measured element (see
-   [I-D.draft-ydb-rats-cca-endorsement]) or to identify multiple
-   measured element instances within the same environment.  The initial
-   types defined are OID, UUID, uint, and tstr.
+   [I-D.ydb-rats-cca-endorsements]) or to identify multiple measured
+   element instances within the same environment.  The initial types
+   defined are OID, UUID, uint, and tstr.
 
    A single anonymous measurement-map is allowed within the same
    environment.  Two or more measurement-map entries within the same
@@ -2707,60 +2707,72 @@ Table of Contents
 
 9.1.  Verifier Processing
 
-   Conceptual Messages are Verifier input and output values such as
-   Evidence, Reference Values, Endorsed Values, Appraisal Policy, and
-   Attestation Results.
+   The Verifier operates on RATS Conceptual Messages.  It takes
+   Evidence, Reference Values, Endorsements and an Appraisal Policy as
+   inputs, and produces Attestation Results as outputs.
 
-   All the Conceptual Messages once fully processed are transformed into
-   a common internal representation known as Environment Claims
-   Tuple(ECT)Section 9.1.1.  The ECT is the root data structure, used to
-   represent all Conceptual Messages and active Appraisal in the
-   Verifier.  The ECTs are stored in a staging area prior to initiation
-   of Appraisal.
+   Once fully processed, all Conceptual Messages are transformed into a
+   common internal representation known as an Environment-Claim Tuple
+   (ECT) (see Section 9.1.1).  The ECT is the core data structure used
+   to represent all Conceptual Messages during appraisal by the
+   Verifier.  ECTs are stored in a staging area prior to appraisal
+   initiation.
 
-   See section Section 10 for how Conceptual Messages are transformed
-   from external representations to internal representations.
+   See section Section 10 for details of how Conceptual Messages are
+   transformed from external representations to internal
+   representations.
 
-   This section describes the internal structure of ECT and Appraisal
-   Claims Set (ACS).  These structures are used in the Appraisal phases
-   described in detail in the following section.
+   This section describes the internal structure of both the ECT and the
+   Appraisal Claims Set (ACS).  The ACS contains all appraised ECTs and
+   represents the Attester's state as understood by the Verifier.  These
+   structures are employed in the appraisal phases, which are detailed
+   in the subsequent section.
 
-9.1.1.  Internal structure of ECT
+9.1.1.  Environment-Claim Tuple (ECT)
 
-   Environment-Claims Tuples (ECT) have six attributes:
+   The Environment-Claim Tuple (defined in Figure 2) is a core internal
+   construct of the CoRIM Verifier.  It is used to describe a feature
+   (or "claim") of the appraised environment alongside relevant
+   metadata.
 
-   1.  Environment : Identifies the Target Environment.  Environments
-       are identified using instance, class, or group identifiers.
-       Environments may be composed of elements, each having an element
-       identifier (mkey).  If the Conceptual Message Type is domain-
-       member, this field contains the domain identifier (domain-id) of
-       the domain triple.
+   ECT = E-ECT /
+         D-ECT /
+         K-ECT
 
-   2.  Elements : Identifies the set of elements contained within a
-       Target Environment and their trustworthiness Claims.
+                          Figure 2: ECT definition
 
-   3.  Authority : Identifies the entity that issued the tuple.  A
-       certain type of key material by which the authority (and
-       corresponding provenance) of the tuple can be determined, such as
-       the public key of an asymmetric key pair that is associated with
-       an authority's PKIX certificate.
+   An ECT can be one of the following specializations:
 
-   4.  Members : Identifies the set of Environments that act as members
-       when a Domain Membership is expressed in an ECT
+   *  E-ECT (Element ECT): used to represent Evidence, Reference Value
+      and Endorsement claims, as detailed in Section 9.1.1.1;
 
-   5.  Conceptual Message Type : Identifies the type of Conceptual
-       Message that originated the tuple.
+   *  D-ECT (Domain ECT): used to represent domain membership and trust
+      dependencies claims, as detailed in Section 9.1.1.2;
 
-   6.  Profile : The profile that defines this tuple.  If no profile is
-       used, this attribute is omitted.
+   *  K-ECT (Key ECT): used to represent Identity and Attestation keys,
+      as detailed in Section 9.1.1.3.
 
-   The following CDDL describes the ECT structure in more detail.
+   The following fields are shared by all ECT specializations:
 
-   ECT = {
+   *  authority: Identifies the entity that issued the tuple.  It is
+      represented as the key material by which the authority (and
+      corresponding provenance) of the tuple can be determined.
+      Examples include the public key of an asymmetric key pair that is
+      associated with an authority's PKIX certificate.
+
+   *  profile: The profile that defines the domain of interpretation of
+      this tuple.  If no profile is used, this attribute is omitted.
+
+9.1.1.1.  Element ECT
+
+   An Element ECT (E-ECT) is used to represent Evidence, Reference Value
+   and Endorsement claims.
+
+   E-ECT = {
      ? environment: environment-map
      ? element-list: [ + element-map ]
-     ? authority: [ + $crypto-key-type-choice ]
      ? cmtype: cm-type
+     ? authority: [ + $crypto-key-type-choice ]
      ? profile: $profile-type-choice
    }
 
@@ -2773,13 +2785,39 @@ Table of Contents
      reference-values: 0
      endorsements: 1
      evidence: 2
-     attestation-results: 3
    )
+
+                           Figure 3: Element ECT
+
+   The following describes each member of the E-ECT.
+
+   *  environment: Identifies the Target Environment.  Environments are
+      identified using instance, class, or group identifiers.
+      Environments are composed of elements
+      // TODO: define "element" in the glossary
+
+   *  element-list: Identifies the set of elements contained within a
+      Target Environment and their trustworthiness Claims, each
+      described by an element-map.  An element-map is very similar to a
+      measurement-map, with the element-id and element-claims
+      corresponding to the mkey and mval, respectively.
+
+   *  cmtype: Identifies the type of Conceptual Message that originated
+      the tuple (Reference Values, Endorsements or Evidence).
+
+9.1.1.2.  Domain ECT
+
+   A Domain ECT (D-ECT) is used to represent domain membership and trust
+   dependency claims between environments.  It describes the direct
+   relationship between a specific node in the membership or trust
+   dependency graph (parent) and the nodes that it is connected to
+   (children).
+
    D-ECT = {
-     ? domain-id: domain-type
-     ? authority: [ + $crypto-key-type-choice ]
+     ? parent: environment-map
      ? children: [ + environment-map ]
      ? kind: kind
+     ? authority: [ + $crypto-key-type-choice ]
      ? profile: $profile-type-choice
    }
 
@@ -2788,10 +2826,60 @@ Table of Contents
      trustee: 1
    )
 
-   The Conceptual Message type (cmtype) determines which attributes are
-   mandatory.
+                            Figure 4: Domain ECT
+
+   The following describes each member of the D-ECT.
+
+   *  parent: Identifies the "parent" environment.
+
+   *  children: Identifies the set of members of the domain rooted in
+      the parent.
+
+   *  kind: Identifies the type of Domain triple that originated the
+      tuple. member stands for Domain Membership, trustee is for Domain
+      Dependency.
+
+9.1.1.3.  Key ECT
+
+   A Key ECT (K-ECT) is used to represent Identity and Attestation keys.
+
+   K-ECT = {
+     ? environment: environment-map
+     ? key-list: [ + typed-crypto-key ]
+     ? key-type: key-type
+     ? authority: [ + $crypto-key-type-choice ]
+     ? profile: $profile-type-choice
+   }
+
+   typed-crypto-key = {
+     key: $crypto-key-type-choice
+     ? key-type: uint .bits key-type
+   }
+
+   key-type = &(
+     attest-key: 0
+     identity-key: 1
+   )
+
+                             Figure 5: Key ECT
+
+   The following describes each member of the K-ECT.
+
+   *  environment: Identifies the Target or Attesting Environment to
+      which the keys in key-list belong.
+
+   *  key-list: Identifies the set of keys associated with the
+      environment.  Each key in the set is explicitly typed.
+
+
+   // TBC: why is "key-type" a bitmask?
+
+
+   // TBC: why is "key-type" optional?
 
 9.1.2.  Appraisal Context
+
+   RESTART_HERE
 
    The core function of a Verifier is to perform Appraisal of Evidence.
    Upon initiation of Appraisal procedure, an Appriasal Context, is
@@ -3188,7 +3276,7 @@ Table of Contents
    the Evidence inputs are associated with the correct ACS.  The
    addition is added to the ACS for a specific Attester.
 
-   Figure 2 contains the profiled ECT for an Evidence tuple:
+   Figure 6 contains the profiled ECT for an Evidence tuple:
 
    evidence-ECT = {
      environment: environment-map
@@ -3198,7 +3286,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }
 
-                    Figure 2: Profiled ECT for Evidence
+                    Figure 6: Profiled ECT for Evidence
 
 10.2.2.  Evidence Transformation
 
@@ -3242,7 +3330,7 @@ Table of Contents
    asserted ECTs are added to the ACS.  Refer to Section 9.4 for how the
    rv entries are processed.
 
-   Figure 3 and Figure 4 contain the profiled ECTs for a Reference
+   Figure 7 and Figure 8 contain the profiled ECTs for a Reference
    Values tuple:
 
    reference-value-condition-ECT = {
@@ -3251,7 +3339,7 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }
 
-          Figure 3: Profiled ECT for Reference Values (condition)
+          Figure 7: Profiled ECT for Reference Values (condition)
 
    reference-value-addition-ECT = {
      environment: environment-map
@@ -3261,7 +3349,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }
 
-           Figure 4: Profiled ECT for Reference Values (addition)
+           Figure 8: Profiled ECT for Reference Values (addition)
 
 10.3.2.  Reference Triples Transformation
 
@@ -3360,7 +3448,7 @@ Table of Contents
    is not satisfied, then evaluation proceeds to the next series list
    entry.
 
-   Figure 5, Figure 6 and Figure 7 contain the profiled ECTs for a
+   Figure 9, Figure 10 and Figure 11 contain the profiled ECTs for a
    Endorsed Values, Conditional Endorsements and Endorsed Values Series
    tuples.
 
@@ -3370,7 +3458,7 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }
 
-       Figure 5: Profiled ECT for Endorsed Values and Endorsed Values
+       Figure 9: Profiled ECT for Endorsed Values and Endorsed Values
                          Series tuples (condition)
 
    endorsement-selection-ECT = {
@@ -3379,7 +3467,7 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }
 
-       Figure 6: Profiled ECT for Endorsed Values and Endorsed Values
+      Figure 10: Profiled ECT for Endorsed Values and Endorsed Values
                          Series tuples (selection)
 
    endorsement-addition-ECT = {
@@ -3390,7 +3478,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }
 
-       Figure 7: Profiled ECT for Endorsed Values and Endorsed Values
+      Figure 11: Profiled ECT for Endorsed Values and Endorsed Values
                           Series tuples (addition)
 
 10.4.2.  Endorsement Triples Transformations
@@ -3534,10 +3622,10 @@ Table of Contents
    TODO prose
 
    K-ECT = {
-     environment: environment-map
+     ? environment: environment-map
      ? key-list: [ + typed-crypto-key ]
-     ? authority: [ + $crypto-key-type-choice ]
      ? key-type: key-type
+     ? authority: [ + $crypto-key-type-choice ]
      ? profile: $profile-type-choice
    }
 
@@ -3668,10 +3756,10 @@ Table of Contents
 10.5.  Domain Membership Triples
 
    D-ECT = {
-     ? domain-id: domain-type
-     ? authority: [ + $crypto-key-type-choice ]
+     ? parent: environment-map
      ? children: [ + environment-map ]
      ? kind: kind
+     ? authority: [ + $crypto-key-type-choice ]
      ? profile: $profile-type-choice
    }
 
@@ -3693,7 +3781,7 @@ Table of Contents
      domain: ECT
    }
 
-   Figure 8 contains the requirements for the ECT fields of the Domain
+   Figure 12 contains the requirements for the ECT fields of the Domain
    Membership tuple:
 
    domain-membership-ECT = {
@@ -3704,7 +3792,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }
 
-                Figure 8: Profiled ECT for Domain Membership
+               Figure 12: Profiled ECT for Domain Membership
 
 10.5.2.  Domain Membership Triples Transformation
 
@@ -3796,7 +3884,7 @@ Table of Contents
      dde: ECT
    }
 
-   Figure 9 contains the requirements for the ECT fields of the Domain
+   Figure 13 contains the requirements for the ECT fields of the Domain
    Dependency tuple:
 
    domain-membership-ECT = {
@@ -3807,7 +3895,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }
 
-                Figure 9: Profiled ECT for Domain Dependency
+               Figure 13: Profiled ECT for Domain Dependency
 
 10.6.2.  Domain Dependency Triples Transformation
 
@@ -5181,9 +5269,6 @@ Table of Contents
               <https://trustedcomputinggroup.org/wp-content/uploads/
               DICE-Layering-Architecture-r19_pub.pdf>.
 
-   [I-D.draft-ydb-rats-cca-endorsement]
-              "*** BROKEN REFERENCE ***".
-
    [I-D.fdb-rats-psa-endorsements]
               Fossati, T., Deshpande, Y., and H. Birkholz, "A CoRIM
               Profile for Arm's Platform Security Architecture (PSA)
@@ -5205,6 +5290,14 @@ Table of Contents
               ietf-rats-endorsements-09, 2 March 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
               endorsements-09>.
+
+   [I-D.ydb-rats-cca-endorsements]
+              Deshpande, Y. and T. Fossati, "A CoRIM Profile for Arm's
+              Confidential Computing Architecture (CCA) Endorsements",
+              Work in Progress, Internet-Draft, draft-ydb-rats-cca-
+              endorsements-03, 5 January 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ydb-rats-cca-
+              endorsements-03>.
 
    [IANA.coswid]
               IANA, "Concise Software Identifier (CoSWID)",
