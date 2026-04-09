@@ -128,8 +128,7 @@ Table of Contents
        8.2.1.  High-Level View
        8.2.2.  Data Structures
        8.2.3.  Conceptual Messages Ingestion
-       8.2.4.  Processing Algorithm (i.e., how to "match & augment"
-               the ACS)
+       8.2.4.  Processing Algorithm
        8.2.5.  Handoff
    9.  Implementation Status
      9.1.  Veraison
@@ -2522,7 +2521,7 @@ Table of Contents
 
 8.  Reference Verifier
 
-   This section outlines the behaviour of a "CoRIM Processor" within the
+   This section outlines the behaviour of a "CoRIM processor" within the
    Evidence appraisal procedure carried out by the RATS Verifier
    (Section 7.4 of [RFC9334]).
 
@@ -2538,8 +2537,8 @@ Table of Contents
 
    *Phase 1*: Input Validation and Transformation.
 
-   During Phase 1, all available Conceptual Messages are processed for
-   validation.  This involves checking digital signatures to verify
+   During this phase, all available Conceptual Messages are processed
+   for validation.  This involves checking digital signatures to verify
    their integrity and authenticity, ensuring they are not outdated and
    confirming their relevance to the current appraisal.  If validation
    fails, the input Conceptual Message is discarded.  If validation
@@ -2550,13 +2549,13 @@ Table of Contents
 
    *Phase 2*: Evidence Augmentation.
 
-   During Phase 2, Evidence Claims are added to a structure describing
-   the Attester's actual state, known as the ACS.  These Claims are
-   added to the ACS with Attester Authority.
+   During this phase, Evidence Claims are added to a structure
+   describing the Attester's actual state, known as the ACS.  These
+   Claims are added to the ACS with Attester Authority.
 
    *Phase 3*: Reference Values Corroboration and Augmentation.
 
-   During Phase 3, Reference Value Claims are compared with Evidence
+   During this phase, Reference Value Claims are compared with Evidence
    Claims from the ACS.  Reference Value Claims describe the possible
    states of the Attester.  If the Attester's actual state, as described
    in the ACS, is one of these possible states, the Attester's actual
@@ -2565,7 +2564,7 @@ Table of Contents
 
    *Phase 4*: Endorsed Values Augmentation.
 
-   During Phase 4, Endorsed Values inputs containing conditions that
+   During this phase, Endorsed Values inputs containing conditions that
    describe the expected state of the Attester are processed.  If the
    conditions are met, additional Claims about the Attester are added to
    the ACS.  These Claims are added with the Endorser's Authority.
@@ -2591,7 +2590,7 @@ Table of Contents
 
    Please note that a detailed description of subsequent phases is
    beyond the scope of this document.  They are mentioned here to
-   provide an overview of the appraisal procedure.  The CoRIM Processor
+   provide an overview of the appraisal procedure.  The CoRIM processor
    described in Section 8.2 describes the handoff interface between
    Phase 4 and the subsequent phases in terms of the computed ACS.
 
@@ -2653,11 +2652,11 @@ Table of Contents
                        |  |  '----+----'                         |  |
                        |  |       |                              |  |
                        |   '------+-----------------------------'   |
-                       |          v                                 |
-                       |   .-----------------.     .-------------.  |
-                       |  | Subsequent Phases +--->| Attestation |  |
-                       |   '-----------------'     | Results     +----->
-                       |                           '-------------'  |
+   .----------------.  |          v                                 |
+   |   Appraisal    |  |   .-----------------.     .-------------.  |
+   |   Policy for   +---->| Subsequent Phases +--->| Attestation +----->
+   |   Evidence     |  |   '-----------------'     | Results     |  |
+   '----------------'  |                           '-------------'  |
                         '------------------------------------------'
 
     Legend:                                  .-------.   .------.
@@ -2666,7 +2665,7 @@ Table of Contents
 
                      Figure 1: CoRIM Processing Flow
 
-   The CoRIM Processor accepts Reference Values and Endorsements in the
+   The CoRIM processor accepts Reference Values and Endorsements in the
    form of CoRIM documents, as well as Evidence that has been converted
    into a CoRIM-compatible format using transforms such as those
    described in [I-D.ietf-rats-evidence-trans].  Before the appraisal
@@ -2842,8 +2841,8 @@ Table of Contents
    A Domain ECT (D-ECT) is used to represent domain membership and trust
    dependency Claims between environments.  It describes the direct
    relationship between a specific node in the membership or trust
-   dependency graph (parent) and the nodes that it is connected to
-   (children).
+   dependency graph (i.e., the parent environment) and the nodes to
+   which it is connected (i.e., the children).
 
    D-ECT = {
      ECT-common
@@ -2919,10 +2918,10 @@ Table of Contents
 8.2.2.2.  Internal Representation
 
    This section describes how the relevant RATS Conceptual Messages are
-   transformed upon ingestion by the CoRIM processor.  This internal
-   representation is based on the concept of "relations", which in turn
-   are based on ECTs.  A relation
-   // TODO: describe relations condition/addition.
+   represented inside the CoRIM processor.  This internal representation
+   is based on the concept of "relations", which in turn are based on
+   ECTs.  A relation...
+   // [TODO] Describe relations condition/addition structure.
 
 8.2.2.2.1.  Evidence
 
@@ -2954,19 +2953,6 @@ Table of Contents
                     Figure 9: Profiled ECT for Evidence
 
    All E-ECT attributes are mandatory, except profile.
-
-   *Transformation Algorithm.*
-
-   Evidence transformation involves mapping Evidence into one or more
-   Evidence-ECTs, and adding them to the addition list of an ae
-   relation.  Evidence transformation algorithms may be well-known
-   (e.g., [I-D.ietf-rats-evidence-trans]), defined by a CoRIM profile
-   (see Section 4.1.4), or supplied dynamically.  Evidence
-   transformation algorithms are out of scope for this document.
-
-   For successful transformation, Evidence MUST contain a relevant value
-   for all the mandatory Evidence-ECT attributes.  Otherwise, the CoRIM
-   processor MUST reject the Evidence.
 
 8.2.2.2.2.  Reference Values
 
@@ -3024,11 +3010,189 @@ Table of Contents
    authority value is that of the RVP rather than the Attester, and the
    cmtype value is reference-values rather than evidence.
 
-   *Transformation Algorithm.*
+8.2.2.2.3.  Endorsed Values
 
-   A reference-triple-record is transformed into an rv-item as described
-   in Figure 13.  (The code reuses the mms_to_ems function from
-   Figure 5.)
+   The internal representation of Endorsed Values uses the ev and evs
+   relations.  These are lists of ECTs that describe matching conditions
+   and the additions that apply when these conditions are met.
+
+   The ev relation (Figure 13) applies to Endorsed Values (EV) and
+   Conditional Endorsement (CE) triples.
+
+   ev = [ + ev-item ]
+
+   ev-item = {
+     condition: [ + Endorsement-condition-ECT ]
+     addition: [ + Endorsement-addition-ECT ]
+   }
+
+                    Figure 13: Endorsed Values Relation
+
+   The ev relation compares the condition ECTs with those in the ACS.
+   If all the ECTs are found in the ACS, the addition ECTs are added to
+   it.  Note that when the ev relation is for an EV triple, the optional
+   element-list inside the condition is not used; however, it is used
+   for CE triples.
+
+   The evs relation (Figure 14) applies to Conditional Endorsement
+   Series (CES) Triples.
+
+   evs = [ + evs-item ]
+
+   evs-item = {
+     condition: Endorsement-condition-ECT
+     series: [ + series-item ]
+   }
+
+   series-item = [
+     selection: [ + Endorsement-selection-ECT ]
+     addition: [ + Endorsement-addition-ECT ]
+   ]
+
+                 Figure 14: Endorsed Values Series Relation
+
+   The evs relation compares the condition ECTs with the ACS.
+   // [TBC] There is only one ECT in the condition.  The description
+   // doesn't seem to match the data format.  If all the ECTs are found
+   in the ACS, each entry in the series list is evaluated.  The
+   selection ECTs are then compared with the ACS.  If the selection
+   criteria are met, the addition ECTs are added to the ACS and the
+   series evaluation ends.  If the selection criteria are not satisfied,
+   evaluation proceeds to the next series list entry.
+
+   Figure 15 shows the profiled Element ECT an Endorsed Value condition.
+
+   Endorsement-condition-ECT = ({
+     environment: environment-map
+     ? element-list: [ + element-map ]
+     ? authority: [ + $crypto-key-type-choice ]
+   }) .within E-ECT
+
+      Figure 15: Profiled ECT for Endorsed Values and Endorsed Values
+                         Series tuples (condition)
+
+   Figure 16 shows the profiled Element ECT an Endorsed Value selection.
+
+   Endorsement-selection-ECT = ({
+     environment: environment-map
+     element-list: [ + element-map ]
+     ? authority: [ + $crypto-key-type-choice ]
+   }) .within E-ECT
+
+      Figure 16: Profiled ECT for Endorsed Values and Endorsed Values
+                         Series tuples (selection)
+
+   Figure 17 shows the profiled Element ECT an Endorsed Value addition.
+
+   Endorsement-addition-ECT = ({
+     environment: environment-map
+     element-list: [ + element-map ]
+     authority: [ + $crypto-key-type-choice ]
+     cmtype: endorsements
+     ? profile: $profile-type-choice
+   }) .within E-ECT
+
+      Figure 17: Profiled ECT for Endorsed Values and Endorsed Values
+                          Series tuples (addition)
+
+8.2.2.2.4.  Keys
+
+   The internal representation of Attest Key and Device Identity triples
+   uses the keys relation (see Figure 18), whereby each key-item
+   corresponds to either an attest-key-triple-record or an identity-
+   triple-record.
+
+   keys = [ + key-item ]
+
+   key-item = {
+     condition: K-ECT
+     addition: K-ECT
+   }
+
+                          Figure 18: Keys Relation
+
+
+   // [TODO] Specialise condition/addition ECTs.  Define constraints.
+
+8.2.2.2.5.  Domains
+
+   The internal representation of Domain Membership and Domain
+   Dependency triples uses the dm relation (see Figure 19), whereby each
+   dm-item corresponds to either an domain-membership-triple-record or
+   an domain-dependency-triple-record.
+
+   dm = [ + dm-item ]
+
+   dm-item = {
+     domain: D-ECT
+   }
+
+                         Figure 19: Domain Relation
+
+
+   // [TODO] Specialise condition/addition ECTs.  Define constraints.
+
+8.2.2.3.  ACS
+
+   The ACS (see Figure 20) is a list of ECTs that represent the
+   Attester's actual state as determined by various authoritative
+   sources (Reference Value Providers and Endorsers) collected by the
+   Verifier.
+
+   ACS = [ + ECT ]
+
+                               Figure 20: ACS
+
+   The authority attribute in each ECT represents one such source, while
+   the Claims in the ECT are statements made by that source about the
+   Attester.
+
+   The ACS is initialized with Evidence Claims and is then populated
+   with Reference Values and Endorsement Claims via the "match and
+   augment" algorithm (see Section 8.2.4) implemented by the CoRIM
+   processor.
+
+   Once the Staging Area has been drained by the CoRIM processor,
+   processing stops and the computed ACS is handed over to subsequent
+   phases.  In this way, the ACS represents the CoRIM processor's output
+   interface.
+
+8.2.3.  Conceptual Messages Ingestion
+
+   This section describes in details the phase 1 described at a high
+   level in Section 8.1.
+
+   *  describe the transformation process for each "relation" using
+      pseudo-code
+
+8.2.3.1.  Conceptual Messages Transformation
+
+   This section describes how the relevant RATS Conceptual Messages are
+   transformed upon ingestion by the CoRIM processor.
+
+
+   // [TODO]
+
+8.2.3.1.1.  Evidence
+
+   Evidence transformation involves mapping Evidence into one or more
+   Evidence-ECTs (see Section 8.2.2.2.1), and adding them to the
+   addition list of an ae relation.  Evidence transformation algorithms
+   may be well-known (e.g., [I-D.ietf-rats-evidence-trans]), defined by
+   a CoRIM profile (see Section 4.1.4), or supplied dynamically.
+   Evidence transformation algorithms are out of scope for this
+   document.
+
+   For successful transformation, Evidence MUST contain a relevant value
+   for all the mandatory Evidence-ECT attributes.  Otherwise, the CoRIM
+   processor MUST reject the Evidence.
+
+8.2.3.1.2.  Reference Values
+
+   Reference Values transformation involves mapping Reference Value
+   triples into into an rv relation.  Each reference-triple-record is
+   transformed into an rv-item as described in Figure 21.  (The code
+   reuses the mms_to_ems function from Figure 5.)
 
    func transform(
        T: reference-triple-record,
@@ -3052,7 +3216,7 @@ Table of Contents
        return item
    }
 
-              Figure 13: Reference Value Triple Transformation
+              Figure 21: Reference Value Triple Transformation
 
    Note that the ref-claims are not copied to the addition ECT.  Since
    they may contain ranges rather than individual values (see, for
@@ -3060,95 +3224,13 @@ Table of Contents
    satisfied by an Evidence ECT before we can copy the matched claims
    from the Evidence ECT to the addition ECT.
 
-8.2.2.2.3.  Endorsed Values
+8.2.3.1.3.  Endorsed Values
 
-   The internal representation of Endorsed Values uses the ev and evs
-   relations.  These are lists of ECTs that describe matching conditions
-   and the additions that apply when these conditions are met.
-
-   The ev relation (Figure 14) applies to Endorsed Values (EV) and
-   Conditional Endorsement (CE) triples.
-
-   ev = [ + ev-item ]
-
-   ev-item = {
-     condition: [ + Endorsement-condition-ECT ]
-     addition: [ + Endorsement-addition-ECT ]
-   }
-
-                    Figure 14: Endorsed Values Relation
-
-   The ev relation compares the condition ECTs with those in the ACS.
-   If all the ECTs are found in the ACS, the addition ECTs are added to
-   it.  Note that when the ev relation is for an EV triple, the optional
-   element-list inside the condition is not used; however, it is used
-   for CE triples.
-
-   The evs relation (Figure 15) applies to Conditional Endorsement
-   Series (CES) Triples.
-
-   evs = [ + evs-item ]
-
-   evs-item = {
-     condition: Endorsement-condition-ECT
-     series: [ + series-item ]
-   }
-
-   series-item = [
-     selection: [ + Endorsement-selection-ECT ]
-     addition: [ + Endorsement-addition-ECT ]
-   ]
-
-                 Figure 15: Endorsed Values Series Relation
-
-   The evs relation compares the condition ECTs with the ACS.
-   // [TBC] There is only one ECT in the condition.  The description
-   // doesn't seem to match the data format.  If all the ECTs are found
-   in the ACS, each entry in the series list is evaluated.  The
-   selection ECTs are then compared with the ACS.  If the selection
-   criteria are met, the addition ECTs are added to the ACS and the
-   series evaluation ends.  If the selection criteria are not satisfied,
-   evaluation proceeds to the next series list entry.
-
-   Figure 16 shows the profiled Element ECT an Endorsed Value condition.
-
-   Endorsement-condition-ECT = ({
-     environment: environment-map
-     ? element-list: [ + element-map ]
-     ? authority: [ + $crypto-key-type-choice ]
-   }) .within E-ECT
-
-      Figure 16: Profiled ECT for Endorsed Values and Endorsed Values
-                         Series tuples (condition)
-
-   Figure 17 shows the profiled Element ECT an Endorsed Value selection.
-
-   Endorsement-selection-ECT = ({
-     environment: environment-map
-     element-list: [ + element-map ]
-     ? authority: [ + $crypto-key-type-choice ]
-   }) .within E-ECT
-
-      Figure 17: Profiled ECT for Endorsed Values and Endorsed Values
-                         Series tuples (selection)
-
-   Figure 18 shows the profiled Element ECT an Endorsed Value addition.
-
-   Endorsement-addition-ECT = ({
-     environment: environment-map
-     element-list: [ + element-map ]
-     authority: [ + $crypto-key-type-choice ]
-     cmtype: endorsements
-     ? profile: $profile-type-choice
-   }) .within E-ECT
-
-      Figure 18: Profiled ECT for Endorsed Values and Endorsed Values
-                          Series tuples (addition)
-
-   *Transformation Algorithm.*
+   Endorsed Values transformation involves mapping EV, CE and CES
+   triples into into ev or evs relations.
 
    A endorsed-triple-record is transformed into an ev-item as described
-   in Figure 19.  (The code reuses the mms_to_ems function from
+   in Figure 22.  (The code reuses the mms_to_ems function from
    Figure 5.)
 
    func transform(
@@ -3173,10 +3255,10 @@ Table of Contents
        return item
    }
 
-              Figure 19: Endorsed Value Triple Transformation
+              Figure 22: Endorsed Value Triple Transformation
 
    A conditional-endorsement-triple-record is transformed into an ev-
-   item as described in Figure 20.  (The code reuses the mms_to_ems
+   item as described in Figure 23.  (The code reuses the mms_to_ems
    function from Figure 5.)
 
    func transform(
@@ -3204,10 +3286,10 @@ Table of Contents
        return item
    }
 
-          Figure 20: Conditional Endorsement Triple Transformation
+          Figure 23: Conditional Endorsement Triple Transformation
 
    A conditional-endorsement-series-triple-record is transformed into an
-   evs-item as described in Figure 21.  (The code reuses the mm_to_em
+   evs-item as described in Figure 24.  (The code reuses the mm_to_em
    and mms_to_ems functions from Figure 5.)
 
    func transform(
@@ -3243,31 +3325,15 @@ Table of Contents
        return item
    }
 
-      Figure 21: Conditional Endorsement Series Triple Transformation
+      Figure 24: Conditional Endorsement Series Triple Transformation
 
-8.2.2.2.4.  Keys
+8.2.3.1.4.  Keys
 
-   The internal representation of Attest Key and Device Identity triples
-   uses the keys relation (see Figure 22), whereby each key-item
-   corresponds to either an attest-key-triple-record or an identity-
-   triple-record.
-
-   keys = [ + key-item ]
-
-   key-item = {
-     condition: K-ECT
-     addition: K-ECT
-   }
-
-                          Figure 22: Keys Relation
-
-
-   // [TODO] Specialise condition/addition ECTs?
-
-   *Transformation Algorithm.*
+   Keys transformation involves mapping Attest Key and Device Identity
+   triples into into a key relation.
 
    An attest-key-triple-record or an identity-triple-record is
-   transformed into a key-item as described in Figure 23.
+   transformed into a key-item as described in Figure 25.
 
    func transform(
        T: attest-key-triple-record / identity-triple-record,
@@ -3300,27 +3366,15 @@ Table of Contents
        return item
    }
 
-                    Figure 23: Key Triple Transformation
+                    Figure 25: Key Triple Transformation
 
-8.2.2.2.5.  Domains
+8.2.3.1.5.  Domains
 
-   The internal representation of Domain Membership and Domain
-   Dependency triples uses the dm relation (see Figure 24), whereby each
-   dm-item corresponds to either an domain-membership-triple-record or
-   an domain-dependency-triple-record.
-
-   dm = [ + dm-item ]
-
-   dm-item = {
-     domain: D-ECT
-   }
-
-                         Figure 24: Domain Relation
-
-   *Transformation Algorithm.*
+   Domains transformation involves mapping Domain Membership and Domain
+   Dependency triples into into a dm relation.
 
    A domain-membership-triple-record or a domain-dependency-triple-
-   record is transformed into a dm-item as described in Figure 25.
+   record is transformed into a dm-item as described in Figure 26.
 
    func transform(
        T: domain-membership-triple-record / domain-dependency-triple-record
@@ -3346,18 +3400,11 @@ Table of Contents
        return item
    }
 
-                  Figure 25: Domain Triple Transformation
+                  Figure 26: Domain Triple Transformation
 
-8.2.2.3.  ACS
+8.2.4.  Processing Algorithm
 
-   *  ACS (attester state repr)
-
-8.2.3.  Conceptual Messages Ingestion
-
-   *  describe the transformation process for each "relation" using
-      pseudo-code
-
-8.2.4.  Processing Algorithm (i.e., how to "match & augment" the ACS)
+   (i.e., how to "match & augment" the ACS)
 
    *  describe the processing algorithm
 
