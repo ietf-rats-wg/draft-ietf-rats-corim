@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 10 October 2026</td>
+<td class="center">Expires 11 October 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-04-08" class="published">8 April 2026</time>
+<time datetime="2026-04-09" class="published">9 April 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-10-10">10 October 2026</time></dd>
+<dd class="expires"><time datetime="2026-10-11">11 October 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 10 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 11 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -4028,6 +4028,7 @@ tagged-bytes = #6.560(bytes)
       </h2>
 <p id="section-8-1">This section outlines the behaviour of a "CoRIM Processor" within the Evidence appraisal procedure carried out by the RATS Verifier (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>).<a href="#section-8-1" class="pilcrow">¶</a></p>
 <p id="section-8-2">In the remainder of this section, the terms
+Environment,
 Claim,
 Environment-Claim Tuple (ECT),
 Authority,
@@ -4339,25 +4340,47 @@ ECT = E-ECT /
 <a href="#name-ect-definition" class="selfRef">ECT definition</a>
               </figcaption></figure>
 </div>
-<p id="section-8.2.2.1-5">Although the internal representation of each specialization differs, all ECT specializations share the following fields:<a href="#section-8.2.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1-5">While the internal representation of each specialization varies, all ECT specializations share the attributes captured in the <code>ECT-common</code> group (see <a href="#fig-ect-common" class="auto internal xref">Figure 3</a>).<a href="#section-8.2.2.1-5" class="pilcrow">¶</a></p>
+<span id="name-ect-common-attributes"></span><div id="fig-ect-common">
+<figure id="figure-3">
+              <div class="lang-cddl sourcecode" id="section-8.2.2.1-6.1">
+<pre>
+ECT-common = (
+  ? environment: environment-map
+  ? authority: [ + $crypto-key-type-choice ]
+  ? profile: $profile-type-choice
+)
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-ect-common-attributes" class="selfRef">ECT common attributes</a>
+              </figcaption></figure>
+</div>
 <ul class="normal">
-<li class="normal" id="section-8.2.2.1-6.1">
-                <p id="section-8.2.2.1-6.1.1"><code>authority</code>: Identifies the entity that issued the tuple.
+<li class="normal" id="section-8.2.2.1-7.1">
+                <p id="section-8.2.2.1-7.1.1"><code>environment</code>: Identifies the Environment that is the subject of the stated Claims.
+In an Element ECT, it is the target environment to which the elements belong.
+In a Domain ECT, it is the parent environment to which the child domains are related.
+In a Key ECT, it is the environment to which the keys belong.
+In all cases, Environments are identified using instance, class, or group identifiers.<a href="#section-8.2.2.1-7.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.2.2.1-7.2">
+                <p id="section-8.2.2.1-7.2.1"><code>authority</code>: Identifies the entity that issued the tuple.
 The authority of a given ECT is typically established through a digital signature on the Claim.
 For instance, a signature of the authoritative supply chain entity over the CoRIM containing the triple from which the ECT was obtained, or the Attesting Environment that signed the Evidence from which the ECT is derived.
 It is represented as the key material by which the authority (and corresponding provenance) of the tuple can be determined.
 A typical example is the authority's PKIX certificate.
-This is a mandatory attribute in an ECT.<a href="#section-8.2.2.1-6.1.1" class="pilcrow">¶</a></p>
+This is a mandatory attribute in an ECT.<a href="#section-8.2.2.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-8.2.2.1-6.2">
-                <p id="section-8.2.2.1-6.2.1"><code>profile</code>: The profile that defines the domain of interpretation of this tuple.
+              <li class="normal" id="section-8.2.2.1-7.3">
+                <p id="section-8.2.2.1-7.3.1"><code>profile</code>: The profile that defines the domain of interpretation of this tuple.
 This is the <code>profile</code> attribute of the CoRIM that contained the original triple from which this ECT was obtained.
 This is an optional attribute in an ECT.
 If no profile is used, the attribute is omitted.
 <span class="cref">
 [TBC]
 What profile applies in such a case?
-</span><a href="#section-8.2.2.1-6.2.1" class="pilcrow">¶</a></p>
+</span><a href="#section-8.2.2.1-7.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <div id="sec-element-ect">
@@ -4367,15 +4390,13 @@ What profile applies in such a case?
               </h6>
 <p id="section-8.2.2.1.1-1">An Element ECT (<code>E-ECT</code>) is used to represent Evidence, Reference Value and Endorsement Claims.<a href="#section-8.2.2.1.1-1" class="pilcrow">¶</a></p>
 <span id="name-element-ect-2"></span><div id="fig-e-ect">
-<figure id="figure-3">
+<figure id="figure-4">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.1.1-2.1">
 <pre>
 E-ECT = {
-  ? environment: environment-map
+  ECT-common
   ? element-list: [ + element-map ]
   ? cmtype: cm-type
-  ? authority: [ + $crypto-key-type-choice ]
-  ? profile: $profile-type-choice
 }
 
 element-map = {
@@ -4390,33 +4411,23 @@ cm-type = &amp;(
 )
 </pre>
 </div>
-<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
 <a href="#name-element-ect-2" class="selfRef">Element ECT</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.1.1-3">The following describes each member of the <code>E-ECT</code>.<a href="#section-8.2.2.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.1-3">The following describes the specialized members of the <code>E-ECT</code>.<a href="#section-8.2.2.1.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.2.2.1.1-4.1">
-                  <p id="section-8.2.2.1.1-4.1.1"><code>environment</code>: Identifies the Target Environment.
-Environments are identified using instance, class, or group identifiers.
-Environments are composed of elements
-<span class="cref">
-[TODO]
-Define "element" in the glossary.
-And add it to the list at the top of §8.
-</span><a href="#section-8.2.2.1.1-4.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.2.2.1.1-4.1.1"><code>element-list</code>: Identifies the set of elements contained within a Target Environment and their trustworthiness Claims, each described by an <code>element-map</code>.
+An <code>element-map</code> is very similar to a <code>measurement-map</code>, with the <code>element-id</code> and <code>element-claims</code> corresponding to the <code>mkey</code> and <code>mval</code>, respectively.
+The pseudocode in <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a> describes the transformation from <code>measurement-map</code>(s) to <code>element-map</code>(s).<a href="#section-8.2.2.1.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-8.2.2.1.1-4.2">
-                  <p id="section-8.2.2.1.1-4.2.1"><code>element-list</code>: Identifies the set of elements contained within a Target Environment and their trustworthiness Claims, each described by an <code>element-map</code>.
-An <code>element-map</code> is very similar to a <code>measurement-map</code>, with the <code>element-id</code> and <code>element-claims</code> corresponding to the <code>mkey</code> and <code>mval</code>, respectively.
-The pseudocode in <a href="#algo-mm-to-em" class="auto internal xref">Figure 4</a> describes the transformation from <code>measurement-map</code> to <code>element-map</code>.<a href="#section-8.2.2.1.1-4.2.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-8.2.2.1.1-4.3">
-                  <p id="section-8.2.2.1.1-4.3.1"><code>cmtype</code>: Identifies the type of Conceptual Message that originated the tuple (Reference Values, Endorsements or Evidence).<a href="#section-8.2.2.1.1-4.3.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.2.2.1.1-4.2.1"><code>cmtype</code>: Identifies the type of Conceptual Message that originated the tuple (Reference Values, Endorsements or Evidence).<a href="#section-8.2.2.1.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
-<span id="name-transform-measurement-map-i"></span><div id="algo-mm-to-em">
-<figure id="figure-4">
+<span id="name-transform-measurement-maps-"></span><div id="algo-mm-to-em">
+<figure id="figure-5">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.2.1.1-5.1">
 <pre>
 func mm_to_em(mm: measurement-map) -&gt; element-map {
@@ -4429,10 +4440,20 @@ func mm_to_em(mm: measurement-map) -&gt; element-map {
 
     return em
 }
+
+func mms_to_ems(mms: [ + measurement-map ]) -&gt; [ + element-map ] {
+    ems := [ + element-map ]::NEW()
+
+    FOREACH mm IN mms:
+        em := mm_to_em(mm)
+        ems::APPEND(em)
+
+    return ems
+}
 </pre>
 </div>
-<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
-<a href="#name-transform-measurement-map-i" class="selfRef">Transform Measurement Map into Element Map</a>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-transform-measurement-maps-" class="selfRef">Transform Measurement Map(s) into Element Map(s)</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.2.2.1.1-6"><strong>Claim Names.</strong>
@@ -4458,15 +4479,13 @@ Can't they be interpreted as alternative states?
 <p id="section-8.2.2.1.2-1">A Domain ECT (<code>D-ECT</code>) is used to represent domain membership and trust dependency Claims between environments.
 It describes the direct relationship between a specific node in the membership or trust dependency graph (<code>parent</code>) and the nodes that it is connected to (<code>children</code>).<a href="#section-8.2.2.1.2-1" class="pilcrow">¶</a></p>
 <span id="name-domain-ect-2"></span><div id="fig-d-ect">
-<figure id="figure-5">
+<figure id="figure-6">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.1.2-2.1">
 <pre>
 D-ECT = {
-  ? parent: environment-map
-  ? children: [ + environment-map ]
-  ? kind: kind
-  ? authority: [ + $crypto-key-type-choice ]
-  ? profile: $profile-type-choice
+  ECT-common
+  children: [ + environment-map ]
+  kind: kind
 }
 
 kind = &amp;(
@@ -4475,20 +4494,17 @@ kind = &amp;(
 )
 </pre>
 </div>
-<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-domain-ect-2" class="selfRef">Domain ECT</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.1.2-3">The following describes each member of the <code>D-ECT</code>.<a href="#section-8.2.2.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.2-3">The following describes the specialized members of the <code>D-ECT</code>.<a href="#section-8.2.2.1.2-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.2.2.1.2-4.1">
-                  <p id="section-8.2.2.1.2-4.1.1"><code>parent</code>: Identifies the "parent" environment.<a href="#section-8.2.2.1.2-4.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.2.2.1.2-4.1.1"><code>children</code>: Identifies the set of members of the domain rooted in the parent <code>environment</code>.<a href="#section-8.2.2.1.2-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-8.2.2.1.2-4.2">
-                  <p id="section-8.2.2.1.2-4.2.1"><code>children</code>: Identifies the set of members of the domain rooted in the <code>parent</code>.<a href="#section-8.2.2.1.2-4.2.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-8.2.2.1.2-4.3">
-                  <p id="section-8.2.2.1.2-4.3.1"><code>kind</code>: Identifies the type of Domain triple that originated the tuple: <code>member</code> stands for Domain Membership, <code>trustee</code> is for Domain Dependency.<a href="#section-8.2.2.1.2-4.3.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.2.2.1.2-4.2.1"><code>kind</code>: Identifies the type of Domain triple that originated the tuple: <code>member</code> stands for Domain Membership, <code>trustee</code> is for Domain Dependency.<a href="#section-8.2.2.1.2-4.2.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 <p id="section-8.2.2.1.2-5"><strong>Claim Names.</strong><a href="#section-8.2.2.1.2-5" class="pilcrow">¶</a></p>
@@ -4504,20 +4520,14 @@ kind = &amp;(
               </h6>
 <p id="section-8.2.2.1.3-1">A Key ECT (<code>K-ECT</code>) is used to represent Identity and Attestation keys.<a href="#section-8.2.2.1.3-1" class="pilcrow">¶</a></p>
 <span id="name-key-ect-2"></span><div id="fig-k-ect">
-<figure id="figure-6">
+<figure id="figure-7">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.1.3-2.1">
 <pre>
 K-ECT = {
-  ? environment: environment-map
-  ? key-list: [ + typed-crypto-key ]
+  ECT-common
+  ? key-id: $measured-element-type-choice
+  ? key-list: [ + $crypto-key-type-choice ]
   ? key-type: key-type
-  ? authority: [ + $crypto-key-type-choice ]
-  ? profile: $profile-type-choice
-}
-
-typed-crypto-key = {
-  key: $crypto-key-type-choice
-  ? key-type: uint .bits key-type
 }
 
 key-type = &amp;(
@@ -4526,34 +4536,26 @@ key-type = &amp;(
 )
 </pre>
 </div>
-<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
 <a href="#name-key-ect-2" class="selfRef">Key ECT</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.1.3-3">The following describes each member of the <code>K-ECT</code>.<a href="#section-8.2.2.1.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.3-3">The following describes the specialized members of the <code>K-ECT</code>.<a href="#section-8.2.2.1.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.2.2.1.3-4.1">
-                  <p id="section-8.2.2.1.3-4.1.1"><code>environment</code>: Identifies the Target or Attesting Environment to which the keys in <code>key-list</code> belong.<a href="#section-8.2.2.1.3-4.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.2.2.1.3-4.1.1"><code>key-id</code>: Identifies a specific namespace within <code>environment</code> that the keys in <code>key-list</code> are associated with.<a href="#section-8.2.2.1.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-8.2.2.1.3-4.2">
-                  <p id="section-8.2.2.1.3-4.2.1"><code>key-list</code>: Identifies the set of keys associated with the <code>environment</code>.
-Each key in the set is explicitly typed.<a href="#section-8.2.2.1.3-4.2.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.2.2.1.3-4.2.1"><code>key-list</code>: Identifies the set of keys associated with <code>environment</code> and (optionally) <code>key-id</code>.<a href="#section-8.2.2.1.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-8.2.2.1.3-4.3">
+                  <p id="section-8.2.2.1.3-4.3.1"><code>key-type</code>: Either <code>attest-key</code> or <code>identity-key</code>, depending on the triple that originated this <code>K-ECT</code> instance.<a href="#section-8.2.2.1.3-4.3.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
-<p id="section-8.2.2.1.3-5"><span class="cref">
-[TBC]
-Why is "key-type" a bitmask?
-Can a key be both attest and identity?
-</span><a href="#section-8.2.2.1.3-5" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.1.3-6"><span class="cref">
-[TBC]
-Why is "key-type" optional?
-What it the default?
-</span><a href="#section-8.2.2.1.3-6" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.1.3-7"><strong>Claim Names.</strong><a href="#section-8.2.2.1.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.3-5"><strong>Claim Names.</strong><a href="#section-8.2.2.1.3-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.3-6"><span class="cref">[TODO]</span><a href="#section-8.2.2.1.3-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.3-7"><strong>Merge Rules.</strong><a href="#section-8.2.2.1.3-7" class="pilcrow">¶</a></p>
 <p id="section-8.2.2.1.3-8"><span class="cref">[TODO]</span><a href="#section-8.2.2.1.3-8" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.1.3-9"><strong>Merge Rules.</strong><a href="#section-8.2.2.1.3-9" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.1.3-10"><span class="cref">[TODO]</span><a href="#section-8.2.2.1.3-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -4566,10 +4568,6 @@ What it the default?
 <p id="section-8.2.2.2-1">This section describes how the relevant RATS Conceptual Messages are transformed upon ingestion by the CoRIM processor.
 This internal representation is based on the concept of "relations", which in turn are based on ECTs.
 A relation <span class="cref">TODO: describe relations condition/addition.</span><a href="#section-8.2.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2-2"><span class="cref">
-[TODO]
-See if we can factor out some common mappings.
-</span><a href="#section-8.2.2.2-2" class="pilcrow">¶</a></p>
 <div id="sec-ir-evidence">
 <section id="section-8.2.2.2.1">
               <h6 id="name-evidence">
@@ -4577,7 +4575,7 @@ See if we can factor out some common mappings.
               </h6>
 <p id="section-8.2.2.2.1-1">The internal representation of Evidence uses the <code>ae</code> relation.<a href="#section-8.2.2.2.1-1" class="pilcrow">¶</a></p>
 <span id="name-attestation-evidence-relati"></span><div id="fig-ae">
-<figure id="figure-7">
+<figure id="figure-8">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.1-2.1">
 <pre>
 ae = [ + ae-item ]
@@ -4587,15 +4585,15 @@ ae-item = {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
 <a href="#name-attestation-evidence-relati" class="selfRef">Attestation Evidence Relation</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.2.2.2.1-3">The <code>addition</code> is a list of ECTs with Evidence Claims (<code>ae-item</code>s) to be appraised.
 Note that there is no <code>condition</code> in the <code>ae</code> relation, meaning that the addition of Evidence Claims is unconditional once Evidence has been verified.<a href="#section-8.2.2.2.1-3" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.1-4"><a href="#fig-ae-ect" class="auto internal xref">Figure 8</a> shows the profiled ECT for an <code>ae</code> item.<a href="#section-8.2.2.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.1-4"><a href="#fig-ae-ect" class="auto internal xref">Figure 9</a> shows the profiled ECT for an <code>ae</code> item.<a href="#section-8.2.2.2.1-4" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-evidence"></span><div id="fig-ae-ect">
-<figure id="figure-8">
+<figure id="figure-9">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.1-5.1">
 <pre>
 Evidence-addition-ECT = ({
@@ -4607,7 +4605,7 @@ Evidence-addition-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
 <a href="#name-profiled-ect-for-evidence" class="selfRef">Profiled ECT for Evidence</a>
                 </figcaption></figure>
 </div>
@@ -4627,7 +4625,7 @@ Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.2.2.
               </h6>
 <p id="section-8.2.2.2.2-1">The internal representation of Reference Values uses the <code>rv</code> relation where each <code>rv-item</code> corresponds to a <code>reference-triple-record</code>.<a href="#section-8.2.2.2.2-1" class="pilcrow">¶</a></p>
 <span id="name-reference-values-relation"></span><div id="fig-rv">
-<figure id="figure-9">
+<figure id="figure-10">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.2-2.1">
 <pre>
 rv = [ + rv-item ]
@@ -4638,7 +4636,7 @@ rv-item = {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
 <a href="#name-reference-values-relation" class="selfRef">Reference Values Relation</a>
                 </figcaption></figure>
 </div>
@@ -4646,9 +4644,9 @@ rv-item = {
 If the <code>condition</code> containing the "reference" ECTs matches the Evidence ECTs, the Evidence ECTs are re-asserted with the RVP authority carried in the <code>addition</code> ECT and the <code>cmtype</code> set to <code>reference-values</code>.
 The re-asserted ECTs are added to the ACS.
 Refer to TODO-REF-sec-phase3 for how the <code>rv</code> entries are processed.<a href="#section-8.2.2.2.2-3" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.2-4"><a href="#fig-rv-ect-cond" class="auto internal xref">Figure 10</a> shows the profiled Element ECT for a Reference Values condition.<a href="#section-8.2.2.2.2-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.2-4"><a href="#fig-rv-ect-cond" class="auto internal xref">Figure 11</a> shows the profiled Element ECT for a Reference Values condition.<a href="#section-8.2.2.2.2-4" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-reference-"></span><div id="fig-rv-ect-cond">
-<figure id="figure-10">
+<figure id="figure-11">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.2-5.1">
 <pre>
 Reference-Value-condition-ECT = ({
@@ -4658,7 +4656,7 @@ Reference-Value-condition-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
 <a href="#name-profiled-ect-for-reference-" class="selfRef">Profiled ECT for Reference Values (condition)</a>
                 </figcaption></figure>
 </div>
@@ -4667,9 +4665,9 @@ Reference-Value-condition-ECT = ({
 Why aren't we modelling the condition on ECT, i.e., the matching target, based on the evidence ECT?
 Making the matching context-dependent makes things cumbersome.
 </span><a href="#section-8.2.2.2.2-6" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.2-7"><a href="#fig-rv-ect-add" class="auto internal xref">Figure 11</a> shows the profiled Element ECT for a Reference Values addition.<a href="#section-8.2.2.2.2-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.2-7"><a href="#fig-rv-ect-add" class="auto internal xref">Figure 12</a> shows the profiled Element ECT for a Reference Values addition.<a href="#section-8.2.2.2.2-7" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-reference-v"></span><div id="fig-rv-ect-add">
-<figure id="figure-11">
+<figure id="figure-12">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.2-8.1">
 <pre>
 Reference-Value-addition-ECT = ({
@@ -4681,7 +4679,7 @@ Reference-Value-addition-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
 <a href="#name-profiled-ect-for-reference-v" class="selfRef">Profiled ECT for Reference Values (addition)</a>
                 </figcaption></figure>
 </div>
@@ -4689,14 +4687,14 @@ Reference-Value-addition-ECT = ({
 The only differences are the values of the <code>authority</code> and <code>cmtype</code> attributes.
 Here, the <code>authority</code> value is that of the RVP rather than the Attester, and the <code>cmtype</code> value is <code>reference-values</code> rather than <code>evidence</code>.<a href="#section-8.2.2.2.2-9" class="pilcrow">¶</a></p>
 <p id="section-8.2.2.2.2-10"><strong>Transformation Algorithm.</strong><a href="#section-8.2.2.2.2-10" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.2-11">A <code>reference-triple-record</code> is transformed into an <code>rv-item</code> as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 12</a>.
-(The code reuses the <code>mm_to_em</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 4</a>.)<a href="#section-8.2.2.2.2-11" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.2-11">A <code>reference-triple-record</code> is transformed into an <code>rv-item</code> as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 13</a>.
+(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.2.2.2-11" class="pilcrow">¶</a></p>
 <span id="name-reference-value-triple-tran"></span><div id="algo-rv-transform">
-<figure id="figure-12">
+<figure id="figure-13">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.2-12.1">
 <pre>
 func transform(
-    rtr: reference-triple-record,
+    T: reference-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -&gt; rv-item {
@@ -4704,15 +4702,12 @@ func transform(
 
     item.addition.cmtype = reference-values
 
-    item.addition.environment = rtr.ref-env
-    item.condition.environment = rtr.ref-env
+    item.addition.environment = T.ref-env
+    item.condition.environment = T.ref-env
 
-    FOREACH e IN rtr.ref-claims:
-        em := mm_to_em(e)
-        item.condition.element-list::APPEND(em)
+    item.condition.element-list = mms_to_ems(T.ref-claims)
 
-    IF signer:
-        item.addition.authority = signer
+    item.addition.authority = signer
 
     IF profile:
         item.addition.profile = profile
@@ -4721,7 +4716,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
+<figcaption><a href="#figure-13" class="selfRef">Figure 13</a>:
 <a href="#name-reference-value-triple-tran" class="selfRef">Reference Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -4736,9 +4731,9 @@ Since they may contain ranges rather than individual values (see, for example, <
               </h6>
 <p id="section-8.2.2.2.3-1">The internal representation of Endorsed Values uses the <code>ev</code> and <code>evs</code> relations.
 These are lists of ECTs that describe matching conditions and the additions that apply when these conditions are met.<a href="#section-8.2.2.2.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.3-2">The <code>ev</code> relation (<a href="#fig-ev-ect" class="auto internal xref">Figure 13</a>) applies to Endorsed Values (EV) and Conditional Endorsement (CE) triples.<a href="#section-8.2.2.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.3-2">The <code>ev</code> relation (<a href="#fig-ev-ect" class="auto internal xref">Figure 14</a>) applies to Endorsed Values (EV) and Conditional Endorsement (CE) triples.<a href="#section-8.2.2.2.3-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-values-relation"></span><div id="fig-ev-ect">
-<figure id="figure-13">
+<figure id="figure-14">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.3-3.1">
 <pre>
 ev = [ + ev-item ]
@@ -4749,16 +4744,16 @@ ev-item = {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-13" class="selfRef">Figure 13</a>:
+<figcaption><a href="#figure-14" class="selfRef">Figure 14</a>:
 <a href="#name-endorsed-values-relation" class="selfRef">Endorsed Values Relation</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.2.2.2.3-4">The <code>ev</code> relation compares the condition ECTs with those in the ACS.
 If all the ECTs are found in the ACS, the addition ECTs are added to it.
 Note that when the <code>ev</code> relation is for an EV triple, the optional <code>element-list</code> inside the condition is not used; however, it is used for CE triples.<a href="#section-8.2.2.2.3-4" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.3-5">The <code>evs</code> relation (<a href="#fig-evs-ect" class="auto internal xref">Figure 14</a>) applies to Conditional Endorsement Series (CES) Triples.<a href="#section-8.2.2.2.3-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.3-5">The <code>evs</code> relation (<a href="#fig-evs-ect" class="auto internal xref">Figure 15</a>) applies to Conditional Endorsement Series (CES) Triples.<a href="#section-8.2.2.2.3-5" class="pilcrow">¶</a></p>
 <span id="name-endorsed-values-series-rela"></span><div id="fig-evs-ect">
-<figure id="figure-14">
+<figure id="figure-15">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.3-6.1">
 <pre>
 evs = [ + evs-item ]
@@ -4774,7 +4769,7 @@ series-item = [
 ]
 </pre>
 </div>
-<figcaption><a href="#figure-14" class="selfRef">Figure 14</a>:
+<figcaption><a href="#figure-15" class="selfRef">Figure 15</a>:
 <a href="#name-endorsed-values-series-rela" class="selfRef">Endorsed Values Series Relation</a>
                 </figcaption></figure>
 </div>
@@ -4788,9 +4783,9 @@ If all the ECTs are found in the ACS, each entry in the series list is evaluated
 The selection ECTs are then compared with the ACS.
 If the selection criteria are met, the addition ECTs are added to the ACS and the series evaluation ends.
 If the selection criteria are not satisfied, evaluation proceeds to the next series list entry.<a href="#section-8.2.2.2.3-7" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.3-8"><a href="#fig-ev-ect-cond" class="auto internal xref">Figure 15</a> shows the profiled Element ECT an Endorsed Value condition.<a href="#section-8.2.2.2.3-8" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.3-8"><a href="#fig-ev-ect-cond" class="auto internal xref">Figure 16</a> shows the profiled Element ECT an Endorsed Value condition.<a href="#section-8.2.2.2.3-8" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-endorsed-v"></span><div id="fig-ev-ect-cond">
-<figure id="figure-15">
+<figure id="figure-16">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.3-9.1">
 <pre>
 Endorsement-condition-ECT = ({
@@ -4800,13 +4795,13 @@ Endorsement-condition-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-15" class="selfRef">Figure 15</a>:
+<figcaption><a href="#figure-16" class="selfRef">Figure 16</a>:
 <a href="#name-profiled-ect-for-endorsed-v" class="selfRef">Profiled ECT for Endorsed Values and Endorsed Values Series tuples (condition)</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.2.3-10"><a href="#fig-ev-ect-sel" class="auto internal xref">Figure 16</a> shows the profiled Element ECT an Endorsed Value selection.<a href="#section-8.2.2.2.3-10" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.3-10"><a href="#fig-ev-ect-sel" class="auto internal xref">Figure 17</a> shows the profiled Element ECT an Endorsed Value selection.<a href="#section-8.2.2.2.3-10" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-endorsed-va"></span><div id="fig-ev-ect-sel">
-<figure id="figure-16">
+<figure id="figure-17">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.3-11.1">
 <pre>
 Endorsement-selection-ECT = ({
@@ -4816,13 +4811,13 @@ Endorsement-selection-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-16" class="selfRef">Figure 16</a>:
+<figcaption><a href="#figure-17" class="selfRef">Figure 17</a>:
 <a href="#name-profiled-ect-for-endorsed-va" class="selfRef">Profiled ECT for Endorsed Values and Endorsed Values Series tuples (selection)</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.2.3-12"><a href="#fig-ev-ect-add" class="auto internal xref">Figure 17</a> shows the profiled Element ECT an Endorsed Value addition.<a href="#section-8.2.2.2.3-12" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.3-12"><a href="#fig-ev-ect-add" class="auto internal xref">Figure 18</a> shows the profiled Element ECT an Endorsed Value addition.<a href="#section-8.2.2.2.3-12" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-endorsed-val"></span><div id="fig-ev-ect-add">
-<figure id="figure-17">
+<figure id="figure-18">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.3-13.1">
 <pre>
 Endorsement-addition-ECT = ({
@@ -4834,19 +4829,19 @@ Endorsement-addition-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-17" class="selfRef">Figure 17</a>:
+<figcaption><a href="#figure-18" class="selfRef">Figure 18</a>:
 <a href="#name-profiled-ect-for-endorsed-val" class="selfRef">Profiled ECT for Endorsed Values and Endorsed Values Series tuples (addition)</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.2.2.2.3-14"><strong>Transformation Algorithm.</strong><a href="#section-8.2.2.2.3-14" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.2.3-15">A <code>endorsed-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 18</a>.
-(The code reuses the <code>mm_to_em</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 4</a>.)<a href="#section-8.2.2.2.3-15" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.3-15">A <code>endorsed-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 19</a>.
+(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.2.2.3-15" class="pilcrow">¶</a></p>
 <span id="name-endorsed-value-triple-trans"></span><div id="algo-ev-transform">
-<figure id="figure-18">
+<figure id="figure-19">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.3-16.1">
 <pre>
 func transform(
-    etr: endorsed-triple-record,
+    T: endorsed-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -&gt; ev-item {
@@ -4854,55 +4849,12 @@ func transform(
 
     item.addition.cmtype = endorsements
 
-    item.addition.environment = etr.condition
-    item.condition.environment = etr.condition
+    item.addition.environment = T.condition
+    item.condition.environment = T.condition
 
-    FOREACH e IN etr.endorsement:
-        em := mm_to_em(e)
-        item.addition.element-list::APPEND(em)
+    item.addition.element-list = mms_to_ems(T.endorsement)
 
-    IF signer:
-        item.addition.authority = signer
-
-    IF profile:
-        item.addition.profile = profile
-
-    return item
-}
-</pre>
-</div>
-<figcaption><a href="#figure-18" class="selfRef">Figure 18</a>:
-<a href="#name-endorsed-value-triple-trans" class="selfRef">Endorsed Value Triple Transformation</a>
-                </figcaption></figure>
-</div>
-<p id="section-8.2.2.2.3-17">A <code>conditional-endorsement-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 19</a>.<a href="#section-8.2.2.2.3-17" class="pilcrow">¶</a></p>
-<span id="name-conditional-endorsement-trip"></span><div id="algo-ce-transform">
-<figure id="figure-19">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.3-18.1">
-<pre>
-func transform(
-    cetr: conditional-endorsement-triple-record,
-    signer: [ + $crypto-key-type-choice ],
-    profile: $profile-type-choice
-) -&gt; ev-item {
-    item := ev-item::NEW()
-
-    item.addition.cmtype = endorsements
-
-    FOREACH se IN cetr.conditions:
-        item.condition.environment = se.environment
-        FOREACH m IN se.claims-list:
-            em := mm_to_em(m)
-            item.condition.element-list::APPEND(em)
-
-    FOREACH etr IN cetr.endorsements:
-        item.addition.environment = etr.condition
-        FOREACH e IN etr.endorsement:
-            em := mm_to_em(e)
-            item.addition.element-list::APPEND(em)
-
-    IF signer:
-        item.addition.authority = signer
+    item.addition.authority = signer
 
     IF profile:
         item.addition.profile = profile
@@ -4912,43 +4864,77 @@ func transform(
 </pre>
 </div>
 <figcaption><a href="#figure-19" class="selfRef">Figure 19</a>:
-<a href="#name-conditional-endorsement-trip" class="selfRef">Conditional Endorsement Triple Transformation</a>
+<a href="#name-endorsed-value-triple-trans" class="selfRef">Endorsed Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.2.3-19">A <code>conditional-endorsement-series-triple-record</code> is transformed into an <code>evs-item</code> as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 20</a>.<a href="#section-8.2.2.2.3-19" class="pilcrow">¶</a></p>
-<span id="name-conditional-endorsement-seri"></span><div id="algo-ces-transform">
+<p id="section-8.2.2.2.3-17">A <code>conditional-endorsement-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 20</a>.
+(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.2.2.3-17" class="pilcrow">¶</a></p>
+<span id="name-conditional-endorsement-trip"></span><div id="algo-ce-transform">
 <figure id="figure-20">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.3-20.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.3-18.1">
 <pre>
 func transform(
-    cestr: conditional-endorsement-series-triple-record,
+    T: conditional-endorsement-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -&gt; ev-item {
+    item := ev-item::NEW()
+
+    item.addition.cmtype = endorsements
+
+    FOREACH se IN T.conditions:
+        item.condition.environment = se.environment
+        item.condition.element-list = mms_to_ems(se.claims-list)
+
+    FOREACH etr IN T.endorsements:
+        item.addition.environment = etr.condition
+        item.addition.element-list = mms_to_ems(etr.endorsement)
+
+    item.addition.authority = signer
+
+    IF profile:
+        item.addition.profile = profile
+
+    return item
+}
+</pre>
+</div>
+<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
+<a href="#name-conditional-endorsement-trip" class="selfRef">Conditional Endorsement Triple Transformation</a>
+                </figcaption></figure>
+</div>
+<p id="section-8.2.2.2.3-19">A <code>conditional-endorsement-series-triple-record</code> is transformed into an <code>evs-item</code> as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 21</a>.
+(The code reuses the <code>mm_to_em</code> and <code>mms_to_ems</code> functions from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.2.2.3-19" class="pilcrow">¶</a></p>
+<span id="name-conditional-endorsement-seri"></span><div id="algo-ces-transform">
+<figure id="figure-21">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.3-20.1">
+<pre>
+func transform(
+    T: conditional-endorsement-series-triple-record,
+    signer: [ + $crypto-key-type-choice ],
+    profile: $profile-type-choice
+) -&gt; evs-item {
     item := evs-item::NEW()
 
     item.addition.cmtype = endorsements
 
-    item.condition.environment = cestr.condition.environment
+    item.condition.environment = T.condition.environment
 
-    FOREACH e IN cestr.condition.claims-list:
-        em := mm_to_em(e)
-        item.condition.element-list::APPEND(em)
+    item.condition.element-list = mms_to_ems(T.condition.claims-list)
 
-    IF cestr.condition.authorized-by:
-        item.condition.authority = cestr.condition.authorized-by
+    IF T.condition.authorized-by:
+        item.condition.authority = T.condition.authorized-by
 
-    FOREACH s in cestr.series:
-        item.series.selection.environment = cestr.condition.environment
+    FOREACH s in T.series:
+        item.series.selection.environment = T.condition.environment
         se := mm_to_em(s.selection)
         item.series.selection.element-list::APPEND(se)
 
-        item.series.addition.environment = cestr.condition.environment
+        item.series.addition.environment = T.condition.environment
         ae := mm_to_em(s.addition)
         item.series.addition.element-list::APPEND(ae)
 
-    IF signer:
-        item.series.addition.authority = signer
+    item.series.addition.authority = signer
 
     IF profile:
         item.series.addition.profile = profile
@@ -4957,8 +4943,136 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
+<figcaption><a href="#figure-21" class="selfRef">Figure 21</a>:
 <a href="#name-conditional-endorsement-seri" class="selfRef">Conditional Endorsement Series Triple Transformation</a>
+                </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="sec-ir-keys">
+<section id="section-8.2.2.2.4">
+              <h6 id="name-keys">
+<a href="#section-8.2.2.2.4" class="section-number selfRef">8.2.2.2.4. </a><a href="#name-keys" class="section-name selfRef">Keys</a>
+              </h6>
+<p id="section-8.2.2.2.4-1">The internal representation of Attest Key and Device Identity triples uses the <code>keys</code> relation (see <a href="#fig-k" class="auto internal xref">Figure 22</a>), whereby each <code>key-item</code> corresponds to either an <code>attest-key-triple-record</code> or an <code>identity-triple-record</code>.<a href="#section-8.2.2.2.4-1" class="pilcrow">¶</a></p>
+<span id="name-keys-relation"></span><div id="fig-k">
+<figure id="figure-22">
+                <div class="lang-cddl sourcecode" id="section-8.2.2.2.4-2.1">
+<pre>
+keys = [ + key-item ]
+
+key-item = {
+  condition: K-ECT
+  addition: K-ECT
+}
+</pre>
+</div>
+<figcaption><a href="#figure-22" class="selfRef">Figure 22</a>:
+<a href="#name-keys-relation" class="selfRef">Keys Relation</a>
+                </figcaption></figure>
+</div>
+<p id="section-8.2.2.2.4-3"><span class="cref">
+[TODO]
+Specialise condition/addition ECTs?
+</span><a href="#section-8.2.2.2.4-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.4-4"><strong>Transformation Algorithm.</strong><a href="#section-8.2.2.2.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.4-5">An <code>attest-key-triple-record</code> or an <code>identity-triple-record</code> is transformed into a <code>key-item</code> as described in <a href="#algo-key-transform" class="auto internal xref">Figure 23</a>.<a href="#section-8.2.2.2.4-5" class="pilcrow">¶</a></p>
+<span id="name-key-triple-transformation"></span><div id="algo-key-transform">
+<figure id="figure-23">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.4-6.1">
+<pre>
+func transform(
+    T: attest-key-triple-record / identity-triple-record,
+    signer: [ + $crypto-key-type-choice ],
+    profile: $profile-type-choice
+) -&gt; key-item {
+    item := key-item::NEW()
+
+    IF TYPEOF(T) == attest-key-triple-record:
+        item.condition.key-type = attest-key
+        item.addition.key-type = attest-key
+    ELIF TYPEOF(T) == identity-triple-record:
+        item.condition.key-type = identity-key
+        item.addition.key-type = identity-key
+
+    item.condition.environment = T.environment
+    item.condition.key-list = T.key-list
+
+    IF T.condition.mkey:
+        item.condition.key-id = T.condition.mkey
+
+    IF T.condition.authorized-by:
+        item.condition.authority = T.condition.authorized-by
+
+    item.addition.authority = signer
+
+    IF profile:
+        item.addition.profile = profile
+
+    return item
+}
+</pre>
+</div>
+<figcaption><a href="#figure-23" class="selfRef">Figure 23</a>:
+<a href="#name-key-triple-transformation" class="selfRef">Key Triple Transformation</a>
+                </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="domains">
+<section id="section-8.2.2.2.5">
+              <h6 id="name-domains">
+<a href="#section-8.2.2.2.5" class="section-number selfRef">8.2.2.2.5. </a><a href="#name-domains" class="section-name selfRef">Domains</a>
+              </h6>
+<p id="section-8.2.2.2.5-1">The internal representation of Domain Membership and Domain Dependency triples uses the <code>dm</code> relation (see <a href="#fig-d" class="auto internal xref">Figure 24</a>), whereby each <code>dm-item</code> corresponds to either an <code>domain-membership-triple-record</code> or an <code>domain-dependency-triple-record</code>.<a href="#section-8.2.2.2.5-1" class="pilcrow">¶</a></p>
+<span id="name-domain-relation"></span><div id="fig-d">
+<figure id="figure-24">
+                <div class="lang-cddl sourcecode" id="section-8.2.2.2.5-2.1">
+<pre>
+dm = [ + dm-item ]
+
+dm-item = {
+  domain: D-ECT
+}
+</pre>
+</div>
+<figcaption><a href="#figure-24" class="selfRef">Figure 24</a>:
+<a href="#name-domain-relation" class="selfRef">Domain Relation</a>
+                </figcaption></figure>
+</div>
+<p id="section-8.2.2.2.5-3"><strong>Transformation Algorithm.</strong><a href="#section-8.2.2.2.5-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.5-4">A <code>domain-membership-triple-record</code> or a <code>domain-dependency-triple-record</code> is transformed into a <code>dm-item</code> as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 25</a>.<a href="#section-8.2.2.2.5-4" class="pilcrow">¶</a></p>
+<span id="name-domain-triple-transformatio"></span><div id="algo-domain-transform">
+<figure id="figure-25">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.2.2.5-5.1">
+<pre>
+func transform(
+    T: domain-membership-triple-record / domain-dependency-triple-record
+    signer: [ + $crypto-key-type-choice ],
+    profile: $profile-type-choice
+) -&gt; key-item {
+    item := dm-item::NEW()
+
+    IF TYPEOF(T) == domain-membership-triple-record:
+        item.kind = member
+        item.children = T.members
+    ELIF TYPEOF(T) == domain-dependency-triple-record
+        item.kind = trustee
+        item.children = T.trustees
+
+    item.environment = T.domain-id
+
+    item.authority = signer
+
+    IF profile:
+        item.profile = profile
+
+    return item
+}
+</pre>
+</div>
+<figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
+<a href="#name-domain-triple-transformatio" class="selfRef">Domain Triple Transformation</a>
                 </figcaption></figure>
 </div>
 </section>

@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 10 October 2026                                          Linaro
+Expires: 11 October 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            8 April 2026
+                                                            9 April 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 October 2026.
+   This Internet-Draft will expire on 11 October 2026.
 
 Copyright Notice
 
@@ -2526,9 +2526,10 @@ Table of Contents
    Evidence appraisal procedure carried out by the RATS Verifier
    (Section 7.4 of [RFC9334]).
 
-   In the remainder of this section, the terms Claim, Environment-Claim
-   Tuple (ECT), Authority, Appraisal Claims Set (ACS), and Appraisal
-   Policy are used with the meanings defined in Section 1.1.1.
+   In the remainder of this section, the terms Environment, Claim,
+   Environment-Claim Tuple (ECT), Authority, Appraisal Claims Set (ACS),
+   and Appraisal Policy are used with the meanings defined in
+   Section 1.1.1.
 
 8.1.  Appraisal Logical Phases
 
@@ -2720,8 +2721,25 @@ Table of Contents
 
                           Figure 2: ECT definition
 
-   Although the internal representation of each specialization differs,
-   all ECT specializations share the following fields:
+   While the internal representation of each specialization varies, all
+   ECT specializations share the attributes captured in the ECT-common
+   group (see Figure 3).
+
+   ECT-common = (
+     ? environment: environment-map
+     ? authority: [ + $crypto-key-type-choice ]
+     ? profile: $profile-type-choice
+   )
+
+                      Figure 3: ECT common attributes
+
+   *  environment: Identifies the Environment that is the subject of the
+      stated Claims.  In an Element ECT, it is the target environment to
+      which the elements belong.  In a Domain ECT, it is the parent
+      environment to which the child domains are related.  In a Key ECT,
+      it is the environment to which the keys belong.  In all cases,
+      Environments are identified using instance, class, or group
+      identifiers.
 
    *  authority: Identifies the entity that issued the tuple.  The
       authority of a given ECT is typically established through a
@@ -2747,11 +2765,9 @@ Table of Contents
    and Endorsement Claims.
 
    E-ECT = {
-     ? environment: environment-map
+     ECT-common
      ? element-list: [ + element-map ]
      ? cmtype: cm-type
-     ? authority: [ + $crypto-key-type-choice ]
-     ? profile: $profile-type-choice
    }
 
    element-map = {
@@ -2765,24 +2781,17 @@ Table of Contents
      evidence: 2
    )
 
-                           Figure 3: Element ECT
+                           Figure 4: Element ECT
 
-   The following describes each member of the E-ECT.
-
-   *  environment: Identifies the Target Environment.  Environments are
-      identified using instance, class, or group identifiers.
-      Environments are composed of elements
-      // [TODO] Define "element" in the glossary.  And add it to the
-      list
-      // at the top of §8.
+   The following describes the specialized members of the E-ECT.
 
    *  element-list: Identifies the set of elements contained within a
       Target Environment and their trustworthiness Claims, each
       described by an element-map.  An element-map is very similar to a
       measurement-map, with the element-id and element-claims
       corresponding to the mkey and mval, respectively.  The pseudocode
-      in Figure 4 describes the transformation from measurement-map to
-      element-map.
+      in Figure 5 describes the transformation from measurement-map(s)
+      to element-map(s).
 
    *  cmtype: Identifies the type of Conceptual Message that originated
       the tuple (Reference Values, Endorsements or Evidence).
@@ -2798,7 +2807,17 @@ Table of Contents
        return em
    }
 
-            Figure 4: Transform Measurement Map into Element Map
+   func mms_to_ems(mms: [ + measurement-map ]) -> [ + element-map ] {
+       ems := [ + element-map ]::NEW()
+
+       FOREACH mm IN mms:
+           em := mm_to_em(mm)
+           ems::APPEND(em)
+
+       return ems
+   }
+
+         Figure 5: Transform Measurement Map(s) into Element Map(s)
 
    *Claim Names.* The combination of environment, optional element-id,
    and map key within each element-claims encodes the name of an Element
@@ -2827,11 +2846,9 @@ Table of Contents
    (children).
 
    D-ECT = {
-     ? parent: environment-map
-     ? children: [ + environment-map ]
-     ? kind: kind
-     ? authority: [ + $crypto-key-type-choice ]
-     ? profile: $profile-type-choice
+     ECT-common
+     children: [ + environment-map ]
+     kind: kind
    }
 
    kind = &(
@@ -2839,14 +2856,12 @@ Table of Contents
      trustee: 1
    )
 
-                            Figure 5: Domain ECT
+                            Figure 6: Domain ECT
 
-   The following describes each member of the D-ECT.
-
-   *  parent: Identifies the "parent" environment.
+   The following describes the specialized members of the D-ECT.
 
    *  children: Identifies the set of members of the domain rooted in
-      the parent.
+      the parent environment.
 
    *  kind: Identifies the type of Domain triple that originated the
       tuple: member stands for Domain Membership, trustee is for Domain
@@ -2867,16 +2882,10 @@ Table of Contents
    A Key ECT (K-ECT) is used to represent Identity and Attestation keys.
 
    K-ECT = {
-     ? environment: environment-map
-     ? key-list: [ + typed-crypto-key ]
+     ECT-common
+     ? key-id: $measured-element-type-choice
+     ? key-list: [ + $crypto-key-type-choice ]
      ? key-type: key-type
-     ? authority: [ + $crypto-key-type-choice ]
-     ? profile: $profile-type-choice
-   }
-
-   typed-crypto-key = {
-     key: $crypto-key-type-choice
-     ? key-type: uint .bits key-type
    }
 
    key-type = &(
@@ -2884,22 +2893,18 @@ Table of Contents
      identity-key: 1
    )
 
-                             Figure 6: Key ECT
+                             Figure 7: Key ECT
 
-   The following describes each member of the K-ECT.
+   The following describes the specialized members of the K-ECT.
 
-   *  environment: Identifies the Target or Attesting Environment to
-      which the keys in key-list belong.
+   *  key-id: Identifies a specific namespace within environment that
+      the keys in key-list are associated with.
 
-   *  key-list: Identifies the set of keys associated with the
-      environment.  Each key in the set is explicitly typed.
+   *  key-list: Identifies the set of keys associated with environment
+      and (optionally) key-id.
 
-
-   // [TBC] Why is "key-type" a bitmask?  Can a key be both attest and
-   // identity?
-
-
-   // [TBC] Why is "key-type" optional?  What it the default?
+   *  key-type: Either attest-key or identity-key, depending on the
+      triple that originated this K-ECT instance.
 
    *Claim Names.*
 
@@ -2919,9 +2924,6 @@ Table of Contents
    are based on ECTs.  A relation
    // TODO: describe relations condition/addition.
 
-
-   // [TODO] See if we can factor out some common mappings.
-
 8.2.2.2.1.  Evidence
 
    The internal representation of Evidence uses the ae relation.
@@ -2932,14 +2934,14 @@ Table of Contents
      addition: Evidence-addition-ECT
    }
 
-                  Figure 7: Attestation Evidence Relation
+                  Figure 8: Attestation Evidence Relation
 
    The addition is a list of ECTs with Evidence Claims (ae-items) to be
    appraised.  Note that there is no condition in the ae relation,
    meaning that the addition of Evidence Claims is unconditional once
    Evidence has been verified.
 
-   Figure 8 shows the profiled ECT for an ae item.
+   Figure 9 shows the profiled ECT for an ae item.
 
    Evidence-addition-ECT = ({
      environment: environment-map
@@ -2949,7 +2951,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }) .within E-ECT
 
-                    Figure 8: Profiled ECT for Evidence
+                    Figure 9: Profiled ECT for Evidence
 
    All E-ECT attributes are mandatory, except profile.
 
@@ -2978,7 +2980,7 @@ Table of Contents
      addition: Reference-Value-addition-ECT
    }
 
-                    Figure 9: Reference Values Relation
+                    Figure 10: Reference Values Relation
 
    The rv relation is a list of condition-addition pairs, each of which
    is evaluated together.  If the condition containing the "reference"
@@ -2987,7 +2989,7 @@ Table of Contents
    to reference-values.  The re-asserted ECTs are added to the ACS.
    Refer to TODO-REF-sec-phase3 for how the rv entries are processed.
 
-   Figure 10 shows the profiled Element ECT for a Reference Values
+   Figure 11 shows the profiled Element ECT for a Reference Values
    condition.
 
    Reference-Value-condition-ECT = ({
@@ -2996,14 +2998,14 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }) .within E-ECT
 
-          Figure 10: Profiled ECT for Reference Values (condition)
+          Figure 11: Profiled ECT for Reference Values (condition)
 
 
    // [TBC] Why aren't we modelling the condition on ECT, i.e., the
    // matching target, based on the evidence ECT?  Making the matching
    // context-dependent makes things cumbersome.
 
-   Figure 11 shows the profiled Element ECT for a Reference Values
+   Figure 12 shows the profiled Element ECT for a Reference Values
    addition.
 
    Reference-Value-addition-ECT = ({
@@ -3014,7 +3016,7 @@ Table of Contents
      ? profile: $profile-type-choice
    }) .within E-ECT
 
-          Figure 11: Profiled ECT for Reference Values (addition)
+          Figure 12: Profiled ECT for Reference Values (addition)
 
    As this is used to corroborate an Evidence ECT, its layout is
    identical to that of an Evidence-addition-ECT.  The only differences
@@ -3025,10 +3027,11 @@ Table of Contents
    *Transformation Algorithm.*
 
    A reference-triple-record is transformed into an rv-item as described
-   in Figure 12.  (The code reuses the mm_to_em function from Figure 4.)
+   in Figure 13.  (The code reuses the mms_to_ems function from
+   Figure 5.)
 
    func transform(
-       rtr: reference-triple-record,
+       T: reference-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
    ) -> rv-item {
@@ -3036,15 +3039,12 @@ Table of Contents
 
        item.addition.cmtype = reference-values
 
-       item.addition.environment = rtr.ref-env
-       item.condition.environment = rtr.ref-env
+       item.addition.environment = T.ref-env
+       item.condition.environment = T.ref-env
 
-       FOREACH e IN rtr.ref-claims:
-           em := mm_to_em(e)
-           item.condition.element-list::APPEND(em)
+       item.condition.element-list = mms_to_ems(T.ref-claims)
 
-       IF signer:
-           item.addition.authority = signer
+       item.addition.authority = signer
 
        IF profile:
            item.addition.profile = profile
@@ -3052,7 +3052,7 @@ Table of Contents
        return item
    }
 
-              Figure 12: Reference Value Triple Transformation
+              Figure 13: Reference Value Triple Transformation
 
    Note that the ref-claims are not copied to the addition ECT.  Since
    they may contain ranges rather than individual values (see, for
@@ -3066,7 +3066,7 @@ Table of Contents
    relations.  These are lists of ECTs that describe matching conditions
    and the additions that apply when these conditions are met.
 
-   The ev relation (Figure 13) applies to Endorsed Values (EV) and
+   The ev relation (Figure 14) applies to Endorsed Values (EV) and
    Conditional Endorsement (CE) triples.
 
    ev = [ + ev-item ]
@@ -3076,7 +3076,7 @@ Table of Contents
      addition: [ + Endorsement-addition-ECT ]
    }
 
-                    Figure 13: Endorsed Values Relation
+                    Figure 14: Endorsed Values Relation
 
    The ev relation compares the condition ECTs with those in the ACS.
    If all the ECTs are found in the ACS, the addition ECTs are added to
@@ -3084,7 +3084,7 @@ Table of Contents
    element-list inside the condition is not used; however, it is used
    for CE triples.
 
-   The evs relation (Figure 14) applies to Conditional Endorsement
+   The evs relation (Figure 15) applies to Conditional Endorsement
    Series (CES) Triples.
 
    evs = [ + evs-item ]
@@ -3099,7 +3099,7 @@ Table of Contents
      addition: [ + Endorsement-addition-ECT ]
    ]
 
-                 Figure 14: Endorsed Values Series Relation
+                 Figure 15: Endorsed Values Series Relation
 
    The evs relation compares the condition ECTs with the ACS.
    // [TBC] There is only one ECT in the condition.  The description
@@ -3110,7 +3110,7 @@ Table of Contents
    series evaluation ends.  If the selection criteria are not satisfied,
    evaluation proceeds to the next series list entry.
 
-   Figure 15 shows the profiled Element ECT an Endorsed Value condition.
+   Figure 16 shows the profiled Element ECT an Endorsed Value condition.
 
    Endorsement-condition-ECT = ({
      environment: environment-map
@@ -3118,10 +3118,10 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }) .within E-ECT
 
-      Figure 15: Profiled ECT for Endorsed Values and Endorsed Values
+      Figure 16: Profiled ECT for Endorsed Values and Endorsed Values
                          Series tuples (condition)
 
-   Figure 16 shows the profiled Element ECT an Endorsed Value selection.
+   Figure 17 shows the profiled Element ECT an Endorsed Value selection.
 
    Endorsement-selection-ECT = ({
      environment: environment-map
@@ -3129,10 +3129,10 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }) .within E-ECT
 
-      Figure 16: Profiled ECT for Endorsed Values and Endorsed Values
+      Figure 17: Profiled ECT for Endorsed Values and Endorsed Values
                          Series tuples (selection)
 
-   Figure 17 shows the profiled Element ECT an Endorsed Value addition.
+   Figure 18 shows the profiled Element ECT an Endorsed Value addition.
 
    Endorsement-addition-ECT = ({
      environment: environment-map
@@ -3142,16 +3142,17 @@ Table of Contents
      ? profile: $profile-type-choice
    }) .within E-ECT
 
-      Figure 17: Profiled ECT for Endorsed Values and Endorsed Values
+      Figure 18: Profiled ECT for Endorsed Values and Endorsed Values
                           Series tuples (addition)
 
    *Transformation Algorithm.*
 
    A endorsed-triple-record is transformed into an ev-item as described
-   in Figure 18.  (The code reuses the mm_to_em function from Figure 4.)
+   in Figure 19.  (The code reuses the mms_to_ems function from
+   Figure 5.)
 
    func transform(
-       etr: endorsed-triple-record,
+       T: endorsed-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
    ) -> ev-item {
@@ -3159,15 +3160,12 @@ Table of Contents
 
        item.addition.cmtype = endorsements
 
-       item.addition.environment = etr.condition
-       item.condition.environment = etr.condition
+       item.addition.environment = T.condition
+       item.condition.environment = T.condition
 
-       FOREACH e IN etr.endorsement:
-           em := mm_to_em(e)
-           item.addition.element-list::APPEND(em)
+       item.addition.element-list = mms_to_ems(T.endorsement)
 
-       IF signer:
-           item.addition.authority = signer
+       item.addition.authority = signer
 
        IF profile:
            item.addition.profile = profile
@@ -3175,13 +3173,14 @@ Table of Contents
        return item
    }
 
-              Figure 18: Endorsed Value Triple Transformation
+              Figure 19: Endorsed Value Triple Transformation
 
    A conditional-endorsement-triple-record is transformed into an ev-
-   item as described in Figure 19.
+   item as described in Figure 20.  (The code reuses the mms_to_ems
+   function from Figure 5.)
 
    func transform(
-       cetr: conditional-endorsement-triple-record,
+       T: conditional-endorsement-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
    ) -> ev-item {
@@ -3189,20 +3188,15 @@ Table of Contents
 
        item.addition.cmtype = endorsements
 
-       FOREACH se IN cetr.conditions:
+       FOREACH se IN T.conditions:
            item.condition.environment = se.environment
-           FOREACH m IN se.claims-list:
-               em := mm_to_em(m)
-               item.condition.element-list::APPEND(em)
+           item.condition.element-list = mms_to_ems(se.claims-list)
 
-       FOREACH etr IN cetr.endorsements:
+       FOREACH etr IN T.endorsements:
            item.addition.environment = etr.condition
-           FOREACH e IN etr.endorsement:
-               em := mm_to_em(e)
-               item.addition.element-list::APPEND(em)
+           item.addition.element-list = mms_to_ems(etr.endorsement)
 
-       IF signer:
-           item.addition.authority = signer
+       item.addition.authority = signer
 
        IF profile:
            item.addition.profile = profile
@@ -3210,40 +3204,38 @@ Table of Contents
        return item
    }
 
-          Figure 19: Conditional Endorsement Triple Transformation
+          Figure 20: Conditional Endorsement Triple Transformation
 
    A conditional-endorsement-series-triple-record is transformed into an
-   evs-item as described in Figure 20.
+   evs-item as described in Figure 21.  (The code reuses the mm_to_em
+   and mms_to_ems functions from Figure 5.)
 
    func transform(
-       cestr: conditional-endorsement-series-triple-record,
+       T: conditional-endorsement-series-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
-   ) -> ev-item {
+   ) -> evs-item {
        item := evs-item::NEW()
 
        item.addition.cmtype = endorsements
 
-       item.condition.environment = cestr.condition.environment
+       item.condition.environment = T.condition.environment
 
-       FOREACH e IN cestr.condition.claims-list:
-           em := mm_to_em(e)
-           item.condition.element-list::APPEND(em)
+       item.condition.element-list = mms_to_ems(T.condition.claims-list)
 
-       IF cestr.condition.authorized-by:
-           item.condition.authority = cestr.condition.authorized-by
+       IF T.condition.authorized-by:
+           item.condition.authority = T.condition.authorized-by
 
-       FOREACH s in cestr.series:
-           item.series.selection.environment = cestr.condition.environment
+       FOREACH s in T.series:
+           item.series.selection.environment = T.condition.environment
            se := mm_to_em(s.selection)
            item.series.selection.element-list::APPEND(se)
 
-           item.series.addition.environment = cestr.condition.environment
+           item.series.addition.environment = T.condition.environment
            ae := mm_to_em(s.addition)
            item.series.addition.element-list::APPEND(ae)
 
-       IF signer:
-           item.series.addition.authority = signer
+       item.series.addition.authority = signer
 
        IF profile:
            item.series.addition.profile = profile
@@ -3251,7 +3243,110 @@ Table of Contents
        return item
    }
 
-      Figure 20: Conditional Endorsement Series Triple Transformation
+      Figure 21: Conditional Endorsement Series Triple Transformation
+
+8.2.2.2.4.  Keys
+
+   The internal representation of Attest Key and Device Identity triples
+   uses the keys relation (see Figure 22), whereby each key-item
+   corresponds to either an attest-key-triple-record or an identity-
+   triple-record.
+
+   keys = [ + key-item ]
+
+   key-item = {
+     condition: K-ECT
+     addition: K-ECT
+   }
+
+                          Figure 22: Keys Relation
+
+
+   // [TODO] Specialise condition/addition ECTs?
+
+   *Transformation Algorithm.*
+
+   An attest-key-triple-record or an identity-triple-record is
+   transformed into a key-item as described in Figure 23.
+
+   func transform(
+       T: attest-key-triple-record / identity-triple-record,
+       signer: [ + $crypto-key-type-choice ],
+       profile: $profile-type-choice
+   ) -> key-item {
+       item := key-item::NEW()
+
+       IF TYPEOF(T) == attest-key-triple-record:
+           item.condition.key-type = attest-key
+           item.addition.key-type = attest-key
+       ELIF TYPEOF(T) == identity-triple-record:
+           item.condition.key-type = identity-key
+           item.addition.key-type = identity-key
+
+       item.condition.environment = T.environment
+       item.condition.key-list = T.key-list
+
+       IF T.condition.mkey:
+           item.condition.key-id = T.condition.mkey
+
+       IF T.condition.authorized-by:
+           item.condition.authority = T.condition.authorized-by
+
+       item.addition.authority = signer
+
+       IF profile:
+           item.addition.profile = profile
+
+       return item
+   }
+
+                    Figure 23: Key Triple Transformation
+
+8.2.2.2.5.  Domains
+
+   The internal representation of Domain Membership and Domain
+   Dependency triples uses the dm relation (see Figure 24), whereby each
+   dm-item corresponds to either an domain-membership-triple-record or
+   an domain-dependency-triple-record.
+
+   dm = [ + dm-item ]
+
+   dm-item = {
+     domain: D-ECT
+   }
+
+                         Figure 24: Domain Relation
+
+   *Transformation Algorithm.*
+
+   A domain-membership-triple-record or a domain-dependency-triple-
+   record is transformed into a dm-item as described in Figure 25.
+
+   func transform(
+       T: domain-membership-triple-record / domain-dependency-triple-record
+       signer: [ + $crypto-key-type-choice ],
+       profile: $profile-type-choice
+   ) -> key-item {
+       item := dm-item::NEW()
+
+       IF TYPEOF(T) == domain-membership-triple-record:
+           item.kind = member
+           item.children = T.members
+       ELIF TYPEOF(T) == domain-dependency-triple-record
+           item.kind = trustee
+           item.children = T.trustees
+
+       item.environment = T.domain-id
+
+       item.authority = signer
+
+       IF profile:
+           item.profile = profile
+
+       return item
+   }
+
+                  Figure 25: Domain Triple Transformation
 
 8.2.2.3.  ACS
 
