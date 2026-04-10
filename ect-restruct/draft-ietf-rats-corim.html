@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 11 October 2026</td>
+<td class="center">Expires 12 October 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-04-09" class="published">9 April 2026</time>
+<time datetime="2026-04-10" class="published">10 April 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-10-11">11 October 2026</time></dd>
+<dd class="expires"><time datetime="2026-10-12">12 October 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 11 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 12 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -4616,7 +4616,7 @@ Evidence-addition-ECT = ({
   environment: environment-map
   element-list: [ + element-map ]
   authority: [ + $crypto-key-type-choice ]
-  cmtype: evidence
+  cmtype: 2
   ? profile: $profile-type-choice
 }) .within E-ECT
 </pre>
@@ -4684,7 +4684,7 @@ Reference-Value-addition-ECT = ({
   environment: environment-map
   element-list: [ + element-map ]
   authority: [ + $crypto-key-type-choice ]
-  cmtype: reference-values
+  cmtype: 0
   ? profile: $profile-type-choice
 }) .within E-ECT
 </pre>
@@ -4798,7 +4798,7 @@ Endorsement-addition-ECT = ({
   environment: environment-map
   element-list: [ + element-map ]
   authority: [ + $crypto-key-type-choice ]
-  cmtype: endorsements
+  cmtype: 1
   ? profile: $profile-type-choice
 }) .within E-ECT
 </pre>
@@ -4843,27 +4843,77 @@ Define constraints.
               <h6 id="name-domains">
 <a href="#section-8.2.2.2.5" class="section-number selfRef">8.2.2.2.5. </a><a href="#name-domains" class="section-name selfRef">Domains</a>
               </h6>
-<p id="section-8.2.2.2.5-1">The internal representation of Domain Membership and Domain Dependency triples uses the <code>dm</code> relation (see <a href="#fig-d" class="auto internal xref">Figure 19</a>), whereby each <code>dm-item</code> corresponds to either an <code>domain-membership-triple-record</code> or an <code>domain-dependency-triple-record</code>.<a href="#section-8.2.2.2.5-1" class="pilcrow">¶</a></p>
-<span id="name-domain-relation"></span><div id="fig-d">
+<p id="section-8.2.2.2.5-1">The internal representation of Domain Membership uses the <code>dm</code> relation (see <a href="#fig-dm" class="auto internal xref">Figure 19</a>), whereby each <code>domain-item</code> corresponds to an <code>domain-membership-triple-record</code><a href="#section-8.2.2.2.5-1" class="pilcrow">¶</a></p>
+<span id="name-domain-membership-relation"></span><div id="fig-dm">
 <figure id="figure-19">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.5-2.1">
 <pre>
-dm = [ + dm-item ]
+dm = [ + domain-item ]
 
-dm-item = {
-  domain: D-ECT
+domain-item = {
+  condition: Domain-condition-ECT
+  addition: Domain-addition-ECT
 }
 </pre>
 </div>
 <figcaption><a href="#figure-19" class="selfRef">Figure 19</a>:
-<a href="#name-domain-relation" class="selfRef">Domain Relation</a>
+<a href="#name-domain-membership-relation" class="selfRef">Domain Membership Relation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.2.2.5-3"><span class="cref">
-[TODO]
-Specialise condition/addition ECTs.
-Define constraints.
-</span><a href="#section-8.2.2.2.5-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.5-3">The internal representation of Domain Dependency uses the <code>dd</code> relation (see <a href="#fig-dd" class="auto internal xref">Figure 20</a>), whereby each <code>domain-item</code> corresponds to a <code>domain-dependency-triple-record</code>.<a href="#section-8.2.2.2.5-3" class="pilcrow">¶</a></p>
+<span id="name-domain-dependency-relation"></span><div id="fig-dd">
+<figure id="figure-20">
+                <div class="lang-cddl sourcecode" id="section-8.2.2.2.5-4.1">
+<pre>
+dd = [ + domain-item ]
+
+domain-item = {
+  condition: Domain-condition-ECT
+  addition: Domain-addition-ECT
+}
+</pre>
+</div>
+<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
+<a href="#name-domain-dependency-relation" class="selfRef">Domain Dependency Relation</a>
+                </figcaption></figure>
+</div>
+<p id="section-8.2.2.2.5-5"><a href="#fig-domain-ect-cond" class="auto internal xref">Figure 21</a> shows the profiled Domain ECT for both Domain Membership and Dependency conditions.<a href="#section-8.2.2.2.5-5" class="pilcrow">¶</a></p>
+<span id="name-profiled-ect-for-domain-mem"></span><div id="fig-domain-ect-cond">
+<figure id="figure-21">
+                <div class="lang-cddl sourcecode" id="section-8.2.2.2.5-6.1">
+<pre>
+Domain-condition-ECT = ({
+  children: [ + environment-map ]
+  authority: [ + $crypto-key-type-choice ]
+  kind: kind
+  ? profile: $profile-type-choice
+}) .within D-ECT
+</pre>
+</div>
+<figcaption><a href="#figure-21" class="selfRef">Figure 21</a>:
+<a href="#name-profiled-ect-for-domain-mem" class="selfRef">Profiled ECT for Domain Membership and Dependency (condition)</a>
+                </figcaption></figure>
+</div>
+<p id="section-8.2.2.2.5-7">Only the <code>children</code> are used for matching, not the <code>environment</code>.
+Therefore, the <code>environment</code> attribute is excluded from the ECT condition.<a href="#section-8.2.2.2.5-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.5-8"><a href="#fig-domain-ect-add" class="auto internal xref">Figure 22</a> shows the profiled Domain ECT for both Domain Membership and Dependency additions.<a href="#section-8.2.2.2.5-8" class="pilcrow">¶</a></p>
+<span id="name-profiled-ect-for-domain-memb"></span><div id="fig-domain-ect-add">
+<figure id="figure-22">
+                <div class="lang-cddl sourcecode" id="section-8.2.2.2.5-9.1">
+<pre>
+Domain-addition-ECT = ({
+  environment: environment-map
+  authority: [ + $crypto-key-type-choice ]
+  ? profile: $profile-type-choice
+  children: [ + environment-map ]
+  kind: kind
+}) .within D-ECT
+</pre>
+</div>
+<figcaption><a href="#figure-22" class="selfRef">Figure 22</a>:
+<a href="#name-profiled-ect-for-domain-memb" class="selfRef">Profiled ECT for Domain Membership and Dependency (addition)</a>
+                </figcaption></figure>
+</div>
 </section>
 </div>
 </section>
@@ -4873,15 +4923,15 @@ Define constraints.
             <h5 id="name-acs">
 <a href="#section-8.2.2.3" class="section-number selfRef">8.2.2.3. </a><a href="#name-acs" class="section-name selfRef">ACS</a>
             </h5>
-<p id="section-8.2.2.3-1">The ACS (see <a href="#fig-acs" class="auto internal xref">Figure 20</a>) is a list of ECTs that represent the Attester's actual state as determined by various authoritative sources (Reference Value Providers and Endorsers) collected by the Verifier.<a href="#section-8.2.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.3-1">The ACS (see <a href="#fig-acs" class="auto internal xref">Figure 23</a>) is a list of ECTs that represent the Attester's actual state as determined by various authoritative sources (Reference Value Providers and Endorsers) collected by the Verifier.<a href="#section-8.2.2.3-1" class="pilcrow">¶</a></p>
 <span id="name-acs-2"></span><div id="fig-acs">
-<figure id="figure-20">
+<figure id="figure-23">
               <div class="lang-cddl sourcecode" id="section-8.2.2.3-2.1">
 <pre>
 ACS = [ + ECT ]
 </pre>
 </div>
-<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
+<figcaption><a href="#figure-23" class="selfRef">Figure 23</a>:
 <a href="#name-acs-2" class="selfRef">ACS</a>
               </figcaption></figure>
 </div>
@@ -4931,10 +4981,10 @@ Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.2.3.
 <a href="#section-8.2.3.1.2" class="section-number selfRef">8.2.3.1.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
               </h6>
 <p id="section-8.2.3.1.2-1">Reference Values transformation involves mapping Reference Value triples into into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.2.2.2.2</a>).
-Each <code>reference-triple-record</code> is transformed into an <code>rv-item</code> as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 21</a>.
+Each <code>reference-triple-record</code> is transformed into an <code>rv-item</code> as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 24</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.2-1" class="pilcrow">¶</a></p>
 <span id="name-reference-value-triple-tran"></span><div id="algo-rv-transform">
-<figure id="figure-21">
+<figure id="figure-24">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.2-2.1">
 <pre>
 func transform(
@@ -4960,7 +5010,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-21" class="selfRef">Figure 21</a>:
+<figcaption><a href="#figure-24" class="selfRef">Figure 24</a>:
 <a href="#name-reference-value-triple-tran" class="selfRef">Reference Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -4974,10 +5024,10 @@ Since they may contain ranges rather than individual values (see, for example, <
 <a href="#section-8.2.3.1.3" class="section-number selfRef">8.2.3.1.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
               </h6>
 <p id="section-8.2.3.1.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.2.2.2.3</a>).<a href="#section-8.2.3.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.3-2">A <code>endorsed-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 22</a>.
+<p id="section-8.2.3.1.3-2">A <code>endorsed-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 25</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.3-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-value-triple-trans"></span><div id="algo-ev-transform">
-<figure id="figure-22">
+<figure id="figure-25">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.3-3.1">
 <pre>
 func transform(
@@ -5003,14 +5053,14 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-22" class="selfRef">Figure 22</a>:
+<figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
 <a href="#name-endorsed-value-triple-trans" class="selfRef">Endorsed Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.1.3-4">A <code>conditional-endorsement-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 23</a>.
+<p id="section-8.2.3.1.3-4">A <code>conditional-endorsement-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 26</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.3-4" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-trip"></span><div id="algo-ce-transform">
-<figure id="figure-23">
+<figure id="figure-26">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.3-5.1">
 <pre>
 func transform(
@@ -5039,14 +5089,14 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-23" class="selfRef">Figure 23</a>:
+<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
 <a href="#name-conditional-endorsement-trip" class="selfRef">Conditional Endorsement Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.1.3-6">A <code>conditional-endorsement-series-triple-record</code> is transformed into an <code>evs-item</code> as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 24</a>.
+<p id="section-8.2.3.1.3-6">A <code>conditional-endorsement-series-triple-record</code> is transformed into an <code>evs-item</code> as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 27</a>.
 (The code reuses the <code>mm_to_em</code> and <code>mms_to_ems</code> functions from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.3-6" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-seri"></span><div id="algo-ces-transform">
-<figure id="figure-24">
+<figure id="figure-27">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.3-7.1">
 <pre>
 func transform(
@@ -5083,7 +5133,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-24" class="selfRef">Figure 24</a>:
+<figcaption><a href="#figure-27" class="selfRef">Figure 27</a>:
 <a href="#name-conditional-endorsement-seri" class="selfRef">Conditional Endorsement Series Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5095,9 +5145,9 @@ func transform(
 <a href="#section-8.2.3.1.4" class="section-number selfRef">8.2.3.1.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
               </h6>
 <p id="section-8.2.3.1.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.2.2.2.4</a>).<a href="#section-8.2.3.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.4-2">An <code>attest-key-triple-record</code> or an <code>identity-triple-record</code> is transformed into a <code>key-item</code> as described in <a href="#algo-key-transform" class="auto internal xref">Figure 25</a>.<a href="#section-8.2.3.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.1.4-2">An <code>attest-key-triple-record</code> or an <code>identity-triple-record</code> is transformed into a <code>key-item</code> as described in <a href="#algo-key-transform" class="auto internal xref">Figure 28</a>.<a href="#section-8.2.3.1.4-2" class="pilcrow">¶</a></p>
 <span id="name-key-triple-transformation"></span><div id="algo-key-transform">
-<figure id="figure-25">
+<figure id="figure-28">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.4-3.1">
 <pre>
 func transform(
@@ -5132,7 +5182,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
+<figcaption><a href="#figure-28" class="selfRef">Figure 28</a>:
 <a href="#name-key-triple-transformation" class="selfRef">Key Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5144,9 +5194,9 @@ func transform(
 <a href="#section-8.2.3.1.5" class="section-number selfRef">8.2.3.1.5. </a><a href="#name-domains-2" class="section-name selfRef">Domains</a>
               </h6>
 <p id="section-8.2.3.1.5-1">Domains transformation involves mapping Domain Membership and Domain Dependency triples into into a <code>dm</code> relation (see <a href="#sec-ir-domains" class="auto internal xref">Section 8.2.2.2.5</a>).<a href="#section-8.2.3.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.5-2">A <code>domain-membership-triple-record</code> or a <code>domain-dependency-triple-record</code> is transformed into a <code>dm-item</code> as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 26</a>.<a href="#section-8.2.3.1.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.1.5-2">A <code>domain-membership-triple-record</code> or a <code>domain-dependency-triple-record</code> is transformed into a <code>dm-item</code> as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 29</a>.<a href="#section-8.2.3.1.5-2" class="pilcrow">¶</a></p>
 <span id="name-domain-triple-transformatio"></span><div id="algo-domain-transform">
-<figure id="figure-26">
+<figure id="figure-29">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.5-3.1">
 <pre>
 func transform(
@@ -5174,7 +5224,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
+<figcaption><a href="#figure-29" class="selfRef">Figure 29</a>:
 <a href="#name-domain-triple-transformatio" class="selfRef">Domain Triple Transformation</a>
                 </figcaption></figure>
 </div>

@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 11 October 2026                                          Linaro
+Expires: 12 October 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            9 April 2026
+                                                           10 April 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 October 2026.
+   This Internet-Draft will expire on 12 October 2026.
 
 Copyright Notice
 
@@ -2946,7 +2946,7 @@ Table of Contents
      environment: environment-map
      element-list: [ + element-map ]
      authority: [ + $crypto-key-type-choice ]
-     cmtype: evidence
+     cmtype: 2
      ? profile: $profile-type-choice
    }) .within E-ECT
 
@@ -2998,7 +2998,7 @@ Table of Contents
      environment: environment-map
      element-list: [ + element-map ]
      authority: [ + $crypto-key-type-choice ]
-     cmtype: reference-values
+     cmtype: 0
      ? profile: $profile-type-choice
    }) .within E-ECT
 
@@ -3088,7 +3088,7 @@ Table of Contents
      environment: environment-map
      element-list: [ + element-map ]
      authority: [ + $crypto-key-type-choice ]
-     cmtype: endorsements
+     cmtype: 1
      ? profile: $profile-type-choice
    }) .within E-ECT
 
@@ -3116,32 +3116,73 @@ Table of Contents
 
 8.2.2.2.5.  Domains
 
-   The internal representation of Domain Membership and Domain
-   Dependency triples uses the dm relation (see Figure 19), whereby each
-   dm-item corresponds to either an domain-membership-triple-record or
-   an domain-dependency-triple-record.
+   The internal representation of Domain Membership uses the dm relation
+   (see Figure 19), whereby each domain-item corresponds to an domain-
+   membership-triple-record
 
-   dm = [ + dm-item ]
+   dm = [ + domain-item ]
 
-   dm-item = {
-     domain: D-ECT
+   domain-item = {
+     condition: Domain-condition-ECT
+     addition: Domain-addition-ECT
    }
 
-                         Figure 19: Domain Relation
+                   Figure 19: Domain Membership Relation
 
+   The internal representation of Domain Dependency uses the dd relation
+   (see Figure 20), whereby each domain-item corresponds to a domain-
+   dependency-triple-record.
 
-   // [TODO] Specialise condition/addition ECTs.  Define constraints.
+   dd = [ + domain-item ]
+
+   domain-item = {
+     condition: Domain-condition-ECT
+     addition: Domain-addition-ECT
+   }
+
+                   Figure 20: Domain Dependency Relation
+
+   Figure 21 shows the profiled Domain ECT for both Domain Membership
+   and Dependency conditions.
+
+   Domain-condition-ECT = ({
+     children: [ + environment-map ]
+     authority: [ + $crypto-key-type-choice ]
+     kind: kind
+     ? profile: $profile-type-choice
+   }) .within D-ECT
+
+        Figure 21: Profiled ECT for Domain Membership and Dependency
+                                (condition)
+
+   Only the children are used for matching, not the environment.
+   Therefore, the environment attribute is excluded from the ECT
+   condition.
+
+   Figure 22 shows the profiled Domain ECT for both Domain Membership
+   and Dependency additions.
+
+   Domain-addition-ECT = ({
+     environment: environment-map
+     authority: [ + $crypto-key-type-choice ]
+     ? profile: $profile-type-choice
+     children: [ + environment-map ]
+     kind: kind
+   }) .within D-ECT
+
+        Figure 22: Profiled ECT for Domain Membership and Dependency
+                                 (addition)
 
 8.2.2.3.  ACS
 
-   The ACS (see Figure 20) is a list of ECTs that represent the
+   The ACS (see Figure 23) is a list of ECTs that represent the
    Attester's actual state as determined by various authoritative
    sources (Reference Value Providers and Endorsers) collected by the
    Verifier.
 
    ACS = [ + ECT ]
 
-                               Figure 20: ACS
+                               Figure 23: ACS
 
    The authority attribute in each ECT represents one such source, while
    the Claims in the ECT are statements made by that source about the
@@ -3192,7 +3233,7 @@ Table of Contents
    Reference Values transformation involves mapping Reference Value
    triples into into an rv relation (see Section 8.2.2.2.2).  Each
    reference-triple-record is transformed into an rv-item as described
-   in Figure 21.  (The code reuses the mms_to_ems function from
+   in Figure 24.  (The code reuses the mms_to_ems function from
    Figure 5.)
 
    func transform(
@@ -3217,7 +3258,7 @@ Table of Contents
        return item
    }
 
-              Figure 21: Reference Value Triple Transformation
+              Figure 24: Reference Value Triple Transformation
 
    Note that the ref-claims are not copied to the addition ECT.  Since
    they may contain ranges rather than individual values (see, for
@@ -3231,7 +3272,7 @@ Table of Contents
    triples into into ev or evs relations (see Section 8.2.2.2.3).
 
    A endorsed-triple-record is transformed into an ev-item as described
-   in Figure 22.  (The code reuses the mms_to_ems function from
+   in Figure 25.  (The code reuses the mms_to_ems function from
    Figure 5.)
 
    func transform(
@@ -3256,10 +3297,10 @@ Table of Contents
        return item
    }
 
-              Figure 22: Endorsed Value Triple Transformation
+              Figure 25: Endorsed Value Triple Transformation
 
    A conditional-endorsement-triple-record is transformed into an ev-
-   item as described in Figure 23.  (The code reuses the mms_to_ems
+   item as described in Figure 26.  (The code reuses the mms_to_ems
    function from Figure 5.)
 
    func transform(
@@ -3287,10 +3328,10 @@ Table of Contents
        return item
    }
 
-          Figure 23: Conditional Endorsement Triple Transformation
+          Figure 26: Conditional Endorsement Triple Transformation
 
    A conditional-endorsement-series-triple-record is transformed into an
-   evs-item as described in Figure 24.  (The code reuses the mm_to_em
+   evs-item as described in Figure 27.  (The code reuses the mm_to_em
    and mms_to_ems functions from Figure 5.)
 
    func transform(
@@ -3326,7 +3367,7 @@ Table of Contents
        return item
    }
 
-      Figure 24: Conditional Endorsement Series Triple Transformation
+      Figure 27: Conditional Endorsement Series Triple Transformation
 
 8.2.3.1.4.  Keys
 
@@ -3334,7 +3375,7 @@ Table of Contents
    triples into into a key relation (see Section 8.2.2.2.4).
 
    An attest-key-triple-record or an identity-triple-record is
-   transformed into a key-item as described in Figure 25.
+   transformed into a key-item as described in Figure 28.
 
    func transform(
        T: attest-key-triple-record / identity-triple-record,
@@ -3367,7 +3408,7 @@ Table of Contents
        return item
    }
 
-                    Figure 25: Key Triple Transformation
+                    Figure 28: Key Triple Transformation
 
 8.2.3.1.5.  Domains
 
@@ -3375,7 +3416,7 @@ Table of Contents
    Dependency triples into into a dm relation (see Section 8.2.2.2.5).
 
    A domain-membership-triple-record or a domain-dependency-triple-
-   record is transformed into a dm-item as described in Figure 26.
+   record is transformed into a dm-item as described in Figure 29.
 
    func transform(
        T: domain-membership-triple-record / domain-dependency-triple-record
@@ -3401,7 +3442,7 @@ Table of Contents
        return item
    }
 
-                  Figure 26: Domain Triple Transformation
+                  Figure 29: Domain Triple Transformation
 
 8.2.4.  Processing Algorithm
 
