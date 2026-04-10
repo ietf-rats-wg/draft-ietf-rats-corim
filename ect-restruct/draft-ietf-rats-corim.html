@@ -1353,10 +1353,10 @@ This document specifies the information elements for representing Endorsements a
                     <p id="section-toc.1-1.8.2.2.2.2.1"><a href="#section-8.2.2" class="auto internal xref">8.2.2</a>.  <a href="#name-data-structures" class="internal xref">Data Structures</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2.2.3">
-                    <p id="section-toc.1-1.8.2.2.2.3.1"><a href="#section-8.2.3" class="auto internal xref">8.2.3</a>.  <a href="#name-conceptual-messages-ingesti" class="internal xref">Conceptual Messages Ingestion</a></p>
+                    <p id="section-toc.1-1.8.2.2.2.3.1"><a href="#section-8.2.3" class="auto internal xref">8.2.3</a>.  <a href="#name-input-validation-and-transf" class="internal xref">Input Validation and Transformation (Phase 1)</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2.2.4">
-                    <p id="section-toc.1-1.8.2.2.2.4.1"><a href="#section-8.2.4" class="auto internal xref">8.2.4</a>.  <a href="#name-processing-algorithm" class="internal xref">Processing Algorithm</a></p>
+                    <p id="section-toc.1-1.8.2.2.2.4.1"><a href="#section-8.2.4" class="auto internal xref">8.2.4</a>.  <a href="#name-acs-augmentation-phases-2-3" class="internal xref">ACS Augmentation (Phases 2, 3 and 4)</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2.2.5">
                     <p id="section-toc.1-1.8.2.2.2.5.1"><a href="#section-8.2.5" class="auto internal xref">8.2.5</a>.  <a href="#name-handoff" class="internal xref">Handoff</a></p>
@@ -4450,7 +4450,7 @@ func mm_to_em(mm: measurement-map) -&gt; element-map {
 
     em.element-claims = mm.mval
 
-    return em
+    RETURN em
 }
 
 func mms_to_ems(mms: [ + measurement-map ]) -&gt; [ + element-map ] {
@@ -4460,7 +4460,7 @@ func mms_to_ems(mms: [ + measurement-map ]) -&gt; [ + element-map ] {
         em := mm_to_em(mm)
         ems::APPEND(em)
 
-    return ems
+    RETURN ems
 }
 </pre>
 </div>
@@ -4843,7 +4843,7 @@ Define constraints.
               <h6 id="name-domains">
 <a href="#section-8.2.2.2.5" class="section-number selfRef">8.2.2.2.5. </a><a href="#name-domains" class="section-name selfRef">Domains</a>
               </h6>
-<p id="section-8.2.2.2.5-1">The internal representation of Domain Membership uses the <code>dm</code> relation (see <a href="#fig-dm" class="auto internal xref">Figure 19</a>), whereby each <code>domain-item</code> corresponds to an <code>domain-membership-triple-record</code><a href="#section-8.2.2.2.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.2.5-1">The internal representation of Domain Membership uses the <code>dm</code> relation (see <a href="#fig-dm" class="auto internal xref">Figure 19</a>), whereby each <code>domain-item</code> corresponds to a <code>domain-membership-triple-record</code><a href="#section-8.2.2.2.5-1" class="pilcrow">¶</a></p>
 <span id="name-domain-membership-relation"></span><div id="fig-dm">
 <figure id="figure-19">
                 <div class="lang-cddl sourcecode" id="section-8.2.2.2.5-2.1">
@@ -4943,49 +4943,67 @@ In this way, the ACS represents the CoRIM processor's output interface.<a href="
 </div>
 </section>
 </div>
-<div id="conceptual-messages-ingestion">
+<div id="input-validation-and-transformation-phase-1">
 <section id="section-8.2.3">
-          <h4 id="name-conceptual-messages-ingesti">
-<a href="#section-8.2.3" class="section-number selfRef">8.2.3. </a><a href="#name-conceptual-messages-ingesti" class="section-name selfRef">Conceptual Messages Ingestion</a>
+          <h4 id="name-input-validation-and-transf">
+<a href="#section-8.2.3" class="section-number selfRef">8.2.3. </a><a href="#name-input-validation-and-transf" class="section-name selfRef">Input Validation and Transformation (Phase 1)</a>
           </h4>
-<p id="section-8.2.3-1">This section describes in details the phase 1 described at a high level in <a href="#sec-appraisal-phases" class="auto internal xref">Section 8.1</a>.<a href="#section-8.2.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-8.2.3-2.1">
-              <p id="section-8.2.3-2.1.1">describe the transformation process for each "relation" using pseudo-code<a href="#section-8.2.3-2.1.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
-<div id="conceptual-messages-transformation">
-<section id="section-8.2.3.1">
-            <h5 id="name-conceptual-messages-transfo">
-<a href="#section-8.2.3.1" class="section-number selfRef">8.2.3.1. </a><a href="#name-conceptual-messages-transfo" class="section-name selfRef">Conceptual Messages Transformation</a>
-            </h5>
-<p id="section-8.2.3.1-1">This section describes how the relevant RATS Conceptual Messages are transformed upon ingestion by the CoRIM processor.<a href="#section-8.2.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1-2"><span class="cref">
+<p id="section-8.2.3-1">This section provides a detailed description of Phase 1, which was outlined at a high level in <a href="#sec-appraisal-phases" class="auto internal xref">Section 8.1</a>, explaining how the relevant Conceptual Messages are ingested by the CoRIM processor.<a href="#section-8.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.3-2"><span class="cref">
 [TODO]
-</span><a href="#section-8.2.3.1-2" class="pilcrow">¶</a></p>
-<div id="evidence">
-<section id="section-8.2.3.1.1">
+</span><a href="#section-8.2.3-2" class="pilcrow">¶</a></p>
+<div id="input-validation">
+<section id="section-8.2.3.1">
+            <h5 id="name-input-validation">
+<a href="#section-8.2.3.1" class="section-number selfRef">8.2.3.1. </a><a href="#name-input-validation" class="section-name selfRef">Input Validation</a>
+            </h5>
+<p id="section-8.2.3.1-1"><span class="cref">
+[TODO]
+</span><a href="#section-8.2.3.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="evidence-collection">
+<section id="section-8.2.3.2">
+            <h5 id="name-evidence-collection">
+<a href="#section-8.2.3.2" class="section-number selfRef">8.2.3.2. </a><a href="#name-evidence-collection" class="section-name selfRef">Evidence Collection</a>
+            </h5>
+<p id="section-8.2.3.2-1"><span class="cref">
+[TODO]
+</span><a href="#section-8.2.3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="input-transformation">
+<section id="section-8.2.3.3">
+            <h5 id="name-input-transformation">
+<a href="#section-8.2.3.3" class="section-number selfRef">8.2.3.3. </a><a href="#name-input-transformation" class="section-name selfRef">Input Transformation</a>
+            </h5>
+<p id="section-8.2.3.3-1">This section describes how the relevant RATS Conceptual Messages are transformed upon ingestion by the CoRIM processor.<a href="#section-8.2.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3-2"><span class="cref">
+[TODO]
+</span><a href="#section-8.2.3.3-2" class="pilcrow">¶</a></p>
+<div id="sec-trans-evidence">
+<section id="section-8.2.3.3.1">
               <h6 id="name-evidence-2">
-<a href="#section-8.2.3.1.1" class="section-number selfRef">8.2.3.1.1. </a><a href="#name-evidence-2" class="section-name selfRef">Evidence</a>
+<a href="#section-8.2.3.3.1" class="section-number selfRef">8.2.3.3.1. </a><a href="#name-evidence-2" class="section-name selfRef">Evidence</a>
               </h6>
-<p id="section-8.2.3.1.1-1">Evidence transformation involves mapping Evidence into one or more <code>Evidence-ECT</code>s (see <a href="#sec-ir-evidence" class="auto internal xref">Section 8.2.2.2.1</a>), and adding them to the <code>addition</code> list of an <code>ae</code> relation.
+<p id="section-8.2.3.3.1-1">Evidence transformation involves mapping Evidence into one or more <code>Evidence-ECT</code>s (see <a href="#sec-ir-evidence" class="auto internal xref">Section 8.2.2.2.1</a>), and adding them to the <code>addition</code> list of an <code>ae</code> relation.
 Evidence transformation algorithms may be well-known (e.g., <span>[<a href="#I-D.ietf-rats-evidence-trans" class="cite xref">I-D.ietf-rats-evidence-trans</a>]</span>), defined by a CoRIM profile (see <a href="#sec-corim-profile-types" class="auto internal xref">Section 4.1.4</a>), or supplied dynamically.
-Evidence transformation algorithms are out of scope for this document.<a href="#section-8.2.3.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.1-2">For successful transformation, Evidence MUST contain a relevant value for all the mandatory <code>Evidence-ECT</code> attributes.
-Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.2.3.1.1-2" class="pilcrow">¶</a></p>
+Evidence transformation algorithms are out of scope for this document.<a href="#section-8.2.3.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.1-2">For successful transformation, Evidence MUST contain a relevant value for all the mandatory <code>Evidence-ECT</code> attributes.
+Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.2.3.3.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="reference-values">
-<section id="section-8.2.3.1.2">
+<section id="section-8.2.3.3.2">
               <h6 id="name-reference-values-2">
-<a href="#section-8.2.3.1.2" class="section-number selfRef">8.2.3.1.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
+<a href="#section-8.2.3.3.2" class="section-number selfRef">8.2.3.3.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
               </h6>
-<p id="section-8.2.3.1.2-1">Reference Values transformation involves mapping Reference Value triples into into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.2.2.2.2</a>).
+<p id="section-8.2.3.3.2-1">Reference Values transformation involves mapping Reference Value triples into into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.2.2.2.2</a>).
 Each <code>reference-triple-record</code> is transformed into an <code>rv-item</code> as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 24</a>.
-(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.2-1" class="pilcrow">¶</a></p>
+(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.3.2-1" class="pilcrow">¶</a></p>
 <span id="name-reference-value-triple-tran"></span><div id="algo-rv-transform">
 <figure id="figure-24">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.2-2.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.2-2.1">
 <pre>
 func transform(
     T: reference-triple-record,
@@ -5006,7 +5024,7 @@ func transform(
     IF profile:
         item.addition.profile = profile
 
-    return item
+    RETURN item
 }
 </pre>
 </div>
@@ -5014,21 +5032,21 @@ func transform(
 <a href="#name-reference-value-triple-tran" class="selfRef">Reference Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.1.2-3">Note that the <code>ref-claims</code> are not copied to the addition ECT.
-Since they may contain ranges rather than individual values (see, for example, <a href="#sec-comid-int-range" class="auto internal xref">Section 5.1.4.8</a>), we need to wait until the condition is satisfied by an Evidence ECT before we can copy the matched claims from the Evidence ECT to the addition ECT.<a href="#section-8.2.3.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.2-3">Note that the <code>ref-claims</code> are not copied to the addition ECT.
+Since they may contain ranges rather than individual values (see, for example, <a href="#sec-comid-int-range" class="auto internal xref">Section 5.1.4.8</a>), we need to wait until the condition is satisfied by an Evidence ECT before we can copy the matched claims from the Evidence ECT to the addition ECT.<a href="#section-8.2.3.3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="endorsed-values">
-<section id="section-8.2.3.1.3">
+<section id="section-8.2.3.3.3">
               <h6 id="name-endorsed-values-2">
-<a href="#section-8.2.3.1.3" class="section-number selfRef">8.2.3.1.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
+<a href="#section-8.2.3.3.3" class="section-number selfRef">8.2.3.3.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
               </h6>
-<p id="section-8.2.3.1.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.2.2.2.3</a>).<a href="#section-8.2.3.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.3-2">A <code>endorsed-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 25</a>.
-(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.2.2.2.3</a>).<a href="#section-8.2.3.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.3-2">A <code>endorsed-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 25</a>.
+(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.3.3-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-value-triple-trans"></span><div id="algo-ev-transform">
 <figure id="figure-25">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.3-3.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-3.1">
 <pre>
 func transform(
     T: endorsed-triple-record,
@@ -5049,7 +5067,7 @@ func transform(
     IF profile:
         item.addition.profile = profile
 
-    return item
+    RETURN item
 }
 </pre>
 </div>
@@ -5057,11 +5075,11 @@ func transform(
 <a href="#name-endorsed-value-triple-trans" class="selfRef">Endorsed Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.1.3-4">A <code>conditional-endorsement-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 26</a>.
-(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.3-4">A <code>conditional-endorsement-triple-record</code> is transformed into an <code>ev-item</code> as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 26</a>.
+(The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.3.3-4" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-trip"></span><div id="algo-ce-transform">
 <figure id="figure-26">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.3-5.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-5.1">
 <pre>
 func transform(
     T: conditional-endorsement-triple-record,
@@ -5085,7 +5103,7 @@ func transform(
     IF profile:
         item.addition.profile = profile
 
-    return item
+    RETURN item
 }
 </pre>
 </div>
@@ -5093,11 +5111,11 @@ func transform(
 <a href="#name-conditional-endorsement-trip" class="selfRef">Conditional Endorsement Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.1.3-6">A <code>conditional-endorsement-series-triple-record</code> is transformed into an <code>evs-item</code> as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 27</a>.
-(The code reuses the <code>mm_to_em</code> and <code>mms_to_ems</code> functions from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.1.3-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.3-6">A <code>conditional-endorsement-series-triple-record</code> is transformed into an <code>evs-item</code> as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 27</a>.
+(The code reuses the <code>mm_to_em</code> and <code>mms_to_ems</code> functions from <a href="#algo-mm-to-em" class="auto internal xref">Figure 5</a>.)<a href="#section-8.2.3.3.3-6" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-seri"></span><div id="algo-ces-transform">
 <figure id="figure-27">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.3-7.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-7.1">
 <pre>
 func transform(
     T: conditional-endorsement-series-triple-record,
@@ -5129,7 +5147,7 @@ func transform(
     IF profile:
         item.series.addition.profile = profile
 
-    return item
+    RETURN item
 }
 </pre>
 </div>
@@ -5140,15 +5158,15 @@ func transform(
 </section>
 </div>
 <div id="keys">
-<section id="section-8.2.3.1.4">
+<section id="section-8.2.3.3.4">
               <h6 id="name-keys-2">
-<a href="#section-8.2.3.1.4" class="section-number selfRef">8.2.3.1.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
+<a href="#section-8.2.3.3.4" class="section-number selfRef">8.2.3.3.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
               </h6>
-<p id="section-8.2.3.1.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.2.2.2.4</a>).<a href="#section-8.2.3.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.4-2">An <code>attest-key-triple-record</code> or an <code>identity-triple-record</code> is transformed into a <code>key-item</code> as described in <a href="#algo-key-transform" class="auto internal xref">Figure 28</a>.<a href="#section-8.2.3.1.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.2.2.2.4</a>).<a href="#section-8.2.3.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.4-2">An <code>attest-key-triple-record</code> or an <code>identity-triple-record</code> is transformed into a <code>key-item</code> as described in <a href="#algo-key-transform" class="auto internal xref">Figure 28</a>.<a href="#section-8.2.3.3.4-2" class="pilcrow">¶</a></p>
 <span id="name-key-triple-transformation"></span><div id="algo-key-transform">
 <figure id="figure-28">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.4-3.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.4-3.1">
 <pre>
 func transform(
     T: attest-key-triple-record / identity-triple-record,
@@ -5178,7 +5196,7 @@ func transform(
     IF profile:
         item.addition.profile = profile
 
-    return item
+    RETURN item
 }
 </pre>
 </div>
@@ -5189,38 +5207,37 @@ func transform(
 </section>
 </div>
 <div id="domains">
-<section id="section-8.2.3.1.5">
+<section id="section-8.2.3.3.5">
               <h6 id="name-domains-2">
-<a href="#section-8.2.3.1.5" class="section-number selfRef">8.2.3.1.5. </a><a href="#name-domains-2" class="section-name selfRef">Domains</a>
+<a href="#section-8.2.3.3.5" class="section-number selfRef">8.2.3.3.5. </a><a href="#name-domains-2" class="section-name selfRef">Domains</a>
               </h6>
-<p id="section-8.2.3.1.5-1">Domains transformation involves mapping Domain Membership and Domain Dependency triples into into a <code>dm</code> relation (see <a href="#sec-ir-domains" class="auto internal xref">Section 8.2.2.2.5</a>).<a href="#section-8.2.3.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.1.5-2">A <code>domain-membership-triple-record</code> or a <code>domain-dependency-triple-record</code> is transformed into a <code>dm-item</code> as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 29</a>.<a href="#section-8.2.3.1.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.5-1">Domains transformation involves mapping Domain Membership and Domain Dependency triples into a <code>dm</code> or <code>dd</code> relation (see <a href="#sec-ir-domains" class="auto internal xref">Section 8.2.2.2.5</a>).<a href="#section-8.2.3.3.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.5-2">In any case, before being added to the respective relation, a <code>domain-membership-triple-record</code> or a <code>domain-dependency-triple-record</code> is transformed into a <code>domain-item</code> as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 29</a>.<a href="#section-8.2.3.3.5-2" class="pilcrow">¶</a></p>
 <span id="name-domain-triple-transformatio"></span><div id="algo-domain-transform">
 <figure id="figure-29">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.1.5-3.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.5-3.1">
 <pre>
 func transform(
     T: domain-membership-triple-record / domain-dependency-triple-record
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
-) -&gt; key-item {
-    item := dm-item::NEW()
+) -&gt; domain-item {
+    item := domain-item::NEW()
 
     IF TYPEOF(T) == domain-membership-triple-record:
-        item.kind = member
-        item.children = T.members
+        item.condition.kind = member
+        item.condition.children = T.members
     ELIF TYPEOF(T) == domain-dependency-triple-record
-        item.kind = trustee
-        item.children = T.trustees
+        item.condition.kind = trustee
+        item.condition.children = T.trustees
 
-    item.environment = T.domain-id
-
-    item.authority = signer
+    item.addition.environment = T.domain-id
+    item.addition.authority = signer
 
     IF profile:
-        item.profile = profile
+        item.addition.profile = profile
 
-    return item
+    RETURN item
 }
 </pre>
 </div>
@@ -5232,35 +5249,95 @@ func transform(
 </div>
 </section>
 </div>
+<div id="appraisal-context-initialization">
+<section id="section-8.2.3.4">
+            <h5 id="name-appraisal-context-initializ">
+<a href="#section-8.2.3.4" class="section-number selfRef">8.2.3.4. </a><a href="#name-appraisal-context-initializ" class="section-name selfRef">Appraisal Context Initialization</a>
+            </h5>
+<p id="section-8.2.3.4-1">At the end of Phase 1 all of the extracted and validated tags are loaded into an "appraisal context", consisting of the ACS and the Staging Area.
+The ACS is initialized with all the addition ECTs in the <code>ev</code> relation:<a href="#section-8.2.3.4-1" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-8.2.3.4-2">
+<pre>
+func init_acs(ae: ae) -&gt; ACS {
+    FOREACH item IN ae:
+        acs::APPEND(item.addition)
+
+    RETURN acs
+}
+</pre><a href="#section-8.2.3.4-2" class="pilcrow">¶</a>
+</div>
+<p id="section-8.2.3.4-3">The Staging Area is loaded with <code>rv</code>, <code>ev</code>, <code>evs</code>, <code>keys</code>, <code>dm</code> and <code>dd</code> relations in that order.<a href="#section-8.2.3.4-3" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-8.2.3.4-4">
+<pre>
+func init_staging_area(
+    rv: rv,
+    ev: ev,
+    evs: evs,
+    keys: keys,
+    dm: dm,
+    dd: dd,
+) -&gt; StagingArea {
+    sa := StagingArea::NEW()
+
+    sa::APPEND(rv)
+
+    IF ev:   sa::APPEND(ev)
+    IF evs:  sa::APPEND(evs)
+    IF keys: sa::APPEND(keys)
+    IF dm:   sa::APPEND(dm)
+    IF dd:   sa::APPEND(dd)
+
+    RETURN sa
+}
+</pre><a href="#section-8.2.3.4-4" class="pilcrow">¶</a>
+</div>
+<p id="section-8.2.3.4-5">Note that all but the <code>rv</code> relation are mandatory.<a href="#section-8.2.3.4-5" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="sec-match-and-augment">
 <section id="section-8.2.4">
-          <h4 id="name-processing-algorithm">
-<a href="#section-8.2.4" class="section-number selfRef">8.2.4. </a><a href="#name-processing-algorithm" class="section-name selfRef">Processing Algorithm</a>
+          <h4 id="name-acs-augmentation-phases-2-3">
+<a href="#section-8.2.4" class="section-number selfRef">8.2.4. </a><a href="#name-acs-augmentation-phases-2-3" class="section-name selfRef">ACS Augmentation (Phases 2, 3 and 4)</a>
           </h4>
-<p id="section-8.2.4-1">(i.e., how to "match &amp; augment" the ACS)<a href="#section-8.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4-1">This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester.<a href="#section-8.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4-2">At a high level, the process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
+If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
+Once all the relations in the Staging Area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.<a href="#section-8.2.4-2" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-8.2.4-3">
+<pre>
+func match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
+    FOREACH rel IN sa:
+        FOREACH item IN rel:
+            IF acs::MATCH(item.condition):
+                acs::APPEND(item.addition)
+
+    RETURN acs
+}
+</pre><a href="#section-8.2.4-3" class="pilcrow">¶</a>
+</div>
 <ul class="normal">
-<li class="normal" id="section-8.2.4-2.1">
-              <p id="section-8.2.4-2.1.1">describe the processing algorithm<a href="#section-8.2.4-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4-4.1">
+              <p id="section-8.2.4-4.1.1">describe the processing algorithm<a href="#section-8.2.4-4.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4-2.1.2.1">
-                  <p id="section-8.2.4-2.1.2.1.1">the core principles<a href="#section-8.2.4-2.1.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4-4.1.2.1">
+                  <p id="section-8.2.4-4.1.2.1.1">the core principles<a href="#section-8.2.4-4.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-8.2.4-2.1.2.2">
-                  <p id="section-8.2.4-2.1.2.2.1">the high level flow<a href="#section-8.2.4-2.1.2.2.1" class="pilcrow">¶</a></p>
+                <li class="normal" id="section-8.2.4-4.1.2.2">
+                  <p id="section-8.2.4-4.1.2.2.1">the high level flow<a href="#section-8.2.4-4.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-8.2.4-2.1.2.3">
-                  <p id="section-8.2.4-2.1.2.3.1">for each "phase"<a href="#section-8.2.4-2.1.2.3.1" class="pilcrow">¶</a></p>
+                <li class="normal" id="section-8.2.4-4.1.2.3">
+                  <p id="section-8.2.4-4.1.2.3.1">for each "phase"<a href="#section-8.2.4-4.1.2.3.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4-2.1.2.3.2.1">
-                      <p id="section-8.2.4-2.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4-2.1.2.3.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4-4.1.2.3.2.1">
+                      <p id="section-8.2.4-4.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4-4.1.2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                    <li class="normal" id="section-8.2.4-2.1.2.3.2.2">
-                      <p id="section-8.2.4-2.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4-2.1.2.3.2.2.1" class="pilcrow">¶</a></p>
+                    <li class="normal" id="section-8.2.4-4.1.2.3.2.2">
+                      <p id="section-8.2.4-4.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4-4.1.2.3.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                    <li class="normal" id="section-8.2.4-2.1.2.3.2.3">
-                      <p id="section-8.2.4-2.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4-2.1.2.3.2.3.1" class="pilcrow">¶</a></p>
+                    <li class="normal" id="section-8.2.4-4.1.2.3.2.3">
+                      <p id="section-8.2.4-4.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4-4.1.2.3.2.3.1" class="pilcrow">¶</a></p>
 </li>
                   </ul>
 </li>
