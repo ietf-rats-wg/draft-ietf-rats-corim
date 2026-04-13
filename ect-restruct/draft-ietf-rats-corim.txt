@@ -2722,6 +2722,11 @@ Table of Contents
    those containing Evidence Claims, are typically obtained from CoMID
    triples.
 
+   Claims in ECTs have a both name and a value.  The value represents
+   the state associated with the Claim.  This specification does not
+   assign any special meaning to Claim names; it only specifies the
+   rules for determining whether two Claim names are the same.
+
    An ECT (Figure 11) can be one of the following specializations:
 
    *  E-ECT (Element ECT): used to represent Evidence, Reference Value
@@ -3215,6 +3220,11 @@ Table of Contents
    phases.  In this way, the ACS represents the CoRIM processor's output
    interface.
 
+   The order of the ECTs in the ACS is not significant.  Logically, as
+   the ACS represents the conjunction of all claims, adding an ECT entry
+   to the existing ACS at the end has the same effect as inserting it
+   anywhere else.
+
 8.2.3.  Input Validation and Transformation (Phase 1)
 
    This section provides a detailed description of Phase 1, which was
@@ -3530,10 +3540,12 @@ Table of Contents
    conditions against the current state of the ACS according to the
    matching rules defined for each relation.  If there is a match, the
    additions in the matched relation are added to the ACS, thereby
-   providing its "augmentation".  Once all the relations in the Staging
-   Area have been processed, the algorithm terminates and the computed
-   ACS is handed over to the subsequent appraisal phases by the CoRIM
-   processor.
+   providing its "augmentation".  Otherwise, the algorithm moves on to
+   the next relation.  Any augmentations to the ACS (i.e., the
+   acs::APPEND operation in Figure 42) MUST be atomic.  Once all the
+   relations in the Staging Area have been processed, the algorithm
+   terminates and the computed ACS is handed over to the subsequent
+   appraisal phases by the CoRIM processor.
 
    func match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
        FOREACH rel IN sa:
@@ -3545,6 +3557,43 @@ Table of Contents
    }
 
                    Figure 42: Match and Augment Algorithm
+
+   The acs::MATCH operation depends on the type of relation.  The
+   matching logic for each type of relation is described in the
+   following sections.
+
+8.2.4.1.  Ordering of Relations
+
+   The order in which items within relations are processed is important.
+   Processing a relation may result in ACS modifications that affect the
+   matching behaviour of other relations.  The verifier MUST ensure that
+   any relation including a matching condition is processed after any
+   other relation that modifies or adds an ACS entry with an environment
+   matching the condition.  This can be achieved by sorting the
+   relations before processing, repeating the processing of some
+   relations after ACS modifications, or using other algorithms.  The
+   "match and augment" algorithm described in Figure 42 assumes that
+   relations have been topologically sorted prior to loading into the
+   Staging Area (Figure 41).
+
+8.2.4.2.  Reference Values Corroboration and Augmentation (Phase 3)
+
+   Corroboration is the process of determining whether actual Attester
+   state (as contained in the ACS) can be satisfied by Reference Values.
+
+   Reference Values are matched with ACS entries by iterating through
+   the rv list.  For each rv entry, the condition ECT is compared
+   against an ACS ECT with cmtype 2 (i.e., evidence).
+
+   If the two match, the following two steps are performed:
+
+   1.  The element-list of the matched ACS ECT is copied to the element-
+       list of the addition ECT.
+
+   2.  The addition ECT is copied to the ACS.
+
+
+   // [TODO]
 
    *  describe the processing algorithm
 

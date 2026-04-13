@@ -4386,21 +4386,24 @@ The computed ACS can then be handed over to subsequent appraisal phases, such as
 <p id="section-8.2.2.1-1">The Environment-Claim Tuple is a core internal construct of the CoRIM Verifier.
 It is used to describe a feature (or "Claim") of the appraised environment alongside relevant metadata.
 All ECTs, except those containing Evidence Claims, are typically obtained from CoMID triples.<a href="#section-8.2.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.1-2">An ECT (<a href="#fig-ect" class="auto internal xref">Figure 11</a>) can be one of the following specializations:<a href="#section-8.2.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1-2">Claims in ECTs have a both name and a value.
+The value represents the state associated with the Claim.
+This specification does not assign any special meaning to Claim names; it only specifies the rules for determining whether two Claim names are the same.<a href="#section-8.2.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1-3">An ECT (<a href="#fig-ect" class="auto internal xref">Figure 11</a>) can be one of the following specializations:<a href="#section-8.2.2.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.2.1-3.1">
-                <p id="section-8.2.2.1-3.1.1"><code>E-ECT</code> (Element ECT): used to represent Evidence, Reference Value and Endorsement Claims, as detailed in <a href="#sec-element-ect" class="auto internal xref">Section 8.2.2.1.1</a>;<a href="#section-8.2.2.1-3.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.2.1-4.1">
+                <p id="section-8.2.2.1-4.1.1"><code>E-ECT</code> (Element ECT): used to represent Evidence, Reference Value and Endorsement Claims, as detailed in <a href="#sec-element-ect" class="auto internal xref">Section 8.2.2.1.1</a>;<a href="#section-8.2.2.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-8.2.2.1-3.2">
-                <p id="section-8.2.2.1-3.2.1"><code>D-ECT</code> (Domain ECT): used to represent domain membership and trust dependencies Claims, as detailed in <a href="#sec-domain-ect" class="auto internal xref">Section 8.2.2.1.2</a>;<a href="#section-8.2.2.1-3.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-8.2.2.1-4.2">
+                <p id="section-8.2.2.1-4.2.1"><code>D-ECT</code> (Domain ECT): used to represent domain membership and trust dependencies Claims, as detailed in <a href="#sec-domain-ect" class="auto internal xref">Section 8.2.2.1.2</a>;<a href="#section-8.2.2.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-8.2.2.1-3.3">
-                <p id="section-8.2.2.1-3.3.1"><code>K-ECT</code> (Key ECT): used to represent Identity and Attestation keys, as detailed in <a href="#sec-key-ect" class="auto internal xref">Section 8.2.2.1.3</a>.<a href="#section-8.2.2.1-3.3.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-8.2.2.1-4.3">
+                <p id="section-8.2.2.1-4.3.1"><code>K-ECT</code> (Key ECT): used to represent Identity and Attestation keys, as detailed in <a href="#sec-key-ect" class="auto internal xref">Section 8.2.2.1.3</a>.<a href="#section-8.2.2.1-4.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <span id="name-ect-definition"></span><div id="fig-ect">
 <figure id="figure-11">
-              <div class="lang-cddl sourcecode" id="section-8.2.2.1-4.1">
+              <div class="lang-cddl sourcecode" id="section-8.2.2.1-5.1">
 <pre>
 ECT = E-ECT /
       D-ECT /
@@ -4411,10 +4414,10 @@ ECT = E-ECT /
 <a href="#name-ect-definition" class="selfRef">ECT definition</a>
               </figcaption></figure>
 </div>
-<p id="section-8.2.2.1-5">While the internal representation of each specialization varies, all ECT specializations share the attributes captured in the <code>ECT-common</code> group (<a href="#fig-ect-common" class="auto internal xref">Figure 12</a>).<a href="#section-8.2.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1-6">While the internal representation of each specialization varies, all ECT specializations share the attributes captured in the <code>ECT-common</code> group (<a href="#fig-ect-common" class="auto internal xref">Figure 12</a>).<a href="#section-8.2.2.1-6" class="pilcrow">¶</a></p>
 <span id="name-ect-common-attributes"></span><div id="fig-ect-common">
 <figure id="figure-12">
-              <div class="lang-cddl sourcecode" id="section-8.2.2.1-6.1">
+              <div class="lang-cddl sourcecode" id="section-8.2.2.1-7.1">
 <pre>
 ECT-common = (
   ? environment: environment-map
@@ -4428,30 +4431,30 @@ ECT-common = (
               </figcaption></figure>
 </div>
 <ul class="normal">
-<li class="normal" id="section-8.2.2.1-7.1">
-                <p id="section-8.2.2.1-7.1.1"><code>environment</code>: Identifies the Environment that is the subject of the stated Claims.
+<li class="normal" id="section-8.2.2.1-8.1">
+                <p id="section-8.2.2.1-8.1.1"><code>environment</code>: Identifies the Environment that is the subject of the stated Claims.
 In an Element ECT, it is the target environment to which the elements belong.
 In a Domain ECT, it is the parent environment to which the child domains are related.
 In a Key ECT, it is the environment to which the keys belong.
-In all cases, Environments are identified using instance, class, or group identifiers.<a href="#section-8.2.2.1-7.1.1" class="pilcrow">¶</a></p>
+In all cases, Environments are identified using instance, class, or group identifiers.<a href="#section-8.2.2.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-8.2.2.1-7.2">
-                <p id="section-8.2.2.1-7.2.1"><code>authority</code>: Identifies the entity that issued the tuple.
+              <li class="normal" id="section-8.2.2.1-8.2">
+                <p id="section-8.2.2.1-8.2.1"><code>authority</code>: Identifies the entity that issued the tuple.
 The authority of a given ECT is typically established through a digital signature on the Claim.
 For instance, a signature of the authoritative supply chain entity over the CoRIM containing the triple from which the ECT was obtained, or the Attesting Environment that signed the Evidence from which the ECT is derived.
 It is represented as the key material by which the authority (and corresponding provenance) of the tuple can be determined.
 A typical example is the authority's PKIX certificate.
-This is a mandatory attribute in an ECT.<a href="#section-8.2.2.1-7.2.1" class="pilcrow">¶</a></p>
+This is a mandatory attribute in an ECT.<a href="#section-8.2.2.1-8.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-8.2.2.1-7.3">
-                <p id="section-8.2.2.1-7.3.1"><code>profile</code>: The profile that defines the domain of interpretation of this tuple.
+              <li class="normal" id="section-8.2.2.1-8.3">
+                <p id="section-8.2.2.1-8.3.1"><code>profile</code>: The profile that defines the domain of interpretation of this tuple.
 This is the <code>profile</code> attribute of the CoRIM that contained the original triple from which this ECT was obtained.
 This is an optional attribute in an ECT.
 If no profile is used, the attribute is omitted.
 <span class="cref">
 [TBC]
 What profile applies in such a case?
-</span><a href="#section-8.2.2.1-7.3.1" class="pilcrow">¶</a></p>
+</span><a href="#section-8.2.2.1-8.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <div id="sec-element-ect">
@@ -5003,6 +5006,8 @@ ACS = [ + ECT ]
 <p id="section-8.2.2.3-4">The ACS is initialized with Evidence Claims and is then populated with Reference Values and Endorsement Claims via the "match and augment" algorithm (see <a href="#sec-match-and-augment" class="auto internal xref">Section 8.2.4</a>) implemented by the CoRIM processor.<a href="#section-8.2.2.3-4" class="pilcrow">¶</a></p>
 <p id="section-8.2.2.3-5">Once the Staging Area has been drained by the CoRIM processor, processing stops and the computed ACS is handed over to subsequent phases.
 In this way, the ACS represents the CoRIM processor's output interface.<a href="#section-8.2.2.3-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.3-6">The order of the ECTs in the ACS is not significant.
+Logically, as the ACS represents the conjunction of all claims, adding an ECT entry to the existing ACS at the end has the same effect as inserting it anywhere else.<a href="#section-8.2.2.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5380,6 +5385,8 @@ func init_staging_area(
 <p id="section-8.2.4-1">This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester.<a href="#section-8.2.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.2.4-2">At a high level, the process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
 If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
+Otherwise, the algorithm moves on to the next relation.
+Any augmentations to the ACS (i.e., the <code>acs::APPEND</code> operation in <a href="#algo-match-and-augment" class="auto internal xref">Figure 42</a>) MUST be atomic.
 Once all the relations in the Staging Area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.<a href="#section-8.2.4-2" class="pilcrow">¶</a></p>
 <span id="name-match-and-augment-algorithm"></span><div id="algo-match-and-augment">
 <figure id="figure-42">
@@ -5399,33 +5406,69 @@ func match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
 <a href="#name-match-and-augment-algorithm" class="selfRef">Match and Augment Algorithm</a>
             </figcaption></figure>
 </div>
+<p id="section-8.2.4-4">The <code>acs::MATCH</code> operation depends on the type of relation.
+The matching logic for each type of relation is described in the following sections.<a href="#section-8.2.4-4" class="pilcrow">¶</a></p>
+<div id="ordering-of-relations">
+<section id="section-8.2.4.1">
+            <h5 id="name-ordering-of-relations">
+<a href="#section-8.2.4.1" class="section-number selfRef">8.2.4.1. </a><a href="#name-ordering-of-relations" class="section-name selfRef">Ordering of Relations</a>
+            </h5>
+<p id="section-8.2.4.1-1">The order in which items within relations are processed is important.
+Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
+The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an <code>environment</code> matching the condition.
+This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
+The "match and augment" algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 42</a> assumes that relations have been topologically sorted prior to loading into the Staging Area (<a href="#algo-init-sa" class="auto internal xref">Figure 41</a>).<a href="#section-8.2.4.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="reference-values-corroboration-and-augmentation-phase-3">
+<section id="section-8.2.4.2">
+            <h5 id="name-reference-values-corroborat">
+<a href="#section-8.2.4.2" class="section-number selfRef">8.2.4.2. </a><a href="#name-reference-values-corroborat" class="section-name selfRef">Reference Values Corroboration and Augmentation (Phase 3)</a>
+            </h5>
+<p id="section-8.2.4.2-1">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.<a href="#section-8.2.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.2-2">Reference Values are matched with ACS entries by iterating through the <code>rv</code> list.
+For each <code>rv</code> entry, the condition ECT is compared against an ACS ECT with <code>cmtype</code> 2 (i.e., <code>evidence</code>).<a href="#section-8.2.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.2-3">If the two match, the following two steps are performed:<a href="#section-8.2.4.2-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-8.2.4.2-4">
+<li id="section-8.2.4.2-4.1">
+                <p id="section-8.2.4.2-4.1.1">The <code>element-list</code> of the matched ACS ECT is copied to the <code>element-list</code> of the addition ECT.<a href="#section-8.2.4.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li id="section-8.2.4.2-4.2">
+                <p id="section-8.2.4.2-4.2.1">The addition ECT is copied to the ACS.<a href="#section-8.2.4.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ol>
+<p id="section-8.2.4.2-5"><span class="cref">
+[TODO]
+</span><a href="#section-8.2.4.2-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4-4.1">
-              <p id="section-8.2.4-4.1.1">describe the processing algorithm<a href="#section-8.2.4-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.2-6.1">
+                <p id="section-8.2.4.2-6.1.1">describe the processing algorithm<a href="#section-8.2.4.2-6.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4-4.1.2.1">
-                  <p id="section-8.2.4-4.1.2.1.1">the core principles<a href="#section-8.2.4-4.1.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.2-6.1.2.1">
+                    <p id="section-8.2.4.2-6.1.2.1.1">the core principles<a href="#section-8.2.4.2-6.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-8.2.4-4.1.2.2">
-                  <p id="section-8.2.4-4.1.2.2.1">the high level flow<a href="#section-8.2.4-4.1.2.2.1" class="pilcrow">¶</a></p>
+                  <li class="normal" id="section-8.2.4.2-6.1.2.2">
+                    <p id="section-8.2.4.2-6.1.2.2.1">the high level flow<a href="#section-8.2.4.2-6.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-8.2.4-4.1.2.3">
-                  <p id="section-8.2.4-4.1.2.3.1">for each "phase"<a href="#section-8.2.4-4.1.2.3.1" class="pilcrow">¶</a></p>
+                  <li class="normal" id="section-8.2.4.2-6.1.2.3">
+                    <p id="section-8.2.4.2-6.1.2.3.1">for each "phase"<a href="#section-8.2.4.2-6.1.2.3.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4-4.1.2.3.2.1">
-                      <p id="section-8.2.4-4.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4-4.1.2.3.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.2-6.1.2.3.2.1">
+                        <p id="section-8.2.4.2-6.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4.2-6.1.2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                    <li class="normal" id="section-8.2.4-4.1.2.3.2.2">
-                      <p id="section-8.2.4-4.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4-4.1.2.3.2.2.1" class="pilcrow">¶</a></p>
+                      <li class="normal" id="section-8.2.4.2-6.1.2.3.2.2">
+                        <p id="section-8.2.4.2-6.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4.2-6.1.2.3.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                    <li class="normal" id="section-8.2.4-4.1.2.3.2.3">
-                      <p id="section-8.2.4-4.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4-4.1.2.3.2.3.1" class="pilcrow">¶</a></p>
+                      <li class="normal" id="section-8.2.4.2-6.1.2.3.2.3">
+                        <p id="section-8.2.4.2-6.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4.2-6.1.2.3.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  </ul>
+                    </ul>
 </li>
-              </ul>
+                </ul>
 </li>
-          </ul>
+            </ul>
+</section>
+</div>
 </section>
 </div>
 <div id="handoff">
