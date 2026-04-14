@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 15 October 2026</td>
+<td class="center">Expires 16 October 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-04-13" class="published">13 April 2026</time>
+<time datetime="2026-04-14" class="published">14 April 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-10-15">15 October 2026</time></dd>
+<dd class="expires"><time datetime="2026-10-16">16 October 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 16 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1913,10 +1913,12 @@ structures to the <code>corim-map</code>.
 Described in <a href="#sec-iana-corim" class="auto internal xref">Section 11.3</a>.<a href="#section-4.1-4.7.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-4.1-5">A <code>corim-map</code> is unsigned, and its tagged form is an entrypoint for parsing a CoRIM, so it is named <code>tagged-unsigned-corim-map</code>.
-~~~ cddl
+<p id="section-4.1-5">A <code>corim-map</code> is unsigned, and its tagged form is an entrypoint for parsing a CoRIM, so it is named <code>tagged-unsigned-corim-map</code>.<a href="#section-4.1-5" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.1-6">
+<pre>
 tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
-~~~<a href="#section-4.1-5" class="pilcrow">¶</a></p>
+</pre><a href="#section-4.1-6" class="pilcrow">¶</a>
+</div>
 <div id="sec-corim-id">
 <section id="section-4.1.1">
           <h4 id="name-corim-identifier">
@@ -4884,8 +4886,8 @@ Endorsement-addition-ECT = ({
 keys = [ + key-item ]
 
 key-item = {
-  condition: K-ECT
-  addition: K-ECT
+  condition: Key-condition-ECT
+  addition: Key-addition-ECT
 }
 </pre>
 </div>
@@ -5239,28 +5241,29 @@ func transform(
 <pre>
 func transform(
     T: attest-key-triple-record / identity-triple-record,
-    signer: [ + $crypto-key-type-choice ],
+    verifier: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -&gt; key-item {
     item := key-item::NEW()
 
     IF TYPEOF(T) == attest-key-triple-record:
-        item.condition.key-type = attest-key
         item.addition.key-type = attest-key
     ELIF TYPEOF(T) == identity-triple-record:
-        item.condition.key-type = identity-key
         item.addition.key-type = identity-key
 
     item.condition.environment = T.environment
+    item.addition.environment = T.environment
+
     item.condition.key-list = T.key-list
 
     IF T.condition.mkey:
         item.condition.key-id = T.condition.mkey
+        item.addition.key-id = T.condition.mkey
 
     IF T.condition.authorized-by:
         item.condition.authority = T.condition.authorized-by
 
-    item.addition.authority = signer
+    item.addition.authority = verifier
 
     IF profile:
         item.addition.profile = profile
@@ -5426,47 +5429,116 @@ The "match and augment" algorithm described in <a href="#algo-match-and-augment"
 <a href="#section-8.2.4.2" class="section-number selfRef">8.2.4.2. </a><a href="#name-reference-values-corroborat" class="section-name selfRef">Reference Values Corroboration and Augmentation (Phase 3)</a>
             </h5>
 <p id="section-8.2.4.2-1">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.<a href="#section-8.2.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.2-2">Reference Values are matched with ACS entries by iterating through the <code>rv</code> list.
-For each <code>rv</code> entry, the condition ECT is compared against an ACS ECT with <code>cmtype</code> 2 (i.e., <code>evidence</code>).<a href="#section-8.2.4.2-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.2-3">If the two match, the following two steps are performed:<a href="#section-8.2.4.2-3" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-8.2.4.2-4">
-<li id="section-8.2.4.2-4.1">
-                <p id="section-8.2.4.2-4.1.1">The <code>element-list</code> of the matched ACS ECT is copied to the <code>element-list</code> of the addition ECT.<a href="#section-8.2.4.2-4.1.1" class="pilcrow">¶</a></p>
+<div id="processing-rv-relations">
+<section id="section-8.2.4.2.1">
+              <h6 id="name-processing-rv-relations">
+<a href="#section-8.2.4.2.1" class="section-number selfRef">8.2.4.2.1. </a><a href="#name-processing-rv-relations" class="section-name selfRef">Processing <code>rv</code> Relations</a>
+              </h6>
+<p id="section-8.2.4.2.1-1">Reference Values are matched with ACS entries by iterating through the <code>rv</code> list.
+For each <code>rv</code> entry, the condition ECT is compared against an ACS ECT with <code>cmtype</code> 2 (i.e., <code>evidence</code>).<a href="#section-8.2.4.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.2.1-2">If the two match, the following two steps are performed:<a href="#section-8.2.4.2.1-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-8.2.4.2.1-3">
+<li id="section-8.2.4.2.1-3.1">
+                  <p id="section-8.2.4.2.1-3.1.1">The <code>element-list</code> of the matched ACS ECT is copied to the <code>element-list</code> of the addition ECT.<a href="#section-8.2.4.2.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li id="section-8.2.4.2-4.2">
-                <p id="section-8.2.4.2-4.2.1">The addition ECT is copied to the ACS.<a href="#section-8.2.4.2-4.2.1" class="pilcrow">¶</a></p>
+                <li id="section-8.2.4.2.1-3.2">
+                  <p id="section-8.2.4.2.1-3.2.1">The addition ECT is added to the ACS.<a href="#section-8.2.4.2.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
-            </ol>
-<p id="section-8.2.4.2-5"><span class="cref">
+              </ol>
+<p id="section-8.2.4.2.1-4">Note that this new ACS item is essentially a copy of the matched evidence ECT, which has been re-asserted under the authority of the Reference Value Provider.<a href="#section-8.2.4.2.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="endorsed-values-augmentation-phase-4">
+<section id="section-8.2.4.3">
+            <h5 id="name-endorsed-values-augmentatio">
+<a href="#section-8.2.4.3" class="section-number selfRef">8.2.4.3. </a><a href="#name-endorsed-values-augmentatio" class="section-name selfRef">Endorsed Values Augmentation (Phase 4)</a>
+            </h5>
+<p id="section-8.2.4.3-1">Endorsed values augmentation is the process of adding Claims about the Attester's actual state with Endorser authority rather than Attester authority.
+Augmentation is predicated on a certain condition matching the actual state currently encoded in the ACS.<a href="#section-8.2.4.3-1" class="pilcrow">¶</a></p>
+<div id="processing-ev-relations">
+<section id="section-8.2.4.3.1">
+              <h6 id="name-processing-ev-relations">
+<a href="#section-8.2.4.3.1" class="section-number selfRef">8.2.4.3.1. </a><a href="#name-processing-ev-relations" class="section-name selfRef">Processing <code>ev</code> Relations</a>
+              </h6>
+<p id="section-8.2.4.3.1-1">Endorsed Values and Conditional Endorsed Values are matched with ACS entries by iterating through the <code>ev</code> list.
+For each <code>ev</code> entry, the condition ECT is compared with an ACS ECT with <code>cmtype</code> 0, 1 or 2 (i.e., reference-values, endorsements or evidence).
+If the two match, the addition ECT is added to the ACS.<a href="#section-8.2.4.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.1-2"><span class="cref">
+[TBC]
+Original text also states: "Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs. If there are multiple matches, then each match is processed independently from the others."  Why should add exact copies of the same addition ECT?  Is there any specific semantics associated with clones?
+</span><a href="#section-8.2.4.3.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="processing-evs-relations">
+<section id="section-8.2.4.3.2">
+              <h6 id="name-processing-evs-relations">
+<a href="#section-8.2.4.3.2" class="section-number selfRef">8.2.4.3.2. </a><a href="#name-processing-evs-relations" class="section-name selfRef">Processing <code>evs</code> Relations</a>
+              </h6>
+<p id="section-8.2.4.3.2-1">Conditional Endorsement Series are matched with ACS entries by iterating through the <code>evs</code> list.
+For each <code>evs</code> entry, the condition ECT is compared with an ACS ECT with <code>cmtype</code> 0, 1 or 2 (i.e. reference values, endorsements or evidence).
+If they match, the <code>evs</code> series array is iterated.
+For each series entry, if the selection ECT matches an ACS ECT, the addition ECT is added to the ACS.
+Series iteration terminates either when the first matching series entry has been processed, or when no series entries match.<a href="#section-8.2.4.3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="processing-keys-relations">
+<section id="section-8.2.4.3.3">
+              <h6 id="name-processing-keys-relations">
+<a href="#section-8.2.4.3.3" class="section-number selfRef">8.2.4.3.3. </a><a href="#name-processing-keys-relations" class="section-name selfRef">Processing <code>keys</code> Relations</a>
+              </h6>
+<p id="section-8.2.4.3.3-1">Keys relations identify cryptographic keys that require additional key verification steps.<a href="#section-8.2.4.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.3-2">Keys are matched with ACS entries by iterating through the <code>keys</code> list.
+For each <code>keys</code> entry, the condition ECT is compared with an ACS ECT with <code>cmtype</code> 1 or 2 (i.e., endorsements or evidence).<a href="#section-8.2.4.3.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.3-3">The matched key is verified.
+If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using under the Verifier authority.<a href="#section-8.2.4.3.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="processing-dm-relations">
+<section id="section-8.2.4.3.4">
+              <h6 id="name-processing-dm-relations">
+<a href="#section-8.2.4.3.4" class="section-number selfRef">8.2.4.3.4. </a><a href="#name-processing-dm-relations" class="section-name selfRef">Processing <code>dm</code> Relations</a>
+            </h6>
+</section>
+</div>
+<div id="processing-dd-relations">
+<section id="section-8.2.4.3.5">
+              <h6 id="name-processing-dd-relations">
+<a href="#section-8.2.4.3.5" class="section-number selfRef">8.2.4.3.5. </a><a href="#name-processing-dd-relations" class="section-name selfRef">Processing <code>dd</code> Relations</a>
+              </h6>
+<p id="section-8.2.4.3.5-1"><span class="cref">
 [TODO]
-</span><a href="#section-8.2.4.2-5" class="pilcrow">¶</a></p>
+</span><a href="#section-8.2.4.3.5-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4.2-6.1">
-                <p id="section-8.2.4.2-6.1.1">describe the processing algorithm<a href="#section-8.2.4.2-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.3.5-2.1">
+                  <p id="section-8.2.4.3.5-2.1.1">describe the processing algorithm<a href="#section-8.2.4.3.5-2.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4.2-6.1.2.1">
-                    <p id="section-8.2.4.2-6.1.2.1.1">the core principles<a href="#section-8.2.4.2-6.1.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.3.5-2.1.2.1">
+                      <p id="section-8.2.4.3.5-2.1.2.1.1">the core principles<a href="#section-8.2.4.3.5-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="normal" id="section-8.2.4.2-6.1.2.2">
-                    <p id="section-8.2.4.2-6.1.2.2.1">the high level flow<a href="#section-8.2.4.2-6.1.2.2.1" class="pilcrow">¶</a></p>
+                    <li class="normal" id="section-8.2.4.3.5-2.1.2.2">
+                      <p id="section-8.2.4.3.5-2.1.2.2.1">the high level flow<a href="#section-8.2.4.3.5-2.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="normal" id="section-8.2.4.2-6.1.2.3">
-                    <p id="section-8.2.4.2-6.1.2.3.1">for each "phase"<a href="#section-8.2.4.2-6.1.2.3.1" class="pilcrow">¶</a></p>
+                    <li class="normal" id="section-8.2.4.3.5-2.1.2.3">
+                      <p id="section-8.2.4.3.5-2.1.2.3.1">for each "phase"<a href="#section-8.2.4.3.5-2.1.2.3.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4.2-6.1.2.3.2.1">
-                        <p id="section-8.2.4.2-6.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4.2-6.1.2.3.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.3.5-2.1.2.3.2.1">
+                          <p id="section-8.2.4.3.5-2.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4.3.5-2.1.2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                      <li class="normal" id="section-8.2.4.2-6.1.2.3.2.2">
-                        <p id="section-8.2.4.2-6.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4.2-6.1.2.3.2.2.1" class="pilcrow">¶</a></p>
+                        <li class="normal" id="section-8.2.4.3.5-2.1.2.3.2.2">
+                          <p id="section-8.2.4.3.5-2.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4.3.5-2.1.2.3.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                      <li class="normal" id="section-8.2.4.2-6.1.2.3.2.3">
-                        <p id="section-8.2.4.2-6.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4.2-6.1.2.3.2.3.1" class="pilcrow">¶</a></p>
+                        <li class="normal" id="section-8.2.4.3.5-2.1.2.3.2.3">
+                          <p id="section-8.2.4.3.5-2.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4.3.5-2.1.2.3.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                    </ul>
+                      </ul>
 </li>
-                </ul>
+                  </ul>
 </li>
-            </ul>
+              </ul>
+</section>
+</div>
 </section>
 </div>
 </section>

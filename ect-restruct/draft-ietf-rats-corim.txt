@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 15 October 2026                                          Linaro
+Expires: 16 October 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           13 April 2026
+                                                           14 April 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 October 2026.
+   This Internet-Draft will expire on 16 October 2026.
 
 Copyright Notice
 
@@ -583,8 +583,9 @@ Table of Contents
       Section 11.3.
 
    A corim-map is unsigned, and its tagged form is an entrypoint for
-   parsing a CoRIM, so it is named tagged-unsigned-corim-map. ~~~ cddl
-   tagged-unsigned-corim-map = #6.501(unsigned-corim-map) ~~~
+   parsing a CoRIM, so it is named tagged-unsigned-corim-map.
+
+   tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
 
 4.1.1.  CoRIM Identifier
 
@@ -3128,8 +3129,8 @@ Table of Contents
    keys = [ + key-item ]
 
    key-item = {
-     condition: K-ECT
-     addition: K-ECT
+     condition: Key-condition-ECT
+     addition: Key-addition-ECT
    }
 
                           Figure 27: Keys Relation
@@ -3419,28 +3420,29 @@ Table of Contents
 
    func transform(
        T: attest-key-triple-record / identity-triple-record,
-       signer: [ + $crypto-key-type-choice ],
+       verifier: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
    ) -> key-item {
        item := key-item::NEW()
 
        IF TYPEOF(T) == attest-key-triple-record:
-           item.condition.key-type = attest-key
            item.addition.key-type = attest-key
        ELIF TYPEOF(T) == identity-triple-record:
-           item.condition.key-type = identity-key
            item.addition.key-type = identity-key
 
        item.condition.environment = T.environment
+       item.addition.environment = T.environment
+
        item.condition.key-list = T.key-list
 
        IF T.condition.mkey:
            item.condition.key-id = T.condition.mkey
+           item.addition.key-id = T.condition.mkey
 
        IF T.condition.authorized-by:
            item.condition.authority = T.condition.authorized-by
 
-       item.addition.authority = signer
+       item.addition.authority = verifier
 
        IF profile:
            item.addition.profile = profile
@@ -3581,6 +3583,8 @@ Table of Contents
    Corroboration is the process of determining whether actual Attester
    state (as contained in the ACS) can be satisfied by Reference Values.
 
+8.2.4.2.1.  Processing rv Relations
+
    Reference Values are matched with ACS entries by iterating through
    the rv list.  For each rv entry, the condition ECT is compared
    against an ACS ECT with cmtype 2 (i.e., evidence).
@@ -3590,7 +3594,62 @@ Table of Contents
    1.  The element-list of the matched ACS ECT is copied to the element-
        list of the addition ECT.
 
-   2.  The addition ECT is copied to the ACS.
+   2.  The addition ECT is added to the ACS.
+
+   Note that this new ACS item is essentially a copy of the matched
+   evidence ECT, which has been re-asserted under the authority of the
+   Reference Value Provider.
+
+8.2.4.3.  Endorsed Values Augmentation (Phase 4)
+
+   Endorsed values augmentation is the process of adding Claims about
+   the Attester's actual state with Endorser authority rather than
+   Attester authority.  Augmentation is predicated on a certain
+   condition matching the actual state currently encoded in the ACS.
+
+8.2.4.3.1.  Processing ev Relations
+
+   Endorsed Values and Conditional Endorsed Values are matched with ACS
+   entries by iterating through the ev list.  For each ev entry, the
+   condition ECT is compared with an ACS ECT with cmtype 0, 1 or 2
+   (i.e., reference-values, endorsements or evidence).  If the two
+   match, the addition ECT is added to the ACS.
+
+
+   // [TBC] Original text also states: "Some condition values can match
+   // against multiple ACS-ECTs, or sets of ACS-ECTs.  If there are
+   // multiple matches, then each match is processed independently from
+   // the others."  Why should add exact copies of the same addition
+   // ECT?  Is there any specific semantics associated with clones?
+
+8.2.4.3.2.  Processing evs Relations
+
+   Conditional Endorsement Series are matched with ACS entries by
+   iterating through the evs list.  For each evs entry, the condition
+   ECT is compared with an ACS ECT with cmtype 0, 1 or 2 (i.e. reference
+   values, endorsements or evidence).  If they match, the evs series
+   array is iterated.  For each series entry, if the selection ECT
+   matches an ACS ECT, the addition ECT is added to the ACS.  Series
+   iteration terminates either when the first matching series entry has
+   been processed, or when no series entries match.
+
+8.2.4.3.3.  Processing keys Relations
+
+   Keys relations identify cryptographic keys that require additional
+   key verification steps.
+
+   Keys are matched with ACS entries by iterating through the keys list.
+   For each keys entry, the condition ECT is compared with an ACS ECT
+   with cmtype 1 or 2 (i.e., endorsements or evidence).
+
+   The matched key is verified.  If the key verification check succeeds,
+   the key is re-asserted by the Verifier as an Endorsement by
+   constructing an ECT that contains the verified key using under the
+   Verifier authority.
+
+8.2.4.3.4.  Processing dm Relations
+
+8.2.4.3.5.  Processing dd Relations
 
 
    // [TODO]
