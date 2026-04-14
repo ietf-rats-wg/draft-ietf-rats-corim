@@ -207,13 +207,14 @@ Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
 Authority:
-: The entity asserting that a Claim is true.
+: The entity that asserts a Claim.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
 A cryptographic key can be a proxy for a human or organizational entity.
 
 Claim:
 : A piece of information, in the form of a key-value pair.
 See also {{Section 4.2 of -rats-arch}} and {{Section 2 of -jwt}}.
+Within this document a Claim is either Evidence, a Reference Value, or an Endorsement.
 
 Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
