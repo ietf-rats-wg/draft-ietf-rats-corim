@@ -3226,6 +3226,26 @@ Table of Contents
    to the existing ACS at the end has the same effect as inserting it
    anywhere else.
 
+8.2.2.4.  Staging Area
+
+   The Staging Area (Figure 34) is a list of the relations corresponding
+   to the transformed triples.
+
+   StagingArea = [
+     ? rv,
+     ? ev,
+     ? evs,
+     ? keys,
+     ? dm,
+     ? dd,
+   ]
+
+                          Figure 34: Staging Area
+
+   All relations are optional.  Whether a given relation is present in
+   the Staging Area depends on whether a triple exists and has been
+   successfully transformed.
+
 8.2.3.  Input Validation and Transformation (Phase 1)
 
    This section provides a detailed description of Phase 1, which was
@@ -3272,7 +3292,7 @@ Table of Contents
    Reference Values transformation involves mapping Reference Value
    triples into into an rv relation (see Section 8.2.2.2.2).  Each
    reference-triple-record (Figure 1) is transformed into an rv-item
-   (Figure 19) as described in Figure 34.  (The code reuses the
+   (Figure 19) as described in Figure 35.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
    func transform(
@@ -3297,7 +3317,7 @@ Table of Contents
        RETURN item
    }
 
-              Figure 34: Reference Value Triple Transformation
+              Figure 35: Reference Value Triple Transformation
 
    Note that the ref-claims are not copied to the addition ECT.  Since
    they may contain ranges rather than individual values (see, for
@@ -3311,7 +3331,7 @@ Table of Contents
    triples into into ev or evs relations (see Section 8.2.2.2.3).
 
    A endorsed-triple-record (Figure 2) is transformed into an ev-item
-   (Figure 22) as described in Figure 35.  (The code reuses the
+   (Figure 22) as described in Figure 36.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
    func transform(
@@ -3336,10 +3356,10 @@ Table of Contents
        RETURN item
    }
 
-              Figure 35: Endorsed Value Triple Transformation
+              Figure 36: Endorsed Value Triple Transformation
 
    A conditional-endorsement-triple-record (Figure 3) is transformed
-   into an ev-item (Figure 22) as described in Figure 36.  (The code
+   into an ev-item (Figure 22) as described in Figure 37.  (The code
    reuses the mms_to_ems function from Figure 14.)
 
    func transform(
@@ -3367,10 +3387,10 @@ Table of Contents
        RETURN item
    }
 
-          Figure 36: Conditional Endorsement Triple Transformation
+          Figure 37: Conditional Endorsement Triple Transformation
 
    A conditional-endorsement-series-triple-record (Figure 4) is
-   transformed into an evs-item (Figure 23) as described in Figure 37.
+   transformed into an evs-item (Figure 23) as described in Figure 38.
    (The code reuses the mm_to_em and mms_to_ems functions from
    Figure 14.)
 
@@ -3407,7 +3427,7 @@ Table of Contents
        RETURN item
    }
 
-      Figure 37: Conditional Endorsement Series Triple Transformation
+      Figure 38: Conditional Endorsement Series Triple Transformation
 
 8.2.3.3.4.  Keys
 
@@ -3416,7 +3436,7 @@ Table of Contents
 
    An attest-key-triple-record (Figure 6) or an identity-triple-record
    (Figure 5) is transformed into a key-item (Figure 27) as described in
-   Figure 38.
+   Figure 39.
 
    func transform(
        T: attest-key-triple-record / identity-triple-record,
@@ -3452,7 +3472,7 @@ Table of Contents
        RETURN item
    }
 
-                    Figure 38: Key Triple Transformation
+                    Figure 39: Key Triple Transformation
 
    Note that keys are added under the authority of the verifier.
 
@@ -3464,7 +3484,7 @@ Table of Contents
    In any case, before being added to the respective relation, a domain-
    membership-triple-record (Figure 7) or a domain-dependency-triple-
    record (Figure 8) is transformed into a domain-item (Figure 28) as
-   described in Figure 39.
+   described in Figure 40.
 
    func transform(
        T: domain-membership-triple-record / domain-dependency-triple-record
@@ -3489,7 +3509,7 @@ Table of Contents
        RETURN item
    }
 
-                  Figure 39: Domain Triple Transformation
+                  Figure 40: Domain Triple Transformation
 
 8.2.3.4.  Appraisal Context Initialization
 
@@ -3505,7 +3525,7 @@ Table of Contents
        RETURN acs
    }
 
-                       Figure 40: ACS Initialization
+                       Figure 41: ACS Initialization
 
    The Staging Area is loaded with rv, ev, evs, keys, dm and dd
    relations, in that order.
@@ -3520,8 +3540,7 @@ Table of Contents
    ) -> StagingArea {
        sa := StagingArea::NEW()
 
-       sa::APPEND(rv)
-
+       IF rv    sa::APPEND(rv)
        IF ev:   sa::APPEND(ev)
        IF evs:  sa::APPEND(evs)
        IF keys: sa::APPEND(keys)
@@ -3531,9 +3550,7 @@ Table of Contents
        RETURN sa
    }
 
-                   Figure 41: Staging Area Initialization
-
-   Note that all but the rv relation are optional.
+                   Figure 42: Staging Area Initialization
 
 8.2.4.  ACS Augmentation (Phases 2, 3 and 4)
 
@@ -3548,7 +3565,7 @@ Table of Contents
    additions in the matched relation are added to the ACS, thereby
    providing its "augmentation".  Otherwise, the algorithm moves on to
    the next relation.  Any augmentations to the ACS (i.e., the
-   acs::APPEND operation in Figure 42) MUST be atomic.  Once all the
+   acs::APPEND operation in Figure 43) MUST be atomic.  Once all the
    relations in the Staging Area have been processed, the algorithm
    terminates and the computed ACS is handed over to the subsequent
    appraisal phases by the CoRIM processor.
@@ -3562,7 +3579,7 @@ Table of Contents
        RETURN acs
    }
 
-                   Figure 42: Match and Augment Algorithm
+                   Figure 43: Match and Augment Algorithm
 
    The acs::MATCH operation depends on the type of relation.  The
    matching logic for each type of relation is described in the
@@ -3578,9 +3595,9 @@ Table of Contents
    matching the condition.  This can be achieved by sorting the
    relations before processing, repeating the processing of some
    relations after ACS modifications, or using other algorithms.  The
-   "match and augment" algorithm described in Figure 42 assumes that
+   "match and augment" algorithm described in Figure 43 assumes that
    relations have been topologically sorted prior to loading into the
-   Staging Area (Figure 41).
+   Staging Area (Figure 42).
 
 8.2.4.2.  Reference Values Corroboration and Augmentation (Phase 3)
 

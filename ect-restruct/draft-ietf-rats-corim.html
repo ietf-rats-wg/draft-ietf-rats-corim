@@ -5012,6 +5012,34 @@ In this way, the ACS represents the CoRIM processor's output interface.<a href="
 Logically, as the ACS represents the conjunction of all claims, adding an ECT entry to the existing ACS at the end has the same effect as inserting it anywhere else.<a href="#section-8.2.2.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="staging-area">
+<section id="section-8.2.2.4">
+            <h5 id="name-staging-area">
+<a href="#section-8.2.2.4" class="section-number selfRef">8.2.2.4. </a><a href="#name-staging-area" class="section-name selfRef">Staging Area</a>
+            </h5>
+<p id="section-8.2.2.4-1">The Staging Area (<a href="#fig-sa" class="auto internal xref">Figure 34</a>) is a list of the relations corresponding to the transformed triples.<a href="#section-8.2.2.4-1" class="pilcrow">¶</a></p>
+<span id="name-staging-area-2"></span><div id="fig-sa">
+<figure id="figure-34">
+              <div class="lang-cddl sourcecode" id="section-8.2.2.4-2.1">
+<pre>
+StagingArea = [
+  ? rv,
+  ? ev,
+  ? evs,
+  ? keys,
+  ? dm,
+  ? dd,
+]
+</pre>
+</div>
+<figcaption><a href="#figure-34" class="selfRef">Figure 34</a>:
+<a href="#name-staging-area-2" class="selfRef">Staging Area</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.2.4-3">All relations are optional.
+Whether a given relation is present in the Staging Area depends on whether a triple exists and has been successfully transformed.<a href="#section-8.2.2.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="input-validation-and-transformation-phase-1">
@@ -5070,10 +5098,10 @@ Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.2.3.
 <a href="#section-8.2.3.3.2" class="section-number selfRef">8.2.3.3.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
               </h6>
 <p id="section-8.2.3.3.2-1">Reference Values transformation involves mapping Reference Value triples into into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.2.2.2.2</a>).
-Each <code>reference-triple-record</code> (<a href="#triple-rv" class="auto internal xref">Figure 1</a>) is transformed into an <code>rv-item</code> (<a href="#fig-rv" class="auto internal xref">Figure 19</a>) as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 34</a>.
+Each <code>reference-triple-record</code> (<a href="#triple-rv" class="auto internal xref">Figure 1</a>) is transformed into an <code>rv-item</code> (<a href="#fig-rv" class="auto internal xref">Figure 19</a>) as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 35</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.2.3.3.2-1" class="pilcrow">¶</a></p>
 <span id="name-reference-value-triple-tran"></span><div id="algo-rv-transform">
-<figure id="figure-34">
+<figure id="figure-35">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.2-2.1">
 <pre>
 func transform(
@@ -5099,7 +5127,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-34" class="selfRef">Figure 34</a>:
+<figcaption><a href="#figure-35" class="selfRef">Figure 35</a>:
 <a href="#name-reference-value-triple-tran" class="selfRef">Reference Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5113,10 +5141,10 @@ Since they may contain ranges rather than individual values (see, for example, <
 <a href="#section-8.2.3.3.3" class="section-number selfRef">8.2.3.3.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
               </h6>
 <p id="section-8.2.3.3.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.2.2.2.3</a>).<a href="#section-8.2.3.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.3.3-2">A <code>endorsed-triple-record</code> (<a href="#triple-ev" class="auto internal xref">Figure 2</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 22</a>) as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 35</a>.
+<p id="section-8.2.3.3.3-2">A <code>endorsed-triple-record</code> (<a href="#triple-ev" class="auto internal xref">Figure 2</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 22</a>) as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 36</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.2.3.3.3-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-value-triple-trans"></span><div id="algo-ev-transform">
-<figure id="figure-35">
+<figure id="figure-36">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-3.1">
 <pre>
 func transform(
@@ -5142,14 +5170,14 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-35" class="selfRef">Figure 35</a>:
+<figcaption><a href="#figure-36" class="selfRef">Figure 36</a>:
 <a href="#name-endorsed-value-triple-trans" class="selfRef">Endorsed Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.3.3-4">A <code>conditional-endorsement-triple-record</code> (<a href="#triple-ce" class="auto internal xref">Figure 3</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 22</a>) as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 36</a>.
+<p id="section-8.2.3.3.3-4">A <code>conditional-endorsement-triple-record</code> (<a href="#triple-ce" class="auto internal xref">Figure 3</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 22</a>) as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 37</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.2.3.3.3-4" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-tripl"></span><div id="algo-ce-transform">
-<figure id="figure-36">
+<figure id="figure-37">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-5.1">
 <pre>
 func transform(
@@ -5178,14 +5206,14 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-36" class="selfRef">Figure 36</a>:
+<figcaption><a href="#figure-37" class="selfRef">Figure 37</a>:
 <a href="#name-conditional-endorsement-tripl" class="selfRef">Conditional Endorsement Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.3.3-6">A <code>conditional-endorsement-series-triple-record</code> (<a href="#triple-ces" class="auto internal xref">Figure 4</a>) is transformed into an <code>evs-item</code> (<a href="#fig-evs" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 37</a>.
+<p id="section-8.2.3.3.3-6">A <code>conditional-endorsement-series-triple-record</code> (<a href="#triple-ces" class="auto internal xref">Figure 4</a>) is transformed into an <code>evs-item</code> (<a href="#fig-evs" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 38</a>.
 (The code reuses the <code>mm_to_em</code> and <code>mms_to_ems</code> functions from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.2.3.3.3-6" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-serie"></span><div id="algo-ces-transform">
-<figure id="figure-37">
+<figure id="figure-38">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-7.1">
 <pre>
 func transform(
@@ -5222,7 +5250,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-37" class="selfRef">Figure 37</a>:
+<figcaption><a href="#figure-38" class="selfRef">Figure 38</a>:
 <a href="#name-conditional-endorsement-serie" class="selfRef">Conditional Endorsement Series Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5234,9 +5262,9 @@ func transform(
 <a href="#section-8.2.3.3.4" class="section-number selfRef">8.2.3.3.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
               </h6>
 <p id="section-8.2.3.3.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.2.2.2.4</a>).<a href="#section-8.2.3.3.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.3.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 27</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 38</a>.<a href="#section-8.2.3.3.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 27</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 39</a>.<a href="#section-8.2.3.3.4-2" class="pilcrow">¶</a></p>
 <span id="name-key-triple-transformation"></span><div id="algo-key-transform">
-<figure id="figure-38">
+<figure id="figure-39">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.4-3.1">
 <pre>
 func transform(
@@ -5274,7 +5302,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-38" class="selfRef">Figure 38</a>:
+<figcaption><a href="#figure-39" class="selfRef">Figure 39</a>:
 <a href="#name-key-triple-transformation" class="selfRef">Key Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5287,9 +5315,9 @@ func transform(
 <a href="#section-8.2.3.3.5" class="section-number selfRef">8.2.3.3.5. </a><a href="#name-domains-2" class="section-name selfRef">Domains</a>
               </h6>
 <p id="section-8.2.3.3.5-1">Domains transformation involves mapping Domain Membership and Domain Dependency triples into a <code>dm</code> or <code>dd</code> relation (see <a href="#sec-ir-domains" class="auto internal xref">Section 8.2.2.2.5</a>).<a href="#section-8.2.3.3.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.3.3.5-2">In any case, before being added to the respective relation, a <code>domain-membership-triple-record</code> (<a href="#triple-dm" class="auto internal xref">Figure 7</a>) or a <code>domain-dependency-triple-record</code> (<a href="#triple-dd" class="auto internal xref">Figure 8</a>) is transformed into a <code>domain-item</code> (<a href="#fig-dm-item" class="auto internal xref">Figure 28</a>) as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 39</a>.<a href="#section-8.2.3.3.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.3.5-2">In any case, before being added to the respective relation, a <code>domain-membership-triple-record</code> (<a href="#triple-dm" class="auto internal xref">Figure 7</a>) or a <code>domain-dependency-triple-record</code> (<a href="#triple-dd" class="auto internal xref">Figure 8</a>) is transformed into a <code>domain-item</code> (<a href="#fig-dm-item" class="auto internal xref">Figure 28</a>) as described in <a href="#algo-domain-transform" class="auto internal xref">Figure 40</a>.<a href="#section-8.2.3.3.5-2" class="pilcrow">¶</a></p>
 <span id="name-domain-triple-transformatio"></span><div id="algo-domain-transform">
-<figure id="figure-39">
+<figure id="figure-40">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.5-3.1">
 <pre>
 func transform(
@@ -5316,7 +5344,7 @@ func transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-39" class="selfRef">Figure 39</a>:
+<figcaption><a href="#figure-40" class="selfRef">Figure 40</a>:
 <a href="#name-domain-triple-transformatio" class="selfRef">Domain Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5332,7 +5360,7 @@ func transform(
 <p id="section-8.2.3.4-1">At the end of Phase 1 all of the extracted and validated tags are loaded into an "appraisal context", consisting of the ACS and the Staging Area.
 The ACS is initialized with all the addition ECTs in the <code>ev</code> relation:<a href="#section-8.2.3.4-1" class="pilcrow">¶</a></p>
 <span id="name-acs-initialization"></span><div id="algo-init-acs">
-<figure id="figure-40">
+<figure id="figure-41">
               <div class="lang-pseudocode sourcecode" id="section-8.2.3.4-2.1">
 <pre>
 func init_acs(ae: ae) -&gt; ACS {
@@ -5343,13 +5371,13 @@ func init_acs(ae: ae) -&gt; ACS {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-40" class="selfRef">Figure 40</a>:
+<figcaption><a href="#figure-41" class="selfRef">Figure 41</a>:
 <a href="#name-acs-initialization" class="selfRef">ACS Initialization</a>
               </figcaption></figure>
 </div>
 <p id="section-8.2.3.4-3">The Staging Area is loaded with <code>rv</code>, <code>ev</code>, <code>evs</code>, <code>keys</code>, <code>dm</code> and <code>dd</code> relations, in that order.<a href="#section-8.2.3.4-3" class="pilcrow">¶</a></p>
 <span id="name-staging-area-initialization"></span><div id="algo-init-sa">
-<figure id="figure-41">
+<figure id="figure-42">
               <div class="lang-pseudocode sourcecode" id="section-8.2.3.4-4.1">
 <pre>
 func init_staging_area(
@@ -5362,8 +5390,7 @@ func init_staging_area(
 ) -&gt; StagingArea {
     sa := StagingArea::NEW()
 
-    sa::APPEND(rv)
-
+    IF rv    sa::APPEND(rv)
     IF ev:   sa::APPEND(ev)
     IF evs:  sa::APPEND(evs)
     IF keys: sa::APPEND(keys)
@@ -5374,11 +5401,10 @@ func init_staging_area(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-41" class="selfRef">Figure 41</a>:
+<figcaption><a href="#figure-42" class="selfRef">Figure 42</a>:
 <a href="#name-staging-area-initialization" class="selfRef">Staging Area Initialization</a>
               </figcaption></figure>
 </div>
-<p id="section-8.2.3.4-5">Note that all but the <code>rv</code> relation are optional.<a href="#section-8.2.3.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5392,10 +5418,10 @@ func init_staging_area(
 <p id="section-8.2.4-2">At a high level, the process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
 If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
 Otherwise, the algorithm moves on to the next relation.
-Any augmentations to the ACS (i.e., the <code>acs::APPEND</code> operation in <a href="#algo-match-and-augment" class="auto internal xref">Figure 42</a>) MUST be atomic.
+Any augmentations to the ACS (i.e., the <code>acs::APPEND</code> operation in <a href="#algo-match-and-augment" class="auto internal xref">Figure 43</a>) MUST be atomic.
 Once all the relations in the Staging Area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.<a href="#section-8.2.4-2" class="pilcrow">¶</a></p>
 <span id="name-match-and-augment-algorithm"></span><div id="algo-match-and-augment">
-<figure id="figure-42">
+<figure id="figure-43">
             <div class="lang-pseudocode sourcecode" id="section-8.2.4-3.1">
 <pre>
 func match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
@@ -5408,7 +5434,7 @@ func match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-42" class="selfRef">Figure 42</a>:
+<figcaption><a href="#figure-43" class="selfRef">Figure 43</a>:
 <a href="#name-match-and-augment-algorithm" class="selfRef">Match and Augment Algorithm</a>
             </figcaption></figure>
 </div>
@@ -5423,7 +5449,7 @@ The matching logic for each type of relation is described in the following secti
 Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
 The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an <code>environment</code> matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
-The "match and augment" algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 42</a> assumes that relations have been topologically sorted prior to loading into the Staging Area (<a href="#algo-init-sa" class="auto internal xref">Figure 41</a>).<a href="#section-8.2.4.1-1" class="pilcrow">¶</a></p>
+The "match and augment" algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 43</a> assumes that relations have been topologically sorted prior to loading into the Staging Area (<a href="#algo-init-sa" class="auto internal xref">Figure 42</a>).<a href="#section-8.2.4.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="reference-values-corroboration-and-augmentation-phase-3">
