@@ -1247,9 +1247,9 @@ A cryptographic key can be one of the following formats:
 * `tagged-pkix-base64-cert-type`: PEM encoded X.509 public key certificate.
   Defined in {{Section 5 of -pkix-text}}.
 
-* `tagged-pkix-base64-cert-path-type`: X.509 certificate chain created by the
-  concatenation of as many PEM encoded X.509 certificates as needed.  The
-  certificates MUST be concatenated in order so that each directly certifies
+* `tagged-pkix-base64-cert-path-type`: certificate chain created by the
+  concatenation of as many PEM encoded certificates, in {{Section 3.2 of -pkix-text}} as needed.
+  The certificates MUST be concatenated in order so that each directly certifies
   the one preceding.
 
 * `tagged-cose-key-type`: CBOR encoded COSE_Key or COSE_KeySet.
@@ -2759,7 +2759,301 @@ Process each domain dependency triple record (`ddtr`) in the DDT list until ever
 The domain dependency graph becomes input to domain dependency processing steps in {{sec-process-dd}}.
 
 
-### Processing Domain Dependency {#sec-process-dd}
+During the Evidence collection phase, the Verifier communicates with Attesters to gather Evidence.
+Discovery of Evidence sources is untrusted.
+Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.
+
+The collected Evidence is then transformed to an internal representation, making it suitable for appraisal processing.
+
+The exact protocol used to collect Evidence is out of scope of this specification.
+
+#### Cryptographic Validation of Evidence {#sec-crypto-validate-evidence}
+
+If Evidence is cryptographically signed, its validation is applied before transforming Evidence to an internal representation.
+
+If Evidence is not cryptographically signed, the underlying conveyance protocol that collected it, should provide the required security.
+In such cases, the cryptographic validation of Evidence is determined by the security offered by the conveyance protocol.
+
+The way cryptographic signature validation works depends on the specific Evidence collection method used.
+For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (a.k.a., the alias certificate).
+If this is successful, a suitable certification path is looked up in the Appraisal Context, based on linking information obtained from the DeviceID certificate.
+See Section 9.2.1 of {{DICE.Layer}}.
+If a trusted root certificate is found, certificate validation is performed as described in {{Section 6 of -pkix-cert}}.
+
+As a second example, in PSA {{-psa-token}} the verification public key is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
+If found, COSE Sign1 verification is performed accordingly.
+
+Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence which is not successfully validated.
+
+Once Evidence is validated it is transformed into an internal representation as given in {{sec-ev-processing}}.
+
+### Input Transformation {#sec-phase1-trans}
+
+Input Conceptual Messages, whether Evidence, Reference Values, Endorsements, or Policies, are transformed to an internal representation that is based on ECTs ({{sec-conc-mess}}).
+
+#### Appraisal Context Construction
+
+All of the extracted and validated tags are loaded into an *appraisal context*.
+The Appraisal Context contains an internal representation of the inputted Conceptual Messages.
+The selected tags are mapped to an internal representation, making them suitable for appraisal processing.
+As the Conceptual Messages are processed during Appraisal, the *appraisal context* starts to get populated using a data structure
+as given below. See {{sec-ir-acs}}
+
+### Internal Representation of Appraisal Claims Set (ACS) {#sec-ir-acs}
+
+An ACS is a list of ECTs that describe an Attester's actual state.
+
+For ECTs present in the ACS, the `cmtype` field is mandatory.
+Table {{tbl-acs-ect-optionality}} shows the minimum required mandatory fields applicable to all ECTs in an ACS.
+
+| ECT type  | ECT Field       | Requirement |
+|---
+| n/a       | `environment`   | Mandatory   |
+|           | `authority`     | Mandatory   |
+|           | `cmtype`        | Mandatory   |
+{: #tbl-acs-ect-optionality title="ACS tuple minimum requirements"}
+
+~~~ cddl
+{::include cddl/intrep-acs.cddl}
+~~~
+
+## ACS Augmentation - Phases 2, 3, and 4 {#sec-acs-aug}
+
+In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
+Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
+
+Each triple is processed independently of other triples.
+However, the ACS state may change as a result of processing a triple.
+If a triple condition does not match, then the Verifier continues to process other triples.
+
+### ACS Requirements {#sec-acs-reqs}
+
+At the end of the Evidence collection process, the Evidence has been converted into an internal representation suitable for appraisal.
+See {{sec-conc-mess}}.
+
+Verifiers are not required to use this as their internal representation.
+For the purposes of this document, appraisal is described in terms of the above cited internal representation.
+
+#### ACS Processing Requirements
+
+The ACS contains the actual state of Attester's Target Environments (TEs).
+The ACS contains Evidence ECTs (from Attesters) and Endorsement ECTs
+(e.g. from `endorsed-triple-record`).
+
+CoMID Reference Values will be matched against the ACS following the comparison rules in {{sec-match-condition-ect}}.
+
+Each Endorsement ECT contains the environment and internal representation of `measurement-map`s as extracted from an `endorsed-triple-record`.
+When an `endorsed-triple-record` is transformed to Endorsements ECTs it
+indicates that the authority named by `measurement-map`.`authorized-by`
+asserts that the actual state of one or more Claims within the
+Target Environment, as identified by `environment-map`, have the
+measurement values in `measurement-map`.`mval`.
+
+ECT authority is represented by cryptographic keys. Authority
+is asserted by digitally signing a Claim using the key. Hence, Claims are
+added to the ACS under the authority of a cryptographic key.
+
+Each Claim is encoded as an ECT. The `environment-map`, the `mkey` or `element-id`, and a
+key within `measurement-values-map` encode the name of the Claim.
+The value matching that key within `measurement-values-map` is the actual
+state of the Claim.
+
+This specification does not assign special meanings to any Claim name,
+it only specifies rules for determining when two Claim names are the same.
+
+If two Claims have the same `environment-map` encoding then this does not
+trigger special encoding in the Verifier. The Verifier follows instructions
+in the CoRIM file which tell it how claims are related.
+
+If Evidence or Endorsements from different sources has the same `environment-map`
+and `authorized-by` then the `measurement-values-map`s are merged.
+
+The ACS MUST maintain the authority information for each ECT. There can be
+multiple entries in `state-triples` which have the same `environment-map`
+and a different authority.
+See {{sec-authority}}.
+
+If the merged `measurement-values-map` contains duplicate codepoints and the
+measurement values are equivalent, then duplicate claims SHOULD be omitted.
+Equivalence typically means values MUST be binary identical.
+
+If the merged `measurement-values-map` contains duplicate codepoints and the
+measurement values are not equivalent, then the Verifier SHALL report
+an error and stop validation processing.
+
+##### Ordering of triple processing
+
+Triples interface with the ACS by either adding new ACS entries or by matching existing ACS entries before updating the ACS.
+Most triples use an `environment-map` field to select the ACS entries to match or modify.
+This field may be contained in an explicit matching condition, such as `stateful-environment-record`.
+
+The order of triples processing is important.
+Processing a triple may result in ACS modifications that affect matching behavior of other triples.
+
+The Verifier MUST ensure that a triple including a matching condition is processed after any other triple that modifies or adds an ACS entry with an `environment-map` that is in the matching condition.
+
+This can be achieved by sorting the triples before processing, by repeating processing of some triples after ACS modifications or by other algorithms.
+
+#### ACS Augmentation Requirements {#sec-acs-aug-req}
+
+The ordering of ECTs in the ACS is not significant.
+Logically, the ACS represents the conjunction of all claims, so adding an ECT entry to the existing ACS at the end is equivalent to inserting it anywhere else.
+Implementations may optimize ECT order to achieve better performance.
+Additions to the ACS MUST be atomic.
+
+### Evidence Augmentation (Phase 2) {#sec-phase2}
+
+#### Appraisal Claims Set Initialization {#sec-acs-initialization}
+
+The ACS is initialized by copying the internal representation of Evidence claims to the ACS.
+See {{sec-acs-aug}}.
+
+#### The authority field in the ACS {#sec-authority}
+
+The `authority` field in an ACS ECT indicates the entity whose authority backs the Claims.
+
+The Verifier keeps track of authority so that it can satisfy appraisal policy that specifies authority.
+
+When adding an Evidence entry to the ACS, the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the Evidence.
+
+If multiple authorities approve the same Claim, for example if multiple key chains are available, then the `authority` field SHALL be set to include the `$crypto-keys-type-choice` representation for each key chain.
+
+When adding Endorsement or Reference Values Claims to the ACS that resulted from CoRIM processing,
+the Verifier SHALL set the `authority` field using a `$crypto-keys-type-choice` representation of the entity that signed the CoRIM.
+
+When searching the ACS for an entry which matches a triple condition containing an `authorized-by` field, the Verifier SHALL ignore ACS entries if none of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
+The Verifier SHALL match ACS entries if all of the entries present in the condition `authorized-by` field are present in the ACS `authority` field.
+
+#### ACS augmentation using CoMID triples
+
+In the ACS augmentation phase, a CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS.
+Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.
+
+Each triple is processed independently of other triples.
+However, the ACS state may change as a result of processing a triple.
+If a triple condition does not match, then the Verifier continues to process other triples.
+
+### Reference Values Corroboration and Augmentation (Phase 3) {#sec-phase3}
+
+Reference Value Providers (RVP) publish Reference Values using the Reference Values Triple ({{sec-comid-triple-refval}}) which are transformed ({{sec-ref-trans}}) into an internal representation ({{sec-ir-ref-val}}).
+Each Reference Value Triple describes a single possible Attester state.
+
+Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
+
+Reference Values are matched with ACS entries by iterating through the `rv` list.
+For each `rv` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains `evidence`.
+
+If satisfied, for the `rv` entry, the following three steps are performed:
+
+1. The `addition` ECT is moved to the ACS, with `cmtype` set to `reference-values`
+2. The claims, i.e., the `element-list` from the ACS ECT with `cmtype` set to `evidence` is copied to the `element-list` of the `addition` ECT
+3. The `authority` field of the `addition` ECT has been confirmed as being set correctly to the RVP authority
+
+### Endorsed Values Augmentation (Phase 4) {#sec-phase4}
+Endorsers publish Endorsements using endorsement triples (see {{sec-comid-triple-endval}}), {{sec-comid-triple-cond-endors}}, and {{sec-comid-triple-cond-series}}) which are transformed ({{sec-end-trans}}) into an internal representation ({{sec-ir-end-val}}).
+Endorsements describe actual Attester state.
+Endorsements are added to the ACS if the Endorsement condition is satisfied by the ACS.
+
+#### Processing Endorsements {#sec-process-end}
+
+Endorsed Values Triple and Conditional Endorsement Triple share the same internal representation.
+
+After transformation into an `ev` entry, the processing steps of both triples are the same, as described below.
+Each `ev` entry is processed independently of other `ev`s.
+
+Endorsements are matched with ACS entries by iterating through the `ev` list.
+For each `ev` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `ev` `addition` ECT is added to the ACS.
+
+Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs.
+If there are multiple matches, then each match is processed independently from the others.
+
+#### Processing Conditional Endorsements {#sec-process-cond-end}
+
+Conditional Endorsement Triples are transformed into an internal representation based on `ev`.
+Conditional endorsements have the same processing steps as shown in ({{sec-process-end}}).
+
+#### Processing Conditional Endorsement Series {#sec-process-series}
+
+Conditional Endorsement Series Triples are transformed into an internal representation based on `evs`.
+Conditional series endorsements are matched with ACS entries first by iterating through the `evs` list,
+where for each `evs` entry, the `condition` ECT is compared with an ACS ECT, where the ACS ECT `cmtype` contains either `evidence`, `reference-values`, or `endorsements`.
+If the ECTs match ({{sec-match-condition-ect}}), the `evs` `series` array is iterated,
+where for each `series` entry, if the `selection` ECT matches an ACS ECT,
+the `addition` ECT is added to the ACS.
+Series iteration terminates after the first matching series entry is processed or when no series entries match.
+
+#### Processing Key Verifications {#sec-process-keys}
+
+To process key verification triples, the internal representation of ECTs containing `intrep-keys` is used to identify ACS entries containing `$crypto-key-type-choice` values that require additional key verification steps.
+If the `key-type` field is set, the Verifier will apply the verification steps depending upon the type of `key`, i.e.
+the selected choice from `$crypto-key-type-choice`.
+If the `key` is set to `tagged-pkix-base64-cert-type` or `tagged-pkix-asn1der-cert-type`, certificate validation is performed as described in {{Section 6 of -pkix-cert}}.
+For other types of keys, the key validation steps should be defined by a CoRIM author in a profile document.
+
+If the key verification check succeeds, the key is re-asserted by the Verifier as an Endorsement by constructing an ECT that contains the verified key using the `authority` of the Verifier.
+Note that, in this case, the Verifier is acting in the role of an Endorser.
+
+For each ECT from endorsed value (`ev`) or attestation evidence (`ae`) entries, the candidate ECT (C-ECT) is compared with an ACS ECT (ACS-ECT), where the ACS-ECT `cmtype` contains either `evidence` or `endorsements`.
+If the C-ECT and ACS-ECT match ({{sec-match-condition-ect}}), then for each _key_ in the C-ECT.`element-claims`.`measurement-values-map`.`intrep-keys`, do the following steps:
+
+{:kvp-enum: counter="kvp" style="format Step %d."}
+
+{: kvp-enum}
+
+* If key verification succeeds for any _key_, allocate an addition ECT (ADDITION).
+
+* For each verified _key_ in C-ECT:
+
+{:kvp2-enum: counter="kvp2" style="format %i"}
+
+{: kvp2-enum}
+
+* **append**(_key_, ADDITION.`element-list`.`element-map`.`element-claims`.`measurement-values-map`.`intrep-keys`).
+
+{: kvp-enum}
+
+* **copy**(ACS-ECT`.`environment`, ADDITION.`environment`).
+
+* **copy**(ACS-ECT.`element-list`.`element-map`.`element-id`, ADDITION.`element-list`.`element-map`.`element-id`).
+
+* Set ADDITION.`cmtype` to `endorsements`.
+
+* Add the Verifier authority `$crypto-key-type-choice` to the ADDITION.`authority` field.
+
+* Add the ADDITION to the ACS.
+
+Otherwise, do not add the ADDITION to the ACS.
+
+It is possible that a candidate key has been verified during Phase 1 processing ({{sec-phase1}}) or is replicated across Evidence or Endorsement ECTs.
+Implementations might optimize processing of key verifications by checking whether a key has already been verified by the Verifier.
+
+#### Processing Domain Membership {#sec-process-dm}
+
+This section assumes that each Domain Membership Triple (see {{sec-comid-triple-domain-membership}}) has been transformed into an internal representation following the steps described in {{sec-ir-dm-trans}}, resulting in the representation specified in {{sec-ir-dm}}.
+
+Domain Membership ECTs (i.e., `cmtype` equals `domain-member`) in the `dm` staging area are matched with ACS entries where `cmtype` is set to `evidence`, `reference-values` i.e. corroborated evidence,  or `domain-member` using the following algorithm:
+
+For each `domain` in the `dm` staging area, which has not been processed (outer loop):
+
+For each member `m` in `domain`.`members` (inner loop):
+
+* Check that there is a corresponding ACS entry `environment` that matches `m`.`environment`.
+* Check that the ACS entry `cmtype` is one of `evidence`, `reference-values`, or `domain-member`.
+
+Outer loop resumes:
+
+* If all `domain`.`members` matched a corresponding ACS entry, add the `domain` ECT to the ACS.
+* If none of the `domain`.`members` matched, proceed to next `dm` entry.
+* If some, but not all of the `domain`.`members` matched, proceed to the next `dm` entry.
+If the previous execution of the outer loop added any `domain` entry to the ACS, then run the outer loop again
+Else STOP processing `dm` entries.
+
+The processing terminates, when all the Domain Membership ECTs which are appropriate to the Evidence have been added to the ACS.
+
+If any of the expected Domain Membership ECTs have not been added to the ACS, then this may affect outcomes in subsequent phases.
+
+#### Processing Domain Dependency {#sec-process-dd}
 
 This section assumes that each Domain Dependency Triple (see {{sec-comid-triple-domain-dependency}}) has been transformed into domain dependency graph (see {{sec-ir-dd}}) following the steps described in {{sec-ir-dd-trans}}.
 
