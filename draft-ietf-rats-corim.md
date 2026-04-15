@@ -1037,9 +1037,6 @@ It can be used to identify the type of measured element (see {{-cca-profile}}) o
 multiple measured element instances within the same environment.
 The initial types defined are OID, UUID, uint, and tstr.
 
-A single anonymous `measurement-map` is allowed within the same environment.
-Two or more measurement-map entries within the same environment MUST populate `mkey`.
-
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
