@@ -3583,7 +3583,11 @@ Table of Contents
 
    The acs::MATCH operation depends on the type of relation.  The
    matching logic for each type of relation is described in the
-   following sections.
+   following sections.  The acs::APPEND operation also depends on the
+   type of relation.  This could involve simply appending the addition
+   ECT, or it could be a more complex operation involving further
+   manipulation of the addition ECT before appending (see
+   Section 8.2.4.2.1 for an example of the latter).
 
 8.2.4.1.  Ordering of Relations
 
@@ -3695,7 +3699,14 @@ Table of Contents
 
    For each dm entry, the condition ECT is compared with either an ACS
    Element ECT with cmtype 0 (i.e., corroborated evidence) or a Domain
-   ECT with kind 0 (i.e., member).  All other ECTs are ignored.
+   ECT with kind 0 (i.e., member).
+   // [TBC] The original text says: "Domain Membership ECTs (i.e.,
+   // cmtype equals domain-member) in the dm staging area are matched
+   // with ACS entries where cmtype is set to evidence, reference-values
+   // i.e. corroborated evidence, or domain-member [...]" but it seems
+   // that matching evidence ECTs is superfluous and potentially leading
+   // to the wrong result (i.e., matching uncorroborated environments).
+   All other ECTs are ignored.
 
    If all the children environments in the condition ECT have a matching
    ECT in the ACS, the ECT addition is added to the ACS.  Otherwise,
@@ -3703,25 +3714,35 @@ Table of Contents
 
 8.2.4.3.5.  Processing dd Relations
 
-   ...
+   Essentially, the objective of processing a dd relation is to verify
+   that each edge in a domain dependency graph (DDG) has a corresponding
+   edge in a domain membership graph (DMG).  (Note that DDGs need not be
+   isomorphs of DMGs.)
+
+   The same assumptions regarding acyclicity and pre-sorting of the
+   relation items as in Section 8.2.4.3.4 apply.
+
+   If, in a later processing phase, an appraisal policy for trust
+   dependency exists, the DDG can be further evaluated.  For example, a
+   trust dependency policy might specify a strength of function
+   requirement for how Evidence about a TE is integrity protected by its
+   AE.
+
+   For each dd entry, the condition ECT is compared with an ACS Domain
+   ECT with kind 0 (i.e., member).  If the two environment match or if
+   the condition ECT environment matches one of the ACS Domain ECT
+   children ...
 
 
    // [TODO]
 
-   *  describe the processing algorithm
+   The subsequent Verifier stages or Relying Party processing of the ACS
+   may be affected if domain dependency ECTs are not added to the ACS.
+   For example, trust in an ACS entry that depends on trustee ACS
+   entries may not be considered.
 
-      -  the core principles
 
-      -  the high level flow
-
-      -  for each "phase"
-
-         o  describe prerequisites
-
-         o  describe any setup step
-
-         o  description of the "match & augment" for each "relation"
-            involved in that phase
+   // [TODO] SECTION 9.4
 
 8.2.5.  Handoff
 

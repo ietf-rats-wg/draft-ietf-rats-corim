@@ -5439,7 +5439,9 @@ func match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
             </figcaption></figure>
 </div>
 <p id="section-8.2.4-4">The <code>acs::MATCH</code> operation depends on the type of relation.
-The matching logic for each type of relation is described in the following sections.<a href="#section-8.2.4-4" class="pilcrow">¶</a></p>
+The matching logic for each type of relation is described in the following sections.
+The <code>acs::APPEND</code> operation also depends on the type of relation.
+This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see <a href="#sec-proc-rv" class="auto internal xref">Section 8.2.4.2.1</a> for an example of the latter).<a href="#section-8.2.4-4" class="pilcrow">¶</a></p>
 <div id="ordering-of-relations">
 <section id="section-8.2.4.1">
             <h5 id="name-ordering-of-relations">
@@ -5458,7 +5460,7 @@ The "match and augment" algorithm described in <a href="#algo-match-and-augment"
 <a href="#section-8.2.4.2" class="section-number selfRef">8.2.4.2. </a><a href="#name-reference-values-corroborat" class="section-name selfRef">Reference Values Corroboration and Augmentation (Phase 3)</a>
             </h5>
 <p id="section-8.2.4.2-1">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.<a href="#section-8.2.4.2-1" class="pilcrow">¶</a></p>
-<div id="processing-rv-relations">
+<div id="sec-proc-rv">
 <section id="section-8.2.4.2.1">
               <h6 id="name-processing-rv-relations">
 <a href="#section-8.2.4.2.1" class="section-number selfRef">8.2.4.2.1. </a><a href="#name-processing-rv-relations" class="section-name selfRef">Processing <code>rv</code> Relations</a>
@@ -5536,7 +5538,7 @@ If they match, perform the following steps for each key in the condition ECT <co
 <p id="section-8.2.4.3.3-5">Add all the verified keys to the addition ECT's <code>key-list</code> and add the addition ECT to the ACS.<a href="#section-8.2.4.3.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="processing-dm-relations">
+<div id="sec-proc-dm">
 <section id="section-8.2.4.3.4">
               <h6 id="name-processing-dm-relations">
 <a href="#section-8.2.4.3.4" class="section-number selfRef">8.2.4.3.4. </a><a href="#name-processing-dm-relations" class="section-name selfRef">Processing <code>dm</code> Relations</a>
@@ -5547,47 +5549,36 @@ If they match, perform the following steps for each key in the condition ECT <co
 It also assumes that the <code>dm-item</code>s in the <code>dm</code> relation are topologically sorted.
 This allows the algorithm to execute in one pass.<a href="#section-8.2.4.3.4-3" class="pilcrow">¶</a></p>
 <p id="section-8.2.4.3.4-4">For each <code>dm</code> entry, the condition ECT is compared with either an ACS Element ECT with <code>cmtype</code> 0 (i.e., corroborated evidence) or a Domain ECT with <code>kind</code> 0 (i.e., member).
+<span class="cref">
+[TBC]
+The original text says: "Domain Membership ECTs (i.e., cmtype equals domain-member) in the dm staging area are matched with ACS entries where cmtype is set to evidence, reference-values i.e. corroborated evidence, or domain-member [...]" but it seems that matching evidence ECTs is superfluous and potentially leading to the wrong result (i.e., matching uncorroborated environments).
+</span>
 All other ECTs are ignored.<a href="#section-8.2.4.3.4-4" class="pilcrow">¶</a></p>
 <p id="section-8.2.4.3.4-5">If all the <code>children</code> environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
 Otherwise, processing moves to processing the next <code>dm</code> entry.<a href="#section-8.2.4.3.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="processing-dd-relations">
+<div id="sec-proc-dd">
 <section id="section-8.2.4.3.5">
               <h6 id="name-processing-dd-relations">
 <a href="#section-8.2.4.3.5" class="section-number selfRef">8.2.4.3.5. </a><a href="#name-processing-dd-relations" class="section-name selfRef">Processing <code>dd</code> Relations</a>
               </h6>
-<p id="section-8.2.4.3.5-1">...<a href="#section-8.2.4.3.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.5-2"><span class="cref">
+<p id="section-8.2.4.3.5-1">Essentially, the objective of processing a <code>dd</code> relation is to verify that each edge in a domain dependency graph (DDG) has a corresponding edge in a domain membership graph (DMG).
+(Note that DDGs need not be isomorphs of DMGs.)<a href="#section-8.2.4.3.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-2">The same assumptions regarding acyclicity and pre-sorting of the relation items as in <a href="#sec-proc-dm" class="auto internal xref">Section 8.2.4.3.4</a> apply.<a href="#section-8.2.4.3.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-3">If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
+For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.<a href="#section-8.2.4.3.5-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-4">For each <code>dd</code> entry, the condition ECT is compared with an ACS Domain ECT with <code>kind</code> 0 (i.e., member).
+If the two <code>environment</code> match or if the condition ECT <code>environment</code> matches one of the ACS Domain ECT <code>children</code> ...<a href="#section-8.2.4.3.5-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-5"><span class="cref">
 [TODO]
-</span><a href="#section-8.2.4.3.5-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-8.2.4.3.5-3.1">
-                  <p id="section-8.2.4.3.5-3.1.1">describe the processing algorithm<a href="#section-8.2.4.3.5-3.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-8.2.4.3.5-3.1.2.1">
-                      <p id="section-8.2.4.3.5-3.1.2.1.1">the core principles<a href="#section-8.2.4.3.5-3.1.2.1.1" class="pilcrow">¶</a></p>
-</li>
-                    <li class="normal" id="section-8.2.4.3.5-3.1.2.2">
-                      <p id="section-8.2.4.3.5-3.1.2.2.1">the high level flow<a href="#section-8.2.4.3.5-3.1.2.2.1" class="pilcrow">¶</a></p>
-</li>
-                    <li class="normal" id="section-8.2.4.3.5-3.1.2.3">
-                      <p id="section-8.2.4.3.5-3.1.2.3.1">for each "phase"<a href="#section-8.2.4.3.5-3.1.2.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-8.2.4.3.5-3.1.2.3.2.1">
-                          <p id="section-8.2.4.3.5-3.1.2.3.2.1.1">describe prerequisites<a href="#section-8.2.4.3.5-3.1.2.3.2.1.1" class="pilcrow">¶</a></p>
-</li>
-                        <li class="normal" id="section-8.2.4.3.5-3.1.2.3.2.2">
-                          <p id="section-8.2.4.3.5-3.1.2.3.2.2.1">describe any setup step<a href="#section-8.2.4.3.5-3.1.2.3.2.2.1" class="pilcrow">¶</a></p>
-</li>
-                        <li class="normal" id="section-8.2.4.3.5-3.1.2.3.2.3">
-                          <p id="section-8.2.4.3.5-3.1.2.3.2.3.1">description of the "match &amp; augment" for each "relation" involved in that phase<a href="#section-8.2.4.3.5-3.1.2.3.2.3.1" class="pilcrow">¶</a></p>
-</li>
-                      </ul>
-</li>
-                  </ul>
-</li>
-              </ul>
+</span><a href="#section-8.2.4.3.5-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-6">The subsequent Verifier stages or Relying Party processing of the ACS may be affected if domain dependency ECTs are not added to the ACS.
+For example, trust in an ACS entry that depends on <code>trustee</code> ACS entries may not be considered.<a href="#section-8.2.4.3.5-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-7"><span class="cref">
+[TODO]
+SECTION 9.4
+</span><a href="#section-8.2.4.3.5-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
