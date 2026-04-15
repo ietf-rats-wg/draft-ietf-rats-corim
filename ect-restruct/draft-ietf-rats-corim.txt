@@ -3474,10 +3474,10 @@ Table of Contents
        item := domain-item::NEW()
 
        IF TYPEOF(T) == domain-membership-triple-record:
-           item.condition.kind = member
+           item.condition.kind = item.addition.kind = member
            item.condition.children = T.members
        ELIF TYPEOF(T) == domain-dependency-triple-record
-           item.condition.kind = trustee
+           item.condition.kind = item.addition.kind = trustee
            item.condition.children = T.trustees
 
        item.addition.environment = T.domain-id
@@ -3665,7 +3665,28 @@ Table of Contents
 
 8.2.4.3.4.  Processing dm Relations
 
+   Domain Membership relations describe the expected topological
+   arrangement of the Attester.
+
+   Domains are matched with ACS entries by iterating through the dm
+   list.
+
+   The following algorithm assumes that the graph described by the
+   condition ECTs in the dm relation is acyclic.  It also assumes that
+   the dm-items in the dm relation are topologically sorted.  This
+   allows the algorithm to execute in one pass.
+
+   For each dm entry, the condition ECT is compared with either an ACS
+   Element ECT with cmtype 0 (i.e., corroborated evidence) or a Domain
+   ECT with kind 0 (i.e., member).  All other ECTs are ignored.
+
+   If all the children environments in the condition ECT have a matching
+   ECT in the ACS, the ECT addition is added to the ACS.  Otherwise,
+   processing moves to processing the next dm entry.
+
 8.2.4.3.5.  Processing dd Relations
+
+   ...
 
 
    // [TODO]
