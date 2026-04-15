@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 16 October 2026                                          Linaro
+Expires: 17 October 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           14 April 2026
+                                                           15 April 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 October 2026.
+   This Internet-Draft will expire on 17 October 2026.
 
 Copyright Notice
 
@@ -3427,20 +3427,22 @@ Table of Contents
 
        IF TYPEOF(T) == attest-key-triple-record:
            item.addition.key-type = attest-key
+           item.condition.key-type = attest-key
        ELIF TYPEOF(T) == identity-triple-record:
            item.addition.key-type = identity-key
+           item.condition.key-type = identity-key
 
        item.condition.environment = T.environment
        item.addition.environment = T.environment
 
        item.condition.key-list = T.key-list
 
-       IF T.condition.mkey:
-           item.condition.key-id = T.condition.mkey
-           item.addition.key-id = T.condition.mkey
+       IF T.conditions.mkey:
+           item.condition.key-id = T.conditions.mkey
+           item.addition.key-id = T.conditions.mkey
 
-       IF T.condition.authorized-by:
-           item.condition.authority = T.condition.authorized-by
+       IF T.conditions.authorized-by:
+           item.condition.authority = T.conditions.authorized-by
 
        item.addition.authority = verifier
 
@@ -3451,6 +3453,8 @@ Table of Contents
    }
 
                     Figure 38: Key Triple Transformation
+
+   Note that keys are added under the authority of the verifier.
 
 8.2.3.3.5.  Domains
 
@@ -3640,12 +3644,24 @@ Table of Contents
 
    Keys are matched with ACS entries by iterating through the keys list.
    For each keys entry, the condition ECT is compared with an ACS ECT
-   with cmtype 1 or 2 (i.e., endorsements or evidence).
+   with cmtype 1 or 2 (i.e., endorsements or evidence).  If they match,
+   perform the following steps for each key in the condition ECT key-
+   list:
 
-   The matched key is verified.  If the key verification check succeeds,
-   the key is re-asserted by the Verifier as an Endorsement by
-   constructing an ECT that contains the verified key using under the
-   Verifier authority.
+   1.  Verify the certificate signatures for each certificate in the
+       certification path.
+
+   2.  Verify the revocation status for each certificate in the
+       certification path.
+
+   3.  Verify the key usage restrictions that are appropriate for key-
+       type.
+
+   A key that successfully passes the above checks is said to be
+   verified.
+
+   Add all the verified keys to the addition ECT's key-list and add the
+   addition ECT to the ACS.
 
 8.2.4.3.4.  Processing dm Relations
 
