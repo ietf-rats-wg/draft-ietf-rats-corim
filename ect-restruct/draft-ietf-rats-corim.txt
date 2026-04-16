@@ -1542,7 +1542,7 @@ Table of Contents
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 8.2.4.4.6.6.
+      Value entry.  Matching is described in Section 8.2.4.4.5.6.
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
@@ -3740,16 +3740,20 @@ Table of Contents
 
    The matching component of the "match and augment" algorithm (see
    Section 8.2.4) relies on a standardized set of comparison rules for
-   ECTs.  In general, these rules depend on the type of elements being
-   compared.  This section provides a normative description of the rules
-   for comparing ECT elements found in relation conditions with ECTs in
-   the ACS.
+   ECTs.  These rules depend on the type of elements being compared.
+   This section provides a normative description of the rules for
+   comparing ECT elements found in relation conditions with ECTs in the
+   ACS.
 
-   When comparing a condition ECT in a relation against the ACS, the
-   processor iterates over all ACS entries of the same type (i.e.,
-   E-ECTs are compared against E-ECTs, K-ECTs against K-ECTs and D-ECTs
-   against D-ECTs) and attempts to match the condition ECT with each ACS
-   entry.
+   When comparing a condition ECT against the ACS, the processor
+   iterates over all ACS entries and attempts to match the condition ECT
+   with each ACS entry.  Typically, the comparison is between ECTs of
+   the same type (i.e., Element ECTs are compared with Element ECTs, Key
+   ECTs with Key ECTs and Domain ECTs with Domain ECTs).  However, ECTs
+   of different types can sometimes be compared if the comparison is
+   based on common attributes (Figure 12).  See Section 8.2.4.3.4 for an
+   example of this, where the environments of D-ECTs and E-ECTs are
+   compared.
 
    Conceptually, the processor creates a "matched entries" set and
    populates it with all ACS entries that match the condition ECT.  If,
@@ -3758,30 +3762,28 @@ Table of Contents
    the matched entries set is empty, the condition ECT does not match
    the ACS.
 
-8.2.4.4.1.  Comparing a condition ECT against a single ACS entry
-
    If the condition ECT contains a profile and the profile defines an
-   algorithm for a codepoint and environment-map then the Verifier MUST
-   use the algorithm defined by the profile, or it MUST use a standard
-   algorithm if the profile defines that.  If the condition ECT contains
-   a profile, but the profile does not define an algorithm for a
-   particular codepoint and environment-map then the verifier MUST use
-   the standard algorithm described in this document to compare the data
-   at that codepoint.
+   algorithm for a given codepoint, the processor MUST use the algorithm
+   defined by the profile in comparisons involving that codepoint.  If
+   the condition ECT contains a profile, but the profile does not define
+   an algorithm for a particular codepoint, the processor MUST use the
+   standard algorithm described in this document for comparisons
+   involving that codepoint.
 
-   The Verifier SHALL perform all of the comparisons defined in
-   Section 8.2.4.4.2, Section 8.2.4.4.3, and Section 8.2.4.4.4.
+   The specific comparisons performed depend on the type of relation
+   being processed.  In general, the processor will perform comparisons
+   based on environment (see Section 8.2.4.4.1 and authority (see
+   Section 8.2.4.4.2), as well as more specialized comparisons based on
+   the type of ECT matched.  Element ECTs will match on element-list
+   (see Section 8.2.4.4.3), Key ECTs will match on key-list (TODO ref),
+   and Domain ECTs will typically match on children (TODO ref).
 
    Each of these comparisons compares one field in the condition ECT
-   against the same field in the ACS entry.
+   against the same field in the ACS entry.  If all the fields match,
+   the condition ECT matches the ACS entry.  If any fields do not match,
+   the condition ECT does not match the ACS entry.
 
-   If all of the fields match, then the condition ECT matches the ACS
-   entry.
-
-   If any of the fields does not match, then the condition ECT does not
-   match the ACS entry.
-
-8.2.4.4.2.  Environment Comparison
+8.2.4.4.1.  Environment Comparison
 
    The Verifier SHALL compare each field which is present in the
    condition ECT environment-map against the corresponding field in the
@@ -3805,7 +3807,7 @@ Table of Contents
    the presence of, and value of, the corresponding ACS entry field
    SHALL NOT affect whether the environments match.
 
-8.2.4.4.3.  Authority comparison
+8.2.4.4.2.  Authority comparison
 
    The Verifier MUST compare byte-by-byte the condition ECT's authority
    value to the candidate entry's authority value.
@@ -3823,7 +3825,7 @@ Table of Contents
    Verifier SHALL treat them as equal if their deterministic CBOR
    encoding is binary equal.
 
-8.2.4.4.4.  Element list comparison
+8.2.4.4.3.  Element list comparison
 
    The Verifier SHALL iterate over all the entries in the condition ECT
    element-list and compare each one against the corresponding entry in
@@ -3839,7 +3841,7 @@ Table of Contents
    matching entry in the ACS entry element-list field then the element-
    list do not match.
 
-8.2.4.4.5.  Element map comparison
+8.2.4.4.4.  Element map comparison
 
    The Verifier SHALL compare each element-map within the condition ECT
    element-list against the ACS entry element-list.
@@ -3862,9 +3864,9 @@ Table of Contents
 
    Second, the Verifier SHALL compare the element-claims field within
    the condition ECT element-list and the corresponding field from the
-   ACS entry.  See Section 8.2.4.4.6.
+   ACS entry.  See Section 8.2.4.4.5.
 
-8.2.4.4.6.  Measurement values map Comparison
+8.2.4.4.5.  Measurement values map Comparison
 
    The Verifier SHALL iterate over the codepoints which are present in
    the condition ECT element's measurement-values-map.  Each of the
@@ -3882,7 +3884,7 @@ Table of Contents
    measurement-values-map then Verifier SHALL remove that candidate
    entry from the candidate entries array.
 
-8.2.4.4.6.1.  # Comparison of a single measurement-values-map codepoint
+8.2.4.4.5.1.  Comparison of a single measurement-values-map codepoint
 
    The Verifier SHALL compare each condition ECT measurement-values-map
    value against the corresponding ACS entry value using the appropriate
@@ -3909,14 +3911,14 @@ Table of Contents
    The following subsections define the comparison algorithms for the
    measurement-values-map codepoints defined by this specification.
 
-8.2.4.4.6.2.  Comparison for version entries
+8.2.4.4.5.2.  Comparison for version entries
 
    The value stored under measurement-values-map codepoint 0 is an
    version label, which MUST have type version-map.  Two version-map
    values can only be compared for equality, as they are colloquial
    versions that cannot specify ordering.
 
-8.2.4.4.6.3.  Comparison for svn entries
+8.2.4.4.5.3.  Comparison for svn entries
 
    The ACS entry value stored under measurement-values-map codepoint 1
    is a security version number, which MUST have type svn-type.
@@ -3952,7 +3954,7 @@ Table of Contents
    therefore treats the minimum SVN as an exact state and not one to
    compare with inequality.
 
-8.2.4.4.6.4.  Comparison for digests entries
+8.2.4.4.5.4.  Comparison for digests entries
 
    A digests entry contains one or more digests, each measuring the same
    object.  When multiple digests are provided, each represents a
@@ -3995,7 +3997,7 @@ Table of Contents
    the condition ECT in common with the hash algorithms from the
    candidate entry ECT.
 
-8.2.4.4.6.5.  Comparison for raw-value entries
+8.2.4.4.5.5.  Comparison for raw-value entries
 
    A raw-value entry contains binary data.
 
@@ -4033,7 +4035,7 @@ Table of Contents
    position in the mask whose value is 1, the corresponding bits in both
    values are equal then the comparison MUST return true.
 
-8.2.4.4.6.6.  Comparison for cryptokeys entries
+8.2.4.4.5.6.  Comparison for cryptokeys entries
 
    The CBOR tag of the first entry of the condition ECT cryptokeys array
    is compared with the CBOR tag of the first entry of the candidate
@@ -4047,21 +4049,21 @@ Table of Contents
    then the cryptokeys condition ECT matches.  Otherwise, cryptokeys
    does not match.
 
-8.2.4.4.6.7.  Comparison for Integrity Registers
+8.2.4.4.5.7.  Comparison for Integrity Registers
 
    For each Integrity Register entry in the condition ECT, the Verifier
    will use the associated identifier (i.e., integrity-register-id-type-
    choice) to look up the matching Integrity Register entry in the
    candidate entry.  If no entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
-   as defined in Section 8.2.4.4.6.4 after equivalence has been found
+   as defined in Section 8.2.4.4.5.4 after equivalence has been found
    according to Section 5.1.4.7.  Note that it is not required for all
    the entries in the candidate entry to be used during matching: the
    condition ECT could consist of a subset of the device's register
    space.  In TPM parlance, a TPM "quote" may report all PCRs in
    Evidence, while a condition ECT could describe a subset of PCRs.
 
-8.2.4.4.6.8.  Comparison for int-range entries
+8.2.4.4.5.8.  Comparison for int-range entries
 
    The ACS entry value stored under measurement-values-map codepoint 15
    is an int range value, which MUST have type int-range-type-choice.
@@ -4102,7 +4104,7 @@ Table of Contents
       -  CONDITION.max is null or ENTRY.max is an int that is less than
          or equal to CONDITION.max.
 
-8.2.4.4.7.  Profile-directed Comparison
+8.2.4.4.6.  Profile-directed Comparison
 
    A profile MUST specify comparison algorithms for its additions to
    $-prefixed CoRIM CDDL codepoints when this specification does not
