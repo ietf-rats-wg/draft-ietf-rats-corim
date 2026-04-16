@@ -3742,31 +3742,30 @@ Table of Contents
    Section 8.2.4) relies on a standardized set of comparison rules for
    ECTs.  These rules depend on the type of elements being compared.
    This section provides a normative description of the rules for
-   comparing ECT elements found in relation conditions with ECTs in the
-   ACS.
+   comparing ECT elements found in relation conditions (referred to as
+   C-ECTs for the remainder of this text) with ECTs in the ACS (referred
+   to as ACS-ECTs for the remainder of this text).
 
-   When comparing a condition ECT against the ACS, the processor
-   iterates over all ACS entries and attempts to match the condition ECT
-   with each ACS entry.  Typically, the comparison is between ECTs of
-   the same type (i.e., Element ECTs are compared with Element ECTs, Key
-   ECTs with Key ECTs and Domain ECTs with Domain ECTs).  However, ECTs
-   of different types can sometimes be compared if the comparison is
-   based on common attributes (Figure 12).  See Section 8.2.4.3.4 for an
-   example of this, where the environments of D-ECTs and E-ECTs are
-   compared.
+   When comparing a C-ECT against the ACS, the processor iterates over
+   all ACS entries and attempts to match the C-ECT with each ACS entry.
+   Typically, the comparison is between ECTs of the same type (i.e.,
+   Element ECTs are compared with Element ECTs, Key ECTs with Key ECTs
+   and Domain ECTs with Domain ECTs).  However, ECTs of different types
+   can sometimes be compared if the comparison is based on common
+   attributes (Figure 12).  See Section 8.2.4.3.4 for an example of
+   this, where the environments of D-ECTs and E-ECTs are compared.
 
    Conceptually, the processor creates a "matched entries" set and
-   populates it with all ACS entries that match the condition ECT.  If,
-   after visiting all the entries in the ACS, the matched entries set is
-   not empty, then the condition ECT matches the ACS.  Conversely, if
-   the matched entries set is empty, the condition ECT does not match
-   the ACS.
+   populates it with all ACS entries that match the C-ECT.  If, after
+   visiting all the entries in the ACS, the matched entries set is not
+   empty, the C-ECT matches the ACS.  Conversely, if the matched entries
+   set is empty, the C-ECT does not match the ACS.
 
-   If the condition ECT contains a profile and the profile defines an
-   algorithm for a given codepoint, the processor MUST use the algorithm
-   defined by the profile in comparisons involving that codepoint.  If
-   the condition ECT contains a profile, but the profile does not define
-   an algorithm for a particular codepoint, the processor MUST use the
+   If the C-ECT contains a profile and the profile defines an algorithm
+   for a given codepoint, the processor MUST use the algorithm defined
+   by the profile in comparisons involving that codepoint.  If the
+   condition ECT contains a profile, but the profile does not define an
+   algorithm for a particular codepoint, the processor MUST use the
    standard algorithm described in this document for comparisons
    involving that codepoint.
 
@@ -3775,71 +3774,61 @@ Table of Contents
    based on environment (see Section 8.2.4.4.1 and authority (see
    Section 8.2.4.4.2), as well as more specialized comparisons based on
    the type of ECT matched.  Element ECTs will match on element-list
-   (see Section 8.2.4.4.3), Key ECTs will match on key-list (TODO ref),
-   and Domain ECTs will typically match on children (TODO ref).
+   (see Section 8.2.4.4.3), Key ECTs will match on key-list (
+   // [TODO]), and Domain ECTs will typically match on children (see
+   Section 8.2.4.4.1).
 
-   Each of these comparisons compares one field in the condition ECT
-   against the same field in the ACS entry.  If all the fields match,
-   the condition ECT matches the ACS entry.  If any fields do not match,
-   the condition ECT does not match the ACS entry.
+
+   // [TBC] Are authority checks always carried out?
+
+   Each of these comparisons compares one attribute in the C-ECT against
+   the same attribute in the ACS-ECT.  If all the attributes match, the
+   C-ECT matches the ACS-ECT.  If any attributes do not match, the C-ECT
+   does not match the ACS-ECT.
 
 8.2.4.4.1.  Environment Comparison
 
-   The Verifier SHALL compare each field which is present in the
-   condition ECT environment-map against the corresponding field in the
-   ACS entry environment-map using binary comparison.  Before performing
-   the binary comparison, the Verifier SHOULD convert both environment-
-   map fields into a form which meets CBOR Core Deterministic Encoding
-   Requirements [STD94].
+   The processor MUST compare each attribute which is present in the
+   C-ECT's environment with the corresponding attribute in the ACS-ECT's
+   environment using binary comparison.  Before performing the binary
+   comparison, the processor SHOULD convert the attributes in both
+   environments into a form that meets the CBOR core deterministic
+   encoding requirements described in Section 4.2 of [STD94].
 
-   If all fields which are present in the condition ECT environment-map
-   (e.g., instance-id or group-id) are also present in the ACS entry and
-   are binary identical, then the environments match.
-
-   If any field which is present in the condition ECT environment-map is
-   not present in the ACS entry, then the environments do not match.
-
-   If any field which is present in the condition ECT environment-map is
-   not binary identical to the corresponding ACS entry field, then the
+   If all the attributes which are present in the C-ECT environment
+   (e.g., instance-id or group-id) are also present in the ACS-ECT and
+   are binary identical, the two environments match.  Otherwise, the
    environments do not match.
 
-   If a field is not present in the condition ECT environment-map then
-   the presence of, and value of, the corresponding ACS entry field
-   SHALL NOT affect whether the environments match.
+   Any attribute that is present in the ACS-ECT but not in the C-ECT is
+   ignored in the comparison.
 
 8.2.4.4.2.  Authority comparison
 
-   The Verifier MUST compare byte-by-byte the condition ECT's authority
-   value to the candidate entry's authority value.
+   The comparison between a C-ECT's authority value and an ACS-ECT's
+   authority value is as follows: if every entry in the C-ECT authority
+   matches byte-by-byte an entry in the ACS-ECT authority, the
+   authorities match.  Otherwise, the authorities do not match.
 
-   If every entry in the condition ECT authority matches byte-by-byte a
-   corresponding entry in the ACS entry authority field, then the
-   authorities match.  The order of the fields in each authority field
-   do not affect the result of the comparison.
+   The order of the items within each authority does not affect the
+   result of the comparison.
 
-   If any entry in the condition ECT authority does not have a matching
-   entry in the ACS entry authority field then the authorities do not
-   match.
-
-   When comparing two $crypto-key-type-choice fields for equality, the
-   Verifier SHALL treat them as equal if their deterministic CBOR
+   When comparing two $crypto-key-type-choice items for equality, the
+   processor MUST treat them as equal if their deterministic CBOR
    encoding is binary equal.
 
 8.2.4.4.3.  Element list comparison
 
-   The Verifier SHALL iterate over all the entries in the condition ECT
-   element-list and compare each one against the corresponding entry in
-   the ACS entry element-list.
+   The processor MUST iterate through all the entries in the C-ECT's
+   element-list, comparing each one with the corresponding entry in the
+   ACS-ECT's element-list.
 
-   If every entry in the condition ECT element-list has a matching entry
-   in the ACS entry element-list field then the element lists match.
+   If every entry in the C-ECT's element-list has a matching entry in
+   the ACS-ECT's element-list attribute, the two lists match.
+   Otherwise, the element lists do not match.
 
-   The order of the fields in each element-list field do not affect the
+   The order of the items within each element-list does not affect the
    result of the comparison.
-
-   If any entry in the condition ECT element-list does not have a
-   matching entry in the ACS entry element-list field then the element-
-   list do not match.
 
 8.2.4.4.4.  Element map comparison
 
