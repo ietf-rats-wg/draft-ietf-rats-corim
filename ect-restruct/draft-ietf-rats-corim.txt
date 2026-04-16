@@ -3803,7 +3803,7 @@ Table of Contents
    Any attribute that is present in the ACS-ECT but not in the C-ECT is
    ignored in the comparison.
 
-8.2.4.4.2.  Authority comparison
+8.2.4.4.2.  Authority Comparison
 
    The comparison between a C-ECT's authority value and an ACS-ECT's
    authority value is as follows: if every entry in the C-ECT authority
@@ -3817,114 +3817,104 @@ Table of Contents
    processor MUST treat them as equal if their deterministic CBOR
    encoding is binary equal.
 
-8.2.4.4.3.  Element list comparison
+8.2.4.4.3.  Element List Comparison
 
-   The processor MUST iterate through all the entries in the C-ECT's
-   element-list, comparing each one with the corresponding entry in the
-   ACS-ECT's element-list.
+   A C-ECT's element-list matches an ACS-ETC's element-list if all the
+   element-maps in the C-ECT's element-list match the element-maps in
+   the ACS-ECT's element-list.
 
-   If every entry in the C-ECT's element-list has a matching entry in
-   the ACS-ECT's element-list attribute, the two lists match.
-   Otherwise, the element lists do not match.
+   Any element-map that is present in the ACS-ECT's element-list but not
+   in the C-ECT's is ignored in the comparison.
 
-   The order of the items within each element-list does not affect the
-   result of the comparison.
+   The rules for matching element-maps are described in
+   Section 8.2.4.4.4.
 
-8.2.4.4.4.  Element map comparison
+8.2.4.4.4.  Element Map Comparison
 
-   The Verifier SHALL compare each element-map within the condition ECT
-   element-list against the ACS entry element-list.
+   The C-ECT's element-map matches an ACS-ECT's element-map if both the
+   element-id and element-claims match.
 
-   First, the Verifier SHALL locate the entries in the ACS entry
-   element-list which have a matching element-id as the condition ECT
-   element-map.  Two element-id fields are the same if they are either
-   both omitted, or both present with binary identical deterministic
-   encodings.
+   Two element-ids are considered the same if they are either both
+   omitted, or both present with binary identical deterministic
+   encodings.  Before performing the binary comparison, the processor
+   SHOULD convert the element-id attributes into a form that meets the
+   CBOR core deterministic encoding requirements described in
+   Section 4.2 of [STD94].
 
-   Before performing the binary comparison, the Verifier SHOULD convert
-   both fields into a form which meets CBOR Core Deterministic Encoding
-   Requirements [STD94].
+   The rules for matching element-claims are described in
+   Section 8.2.4.4.5.
 
-   If any condition ECT entry element-id does not have a corresponding
-   element-id in the ACS entry then the element map does not match.
+8.2.4.4.5.  Measurement Values Map Comparison
 
-   If any condition ECT entry has multiple corresponding element-ids
-   then the element map does not match.
+   The C-ECT's element-claims match an ACS-ECT's element-claims if:
 
-   Second, the Verifier SHALL compare the element-claims field within
-   the condition ECT element-list and the corresponding field from the
-   ACS entry.  See Section 8.2.4.4.5.
+   1.  Each attribute in the C-ECT's measurement-values-map is also
+       present in the ACS-ECT's measurement-values-map; and
 
-8.2.4.4.5.  Measurement values map Comparison
+   2.  The attribute values match.
 
-   The Verifier SHALL iterate over the codepoints which are present in
-   the condition ECT element's measurement-values-map.  Each of the
-   codepoints present in the condition ECT measurement-values-map is
-   compared against the same codepoint in the candidate entry
-   measurement-values-map.
+   Otherwise, the element claims do not match.
 
-   If any codepoint present in the condition ECT measurement-values-map
-   does not have a corresponding codepoint within the candidate entry
-   measurement-values-map then Verifier SHALL remove that candidate
-   entry from the candidate entries array.
+   The rules for matching a single measurement-values-map attribute are
+   described in Section 8.2.4.4.5.1
 
-   If any codepoint present in the condition ECT measurement-values-map
-   does not match the same codepoint within the candidate entry
-   measurement-values-map then Verifier SHALL remove that candidate
-   entry from the candidate entries array.
+8.2.4.4.5.1.  Comparison of a Single Measurement Values Map Attribute
 
-8.2.4.4.5.1.  Comparison of a single measurement-values-map codepoint
+   The algorithm used to compare two values of a measurement-values-map
+   attribute depends on the attribute's type.
 
-   The Verifier SHALL compare each condition ECT measurement-values-map
-   value against the corresponding ACS entry value using the appropriate
-   algorithm.
+   The processor needs to select the appropriate algorithm for the given
+   attribute, including any extensions defined by a supported profile.
 
    Non-negative codepoints represent standard data representations.  The
    comparison algorithms for these are defined in this document (in the
-   sections below) or in other specifications.  For some non-negative
-   codepoints their behavior is modified by the CBOR tag at the start of
-   the condition ECT measurement-values-map value.
+   sections below) or in other specifications.  Some attributes allow
+   different types.  These are designated by a CBOR tag that allows
+   clear type disambiguation.
 
-   Negative codepoints represent profile defined data representations.
-   The Verifier SHALL use the codepoint number, the profile associated
-   with the condition ECT, and, if present, the tag value to select the
-   comparison algorithm.
+   Negative codepoints represent profile-defined data representations.
+   The processor MUST use the attribute name, the profile associated
+   with the condition ECT, and, if present, the CBOR tag value to select
+   the comparison algorithm.
 
-   If the Verifier is unable to determine the comparison algorithm which
-   applies to a codepoint then it SHALL behave as though the candidate
-   entry does not match the condition ECT.
+   If the processor is unable to determine the applicable comparison
+   algorithm for an attribute, it MUST behave as though the C-ECT does
+   not match the ACS-ECT.
 
    Profile writers SHOULD use CBOR tags for widely applicable comparison
    methods to ease Verifier implementation compliance across profiles.
+   // [TBC] Unclear what this recommendation aims to achieve.
 
    The following subsections define the comparison algorithms for the
-   measurement-values-map codepoints defined by this specification.
+   measurement-values-map attributes defined by this specification.
 
 8.2.4.4.5.2.  Comparison for version entries
 
-   The value stored under measurement-values-map codepoint 0 is an
-   version label, which MUST have type version-map.  Two version-map
-   values can only be compared for equality, as they are colloquial
-   versions that cannot specify ordering.
+   The value stored under measurement-values-map codepoint 0 is of type
+   version-map.
+
+   Since, in general - with the exception of semver - they are
+   colloquial versions that cannot specify ordering, two version-map
+   values can only be compared for equality.
 
 8.2.4.4.5.3.  Comparison for svn entries
 
-   The ACS entry value stored under measurement-values-map codepoint 1
-   is a security version number, which MUST have type svn-type.
+   The value stored under measurement-values-map codepoint 1 is a
+   security version number of type svn-type-choice.
 
-   If the entry svn-type is a uint or a uint tagged with #6.552, then
-   comparison with the uint named as SVN is as follows.
+   If the ACS-ECT's svn-type-choice is a svn or tagged-svn (i.e., uint
+   or a uint tagged with 552), comparison with the uint in the C-ECT is
+   as follows:
 
-   *  If the condition ECT value for measurement-values-map codepoint 1
-      is an untagged uint or a uint tagged with #6.552 then an equality
+   *  If the C-ECT value is of type svn or tagged-svn, an equality
       comparison is performed on the uint components.  The comparison
-      MUST return true if the value of SVN is equal to the uint value in
-      the condition ECT.
+      MUST return true if the uint values are equal.
 
-   *  If the condition ECT value for measurement-values-map codepoint 1
-      is a uint tagged with #6.553 then a minimum comparison is
-      performed.  The comparison MUST return true if the uint value in
-      the condition ECT is less than or equal to the value of SVN.
+   *  If the C-ECT value is of type tagged-min-svn, a minimum comparison
+      is performed.  The comparison MUST return true if the uint value
+      in the C-ECT is less than or equal to the value in the ACS-ECT.
+
+   RESTART FROM HERE
 
    If the entry svn-type is a uint tagged with #6.553, then comparison
    with the uint named as MINSVN is as follows.
