@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 18 October 2026                                          Linaro
+Expires: 19 October 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           16 April 2026
+                                                           17 April 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 October 2026.
+   This Internet-Draft will expire on 19 October 2026.
 
 Copyright Notice
 
@@ -2815,7 +2815,7 @@ Table of Contents
    *  cmtype: Identifies the type of Conceptual Message that originated
       the tuple (Reference Values, Endorsements or Evidence).
 
-   func mm_to_em(mm: measurement-map) -> element-map {
+   FUNC mm_to_em(mm: measurement-map) -> element-map {
        em := element-map::NEW()
 
        IF mm.mkey:
@@ -2826,7 +2826,7 @@ Table of Contents
        RETURN em
    }
 
-   func mms_to_ems(mms: [ + measurement-map ]) -> [ + element-map ] {
+   FUNC mms_to_ems(mms: [ + measurement-map ]) -> [ + element-map ] {
        ems := [ + element-map ]::NEW()
 
        FOREACH mm IN mms:
@@ -3290,7 +3290,7 @@ Table of Contents
    (Figure 19) as described in Figure 35.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
-   func transform(
+   FUNC transform(
        T: reference-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
@@ -3329,7 +3329,7 @@ Table of Contents
    (Figure 22) as described in Figure 36.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
-   func transform(
+   FUNC transform(
        T: endorsed-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
@@ -3357,7 +3357,7 @@ Table of Contents
    into an ev-item (Figure 22) as described in Figure 37.  (The code
    reuses the mms_to_ems function from Figure 14.)
 
-   func transform(
+   FUNC transform(
        T: conditional-endorsement-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
@@ -3389,7 +3389,7 @@ Table of Contents
    (The code reuses the mm_to_em and mms_to_ems functions from
    Figure 14.)
 
-   func transform(
+   FUNC transform(
        T: conditional-endorsement-series-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
@@ -3433,7 +3433,7 @@ Table of Contents
    (Figure 5) is transformed into a key-item (Figure 27) as described in
    Figure 39.
 
-   func transform(
+   FUNC transform(
        T: attest-key-triple-record / identity-triple-record,
        verifier: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
@@ -3481,7 +3481,7 @@ Table of Contents
    record (Figure 8) is transformed into a domain-item (Figure 28) as
    described in Figure 40.
 
-   func transform(
+   FUNC transform(
        T: domain-membership-triple-record / domain-dependency-triple-record
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
@@ -3491,7 +3491,7 @@ Table of Contents
        IF TYPEOF(T) == domain-membership-triple-record:
            item.condition.kind = item.addition.kind = member
            item.condition.children = T.members
-       ELIF TYPEOF(T) == domain-dependency-triple-record
+       ELIF TYPEOF(T) == domain-dependency-triple-record:
            item.condition.kind = item.addition.kind = trustee
            item.condition.children = T.trustees
 
@@ -3513,7 +3513,7 @@ Table of Contents
    staging area.  The ACS is initialized with all the addition ECTs in
    the ev relation:
 
-   func init_acs(ae: ae) -> ACS {
+   FUNC init_acs(ae: ae) -> ACS {
        FOREACH item IN ae:
            acs::APPEND(item.addition)
 
@@ -3525,7 +3525,7 @@ Table of Contents
    The staging area is loaded with rv, ev, evs, keys, dm and dd
    relations, in that order.
 
-   func init_staging_area(
+   FUNC init_staging_area(
        rv: rv,
        ev: ev,
        evs: evs,
@@ -3565,7 +3565,7 @@ Table of Contents
    terminates and the computed ACS is handed over to the subsequent
    appraisal phases by the CoRIM processor.
 
-   func match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
+   FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
        FOREACH rel IN sa:
            FOREACH item IN rel:
                IF acs::MATCH(item.condition):
@@ -3903,8 +3903,8 @@ Table of Contents
    security version number of type svn-type-choice.
 
    If the ACS-ECT's svn-type-choice is a svn or tagged-svn (i.e., uint
-   or a uint tagged with 552), comparison with the uint in the C-ECT is
-   as follows:
+   or a uint wrapped in tag 552), comparison with the uint in the C-ECT
+   is as follows:
 
    *  If the C-ECT value is of type svn or tagged-svn, an equality
       comparison is performed on the uint components.  The comparison
@@ -3914,24 +3914,56 @@ Table of Contents
       is performed.  The comparison MUST return true if the uint value
       in the C-ECT is less than or equal to the value in the ACS-ECT.
 
-   RESTART FROM HERE
+   If the ACS-ECT's svn-type-choice is tagged-min-svn (i.e., uint
+   wrapped in tag 553), then comparison with the uint in the C-ECT is as
+   follows.
 
-   If the entry svn-type is a uint tagged with #6.553, then comparison
-   with the uint named as MINSVN is as follows.
+   *  If the C-ECT value for measurement-values-map codepoint 1 is svn
+      or tagged-svn (i.e., uint or a uint wrapped in tag 552), the
+      comparison is not allowed and MUST return false.
 
    *  If the condition ECT value for measurement-values-map codepoint 1
-      is an untagged uint or a uint tagged with #6.552 then the
-      comparison MUST return false.
+      is a tagged-min-svn (i.e., uint wrapped in tag 553), an equality
+      comparison is performed.  The comparison MUST return true if the
+      uint values are equal.
 
-   *  If the condition ECT value for measurement-values-map codepoint 1
-      is a uint tagged with #6.553 then an equality comparison is
-      performed.  The comparison MUST return true if the value of MINSVN
-      is equal to the uint value in the condition ECT.
+   A minimum SVN is only meaningful as an entry value when it is an
+   endorsed value that has been added to the ACS.  The condition
+   therefore treats the minimum SVN as an exact state, rather than as
+   something to be compared with inequality.
 
-   The meaning of a minimum SVN as an entry value is only meaningful as
-   an endorsed value that has been added to the ACS.  The condition
-   therefore treats the minimum SVN as an exact state and not one to
-   compare with inequality.
+   The pseudocode for the above algorithm is shown in Figure 44.
+
+   FUNC compare(
+       c_ect: svn-type-choice,
+       acs_ect: svn-type-choice
+   ) -> bool {
+       IF is_plain_svn(acs_ect):
+           IF is_plain_svn(c_ect):
+               RETURN get_svn_value(c_ect) == get_svn_value(acs_ect)
+           ELSE:
+               RETURN get_svn_value(c_ect) <= get_svn_value(acs_ect)
+       ELSE:
+           IF is_plain_svn(c_ect):
+               RETURN false
+           ELSE:
+               RETURN get_svn_value(c_ect) == get_svn_value(acs_ect)
+   }
+
+   FUNC get_svn_value(v: svn-type-choice) -> uint {
+       IF TYPEOF(v) == svn:
+           RETURN v
+       ELIF TYPEOF(v) == tagged-svn:
+           RETURN ~v
+       ELIF TYPEOF(v) == tagged-min-svn:
+           RETURN ~v
+   }
+
+   FUNC is_plain_svn(v: svn-type-choice) -> bool {
+       RETURN TYPEOF(v) == svn OR TYPEOF(v) == tagged-svn
+   }
+
+                         Figure 44: SVN Comparison
 
 8.2.4.4.5.4.  Comparison for digests entries
 

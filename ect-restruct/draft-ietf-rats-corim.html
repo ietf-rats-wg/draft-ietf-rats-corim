@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 18 October 2026</td>
+<td class="center">Expires 19 October 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-04-16" class="published">16 April 2026</time>
+<time datetime="2026-04-17" class="published">17 April 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-10-18">18 October 2026</time></dd>
+<dd class="expires"><time datetime="2026-10-19">19 October 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 19 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -4489,7 +4489,7 @@ The pseudocode in <a href="#algo-mm-to-em" class="auto internal xref">Figure 14<
 <figure id="figure-14">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.2.1.1-5.1">
 <pre>
-func mm_to_em(mm: measurement-map) -&gt; element-map {
+FUNC mm_to_em(mm: measurement-map) -&gt; element-map {
     em := element-map::NEW()
 
     IF mm.mkey:
@@ -4500,7 +4500,7 @@ func mm_to_em(mm: measurement-map) -&gt; element-map {
     RETURN em
 }
 
-func mms_to_ems(mms: [ + measurement-map ]) -&gt; [ + element-map ] {
+FUNC mms_to_ems(mms: [ + measurement-map ]) -&gt; [ + element-map ] {
     ems := [ + element-map ]::NEW()
 
     FOREACH mm IN mms:
@@ -5087,7 +5087,7 @@ Each <code>reference-triple-record</code> (<a href="#triple-rv" class="auto inte
 <figure id="figure-35">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.2-2.1">
 <pre>
-func transform(
+FUNC transform(
     T: reference-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
@@ -5130,7 +5130,7 @@ Since they may contain ranges rather than individual values (see, for example, <
 <figure id="figure-36">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-3.1">
 <pre>
-func transform(
+FUNC transform(
     T: endorsed-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
@@ -5163,7 +5163,7 @@ func transform(
 <figure id="figure-37">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-5.1">
 <pre>
-func transform(
+FUNC transform(
     T: conditional-endorsement-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
@@ -5199,7 +5199,7 @@ func transform(
 <figure id="figure-38">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.3-7.1">
 <pre>
-func transform(
+FUNC transform(
     T: conditional-endorsement-series-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
@@ -5250,7 +5250,7 @@ func transform(
 <figure id="figure-39">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.4-3.1">
 <pre>
-func transform(
+FUNC transform(
     T: attest-key-triple-record / identity-triple-record,
     verifier: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
@@ -5303,7 +5303,7 @@ func transform(
 <figure id="figure-40">
                 <div class="lang-pseudocode sourcecode" id="section-8.2.3.3.5-3.1">
 <pre>
-func transform(
+FUNC transform(
     T: domain-membership-triple-record / domain-dependency-triple-record
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
@@ -5313,7 +5313,7 @@ func transform(
     IF TYPEOF(T) == domain-membership-triple-record:
         item.condition.kind = item.addition.kind = member
         item.condition.children = T.members
-    ELIF TYPEOF(T) == domain-dependency-triple-record
+    ELIF TYPEOF(T) == domain-dependency-triple-record:
         item.condition.kind = item.addition.kind = trustee
         item.condition.children = T.trustees
 
@@ -5346,7 +5346,7 @@ The ACS is initialized with all the addition ECTs in the <code>ev</code> relatio
 <figure id="figure-41">
               <div class="lang-pseudocode sourcecode" id="section-8.2.3.4-2.1">
 <pre>
-func init_acs(ae: ae) -&gt; ACS {
+FUNC init_acs(ae: ae) -&gt; ACS {
     FOREACH item IN ae:
         acs::APPEND(item.addition)
 
@@ -5363,7 +5363,7 @@ func init_acs(ae: ae) -&gt; ACS {
 <figure id="figure-42">
               <div class="lang-pseudocode sourcecode" id="section-8.2.3.4-4.1">
 <pre>
-func init_staging_area(
+FUNC init_staging_area(
     rv: rv,
     ev: ev,
     evs: evs,
@@ -5407,7 +5407,7 @@ Once all the relations in the staging area have been processed, the algorithm te
 <figure id="figure-43">
             <div class="lang-pseudocode sourcecode" id="section-8.2.4-3.1">
 <pre>
-func match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
+FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
@@ -5684,7 +5684,7 @@ Unclear what this recommendation aims to achieve.
 <a href="#section-8.2.4.4.5.3" class="section-number selfRef">8.2.4.4.5.3. </a><a href="#name-comparison-for-svn-entries" class="section-name selfRef">Comparison for svn entries</a>
                 </h6>
 <p id="section-8.2.4.4.5.3-1">The value stored under <code>measurement-values-map</code> codepoint 1 is a security version number of type <code>svn-type-choice</code>.<a href="#section-8.2.4.4.5.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.4.5.3-2">If the ACS-ECT's <code>svn-type-choice</code> is a <code>svn</code> or <code>tagged-svn</code> (i.e., <code>uint</code> or a <code>uint</code> tagged with 552), comparison with the <code>uint</code> in the C-ECT is as follows:<a href="#section-8.2.4.4.5.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.4.5.3-2">If the ACS-ECT's <code>svn-type-choice</code> is a <code>svn</code> or <code>tagged-svn</code> (i.e., <code>uint</code> or a <code>uint</code> wrapped in tag 552), comparison with the <code>uint</code> in the C-ECT is as follows:<a href="#section-8.2.4.4.5.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.2.4.4.5.3-3.1">
                     <p id="section-8.2.4.4.5.3-3.1.1">If the C-ECT value is of type <code>svn</code> or <code>tagged-svn</code>, an equality comparison is performed on the <code>uint</code> components.
@@ -5695,23 +5695,57 @@ The comparison MUST return true if the <code>uint</code> values are equal.<a hre
 The comparison MUST return true if the <code>uint</code> value in the C-ECT is less than or equal to the value in the ACS-ECT.<a href="#section-8.2.4.4.5.3-3.2.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
-<div class="alignLeft art-text artwork" id="section-8.2.4.4.5.3-4">
-<pre>
-RESTART FROM HERE
-</pre><a href="#section-8.2.4.4.5.3-4" class="pilcrow">¶</a>
-</div>
-<p id="section-8.2.4.4.5.3-5">If the entry <code>svn-type</code> is a <code>uint</code> tagged with #6.553, then comparison with the <code>uint</code> named as MINSVN is as follows.<a href="#section-8.2.4.4.5.3-5" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.4.5.3-4">If the ACS-ECT's <code>svn-type-choice</code> is <code>tagged-min-svn</code> (i.e., <code>uint</code> wrapped in tag 553), then comparison with the <code>uint</code> in the C-ECT is as follows.<a href="#section-8.2.4.4.5.3-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-8.2.4.4.5.3-6.1">
-                    <p id="section-8.2.4.4.5.3-6.1.1">If the condition ECT value for <code>measurement-values-map</code> codepoint 1 is an untagged <code>uint</code> or a <code>uint</code> tagged with #6.552 then the comparison MUST return false.<a href="#section-8.2.4.4.5.3-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-8.2.4.4.5.3-5.1">
+                    <p id="section-8.2.4.4.5.3-5.1.1">If the C-ECT value for <code>measurement-values-map</code> codepoint 1 is <code>svn</code> or <code>tagged-svn</code> (i.e., <code>uint</code> or a <code>uint</code> wrapped in tag 552), the comparison is not allowed and MUST return false.<a href="#section-8.2.4.4.5.3-5.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="normal" id="section-8.2.4.4.5.3-6.2">
-                    <p id="section-8.2.4.4.5.3-6.2.1">If the condition ECT value for <code>measurement-values-map</code> codepoint 1 is a <code>uint</code> tagged with #6.553 then an equality comparison is performed.
-The comparison MUST return true if the value of MINSVN is equal to the <code>uint</code> value in the condition ECT.<a href="#section-8.2.4.4.5.3-6.2.1" class="pilcrow">¶</a></p>
+                  <li class="normal" id="section-8.2.4.4.5.3-5.2">
+                    <p id="section-8.2.4.4.5.3-5.2.1">If the condition ECT value for <code>measurement-values-map</code> codepoint 1 is a <code>tagged-min-svn</code> (i.e., <code>uint</code> wrapped in tag 553), an equality comparison is performed.
+The comparison MUST return true if the <code>uint</code> values are equal.<a href="#section-8.2.4.4.5.3-5.2.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
-<p id="section-8.2.4.4.5.3-7">The meaning of a minimum SVN as an entry value is only meaningful as an endorsed value that has been added to the ACS.
-The condition therefore treats the minimum SVN as an exact state and not one to compare with inequality.<a href="#section-8.2.4.4.5.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.4.5.3-6">A minimum SVN is only meaningful as an entry value when it is an endorsed value that has been added to the ACS.
+The condition therefore treats the minimum SVN as an exact state, rather than as something to be compared with inequality.<a href="#section-8.2.4.4.5.3-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.4.5.3-7">The pseudocode for the above algorithm is shown in <a href="#fig-comp-svn" class="auto internal xref">Figure 44</a>.<a href="#section-8.2.4.4.5.3-7" class="pilcrow">¶</a></p>
+<span id="name-svn-comparison"></span><div id="fig-comp-svn">
+<figure id="figure-44">
+                  <div class="lang-pseudocode sourcecode" id="section-8.2.4.4.5.3-8.1">
+<pre>
+FUNC compare(
+    c_ect: svn-type-choice,
+    acs_ect: svn-type-choice
+) -&gt; bool {
+    IF is_plain_svn(acs_ect):
+        IF is_plain_svn(c_ect):
+            RETURN get_svn_value(c_ect) == get_svn_value(acs_ect)
+        ELSE:
+            RETURN get_svn_value(c_ect) &lt;= get_svn_value(acs_ect)
+    ELSE:
+        IF is_plain_svn(c_ect):
+            RETURN false
+        ELSE:
+            RETURN get_svn_value(c_ect) == get_svn_value(acs_ect)
+}
+
+FUNC get_svn_value(v: svn-type-choice) -&gt; uint {
+    IF TYPEOF(v) == svn:
+        RETURN v
+    ELIF TYPEOF(v) == tagged-svn:
+        RETURN ~v
+    ELIF TYPEOF(v) == tagged-min-svn:
+        RETURN ~v
+}
+
+FUNC is_plain_svn(v: svn-type-choice) -&gt; bool {
+    RETURN TYPEOF(v) == svn OR TYPEOF(v) == tagged-svn
+}
+</pre>
+</div>
+<figcaption><a href="#figure-44" class="selfRef">Figure 44</a>:
+<a href="#name-svn-comparison" class="selfRef">SVN Comparison</a>
+                  </figcaption></figure>
+</div>
 </section>
 </div>
 <div id="sec-cmp-digests">
