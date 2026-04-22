@@ -2835,11 +2835,6 @@ The processor MUST use the attribute name, the profile associated with the condi
 
 If the processor is unable to determine the applicable comparison algorithm for an attribute, it MUST behave as though the C-ECT does not match the ACS-ECT.
 
-Profile writers SHOULD use CBOR tags for widely applicable comparison methods to ease Verifier implementation compliance across profiles.
-<cref>
-[TBC]
-Unclear what this recommendation aims to achieve.
-</cref>
 
 The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.
 
