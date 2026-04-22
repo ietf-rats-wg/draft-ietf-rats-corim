@@ -1961,11 +1961,7 @@ This is a mandatory attribute in an ECT.
 * `profile`: The profile that defines the domain of interpretation of this tuple.
 This is the `profile` attribute of the CoRIM that contained the original triple from which this ECT was obtained.
 This is an optional attribute in an ECT.
-If no profile is used, the attribute is omitted.
-<cref>
-[TBC]
-What profile applies in such a case?
-</cref>
+If no profile is used, the attribute is omitted, and the only comparison rules that apply are those specified in {{sec-comparison-rules}}.
 
 ##### Element ECT {#sec-element-ect}
 
@@ -2017,12 +2013,8 @@ This specification does not assign special meanings to any Claim name, it only s
 If two Element ECTs have the same `environment`, `cmtype`, `authority` and `profile` then their `element-list`s are merged.
 Any duplicates MUST be pruned.
 
-<cref>
-[TBC]
-Original text also states: "If two merged `measurement-values-map` contains duplicate codepoints and the measurement values are not equivalent, then the Verifier SHALL report an error and stop validation processing."
-Are we sure this is the case?
-Can't they be interpreted as alternative states?
-</cref>
+Two `measurement-values-map` containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
+These are effectively two different acceptable states that need to be processed separately.
 
 ##### Domain ECT {#sec-domain-ect}
 
@@ -2691,10 +2683,6 @@ Endorsed Values and Conditional Endorsed Values are matched with ACS entries by 
 For each `ev` entry, the condition ECT is compared with an ACS ECT with `cmtype` 0, 1 or 2 (i.e., reference-values, endorsements or evidence).
 If the two match, the addition ECT is added to the ACS.
 
-<cref>
-[TBC]
-Original text also states: "Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs. If there are multiple matches, then each match is processed independently from the others."  Why should add exact copies of the same addition ECT?  Is there any specific semantics associated with clones?
-</cref>
 
 ##### Processing `evs` Relations
 
@@ -2772,7 +2760,7 @@ If the C-ECT contains a profile and the profile defines an algorithm for a given
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint, the processor MUST use the standard algorithm described in this document for comparisons involving that codepoint.
 
 The specific comparisons performed depend on the type of relation being processed.
-In general, the processor will perform comparisons based on `environment` (see {{sec-compare-environment}} and `authority` (see {{sec-compare-authority}}), as well as more specialized comparisons based on the type of ECT matched.
+In general, the processor will perform comparisons based on `environment` (see {{sec-compare-environment}}) as well as more specialized comparisons based on the type of ECT matched.
 Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list` (<cref>[TODO]</cref>), and Domain ECTs will typically match on `children` (see {{sec-compare-environment}}).
 
 <cref>
