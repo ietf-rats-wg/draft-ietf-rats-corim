@@ -2727,14 +2727,10 @@ Domain Membership relations describe the expected topological arrangement of the
 Domains are matched with ACS entries by iterating through the `dm` list.
 
 The following algorithm assumes that the graph described by the condition ECTs in the `dm` relation is acyclic.
-It also assumes that the `dm-item`s in the `dm` relation are topologically sorted.
+It also assumes that the `dm-item`s in the `dm` relation are topologically sorted (bottom up, from leaves to root).
 This allows the algorithm to execute in one pass.
 
-For each `dm` entry, the condition ECT is compared with either an ACS Element ECT with `cmtype` 0 (i.e., corroborated evidence) or a Domain ECT with `kind` 0 (i.e., member).
-<cref>
-[TBC]
-The original text says: "Domain Membership ECTs (i.e., cmtype equals domain-member) in the dm staging area are matched with ACS entries where cmtype is set to evidence, reference-values i.e. corroborated evidence, or domain-member [...]" but it seems that matching evidence ECTs is superfluous and potentially leading to the wrong result (i.e., matching uncorroborated environments).
-</cref>
+For each `dm` entry, the condition ECT is compared with either an ACS Element ECT with `cmtype` 2 (i.e., evidence) or a Domain ECT with `kind` 0 (i.e., member).
 All other ECTs are ignored.
 
 If all the `children` environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
