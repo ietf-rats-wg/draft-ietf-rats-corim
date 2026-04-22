@@ -2765,7 +2765,7 @@ Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Ke
 
 <cref>
 [TBC]
-Are authority checks always carried out?
+Check, for each relation processing, where authority comparisons apply.
 </cref>
 
 Each of these comparisons compares one attribute in the C-ECT against the same attribute in the ACS-ECT.
