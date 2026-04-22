@@ -4435,11 +4435,7 @@ This is a mandatory attribute in an ECT.<a href="#section-8.2.2.1-8.2.1" class="
                 <p id="section-8.2.2.1-8.3.1"><code>profile</code>: The profile that defines the domain of interpretation of this tuple.
 This is the <code>profile</code> attribute of the CoRIM that contained the original triple from which this ECT was obtained.
 This is an optional attribute in an ECT.
-If no profile is used, the attribute is omitted.
-<span class="cref">
-[TBC]
-What profile applies in such a case?
-</span><a href="#section-8.2.2.1-8.3.1" class="pilcrow">¶</a></p>
+If no profile is used, the attribute is omitted, and the only comparison rules that apply are those specified in <a href="#sec-comparison-rules" class="auto internal xref">Section 8.2.4.4</a>.<a href="#section-8.2.2.1-8.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <div id="sec-element-ect">
@@ -4522,12 +4518,8 @@ This specification does not assign special meanings to any Claim name, it only s
 <p id="section-8.2.2.1.1-7"><strong>Merge Rules.</strong>
 If two Element ECTs have the same <code>environment</code>, <code>cmtype</code>, <code>authority</code> and <code>profile</code> then their <code>element-list</code>s are merged.
 Any duplicates MUST be pruned.<a href="#section-8.2.2.1.1-7" class="pilcrow">¶</a></p>
-<p id="section-8.2.2.1.1-8"><span class="cref">
-[TBC]
-Original text also states: "If two merged `measurement-values-map` contains duplicate codepoints and the measurement values are not equivalent, then the Verifier SHALL report an error and stop validation processing."
-Are we sure this is the case?
-Can't they be interpreted as alternative states?
-</span><a href="#section-8.2.2.1.1-8" class="pilcrow">¶</a></p>
+<p id="section-8.2.2.1.1-8">Two <code>measurement-values-map</code> containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
+These are effectively two different acceptable states that need to be processed separately.<a href="#section-8.2.2.1.1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-domain-ect">
@@ -5539,10 +5531,6 @@ Augmentation is predicated on a certain condition matching the actual state curr
 <p id="section-8.2.4.3.1-1">Endorsed Values and Conditional Endorsed Values are matched with ACS entries by iterating through the <code>ev</code> list.
 For each <code>ev</code> entry, the condition ECT is compared with an ACS ECT with <code>cmtype</code> 0, 1 or 2 (i.e., reference-values, endorsements or evidence).
 If the two match, the addition ECT is added to the ACS.<a href="#section-8.2.4.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.1-2"><span class="cref">
-[TBC]
-Original text also states: "Some condition values can match against multiple ACS-ECTs, or sets of ACS-ECTs. If there are multiple matches, then each match is processed independently from the others."  Why should add exact copies of the same addition ECT?  Is there any specific semantics associated with clones?
-</span><a href="#section-8.2.4.3.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="processing-evs-relations">
@@ -5634,7 +5622,7 @@ Conversely, if the matched entries set is empty, the C-ECT does not match the AC
 <p id="section-8.2.4.4-4">If the C-ECT contains a profile and the profile defines an algorithm for a given codepoint, the processor MUST use the algorithm defined by the profile in comparisons involving that codepoint.
 If the condition ECT contains a profile, but the profile does not define an algorithm for a particular codepoint, the processor MUST use the standard algorithm described in this document for comparisons involving that codepoint.<a href="#section-8.2.4.4-4" class="pilcrow">¶</a></p>
 <p id="section-8.2.4.4-5">The specific comparisons performed depend on the type of relation being processed.
-In general, the processor will perform comparisons based on <code>environment</code> (see <a href="#sec-compare-environment" class="auto internal xref">Section 8.2.4.4.1</a> and <code>authority</code> (see <a href="#sec-compare-authority" class="auto internal xref">Section 8.2.4.4.2</a>), as well as more specialized comparisons based on the type of ECT matched.
+In general, the processor will perform comparisons based on <code>environment</code> (see <a href="#sec-compare-environment" class="auto internal xref">Section 8.2.4.4.1</a>) as well as more specialized comparisons based on the type of ECT matched.
 Element ECTs will match on <code>element-list</code> (see <a href="#sec-compare-element-list" class="auto internal xref">Section 8.2.4.4.3</a>), Key ECTs will match on <code>key-list</code> (<span class="cref">[TODO]</span>), and Domain ECTs will typically match on <code>children</code> (see <a href="#sec-compare-environment" class="auto internal xref">Section 8.2.4.4.1</a>).<a href="#section-8.2.4.4-5" class="pilcrow">¶</a></p>
 <p id="section-8.2.4.4-6"><span class="cref">
 [TBC]

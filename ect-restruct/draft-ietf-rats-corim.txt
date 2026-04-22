@@ -2775,8 +2775,8 @@ Table of Contents
       this tuple.  This is the profile attribute of the CoRIM that
       contained the original triple from which this ECT was obtained.
       This is an optional attribute in an ECT.  If no profile is used,
-      the attribute is omitted.
-      // [TBC] What profile applies in such a case?
+      the attribute is omitted, and the only comparison rules that apply
+      are those specified in Section 8.2.4.4.
 
 8.2.2.1.1.  Element ECT
 
@@ -2849,12 +2849,10 @@ Table of Contents
    authority and profile then their element-lists are merged.  Any
    duplicates MUST be pruned.
 
-
-   // [TBC] Original text also states: "If two merged `measurement-
-   // values-map` contains duplicate codepoints and the measurement
-   // values are not equivalent, then the Verifier SHALL report an error
-   // and stop validation processing."  Are we sure this is the case?
-   // Can't they be interpreted as alternative states?
+   Two measurement-values-map containing duplicate codepoints and with
+   non-equivalent measurement values MUST NOT be merged.  These are
+   effectively two different acceptable states that need to be processed
+   separately.
 
 8.2.2.1.2.  Domain ECT
 
@@ -3745,13 +3743,6 @@ Table of Contents
    (i.e., reference-values, endorsements or evidence).  If the two
    match, the addition ECT is added to the ACS.
 
-
-   // [TBC] Original text also states: "Some condition values can match
-   // against multiple ACS-ECTs, or sets of ACS-ECTs.  If there are
-   // multiple matches, then each match is processed independently from
-   // the others."  Why should add exact copies of the same addition
-   // ECT?  Is there any specific semantics associated with clones?
-
 8.2.4.3.2.  Processing evs Relations
 
    Conditional Endorsement Series are matched with ACS entries by
@@ -3875,10 +3866,10 @@ Table of Contents
 
    The specific comparisons performed depend on the type of relation
    being processed.  In general, the processor will perform comparisons
-   based on environment (see Section 8.2.4.4.1 and authority (see
-   Section 8.2.4.4.2), as well as more specialized comparisons based on
-   the type of ECT matched.  Element ECTs will match on element-list
-   (see Section 8.2.4.4.3), Key ECTs will match on key-list (
+   based on environment (see Section 8.2.4.4.1) as well as more
+   specialized comparisons based on the type of ECT matched.  Element
+   ECTs will match on element-list (see Section 8.2.4.4.3), Key ECTs
+   will match on key-list (
    // [TODO]), and Domain ECTs will typically match on children (see
    Section 8.2.4.4.1).
 
