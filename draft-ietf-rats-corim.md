@@ -2013,7 +2013,7 @@ This specification does not assign special meanings to any Claim name, it only s
 If two Element ECTs have the same `environment`, `cmtype`, `authority` and `profile` then their `element-list`s are merged.
 Any duplicates MUST be pruned.
 
-Two `measurement-values-map` containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
+Two `element-map`s containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
 These are effectively two different acceptable states that need to be processed separately.
 
 ##### Domain ECT {#sec-domain-ect}
