@@ -2010,6 +2010,7 @@ The value of the corresponding map element represents an atom of actual state.
 This specification does not assign special meanings to any Claim name, it only specifies rules for determining whether two Claim names are the same.
 
 **Merge Rules.**
+
 If two Element ECTs have the same `environment`, `cmtype`, `authority` and `profile` then their `element-list`s are merged.
 Any duplicates MUST be pruned.
 
@@ -2040,7 +2041,8 @@ The value of the Claim is encoded in the `kind` and `children` attributes.
 
 **Merge Rules.**
 
-No merge rules are specified for a Domain ECT.
+If two Domain ECTs have the same `environment`, `kind`, `authority` and `profile` then their `children` are merged.
+Any duplicates MUST be pruned.
 
 ##### Key ECT {#sec-key-ect}
 
@@ -2059,7 +2061,7 @@ The following describes the specialized members of the `K-ECT`.
 
 **Claim Names.**
 
-A Key Claim specifies the type of key that an environment is expected to ...
+A Key Claim specifies one or more keys associated with the `environment`, as well as the semantics of these keys.
 
 In a Key ECT, the `environment`, `key-type` and optional `key-id` attributes encodes the name of the Claim.
 The value of the Claim is encoded in the `key-list` attribute.
