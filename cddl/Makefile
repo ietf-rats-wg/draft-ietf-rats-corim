@@ -7,7 +7,8 @@ include check.mk
 include corim-frags.mk
 
 check:: cbor-tags-unique
-check:: check-intrep check-intrep-examples
+check:: check-intrep-acs check-intrep-acs-examples
+check:: check-intrep-rel check-intrep-rel-examples
 check:: check-corim check-corim-examples
 check:: check-comid check-comid-examples
 check:: check-cotl check-cotl-examples
@@ -17,7 +18,8 @@ include measured-component.mk
 $(eval $(call cddl_check_template,comid,$(COMID_FRAGS),$(COMID_EXAMPLES),$(COMID_IMPORTS)))
 $(eval $(call cddl_check_template,cotl,$(COTL_FRAGS),$(COTL_EXAMPLES),$(COTL_IMPORTS)))
 $(eval $(call cddl_check_template,corim,$(CORIM_FRAGS),$(CORIM_EXAMPLES),$(CORIM_IMPORTS)))
-$(eval $(call cddl_check_template,intrep,$(INTREP_FRAGS),$(INTREP_EXAMPLES),$(INTREP_IMPORTS)))
+$(eval $(call cddl_check_template,intrep-acs,$(INTREP_ACS_FRAGS),$(INTREP_ACS_EXAMPLES),$(INTREP_ACS_IMPORTS)))
+$(eval $(call cddl_check_template,intrep-rel,$(INTREP_REL_FRAGS),$(INTREP_REL_EXAMPLES),$(INTREP_REL_IMPORTS)))
 
 clean: ; rm -f $(CLEANFILES)
 
