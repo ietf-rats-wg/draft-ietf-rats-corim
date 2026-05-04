@@ -2132,8 +2132,10 @@ Refer to {{sec-proc-rv}} for how the `rv` entries are processed.
 {: #fig-rv-ect-add title="Profiled ECT for Reference Values (addition)"}
 
 As this is used to corroborate an Evidence ECT, its layout is identical to that of an `Evidence-addition-ECT`.
-The only differences are the values of the `authority` and `cmtype` attributes.
+The only differences are the values of the `element-list`, `authority` and `cmtype` attributes.
 Here, the `authority` value is that of the RVP rather than the Attester, and the `cmtype` value is `reference-values` rather than `evidence`.
+Furthermore, the `element-list` is created if a match is found during processing, rather than when the triple is transformed into the internal representation.
+Therefore, it may be absent.
 
 ##### Endorsed Values {#sec-ir-endval}
 
@@ -2276,7 +2278,7 @@ The staging area ({{fig-sa}}) is a list of the relations corresponding to the tr
 All relations are optional.
 Whether a given relation is present in the staging area depends on whether a triple exists and has been successfully transformed.
 
-### Input Validation and Transformation (Phase 1)
+### Input Validation and Transformation (Phase 1) {#sec-phase-1}
 
 This section provides a detailed description of Phase 1, which was outlined at a high level in {{sec-appraisal-phases}}, explaining how the relevant Conceptual Messages are ingested by the CoRIM processor.
 
@@ -2370,7 +2372,7 @@ Evidence transformation algorithms are out of scope for this document.
 For successful transformation, Evidence MUST contain a relevant value for all the mandatory `Evidence-ECT` attributes.
 Otherwise, the CoRIM processor MUST reject the Evidence.
 
-##### Reference Values
+##### Reference Values {#sec-trans-reference-values}
 
 Reference Values transformation involves mapping Reference Value triples into into an `rv` relation (see {{sec-ir-refval}}).
 Each `reference-triple-record` ({{triple-rv}}) is transformed into an `rv-item` ({{fig-rv}}) as described in {{algo-rv-transform}}.
@@ -2404,7 +2406,7 @@ FUNC transform(
 Note that the `ref-claims` are not copied to the addition ECT.
 Since they may contain ranges rather than individual values (see, for example, {{sec-comid-int-range}}), we need to wait until the condition is satisfied by an Evidence ECT before we can copy the matched claims from the Evidence ECT to the addition ECT.
 
-##### Endorsed Values
+##### Endorsed Values {#sec-trans-endorsed-values}
 
 Endorsed Values transformation involves mapping EV, CE and CES triples into into `ev` or `evs` relations (see {{sec-ir-endval}}).
 
@@ -2419,17 +2421,19 @@ FUNC transform(
 ) -> ev-item {
     item := ev-item::NEW()
 
-    item.addition.cmtype = endorsements
+    ect-cond := Endorsement-condition-ECT::NEW()
+    ect-cond.environment = T.condition
+    item.condition::APPEND(ect-cond)
 
-    item.addition.environment = T.condition
-    item.condition.environment = T.condition
-
-    item.addition.element-list = mms_to_ems(T.endorsement)
-
-    item.addition.authority = signer
-
+    ect-add := Endorsement-addition-ECT::NEW()
+    ect-add.environment = T.condition
+    ect-add.element-list = mms_to_ems(T.endorsement)
+    ect-add.cmtype = endorsements
+    ect-add.authority = signer
     IF profile:
-        item.addition.profile = profile
+        ect-add.profile = profile
+
+    item.addition::APPEND(ect-add)
 
     RETURN item
 }
@@ -2447,20 +2451,21 @@ FUNC transform(
 ) -> ev-item {
     item := ev-item::NEW()
 
-    item.addition.cmtype = endorsements
-
     FOREACH ser IN T.conditions:
-        item.condition.environment = ser.environment
-        item.condition.element-list = mms_to_ems(ser.claims-list)
+        ect := Endorsement-condition-ECT::NEW()
+        ect.environment = ser.environment
+        ect.element-list = mms_to_ems(ser.claims-list)
+        item.condition::APPEND(ect)
 
     FOREACH etr IN T.endorsements:
-        item.addition.environment = etr.condition
-        item.addition.element-list = mms_to_ems(etr.endorsement)
-
-    item.addition.authority = signer
-
-    IF profile:
-        item.addition.profile = profile
+        ect := Endorsement-addition-ECT::NEW()
+        ect.environment = etr.condition
+        ect.element-list = mms_to_ems(etr.endorsement)
+        ect.cmtype = endorsements
+        ect.authority = signer
+        IF profile:
+            ect.profile = profile
+        item.addition::APPEND(ect)
 
     RETURN item
 }
@@ -2583,7 +2588,7 @@ FUNC transform(
 ~~~
 {: #algo-domain-transform title="Domain Triple Transformation"}
 
-#### Appraisal Context Initialization
+#### Appraisal Context Initialization {#sec-appraisal-ctx-init}
 
 At the end of Phase 1 all of the extracted and validated tags are loaded into an "appraisal context", consisting of the ACS and the staging area.
 The ACS is initialized with all the addition ECTs in the `ev` relation:
@@ -2662,7 +2667,7 @@ The "match and augment" algorithm described in {{algo-match-and-augment}} assume
 
 Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.
 
-##### Processing `rv` Relations
+##### Processing `rv` Relations {#sec-proc-rv-rel}
 
 Reference Values are matched with ACS entries by iterating through the `rv` list.
 For each `rv` entry, the condition ECT is compared against an ACS ECT with `cmtype` 2 (i.e., `evidence`).
@@ -2679,7 +2684,7 @@ Note that this new ACS item is essentially a copy of the matched evidence ECT, w
 Endorsed values augmentation is the process of adding Claims about the Attester's actual state with Endorser authority rather than Attester authority.
 Augmentation is predicated on a certain condition matching the actual state currently encoded in the ACS.
 
-##### Processing `ev` Relations
+##### Processing `ev` Relations {#sec-proc-ev-rel}
 
 Endorsed Values and Conditional Endorsed Values are matched with ACS entries by iterating through the `ev` list.
 For each `ev` entry, the condition ECT is compared with an ACS ECT with `cmtype` 0, 1 or 2 (i.e., reference-values, endorsements or evidence).
@@ -3002,10 +3007,126 @@ This information can then be encoded in an Attestation Result that can be unders
 
 ### Example Appraisal
 
+The following example describes the appraisal of a PSA Attester {{-psa-token}} from the fictitious vendor "Acme Inc.", which uses the CoRIM profile documented in {{-psa-endorsements}}.
+
+#### Input CoRIMs
+
+In this scenario, the Verifier obtains two CoRIM files from two different actors in the supply chain:
+
+* The device manufacturer (Acme Inc.); and
+* A certifier (Certifier Inc.), which has evaluated the device according to the PSA Certified scheme.
+
+The manufacturer's CoRIM contains a single CoMID with two Reference Values triples (see {{ex-comid-rvt}}) describing two acceptable states of the Attester.
+The Attester is identified by the class attribute Implementation ID with the value `6163..3031`.
+One state has a digest of `9a27..86aa` for the "PRoT" component, and the other has a digest of `a3fe..5065`.
+
+For the remainder of this section, we will assume that the CoRIM containing this CoMID is signed using the manufacturer's certificate, which has a thumbprint of `482e..78b3`.
+
+~~~ cbor-diag
+{::include cddl/examples/comid-psa-refval.diag}
+~~~
+{: #ex-comid-rvt title="Example Manufacturer CoMID"}
+
+The CoMID from the certifier contains a Conditional Endorsement triple that describes the Attester who was granted the security certification `1234567890123 - 12345` (see {{ex-comid-cet}}).
+This Attester has Implementation ID `6163..3031` and the digest associated with the "PRoT" component is `9a27..86aa`.
+In the triple, the security certification is represented as `endorsements`, while the target identification information is represented as `conditions`.
+
+~~~ cbor-diag
+{::include cddl/examples/comid-psa-endval.diag}
+~~~
+{: #ex-comid-cet title="Example Certifier CoMID"}
+
+For the remainder of this section, we will assume that the CoRIM containing this CoMID is signed using the certifier's certificate, which has a thumbprint of `768f..75b1`.
+
+#### Input Evidence
+
+The Verifier obtains Evidence from a PSA Attester in the format described in {{-psa-token}} and verifies its cryptographic integrity and validity.
+
+#### Internal Representations
+
+As described in {{sec-phase-1}}, once all the "raw" inputs and have been validated, input transformations can start.
+
+The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding `rv-item`s ({{ex-rv-item-1}}, {{ex-rv-item-2}}) using the transformations defined in {{algo-rv-transform}}.
+
+The first triple:
+
+~~~ cbor-diag
+{::include cddl/examples/intrep-rel-rv-psa-1.diag}
+~~~
+{: #ex-rv-item-1 title="First rv Relation Item"}
+
+The second triple:
+
+~~~ cbor-diag
+{::include cddl/examples/intrep-rel-rv-psa-2.diag}
+~~~
+{: #ex-rv-item-2 title="Second rv Relation Item"}
+
+Note the authorities in the addition ECT of both items, which are set to `482e..78b3`, and correspond to the thumbprint of the manufacturer's signing certificate.
+
+The Conditional Endorsement triple from the certifier's CoMID is mapped to its corresponding `ev-item` ({{ex-ev-item}}) using the transformation defined in {{algo-ce-transform}}.
+
+~~~ cbor-diag
+{::include cddl/examples/intrep-rel-ev-psa.diag}
+~~~
+{: #ex-ev-item title="First (and only) ev Relation Item"}
+
+Note the authority in the addition ECT, which is set to `768f..75b1`, and corresponds to the thumbprint of the certifier's signing certificate.
+
+Evidence from the PSA Attester is transformed into the corresponding `ae-item` using the transformation defined in {{-psa-endorsements}}:
+
+~~~ cbor-diag
+{::include-fold cddl/examples/intrep-rel-ae-psa.diag}
+~~~
+{: #ex-ae-item title="ae-item"}
+
+Note the authority in the ECT, which is set to `MFkw..Lg=="`, and corresponds to the Attester's PEM-encoded SPKI.
+
+#### Appraisal
+
+As described in {{sec-appraisal-ctx-init}}, the appraisal context is bootstrapped by loading the `ae` ECT(s) into the ACS, and the `rv` and `ev` relations into the Staging Area.
+Then, ACS augmentation described in {{sec-match-and-augment}} can begin.
+
+The first relation to be processed is `rv`, according to the rules described in {{sec-proc-rv-rel}}.
+
+The condition of the first `rv-item` ({{ex-rv-item-1}}) is matched against the ACS which, at this time, contains a single ECT obtained from the `ae-item` ({{ex-ae-item}}).
+The `cmtype` of the ACS-ECT is 2 (evidence), which is exactly the type `rv-item`s need to match against.
+When the two are compared, it is found that the environments of the `rv-item` condition and the ACS-ECT match (note that the instance identifier in the ACS-ECT is ignored because it is not present in the `rv-item`).
+The matching algorithm then proceeds to try to match the respective `element-list`s.
+Both lists contain a single element, whose ID and claims are a perfect match.
+Therefore, all the matching criteria are satisfied and the `rv-item` addition ECT is appended to the ACS.
+Before this addition is made, the matched element from the `rv-item` condition is copied to the addition `element-list`.
+
+The ACS now contains two ECTs, one with `cmtype` 2 (evidence), and a second one with `cmtype` 0 (reference-value) that corroborates the first one with manufacturer authority ({{ex-acs-1}}).
+
+~~~
+{::include-fold cddl/examples/intrep-acs-psa-1.diag}
+~~~
+{: #ex-acs-1 title="ACS State after Corroboration"}
+
+The algorithm then moves on to the second `rv-item` ({{ex-rv-item-2}}), checking its condition against the ACS.
+Once again, the ACS-ECT with `cmtype` 2 (evidence) is selected for matching.
+This time, the environments match, but the state represented in the `rv-item`'s `element-list` is not (the digest differs).
+This results in a no-op on the ACS.
+
+Next, the `ev` relation is popped from the Staging Area for processing according to the rules described in {{sec-proc-ev-rel}}.
+The condition of the first (and only) `ev-item` ({{ex-ev-item}}) is then matched against the ACS.
+The only applicable ACS-ECT is the one with `cmtype` 2 (evidence).
 <cref>
-[TODO] Simple example appraisal with input ae, rv and ev and expected ACS evolution through phases.
-Use PSA evidence, ref values and certification endorsemnts.
+The fact that {{sec-proc-ev-rel}} requires matching against reference values seems incorrect.
 </cref>
+When compared, the environment in the `ev-item` condition matches that of the ACS-ECT (again, the instance identifier in the ACS-ECT is ignored because it is not present in the `ev-item`), and the matching algorithm proceeds to try to match the respective `element-list`s.
+Both lists contain a single element, whose ID and claims are an exact match.
+Therefore, all the matching criteria are satisfied and the `ev-item` addition ECT is appended to the ACS.
+
+The ACS now contains three ECTs, one with `cmtype` 2 (evidence), a second with `cmtype` 0 (reference-value), which corroborates the first with manufacturer authority, and a third one with `cmtype` 1 (endorsements) which adds the PSA certification identifier as an endorsed value for the appraised environment with certifier's authority ({{ex-acs-2}}).
+
+~~~
+{::include-fold cddl/examples/intrep-acs-psa-2.diag}
+~~~
+{: #ex-acs-2 title="ACS State after Endorsements Augmentation"}
+
+At this point, all the relations in the Staging Area have been processed, and the `match_and_augment` algorithm ({{algo-match-and-augment}}) terminates, returning the computed ACS.
 
 # Implementation Status
 

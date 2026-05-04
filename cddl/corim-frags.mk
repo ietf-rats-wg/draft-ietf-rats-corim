@@ -47,6 +47,8 @@ COMID_FRAGS += uuid.cddl
 COMID_FRAGS += version-map.cddl
 COMID_FRAGS += digest.cddl
 COMID_FRAGS += integrity-registers.cddl
+# Used in examples only
+COMID_FRAGS += psa-sac-ext.cddl
 
 COMID_IMPORTS += eatmc=measured-component
 
@@ -147,6 +149,9 @@ INTREP_FRAGS += cose-label-and-value.cddl
 INTREP_FRAGS += class-id-type-choice.cddl
 INTREP_FRAGS += oid.cddl
 INTREP_FRAGS += domain-type.cddl
+INTREP_FRAGS += measured-element-type-choice.cddl
+INTREP_FRAGS += instance-id-type-choice.cddl
+INTREP_FRAGS += psa-sac-ext.cddl
 
 INTREP_IMPORTS += eatmc=measured-component
 
