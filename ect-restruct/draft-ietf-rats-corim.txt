@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 26 October 2026                                          Linaro
+Expires: 5 November 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                           24 April 2026
+                                                              4 May 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 October 2026.
+   This Internet-Draft will expire on 5 November 2026.
 
 Copyright Notice
 
@@ -3026,7 +3026,7 @@ Table of Contents
 
    Reference-Value-addition-ECT = ({
      environment: environment-map
-     element-list: [ + element-map ]
+     ? element-list: [ + element-map ]
      authority: [ + $crypto-key-type-choice ]
      cmtype: 0
      ? profile: $profile-type-choice
@@ -5539,6 +5539,9 @@ Appendix A.  Base CoRIM CDDL
    integrity-register-id-type-choice = uint / text
    integrity-registers = {+ integrity-register-id-type-choice => \
                                                            digests-type}
+   $$measurement-values-map-extension //= (&(psa-cert-num: 100) => psa-\
+                                                          cert-num-type)
+   psa-cert-num-type = text .regexp "[0-9]{13} - [0-9]{5}"
    eatmc.measured-component = {
      eatmc.component-id-label => eatmc.component-id,
      eatmc.measurement,
