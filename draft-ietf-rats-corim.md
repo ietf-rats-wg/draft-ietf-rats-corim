@@ -2029,14 +2029,17 @@ It describes the direct relationship between a specific node in the membership o
 
 The following describes the specialized members of the `D-ECT`.
 
+* The `environment` in the `ECT-common` represents the domain identifier, i.e. the parent environment.
+
 * `children`: Identifies the set of members of the domain rooted in the parent `environment`.
+For domain dependency, `children` represents the edges that describes the dependency.
 
 * `kind`: Identifies the type of Domain triple that originated the tuple: `member` stands for Domain Membership, `trustee` is for Domain Dependency.
 
 **Claim Names.**
 
 A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
-In a Domain ECT, the `environment` attribute encodes the name of the Claim.
+In a Domain ECT, the `environment` attribute encodes the name of the Claim. //TO DO WHat does this mean
 The value of the Claim is encoded in the `kind` and `children` attributes.
 
 **Merge Rules.**
@@ -2722,14 +2725,27 @@ Domain Membership relations describe the expected topological arrangement of the
 Domains are matched with ACS entries by iterating through the `dm` list.
 
 The following algorithm assumes that the graph described by the condition ECTs in the `dm` relation is acyclic.
-It also assumes that the `dm-item`s in the `dm` relation are topologically sorted (bottom up, from leaves to root).
-This allows the algorithm to execute in one pass.
 
-For each `dm` entry, the condition ECT is compared with either an ACS Element ECT with `cmtype` 2 (i.e., evidence) or a Domain ECT with `kind` 0 (i.e., member).
-All other ECTs are ignored.
+Domain Membership ECTs, i.e. `dm` entries, in the staging area, are matched with ACS Entries, of type
+evidence or a Domain ECTs using the following algorithm.
 
-If all the `children` environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
-Otherwise, processing moves to processing the next `dm` entry.
+For each domain entry `dm` in staging area, which has not been processed (outer loop):
+
+For each children `e` in the list of dm.children: (inner loop)
+
+* Check that there is a corresponding ACS entry environment that matches `e`.
+
+* Check that the ACS Entry cmtype 2 (i.e., evidence) or a Domain ECT with kind 0 (i.e., member).
+
+Outer loop resumes:
+* If all the children environments, i.e. `e`s in the condition ECT have a matching ECT in the ACS, then
+domain entry `dm.addition` ECT is added to the ACS.
+
+* If none of the domain.members matched, proceed to next dm entry.
+
+If some, but not all of the children `e` matched, proceed to the next dm entry.
+
+If the previous execution of the outer loop added any domain entry to the ACS, then run the outer loop again Else STOP processing dm entries
 
 ##### Processing `dd` Relations {#sec-proc-dd}
 
