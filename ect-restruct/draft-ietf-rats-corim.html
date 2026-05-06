@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 5 November 2026</td>
+<td class="center">Expires 7 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-04" class="published">4 May 2026</time>
+<time datetime="2026-05-06" class="published">6 May 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-05">5 November 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-07">7 November 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 5 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 7 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -4735,8 +4735,10 @@ Reference-Value-addition-ECT = ({
                 </figcaption></figure>
 </div>
 <p id="section-8.2.2.2.2-8">As this is used to corroborate an Evidence ECT, its layout is identical to that of an <code>Evidence-addition-ECT</code>.
-The only differences are the values of the <code>authority</code> and <code>cmtype</code> attributes.
-Here, the <code>authority</code> value is that of the RVP rather than the Attester, and the <code>cmtype</code> value is <code>reference-values</code> rather than <code>evidence</code>.<a href="#section-8.2.2.2.2-8" class="pilcrow">¶</a></p>
+The only differences are the values of the <code>element-list</code>, <code>authority</code> and <code>cmtype</code> attributes.
+Here, the <code>authority</code> value is that of the RVP rather than the Attester, and the <code>cmtype</code> value is <code>reference-values</code> rather than <code>evidence</code>.
+Furthermore, the <code>element-list</code> is created if a match is found during processing, rather than when the triple is transformed into the internal representation.
+Therefore, it may be absent.<a href="#section-8.2.2.2.2-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-ir-endval">
@@ -5019,7 +5021,7 @@ Whether a given relation is present in the staging area depends on whether a tri
 </div>
 </section>
 </div>
-<div id="input-validation-and-transformation-phase-1">
+<div id="sec-phase-1">
 <section id="section-8.2.3">
           <h4 id="name-input-validation-and-transf">
 <a href="#section-8.2.3" class="section-number selfRef">8.2.3. </a><a href="#name-input-validation-and-transf" class="section-name selfRef">Input Validation and Transformation (Phase 1)</a>
@@ -5128,7 +5130,7 @@ Evidence transformation algorithms are out of scope for this document.<a href="#
 Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.2.3.7.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="reference-values">
+<div id="sec-trans-reference-values">
 <section id="section-8.2.3.7.2">
               <h6 id="name-reference-values-2">
 <a href="#section-8.2.3.7.2" class="section-number selfRef">8.2.3.7.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
@@ -5171,7 +5173,7 @@ FUNC transform(
 Since they may contain ranges rather than individual values (see, for example, <a href="#sec-comid-int-range" class="auto internal xref">Section 5.1.4.8</a>), we need to wait until the condition is satisfied by an Evidence ECT before we can copy the matched claims from the Evidence ECT to the addition ECT.<a href="#section-8.2.3.7.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="endorsed-values">
+<div id="sec-trans-endorsed-values">
 <section id="section-8.2.3.7.3">
               <h6 id="name-endorsed-values-2">
 <a href="#section-8.2.3.7.3" class="section-number selfRef">8.2.3.7.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
@@ -5190,17 +5192,19 @@ FUNC transform(
 ) -&gt; ev-item {
     item := ev-item::NEW()
 
-    item.addition.cmtype = endorsements
+    ect-cond := Endorsement-condition-ECT::NEW()
+    ect-cond.environment = T.condition
+    item.condition::APPEND(ect-cond)
 
-    item.addition.environment = T.condition
-    item.condition.environment = T.condition
-
-    item.addition.element-list = mms_to_ems(T.endorsement)
-
-    item.addition.authority = signer
-
+    ect-add := Endorsement-addition-ECT::NEW()
+    ect-add.environment = T.condition
+    ect-add.element-list = mms_to_ems(T.endorsement)
+    ect-add.cmtype = endorsements
+    ect-add.authority = signer
     IF profile:
-        item.addition.profile = profile
+        ect-add.profile = profile
+
+    item.addition::APPEND(ect-add)
 
     RETURN item
 }
@@ -5223,20 +5227,21 @@ FUNC transform(
 ) -&gt; ev-item {
     item := ev-item::NEW()
 
-    item.addition.cmtype = endorsements
-
     FOREACH ser IN T.conditions:
-        item.condition.environment = ser.environment
-        item.condition.element-list = mms_to_ems(ser.claims-list)
+        ect := Endorsement-condition-ECT::NEW()
+        ect.environment = ser.environment
+        ect.element-list = mms_to_ems(ser.claims-list)
+        item.condition::APPEND(ect)
 
     FOREACH etr IN T.endorsements:
-        item.addition.environment = etr.condition
-        item.addition.element-list = mms_to_ems(etr.endorsement)
-
-    item.addition.authority = signer
-
-    IF profile:
-        item.addition.profile = profile
+        ect := Endorsement-addition-ECT::NEW()
+        ect.environment = etr.condition
+        ect.element-list = mms_to_ems(etr.endorsement)
+        ect.cmtype = endorsements
+        ect.authority = signer
+        IF profile:
+            ect.profile = profile
+        item.addition::APPEND(ect)
 
     RETURN item
 }
@@ -5388,7 +5393,7 @@ FUNC transform(
 </div>
 </section>
 </div>
-<div id="appraisal-context-initialization">
+<div id="sec-appraisal-ctx-init">
 <section id="section-8.2.3.8">
             <h5 id="name-appraisal-context-initializ">
 <a href="#section-8.2.3.8" class="section-number selfRef">8.2.3.8. </a><a href="#name-appraisal-context-initializ" class="section-name selfRef">Appraisal Context Initialization</a>
@@ -5496,7 +5501,7 @@ The "match and augment" algorithm described in <a href="#algo-match-and-augment"
 <a href="#section-8.2.4.2" class="section-number selfRef">8.2.4.2. </a><a href="#name-reference-values-corroborat" class="section-name selfRef">Reference Values Corroboration and Augmentation (Phase 3)</a>
             </h5>
 <p id="section-8.2.4.2-1">Corroboration is the process of determining whether actual Attester state (as contained in the ACS) can be satisfied by Reference Values.<a href="#section-8.2.4.2-1" class="pilcrow">¶</a></p>
-<div id="processing-rv-relations">
+<div id="sec-proc-rv-rel">
 <section id="section-8.2.4.2.1">
               <h6 id="name-processing-rv-relations">
 <a href="#section-8.2.4.2.1" class="section-number selfRef">8.2.4.2.1. </a><a href="#name-processing-rv-relations" class="section-name selfRef">Processing <code>rv</code> Relations</a>
@@ -5524,7 +5529,7 @@ For each <code>rv</code> entry, the condition ECT is compared against an ACS ECT
             </h5>
 <p id="section-8.2.4.3-1">Endorsed values augmentation is the process of adding Claims about the Attester's actual state with Endorser authority rather than Attester authority.
 Augmentation is predicated on a certain condition matching the actual state currently encoded in the ACS.<a href="#section-8.2.4.3-1" class="pilcrow">¶</a></p>
-<div id="processing-ev-relations">
+<div id="sec-proc-ev-rel">
 <section id="section-8.2.4.3.1">
               <h6 id="name-processing-ev-relations">
 <a href="#section-8.2.4.3.1" class="section-number selfRef">8.2.4.3.1. </a><a href="#name-processing-ev-relations" class="section-name selfRef">Processing <code>ev</code> Relations</a>
@@ -5928,10 +5933,655 @@ This information can then be encoded in an Attestation Result that can be unders
           <h4 id="name-example-appraisal">
 <a href="#section-8.2.6" class="section-number selfRef">8.2.6. </a><a href="#name-example-appraisal" class="section-name selfRef">Example Appraisal</a>
           </h4>
-<p id="section-8.2.6-1"><span class="cref">
-[TODO] Simple example appraisal with input ae, rv and ev and expected ACS evolution through phases.
-Use PSA evidence, ref values and certification endorsemnts.
-</span><a href="#section-8.2.6-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.6-1">The following example describes the appraisal of a PSA Attester <span>[<a href="#RFC9783" class="cite xref">RFC9783</a>]</span> from the fictitious vendor "Acme Inc.", which uses the CoRIM profile documented in <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>.<a href="#section-8.2.6-1" class="pilcrow">¶</a></p>
+<div id="input-corims">
+<section id="section-8.2.6.1">
+            <h5 id="name-input-corims">
+<a href="#section-8.2.6.1" class="section-number selfRef">8.2.6.1. </a><a href="#name-input-corims" class="section-name selfRef">Input CoRIMs</a>
+            </h5>
+<p id="section-8.2.6.1-1">In this scenario, the Verifier obtains two CoRIM files from two different actors in the supply chain:<a href="#section-8.2.6.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.2.6.1-2.1">
+                <p id="section-8.2.6.1-2.1.1">The device manufacturer (Acme Inc.); and<a href="#section-8.2.6.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-8.2.6.1-2.2">
+                <p id="section-8.2.6.1-2.2.1">A certifier (Certifier Inc.), which has evaluated the device according to the PSA Certified scheme.<a href="#section-8.2.6.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-8.2.6.1-3">The manufacturer's CoRIM contains a single CoMID with two Reference Values triples (see <a href="#ex-comid-rvt" class="auto internal xref">Figure 45</a>) describing two acceptable states of the Attester.
+The Attester is identified by the class attribute Implementation ID with the value <code>6163..3031</code>.
+One state has a digest of <code>9a27..86aa</code> for the "PRoT" component, and the other has a digest of <code>a3fe..5065</code>.<a href="#section-8.2.6.1-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.1-4">For the remainder of this section, we will assume that the CoRIM containing this CoMID is signed using the manufacturer's certificate, which has a thumbprint of <code>482e..78b3</code>.<a href="#section-8.2.6.1-4" class="pilcrow">¶</a></p>
+<span id="name-example-manufacturer-comid"></span><div id="ex-comid-rvt">
+<figure id="figure-45">
+              <div class="breakable lang-cbor-diag sourcecode" id="section-8.2.6.1-5.1">
+<pre>
+/ concise-mid-tag / {
+  / comid.tag-identity / 1 : {
+    / comid.tag-id / 0 : "acme.example/gizmo-v1",
+  },
+  / comid.entity / 2 : [ {
+    / comid.entity-name / 0 : "ACME Inc.",
+    / comid.reg-id / 1 : 32("https://acme.example"),
+    / comid.role / 2 : [ 0 ] / tag-creator /
+  } ],
+  / comid.triples / 4 : {
+    / comid.reference-triples / 0 : [ [
+      / environment-map / {
+        / comid.class / 0 : {
+          / comid.class-id / 0 :
+            / tagged-bytes / 560(
+              h'61636d652d696d706c656d656e746174
+                696f6e2d69642d303030303030303031'
+            )
+        }
+      },
+      [
+        / measurement-map / {
+          / comid.mkey / 0 : "psa.software-component",
+          / comid.mval / 1 : {
+            / comid.digests / 2 : [ [
+              / hash-alg-id / "sha-256",
+              / hash-value / h'9a271f2a916b0b6ee6cecb2426f0b320
+                               6ef074578be55d9bc94f6f3fe3ab86aa'
+            ] ],
+            / name / 11 : "PRoT",
+            / cryptokeys / 13 : [ 560(h'5378796307535df3ec8d8b15a2
+                                        e2dc5641419c3d3060cfe32238
+                                        c0fa973f7aa3') ]
+          }
+        }
+      ]
+    ],
+    [
+      / environment-map / {
+        / comid.class / 0 : {
+          / comid.class-id / 0 :
+            / tagged-bytes / 560(
+              h'61636d652d696d706c656d656e746174
+                696f6e2d69642d303030303030303031'
+            )
+        }
+      },
+      [
+        / measurement-map / {
+          / comid.mkey / 0 : "psa.software-component",
+          / comid.mval / 1 : {
+            / comid.digests / 2 : [ [
+              / hash-alg-id / "sha-256",
+              / hash-value / h'a3fe9f414586c0d3cacbe3b6920a09d8
+                               718e503bca22e23fef882203bf765065'
+            ] ],
+            / name / 11 : "PRoT",
+            / cryptokeys / 13 : [ 560(h'5378796307535df3ec8d8b15a2
+                                        e2dc5641419c3d3060cfe32238
+                                        c0fa973f7aa3') ]
+          }
+        }
+      ]
+    ] ]
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-45" class="selfRef">Figure 45</a>:
+<a href="#name-example-manufacturer-comid" class="selfRef">Example Manufacturer CoMID</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.1-6">The CoMID from the certifier contains a Conditional Endorsement triple that describes the Attester who was granted the security certification <code>1234567890123 - 12345</code> (see <a href="#ex-comid-cet" class="auto internal xref">Figure 46</a>).
+This Attester has Implementation ID <code>6163..3031</code> and the digest associated with the "PRoT" component is <code>9a27..86aa</code>.
+In the triple, the security certification is represented as <code>endorsements</code>, while the target identification information is represented as <code>conditions</code>.<a href="#section-8.2.6.1-6" class="pilcrow">¶</a></p>
+<span id="name-example-certifier-comid"></span><div id="ex-comid-cet">
+<figure id="figure-46">
+              <div class="breakable lang-cbor-diag sourcecode" id="section-8.2.6.1-7.1">
+<pre>
+/ concise-mid-tag / {
+  / comid.tag-identity / 1 : {
+    / comid.tag-id / 0 : "certifier.example/gizmo-v1",
+  },
+  / comid.entity / 2 : [ {
+    / comid.entity-name / 0 : "Certifier Inc.",
+    / comid.reg-id / 1 : 32("https://certifier.example"),
+    / comid.role / 2 : [ 0 ] / tag-creator /
+  } ],
+  / comid.triples / 4 : {
+    / comid.conditional-endorsement-triple / 10 : [
+      [
+        / conditions / [
+          / stateful-environment / [
+            / environment-map / {
+              / comid.class / 0 : {
+                / comid.class-id / 0 :
+                  / tagged-bytes / 560(
+                    h'61636d652d696d706c656d656e746174
+                      696f6e2d69642d303030303030303031'
+                  )
+              }
+            },
+            / claims-list / [
+              / measurement-map / {
+                / comid.mkey / 0 : "psa.software-component",
+                / comid.mval / 1 : {
+                  / comid.digests / 2 : [ [
+                    / hash-alg-id / "sha-256",
+                    / hash-value / h'9a271f2a916b0b6ee6cecb2426f0b320
+                                     6ef074578be55d9bc94f6f3fe3ab86aa'
+                  ] ],
+                  / name / 11 : "PRoT",
+                  / cryptokeys / 13 : [ 560(h'5378796307535df3ec8d8b15a2
+                                              e2dc5641419c3d3060cfe32238
+                                              c0fa973f7aa3') ]
+                }
+              }
+            ]
+          ]
+        ],
+        / endorsements / [
+          / endorsed-triple / [
+            / environment / {
+              / comid.class / 0 : {
+                / comid.class-id / 0 :
+                  / tagged-bytes / 560(
+                    h'61636d652d696d706c656d656e746174
+                      696f6e2d69642d303030303030303031'
+                  )
+              }
+            },
+            [
+              / measurement-map / {
+                / comid.mval / 1 : {
+                  / psa.cert-num / 100 : "1234567890123 - 12345"
+                }
+              }
+            ]
+          ]
+        ]
+      ]
+    ]
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-46" class="selfRef">Figure 46</a>:
+<a href="#name-example-certifier-comid" class="selfRef">Example Certifier CoMID</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.1-8">For the remainder of this section, we will assume that the CoRIM containing this CoMID is signed using the certifier's certificate, which has a thumbprint of <code>768f..75b1</code>.<a href="#section-8.2.6.1-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="input-evidence">
+<section id="section-8.2.6.2">
+            <h5 id="name-input-evidence">
+<a href="#section-8.2.6.2" class="section-number selfRef">8.2.6.2. </a><a href="#name-input-evidence" class="section-name selfRef">Input Evidence</a>
+            </h5>
+<p id="section-8.2.6.2-1">The Verifier obtains Evidence from a PSA Attester in the format described in <span>[<a href="#RFC9783" class="cite xref">RFC9783</a>]</span> and verifies its cryptographic integrity and validity.<a href="#section-8.2.6.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="internal-representations">
+<section id="section-8.2.6.3">
+            <h5 id="name-internal-representations">
+<a href="#section-8.2.6.3" class="section-number selfRef">8.2.6.3. </a><a href="#name-internal-representations" class="section-name selfRef">Internal Representations</a>
+            </h5>
+<p id="section-8.2.6.3-1">As described in <a href="#sec-phase-1" class="auto internal xref">Section 8.2.3</a>, once all the "raw" inputs and have been validated, input transformations can start.<a href="#section-8.2.6.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.3-2">The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding <code>rv-item</code>s (<a href="#ex-rv-item-1" class="auto internal xref">Figure 47</a>, <a href="#ex-rv-item-2" class="auto internal xref">Figure 48</a>) using the transformations defined in <a href="#algo-rv-transform" class="auto internal xref">Figure 35</a>.<a href="#section-8.2.6.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.3-3">The first triple:<a href="#section-8.2.6.3-3" class="pilcrow">¶</a></p>
+<span id="name-first-rv-relation-item"></span><div id="ex-rv-item-1">
+<figure id="figure-47">
+              <div class="lang-cbor-diag sourcecode" id="section-8.2.6.3-4.1">
+<pre>
+{
+  "condition": {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      }
+    },
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ]
+  },
+  "addition": {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      }
+    },
+    "authority": [
+      559([
+        "sha-256",
+        h'482e829ad29ac6ea6eda2d47d1d93a00
+          2bf41d9d88710ba972c36e59038f78b3'
+      ])
+    ],
+    "cmtype": 0,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-47" class="selfRef">Figure 47</a>:
+<a href="#name-first-rv-relation-item" class="selfRef">First rv Relation Item</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.3-5">The second triple:<a href="#section-8.2.6.3-5" class="pilcrow">¶</a></p>
+<span id="name-second-rv-relation-item"></span><div id="ex-rv-item-2">
+<figure id="figure-48">
+              <div class="lang-cbor-diag sourcecode" id="section-8.2.6.3-6.1">
+<pre>
+{
+  "condition": {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      }
+    },
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'a3fe9f414586c0d3cacbe3b6920a09d8
+                718e503bca22e23fef882203bf765065'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ]
+  },
+  "addition": {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      }
+    },
+    "authority": [
+      559([
+        "sha-256",
+        h'482e829ad29ac6ea6eda2d47d1d93a00
+          2bf41d9d88710ba972c36e59038f78b3'
+      ])
+    ],
+    "cmtype": 0,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-48" class="selfRef">Figure 48</a>:
+<a href="#name-second-rv-relation-item" class="selfRef">Second rv Relation Item</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.3-7">Note the authorities in the addition ECT of both items, which are set to <code>482e..78b3</code>, and correspond to the thumbprint of the manufacturer's signing certificate.<a href="#section-8.2.6.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.3-8">The Conditional Endorsement triple from the certifier's CoMID is mapped to its corresponding <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 49</a>) using the transformation defined in <a href="#algo-ce-transform" class="auto internal xref">Figure 37</a>.<a href="#section-8.2.6.3-8" class="pilcrow">¶</a></p>
+<span id="name-first-and-only-ev-relation-"></span><div id="ex-ev-item">
+<figure id="figure-49">
+              <div class="breakable lang-cbor-diag sourcecode" id="section-8.2.6.3-9.1">
+<pre>
+{
+  "condition": [
+    {
+      "environment": {
+          0: {
+            0:
+              560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+          }
+      },
+      "element-list": [
+        {
+          "element-id": "psa.software-component",
+          "element-claims": {
+            2 : [ [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ] ],
+            11 : "PRoT",
+            13 : [ 560(h'5378796307535df3ec8d8b15a2
+                         e2dc5641419c3d3060cfe32238
+                         c0fa973f7aa3') ]
+          }
+        }
+      ]
+    }
+  ],
+  "addition": [
+    {
+      "environment": {
+        0: {
+          0:
+            560(h'61636d652d696d706c656d656e746174
+                  696f6e2d69642d303030303030303031')
+        }
+      },
+      "element-list": [
+        {
+          "element-id": "psa.certification",
+          "element-claims": {
+            100: "1234567890123 - 12345"
+          }
+        }
+      ],
+      "authority": [
+        559([
+          "sha-256",
+          h'768ff09154f6aacda857cb175ef29cf9
+            d23ef9c38c69efdbf20354dbfd7875b1'
+        ])
+      ],
+      "cmtype": 1,
+      "profile": 32("tag:arm.com,2025:psa#1.0.0")
+    }
+  ]
+}
+</pre>
+</div>
+<figcaption><a href="#figure-49" class="selfRef">Figure 49</a>:
+<a href="#name-first-and-only-ev-relation-" class="selfRef">First (and only) ev Relation Item</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.3-10">Note the authority in the addition ECT, which is set to <code>768f..75b1</code>, and corresponds to the thumbprint of the certifier's signing certificate.<a href="#section-8.2.6.3-10" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.3-11">Evidence from the PSA Attester is transformed into the corresponding <code>ae-item</code> using the transformation defined in <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>:<a href="#section-8.2.6.3-11" class="pilcrow">¶</a></p>
+<span id="name-ae-item"></span><div id="ex-ae-item">
+<figure id="figure-50">
+              <div class="lang-cbor-diag sourcecode" id="section-8.2.6.3-12.1">
+<pre>
+=============== NOTE: '\' line wrapping per RFC 8792 ================
+
+{
+  "addition": {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      },
+      1: 550(h'01
+               4ca3e4f50bf248c39787020d68ffd05c
+               88767751bf2645ca923f57a98becd296')
+    }
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ],
+    "authority": [
+      554("\
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv18HI\
+           nYhnmMNybo+A1wuECyVqrDSmLt4QQzZPBECV8ANHS5HgGCCSr7E/Lg==")
+    ],
+    "cmtype": 2,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  }
+}
+</pre>
+</div>
+<figcaption><a href="#figure-50" class="selfRef">Figure 50</a>:
+<a href="#name-ae-item" class="selfRef">ae-item</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.3-13">Note the authority in the ECT, which is set to <code>MFkw..Lg=="</code>, and corresponds to the Attester's PEM-encoded SPKI.<a href="#section-8.2.6.3-13" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="appraisal">
+<section id="section-8.2.6.4">
+            <h5 id="name-appraisal">
+<a href="#section-8.2.6.4" class="section-number selfRef">8.2.6.4. </a><a href="#name-appraisal" class="section-name selfRef">Appraisal</a>
+            </h5>
+<p id="section-8.2.6.4-1">As described in <a href="#sec-appraisal-ctx-init" class="auto internal xref">Section 8.2.3.8</a>, the appraisal context is bootstrapped by loading the <code>ae</code> ECT(s) into the ACS, and the <code>rv</code> and <code>ev</code> relations into the Staging Area.
+Then, ACS augmentation described in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.2.4</a> can begin.<a href="#section-8.2.6.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-2">The first relation to be processed is <code>rv</code>, according to the rules described in <a href="#sec-proc-rv-rel" class="auto internal xref">Section 8.2.4.2.1</a>.<a href="#section-8.2.6.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-3">The condition of the first <code>rv-item</code> (<a href="#ex-rv-item-1" class="auto internal xref">Figure 47</a>) is matched against the ACS which, at this time, contains a single ECT obtained from the <code>ae-item</code> (<a href="#ex-ae-item" class="auto internal xref">Figure 50</a>).
+The <code>cmtype</code> of the ACS-ECT is 2 (evidence), which is exactly the type <code>rv-item</code>s need to match against.
+When the two are compared, it is found that the environments of the <code>rv-item</code> condition and the ACS-ECT match (note that the instance identifier in the ACS-ECT is ignored because it is not present in the <code>rv-item</code>).
+The matching algorithm then proceeds to try to match the respective <code>element-list</code>s.
+Both lists contain a single element, whose ID and claims are a perfect match.
+Therefore, all the matching criteria are satisfied and the <code>rv-item</code> addition ECT is appended to the ACS.
+Before this addition is made, the matched element from the <code>rv-item</code> condition is copied to the addition <code>element-list</code>.<a href="#section-8.2.6.4-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-4">The ACS now contains two ECTs, one with <code>cmtype</code> 2 (evidence), and a second one with <code>cmtype</code> 0 (reference-value) that corroborates the first one with manufacturer authority (<a href="#ex-acs-1" class="auto internal xref">Figure 51</a>).<a href="#section-8.2.6.4-4" class="pilcrow">¶</a></p>
+<span id="name-acs-state-after-corroborati"></span><div id="ex-acs-1">
+<figure id="figure-51">
+              <div class="alignLeft art-text artwork" id="section-8.2.6.4-5.1">
+<pre>
+=============== NOTE: '\' line wrapping per RFC 8792 ================
+
+[
+  / Evidence ECT / {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      },
+      1: 550(h'01
+               4ca3e4f50bf248c39787020d68ffd05c
+               88767751bf2645ca923f57a98becd296')
+    }
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ],
+    "authority": [
+      554("\
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv18HI\
+           nYhnmMNybo+A1wuECyVqrDSmLt4QQzZPBECV8ANHS5HgGCCSr7E/Lg==")
+    ],
+    "cmtype": 2,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  },
+  / Reference Value ECT / {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      }
+    },
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ],
+    "authority": [
+      559([
+        "sha-256",
+        h'482e829ad29ac6ea6eda2d47d1d93a00
+          2bf41d9d88710ba972c36e59038f78b3'
+      ])
+    ],
+    "cmtype": 0,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  }
+]
+</pre>
+</div>
+<figcaption><a href="#figure-51" class="selfRef">Figure 51</a>:
+<a href="#name-acs-state-after-corroborati" class="selfRef">ACS State after Corroboration</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.4-6">The algorithm then moves on to the second <code>rv-item</code> (<a href="#ex-rv-item-2" class="auto internal xref">Figure 48</a>), checking its condition against the ACS.
+Once again, the ACS-ECT with <code>cmtype</code> 2 (evidence) is selected for matching.
+This time, the environments match, but the state represented in the <code>rv-item</code>'s <code>element-list</code> is not (the digest differs).
+This results in a no-op on the ACS.<a href="#section-8.2.6.4-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-7">Next, the <code>ev</code> relation is popped from the Staging Area for processing according to the rules described in <a href="#sec-proc-ev-rel" class="auto internal xref">Section 8.2.4.3.1</a>.
+The condition of the first (and only) <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 49</a>) is then matched against the ACS.
+The only applicable ACS-ECT is the one with <code>cmtype</code> 2 (evidence).
+<span class="cref">
+The fact that {{sec-proc-ev-rel}} requires matching against reference values seems incorrect.
+</span>
+When compared, the environment in the <code>ev-item</code> condition matches that of the ACS-ECT (again, the instance identifier in the ACS-ECT is ignored because it is not present in the <code>ev-item</code>), and the matching algorithm proceeds to try to match the respective <code>element-list</code>s.
+Both lists contain a single element, whose ID and claims are an exact match.
+Therefore, all the matching criteria are satisfied and the <code>ev-item</code> addition ECT is appended to the ACS.<a href="#section-8.2.6.4-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-8">The ACS now contains three ECTs, one with <code>cmtype</code> 2 (evidence), a second with <code>cmtype</code> 0 (reference-value), which corroborates the first with manufacturer authority, and a third one with <code>cmtype</code> 1 (endorsements) which adds the PSA certification identifier as an endorsed value for the appraised environment with certifier's authority (<a href="#ex-acs-2" class="auto internal xref">Figure 52</a>).<a href="#section-8.2.6.4-8" class="pilcrow">¶</a></p>
+<span id="name-acs-state-after-endorsement"></span><div id="ex-acs-2">
+<figure id="figure-52">
+              <div class="alignLeft art-text artwork" id="section-8.2.6.4-9.1">
+<pre>
+=============== NOTE: '\' line wrapping per RFC 8792 ================
+
+[
+  / Evidence ECT / {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      },
+      1: 550(h'01
+               4ca3e4f50bf248c39787020d68ffd05c
+               88767751bf2645ca923f57a98becd296')
+    }
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ],
+    "authority": [
+      554("\
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv18HI\
+           nYhnmMNybo+A1wuECyVqrDSmLt4QQzZPBECV8ANHS5HgGCCSr7E/Lg==")
+    ],
+    "cmtype": 2,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  },
+  / Reference Value ECT / {
+    "environment": {
+      0: {
+        0: 560(h'61636d652d696d706c656d656e746174
+                 696f6e2d69642d303030303030303031')
+      }
+    },
+    "element-list": [
+      {
+        "element-id": "psa.software-component",
+        "element-claims": {
+          2: [
+            [
+              "sha-256",
+              h'9a271f2a916b0b6ee6cecb2426f0b320
+                6ef074578be55d9bc94f6f3fe3ab86aa'
+            ]
+          ],
+          11: "PRoT",
+          13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                      41419c3d3060cfe32238c0fa973f7aa3') ]
+        }
+      }
+    ],
+    "authority": [
+      559([
+        "sha-256",
+        h'482e829ad29ac6ea6eda2d47d1d93a00
+          2bf41d9d88710ba972c36e59038f78b3'
+      ])
+    ],
+    "cmtype": 0,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  },
+  / Endorsed Value ECT / {
+    "environment": {
+      0: {
+        0:
+          560(h'61636d652d696d706c656d656e746174
+                696f6e2d69642d303030303030303031')
+      }
+    },
+    "element-list": [
+      {
+        "element-id": "psa.certification",
+        "element-claims": {
+          100: "1234567890123 - 12345"
+        }
+      }
+    ],
+    "authority": [
+      559([
+        "sha-256",
+        h'768ff09154f6aacda857cb175ef29cf9
+          d23ef9c38c69efdbf20354dbfd7875b1'
+      ])
+    ],
+    "cmtype": 1,
+    "profile": 32("tag:arm.com,2025:psa#1.0.0")
+  }
+]
+</pre>
+</div>
+<figcaption><a href="#figure-52" class="selfRef">Figure 52</a>:
+<a href="#name-acs-state-after-endorsement" class="selfRef">ACS State after Endorsements Augmentation</a>
+              </figcaption></figure>
+</div>
+<p id="section-8.2.6.4-10">At this point, all the relations in the Staging Area have been processed, and the <code>match_and_augment</code> algorithm (<a href="#algo-match-and-augment" class="auto internal xref">Figure 43</a>) terminates, returning the computed ACS.<a href="#section-8.2.6.4-10" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 </section>

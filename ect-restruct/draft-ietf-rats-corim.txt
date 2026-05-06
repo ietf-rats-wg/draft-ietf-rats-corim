@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 5 November 2026                                          Linaro
+Expires: 7 November 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                              4 May 2026
+                                                              6 May 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 November 2026.
+   This Internet-Draft will expire on 7 November 2026.
 
 Copyright Notice
 
@@ -3036,9 +3036,12 @@ Table of Contents
 
    As this is used to corroborate an Evidence ECT, its layout is
    identical to that of an Evidence-addition-ECT.  The only differences
-   are the values of the authority and cmtype attributes.  Here, the
-   authority value is that of the RVP rather than the Attester, and the
-   cmtype value is reference-values rather than evidence.
+   are the values of the element-list, authority and cmtype attributes.
+   Here, the authority value is that of the RVP rather than the
+   Attester, and the cmtype value is reference-values rather than
+   evidence.  Furthermore, the element-list is created if a match is
+   found during processing, rather than when the triple is transformed
+   into the internal representation.  Therefore, it may be absent.
 
 8.2.2.2.3.  Endorsed Values
 
@@ -3448,17 +3451,19 @@ Table of Contents
    ) -> ev-item {
        item := ev-item::NEW()
 
-       item.addition.cmtype = endorsements
+       ect-cond := Endorsement-condition-ECT::NEW()
+       ect-cond.environment = T.condition
+       item.condition::APPEND(ect-cond)
 
-       item.addition.environment = T.condition
-       item.condition.environment = T.condition
-
-       item.addition.element-list = mms_to_ems(T.endorsement)
-
-       item.addition.authority = signer
-
+       ect-add := Endorsement-addition-ECT::NEW()
+       ect-add.environment = T.condition
+       ect-add.element-list = mms_to_ems(T.endorsement)
+       ect-add.cmtype = endorsements
+       ect-add.authority = signer
        IF profile:
-           item.addition.profile = profile
+           ect-add.profile = profile
+
+       item.addition::APPEND(ect-add)
 
        RETURN item
    }
@@ -3476,20 +3481,21 @@ Table of Contents
    ) -> ev-item {
        item := ev-item::NEW()
 
-       item.addition.cmtype = endorsements
-
        FOREACH ser IN T.conditions:
-           item.condition.environment = ser.environment
-           item.condition.element-list = mms_to_ems(ser.claims-list)
+           ect := Endorsement-condition-ECT::NEW()
+           ect.environment = ser.environment
+           ect.element-list = mms_to_ems(ser.claims-list)
+           item.condition::APPEND(ect)
 
        FOREACH etr IN T.endorsements:
-           item.addition.environment = etr.condition
-           item.addition.element-list = mms_to_ems(etr.endorsement)
-
-       item.addition.authority = signer
-
-       IF profile:
-           item.addition.profile = profile
+           ect := Endorsement-addition-ECT::NEW()
+           ect.environment = etr.condition
+           ect.element-list = mms_to_ems(etr.endorsement)
+           ect.cmtype = endorsements
+           ect.authority = signer
+           IF profile:
+               ect.profile = profile
+           item.addition::APPEND(ect)
 
        RETURN item
    }
@@ -4231,10 +4237,652 @@ Table of Contents
 
 8.2.6.  Example Appraisal
 
+   The following example describes the appraisal of a PSA Attester
+   [RFC9783] from the fictitious vendor "Acme Inc.", which uses the
+   CoRIM profile documented in [I-D.fdb-rats-psa-endorsements].
 
-   // [TODO] Simple example appraisal with input ae, rv and ev and
-   // expected ACS evolution through phases.  Use PSA evidence, ref
-   // values and certification endorsemnts.
+8.2.6.1.  Input CoRIMs
+
+   In this scenario, the Verifier obtains two CoRIM files from two
+   different actors in the supply chain:
+
+   *  The device manufacturer (Acme Inc.); and
+
+   *  A certifier (Certifier Inc.), which has evaluated the device
+      according to the PSA Certified scheme.
+
+   The manufacturer's CoRIM contains a single CoMID with two Reference
+   Values triples (see Figure 45) describing two acceptable states of
+   the Attester.  The Attester is identified by the class attribute
+   Implementation ID with the value 6163..3031.  One state has a digest
+   of 9a27..86aa for the "PRoT" component, and the other has a digest of
+   a3fe..5065.
+
+   For the remainder of this section, we will assume that the CoRIM
+   containing this CoMID is signed using the manufacturer's certificate,
+   which has a thumbprint of 482e..78b3.
+
+   / concise-mid-tag / {
+     / comid.tag-identity / 1 : {
+       / comid.tag-id / 0 : "acme.example/gizmo-v1",
+     },
+     / comid.entity / 2 : [ {
+       / comid.entity-name / 0 : "ACME Inc.",
+       / comid.reg-id / 1 : 32("https://acme.example"),
+       / comid.role / 2 : [ 0 ] / tag-creator /
+     } ],
+     / comid.triples / 4 : {
+       / comid.reference-triples / 0 : [ [
+         / environment-map / {
+           / comid.class / 0 : {
+             / comid.class-id / 0 :
+               / tagged-bytes / 560(
+                 h'61636d652d696d706c656d656e746174
+                   696f6e2d69642d303030303030303031'
+               )
+           }
+         },
+         [
+           / measurement-map / {
+             / comid.mkey / 0 : "psa.software-component",
+             / comid.mval / 1 : {
+               / comid.digests / 2 : [ [
+                 / hash-alg-id / "sha-256",
+                 / hash-value / h'9a271f2a916b0b6ee6cecb2426f0b320
+                                  6ef074578be55d9bc94f6f3fe3ab86aa'
+               ] ],
+               / name / 11 : "PRoT",
+               / cryptokeys / 13 : [ 560(h'5378796307535df3ec8d8b15a2
+                                           e2dc5641419c3d3060cfe32238
+                                           c0fa973f7aa3') ]
+             }
+           }
+         ]
+       ],
+       [
+         / environment-map / {
+           / comid.class / 0 : {
+             / comid.class-id / 0 :
+               / tagged-bytes / 560(
+                 h'61636d652d696d706c656d656e746174
+                   696f6e2d69642d303030303030303031'
+               )
+           }
+         },
+         [
+           / measurement-map / {
+             / comid.mkey / 0 : "psa.software-component",
+             / comid.mval / 1 : {
+               / comid.digests / 2 : [ [
+                 / hash-alg-id / "sha-256",
+                 / hash-value / h'a3fe9f414586c0d3cacbe3b6920a09d8
+                                  718e503bca22e23fef882203bf765065'
+               ] ],
+               / name / 11 : "PRoT",
+               / cryptokeys / 13 : [ 560(h'5378796307535df3ec8d8b15a2
+                                           e2dc5641419c3d3060cfe32238
+                                           c0fa973f7aa3') ]
+             }
+           }
+         ]
+       ] ]
+     }
+   }
+
+                   Figure 45: Example Manufacturer CoMID
+
+   The CoMID from the certifier contains a Conditional Endorsement
+   triple that describes the Attester who was granted the security
+   certification 1234567890123 - 12345 (see Figure 46).  This Attester
+   has Implementation ID 6163..3031 and the digest associated with the
+   "PRoT" component is 9a27..86aa.  In the triple, the security
+   certification is represented as endorsements, while the target
+   identification information is represented as conditions.
+
+   / concise-mid-tag / {
+     / comid.tag-identity / 1 : {
+       / comid.tag-id / 0 : "certifier.example/gizmo-v1",
+     },
+     / comid.entity / 2 : [ {
+       / comid.entity-name / 0 : "Certifier Inc.",
+       / comid.reg-id / 1 : 32("https://certifier.example"),
+       / comid.role / 2 : [ 0 ] / tag-creator /
+     } ],
+     / comid.triples / 4 : {
+       / comid.conditional-endorsement-triple / 10 : [
+         [
+           / conditions / [
+             / stateful-environment / [
+               / environment-map / {
+                 / comid.class / 0 : {
+                   / comid.class-id / 0 :
+                     / tagged-bytes / 560(
+                       h'61636d652d696d706c656d656e746174
+                         696f6e2d69642d303030303030303031'
+                     )
+                 }
+               },
+               / claims-list / [
+                 / measurement-map / {
+                   / comid.mkey / 0 : "psa.software-component",
+                   / comid.mval / 1 : {
+                     / comid.digests / 2 : [ [
+                       / hash-alg-id / "sha-256",
+                       / hash-value / h'9a271f2a916b0b6ee6cecb2426f0b320
+                                        6ef074578be55d9bc94f6f3fe3ab86aa'
+                     ] ],
+                     / name / 11 : "PRoT",
+                     / cryptokeys / 13 : [ 560(h'5378796307535df3ec8d8b15a2
+                                                 e2dc5641419c3d3060cfe32238
+                                                 c0fa973f7aa3') ]
+                   }
+                 }
+               ]
+             ]
+           ],
+           / endorsements / [
+             / endorsed-triple / [
+               / environment / {
+                 / comid.class / 0 : {
+                   / comid.class-id / 0 :
+                     / tagged-bytes / 560(
+                       h'61636d652d696d706c656d656e746174
+                         696f6e2d69642d303030303030303031'
+                     )
+                 }
+               },
+               [
+                 / measurement-map / {
+                   / comid.mval / 1 : {
+                     / psa.cert-num / 100 : "1234567890123 - 12345"
+                   }
+                 }
+               ]
+             ]
+           ]
+         ]
+       ]
+     }
+   }
+
+                     Figure 46: Example Certifier CoMID
+
+   For the remainder of this section, we will assume that the CoRIM
+   containing this CoMID is signed using the certifier's certificate,
+   which has a thumbprint of 768f..75b1.
+
+8.2.6.2.  Input Evidence
+
+   The Verifier obtains Evidence from a PSA Attester in the format
+   described in [RFC9783] and verifies its cryptographic integrity and
+   validity.
+
+8.2.6.3.  Internal Representations
+
+   As described in Section 8.2.3, once all the "raw" inputs and have
+   been validated, input transformations can start.
+
+   The two Reference Values triples from the manufacturer's CoMID are
+   mapped to their corresponding rv-items (Figure 47, Figure 48) using
+   the transformations defined in Figure 35.
+
+   The first triple:
+
+   {
+     "condition": {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         }
+       },
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ]
+     },
+     "addition": {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         }
+       },
+       "authority": [
+         559([
+           "sha-256",
+           h'482e829ad29ac6ea6eda2d47d1d93a00
+             2bf41d9d88710ba972c36e59038f78b3'
+         ])
+       ],
+       "cmtype": 0,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     }
+   }
+
+                     Figure 47: First rv Relation Item
+
+   The second triple:
+
+   {
+     "condition": {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         }
+       },
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'a3fe9f414586c0d3cacbe3b6920a09d8
+                   718e503bca22e23fef882203bf765065'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ]
+     },
+     "addition": {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         }
+       },
+       "authority": [
+         559([
+           "sha-256",
+           h'482e829ad29ac6ea6eda2d47d1d93a00
+             2bf41d9d88710ba972c36e59038f78b3'
+         ])
+       ],
+       "cmtype": 0,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     }
+   }
+
+                     Figure 48: Second rv Relation Item
+
+   Note the authorities in the addition ECT of both items, which are set
+   to 482e..78b3, and correspond to the thumbprint of the manufacturer's
+   signing certificate.
+
+   The Conditional Endorsement triple from the certifier's CoMID is
+   mapped to its corresponding ev-item (Figure 49) using the
+   transformation defined in Figure 37.
+
+   {
+     "condition": [
+       {
+         "environment": {
+             0: {
+               0:
+                 560(h'61636d652d696d706c656d656e746174
+                       696f6e2d69642d303030303030303031')
+             }
+         },
+         "element-list": [
+           {
+             "element-id": "psa.software-component",
+             "element-claims": {
+               2 : [ [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ] ],
+               11 : "PRoT",
+               13 : [ 560(h'5378796307535df3ec8d8b15a2
+                            e2dc5641419c3d3060cfe32238
+                            c0fa973f7aa3') ]
+             }
+           }
+         ]
+       }
+     ],
+     "addition": [
+       {
+         "environment": {
+           0: {
+             0:
+               560(h'61636d652d696d706c656d656e746174
+                     696f6e2d69642d303030303030303031')
+           }
+         },
+         "element-list": [
+           {
+             "element-id": "psa.certification",
+             "element-claims": {
+               100: "1234567890123 - 12345"
+             }
+           }
+         ],
+         "authority": [
+           559([
+             "sha-256",
+             h'768ff09154f6aacda857cb175ef29cf9
+               d23ef9c38c69efdbf20354dbfd7875b1'
+           ])
+         ],
+         "cmtype": 1,
+         "profile": 32("tag:arm.com,2025:psa#1.0.0")
+       }
+     ]
+   }
+
+                Figure 49: First (and only) ev Relation Item
+
+   Note the authority in the addition ECT, which is set to 768f..75b1,
+   and corresponds to the thumbprint of the certifier's signing
+   certificate.
+
+   Evidence from the PSA Attester is transformed into the corresponding
+   ae-item using the transformation defined in
+   [I-D.fdb-rats-psa-endorsements]:
+
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
+   {
+     "addition": {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         },
+         1: 550(h'01
+                  4ca3e4f50bf248c39787020d68ffd05c
+                  88767751bf2645ca923f57a98becd296')
+       }
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ],
+       "authority": [
+         554("\
+   MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv18HI\
+              nYhnmMNybo+A1wuECyVqrDSmLt4QQzZPBECV8ANHS5HgGCCSr7E/Lg==")
+       ],
+       "cmtype": 2,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     }
+   }
+
+                             Figure 50: ae-item
+
+   Note the authority in the ECT, which is set to MFkw..Lg==", and
+   corresponds to the Attester's PEM-encoded SPKI.
+
+8.2.6.4.  Appraisal
+
+   As described in Section 8.2.3.8, the appraisal context is
+   bootstrapped by loading the ae ECT(s) into the ACS, and the rv and ev
+   relations into the Staging Area.  Then, ACS augmentation described in
+   Section 8.2.4 can begin.
+
+   The first relation to be processed is rv, according to the rules
+   described in Section 8.2.4.2.1.
+
+   The condition of the first rv-item (Figure 47) is matched against the
+   ACS which, at this time, contains a single ECT obtained from the ae-
+   item (Figure 50).  The cmtype of the ACS-ECT is 2 (evidence), which
+   is exactly the type rv-items need to match against.  When the two are
+   compared, it is found that the environments of the rv-item condition
+   and the ACS-ECT match (note that the instance identifier in the ACS-
+   ECT is ignored because it is not present in the rv-item).  The
+   matching algorithm then proceeds to try to match the respective
+   element-lists.  Both lists contain a single element, whose ID and
+   claims are a perfect match.  Therefore, all the matching criteria are
+   satisfied and the rv-item addition ECT is appended to the ACS.
+   Before this addition is made, the matched element from the rv-item
+   condition is copied to the addition element-list.
+
+   The ACS now contains two ECTs, one with cmtype 2 (evidence), and a
+   second one with cmtype 0 (reference-value) that corroborates the
+   first one with manufacturer authority (Figure 51).
+
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
+   [
+     / Evidence ECT / {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         },
+         1: 550(h'01
+                  4ca3e4f50bf248c39787020d68ffd05c
+                  88767751bf2645ca923f57a98becd296')
+       }
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ],
+       "authority": [
+         554("\
+   MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv18HI\
+              nYhnmMNybo+A1wuECyVqrDSmLt4QQzZPBECV8ANHS5HgGCCSr7E/Lg==")
+       ],
+       "cmtype": 2,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     },
+     / Reference Value ECT / {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         }
+       },
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ],
+       "authority": [
+         559([
+           "sha-256",
+           h'482e829ad29ac6ea6eda2d47d1d93a00
+             2bf41d9d88710ba972c36e59038f78b3'
+         ])
+       ],
+       "cmtype": 0,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     }
+   ]
+
+                  Figure 51: ACS State after Corroboration
+
+   The algorithm then moves on to the second rv-item (Figure 48),
+   checking its condition against the ACS.  Once again, the ACS-ECT with
+   cmtype 2 (evidence) is selected for matching.  This time, the
+   environments match, but the state represented in the rv-item's
+   element-list is not (the digest differs).  This results in a no-op on
+   the ACS.
+
+   Next, the ev relation is popped from the Staging Area for processing
+   according to the rules described in Section 8.2.4.3.1.  The condition
+   of the first (and only) ev-item (Figure 49) is then matched against
+   the ACS.  The only applicable ACS-ECT is the one with cmtype 2
+   (evidence).
+   // The fact that {{sec-proc-ev-rel}} requires matching against
+   // reference values seems incorrect.  When compared, the environment
+   in the ev-item condition matches that of the ACS-ECT (again, the
+   instance identifier in the ACS-ECT is ignored because it is not
+   present in the ev-item), and the matching algorithm proceeds to try
+   to match the respective element-lists.  Both lists contain a single
+   element, whose ID and claims are an exact match.  Therefore, all the
+   matching criteria are satisfied and the ev-item addition ECT is
+   appended to the ACS.
+
+   The ACS now contains three ECTs, one with cmtype 2 (evidence), a
+   second with cmtype 0 (reference-value), which corroborates the first
+   with manufacturer authority, and a third one with cmtype 1
+   (endorsements) which adds the PSA certification identifier as an
+   endorsed value for the appraised environment with certifier's
+   authority (Figure 52).
+
+   =============== NOTE: '\' line wrapping per RFC 8792 ================
+
+   [
+     / Evidence ECT / {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         },
+         1: 550(h'01
+                  4ca3e4f50bf248c39787020d68ffd05c
+                  88767751bf2645ca923f57a98becd296')
+       }
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ],
+       "authority": [
+         554("\
+   MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv18HI\
+              nYhnmMNybo+A1wuECyVqrDSmLt4QQzZPBECV8ANHS5HgGCCSr7E/Lg==")
+       ],
+       "cmtype": 2,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     },
+     / Reference Value ECT / {
+       "environment": {
+         0: {
+           0: 560(h'61636d652d696d706c656d656e746174
+                    696f6e2d69642d303030303030303031')
+         }
+       },
+       "element-list": [
+         {
+           "element-id": "psa.software-component",
+           "element-claims": {
+             2: [
+               [
+                 "sha-256",
+                 h'9a271f2a916b0b6ee6cecb2426f0b320
+                   6ef074578be55d9bc94f6f3fe3ab86aa'
+               ]
+             ],
+             11: "PRoT",
+             13: [ 560(h'5378796307535df3ec8d8b15a2e2dc56
+                         41419c3d3060cfe32238c0fa973f7aa3') ]
+           }
+         }
+       ],
+       "authority": [
+         559([
+           "sha-256",
+           h'482e829ad29ac6ea6eda2d47d1d93a00
+             2bf41d9d88710ba972c36e59038f78b3'
+         ])
+       ],
+       "cmtype": 0,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     },
+     / Endorsed Value ECT / {
+       "environment": {
+         0: {
+           0:
+             560(h'61636d652d696d706c656d656e746174
+                   696f6e2d69642d303030303030303031')
+         }
+       },
+       "element-list": [
+         {
+           "element-id": "psa.certification",
+           "element-claims": {
+             100: "1234567890123 - 12345"
+           }
+         }
+       ],
+       "authority": [
+         559([
+           "sha-256",
+           h'768ff09154f6aacda857cb175ef29cf9
+             d23ef9c38c69efdbf20354dbfd7875b1'
+         ])
+       ],
+       "cmtype": 1,
+       "profile": 32("tag:arm.com,2025:psa#1.0.0")
+     }
+   ]
+
+            Figure 52: ACS State after Endorsements Augmentation
+
+   At this point, all the relations in the Staging Area have been
+   processed, and the match_and_augment algorithm (Figure 43)
+   terminates, returning the computed ACS.
 
 9.  Implementation Status
 
