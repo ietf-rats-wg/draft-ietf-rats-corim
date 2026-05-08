@@ -2576,9 +2576,11 @@ FUNC transform(
     IF TYPEOF(T) == domain-membership-triple-record:
         item.condition.kind = item.addition.kind = member
         item.condition.children = T.members
+        item.addition.children = T.members
     ELIF TYPEOF(T) == domain-dependency-triple-record:
         item.condition.kind = item.addition.kind = trustee
         item.condition.children = T.trustees
+        item.addition.children = T.trustees
 
     item.addition.environment = T.domain-id
     item.addition.authority = signer
@@ -2718,51 +2720,63 @@ A key that successfully passes the above checks is said to be verified.
 
 Add all the verified keys to the addition ECT's `key-list` and add the addition ECT to the ACS.
 
-##### Processing `dm` Relations {#sec-proc-dm}
+##### Processing Domain Membership Relations {#sec-proc-dm}
 
 Domain Membership relations describe the expected topological arrangement of the Attester.
 
 Domains are matched with ACS entries by iterating through the `dm` list.
 
-The following algorithm assumes that the graph described by the condition ECTs in the `dm` relation is acyclic.
+The processing algorithm expects the topology of the condition ECTs in the `dm` relation is acyclic.
 
-Domain Membership ECTs, i.e. `dm` entries, in the staging area, are matched with ACS Entries, of type
-evidence or a Domain ECTs using the following algorithm.
+Domain Membership ECTs in the staging area are matched against ACS Evidence or previously added domain membership entries before any new domain membership entries are added.
 
-For each domain entry `dm` in staging area, which has not been processed (outer loop):
+~~~ pseudocode
+FUNC append_acs( dm: dm) -> ACS {
+    FOREACH item IN dm:
+        FOREACH child IN item.condition.children:
+            IF ( acs::MATCH(`cmtype` == EVIDENCE)
+                OR acs::MATCH(`kind` == MEMBER))
+                AND acs::MATCH(child.environment):
+                   CONTINUE
+            ELSE GET NEXT item
+        acs::APPEND(item.addition)
+    RETURN acs
+}
+~~~
+{: #algo-domain-member title="Domain Member Processing Pseudocode"}
 
-For each children `e` in the list of dm.children: (inner loop)
+If there are `dm` items that were not added while other items were added, it may be necessary to re-run the `append_acs` function as added `dm` entries could have created an ACS state that satisfies a matching condition.
+It might be possible to order the ACS and `dm` entries to avoid re-running the `append_acs` function, however such optimization is out of scope for this specification.
 
-* Check that there is a corresponding ACS entry environment that matches `e`.
-
-* Check that the ACS Entry cmtype 2 (i.e., evidence) or a Domain ECT with kind 0 (i.e., member).
-
-Outer loop resumes:
-* If all the children environments, i.e. `e`s in the condition ECT have a matching ECT in the ACS, then
-domain entry `dm.addition` ECT is added to the ACS.
-
-* If none of the domain.members matched, proceed to next dm entry.
-
-If some, but not all of the children `e` matched, proceed to the next dm entry.
-
-If the previous execution of the outer loop added any domain entry to the ACS, then run the outer loop again Else STOP processing dm entries
-
-##### Processing `dd` Relations {#sec-proc-dd}
+##### Processing Domain Dependency Relations {#sec-proc-dd}
 
 Essentially, the objective of processing a `dd` relation is to verify that each edge in a domain dependency graph (DDG) has a corresponding edge in a domain membership graph (DMG).
-(Note that DDGs need not be isomorphs of DMGs; they can be a subset.)
-
-The same assumptions regarding acyclicity and pre-sorting of the relation items as in {{sec-proc-dm}} apply.
+(Note that DDGs need not be isomorphs of DMGs; though they can be a subset.)
 
 The matching logic needs to ensure that all the `dd` items can be paired with an existing Domain Membership ECT.
-Pairing is successful if the `environment` and all the `children` in the condition ECT are found in the  `environment` or in the `children` of at least one Domain ECT with `kind` 0 (i.e., member).
-If pairing is successful for all the items in the `dd` relation, the all the addition ECTs are added to the ACS.
+Pairing is successful if the `environment` and all the `children` of the domain dependency ECT are found in the ACS.
+If pairing is successful the domain dependency addition ECT is added to the ACS.
 
 If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
-For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
+For example, a trust dependency policy might specify a strength of function requirement for an AE that collects claims from a TE.
+Consequently, failure to process domain dependency ECTs could impact Verifier or Relying Party behavior.
+For example, trust appraisal of an ACS entry that depends on a `trustee` ECT would omit recusive trust appraisals.
 
-The subsequent Verifier stages or Relying Party processing of the ACS may be affected if domain dependency ECTs are not added to the ACS.
-For example, trust in an ACS entry that depends on `trustee` ACS entries may not be considered.
+~~~ pseudocode
+FUNC append_acs( dd: dd) -> ACS {
+    FOREACH item IN dd:
+        IF NOT acs::MATCH(item.condition.environment)
+            GET NEXT item
+        FOREACH child IN item.condition.children:
+            IF acs::MATCH(`kind` == MEMBER)
+                AND acs::MATCH(child.environment):
+                    CONTINUE
+            ELSE GET NEXT item
+        acs::APPEND(item.addition)
+    RETURN acs
+}
+~~~
+{: #algo-domain-dependency title="Domain Dependency Processing Pseudocode"}
 
 #### Rules of Comparison {#sec-comparison-rules}
 
