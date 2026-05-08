@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 7 November 2026</td>
+<td class="center">Expires 9 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-06" class="published">6 May 2026</time>
+<time datetime="2026-05-08" class="published">8 May 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-07">7 November 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-09">9 November 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1137,7 +1137,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 7 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -5375,9 +5375,11 @@ FUNC transform(
     IF TYPEOF(T) == domain-membership-triple-record:
         item.condition.kind = item.addition.kind = member
         item.condition.children = T.members
+        item.addition.children = T.members
     ELIF TYPEOF(T) == domain-dependency-triple-record:
         item.condition.kind = item.addition.kind = trustee
         item.condition.children = T.trustees
+        item.addition.children = T.trustees
 
     item.addition.environment = T.domain-id
     item.addition.authority = signer
@@ -5581,51 +5583,74 @@ If they match, perform the following steps for each key in the condition ECT <co
 </div>
 <div id="sec-proc-dm">
 <section id="section-8.2.4.3.4">
-              <h6 id="name-processing-dm-relations">
-<a href="#section-8.2.4.3.4" class="section-number selfRef">8.2.4.3.4. </a><a href="#name-processing-dm-relations" class="section-name selfRef">Processing <code>dm</code> Relations</a>
+              <h6 id="name-processing-domain-membershi">
+<a href="#section-8.2.4.3.4" class="section-number selfRef">8.2.4.3.4. </a><a href="#name-processing-domain-membershi" class="section-name selfRef">Processing Domain Membership Relations</a>
               </h6>
 <p id="section-8.2.4.3.4-1">Domain Membership relations describe the expected topological arrangement of the Attester.<a href="#section-8.2.4.3.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.2.4.3.4-2">Domains are matched with ACS entries by iterating through the <code>dm</code> list.<a href="#section-8.2.4.3.4-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.4-3">The following algorithm assumes that the graph described by the condition ECTs in the <code>dm</code> relation is acyclic.<a href="#section-8.2.4.3.4-3" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.4-4">Domain Membership ECTs, i.e. <code>dm</code> entries, in the staging area, are matched with ACS Entries, of type
-evidence or a Domain ECTs using the following algorithm.<a href="#section-8.2.4.3.4-4" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.4-5">For each domain entry <code>dm</code> in staging area, which has not been processed (outer loop):<a href="#section-8.2.4.3.4-5" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.4-6">For each children <code>e</code> in the list of dm.children: (inner loop)<a href="#section-8.2.4.3.4-6" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-8.2.4.3.4-7.1">
-                  <p id="section-8.2.4.3.4-7.1.1">Check that there is a corresponding ACS entry environment that matches <code>e</code>.<a href="#section-8.2.4.3.4-7.1.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-8.2.4.3.4-7.2">
-                  <p id="section-8.2.4.3.4-7.2.1">Check that the ACS Entry cmtype 2 (i.e., evidence) or a Domain ECT with kind 0 (i.e., member).<a href="#section-8.2.4.3.4-7.2.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-<p id="section-8.2.4.3.4-8">Outer loop resumes:
-* If all the children environments, i.e. <code>e</code>s in the condition ECT have a matching ECT in the ACS, then
-domain entry <code>dm.addition</code> ECT is added to the ACS.<a href="#section-8.2.4.3.4-8" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-8.2.4.3.4-9.1">
-                  <p id="section-8.2.4.3.4-9.1.1">If none of the domain.members matched, proceed to next dm entry.<a href="#section-8.2.4.3.4-9.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-<p id="section-8.2.4.3.4-10">If some, but not all of the children <code>e</code> matched, proceed to the next dm entry.<a href="#section-8.2.4.3.4-10" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.4-11">If the previous execution of the outer loop added any domain entry to the ACS, then run the outer loop again Else STOP processing dm entries<a href="#section-8.2.4.3.4-11" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.4-3">The processing algorithm expects the topology of the condition ECTs in the <code>dm</code> relation is acyclic.<a href="#section-8.2.4.3.4-3" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.4-4">Domain Membership ECTs in the staging area are matched against ACS Evidence or previously added domain membership entries before any new domain membership entries are added.<a href="#section-8.2.4.3.4-4" class="pilcrow">¶</a></p>
+<span id="name-domain-member-processing-ps"></span><div id="algo-domain-member">
+<figure id="figure-44">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.4.3.4-5.1">
+<pre>
+FUNC append_acs( dm: dm) -&gt; ACS {
+    FOREACH item IN dm:
+        FOREACH child IN item.condition.children:
+            IF ( acs::MATCH(`cmtype` == EVIDENCE)
+                OR acs::MATCH(`kind` == MEMBER))
+                AND acs::MATCH(child.environment):
+                   CONTINUE
+            ELSE GET NEXT item
+        acs::APPEND(item.addition)
+    RETURN acs
+}
+</pre>
+</div>
+<figcaption><a href="#figure-44" class="selfRef">Figure 44</a>:
+<a href="#name-domain-member-processing-ps" class="selfRef">Domain Member Processing Pseudocode</a>
+                </figcaption></figure>
+</div>
+<p id="section-8.2.4.3.4-6">If there are <code>dm</code> items that were not added while other items were added, it may be necessary to re-run the <code>append_acs</code> function as added <code>dm</code> entries could have created an ACS state that satisfies a matching condition.
+It might be possible to order the ACS and <code>dm</code> entries to avoid re-running the <code>append_acs</code> function, however such optimization is out of scope for this specification.<a href="#section-8.2.4.3.4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-proc-dd">
 <section id="section-8.2.4.3.5">
-              <h6 id="name-processing-dd-relations">
-<a href="#section-8.2.4.3.5" class="section-number selfRef">8.2.4.3.5. </a><a href="#name-processing-dd-relations" class="section-name selfRef">Processing <code>dd</code> Relations</a>
+              <h6 id="name-processing-domain-dependenc">
+<a href="#section-8.2.4.3.5" class="section-number selfRef">8.2.4.3.5. </a><a href="#name-processing-domain-dependenc" class="section-name selfRef">Processing Domain Dependency Relations</a>
               </h6>
 <p id="section-8.2.4.3.5-1">Essentially, the objective of processing a <code>dd</code> relation is to verify that each edge in a domain dependency graph (DDG) has a corresponding edge in a domain membership graph (DMG).
-(Note that DDGs need not be isomorphs of DMGs; they can be a subset.)<a href="#section-8.2.4.3.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.5-2">The same assumptions regarding acyclicity and pre-sorting of the relation items as in <a href="#sec-proc-dm" class="auto internal xref">Section 8.2.4.3.4</a> apply.<a href="#section-8.2.4.3.5-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.5-3">The matching logic needs to ensure that all the <code>dd</code> items can be paired with an existing Domain Membership ECT.
-Pairing is successful if the <code>environment</code> and all the <code>children</code> in the condition ECT are found in the  <code>environment</code> or in the <code>children</code> of at least one Domain ECT with <code>kind</code> 0 (i.e., member).
-If pairing is successful for all the items in the <code>dd</code> relation, the all the addition ECTs are added to the ACS.<a href="#section-8.2.4.3.5-3" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.5-4">If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
-For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.<a href="#section-8.2.4.3.5-4" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.5-5">The subsequent Verifier stages or Relying Party processing of the ACS may be affected if domain dependency ECTs are not added to the ACS.
-For example, trust in an ACS entry that depends on <code>trustee</code> ACS entries may not be considered.<a href="#section-8.2.4.3.5-5" class="pilcrow">¶</a></p>
+(Note that DDGs need not be isomorphs of DMGs; though they can be a subset.)<a href="#section-8.2.4.3.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-2">The matching logic needs to ensure that all the <code>dd</code> items can be paired with an existing Domain Membership ECT.
+Pairing is successful if the <code>environment</code> and all the <code>children</code> of the domain dependency ECT are found in the ACS.
+If pairing is successful the domain dependency addition ECT is added to the ACS.<a href="#section-8.2.4.3.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.5-3">If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
+For example, a trust dependency policy might specify a strength of function requirement for an AE that collects claims from a TE.
+Consequently, failure to process domain dependency ECTs could impact Verifier or Relying Party behavior.
+For example, trust appraisal of an ACS entry that depends on a <code>trustee</code> ECT would omit recusive trust appraisals.<a href="#section-8.2.4.3.5-3" class="pilcrow">¶</a></p>
+<span id="name-domain-dependency-processin"></span><div id="algo-domain-dependency">
+<figure id="figure-45">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.4.3.5-4.1">
+<pre>
+FUNC append_acs( dd: dd) -&gt; ACS {
+    FOREACH item IN dd:
+        IF NOT acs::MATCH(item.condition.environment)
+            GET NEXT item
+        FOREACH child IN item.condition.children:
+            IF acs::MATCH(`kind` == MEMBER)
+                AND acs::MATCH(child.environment):
+                    CONTINUE
+            ELSE GET NEXT item
+        acs::APPEND(item.addition)
+    RETURN acs
+}
+</pre>
+</div>
+<figcaption><a href="#figure-45" class="selfRef">Figure 45</a>:
+<a href="#name-domain-dependency-processin" class="selfRef">Domain Dependency Processing Pseudocode</a>
+                </figcaption></figure>
+</div>
 </section>
 </div>
 </section>
@@ -5772,9 +5797,9 @@ The comparison MUST return true if the <code>uint</code> values are equal.<a hre
                 </ul>
 <p id="section-8.2.4.4.5.3-6">A minimum SVN is only meaningful as an entry value when it is an endorsed value that has been added to the ACS.
 The condition therefore treats the minimum SVN as an exact state, rather than as something to be compared with inequality.<a href="#section-8.2.4.4.5.3-6" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.4.5.3-7">The pseudocode for the above algorithm is shown in <a href="#fig-comp-svn" class="auto internal xref">Figure 44</a>.<a href="#section-8.2.4.4.5.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.4.5.3-7">The pseudocode for the above algorithm is shown in <a href="#fig-comp-svn" class="auto internal xref">Figure 46</a>.<a href="#section-8.2.4.4.5.3-7" class="pilcrow">¶</a></p>
 <span id="name-svn-comparison"></span><div id="fig-comp-svn">
-<figure id="figure-44">
+<figure id="figure-46">
                   <div class="lang-pseudocode sourcecode" id="section-8.2.4.4.5.3-8.1">
 <pre>
 FUNC compare(
@@ -5807,7 +5832,7 @@ FUNC is_plain_svn(v: svn-type-choice) -&gt; bool {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-44" class="selfRef">Figure 44</a>:
+<figcaption><a href="#figure-46" class="selfRef">Figure 46</a>:
 <a href="#name-svn-comparison" class="selfRef">SVN Comparison</a>
                   </figcaption></figure>
 </div>
@@ -5968,12 +5993,12 @@ This information can then be encoded in an Attestation Result that can be unders
                 <p id="section-8.2.6.1-2.2.1">A certifier (Certifier Inc.), which has evaluated the device according to the PSA Certified scheme.<a href="#section-8.2.6.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-8.2.6.1-3">The manufacturer's CoRIM contains a single CoMID with two Reference Values triples (see <a href="#ex-comid-rvt" class="auto internal xref">Figure 45</a>) describing two acceptable states of the Attester.
+<p id="section-8.2.6.1-3">The manufacturer's CoRIM contains a single CoMID with two Reference Values triples (see <a href="#ex-comid-rvt" class="auto internal xref">Figure 47</a>) describing two acceptable states of the Attester.
 The Attester is identified by the class attribute Implementation ID with the value <code>6163..3031</code>.
 One state has a digest of <code>9a27..86aa</code> for the "PRoT" component, and the other has a digest of <code>a3fe..5065</code>.<a href="#section-8.2.6.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.2.6.1-4">For the remainder of this section, we will assume that the CoRIM containing this CoMID is signed using the manufacturer's certificate, which has a thumbprint of <code>482e..78b3</code>.<a href="#section-8.2.6.1-4" class="pilcrow">¶</a></p>
 <span id="name-example-manufacturer-comid"></span><div id="ex-comid-rvt">
-<figure id="figure-45">
+<figure id="figure-47">
               <div class="breakable lang-cbor-diag sourcecode" id="section-8.2.6.1-5.1">
 <pre>
 / concise-mid-tag / {
@@ -6044,15 +6069,15 @@ One state has a digest of <code>9a27..86aa</code> for the "PRoT" component, and 
 }
 </pre>
 </div>
-<figcaption><a href="#figure-45" class="selfRef">Figure 45</a>:
+<figcaption><a href="#figure-47" class="selfRef">Figure 47</a>:
 <a href="#name-example-manufacturer-comid" class="selfRef">Example Manufacturer CoMID</a>
               </figcaption></figure>
 </div>
-<p id="section-8.2.6.1-6">The CoMID from the certifier contains a Conditional Endorsement triple that describes the Attester who was granted the security certification <code>1234567890123 - 12345</code> (see <a href="#ex-comid-cet" class="auto internal xref">Figure 46</a>).
+<p id="section-8.2.6.1-6">The CoMID from the certifier contains a Conditional Endorsement triple that describes the Attester who was granted the security certification <code>1234567890123 - 12345</code> (see <a href="#ex-comid-cet" class="auto internal xref">Figure 48</a>).
 This Attester has Implementation ID <code>6163..3031</code> and the digest associated with the "PRoT" component is <code>9a27..86aa</code>.
 In the triple, the security certification is represented as <code>endorsements</code>, while the target identification information is represented as <code>conditions</code>.<a href="#section-8.2.6.1-6" class="pilcrow">¶</a></p>
 <span id="name-example-certifier-comid"></span><div id="ex-comid-cet">
-<figure id="figure-46">
+<figure id="figure-48">
               <div class="breakable lang-cbor-diag sourcecode" id="section-8.2.6.1-7.1">
 <pre>
 / concise-mid-tag / {
@@ -6123,7 +6148,7 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-46" class="selfRef">Figure 46</a>:
+<figcaption><a href="#figure-48" class="selfRef">Figure 48</a>:
 <a href="#name-example-certifier-comid" class="selfRef">Example Certifier CoMID</a>
               </figcaption></figure>
 </div>
@@ -6144,10 +6169,10 @@ In the triple, the security certification is represented as <code>endorsements</
 <a href="#section-8.2.6.3" class="section-number selfRef">8.2.6.3. </a><a href="#name-internal-representations" class="section-name selfRef">Internal Representations</a>
             </h5>
 <p id="section-8.2.6.3-1">As described in <a href="#sec-phase-1" class="auto internal xref">Section 8.2.3</a>, once all the "raw" inputs and have been validated, input transformations can start.<a href="#section-8.2.6.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.6.3-2">The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding <code>rv-item</code>s (<a href="#ex-rv-item-1" class="auto internal xref">Figure 47</a>, <a href="#ex-rv-item-2" class="auto internal xref">Figure 48</a>) using the transformations defined in <a href="#algo-rv-transform" class="auto internal xref">Figure 35</a>.<a href="#section-8.2.6.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.3-2">The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding <code>rv-item</code>s (<a href="#ex-rv-item-1" class="auto internal xref">Figure 49</a>, <a href="#ex-rv-item-2" class="auto internal xref">Figure 50</a>) using the transformations defined in <a href="#algo-rv-transform" class="auto internal xref">Figure 35</a>.<a href="#section-8.2.6.3-2" class="pilcrow">¶</a></p>
 <p id="section-8.2.6.3-3">The first triple:<a href="#section-8.2.6.3-3" class="pilcrow">¶</a></p>
 <span id="name-first-rv-relation-item"></span><div id="ex-rv-item-1">
-<figure id="figure-47">
+<figure id="figure-49">
               <div class="lang-cbor-diag sourcecode" id="section-8.2.6.3-4.1">
 <pre>
 {
@@ -6196,13 +6221,13 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-47" class="selfRef">Figure 47</a>:
+<figcaption><a href="#figure-49" class="selfRef">Figure 49</a>:
 <a href="#name-first-rv-relation-item" class="selfRef">First rv Relation Item</a>
               </figcaption></figure>
 </div>
 <p id="section-8.2.6.3-5">The second triple:<a href="#section-8.2.6.3-5" class="pilcrow">¶</a></p>
 <span id="name-second-rv-relation-item"></span><div id="ex-rv-item-2">
-<figure id="figure-48">
+<figure id="figure-50">
               <div class="lang-cbor-diag sourcecode" id="section-8.2.6.3-6.1">
 <pre>
 {
@@ -6251,14 +6276,14 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-48" class="selfRef">Figure 48</a>:
+<figcaption><a href="#figure-50" class="selfRef">Figure 50</a>:
 <a href="#name-second-rv-relation-item" class="selfRef">Second rv Relation Item</a>
               </figcaption></figure>
 </div>
 <p id="section-8.2.6.3-7">Note the authorities in the addition ECT of both items, which are set to <code>482e..78b3</code>, and correspond to the thumbprint of the manufacturer's signing certificate.<a href="#section-8.2.6.3-7" class="pilcrow">¶</a></p>
-<p id="section-8.2.6.3-8">The Conditional Endorsement triple from the certifier's CoMID is mapped to its corresponding <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 49</a>) using the transformation defined in <a href="#algo-ce-transform" class="auto internal xref">Figure 37</a>.<a href="#section-8.2.6.3-8" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.3-8">The Conditional Endorsement triple from the certifier's CoMID is mapped to its corresponding <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 51</a>) using the transformation defined in <a href="#algo-ce-transform" class="auto internal xref">Figure 37</a>.<a href="#section-8.2.6.3-8" class="pilcrow">¶</a></p>
 <span id="name-first-and-only-ev-relation-"></span><div id="ex-ev-item">
-<figure id="figure-49">
+<figure id="figure-51">
               <div class="breakable lang-cbor-diag sourcecode" id="section-8.2.6.3-9.1">
 <pre>
 {
@@ -6320,14 +6345,14 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-49" class="selfRef">Figure 49</a>:
+<figcaption><a href="#figure-51" class="selfRef">Figure 51</a>:
 <a href="#name-first-and-only-ev-relation-" class="selfRef">First (and only) ev Relation Item</a>
               </figcaption></figure>
 </div>
 <p id="section-8.2.6.3-10">Note the authority in the addition ECT, which is set to <code>768f..75b1</code>, and corresponds to the thumbprint of the certifier's signing certificate.<a href="#section-8.2.6.3-10" class="pilcrow">¶</a></p>
 <p id="section-8.2.6.3-11">Evidence from the PSA Attester is transformed into the corresponding <code>ae-item</code> using the transformation defined in <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>:<a href="#section-8.2.6.3-11" class="pilcrow">¶</a></p>
 <span id="name-ae-item"></span><div id="ex-ae-item">
-<figure id="figure-50">
+<figure id="figure-52">
               <div class="lang-cbor-diag sourcecode" id="section-8.2.6.3-12.1">
 <pre>
 {
@@ -6371,7 +6396,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 }
 </pre>
 </div>
-<figcaption><a href="#figure-50" class="selfRef">Figure 50</a>:
+<figcaption><a href="#figure-52" class="selfRef">Figure 52</a>:
 <a href="#name-ae-item" class="selfRef">ae-item</a>
               </figcaption></figure>
 </div>
@@ -6386,16 +6411,16 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 <p id="section-8.2.6.4-1">As described in <a href="#sec-appraisal-ctx-init" class="auto internal xref">Section 8.2.3.8</a>, the appraisal context is bootstrapped by loading the <code>ae</code> ECT(s) into the ACS, and the <code>rv</code> and <code>ev</code> relations into the Staging Area.
 Then, ACS augmentation described in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.2.4</a> can begin.<a href="#section-8.2.6.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.2.6.4-2">The first relation to be processed is <code>rv</code>, according to the rules described in <a href="#sec-proc-rv-rel" class="auto internal xref">Section 8.2.4.2.1</a>.<a href="#section-8.2.6.4-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.6.4-3">The condition of the first <code>rv-item</code> (<a href="#ex-rv-item-1" class="auto internal xref">Figure 47</a>) is matched against the ACS which, at this time, contains a single ECT obtained from the <code>ae-item</code> (<a href="#ex-ae-item" class="auto internal xref">Figure 50</a>).
+<p id="section-8.2.6.4-3">The condition of the first <code>rv-item</code> (<a href="#ex-rv-item-1" class="auto internal xref">Figure 49</a>) is matched against the ACS which, at this time, contains a single ECT obtained from the <code>ae-item</code> (<a href="#ex-ae-item" class="auto internal xref">Figure 52</a>).
 The <code>cmtype</code> of the ACS-ECT is 2 (evidence), which is exactly the type <code>rv-item</code>s need to match against.
 When the two are compared, it is found that the environments of the <code>rv-item</code> condition and the ACS-ECT match (note that the instance identifier in the ACS-ECT is ignored because it is not present in the <code>rv-item</code>).
 The matching algorithm then proceeds to try to match the respective <code>element-list</code>s.
 Both lists contain a single element, whose ID and claims are a perfect match.
 Therefore, all the matching criteria are satisfied and the <code>rv-item</code> addition ECT is appended to the ACS.
 Before this addition is made, the matched element from the <code>rv-item</code> condition is copied to the addition <code>element-list</code>.<a href="#section-8.2.6.4-3" class="pilcrow">¶</a></p>
-<p id="section-8.2.6.4-4">The ACS now contains two ECTs, one with <code>cmtype</code> 2 (evidence), and a second one with <code>cmtype</code> 0 (reference-value) that corroborates the first one with manufacturer authority (<a href="#ex-acs-1" class="auto internal xref">Figure 51</a>).<a href="#section-8.2.6.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-4">The ACS now contains two ECTs, one with <code>cmtype</code> 2 (evidence), and a second one with <code>cmtype</code> 0 (reference-value) that corroborates the first one with manufacturer authority (<a href="#ex-acs-1" class="auto internal xref">Figure 53</a>).<a href="#section-8.2.6.4-4" class="pilcrow">¶</a></p>
 <span id="name-acs-state-after-corroborati"></span><div id="ex-acs-1">
-<figure id="figure-51">
+<figure id="figure-53">
               <div class="alignLeft art-text artwork" id="section-8.2.6.4-5.1">
 <pre>
 [
@@ -6473,16 +6498,16 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 ]
 </pre>
 </div>
-<figcaption><a href="#figure-51" class="selfRef">Figure 51</a>:
+<figcaption><a href="#figure-53" class="selfRef">Figure 53</a>:
 <a href="#name-acs-state-after-corroborati" class="selfRef">ACS State after Corroboration</a>
               </figcaption></figure>
 </div>
-<p id="section-8.2.6.4-6">The algorithm then moves on to the second <code>rv-item</code> (<a href="#ex-rv-item-2" class="auto internal xref">Figure 48</a>), checking its condition against the ACS.
+<p id="section-8.2.6.4-6">The algorithm then moves on to the second <code>rv-item</code> (<a href="#ex-rv-item-2" class="auto internal xref">Figure 50</a>), checking its condition against the ACS.
 Once again, the ACS-ECT with <code>cmtype</code> 2 (evidence) is selected for matching.
 This time, the environments match, but the state represented in the <code>rv-item</code>'s <code>element-list</code> is not (the digest differs).
 This results in a no-op on the ACS.<a href="#section-8.2.6.4-6" class="pilcrow">¶</a></p>
 <p id="section-8.2.6.4-7">Next, the <code>ev</code> relation is popped from the Staging Area for processing according to the rules described in <a href="#sec-proc-ev-rel" class="auto internal xref">Section 8.2.4.3.1</a>.
-The condition of the first (and only) <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 49</a>) is then matched against the ACS.
+The condition of the first (and only) <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 51</a>) is then matched against the ACS.
 The only applicable ACS-ECT is the one with <code>cmtype</code> 2 (evidence).
 <span class="cref">
 The fact that {{sec-proc-ev-rel}} requires matching against reference values seems incorrect.
@@ -6490,9 +6515,9 @@ The fact that {{sec-proc-ev-rel}} requires matching against reference values see
 When compared, the environment in the <code>ev-item</code> condition matches that of the ACS-ECT (again, the instance identifier in the ACS-ECT is ignored because it is not present in the <code>ev-item</code>), and the matching algorithm proceeds to try to match the respective <code>element-list</code>s.
 Both lists contain a single element, whose ID and claims are an exact match.
 Therefore, all the matching criteria are satisfied and the <code>ev-item</code> addition ECT is appended to the ACS.<a href="#section-8.2.6.4-7" class="pilcrow">¶</a></p>
-<p id="section-8.2.6.4-8">The ACS now contains three ECTs, one with <code>cmtype</code> 2 (evidence), a second with <code>cmtype</code> 0 (reference-value), which corroborates the first with manufacturer authority, and a third one with <code>cmtype</code> 1 (endorsements) which adds the PSA certification identifier as an endorsed value for the appraised environment with certifier's authority (<a href="#ex-acs-2" class="auto internal xref">Figure 52</a>).<a href="#section-8.2.6.4-8" class="pilcrow">¶</a></p>
+<p id="section-8.2.6.4-8">The ACS now contains three ECTs, one with <code>cmtype</code> 2 (evidence), a second with <code>cmtype</code> 0 (reference-value), which corroborates the first with manufacturer authority, and a third one with <code>cmtype</code> 1 (endorsements) which adds the PSA certification identifier as an endorsed value for the appraised environment with certifier's authority (<a href="#ex-acs-2" class="auto internal xref">Figure 54</a>).<a href="#section-8.2.6.4-8" class="pilcrow">¶</a></p>
 <span id="name-acs-state-after-endorsement"></span><div id="ex-acs-2">
-<figure id="figure-52">
+<figure id="figure-54">
               <div class="alignLeft art-text artwork" id="section-8.2.6.4-9.1">
 <pre>
 [
@@ -6596,7 +6621,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 ]
 </pre>
 </div>
-<figcaption><a href="#figure-52" class="selfRef">Figure 52</a>:
+<figcaption><a href="#figure-54" class="selfRef">Figure 54</a>:
 <a href="#name-acs-state-after-endorsement" class="selfRef">ACS State after Endorsements Augmentation</a>
               </figcaption></figure>
 </div>
