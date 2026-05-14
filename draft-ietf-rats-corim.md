@@ -441,8 +441,9 @@ CoMID ({{sec-comid}}), a CoSWID ({{-coswid}}), or a CoTL ({{sec-cotl}}).
 
 ### Locator Map {#sec-corim-locator-map}
 
-The locator map contains pointers to repositories where dependent manifests,
+The locator map acts as a hint that contains pointers to repositories where dependent manifests,
 certificates, or other relevant information can be retrieved by the Verifier.
+
 
 ~~~ cddl
 {::include cddl/corim-locator-map.cddl}
