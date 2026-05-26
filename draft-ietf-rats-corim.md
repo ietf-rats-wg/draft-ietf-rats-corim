@@ -1355,18 +1355,14 @@ The `reference-triple-record` has the following parameters:
 * `ref-env`: Identifies the Target Environment
 * `ref-claims`: Contains one or more reference measurements for the Target Environment
 
-CoMID triples ({{sec-comid-triples}}) may contain multiple `reference-triple-record` entries, each of which describes one or more possible states for a particular Target Environment.
+CoMID triples may contain multiple `reference-triple-record` entries.
+Each `reference-triple-record` describes one possible state for a particular Target Environment identified by `ref-env`.
+In other words, different reference states for a Target Environment MUST be expressed using separate `reference-triple-record` entries.
 
 The `ref-claims` in a `reference-triple-record` can contain one or more entries.
-This multiplicity has the following meaning:
+Each `ref-claims` entry represents the state of a different measured element within the Target Environment.
 
-1. Each `ref-claims` entry MUST represent a possible state of a different measured element (identified by its `mkey`) within the Environment.
-
-Note that multiple possible reference states for a target environment MUST to be expressed using multiple Reference Value Triples.
-
-Note also that a measurement key-value pair could be defined to have multiple values or use "wild carding" to describe a range of acceptable values, for example when using `int-range` and `min-svn`.
-
-Any of these multiplicities could be used in the context of Reference Values Triples.
+Note also that a measurement key-value pair could be defined to have multiple values, or use "wild carding" to describe a range of acceptable values -- for example when using `int-range` and `min-svn`.
 
 To process a `reference-triple-record`, the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
 First, `ref-env` is used as search criteria to locate matching Evidence environments.
