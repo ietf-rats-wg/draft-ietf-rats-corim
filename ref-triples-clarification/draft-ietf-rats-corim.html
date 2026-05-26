@@ -3367,24 +3367,19 @@ reference-triple-record = [
               <p id="section-5.1.5-6.2.1"><code>ref-claims</code>: Contains one or more reference measurements for the Target Environment<a href="#section-5.1.5-6.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.5-7">CoMID triples (<a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) may contain multiple <code>reference-triple-record</code> entries, each of which describes one or more possible states for a particular Target Environment.<a href="#section-5.1.5-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.5-7">CoMID triples may contain multiple <code>reference-triple-record</code> entries.
+Each <code>reference-triple-record</code> describes one possible state for a particular Target Environment identified by <code>ref-env</code>.
+In other words, different reference states for a Target Environment MUST be expressed using separate <code>reference-triple-record</code> entries.<a href="#section-5.1.5-7" class="pilcrow">¶</a></p>
 <p id="section-5.1.5-8">The <code>ref-claims</code> in a <code>reference-triple-record</code> can contain one or more entries.
-This multiplicity has the following meaning:<a href="#section-5.1.5-8" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-5.1.5-9">
-<li id="section-5.1.5-9.1">
-              <p id="section-5.1.5-9.1.1">Each <code>ref-claims</code> entry MUST represent a possible state of a different measured element (identified by its <code>mkey</code>) within the Environment.<a href="#section-5.1.5-9.1.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-<p id="section-5.1.5-10">Note that multiple possible reference states for a target environment MUST to be expressed using multiple Reference Value Triples.<a href="#section-5.1.5-10" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-11">Note also that a measurement key-value pair could be defined to have multiple values or use "wild carding" to describe a range of acceptable values, for example when using <code>int-range</code> and <code>min-svn</code>.<a href="#section-5.1.5-11" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-12">Any of these multiplicities could be used in the context of Reference Values Triples.<a href="#section-5.1.5-12" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-13">To process a <code>reference-triple-record</code>, the <code>ref-env</code> and <code>ref-claims</code> criteria are compared with Evidence entries.
+Each <code>ref-claims</code> entry represents the state of a different measured element within the Target Environment.<a href="#section-5.1.5-8" class="pilcrow">¶</a></p>
+<p id="section-5.1.5-9">Note also that a measurement key-value pair could be defined to have multiple values, or use "wild carding" to describe a range of acceptable values -- for example when using <code>int-range</code> and <code>min-svn</code>.<a href="#section-5.1.5-9" class="pilcrow">¶</a></p>
+<p id="section-5.1.5-10">To process a <code>reference-triple-record</code>, the <code>ref-env</code> and <code>ref-claims</code> criteria are compared with Evidence entries.
 First, <code>ref-env</code> is used as search criteria to locate matching Evidence environments.
 Then, the <code>ref-claims</code> from this triple are used to match against the Evidence measurements for a matched environment.
 If the search criteria are satisfied, the matching entry is added to the body of Attester state, except these Claims are asserted with the Reference Value Provider's authority.
 By re-asserting Evidence matched with Reference Values using the RVP's authority, the Verifier avoids confusing Reference Values (reference / possible state) with Evidence (actual state).
 See <span>[<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.
-Evidence Claims that are re-asserted using RVP authority are said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVP's possible state.<a href="#section-5.1.5-13" class="pilcrow">¶</a></p>
+Evidence Claims that are re-asserted using RVP authority are said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVP's possible state.<a href="#section-5.1.5-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-endval">
