@@ -1360,7 +1360,7 @@ Each `reference-triple-record` describes one possible state for a particular Tar
 In other words, different reference states for a Target Environment MUST be expressed using separate `reference-triple-record` entries.
 
 The `ref-claims` in a `reference-triple-record` can contain one or more entries.
-Each `ref-claims` entry represents the state of a different measured element within the Target Environment.
+Each `ref-claims` entry represents the expected state of a different measured element within the expected overall state of the Target Environment. 
 
 Note also that a measurement key-value pair could be defined to have multiple values, or use "wild carding" to describe a range of acceptable values -- for example when using `int-range` and `min-svn`.
 
