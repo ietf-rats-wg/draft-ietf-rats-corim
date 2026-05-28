@@ -2792,7 +2792,7 @@ TDGs need not be isomorphs of DMGs; but they can be a subset.
 The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
 
 ~~~ pseudocode
-FUNC append_acs( acs: acs, td: sa.td) -> ACS {
+FUNC process-trust-dep( acs: acs, td: sa.td) -> ACS {
     temp-acs := acs
     IF sa.td::IS-ACYCLIC() == FALSE THEN RETURN -1
     FOREACH item IN sa.td:
