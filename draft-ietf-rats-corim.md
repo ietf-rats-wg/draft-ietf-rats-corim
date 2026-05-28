@@ -1565,6 +1565,7 @@ This allows a topological description of an Attester to be expressed by linking 
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
 
 Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
+The domain topology must be acyclic.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
