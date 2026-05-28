@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 27 November 2026                                         Linaro
+Expires: 29 November 2026                                         Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             26 May 2026
+                                                             28 May 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 November 2026.
+   This Internet-Draft will expire on 29 November 2026.
 
 Copyright Notice
 
@@ -3648,21 +3648,27 @@ Table of Contents
 
    Prior to adding a trust dependency relation, Trust Dependency triples
    trust-dependency-triple-record (Figure 8) are transformed into td
-   relations (see Section 8.2.2.2.6).
+   relations (see Section 8.2.2.2.6) using the trust dependency
+   transformation algorithm Figure 41.
 
-   using the trust dependency transformation algorithm Figure 41.
+   FUNC transform(
+       T: trust-dependcy-triple-record,
+       signer: [ + $crypto-key-type-choice ],
+       profile: $profile-type-choice
+   ) -> trust-dependency-item
+       item := T-ECT::NEW()
 
-
-   // [TODO] Note: this pseudo code needs to flesh out trust dependency
-   // logic.
-
-   FUNC transform-trust-dependency () -> trust-dependency-item
+       item.trustees = T.trustees
+       item.ECT-common.environment = T.domain-id
+       item.ECT-common.authority = signer
+       IF profile:
+           item.ECT-common.profile = profile
        RETURN item
    }
 
                  Figure 41: Trust Dependency Transformation
 
-   Subsequent to transformation the trust dependency relations are
+   Subsequent to transformation, the trust dependency relations are
    processed using the trust dependency processing algorithm
    Section 8.2.4.3.5.
 
@@ -3682,7 +3688,7 @@ Table of Contents
 
                        Figure 42: ACS Initialization
 
-   The staging area is loaded with rv, ev, evs, keys, dm and dd
+   The staging area is loaded with rv, ev, evs, keys, dm and td
    relations, in that order.
 
    FUNC init_staging_area(
@@ -3691,7 +3697,7 @@ Table of Contents
        evs: evs,
        keys: keys,
        dm: dm,
-       dd: dd,
+       dd: td,
    ) -> StagingArea {
        sa := StagingArea::NEW()
 
@@ -3700,7 +3706,7 @@ Table of Contents
        IF evs:  sa::APPEND(evs)
        IF keys: sa::APPEND(keys)
        IF dm:   sa::APPEND(dm)
-       IF dd:   sa::APPEND(dd)
+       IF td:   sa::APPEND(td)
 
        RETURN sa
    }
@@ -3724,6 +3730,12 @@ Table of Contents
    relations in the staging area have been processed, the algorithm
    terminates and the computed ACS is handed over to the subsequent
    appraisal phases by the CoRIM processor.
+
+
+   // [TODO] The match_and_augment algorithm doesn't generally apply to
+   // trust dependency.  The condition is not derived from the triple.
+   // The pseudo code defines `ACS` ss input but uses the type `acs` as
+   // input.
 
    FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
        FOREACH rel IN sa:
@@ -3836,7 +3848,10 @@ Table of Contents
 
 
    // [TODO] This section needs to be rewritten to include processing
-   // pseudo code.
+   // pseudo code.  Note: If the Ordering of Relations section defines
+   // pseudo code for acs::SORT() then pseudo code in these sections
+   // doesn't need to include it as they can assume the input ACS is
+   // already sorted.
 
    Domain Membership relations describe the expected topological
    arrangement of the Attester.
@@ -3860,36 +3875,43 @@ Table of Contents
 
 8.2.4.3.5.  Processing td Relations
 
+   The objective of processing a td relation is to verify that each edge
+   in a trust dependency graph (TDG) has a corresponding edge in a
+   domain membership graph (DMG).  TDGs MUST be directed acyclic graphs
+   (DAG) before they can be added to the ACS.  TDGs need not be
+   isomorphs of DMGs; but they can be a subset.
 
-   // [TODO] This section needs to be rewritten to include processing
-   // pseudo code.
-
-   Essentially, the objective of processing a td relation is to verify
-   that each edge in a trust dependency graph (TDG) has a corresponding
-   edge in a domain membership graph (DMG).  (Note that TDGs need not be
-   isomorphs of DMGs; they can be a subset.)
-
-   The same assumptions regarding acyclicity and pre-sorting of the
-   relation items as in Section 8.2.4.3.4 apply.
-
-   The matching logic needs to ensure that all the td items can be
-   paired with an existing Domain Membership ECT.  Pairing is successful
-   if the environment and all the children in the condition ECT are
-   found in the environment or in the children of at least one Domain
-   ECT with kind 0 (i.e., member).  If pairing is successful for all the
-   items in the dd relation, the all the addition ECTs are added to the
+   The matching algorithm ensures that the td items queued for addition
+   to the ACS are also Domain Membership ECTs already contained in the
    ACS.
 
-   If, in a later processing phase, an appraisal policy for trust
-   dependency exists, the DDG can be further evaluated.  For example, a
-   trust dependency policy might specify a strength of function
-   requirement for how Evidence about a TE is integrity protected by its
-   AE.
+   FUNC append_acs( acs: acs, td: sa.td) -> ACS {
+       temp-acs := acs
+       IF sa.td::IS-ACYCLIC() == FALSE THEN RETURN -1
+       FOREACH item IN sa.td:
+           IF acs::IS-MEMBER(item.environment)
+               FOREACH trustee IN item.trustees:
+                   IF acs::IS-MEMBER(trustee.environment):
+                           CONTINUE
+                   ELSE GET NEXT item
+               temp-acs::APPEND(item)
+       IF temp-acs::IS-ACYCLC() == TRUE THEN
+           acs::MERGE(temp-acs)
+           RETURN acs
+       ELSE
+           RETURN -1
+   }
 
-   The subsequent Verifier stages or Relying Party processing of the ACS
-   may be affected if trust dependency ECTs are not added to the ACS.
-   For example, trust in an ACS entry that depends on trustee ACS
-   entries may not be considered.
+               Figure 45: Process Trust Dependency Algorithm
+
+   Subsequent processing phases SHOULD evaluate the TDG against ACS
+   corroborated Evidence to ensure trustee graphs are also trusted.  For
+   example, a TE with corroborated Evidence that has a trustee, TE_2,
+   should ensure TE_2 also has corroborated Evidence before TE is
+   considered trustworthey.  Additionally, a trust dependency might
+   specify a strength of function requirement for TE.  The trust
+   dependency implies TE_2 should have a minimum strength of function as
+   TE.
 
 8.2.4.4.  Rules of Comparison
 
@@ -4084,7 +4106,7 @@ Table of Contents
    therefore treats the minimum SVN as an exact state, rather than as
    something to be compared with inequality.
 
-   The pseudocode for the above algorithm is shown in Figure 45.
+   The pseudocode for the above algorithm is shown in Figure 46.
 
    FUNC compare(
        c_ect: svn-type-choice,
@@ -4115,7 +4137,7 @@ Table of Contents
        RETURN TYPEOF(v) == svn OR TYPEOF(v) == tagged-svn
    }
 
-                         Figure 45: SVN Comparison
+                         Figure 46: SVN Comparison
 
 8.2.4.4.5.4.  Comparison for digests entries
 
@@ -4302,7 +4324,7 @@ Table of Contents
       according to the PSA Certified scheme.
 
    The manufacturer's CoRIM contains a single CoMID with two Reference
-   Values triples (see Figure 46) describing two acceptable states of
+   Values triples (see Figure 47) describing two acceptable states of
    the Attester.  The Attester is identified by the class attribute
    Implementation ID with the value 6163..3031.  One state has a digest
    of 9a27..86aa for the "PRoT" component, and the other has a digest of
@@ -4379,11 +4401,11 @@ Table of Contents
      }
    }
 
-                   Figure 46: Example Manufacturer CoMID
+                   Figure 47: Example Manufacturer CoMID
 
    The CoMID from the certifier contains a Conditional Endorsement
    triple that describes the Attester who was granted the security
-   certification 1234567890123 - 12345 (see Figure 47).  This Attester
+   certification 1234567890123 - 12345 (see Figure 48).  This Attester
    has Implementation ID 6163..3031 and the digest associated with the
    "PRoT" component is 9a27..86aa.  In the triple, the security
    certification is represented as endorsements, while the target
@@ -4456,7 +4478,7 @@ Table of Contents
      }
    }
 
-                     Figure 47: Example Certifier CoMID
+                     Figure 48: Example Certifier CoMID
 
    For the remainder of this section, we will assume that the CoRIM
    containing this CoMID is signed using the certifier's certificate,
@@ -4474,7 +4496,7 @@ Table of Contents
    been validated, input transformations can start.
 
    The two Reference Values triples from the manufacturer's CoMID are
-   mapped to their corresponding rv-items (Figure 48, Figure 49) using
+   mapped to their corresponding rv-items (Figure 49, Figure 50) using
    the transformations defined in Figure 35.
 
    The first triple:
@@ -4524,7 +4546,7 @@ Table of Contents
      }
    }
 
-                     Figure 48: First rv Relation Item
+                     Figure 49: First rv Relation Item
 
    The second triple:
 
@@ -4573,14 +4595,14 @@ Table of Contents
      }
    }
 
-                     Figure 49: Second rv Relation Item
+                     Figure 50: Second rv Relation Item
 
    Note the authorities in the addition ECT of both items, which are set
    to 482e..78b3, and correspond to the thumbprint of the manufacturer's
    signing certificate.
 
    The Conditional Endorsement triple from the certifier's CoMID is
-   mapped to its corresponding ev-item (Figure 50) using the
+   mapped to its corresponding ev-item (Figure 51) using the
    transformation defined in Figure 37.
 
    {
@@ -4641,7 +4663,7 @@ Table of Contents
      ]
    }
 
-                Figure 50: First (and only) ev Relation Item
+                Figure 51: First (and only) ev Relation Item
 
    Note the authority in the addition ECT, which is set to 768f..75b1,
    and corresponds to the thumbprint of the certifier's signing
@@ -4691,7 +4713,7 @@ Table of Contents
      }
    }
 
-                             Figure 51: ae-item
+                             Figure 52: ae-item
 
    Note the authority in the ECT, which is set to MFkw..Lg==", and
    corresponds to the Attester's PEM-encoded SPKI.
@@ -4706,9 +4728,9 @@ Table of Contents
    The first relation to be processed is rv, according to the rules
    described in Section 8.2.4.2.1.
 
-   The condition of the first rv-item (Figure 48) is matched against the
+   The condition of the first rv-item (Figure 49) is matched against the
    ACS which, at this time, contains a single ECT obtained from the ae-
-   item (Figure 51).  The cmtype of the ACS-ECT is 2 (evidence), which
+   item (Figure 52).  The cmtype of the ACS-ECT is 2 (evidence), which
    is exactly the type rv-items need to match against.  When the two are
    compared, it is found that the environments of the rv-item condition
    and the ACS-ECT match (note that the instance identifier in the ACS-
@@ -4722,7 +4744,7 @@ Table of Contents
 
    The ACS now contains two ECTs, one with cmtype 2 (evidence), and a
    second one with cmtype 0 (reference-value) that corroborates the
-   first one with manufacturer authority (Figure 52).
+   first one with manufacturer authority (Figure 53).
 
    [
      / Evidence ECT / {
@@ -4798,9 +4820,9 @@ Table of Contents
      }
    ]
 
-                  Figure 52: ACS State after Corroboration
+                  Figure 53: ACS State after Corroboration
 
-   The algorithm then moves on to the second rv-item (Figure 49),
+   The algorithm then moves on to the second rv-item (Figure 50),
    checking its condition against the ACS.  Once again, the ACS-ECT with
    cmtype 2 (evidence) is selected for matching.  This time, the
    environments match, but the state represented in the rv-item's
@@ -4809,7 +4831,7 @@ Table of Contents
 
    Next, the ev relation is popped from the Staging Area for processing
    according to the rules described in Section 8.2.4.3.1.  The condition
-   of the first (and only) ev-item (Figure 50) is then matched against
+   of the first (and only) ev-item (Figure 51) is then matched against
    the ACS.  The only applicable ACS-ECT is the one with cmtype 2
    (evidence).
    // The fact that {{sec-proc-ev-rel}} requires matching against
@@ -4827,7 +4849,7 @@ Table of Contents
    with manufacturer authority, and a third one with cmtype 1
    (endorsements) which adds the PSA certification identifier as an
    endorsed value for the appraised environment with certifier's
-   authority (Figure 53).
+   authority (Figure 54).
 
    [
      / Evidence ECT / {
@@ -4929,7 +4951,7 @@ Table of Contents
      }
    ]
 
-            Figure 53: ACS State after Endorsements Augmentation
+            Figure 54: ACS State after Endorsements Augmentation
 
    At this point, all the relations in the Staging Area have been
    processed, and the match_and_augment algorithm (Figure 44)
