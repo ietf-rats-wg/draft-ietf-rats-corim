@@ -2606,23 +2606,27 @@ Subsequent to transformation the domain membership relations are processed using
 
 ##### Trust Dependency Transformation {#sec-trans-trust-dep}
 
-Prior to adding a trust dependency relation, Trust Dependency triples `trust-dependency-triple-record` ({{triple-td}}) are transformed into `td` relations (see {{sec-ir-trust-dep}}).
-
-using the trust dependency transformation algorithm {{algo-trust-dependency-transform}}.
-
-<cref>
-[TODO]
-Note: this pseudo code needs to flesh out trust dependency logic.
-</cref>
+Prior to adding a trust dependency relation, Trust Dependency triples `trust-dependency-triple-record` ({{triple-td}}) are transformed into `td` relations (see {{sec-ir-trust-dep}}) using the trust dependency transformation algorithm {{algo-trust-dependency-transform}}.
 
 ~~~ pseudocode
-FUNC transform-trust-dependency () -> trust-dependency-item
+FUNC transform(
+    T: trust-dependcy-triple-record,
+    signer: [ + $crypto-key-type-choice ],
+    profile: $profile-type-choice
+) -> trust-dependency-item
+    item := T-ECT::NEW()
+
+    item.trustees = T.trustees
+    item.ECT-common.environment = T.domain-id
+    item.ECT-common.authority = signer
+    IF profile:
+        item.ECT-common.profile = profile
     RETURN item
 }
 ~~~
 {: #algo-trust-dependency-transform title="Trust Dependency Transformation"}
 
-Subsequent to transformation the trust dependency relations are processed using the trust dependency processing algorithm {{sec-proc-td}}.
+Subsequent to transformation, the trust dependency relations are processed using the trust dependency processing algorithm {{sec-proc-td}}.
 
 #### Appraisal Context Initialization {#sec-appraisal-ctx-init}
 
@@ -2639,7 +2643,7 @@ FUNC init_acs(ae: ae) -> ACS {
 ~~~
 {: #algo-init-acs title="ACS Initialization"}
 
-The staging area is loaded with `rv`, `ev`, `evs`, `keys`, `dm` and `dd` relations, in that order.
+The staging area is loaded with `rv`, `ev`, `evs`, `keys`, `dm` and `td` relations, in that order.
 
 ~~~ pseudocode
 FUNC init_staging_area(
@@ -2648,7 +2652,7 @@ FUNC init_staging_area(
     evs: evs,
     keys: keys,
     dm: dm,
-    dd: dd,
+    dd: td,
 ) -> StagingArea {
     sa := StagingArea::NEW()
 
@@ -2657,7 +2661,7 @@ FUNC init_staging_area(
     IF evs:  sa::APPEND(evs)
     IF keys: sa::APPEND(keys)
     IF dm:   sa::APPEND(dm)
-    IF dd:   sa::APPEND(dd)
+    IF td:   sa::APPEND(td)
 
     RETURN sa
 }
@@ -2673,6 +2677,12 @@ If there is a match, the additions in the matched relation are added to the ACS,
 Otherwise, the algorithm moves on to the next relation.
 Any augmentations to the ACS (i.e., the `acs::APPEND` operation in {{algo-match-and-augment}}) MUST be atomic.
 Once all the relations in the staging area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.
+
+<cref>
+[TODO]
+The match_and_augment algorithm doesn't generally apply to trust dependency. The condition is not derived from the triple.
+The pseudo code defines `ACS` ss input but uses the type `acs` as input.
+</cref>
 
 ~~~ pseudocode
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
@@ -2756,6 +2766,7 @@ Add all the verified keys to the addition ECT's `key-list` and add the addition 
 <cref>
 [TODO]
 This section needs to be rewritten to include processing pseudo code.
+Note: If the Ordering of Relations section defines pseudo code for acs::SORT() then pseudo code in these sections doesn't need to include it as they can assume the input ACS is already sorted.
 </cref>
 
 Domain Membership relations describe the expected topological arrangement of the Attester.
@@ -2774,25 +2785,36 @@ Otherwise, processing moves to processing the next `dm` entry.
 
 ##### Processing `td` Relations {#sec-proc-td}
 
-<cref>
-[TODO]
-This section needs to be rewritten to include processing pseudo code.
-</cref>
+The objective of processing a `td` relation is to verify that each edge in a trust dependency graph (TDG) has a corresponding edge in a domain membership graph (DMG).
+TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS.
+TDGs need not be isomorphs of DMGs; but they can be a subset.
 
-Essentially, the objective of processing a `td` relation is to verify that each edge in a trust dependency graph (TDG) has a corresponding edge in a domain membership graph (DMG).
-(Note that TDGs need not be isomorphs of DMGs; they can be a subset.)
+The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
 
-The same assumptions regarding acyclicity and pre-sorting of the relation items as in {{sec-proc-dm}} apply.
+~~~ pseudocode
+FUNC append_acs( acs: acs, td: sa.td) -> ACS {
+    temp-acs := acs
+    IF sa.td::IS-ACYCLIC() == FALSE THEN RETURN -1
+    FOREACH item IN sa.td:
+        IF acs::IS-MEMBER(item.environment)
+            FOREACH trustee IN item.trustees:
+                IF acs::IS-MEMBER(trustee.environment):
+                        CONTINUE
+                ELSE GET NEXT item
+            temp-acs::APPEND(item)
+    IF temp-acs::IS-ACYCLC() == TRUE THEN
+        acs::MERGE(temp-acs)
+        RETURN acs
+    ELSE
+        RETURN -1
+}
+~~~
+{: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
 
-The matching logic needs to ensure that all the `td` items can be paired with an existing Domain Membership ECT.
-Pairing is successful if the `environment` and all the `children` in the condition ECT are found in the  `environment` or in the `children` of at least one Domain ECT with `kind` 0 (i.e., member).
-If pairing is successful for all the items in the `dd` relation, the all the addition ECTs are added to the ACS.
-
-If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
-For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
-
-The subsequent Verifier stages or Relying Party processing of the ACS may be affected if trust dependency ECTs are not added to the ACS.
-For example, trust in an ACS entry that depends on `trustee` ACS entries may not be considered.
+Subsequent processing phases SHOULD evaluate the TDG against ACS corroborated Evidence to ensure trustee graphs are also trusted.
+For example, a TE with corroborated Evidence that has a trustee, TE_2, should ensure TE_2 also has corroborated Evidence before TE is considered trustworthey.
+Additionally, a trust dependency might specify a strength of function requirement for TE.
+The trust dependency implies TE_2 should have a minimum strength of function as TE.
 
 #### Rules of Comparison {#sec-comparison-rules}
 
