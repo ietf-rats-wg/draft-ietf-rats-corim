@@ -1366,7 +1366,7 @@ The CoRIM author must therefore rely on other CoMID triples (e.g., conditional e
 
 The `ref-claims` of a given `reference-triple-record` can contain one or more entries.
 Each `ref-claims` entry represents the reference state of a different measured element within the expected overall state of the Target Environment.
-As an encoding shortcut, some measurement key-value pairs, for example when using `int-range` and `min-svn`, can be defined to have multiple values or use "wild carding" to describe a range of acceptable values.
+As an encoding shortcut, some measurement key-value pairs, for example when using `int-range`, `min-svn` and `integrity-registers`, can be defined to encode multiple states simultaneously.
 
 To process a `reference-triple-record`, the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
 First, `ref-env` is used as search criteria to locate matching Evidence environments.
