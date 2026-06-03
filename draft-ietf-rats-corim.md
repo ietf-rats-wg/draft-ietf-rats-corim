@@ -1201,6 +1201,12 @@ computing base.
 is confidentiality protected. For example, if the measured environment consists of memory,
 the sensitive values in memory are encrypted.
 
+* `is-runtime-updatable` (index 10): If the flag is true, the measured environment
+supports being updated at run time without requiring a system reboot for the update to
+take effect. This is sometimes referred to as "Live Firmware Activation" (LFA) or hitless
+update or impactless updates. The flag describes a capability of the measured environment;
+it does not by itself imply that an update has occurred or is pending.
+
 ##### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
@@ -3492,7 +3498,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 7     | is-immutable                 | {{&SELF}}     |
 | 8     | is-tcb                       | {{&SELF}}     |
 | 9     | is-confidentiality-protected | {{&SELF}}     |
-| 10-18446744073709551616 | Unassigned | |
+| 10    | is-runtime-updatable         | {{&SELF}}     |
+| 11-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-flags-map-items title="Flags Map Items Initial Registrations"}
 
 ## CoTL Map Registry {#sec-iana-cotl}
