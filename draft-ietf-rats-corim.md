@@ -1395,7 +1395,7 @@ The `endorsed-triple-record` has the following parameters:
 * `endorsement`: Additional Endorsement Claims.
 
 To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criterion is satisfied, the contents of the triple are added to the Attester's actual state under the Endorser's authority.
+If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
