@@ -3083,6 +3083,7 @@ flags-map = non-empty&lt;{
   ? &amp;(is-immutable: 7) =&gt; bool
   ? &amp;(is-tcb: 8) =&gt; bool
   ? &amp;(is-confidentiality-protected: 9) =&gt; bool
+  ? &amp;(is-runtime-updatable: 10) =&gt; bool
   * $$flags-map-extension
 }&gt;
 </pre><a href="#section-5.1.4.5.5-2" class="pilcrow">¶</a>
@@ -3127,6 +3128,13 @@ computing base.<a href="#section-5.1.4.5.5-4.9.1" class="pilcrow">¶</a></p>
                   <p id="section-5.1.4.5.5-4.10.1"><code>is-confidentiality-protected</code> (index 9): If the flag is true, the measured environment
 is confidentiality protected. For example, if the measured environment consists of memory,
 the sensitive values in memory are encrypted.<a href="#section-5.1.4.5.5-4.10.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.4.5.5-4.11">
+                  <p id="section-5.1.4.5.5-4.11.1"><code>is-runtime-updatable</code> (index 10): If the flag is true, the measured environment
+supports being updated at run time without requiring a system reboot for the update to
+take effect. This is sometimes referred to as "Live Firmware Activation" (LFA) or hitless
+update or impactless updates. The flag describes a capability of the measured environment;
+it does not by itself imply that an update has occurred or is pending.<a href="#section-5.1.4.5.5-4.11.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 </section>
@@ -7730,7 +7738,12 @@ Assignments consist of an integer index value, the item name, and a reference to
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">10-18446744073709551616</td>
+              <td class="text-left" rowspan="1" colspan="1">10</td>
+              <td class="text-left" rowspan="1" colspan="1">is-runtime-updatable</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">11-18446744073709551616</td>
               <td class="text-left" rowspan="1" colspan="1">Unassigned</td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
@@ -8484,6 +8497,7 @@ flags-map = non-empty&lt;{
     ? &amp;(is-immutable: 7) =&gt; bool,
     ? &amp;(is-tcb: 8) =&gt; bool,
     ? &amp;(is-confidentiality-protected: 9) =&gt; bool,
+    ? &amp;(is-runtime-updatable: 10) =&gt; bool,
     * $$flags-map-extension,
 }&gt;
 $group-id-type-choice /= tagged-uuid-type / tagged-bytes
