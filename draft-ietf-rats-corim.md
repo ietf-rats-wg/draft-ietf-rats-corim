@@ -1391,10 +1391,10 @@ The Endorsed Values Triple has the following structure:
 
 The `endorsed-triple-record` has the following parameters:
 
-* `condition`: Search criterion that locates an Evidence or Endorsements environment.
+* `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
 * `endorsement`: Additional Endorsement Claims.
 
-To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence and Endorsements.
+To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criterion is satisfied, the contents of the triple are added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
