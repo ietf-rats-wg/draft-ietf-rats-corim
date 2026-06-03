@@ -1413,7 +1413,7 @@ The Conditional Endorsement Triple has the following structure:
 
 The `conditional-endorsement-triple-record` has the following parameters:
 
-* `conditions`: Search criteria that locates Evidence,  corroborated Evidence, or Endorsements.
+* `conditions`: Search criteria that locates Evidence, corroborated Evidence, or Endorsements.
 * `endorsements`: Additional Endorsements.
 
 To process a `conditional-endorsement-triple-record` the `conditions` are compared with existing Evidence, corroborated Evidence, and Endorsements.
