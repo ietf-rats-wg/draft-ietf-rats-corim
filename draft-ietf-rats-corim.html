@@ -1051,11 +1051,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">CoRIM</td>
-<td class="right">May 2026</td>
+<td class="right">June 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 29 November 2026</td>
+<td class="center">Expires 5 December 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-28" class="published">28 May 2026</time>
+<time datetime="2026-06-03" class="published">3 June 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-29">29 November 2026</time></dd>
+<dd class="expires"><time datetime="2026-12-05">5 December 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1135,7 +1135,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 29 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3367,27 +3367,23 @@ reference-triple-record = [
               <p id="section-5.1.5-6.2.1"><code>ref-claims</code>: Contains one or more reference measurements for the Target Environment<a href="#section-5.1.5-6.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.5-7">CoMID triples (<a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) may contain multiple <code>reference-triple-record</code> entries, each of which describes one or more possible states for a particular Target Environment.<a href="#section-5.1.5-7" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-8">The <code>ref-claims</code> in a <code>reference-triple-record</code> can contain one or more entries.
-This multiplicity can have different meanings:<a href="#section-5.1.5-8" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-5.1.5-9">
-<li id="section-5.1.5-9.1">
-              <p id="section-5.1.5-9.1.1">Each <code>ref-claims</code> entry can represent a different possible state of the Environment.<a href="#section-5.1.5-9.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-5.1.5-9.2">
-              <p id="section-5.1.5-9.2.1">Each <code>ref-claims</code> entry can represent a possible state of a different measured element (identified by its <code>mkey</code>) within the Environment.<a href="#section-5.1.5-9.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-<p id="section-5.1.5-10">Note that the same semantics can be expressed using multiple Reference Value Triples.<a href="#section-5.1.5-10" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-11">Note also that a measurement key-value pair could be defined to have multiple values or use "wild carding" to describe a range of acceptable values, for example when using <code>int-range</code> and <code>min-svn</code>.<a href="#section-5.1.5-11" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-12">Any of these multiplicities could be used in the context of Reference Values Triples.<a href="#section-5.1.5-12" class="pilcrow">¶</a></p>
-<p id="section-5.1.5-13">To process a <code>reference-triple-record</code>, the <code>ref-env</code> and <code>ref-claims</code> criteria are compared with Evidence entries.
+<p id="section-5.1.5-7">CoMID triples may contain multiple <code>reference-triple-record</code> entries.
+Each <code>reference-triple-record</code> describes a reference state for the Target Environment identified by <code>ref-env</code>.
+Different reference states for a Target Environment MUST be expressed using separate <code>reference-triple-record</code> entries.
+An exception to the above requirement is when using range types to specify the <code>ref-claims</code> as explained further down.<a href="#section-5.1.5-7" class="pilcrow">¶</a></p>
+<p id="section-5.1.5-8">Since a given <code>reference-triple-record</code> can describe only a single Target Environment, the reference state of a device comprising multiple different Target Environments will necessarily be spread across multiple <code>reference-triple-record</code>s.
+In other words, <code>reference-triple-record</code> alone cannot, in the general case, describe the reference state for a complex device.
+The CoRIM author must therefore rely on other CoMID triples (e.g., conditional endorsements) or profile-specific conventions (e.g., using CoRIM or CoMID boundaries, possibly in conjunction with CoTL) to express the entire reference state of a complex device.<a href="#section-5.1.5-8" class="pilcrow">¶</a></p>
+<p id="section-5.1.5-9">The <code>ref-claims</code> of a given <code>reference-triple-record</code> can contain one or more entries.
+Each <code>ref-claims</code> entry represents the reference state of a different measured element within the expected overall state of the Target Environment.
+As an encoding shortcut, some measurement key-value pairs, for example when using <code>int-range</code>, <code>min-svn</code> and <code>integrity-registers</code>, can be defined to encode multiple states simultaneously.<a href="#section-5.1.5-9" class="pilcrow">¶</a></p>
+<p id="section-5.1.5-10">To process a <code>reference-triple-record</code>, the <code>ref-env</code> and <code>ref-claims</code> criteria are compared with Evidence entries.
 First, <code>ref-env</code> is used as search criteria to locate matching Evidence environments.
 Then, the <code>ref-claims</code> from this triple are used to match against the Evidence measurements for a matched environment.
 If the search criteria are satisfied, the matching entry is added to the body of Attester state, except these Claims are asserted with the Reference Value Provider's authority.
 By re-asserting Evidence matched with Reference Values using the RVP's authority, the Verifier avoids confusing Reference Values (reference / possible state) with Evidence (actual state).
 See <span>[<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.
-Evidence Claims that are re-asserted using RVP authority are said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVP's possible state.<a href="#section-5.1.5-13" class="pilcrow">¶</a></p>
+Evidence Claims that are re-asserted using RVP authority are said to be "corroborated Evidence" because the actual state in Evidence was found within the corpus of the RVP's possible state.<a href="#section-5.1.5-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-endval">

@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 29 November 2026                                         Linaro
+Expires: 5 December 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             28 May 2026
+                                                             3 June 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 November 2026.
+   This Internet-Draft will expire on 5 December 2026.
 
 Copyright Notice
 
@@ -1870,29 +1870,32 @@ Table of Contents
    *  ref-claims: Contains one or more reference measurements for the
       Target Environment
 
-   CoMID triples (Section 5.1.4) may contain multiple reference-triple-
-   record entries, each of which describes one or more possible states
-   for a particular Target Environment.
+   CoMID triples may contain multiple reference-triple-record entries.
+   Each reference-triple-record describes a reference state for the
+   Target Environment identified by ref-env.  Different reference states
+   for a Target Environment MUST be expressed using separate reference-
+   triple-record entries.  An exception to the above requirement is when
+   using range types to specify the ref-claims as explained further
+   down.
 
-   The ref-claims in a reference-triple-record can contain one or more
-   entries.  This multiplicity can have different meanings:
+   Since a given reference-triple-record can describe only a single
+   Target Environment, the reference state of a device comprising
+   multiple different Target Environments will necessarily be spread
+   across multiple reference-triple-records.  In other words, reference-
+   triple-record alone cannot, in the general case, describe the
+   reference state for a complex device.  The CoRIM author must
+   therefore rely on other CoMID triples (e.g., conditional
+   endorsements) or profile-specific conventions (e.g., using CoRIM or
+   CoMID boundaries, possibly in conjunction with CoTL) to express the
+   entire reference state of a complex device.
 
-   1.  Each ref-claims entry can represent a different possible state of
-       the Environment.
-
-   2.  Each ref-claims entry can represent a possible state of a
-       different measured element (identified by its mkey) within the
-       Environment.
-
-   Note that the same semantics can be expressed using multiple
-   Reference Value Triples.
-
-   Note also that a measurement key-value pair could be defined to have
-   multiple values or use "wild carding" to describe a range of
-   acceptable values, for example when using int-range and min-svn.
-
-   Any of these multiplicities could be used in the context of Reference
-   Values Triples.
+   The ref-claims of a given reference-triple-record can contain one or
+   more entries.  Each ref-claims entry represents the reference state
+   of a different measured element within the expected overall state of
+   the Target Environment.  As an encoding shortcut, some measurement
+   key-value pairs, for example when using int-range, min-svn and
+   integrity-registers, can be defined to encode multiple states
+   simultaneously.
 
    To process a reference-triple-record, the ref-env and ref-claims
    criteria are compared with Evidence entries.  First, ref-env is used
