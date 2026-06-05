@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 5 December 2026                                          Linaro
+Expires: 7 December 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             3 June 2026
+                                                             5 June 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 December 2026.
+   This Internet-Draft will expire on 7 December 2026.
 
 Copyright Notice
 
@@ -275,8 +275,8 @@ Table of Contents
       Evidence.  For example, Endorsed Values may include testing or
       certification data related to a hardware or firmware module.
       Endorsed Values are said to be "conditional" when they apply if
-      Attester's actual state matches Verifier's accepted Claims.  See
-      also Section 3 of [I-D.ietf-rats-endorsements].
+      Attester's actual state matches certain conditions.  See also
+      Section 3 of [I-D.ietf-rats-endorsements].
 
    Environment:
       A logical partition within an Attester.  The term "Target
@@ -701,7 +701,9 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
+     payload: bstr .cbor tagged-unsigned-corim-map /
+                         hash-envelope-digest /
+                         nil
      signature: bstr
    ]
 
@@ -725,31 +727,32 @@ Table of Contents
 
 4.2.1.  Protected Header Map
 
-   ; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+   ; protected corim header map needs to contain at least one of
+   ; corim-meta (8) or CWT-Claims (15)
 
-   protected-corim-header-map-inline =
-     {
-       &(alg: 1) => int,
-       &(content-type: 3) => "application/rim+cbor",
-       meta-group,
-       * cose-label => cose-value
-     }
+   protected-corim-header-map = protected-corim-header-map-inline /
+                                protected-corim-header-map-hash-envelope
 
-   protected-corim-header-map-hash-envelope =
-     {
-       &(alg: 1) => int,
-       &(payload_hash_alg: 258) => int
-       &(payload_preimage_content_type: 259) => "application/rim+cbor",
-       ? &(payload_location: 260) => tstr
-       meta-group,
-       * cose-label => cose-value
-     }
+   protected-corim-header-map-inline = {
+     &(alg: 1) => int
+     &(content-type: 3) => "application/rim+cbor"
+     meta-group
+     * cose-label => cose-value
+   }
+
+   protected-corim-header-map-hash-envelope = {
+     &(alg: 1) => int,
+     &(payload_hash_alg: 258) => int
+     &(payload_preimage_content_type: 259) => "application/rim+cbor"
+     ? &(payload_location: 260) => tstr
+     meta-group
+     * cose-label => cose-value
+   }
 
    meta-group = ((
-           corim-meta-identity,
-           ? cwt-claims-identity,
-         ) // cwt-claims-identity)
+     corim-meta-identity,
+     ? cwt-claims-identity,
+   ) // cwt-claims-identity)
 
    corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
@@ -1923,12 +1926,12 @@ Table of Contents
 
 5.1.6.  Endorsed Values Triple
 
-   An Endorsed Values triple provides additional Endorsements - i.e.,
-   claims reflecting the actual state - for an existing Target
-   Environment.  For Endorsed Values Claims, the subject is a Target
+   Endorsed Values Triples provide additional Endorsements - i.e.,
+   claims reflecting actual state - for an existing Target Environment.
+   In an Endorsed Values Triple, the subject identifies a Target
    Environment, the object contains Endorsement Claims for the
-   Environment, and the predicate defines semantics for how the object
-   relates to the subject.
+   Environment, and the predicate asserts that these represent actual
+   state associated with the subject.
 
    The Endorsed Values Triple has the following structure:
 
@@ -1946,20 +1949,18 @@ Table of Contents
 
    *  endorsement: Additional Endorsement Claims.
 
-   To process a endorsed-triple-record the condition is compared with
+   To process a endorsed-triple-record, its condition is compared with
    existing Evidence, corroborated Evidence, and Endorsements.  If the
-   search criterion is satisfied, the endorsement Claims are combined
-   with the condition environment-map to form a new (actual state)
-   entry.  The new entry is added to the existing set of entries using
-   the Endorser's authority.
+   search criterion is satisfied, the endorsement is added to the
+   Attester's actual state under the Endorser's authority.
 
 5.1.7.  Conditional Endorsement Triple
 
-   A Conditional Endorsement Triple declares one or more conditions
-   that, once matched, results in augmenting the Attester's actual state
-   with the Endorsement Claims.  The conditions are expressed via
-   stateful-environment-records, which match Target Environments from
-   Evidence in certain reference state.
+   Conditional Endorsement Triples declare one or more conditions that,
+   once matched, results in augmenting the Attester's actual state with
+   the Endorsement Claims.  The conditions are expressed via stateful-
+   environment-records, which match Target Environments from Evidence in
+   certain reference state.
 
    The Conditional Endorsement Triple has the following structure:
 
@@ -2093,23 +2094,22 @@ Table of Contents
 
 5.1.9.  Device Identity Triple
 
-   Device Identity triples (see identity-triples in Section 5.1.4)
-   endorse that the keys were securely provisioned to the named Target
-   Environment.  A single Target Environment (as identified by
-   environment and mkey) may contain one or more cryptographic keys.
-   The existence of these keys is asserted in Evidence, Reference
-   Values, or Endorsements.
+   Device Identity Triples endorse that the listed keys were securely
+   provisioned to the named Target Environment.  A single Target
+   Environment (as identified by environment and mkey) may contain one
+   or more cryptographic keys.  The existence of these keys is asserted
+   in Evidence, Reference Values, or Endorsements.
 
    The device identity keys may have been used to authenticate the
    Attester device or may be held in reserve for later use.
 
-   Device Identity triples instruct a Verifier to perform key validation
+   Device Identity Triples instruct a Verifier to perform key validation
    checks, such as revocation, certificate path construction &
    verification, or proof of possession.  The Verifier SHOULD verify
    keys contained in Device Identity triples.
 
    Additional details about how a key was provisioned or is protected
-   may be asserted using Endorsements such as endorsed-triples.
+   may be asserted using Endorsements such as endorsed-triple-records.
 
    Depending on key formatting, as defined by $crypto-key-type-choice,
    the Verifier may take different steps to locate and verify the key.
@@ -2150,17 +2150,16 @@ Table of Contents
 
 5.1.10.  Attest Key Triple
 
-   Attest Key triples (see attest-key-triples in Section 5.1.4) endorse
-   that the keys were securely provisioned to the named Attesting
-   Environment.  An Attesting Environment (as identified by environment
-   and mkey) may contain one or more cryptographic keys.  The existence
-   of these keys is asserted in Evidence, Reference Values, or
-   Endorsements.
+   Attest Key Triples endorse that the keys were securely provisioned to
+   the named Attesting Environment.  An Attesting Environment (as
+   identified by environment and mkey) may contain one or more
+   cryptographic keys.  The existence of these keys is asserted in
+   Evidence, Reference Values, or Endorsements.
 
    The attestation keys may have been used to sign Evidence or may be
    held in reserve for later use.
 
-   Attest Key triples instruct a Verifier to perform key validation
+   Attest Key Triples instruct a Verifier to perform key validation
    checks, such as revocation, certification path construction and
    validation, or proof of possession.  The Verifier SHOULD verify keys
    contained in Attest Key triples.

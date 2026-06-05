@@ -1055,7 +1055,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 5 December 2026</td>
+<td class="center">Expires 7 December 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-03" class="published">3 June 2026</time>
+<time datetime="2026-06-05" class="published">5 June 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-12-05">5 December 2026</time></dd>
+<dd class="expires"><time datetime="2026-12-07">7 December 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1135,7 +1135,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 5 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 7 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1547,7 +1547,7 @@ See also <span><a href="https://rfc-editor.org/rfc/rfc9711#section-4.2.4" class=
             <dd style="margin-left: 1.5em" id="section-1.1.1-2.16">
               <p id="section-1.1.1-2.16.1">A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
-Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches Verifier's accepted Claims.
+Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches certain conditions.
 See also <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-rats-endorsements-09#section-3" class="relref">Section 3</a> of [<a href="#I-D.ietf-rats-endorsements" class="cite xref">I-D.ietf-rats-endorsements</a>]</span>.<a href="#section-1.1.1-2.16.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
@@ -2036,7 +2036,9 @@ information about the CoRIM encoded in a <code>corim-meta-map</code> (<a href="#
 COSE-Sign1-corim = [
   protected: bstr .cbor protected-corim-header-map
   unprotected: unprotected-corim-header-map
-  payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
+  payload: bstr .cbor tagged-unsigned-corim-map /
+                      hash-envelope-digest /
+                      nil
   signature: bstr
 ]
 
@@ -2068,31 +2070,32 @@ When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM
           </h4>
 <div class="lang-cddl sourcecode" id="section-4.2.1-1">
 <pre>
-; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+; protected corim header map needs to contain at least one of
+; corim-meta (8) or CWT-Claims (15)
 
-protected-corim-header-map-inline =
-  {
-    &amp;(alg: 1) =&gt; int,
-    &amp;(content-type: 3) =&gt; "application/rim+cbor",
-    meta-group,
-    * cose-label =&gt; cose-value
-  }
+protected-corim-header-map = protected-corim-header-map-inline /
+                             protected-corim-header-map-hash-envelope
 
-protected-corim-header-map-hash-envelope =
-  {
-    &amp;(alg: 1) =&gt; int,
-    &amp;(payload_hash_alg: 258) =&gt; int
-    &amp;(payload_preimage_content_type: 259) =&gt; "application/rim+cbor",
-    ? &amp;(payload_location: 260) =&gt; tstr
-    meta-group,
-    * cose-label =&gt; cose-value
-  }
+protected-corim-header-map-inline = {
+  &amp;(alg: 1) =&gt; int
+  &amp;(content-type: 3) =&gt; "application/rim+cbor"
+  meta-group
+  * cose-label =&gt; cose-value
+}
+
+protected-corim-header-map-hash-envelope = {
+  &amp;(alg: 1) =&gt; int,
+  &amp;(payload_hash_alg: 258) =&gt; int
+  &amp;(payload_preimage_content_type: 259) =&gt; "application/rim+cbor"
+  ? &amp;(payload_location: 260) =&gt; tstr
+  meta-group
+  * cose-label =&gt; cose-value
+}
 
 meta-group = ((
-        corim-meta-identity,
-        ? cwt-claims-identity,
-      ) // cwt-claims-identity)
+  corim-meta-identity,
+  ? cwt-claims-identity,
+) // cwt-claims-identity)
 
 corim-meta-identity = (&amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map)
 cwt-claims-identity = (&amp;(CWT-Claims: 15) =&gt; cwt-claims)
@@ -3399,8 +3402,8 @@ Evidence Claims that are re-asserted using RVP authority are said to be "corrobo
           <h4 id="name-endorsed-values-triple">
 <a href="#section-5.1.6" class="section-number selfRef">5.1.6. </a><a href="#name-endorsed-values-triple" class="section-name selfRef">Endorsed Values Triple</a>
           </h4>
-<p id="section-5.1.6-1">An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
-For Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.<a href="#section-5.1.6-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.6-1">Endorsed Values Triples provide additional Endorsements - i.e., claims reflecting actual state - for an existing Target Environment.
+In an Endorsed Values Triple, the subject identifies a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate asserts that these represent actual state associated with the subject.<a href="#section-5.1.6-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.6-2">The Endorsed Values Triple has the following structure:<a href="#section-5.1.6-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-values-triple-defi"></span><div id="triple-ev">
 <figure id="figure-2">
@@ -3425,9 +3428,8 @@ endorsed-triple-record = [
               <p id="section-5.1.6-5.2.1"><code>endorsement</code>: Additional Endorsement Claims.<a href="#section-5.1.6-5.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.6-6">To process a <code>endorsed-triple-record</code> the <code>condition</code> is compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criterion is satisfied, the <code>endorsement</code> Claims are combined with the <code>condition</code> <code>environment-map</code> to form a new (actual state) entry.
-The new entry is added to the existing set of entries using the Endorser's authority.<a href="#section-5.1.6-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.6-6">To process a <code>endorsed-triple-record</code>, its <code>condition</code> is compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.<a href="#section-5.1.6-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-triple-cond-endors">
@@ -3435,8 +3437,8 @@ The new entry is added to the existing set of entries using the Endorser's autho
           <h4 id="name-conditional-endorsement-tri">
 <a href="#section-5.1.7" class="section-number selfRef">5.1.7. </a><a href="#name-conditional-endorsement-tri" class="section-name selfRef">Conditional Endorsement Triple</a>
           </h4>
-<p id="section-5.1.7-1">A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
-The conditions are expressed via <code>stateful-environment-records</code>, which match Target Environments from Evidence in certain reference state.<a href="#section-5.1.7-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.7-1">Conditional Endorsement Triples declare one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
+The conditions are expressed via <code>stateful-environment-record</code>s, which match Target Environments from Evidence in certain reference state.<a href="#section-5.1.7-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.7-2">The Conditional Endorsement Triple has the following structure:<a href="#section-5.1.7-2" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-trip"></span><div id="triple-ce">
 <figure id="figure-3">
@@ -3564,13 +3566,13 @@ The new entry is added to the existing set of Endorsements.<a href="#section-5.1
           <h4 id="name-device-identity-triple">
 <a href="#section-5.1.9" class="section-number selfRef">5.1.9. </a><a href="#name-device-identity-triple" class="section-name selfRef">Device Identity Triple</a>
           </h4>
-<p id="section-5.1.9-1">Device Identity triples (see <code>identity-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) endorse that the keys were securely provisioned to the named Target Environment.
+<p id="section-5.1.9-1">Device Identity Triples endorse that the listed keys were securely provisioned to the named Target Environment.
 A single Target Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.9-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.9-2">The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.<a href="#section-5.1.9-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.9-3">Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
+<p id="section-5.1.9-3">Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction &amp; verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.<a href="#section-5.1.9-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.9-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.9-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.9-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triple-record</code>s.<a href="#section-5.1.9-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.9-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.<a href="#section-5.1.9-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.9-6">If a key has usage restrictions that limit its use to device identity challenges, the Verifier SHOULD enforce key use restrictions.<a href="#section-5.1.9-6" class="pilcrow">¶</a></p>
 <p id="section-5.1.9-7">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
@@ -3618,11 +3620,11 @@ See <a href="#sec-comid-mkey" class="auto internal xref">Section 5.1.4.5.1</a>.<
           <h4 id="name-attest-key-triple">
 <a href="#section-5.1.10" class="section-number selfRef">5.1.10. </a><a href="#name-attest-key-triple" class="section-name selfRef">Attest Key Triple</a>
           </h4>
-<p id="section-5.1.10-1">Attest Key triples (see <code>attest-key-triples</code> in <a href="#sec-comid-triples" class="auto internal xref">Section 5.1.4</a>) endorse that the keys were securely provisioned to the named Attesting Environment.
+<p id="section-5.1.10-1">Attest Key Triples endorse that the keys were securely provisioned to the named Attesting Environment.
 An Attesting Environment (as identified by <code>environment</code> and <code>mkey</code>) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.<a href="#section-5.1.10-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.10-2">The attestation keys may have been used to sign Evidence or may be held in reserve for later use.<a href="#section-5.1.10-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.10-3">Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
+<p id="section-5.1.10-3">Attest Key Triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#section-5.1.10-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.10-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.10-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.10-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
