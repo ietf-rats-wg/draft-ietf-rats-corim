@@ -25,7 +25,8 @@ endef # cddl_targets
 $(eval $(call cddl_targets,corim,$(CORIM_FRAGS)))
 $(eval $(call cddl_targets,comid,$(COMID_FRAGS)))
 $(eval $(call cddl_targets,cotl,$(COTL_FRAGS)))
-$(eval $(call cddl_targets,intrep,$(INTREP_FRAGS)))
+$(eval $(call cddl_targets,intrep-acs,$(INTREP_FRAGS)))
+$(eval $(call cddl_targets,intrep-rel,$(INTREP_FRAGS)))
 
 cddl/concise-swid-tag.cddl: ; $(MAKE) -C cddl $(notdir $@)
 
