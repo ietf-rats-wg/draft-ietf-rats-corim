@@ -1201,6 +1201,12 @@ computing base.
 is confidentiality protected. For example, if the measured environment consists of memory,
 the sensitive values in memory are encrypted.
 
+* `is-runtime-updatable` (index 10): If the flag is true, the measured environment
+supports being updated at run time without requiring a system reboot for the update to
+take effect. This is sometimes referred to as "Live Firmware Activation" (LFA) or hitless
+update or impactless updates. The flag describes a capability of the measured environment;
+it does not by itself imply that an update has occurred or is pending.
+
 ##### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
@@ -1355,19 +1361,18 @@ The `reference-triple-record` has the following parameters:
 * `ref-env`: Identifies the Target Environment
 * `ref-claims`: Contains one or more reference measurements for the Target Environment
 
-CoMID triples ({{sec-comid-triples}}) may contain multiple `reference-triple-record` entries, each of which describes one or more possible states for a particular Target Environment.
+CoMID triples may contain multiple `reference-triple-record` entries.
+Each `reference-triple-record` describes a reference state for the Target Environment identified by `ref-env`.
+Different reference states for a Target Environment MUST be expressed using separate `reference-triple-record` entries.
+An exception to the above requirement is when using range types to specify the `ref-claims` as explained further down.
 
-The `ref-claims` in a `reference-triple-record` can contain one or more entries.
-This multiplicity can have different meanings:
+Since a given `reference-triple-record` can describe only a single Target Environment, the reference state of a device comprising multiple different Target Environments will necessarily be spread across multiple `reference-triple-record`s.
+In other words, `reference-triple-record` alone cannot, in the general case, describe the reference state for a complex device.
+The CoRIM author must therefore rely on other CoMID triples (e.g., conditional endorsements) or profile-specific conventions (e.g., using CoRIM or CoMID boundaries, possibly in conjunction with CoTL) to express the entire reference state of a complex device.
 
-1. Each `ref-claims` entry can represent a different possible state of the Environment.
-1. Each `ref-claims` entry can represent a possible state of a different measured element (identified by its `mkey`) within the Environment.
-
-Note that the same semantics can be expressed using multiple Reference Value Triples.
-
-Note also that a measurement key-value pair could be defined to have multiple values or use "wild carding" to describe a range of acceptable values, for example when using `int-range` and `min-svn`.
-
-Any of these multiplicities could be used in the context of Reference Values Triples.
+The `ref-claims` of a given `reference-triple-record` can contain one or more entries.
+Each `ref-claims` entry represents the reference state of a different measured element within the expected overall state of the Target Environment.
+As an encoding shortcut, some measurement key-value pairs, for example when using `int-range`, `min-svn` and `integrity-registers`, can be defined to encode multiple states simultaneously.
 
 To process a `reference-triple-record`, the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
 First, `ref-env` is used as search criteria to locate matching Evidence environments.
@@ -3492,7 +3497,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 7     | is-immutable                 | {{&SELF}}     |
 | 8     | is-tcb                       | {{&SELF}}     |
 | 9     | is-confidentiality-protected | {{&SELF}}     |
-| 10-18446744073709551616 | Unassigned | |
+| 10    | is-runtime-updatable         | {{&SELF}}     |
+| 11-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-flags-map-items title="Flags Map Items Initial Registrations"}
 
 ## CoTL Map Registry {#sec-iana-cotl}
