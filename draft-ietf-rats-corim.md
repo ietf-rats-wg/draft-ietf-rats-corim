@@ -229,7 +229,7 @@ Domain:
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
-Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches Verifier's accepted Claims.
+Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches certain conditions.
 See also {{Section 3 of -rats-endorsements}}.
 
 Environment:
@@ -1203,6 +1203,12 @@ computing base.
 is confidentiality protected. For example, if the measured environment consists of memory,
 the sensitive values in memory are encrypted.
 
+* `is-runtime-updatable` (index 10): If the flag is true, the measured environment
+supports being updated at run time without requiring a system reboot for the update to
+take effect. This is sometimes referred to as "Live Firmware Activation" (LFA) or hitless
+update or impactless updates. The flag describes a capability of the measured environment;
+it does not by itself imply that an update has occurred or is pending.
+
 ##### Raw Values Types {#sec-comid-raw-value-types}
 
 Raw value measurements are typically vendor defined values that are checked by Verifiers
@@ -1357,19 +1363,18 @@ The `reference-triple-record` has the following parameters:
 * `ref-env`: Identifies the Target Environment
 * `ref-claims`: Contains one or more reference measurements for the Target Environment
 
-CoMID triples ({{sec-comid-triples}}) may contain multiple `reference-triple-record` entries, each of which describes one or more possible states for a particular Target Environment.
+CoMID triples may contain multiple `reference-triple-record` entries.
+Each `reference-triple-record` describes a reference state for the Target Environment identified by `ref-env`.
+Different reference states for a Target Environment MUST be expressed using separate `reference-triple-record` entries.
+An exception to the above requirement is when using range types to specify the `ref-claims` as explained further down.
 
-The `ref-claims` in a `reference-triple-record` can contain one or more entries.
-This multiplicity can have different meanings:
+Since a given `reference-triple-record` can describe only a single Target Environment, the reference state of a device comprising multiple different Target Environments will necessarily be spread across multiple `reference-triple-record`s.
+In other words, `reference-triple-record` alone cannot, in the general case, describe the reference state for a complex device.
+The CoRIM author must therefore rely on other CoMID triples (e.g., conditional endorsements) or profile-specific conventions (e.g., using CoRIM or CoMID boundaries, possibly in conjunction with CoTL) to express the entire reference state of a complex device.
 
-1. Each `ref-claims` entry can represent a different possible state of the Environment.
-1. Each `ref-claims` entry can represent a possible state of a different measured element (identified by its `mkey`) within the Environment.
-
-Note that the same semantics can be expressed using multiple Reference Value Triples.
-
-Note also that a measurement key-value pair could be defined to have multiple values or use "wild carding" to describe a range of acceptable values, for example when using `int-range` and `min-svn`.
-
-Any of these multiplicities could be used in the context of Reference Values Triples.
+The `ref-claims` of a given `reference-triple-record` can contain one or more entries.
+Each `ref-claims` entry represents the reference state of a different measured element within the expected overall state of the Target Environment.
+As an encoding shortcut, some measurement key-value pairs, for example when using `int-range`, `min-svn` and `integrity-registers`, can be defined to encode multiple states simultaneously.
 
 To process a `reference-triple-record`, the `ref-env` and `ref-claims` criteria are compared with Evidence entries.
 First, `ref-env` is used as search criteria to locate matching Evidence environments.
@@ -1381,8 +1386,8 @@ Evidence Claims that are re-asserted using RVP authority are said to be "corrobo
 
 ### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
-For Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.
+Endorsed Values Triples provide additional Endorsements - i.e., claims reflecting actual state - for an existing Target Environment.
+In an Endorsed Values Triple, the subject identifies a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate asserts that these represent actual state associated with the subject.
 
 The Endorsed Values Triple has the following structure:
 
@@ -1396,14 +1401,13 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
 * `endorsement`: Additional Endorsement Claims.
 
-To process a `endorsed-triple-record` the `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
-The new entry is added to the existing set of entries using the Endorser's authority.
+To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
-The conditions are expressed via `stateful-environment-records`, which match Target Environments from Evidence in certain reference state.
+Conditional Endorsement Triples declare one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
+The conditions are expressed via `stateful-environment-record`s, which match Target Environments from Evidence in certain reference state.
 
 The Conditional Endorsement Triple has the following structure:
 
@@ -1481,16 +1485,16 @@ The first `series` entry that successfully matches the `selection` criteria term
 
 ### Device Identity Triple {#sec-comid-triple-identity}
 
-Device Identity triples (see `identity-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Target Environment.
+Device Identity Triples endorse that the listed keys were securely provisioned to the named Target Environment.
 A single Target Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.
 
 The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.
 
-Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
+Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triple-record`s.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
@@ -1518,13 +1522,13 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 ### Attest Key Triple {#sec-comid-triple-attest-key}
 
-Attest Key triples (see `attest-key-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Attesting Environment.
+Attest Key Triples endorse that the keys were securely provisioned to the named Attesting Environment.
 An Attesting Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.
 
 The attestation keys may have been used to sign Evidence or may be held in reserve for later use.
 
-Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
+Attest Key Triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -1567,6 +1571,7 @@ This allows a topological description of an Attester to be expressed by linking 
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
 
 Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
+The domain topology must be acyclic.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
@@ -3494,7 +3499,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 7     | is-immutable                 | {{&SELF}}     |
 | 8     | is-tcb                       | {{&SELF}}     |
 | 9     | is-confidentiality-protected | {{&SELF}}     |
-| 10-18446744073709551616 | Unassigned | |
+| 10    | is-runtime-updatable         | {{&SELF}}     |
+| 11-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-flags-map-items title="Flags Map Items Initial Registrations"}
 
 ## CoTL Map Registry {#sec-iana-cotl}
