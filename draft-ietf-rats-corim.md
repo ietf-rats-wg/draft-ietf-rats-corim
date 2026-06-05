@@ -229,7 +229,7 @@ Domain:
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
 For example, Endorsed Values may include testing or certification data related to a hardware or firmware module.
-Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches Verifier's accepted Claims.
+Endorsed Values are said to be "conditional" when they apply if Attester's actual state matches certain conditions.
 See also {{Section 3 of -rats-endorsements}}.
 
 Environment:
@@ -1384,8 +1384,8 @@ Evidence Claims that are re-asserted using RVP authority are said to be "corrobo
 
 ### Endorsed Values Triple {#sec-comid-triple-endval}
 
-An Endorsed Values triple provides additional Endorsements - i.e., claims reflecting the actual state - for an existing Target Environment.
-For Endorsed Values Claims, the subject is a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate defines semantics for how the object relates to the subject.
+Endorsed Values Triples provide additional Endorsements - i.e., claims reflecting actual state - for an existing Target Environment.
+In an Endorsed Values Triple, the subject identifies a Target Environment, the object contains Endorsement Claims for the Environment, and the predicate asserts that these represent actual state associated with the subject.
 
 The Endorsed Values Triple has the following structure:
 
@@ -1399,14 +1399,13 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
 * `endorsement`: Additional Endorsement Claims.
 
-To process a `endorsed-triple-record` the `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
-If the search criterion is satisfied, the `endorsement` Claims are combined with the `condition` `environment-map` to form a new (actual state) entry.
-The new entry is added to the existing set of entries using the Endorser's authority.
+To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
 
-A Conditional Endorsement Triple declares one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
-The conditions are expressed via `stateful-environment-records`, which match Target Environments from Evidence in certain reference state.
+Conditional Endorsement Triples declare one or more conditions that, once matched, results in augmenting the Attester's actual state with the Endorsement Claims.
+The conditions are expressed via `stateful-environment-record`s, which match Target Environments from Evidence in certain reference state.
 
 The Conditional Endorsement Triple has the following structure:
 
@@ -1484,16 +1483,16 @@ The first `series` entry that successfully matches the `selection` criteria term
 
 ### Device Identity Triple {#sec-comid-triple-identity}
 
-Device Identity triples (see `identity-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Target Environment.
+Device Identity Triples endorse that the listed keys were securely provisioned to the named Target Environment.
 A single Target Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.
 
 The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.
 
-Device Identity triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
-Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
+Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triple-record`s.
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 
@@ -1521,13 +1520,13 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 ### Attest Key Triple {#sec-comid-triple-attest-key}
 
-Attest Key triples (see `attest-key-triples` in {{sec-comid-triples}}) endorse that the keys were securely provisioned to the named Attesting Environment.
+Attest Key Triples endorse that the keys were securely provisioned to the named Attesting Environment.
 An Attesting Environment (as identified by `environment` and `mkey`) may contain one or more cryptographic keys.
 The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.
 
 The attestation keys may have been used to sign Evidence or may be held in reserve for later use.
 
-Attest Key triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
+Attest Key Triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
