@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 29 November 2026                                         Linaro
+Expires: 7 December 2026                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             28 May 2026
+                                                             5 June 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 November 2026.
+   This Internet-Draft will expire on 7 December 2026.
 
 Copyright Notice
 
@@ -275,8 +275,8 @@ Table of Contents
       Evidence.  For example, Endorsed Values may include testing or
       certification data related to a hardware or firmware module.
       Endorsed Values are said to be "conditional" when they apply if
-      Attester's actual state matches Verifier's accepted Claims.  See
-      also Section 3 of [I-D.ietf-rats-endorsements].
+      Attester's actual state matches certain conditions.  See also
+      Section 3 of [I-D.ietf-rats-endorsements].
 
    Environment:
       A logical partition within an Attester.  The term "Target
@@ -701,7 +701,9 @@ Table of Contents
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
-     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-digest / nil
+     payload: bstr .cbor tagged-unsigned-corim-map /
+                         hash-envelope-digest /
+                         nil
      signature: bstr
    ]
 
@@ -725,31 +727,32 @@ Table of Contents
 
 4.2.1.  Protected Header Map
 
-   ; protected corim header map needs to contain at least one of corim-meta (8) or CWT-Claims (15)
-   protected-corim-header-map = protected-corim-header-map-inline / protected-corim-header-map-hash-envelope
+   ; protected corim header map needs to contain at least one of
+   ; corim-meta (8) or CWT-Claims (15)
 
-   protected-corim-header-map-inline =
-     {
-       &(alg: 1) => int,
-       &(content-type: 3) => "application/rim+cbor",
-       meta-group,
-       * cose-label => cose-value
-     }
+   protected-corim-header-map = protected-corim-header-map-inline /
+                                protected-corim-header-map-hash-envelope
 
-   protected-corim-header-map-hash-envelope =
-     {
-       &(alg: 1) => int,
-       &(payload_hash_alg: 258) => int
-       &(payload_preimage_content_type: 259) => "application/rim+cbor",
-       ? &(payload_location: 260) => tstr
-       meta-group,
-       * cose-label => cose-value
-     }
+   protected-corim-header-map-inline = {
+     &(alg: 1) => int
+     &(content-type: 3) => "application/rim+cbor"
+     meta-group
+     * cose-label => cose-value
+   }
+
+   protected-corim-header-map-hash-envelope = {
+     &(alg: 1) => int,
+     &(payload_hash_alg: 258) => int
+     &(payload_preimage_content_type: 259) => "application/rim+cbor"
+     ? &(payload_location: 260) => tstr
+     meta-group
+     * cose-label => cose-value
+   }
 
    meta-group = ((
-           corim-meta-identity,
-           ? cwt-claims-identity,
-         ) // cwt-claims-identity)
+     corim-meta-identity,
+     ? cwt-claims-identity,
+   ) // cwt-claims-identity)
 
    corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
@@ -1629,6 +1632,7 @@ Table of Contents
      ? &(is-immutable: 7) => bool
      ? &(is-tcb: 8) => bool
      ? &(is-confidentiality-protected: 9) => bool
+     ? &(is-runtime-updatable: 10) => bool
      * $$flags-map-extension
    }>
 
@@ -1666,6 +1670,14 @@ Table of Contents
       measured environment is confidentiality protected.  For example,
       if the measured environment consists of memory, the sensitive
       values in memory are encrypted.
+
+   *  is-runtime-updatable (index 10): If the flag is true, the measured
+      environment supports being updated at run time without requiring a
+      system reboot for the update to take effect.  This is sometimes
+      referred to as "Live Firmware Activation" (LFA) or hitless update
+      or impactless updates.  The flag describes a capability of the
+      measured environment; it does not by itself imply that an update
+      has occurred or is pending.
 
 5.1.4.5.6.  Raw Values Types
 
@@ -1870,29 +1882,32 @@ Table of Contents
    *  ref-claims: Contains one or more reference measurements for the
       Target Environment
 
-   CoMID triples (Section 5.1.4) may contain multiple reference-triple-
-   record entries, each of which describes one or more possible states
-   for a particular Target Environment.
+   CoMID triples may contain multiple reference-triple-record entries.
+   Each reference-triple-record describes a reference state for the
+   Target Environment identified by ref-env.  Different reference states
+   for a Target Environment MUST be expressed using separate reference-
+   triple-record entries.  An exception to the above requirement is when
+   using range types to specify the ref-claims as explained further
+   down.
 
-   The ref-claims in a reference-triple-record can contain one or more
-   entries.  This multiplicity can have different meanings:
+   Since a given reference-triple-record can describe only a single
+   Target Environment, the reference state of a device comprising
+   multiple different Target Environments will necessarily be spread
+   across multiple reference-triple-records.  In other words, reference-
+   triple-record alone cannot, in the general case, describe the
+   reference state for a complex device.  The CoRIM author must
+   therefore rely on other CoMID triples (e.g., conditional
+   endorsements) or profile-specific conventions (e.g., using CoRIM or
+   CoMID boundaries, possibly in conjunction with CoTL) to express the
+   entire reference state of a complex device.
 
-   1.  Each ref-claims entry can represent a different possible state of
-       the Environment.
-
-   2.  Each ref-claims entry can represent a possible state of a
-       different measured element (identified by its mkey) within the
-       Environment.
-
-   Note that the same semantics can be expressed using multiple
-   Reference Value Triples.
-
-   Note also that a measurement key-value pair could be defined to have
-   multiple values or use "wild carding" to describe a range of
-   acceptable values, for example when using int-range and min-svn.
-
-   Any of these multiplicities could be used in the context of Reference
-   Values Triples.
+   The ref-claims of a given reference-triple-record can contain one or
+   more entries.  Each ref-claims entry represents the reference state
+   of a different measured element within the expected overall state of
+   the Target Environment.  As an encoding shortcut, some measurement
+   key-value pairs, for example when using int-range, min-svn and
+   integrity-registers, can be defined to encode multiple states
+   simultaneously.
 
    To process a reference-triple-record, the ref-env and ref-claims
    criteria are compared with Evidence entries.  First, ref-env is used
@@ -1911,12 +1926,12 @@ Table of Contents
 
 5.1.6.  Endorsed Values Triple
 
-   An Endorsed Values triple provides additional Endorsements - i.e.,
-   claims reflecting the actual state - for an existing Target
-   Environment.  For Endorsed Values Claims, the subject is a Target
+   Endorsed Values Triples provide additional Endorsements - i.e.,
+   claims reflecting actual state - for an existing Target Environment.
+   In an Endorsed Values Triple, the subject identifies a Target
    Environment, the object contains Endorsement Claims for the
-   Environment, and the predicate defines semantics for how the object
-   relates to the subject.
+   Environment, and the predicate asserts that these represent actual
+   state associated with the subject.
 
    The Endorsed Values Triple has the following structure:
 
@@ -1934,20 +1949,18 @@ Table of Contents
 
    *  endorsement: Additional Endorsement Claims.
 
-   To process a endorsed-triple-record the condition is compared with
+   To process a endorsed-triple-record, its condition is compared with
    existing Evidence, corroborated Evidence, and Endorsements.  If the
-   search criterion is satisfied, the endorsement Claims are combined
-   with the condition environment-map to form a new (actual state)
-   entry.  The new entry is added to the existing set of entries using
-   the Endorser's authority.
+   search criterion is satisfied, the endorsement is added to the
+   Attester's actual state under the Endorser's authority.
 
 5.1.7.  Conditional Endorsement Triple
 
-   A Conditional Endorsement Triple declares one or more conditions
-   that, once matched, results in augmenting the Attester's actual state
-   with the Endorsement Claims.  The conditions are expressed via
-   stateful-environment-records, which match Target Environments from
-   Evidence in certain reference state.
+   Conditional Endorsement Triples declare one or more conditions that,
+   once matched, results in augmenting the Attester's actual state with
+   the Endorsement Claims.  The conditions are expressed via stateful-
+   environment-records, which match Target Environments from Evidence in
+   certain reference state.
 
    The Conditional Endorsement Triple has the following structure:
 
@@ -2081,23 +2094,22 @@ Table of Contents
 
 5.1.9.  Device Identity Triple
 
-   Device Identity triples (see identity-triples in Section 5.1.4)
-   endorse that the keys were securely provisioned to the named Target
-   Environment.  A single Target Environment (as identified by
-   environment and mkey) may contain one or more cryptographic keys.
-   The existence of these keys is asserted in Evidence, Reference
-   Values, or Endorsements.
+   Device Identity Triples endorse that the listed keys were securely
+   provisioned to the named Target Environment.  A single Target
+   Environment (as identified by environment and mkey) may contain one
+   or more cryptographic keys.  The existence of these keys is asserted
+   in Evidence, Reference Values, or Endorsements.
 
    The device identity keys may have been used to authenticate the
    Attester device or may be held in reserve for later use.
 
-   Device Identity triples instruct a Verifier to perform key validation
+   Device Identity Triples instruct a Verifier to perform key validation
    checks, such as revocation, certificate path construction &
    verification, or proof of possession.  The Verifier SHOULD verify
    keys contained in Device Identity triples.
 
    Additional details about how a key was provisioned or is protected
-   may be asserted using Endorsements such as endorsed-triples.
+   may be asserted using Endorsements such as endorsed-triple-records.
 
    Depending on key formatting, as defined by $crypto-key-type-choice,
    the Verifier may take different steps to locate and verify the key.
@@ -2138,17 +2150,16 @@ Table of Contents
 
 5.1.10.  Attest Key Triple
 
-   Attest Key triples (see attest-key-triples in Section 5.1.4) endorse
-   that the keys were securely provisioned to the named Attesting
-   Environment.  An Attesting Environment (as identified by environment
-   and mkey) may contain one or more cryptographic keys.  The existence
-   of these keys is asserted in Evidence, Reference Values, or
-   Endorsements.
+   Attest Key Triples endorse that the keys were securely provisioned to
+   the named Attesting Environment.  An Attesting Environment (as
+   identified by environment and mkey) may contain one or more
+   cryptographic keys.  The existence of these keys is asserted in
+   Evidence, Reference Values, or Endorsements.
 
    The attestation keys may have been used to sign Evidence or may be
    held in reserve for later use.
 
-   Attest Key triples instruct a Verifier to perform key validation
+   Attest Key Triples instruct a Verifier to perform key validation
    checks, such as revocation, certification path construction and
    validation, or proof of possession.  The Verifier SHOULD verify keys
    contained in Attest Key triples.
@@ -2216,7 +2227,8 @@ Table of Contents
    Representing members of a DMT as domains enables the recursive
    construction of an entity's topology, such as a Composite Device (see
    Section 3.3 of [RFC9334]), where multiple lower-level domains can be
-   aggregated into a higher-level domain.
+   aggregated into a higher-level domain.  The domain topology must be
+   acyclic.
 
    domain-membership-triple-record = [
      domain-id: domain-type
@@ -5584,7 +5596,9 @@ Table of Contents
    +-----------------------+----------------------------+-------------+
    |9                      |is-confidentiality-protected|RFCthis      |
    +-----------------------+----------------------------+-------------+
-   |10-18446744073709551616|Unassigned                  |             |
+   |10                     |is-runtime-updatable        |RFCthis      |
+   +-----------------------+----------------------------+-------------+
+   |11-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
              Table 19: Flags Map Items Initial Registrations
@@ -6142,6 +6156,7 @@ Appendix A.  Base CoRIM CDDL
        ? &(is-immutable: 7) => bool,
        ? &(is-tcb: 8) => bool,
        ? &(is-confidentiality-protected: 9) => bool,
+       ? &(is-runtime-updatable: 10) => bool,
        * $$flags-map-extension,
    }>
    $group-id-type-choice /= tagged-uuid-type / tagged-bytes
