@@ -215,7 +215,7 @@ A cryptographic key can be a proxy for a human or organizational entity.
 Claim:
 : A piece of information, in the form of a key-value pair.
 See also {{Section 4.2 of -rats-arch}} and {{Section 2 of -jwt}}.
-Within this document a Claim is either Evidence, a Reference Value, or an Endorsement.
+Within this document, Claims appear in Evidence, a Reference Value or an Endorsement.
 
 Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
