@@ -3688,6 +3688,8 @@ The authors would like to thank the following people for their review and commen
 {{{Giri Mandyam}}},
 {{{Jeremy O'Donoghue}}},
 {{{Michael Richardson}}},
+{{{Dhawal Kumar}}},
+{{{Spencer Gilson}}},
 and
 {{{Sergei Trofimov}}}.
 
