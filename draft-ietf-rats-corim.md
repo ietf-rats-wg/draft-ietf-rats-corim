@@ -3687,8 +3687,11 @@ The authors would like to thank the following people for their review and commen
 {{{Jag Raman}}},
 {{{Giri Mandyam}}},
 {{{Jeremy O'Donoghue}}},
+{{{Michael Richardson}}},
+{{{Dhawal Kumar}}},
+{{{Spencer Gilson}}},
 and
-{{{Michael Richardson}}}.
+{{{Sergei Trofimov}}}.
 
 [^revise]: (This content needs to be revised. Consider removing for now and
     replacing with an issue.)
