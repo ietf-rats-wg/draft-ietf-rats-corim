@@ -2945,10 +2945,10 @@ The value stored under `measurement-values-map` codepoint 4 in an ACS-ECT MUST b
 
 The value stored under the C-ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
 
-If the C-ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is no value stored under codepoint 5, the processor treats it as if it were a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value, with all bits set.
+If the C-ECT `measurement-values-map` codepoint 4 is of type `tagged-bytes`, and there is no value stored under codepoint 5, the processor treats it as if it were a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value, with all bits set.
 The standard comparison function defined in this document removes the CBOR tag before performing the comparison.
 
-For backwards compatibility, if the C-ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, the processor treats it as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+For backwards compatibility, if the C-ECT `measurement-values-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, the processor treats it as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
 
 The comparison MUST return false if the lengths of the ACS-ECT entry value and the C-ECT value are different.
 
