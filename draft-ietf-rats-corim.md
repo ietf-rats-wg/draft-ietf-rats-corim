@@ -1491,7 +1491,7 @@ The existence of these keys is asserted in Evidence, Reference Values, or Endors
 
 The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.
 
-Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction and verification, or proof of possession.
+Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and verification, or proof of possession.
 If the key is certified, the certification path is validated according to {{Section 6 of -pkix-cert}}.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
