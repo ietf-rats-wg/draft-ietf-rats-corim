@@ -245,14 +245,16 @@ Table of Contents
       Evidence" in [RFC9334].
 
    Authority:
-      The entity asserting that a Claim is true.  Typically, a Claim is
-      asserted using a cryptographic key to digitally sign the Claim.  A
+      The entity that asserts a Claim.  Typically, a Claim is asserted
+      using a cryptographic key to digitally sign the Claim.  A
       cryptographic key can be a proxy for a human or organizational
       entity.
 
    Claim:
       A piece of information, in the form of a key-value pair.  See also
-      Section 4.2 of [RFC9334] and Section 2 of [RFC7519].
+      Section 4.2 of [RFC9334] and Section 2 of [RFC7519].  Within this
+      document, Claims appear in Evidence, a Reference Value or an
+      Endorsement.
 
    Class ID:
       An identifier for an Environment that is shared among similar
@@ -1449,10 +1451,6 @@ Table of Contents
    [I-D.ydb-rats-cca-endorsements]) or to identify multiple measured
    element instances within the same environment.  The initial types
    defined are OID, UUID, uint, and tstr.
-
-   A single anonymous measurement-map is allowed within the same
-   environment.  Two or more measurement-map entries within the same
-   environment MUST populate mkey.
 
    $measured-element-type-choice /= tagged-oid-type
    $measured-element-type-choice /= tagged-uuid-type
@@ -4136,7 +4134,7 @@ Table of Contents
    may additionally be a tagged-masked-raw-value entry, which specifies
    an expected value and a mask.
 
-   If the C-ECT measurement-value-map codepoint 4 is of type tagged-
+   If the C-ECT measurement-values-map codepoint 4 is of type tagged-
    bytes, and there is no value stored under codepoint 5, the processor
    treats it as if it were a tagged-masked-raw-value with the value
    field holding the same contents and a mask of the same length as the
@@ -4144,7 +4142,7 @@ Table of Contents
    in this document removes the CBOR tag before performing the
    comparison.
 
-   For backwards compatibility, if the C-ECT measurement-value-map
+   For backwards compatibility, if the C-ECT measurement-values-map
    codepoint 4 is of type tagged-bytes, and there is a mask stored under
    codepoint 5, the processor treats it as a tagged-masked-raw-value
    with the value field holding the same contents and a mask holding the
@@ -6490,8 +6488,8 @@ Acknowledgments
 
    The authors would like to thank the following people for their review
    and comments on this document: Carl Wallace, Hannes Tschofenig,
-   Steven Bellock, Jag Raman, Giri Mandyam, Jeremy O'Donoghue, and
-   Michael Richardson.
+   Steven Bellock, Jag Raman, Giri Mandyam, Jeremy O'Donoghue, Michael
+   Richardson, Dhawal Kumar, Spencer Gilson, and Sergei Trofimov.
 
 Contributors
 
