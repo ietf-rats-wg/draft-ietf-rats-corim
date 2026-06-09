@@ -168,12 +168,16 @@ Ideally, only the supply chain actor who is the most knowledgeable entity regard
 Attesters vary across vendors and even across products from a single vendor.
 Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
-In order to promote inter-operability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
+In order to promote interoperability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
 Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
-See {{sec-verifier-rec}}.
+In essence, the goal of CoRIMs is to describe Attesters to Verifiers.
 
+This document is divided into two parts.
+The core data model is described in {{sec-corim}}, {{sec-comid}} and {{sec-cotl}}.
+These sections describe the primary CoRIM structures, the Concise Module Identifier (CoMID), which is used to express Endorsements and Reference Values, as well as the Concise Tag Lists (CoTL), which express the currently active sources of Endorsements and Reference Values.
+{{sec-reference-verifier}} outlines the architecture of a reference Verifier, detailing the logical phases of Evidence appraisal and explaining how the CoRIM processor validates and augments data according to the "reconciliation" principles set out in {{sec-verifier-rec}}.
 
 ## Terminology and Requirements Language
 
@@ -267,56 +271,49 @@ In CoRIM, unlike RDF, the predicate of the triple is implicit and is encoded in 
 CoRIM triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
 See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
-# Verifier Reconciliation {#sec-verifier-rec}
+# How the Verifier Uses CoRIM: The Reconciliation Process {#sec-verifier-rec}
 
-This specification describes the CoRIM format and documents how a Verifier must process the CoRIM.
-This ensures that the behaviour of the CoRIM-based appraisal is predictable and consistent, in a word deterministic.
+When a Verifier receives Evidence from an Attester and a CoRIM containing Reference Values and Endorsements from a manufacturer, it has to make sense of it all.
+The specification calls this process "Verifier reconciliation".
+As these inputs arrive in different formats from different sources, the Verifier translates them all into a single, consistent internal representation format.
 
-A Verifier needs to reconcile its various inputs, with CoRIM being one of them.
-In addition to the external CoRIM documents, the Verifier is expected to create an internal representation for each input and map each external representation to an internal one.
-By using the internal representation, the Verifier processes inputs as if they are part of a conversation, keeping track of who said what.
-The origin of the inputs is tracked as *authority*.
-The authority for the Claims in a CoRIM is the CoRIM issuer.
-To this effect, this specification defines one possible internal representation of the attester's actual state for use during the appraisal procedure, known as Appraisal Claims Set (ACS).
+The Evidence appraisal process can be thought of as a conversation mediated by the Verifier.
+The Verifier needs to keep a strict record of exactly what is being claimed and, crucially, who is making the claim (known as the "authority").
+To achieve this, the Verifier creates an internal scratchpad called the Appraisal Claims Set (ACS).
 
-Effectively, Attesters, Reference Value Providers, Endorsers, Verifier Owners, Relying Parties, and even the Verifier potentially all contribute to the conversation.
-Each producer of corresponding RATS Conceptual Messages can assert Claims about an Attester's actual or allowed state.
-The Verifier's objective is to produce a list of Claims that describe the Attester's presumed actual state.
-Producers of RATS Conceptual Messages can assert contradictory assertions.
-For example, a compromised Attester may produce false claims that conflict with the Reference Values provided by a Reference Value Provider (RVP).
-In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the ACS. Please see {{fig-verifier-internal}}.
+## Resolving Conflicts with the ACS
 
-A Verifier relies on input from appraisal policy to identify relevant assertions included in the ACS.
-For example, if a policy requires corroborated assertions issued by a particular RVP, then those assertions may be conveyed as Attestation Results.
-The Verifier may produce new assertions as a result of an applied appraisal policy.
-For example, if an appraisal procedure finds all of the components of a subsystem are configured correctly, the policy may direct the Verifier to produce new assertions, "Subsystem=X" has the Claim "TRUSTED=TRUE".
-Consequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual Messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion (the authority), and has applied Conceptual Message constraints to the assertion.
+Multiple parties contribute to the "conversation" about a device's trustworthiness: the device itself (the Attester), the manufacturer (the CoRIM issuer), and potentially the organization relying on the device (the Verifier Owner).
 
-The CoRIM data model specified in this document covers the RATS Conceptual Message types, "Reference Values" and "Endorsements".
-Reference values and Endorsements are required for Verifier reconciliation, and Evidence is required for corresponding internal ACS creation as illustrated in {{sec-interact-acs}}.
+Sometimes, these parties contradict each other.
+For instance, an outdated or compromised device may report software measurements that conflict with those authorized by the manufacturer.
+The Verifier uses the ACS to determine the actual state of the Attester, as defined by the various entities providing inputs.
 
-## Internal Representation {#sec-internal-rep}
+Different RATS Conceptual Messages interact to build the final ACS:
 
-In this document CDDL is used to specify both the CoRIM structure and to specify an internal representation for use in the appraisal procedure.
-The actual internal representation of a Verifier is implementation-specific and out-of-scope of this document.
-Requirements for an internal representation of Conceptual Messages are defined in {{tbl-cmrr}}, where each Conceptual Message type has a structure as depicted by the *Structure* column.
-The internal representations used by this document are defined in {{sec-ir}}.
-
-## Interacting with an ACS {#sec-interact-acs}
-
-Conceptual Messages interact with an ACS by specifying criteria that should be met by the ACS and by presenting the assertions that should be added to the ACS if the criteria are satisfied.
-The processing sequence of Conceptual Message interaction with ACS is guided by {{sec-match-and-augment}}.
-
-The internal representations of Conceptual Messages and ACS SHOULD satisfy the requirements in {{tbl-cmrr}} for Verifier reconciliation and appraisal processing:
-
-| CM Type | Structure | Description |
-|---
-| Evidence | List of Evidence claims | If the Attester is authenticated, add Evidence claims to the ACS with Attester authority |
-| Reference Values | List of Reference Values claims | If a reference value in a CoRIM matches claims in the ACS, then the authority of the CoRIM issuer is added to those claims. |
-| Endorsements | List of expected actual state claims, List of Endorsed Values claims | If the list of expected claims are in the ACS, then add the list of Endorsed Values claims to the ACS with Endorser authority |
-| Series Endorsements | List of expected actual state claims and a series of selection-addition tuples | If the expected claims are in the ACS, and if the series selection condition is satisfied, then add the additional claims to the ACS with Endorser authority. See {{sec-ir-endval}} |
+| Input Type | Source | How the Verifier Updates the ACS |
+| --- | --- | --- |
+| **Evidence** | The Device | If the device proves its identity, its claims are added to the ACS and tagged with the device's authority. |
+| **Reference Values** | CoRIM | The Verifier checks the Reference Values in the CoRIM against the ACS. If a value matches a claim the device just made, that claim gets an extra tag noting the manufacturer agrees with it. |
+| **Endorsements** | CoRIM | If the device's claims meet certain expectations in the ACS, the Verifier adds new, broader claims (Endorsed Values) to the ACS, tagged with the manufacturer's authority. |
 {: #tbl-cmrr title="Conceptual Message Representation Requirements"}
 
+*Note: If the Attester's Evidence is not matched and corroborated by the manufacturer's Reference Values, the manufacturer's claims do not get added to the ACS.*
+
+## Applying the Appraisal Policy of Evidence
+
+Once the ACS is built and the conversation is reconciled, the Verifier consults its Appraisal Policy.
+
+The policy dictates what the final Attestation Result should be based on the facts in the ACS.
+For example, a policy might state that an assertion is only valid if it is explicitly backed by a specific manufacturer's Reference Value.
+
+If everything looks correct, the policy can even instruct the Verifier to generate entirely new conclusions.
+For instance, if all individual components in a subsystem check out, the Verifier might generate a final, definitive claim stating `"TRUSTED = TRUE"`.
+
+## Deterministic Results
+
+To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
+However, the exact way a Verifier's software is coded to store this internal representation is up to the developer, so long as it strictly follows the reconciliation rules outlined above.
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
@@ -1828,7 +1825,7 @@ When used as an identifier the responsible allocator entity SHOULD ensure unique
 {::include cddl/tagged-bytes.cddl}
 ~~~
 
-# Reference Verifier
+# Reference Verifier {#sec-reference-verifier}
 
 This section outlines the behaviour of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
 
