@@ -208,13 +208,14 @@ Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
 Authority:
-: The entity asserting that a Claim is true.
+: The entity that asserts a Claim.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
 A cryptographic key can be a proxy for a human or organizational entity.
 
 Claim:
 : A piece of information, in the form of a key-value pair.
 See also {{Section 4.2 of -rats-arch}} and {{Section 2 of -jwt}}.
+Within this document, Claims appear in Evidence, a Reference Value or an Endorsement.
 
 Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
@@ -445,6 +446,8 @@ CoMID ({{sec-comid}}), a CoSWID ({{-coswid}}), or a CoTL ({{sec-cotl}}).
 
 The locator map contains pointers to repositories where dependent manifests,
 certificates, or other relevant information can be retrieved by the Verifier.
+The contents of the locator map are purely advisory.
+Verifiers are not required to follow these URLs or use the information retrieved from the corresponding resources.
 
 ~~~ cddl
 {::include cddl/corim-locator-map.cddl}
@@ -1039,9 +1042,6 @@ It can be used to identify the type of measured element (see {{-cca-endorsements
 multiple measured element instances within the same environment.
 The initial types defined are OID, UUID, uint, and tstr.
 
-A single anonymous `measurement-map` is allowed within the same environment.
-Two or more measurement-map entries within the same environment MUST populate `mkey`.
-
 ~~~ cddl
 {::include cddl/measured-element-type-choice.cddl}
 ~~~
@@ -1489,7 +1489,8 @@ The existence of these keys is asserted in Evidence, Reference Values, or Endors
 
 The device identity keys may have been used to authenticate the Attester device or may be held in reserve for later use.
 
-Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certificate path construction & verification, or proof of possession.
+Device Identity Triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and verification, or proof of possession.
+If the key is certified (i.e., a certificate is issued for the key by a certification authority), the certification path is validated according to {{Section 6 of -pkix-cert}}.
 The Verifier SHOULD verify keys contained in Device Identity triples.
 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triple-record`s.
@@ -1527,6 +1528,7 @@ The existence of these keys is asserted in Evidence, Reference Values, or Endors
 The attestation keys may have been used to sign Evidence or may be held in reserve for later use.
 
 Attest Key Triples instruct a Verifier to perform key validation checks, such as revocation, certification path construction and validation, or proof of possession.
+If the key is certified, the certification path is validated according to {{Section 6 of -pkix-cert}}.
 The Verifier SHOULD verify keys contained in Attest Key triples.
 
 Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as `endorsed-triples`.
@@ -3013,10 +3015,10 @@ The value stored under `measurement-values-map` codepoint 4 in an ACS-ECT MUST b
 
 The value stored under the C-ECT `measurement-values-map` codepoint 4 may additionally be a `tagged-masked-raw-value` entry, which specifies an expected value and a mask.
 
-If the C-ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is no value stored under codepoint 5, the processor treats it as if it were a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value, with all bits set.
+If the C-ECT `measurement-values-map` codepoint 4 is of type `tagged-bytes`, and there is no value stored under codepoint 5, the processor treats it as if it were a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` of the same length as the value, with all bits set.
 The standard comparison function defined in this document removes the CBOR tag before performing the comparison.
 
-For backwards compatibility, if the C-ECT `measurement-value-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, the processor treats it as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+For backwards compatibility, if the C-ECT `measurement-values-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, the processor treats it as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
 
 The comparison MUST return false if the lengths of the ACS-ECT entry value and the C-ECT value are different.
 
@@ -3755,8 +3757,11 @@ The authors would like to thank the following people for their review and commen
 {{{Jag Raman}}},
 {{{Giri Mandyam}}},
 {{{Jeremy O'Donoghue}}},
+{{{Michael Richardson}}},
+{{{Dhawal Kumar}}},
+{{{Spencer Gilson}}},
 and
-{{{Michael Richardson}}}.
+{{{Sergei Trofimov}}}.
 
 [^revise]: (This content needs to be revised. Consider removing for now and
     replacing with an issue.)
