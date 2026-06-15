@@ -2028,21 +2028,19 @@ Any duplicates MUST be pruned.
 Two `element-map`s containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
 These are effectively two different acceptable states that need to be processed separately.
 
-##### Domain ECT {#sec-domain-ect}
+##### Domain Membership ECT {#sec-domain-ect}
 
-A Domain ECT (`M-ECT`) is used to represent domain membership Claims between environments.
-It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes that comproses the domain.
+A Domain Membership ECT (`M-ECT`) is used to represent domain membership Claims between environments.
+It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes that comprises the domain.
 
 ~~~ cddl
 {::include cddl/intrep-m-ect.cddl}
 ~~~
-{: #fig-d-ect title="Domain ECT"}
+{: #fig-d-ect title="Domain Membership ECT"}
 
 The following describes the specialized members of the `M-ECT`.
 
 * `members`: Identifies the set of members of the domain rooted in the parent `environment`.
-
-**Claim Names.**
 
 A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
 In a Domain ECT, the `environment` attribute encodes the name of the Claim.
@@ -2052,6 +2050,32 @@ The value of the Claim is encoded in the `members` attributes.
 
 If two Domain ECTs have the same `environment`, `authority` and `profile` then their `members` are merged.
 Any duplicates MUST be pruned.
+
+
+##### Trust Dependency ECT {#sec-trust-ect}
+
+A Trust Depedency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
+It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprises the trust chain.
+
+~~~ cddl
+{::include cddl/intrep-t-ect.cddl}
+~~~
+{: #fig-d-ect title="Trust Dependency ECT"}
+
+The following describes the specialized members of the `T-ECT`.
+
+* `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
+
+
+A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
+In a Trust ECT, the `environment` attribute encodes the name of the Claim.
+The value of the Claim is encoded in the `trustees` attributes.
+
+**Merge Rules.**
+
+If two Trust ECTs have the same `environment`, `authority` and `profile` then their `trustees` are merged.
+Any duplicates MUST be pruned.
+
 
 ##### Key ECT {#sec-key-ect}
 
