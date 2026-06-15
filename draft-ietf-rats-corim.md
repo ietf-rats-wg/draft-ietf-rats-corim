@@ -172,7 +172,7 @@ In order to promote interoperability, consistency and accuracy in the representa
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
 Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
 CoRIM is extensible to accommodate supply chain diversity while supporting a common representation for Endorsement and Reference Value inputs to Verifiers.
-In essence, the goal of CoRIMs is to describe Attesters to Verifiers.
+In essence, the goal of a CoRIM is to describe expected Attester state to Verifiers.
 
 This document is divided into two parts.
 The core data model is described in {{sec-corim}}, {{sec-comid}} and {{sec-cotl}}.
