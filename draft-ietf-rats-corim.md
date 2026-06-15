@@ -2060,7 +2060,7 @@ It describes the direct relationship between a specific node in the trust domain
 ~~~ cddl
 {::include cddl/intrep-t-ect.cddl}
 ~~~
-{: #fig-d-ect title="Trust Dependency ECT"}
+{: #fig-t-ect title="Trust Dependency ECT"}
 
 The following describes the specialized members of the `T-ECT`.
 
