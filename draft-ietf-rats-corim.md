@@ -280,7 +280,9 @@ The specification calls this process "Verifier reconciliation".
 As these inputs arrive in different formats from different sources, the Verifier translates them all into a single, consistent internal representation format.
 
 The Evidence appraisal process can be thought of as a conversation mediated by the Verifier.
-The Verifier needs to keep a strict record of exactly what is being claimed and, crucially, who is making the claim (known as the "authority").
+The Verifier keeps a strict record of exactly what is being claimed in the various Conceptual Message inputs and, crucially, who is making the claims (known as the "authority").
+Authority determines which entity asserts which Claims about an Attester.
+Conceptually, the various entities are having a conversation about the Attester, which the Verifier records.
 To achieve this, the Verifier creates an internal scratchpad called the Appraisal Claims Set (ACS).
 
 ## Resolving Conflicts with the ACS
