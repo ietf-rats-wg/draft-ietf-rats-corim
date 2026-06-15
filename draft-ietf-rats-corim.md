@@ -283,7 +283,7 @@ The Evidence appraisal process can be thought of as a conversation mediated by t
 The Verifier keeps a strict record of exactly what is being claimed in the various Conceptual Message inputs and, crucially, who is making the claims (known as the "authority").
 Authority determines which entity asserts which Claims about an Attester.
 Conceptually, the various entities are having a conversation about the Attester, which the Verifier records.
-To achieve this, the Verifier creates an internal scratchpad called the Appraisal Claims Set (ACS).
+To achieve this, the Verifier creates an internal scratchpad of Attester state called the Appraisal Claims Set (ACS).
 
 ## Resolving Conflicts with the ACS
 
