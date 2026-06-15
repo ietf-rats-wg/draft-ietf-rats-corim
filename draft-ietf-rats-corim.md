@@ -177,7 +177,9 @@ In essence, the goal of a CoRIM is to describe expected Attester state to Verifi
 This document is divided into two parts.
 The core data model is described in {{sec-corim}}, {{sec-comid}} and {{sec-cotl}}.
 These sections describe the primary CoRIM structures, the Concise Module Identifier (CoMID), which is used to express Endorsements and Reference Values, as well as the Concise Tag Lists (CoTL), which express the currently active sources of Endorsements and Reference Values.
-{{sec-reference-verifier}} outlines the architecture of a reference Verifier, detailing the logical phases of Evidence appraisal and explaining how the CoRIM processor validates and augments data according to the "reconciliation" principles set out in {{sec-verifier-rec}}.
+{{sec-reference-verifier}} outlines the architecture of a reference Verifier.
+The architecture details four phases of the appraisal process that explain how CoRIM inputs are validated, evaluated relative to Evidence, and ultimately accepted as additional expressions of Attester state data.
+The four phases of appraisal are called "reconciliation", which applies principles described in {{sec-verifier-rec}}.
 
 ## Terminology and Requirements Language
 
