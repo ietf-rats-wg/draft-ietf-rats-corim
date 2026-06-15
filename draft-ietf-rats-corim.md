@@ -273,7 +273,7 @@ In CoRIM, unlike RDF, the predicate of the triple is implicit and is encoded in 
 CoRIM triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
 See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
-# How the Verifier Uses CoRIM: The Reconciliation Process {#sec-verifier-rec}
+# How the Verifier Uses CoRIM: The Reconciliation Principles {#sec-verifier-rec}
 
 When a Verifier receives Evidence from an Attester and a CoRIM containing Reference Values and Endorsements from a manufacturer, it has to make sense of it all.
 The specification calls this process "Verifier reconciliation".
