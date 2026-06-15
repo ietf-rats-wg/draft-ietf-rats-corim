@@ -1571,7 +1571,7 @@ This allows a topological description of an Attester to be expressed by linking 
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
 
 Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
-The domain topology must be acyclic.
+The domain topology MUST be acyclic.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
@@ -1941,7 +1941,7 @@ An ECT ({{fig-ect}}) can be one of the following specializations:
 
 * `E-ECT` (Element ECT): used to represent Evidence, Reference Value and Endorsement Claims, as detailed in {{sec-element-ect}};
 
-* `D-ECT` (Domain Membership ECT): used to represent domain membership and trust dependencies Claims, as detailed in {{sec-domain-ect}};
+* `M-ECT` (Domain Membership ECT): used to represent domain membership Claims, as detailed in {{sec-domain-ect}};
 
 * `T-ECT` (Trust Dependency ECT): used to represent trust dependency Claims, as detailed in {{sec-domain-ect}};
 
