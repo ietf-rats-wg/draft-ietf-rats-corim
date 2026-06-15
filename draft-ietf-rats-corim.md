@@ -1578,10 +1578,7 @@ The domain topology MUST be acyclic.
 ~~~
 {: #triple-dm title="Domain Membership Triple Definition"}
 
-<cref>
-[TODO]
-Add references to domain membership transformation and domain membership processing sections.
-</cref>
+Domain membership triples are transformed into an internal representation (see {{sec-trans-domain-mem}}) then processed as described in {{sec-proc-dm}}.
 
 #### Trust Dependency Triple {#sec-comid-triple-trust-dependency}
 
@@ -1631,7 +1628,7 @@ Trust dependency typically exists if any of the following are true:
 * A trustee executes security-relevant code in response to an execution thread that originates from the `domain-id` environment.
 * A trustee is a component embedded within another component identified by `domain-id`.
 
-Trust dependency triples are transformed into an internal representation (see {{sec-trans-domain-mem}}) then processed as described in {{sec-proc-td}}.
+Trust dependency triples are transformed into an internal representation (see {{sec-trans-trust-dep}}) then processed as described in {{sec-proc-td}}.
 
 ### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
