@@ -2030,29 +2030,27 @@ These are effectively two different acceptable states that need to be processed 
 
 ##### Domain ECT {#sec-domain-ect}
 
-A Domain ECT (`D-ECT`) is used to represent domain membership and trust dependency Claims between environments.
-It describes the direct relationship between a specific node in the membership or trust dependency graph (i.e., the parent `environment`) and the nodes to which it is connected (i.e., the `children`).
+A Domain ECT (`M-ECT`) is used to represent domain membership Claims between environments.
+It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes to which it is connected.
 
 ~~~ cddl
-{::include cddl/intrep-d-ect.cddl}
+{::include cddl/intrep-m-ect.cddl}
 ~~~
 {: #fig-d-ect title="Domain ECT"}
 
-The following describes the specialized members of the `D-ECT`.
+The following describes the specialized members of the `M-ECT`.
 
-* `children`: Identifies the set of members of the domain rooted in the parent `environment`.
-
-* `kind`: Identifies the type of Domain triple that originated the tuple: `member` stands for Domain Membership, `trustee` is for Trust Dependency.
+* `members`: Identifies the set of members of the domain rooted in the parent `environment`.
 
 **Claim Names.**
 
 A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
 In a Domain ECT, the `environment` attribute encodes the name of the Claim.
-The value of the Claim is encoded in the `kind` and `children` attributes.
+The value of the Claim is encoded in the `members` attributes.
 
 **Merge Rules.**
 
-If two Domain ECTs have the same `environment`, `kind`, `authority` and `profile` then their `children` are merged.
+If two Domain ECTs have the same `environment`, `authority` and `profile` then their `members` are merged.
 Any duplicates MUST be pruned.
 
 ##### Key ECT {#sec-key-ect}
@@ -2239,7 +2237,7 @@ The internal representation of Domain Membership uses the `dm` relation ({{fig-d
 ~~~
 {: #fig-domain-ect-cond title="Profiled ECT for Domain Membership (condition)"}
 
-Only the `children` are used for matching, not the `environment`.
+Only the `members` are used for matching, not the `environment`.
 Therefore, the `environment` attribute is excluded from the ECT condition.
 
 {{fig-domain-ect-add}} shows the profiled Domain ECT for Domain Membership additions.
@@ -2590,10 +2588,10 @@ FUNC transform(
 
     IF TYPEOF(T) == domain-membership-triple-record:
         item.condition.kind = item.addition.kind = member
-        item.condition.children = T.members
+        item.condition.members = T.members
     ELIF TYPEOF(T) == trust-dependency-triple-record:
         item.condition.kind = item.addition.kind = trustee
-        item.condition.children = T.trustees
+        item.condition.members = T.trustees
 
     item.addition.environment = T.domain-id
     item.addition.authority = signer
@@ -2784,7 +2782,7 @@ This allows the algorithm to execute in one pass.
 For each `dm` entry, the condition ECT is compared with either an ACS Element ECT with `cmtype` 2 (i.e., evidence) or a Domain ECT with `kind` 0 (i.e., member).
 All other ECTs are ignored.
 
-If all the `children` environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
+If all the `members` environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
 Otherwise, processing moves to processing the next `dm` entry.
 
 ##### Processing `td` Relations {#sec-proc-td}
@@ -2840,7 +2838,7 @@ If the condition ECT contains a profile, but the profile does not define an algo
 
 The specific comparisons performed depend on the type of relation being processed.
 In general, the processor will perform comparisons based on `environment` (see {{sec-compare-environment}}) as well as more specialized comparisons based on the type of ECT matched.
-Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list` (<cref>[TODO]</cref>), and Domain ECTs will typically match on `children` (see {{sec-compare-environment}}).
+Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list` (<cref>[TODO]</cref>), and Domain ECTs will typically match on `members` (see {{sec-compare-environment}}).
 
 <cref>
 [TBC]
