@@ -2799,7 +2799,7 @@ If there is no match, processing moves to the next dm entry, till the list is ex
 
 If there are additions to ACS, then the above algorithm is repeated, till there are no more additions. When there are no more additions to ACS the algorithm is terminated.
 
-This algorithm can be optimised to complete in a single iteration, if the `dm` entries are topologically sorted (bottom up, from leaves to root).
+This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.
 
 ##### Processing `td` Relations {#sec-proc-td}
