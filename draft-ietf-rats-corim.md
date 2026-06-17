@@ -2685,19 +2685,15 @@ FUNC init_staging_area(
 
 ### ACS Augmentation (Phases 2, 3 and 4) {#sec-match-and-augment}
 
-This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester.
+This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester as asserted by RATS Roles (i.e., Attester, Reference Value Provider, and Endorser).
 
-At a high level, the process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
+Generally, the match and augment process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
 If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
 Otherwise, the algorithm moves on to the next relation.
 Any augmentations to the ACS (i.e., the `acs::APPEND` operation in {{algo-match-and-augment}}) MUST be atomic.
-Once all the relations in the staging area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.
-
-<cref>
-[TODO]
-The match_and_augment algorithm doesn't generally apply to trust dependency. The condition is not derived from the triple.
-The pseudo code defines `ACS` ss input but uses the type `acs` as input.
-</cref>
+Once all the relations in the staging area have been processed, the CoRIM processor forwards the augmented ACS to subsequent appraisal processors as needed.
+Not all CoRIM triples follow the match and augment procedure exactly.
+For example, trust dependency doesn't specify an item.condition syntax, as the check for domain membership prerequisite is algorithmic.
 
 ~~~ pseudocode
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
