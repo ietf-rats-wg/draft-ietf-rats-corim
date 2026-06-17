@@ -5527,20 +5527,17 @@ FUNC init_staging_area(
           <h4 id="name-acs-augmentation-phases-2-3">
 <a href="#section-8.2.4" class="section-number selfRef">8.2.4. </a><a href="#name-acs-augmentation-phases-2-3" class="section-name selfRef">ACS Augmentation (Phases 2, 3 and 4)</a>
           </h4>
-<p id="section-8.2.4-1">This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester.<a href="#section-8.2.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.2.4-2">At a high level, the process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
+<p id="section-8.2.4-1">This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester as asserted by RATS Roles (i.e., Attester, Reference Value Provider, and Endorser).<a href="#section-8.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4-2">Generally, the match and augment process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
 If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
 Otherwise, the algorithm moves on to the next relation.
 Any augmentations to the ACS (i.e., the <code>acs::APPEND</code> operation in <a href="#algo-match-and-augment" class="auto internal xref">Figure 45</a>) MUST be atomic.
-Once all the relations in the staging area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.<a href="#section-8.2.4-2" class="pilcrow">¶</a></p>
-<p id="section-8.2.4-3"><span class="cref">
-[TODO]
-The match_and_augment algorithm doesn't generally apply to trust dependency. The condition is not derived from the triple.
-The pseudo code defines `ACS` ss input but uses the type `acs` as input.
-</span><a href="#section-8.2.4-3" class="pilcrow">¶</a></p>
+Once all the relations in the staging area have been processed, the CoRIM processor forwards the augmented ACS to subsequent appraisal processors as needed.
+Not all CoRIM triples follow the match and augment procedure exactly.
+For example, trust dependency doesn't specify an item.condition syntax, as the check for domain membership prerequisite is algorithmic.<a href="#section-8.2.4-2" class="pilcrow">¶</a></p>
 <span id="name-match-and-augment-algorithm"></span><div id="algo-match-and-augment">
 <figure id="figure-45">
-            <div class="lang-pseudocode sourcecode" id="section-8.2.4-4.1">
+            <div class="lang-pseudocode sourcecode" id="section-8.2.4-3.1">
 <pre>
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
@@ -5556,10 +5553,10 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
 <a href="#name-match-and-augment-algorithm" class="selfRef">Match and Augment Algorithm</a>
             </figcaption></figure>
 </div>
-<p id="section-8.2.4-5">The <code>acs::MATCH</code> operation depends on the type of relation.
+<p id="section-8.2.4-4">The <code>acs::MATCH</code> operation depends on the type of relation.
 The matching logic for each type of relation is described in the following sections.
 The <code>acs::APPEND</code> operation also depends on the type of relation.
-This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see <a href="#sec-proc-rv" class="auto internal xref">Section 8.2.4.2</a> for an example of the latter).<a href="#section-8.2.4-5" class="pilcrow">¶</a></p>
+This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see <a href="#sec-proc-rv" class="auto internal xref">Section 8.2.4.2</a> for an example of the latter).<a href="#section-8.2.4-4" class="pilcrow">¶</a></p>
 <div id="ordering-of-relations">
 <section id="section-8.2.4.1">
             <h5 id="name-ordering-of-relations">
