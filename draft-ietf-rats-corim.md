@@ -2028,21 +2028,19 @@ Any duplicates MUST be pruned.
 Two `element-map`s containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
 These are effectively two different acceptable states that need to be processed separately.
 
-##### Domain ECT {#sec-domain-ect}
+##### Domain Membership ECT {#sec-domain-ect}
 
-A Domain ECT (`M-ECT`) is used to represent domain membership Claims between environments.
-It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes to which it is connected.
+A Domain Membership ECT (`M-ECT`) is used to represent domain membership Claims between environments.
+It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes that comprises the domain.
 
 ~~~ cddl
 {::include cddl/intrep-m-ect.cddl}
 ~~~
-{: #fig-d-ect title="Domain ECT"}
+{: #fig-d-ect title="Domain Membership ECT"}
 
 The following describes the specialized members of the `M-ECT`.
 
 * `members`: Identifies the set of members of the domain rooted in the parent `environment`.
-
-**Claim Names.**
 
 A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
 In a Domain ECT, the `environment` attribute encodes the name of the Claim.
@@ -2052,6 +2050,32 @@ The value of the Claim is encoded in the `members` attributes.
 
 If two Domain ECTs have the same `environment`, `authority` and `profile` then their `members` are merged.
 Any duplicates MUST be pruned.
+
+
+##### Trust Dependency ECT {#sec-trust-ect}
+
+A Trust Depedency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
+It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprises the trust chain.
+
+~~~ cddl
+{::include cddl/intrep-t-ect.cddl}
+~~~
+{: #fig-t-ect title="Trust Dependency ECT"}
+
+The following describes the specialized members of the `T-ECT`.
+
+* `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
+
+
+A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
+In a Trust ECT, the `environment` attribute encodes the name of the Claim.
+The value of the Claim is encoded in the `trustees` attributes.
+
+**Merge Rules.**
+
+If two Trust ECTs have the same `environment`, `authority` and `profile` then their `trustees` are merged.
+Any duplicates MUST be pruned.
+
 
 ##### Key ECT {#sec-key-ect}
 
@@ -2567,34 +2591,23 @@ FUNC transform(
 
 Note that keys are added under the authority of the verifier.
 
-##### Domain Transformation {#sec-trans-domain-mem}
+##### Domain Membership Transformation {#sec-trans-domain-mem}
 
 Domain membership transformation maps Domain Membership triples into `dm` relations (see {{sec-ir-domain-mem}}).
 
-Prior to adding a domain membership relation, a `domain-membership-triple-record` ({{triple-dm}}) is transformed into a `domain-item` ({{fig-dm}}) using the domain membershp transformation algorithm {{algo-domain-member-transform}}.
-
-<cref>
-[TODO]
-Note: This pseudo code needs to be rewritten to remove trust dependency logic.
-</cref>
+Prior to adding a domain membership relation, a `domain-membership-triple-record` ({{triple-dm}}) is transformed into a `domain-item` ({{fig-dm}}) using the domain membership transformation algorithm {{algo-domain-member-transform}}.
 
 ~~~ pseudocode
 FUNC transform(
-    T: domain-membership-triple-record / trust-dependency-triple-record
+    T: domain-membership-triple-record
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -> domain-item {
     item := domain-item::NEW()
-
-    IF TYPEOF(T) == domain-membership-triple-record:
-        item.condition.kind = item.addition.kind = member
-        item.condition.members = T.members
-    ELIF TYPEOF(T) == trust-dependency-triple-record:
-        item.condition.kind = item.addition.kind = trustee
-        item.condition.members = T.trustees
-
+    item.condition.members = T.members
     item.addition.environment = T.domain-id
     item.addition.authority = signer
+    item.addition.members = T.members
 
     IF profile:
         item.addition.profile = profile
@@ -2773,17 +2786,21 @@ Note: If the Ordering of Relations section defines pseudo code for acs::SORT() t
 
 Domain Membership relations describe the expected topological arrangement of the Attester.
 
-Domains are matched with ACS entries by iterating through the `dm` list.
+Domains are matched with ACS entries by iterating through the dm list, in the staging area.
 
-The following algorithm assumes that the graph described by the condition ECTs in the `dm` relation is acyclic.
-It also assumes that the `dm-item`s in the `dm` relation are topologically sorted (bottom up, from leaves to root).
-This allows the algorithm to execute in one pass.
+The following algorithm assumes that the graph described by the condition ECTs in the dm relation is acyclic.
 
-For each `dm` entry, the condition ECT is compared with either an ACS Element ECT with `cmtype` 2 (i.e., evidence) or a Domain ECT with `kind` 0 (i.e., member).
-All other ECTs are ignored.
+For each dm entry (D-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
 
-If all the `members` environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
-Otherwise, processing moves to processing the next `dm` entry.
+If all the `member` environments in the condition ECT have a matching ECT in the ACS, the `addition ECT` is added to the ACS.
+The matching dm entry is pruned from the dm list.
+
+If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.
+
+If there are additions to ACS, then the above algorithm is repeated, till there are no more additions. When there are no more additions to ACS the algorithm is terminated.
+
+This algorithm can be optimised to complete in a single iteration, if the `dm` entries are topologically sorted (bottom up, from leaves to root).
+This specification does not mandate any specific topological algorithm.
 
 ##### Processing `td` Relations {#sec-proc-td}
 
