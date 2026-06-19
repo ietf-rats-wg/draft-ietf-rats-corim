@@ -304,9 +304,9 @@ Different RATS conceptual messages contribute to the construction of an ACS foll
 ## Consistency of ACS
 
 To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
-However, the exact way a Verifier's software is coded to store this internal representation is up to the developer, so long as it strictly follows the reconciliation rules outlined above.
+However, the exact way a Verifier's software is implemented to realize the internal representation is up to the implementor.
 {{sec-corim-processor}} describes these Reconciliation Principles in detail.
-
+Once the ACS is built and the conversation is consistent, the ACS is available for processing of subsequent phases.
 ## Applying the Appraisal Policy of Evidence
 
 Once the ACS is built and the conversation is reconciled, the Verifier consults its Appraisal Policy.
