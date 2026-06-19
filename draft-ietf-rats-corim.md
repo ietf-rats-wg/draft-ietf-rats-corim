@@ -286,8 +286,6 @@ To achieve this, the Verifier creates an internal scratchpad of Attester state c
 
 Multiple parties contribute to the "conversation" about a device's trustworthiness: the device itself (the Attester), the manufacturer (the CoRIM issuer), and potentially the organization relying on the device (the Verifier Owner).
 
-Sometimes, these parties may contradict each other.
-For instance, an outdated or compromised device may report software measurements that conflict with those authorized by the manufacturer.
 The Verifier uses the ACS to determine the actual state of the Attester, as defined by the various entities providing inputs.
 
 Different RATS Conceptual Messages interact to build the final ACS:
