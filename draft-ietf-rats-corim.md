@@ -282,6 +282,8 @@ Authority determines which entity asserts which Claims about an Attester.
 Conceptually, the various entities are having a conversation about the Attester, which the Verifier records.
 To achieve this, the Verifier creates an internal scratchpad of Attester state called the Appraisal Claims Set (ACS).
 
+The motivation for describing a reference CoRIM Verifier is for consistent Verifier operation across the ecosystem.
+
 ## Interactions with ACS
 
 Multiple parties contribute to the "conversation" about a device's trustworthiness: the device itself (the Attester), the manufacturer (the CoRIM issuer), and potentially the organization relying on the device (the Verifier Owner).
