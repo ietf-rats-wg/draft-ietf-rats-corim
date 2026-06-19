@@ -319,6 +319,7 @@ For instance, if all individual components in a subsystem check out, the Verifie
 To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
 However, the exact way a Verifier's software is coded to store this internal representation is up to the developer, so long as it strictly follows the reconciliation rules outlined above.
 {{sec-corim-processor}} describes these Reconciliation Principles in detail.
+
 # Typographical Conventions for CDDL {#sec-type-conv}
 
 The CDDL definitions in this document follows the naming conventions illustrated in {{tbl-typography}}.
