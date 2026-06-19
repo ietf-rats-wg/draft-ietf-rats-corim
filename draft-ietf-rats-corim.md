@@ -179,7 +179,7 @@ The core data model is described in {{sec-corim}}, {{sec-comid}} and {{sec-cotl}
 These sections describe the primary CoRIM structures, the Concise Module Identifier (CoMID), which is used to express Endorsements and Reference Values, as well as the Concise Tag Lists (CoTL), which express the currently active sources of Endorsements and Reference Values.
 {{sec-reference-verifier}} outlines the architecture of a reference Verifier.
 The architecture details four phases of the appraisal process that explain how CoRIM inputs are validated, evaluated relative to Evidence, and ultimately accepted as additional expressions of Attester state data.
-The four phases of appraisal are called "reconciliation", which applies principles described in {{sec-verifier-rec}}.
+In addition, this document also covers how CoRIMs are used within the reference Verifier. Refer to {#sec-verifier-rec}
 
 ## Terminology and Requirements Language
 
@@ -273,7 +273,7 @@ In CoRIM, unlike RDF, the predicate of the triple is implicit and is encoded in 
 CoRIM triples typically represent assertions made by the CoRIM author regarding Attesting or Target Environments and their security features, such as Measurements and cryptographic key material.
 See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
-# How the Verifier Uses CoRIM: The Reconciliation Principles {#sec-verifier-rec}
+# Use of CoRIM in a Verifier {#sec-verifier-rec}
 
 When a Verifier receives Evidence from an Attester and a CoRIM containing Reference Values and Endorsements from a manufacturer, it has to make sense of it all.
 The specification calls this process "Verifier reconciliation".
