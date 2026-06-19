@@ -290,7 +290,7 @@ Multiple parties contribute to the "conversation" about a device's trustworthine
 
 The Verifier uses the ACS to determine the actual state of the Attester, as defined by the various entities providing inputs.
 
-Different RATS Conceptual Messages interact to build the final ACS:
+Different RATS conceptual messages contribute to the construction of an ACS following the requirements in {{tbl-cmrr}}.
 
 | Input Type | Source | How the Verifier Updates the ACS |
 | --- | --- | --- |
