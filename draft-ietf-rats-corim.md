@@ -311,7 +311,7 @@ For example, a policy might state that an assertion is only valid if it is expli
 If everything looks correct, the policy can even instruct the Verifier to generate entirely new conclusions.
 For instance, if all individual components in a subsystem check out, the Verifier might generate a final, definitive claim stating `"TRUSTED = TRUE"`.
 
-## Deterministic Results
+## Consistency of ACS
 
 To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
 However, the exact way a Verifier's software is coded to store this internal representation is up to the developer, so long as it strictly follows the reconciliation rules outlined above.
