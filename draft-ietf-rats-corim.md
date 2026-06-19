@@ -301,6 +301,12 @@ Different RATS conceptual messages contribute to the construction of an ACS foll
 
 *Note: If the Attester's Evidence is not matched and corroborated by the manufacturer's Reference Values, the manufacturer's claims do not get added to the ACS.*
 
+## Consistency of ACS
+
+To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
+However, the exact way a Verifier's software is coded to store this internal representation is up to the developer, so long as it strictly follows the reconciliation rules outlined above.
+{{sec-corim-processor}} describes these Reconciliation Principles in detail.
+
 ## Applying the Appraisal Policy of Evidence
 
 Once the ACS is built and the conversation is reconciled, the Verifier consults its Appraisal Policy.
@@ -311,11 +317,6 @@ For example, a policy might state that an assertion is only valid if it is expli
 If everything looks correct, the policy can even instruct the Verifier to generate entirely new conclusions.
 For instance, if all individual components in a subsystem check out, the Verifier might generate a final, definitive claim stating `"TRUSTED = TRUE"`.
 
-## Consistency of ACS
-
-To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
-However, the exact way a Verifier's software is coded to store this internal representation is up to the developer, so long as it strictly follows the reconciliation rules outlined above.
-{{sec-corim-processor}} describes these Reconciliation Principles in detail.
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
