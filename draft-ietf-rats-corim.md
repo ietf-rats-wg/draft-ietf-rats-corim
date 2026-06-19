@@ -275,9 +275,6 @@ See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
 # Use of CoRIM in a Verifier {#sec-verifier-rec}
 
-When a Verifier receives Evidence from an Attester and a CoRIM containing Reference Values and Endorsements from a manufacturer, it has to make sense of it all.
-The specification calls this process "Verifier reconciliation".
-As these inputs arrive in different formats from different sources, the Verifier translates them all into a single, consistent internal representation format.
 
 The Evidence appraisal process can be thought of as a conversation mediated by the Verifier.
 The Verifier keeps a strict record of exactly what is being claimed in the various Conceptual Message inputs and, crucially, who is making the claims (known as the "authority").
