@@ -307,15 +307,8 @@ To ensure everyone builds these systems consistently, the specification uses CDD
 However, the exact way a Verifier's software is implemented to realize the internal representation is up to the implementor.
 {{sec-corim-processor}} describes these Reconciliation Principles in detail.
 Once the ACS is built and the conversation is consistent, the ACS is available for processing of subsequent phases.
-## Applying the Appraisal Policy of Evidence
 
-Once the ACS is built and the conversation is reconciled, the Verifier consults its Appraisal Policy.
 
-The policy dictates what the final Attestation Result should be based on the facts in the ACS.
-For example, a policy might state that an assertion is only valid if it is explicitly backed by a specific manufacturer's Reference Value.
-
-If everything looks correct, the policy can even instruct the Verifier to generate entirely new conclusions.
-For instance, if all individual components in a subsystem check out, the Verifier might generate a final, definitive claim stating `"TRUSTED = TRUE"`.
 
 
 # Typographical Conventions for CDDL {#sec-type-conv}
