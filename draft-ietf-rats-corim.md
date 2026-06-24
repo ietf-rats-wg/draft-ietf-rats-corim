@@ -280,7 +280,7 @@ The Verifier keeps a strict record of exactly what is being claimed in the vario
 Authority determines which entity asserts which Claims about an Attester.
 To achieve this, the Verifier creates an internal scratchpad of Attester state called the Appraisal Claims Set (ACS).
 
-The motivation for describing a reference CoRIM Verifier is for consistent Verifier operation across the ecosystem.
+The motivation for describing a reference CoRIM Processor is for consistent Verifier operation across the ecosystem.
 
 ## Interactions with ACS
 
