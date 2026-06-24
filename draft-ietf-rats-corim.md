@@ -275,14 +275,12 @@ See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
 # Use of CoRIM in a Verifier {#sec-verifier-rec}
 
-
-The Evidence appraisal process can be thought of as a conversation mediated by the Verifier.
+The Evidence appraisal process can be thought of as a conversation about an Attester, mediated and recorded by the Verifier.
 The Verifier keeps a strict record of exactly what is being claimed in the various Conceptual Message inputs and, crucially, who is making the claims (known as the "authority").
 Authority determines which entity asserts which Claims about an Attester.
-Conceptually, the various entities are having a conversation about the Attester, which the Verifier records.
 To achieve this, the Verifier creates an internal scratchpad of Attester state called the Appraisal Claims Set (ACS).
 
-The motivation for describing a reference CoRIM Verifier is for consistent Verifier operation across the ecosystem.
+The motivation for describing a reference CoRIM Processor is for consistent Verifier operation across the ecosystem.
 
 ## Interactions with ACS
 
@@ -305,11 +303,8 @@ Different RATS conceptual messages contribute to the construction of an ACS foll
 
 To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
 However, the exact way a Verifier's software is implemented to realize the internal representation is up to the implementor.
-{{sec-corim-processor}} describes these Reconciliation Principles in detail.
+{{sec-corim-processor}} describes these reconciliation principles in detail.
 Once the ACS is built and the conversation is consistent, the ACS is available for processing of subsequent phases.
-
-
-
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
