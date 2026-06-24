@@ -275,11 +275,9 @@ See also Section 3.1 of {{?W3C.rdf11-primer}}.
 
 # Use of CoRIM in a Verifier {#sec-verifier-rec}
 
-
-The Evidence appraisal process can be thought of as a conversation mediated by the Verifier.
+The Evidence appraisal process can be thought of as a conversation about an Attester, mediated and recorded by the Verifier.
 The Verifier keeps a strict record of exactly what is being claimed in the various Conceptual Message inputs and, crucially, who is making the claims (known as the "authority").
 Authority determines which entity asserts which Claims about an Attester.
-Conceptually, the various entities are having a conversation about the Attester, which the Verifier records.
 To achieve this, the Verifier creates an internal scratchpad of Attester state called the Appraisal Claims Set (ACS).
 
 The motivation for describing a reference CoRIM Verifier is for consistent Verifier operation across the ecosystem.
