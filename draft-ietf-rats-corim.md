@@ -305,11 +305,8 @@ Different RATS conceptual messages contribute to the construction of an ACS foll
 
 To ensure everyone builds these systems consistently, the specification uses CDDL to define both the exact structure of the CoRIM and a theoretical data model for the ACS.
 However, the exact way a Verifier's software is implemented to realize the internal representation is up to the implementor.
-{{sec-corim-processor}} describes these Reconciliation Principles in detail.
+{{sec-corim-processor}} describes these reconciliation principles in detail.
 Once the ACS is built and the conversation is consistent, the ACS is available for processing of subsequent phases.
-
-
-
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
