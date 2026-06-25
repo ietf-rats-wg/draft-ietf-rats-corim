@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-23T04:07:53.333049+00:00",
+  "timestamp": "2026-06-25T04:11:21.696862+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14294,16 +14294,31 @@
       "id": "I_kwDOH6-tI874lo8b",
       "title": "Thomas\u2019s review of \u00a79 of draft-ietf-rats-corim-10",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/568",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "* \u00a71.1.1: ACS definition reads: \"A structure that holds Environment-Claim Tuples that have been appraised. The ACS contains Attester state that has been authorized by Verifier processing and Appraisal Policy\" unclear what it means for \"Verifier processing\" to authorize attester state...\n\n* \u00a71.1.1: Appraisal Policy definition: \"A description of the conditions that, if met, allow appraisal of Claims.\"  what does \"appraisal of claims\" mean?  Which claims?\n\n* \u00a71.1.1: ARS is defined but not used - drop it\n\n* \u00a71.1.1: Authority definition: \"The entity asserting that a Claim is true.\" I don't think truth is important here, it's purely about asserting: \"The entity asserting a given Claim\"\n\n> <digression>\n> \u00a72 has deep links with \u00a79 (authority, ACS, ...), this needs to be made more explicit.  The content could be moved directly into Section 8.\n> </digression>\n \n* \u00a72: this sentence: \"In essence, if Evidence is not corroborated by an RVP's Claims, then the RVP's Claims are not included in the ACS. Please see Figure 1.\" makes no sense, also the pointer to the figure seems spurious.\n\n* \u00a72: this sentence: \"Consequently, the internal ACS structure is a reconciled conversation between several producers of RATS Conceptual Messages that has mapped each message into a consistent internal representation, has associated the identity of the corresponding RATS role with each assertion (the authority), and has applied Conceptual Message constraints to the assertion.\" 1. \"consequently\" is used inappropriately as there is no logical consequence from the preceding sentence.  2. unclear what does \"Conceptual Message constraints\" refer to?\n\n* \u00a72, last para: \"The CoRIM data model specified in this document covers the RATS Conceptual Message types, \"Reference Values\" and \"Endorsements\". Reference values and Endorsements are required for Verifier reconciliation, and Evidence is required for corresponding internal ACS creation as illustrated in Section 2.2.\" the second sentence is unclear and unnecessary.\n\n* \u00a72.2, second para: \"The internal representations of Conceptual Messages and ACS SHOULD satisfy the requirements in Table 1 for Verifier reconciliation and appraisal processing:\" why SHOULD and not MUST?\n\n* Table 1: \"Description\" column is vague, description of what?\n\n* Table 1: \"selection-addition tuples\" comes out of the blue.  can this be explained more plainly?\n\n* \u00a75.1.4.5: (measurements) Semantics of `authorized-by` are unclear therefore rather unusable: \"designated authority for measurement Claims\" is too generic to be useful.  Is this something similar to EAT MC authority, i.e., related to software updates/installations?\n\n* \u00a75.1.4.5: re: `authorized-by`, it says: \"For example, the signer of a CoMID triple\".  CoMID triples aren't signed! This is the only concrete example and it doesn't compute.\n\n* \u00a75.1.4.5: re: `authorized-by`, it says: \"See Section 5.1.4.6.\" which defines the crypto-key-type-choice type.  A bit out of the blue and withouth much context.\n\n* \u00a75.1.4.5: re: `authorized-by`, it says: \"An entity is authoritative when it makes Claims that are inside its area of competence.\".  What is this supposed to mean?\n\n* \u00a75.1.9 and \u00a75.1.10: \"The existence of these keys is asserted in Evidence, Reference Values, or Endorsements.\" what does \"assert\" means in this context. also, those are quite different CMs, how does the \"assertion\" materialise in each CM?\n\n* \u00a75.1.9: \"certificate path construction & verification\" -- should be \"building & validation\" instead?\n\n* \u00a75.1.9 and \u00a75.1.10: \"The Verifier SHOULD verify keys contained in Device Identity triples.\" what does it mean to \"verify keys\"? If a normative SHOULD is what we want, we should also say under which conditions the SHOULD can be ignored.  Maybe this is \"expected to\" instead?  Would that depend on the nature of the key(s)?\n\n* \u00a75.1.9: \"device identity challenges,\" what are they? can we provide an example?  More generally, the entire sentence is unclear.\n\n* \u00a75.1.9 and \u00a75.1.10: the prose on key restrictions is odd: does it only applies to the mentioned case? If not, make a more general statement and use the specific case as an example.\n\n* \u00a75.1.9: \"Attester's Claim set\" (also in \u00a75.1.10) should be \"Appraisal Claims Set (ACS)\"\n\n* \u00a75.1.9: \"Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.\" <- \"[...] and the Verifier is not possible anymore.\n\n* \u00a75.1.9: re: environment. \"[...] identify the target Evidence or Reference Value\".  unclear what that is supposed to mean\n* \u00a75.1.9: re: environment. \"[...] condition used [...]\" what does \"condition\" mean?\n\n* \u00a75.1.9: Semantics of `authorized-by` are also unclear: \"list of [...] keys that identifies the authorities that asserted the key-list in the target Evidence or Reference Values.\"  What does \"assert\" means in this context?  What is \"target Evidence\"?  What does \"target [...] Reference Values\" represent?\n\n* \u00a75.1.10: \"path construction and validation\" align with \u00a75.1.9\n\n* figure 1 is not referenced in \u00a79. it is referenced in \u00a72, quite enigmatically... remove that ref?\n\n* \u00a79: figure 1 is hanging in void, add some prose around it\n\n* \u00a79, second para: why is this sentence here?  add \"in the reminder of this section...\" or something, to contextualise\n\n* \u00a79, second para: ARS is not used\n\n* \u00a79.1, first para: say which CMs are inputs and which are outputs\n\n* \u00a79.1, second para: consistency: s/Environment Claim/Environment-Claim/ (but see next)\n\n* \u00a79.1, second para: ECT is already introduced in \u00a79\n\n* \u00a79.1, second para: maybe \"The conceptual messages ... are broken down into individual elements, each of which is then transformed into an ECT.\"\n\n* \u00a79.1, second para: \"external conceptual messages\"? \"external\" doesn't seem to carry any relevant meaning, it should just be \"Conceptual Messages\"\n\n> <digression>\n> ECT definition in the glossary \"[...] values that describe a Target Environment\" should be \"[...] values that identify a Target Environment\".  Also, for verification keys, the identification is that of an attesting environment, isn't it?\n> </digression>\n\n* \u00a79.1.1, first para: s/Environment-Claims Tuples/Environment-Claim Tuples/ (but see next)\n\n* \u00a79.1.1, first para: it's the n-th time this is expanded\n\n* \u00a79.1.1, first para: there are now 7 attributes.  Just say \"the following attributes\" and avoid numbering\n\n* \u00a79.1.1, \"trustees\" is missing from the list\n\n* \u00a79.1.1, \"environment\" could just reference the glossary and the env-map description.  The reference to mkey is confusing, we should remove it.  the mention to domain-id could also removed (there is a related discussion on the aliasing between domain-type and environment-map: why is the indirection needed?)\n\n* \u00a79.1.1, \"elements\" we should define what we mean by that and refer to that definition here (see also \"environment\" which talks about mkey as \"element identifier\" without a frame of reference).\n\n* \u00a79.1.1, \"elements\" is a profiled measurements-map -- with the optional authorised-by removed and the other fields renamed..  this should be made clear because the renaming feels quite arbitrary and the aliases choice is confusing.  could we call it instead abbreviated-measurement-map or similar?\n\n* \u00a79.1.1, \"authority\" cumbersome...but probably ok\n\n* \u00a79.1.1, \"members\" should also include DDT I believe\n\n* \u00a79.1.1, \"cm-type\" doesn't apply to domain-member and trustee, since those are not CMs in the first place\n\n* \u00a79.1.1, \"profile\" is it always the embedding corim's profile or can it be evidence's also?\n\n* \u00a79.1.1, in general, I suggest we deal with ECT similar to what we do for other data model items definitions: CDDL and associated description of the fields.\n\n> <digression>\n> elements seem to correspond to EAT MC \"objects\" -- should we align terminology?\n> </digression>\n\n* \u00a79.1.1: ECT is a kitchen sink.  in particular, DDT and DMT stretch its semantics to the limits (i.e., CM types, elements, make no sense in that context.  Conversely, trustee, domain-members have zero meaning in the context of of real CMs's ECTs.  we should distinguish domain-related ECTs from CM-related ECTs.\n\n* \u00a79.1.2: this information should be in 9.1.1 alongside the related fields description\n\n* \u00a79.1.3.1: reflow the description: \"Attestation Evidence is represented using the `ae` relation as a collection of ECTs extracted/transformed from the to-be-appraised Evidence.\"\n\n* \u00a79.1.3.1: also, \"relation\" seems like a term of art whose definition needs to be clearly understood.  in the `ae` context what is the relation?  what are the objects that are related?\n\n* \u00a79.1.3.1: \"The addition is a list of ECTs with Evidence to be appraised.\" => \"The addition is a list of ECTs with Evidence *Claims* to be appraised.\"\n\n* \u00a79.1.3.1: \"A Verifier may maintain multiple simultaneous sessions to different Attesters. [...]:\" not clear why this (a general observation on the ACS) is \"hidden\" here (a specific description of evidence\n\n* \u00a79.1 (general): the internal representation data items could be prefixed with intrep- or similar + could be given more meaningful names than (ambiguous) acronyms -- e.g., ae coudl be expand to \"attesting environment\" ...\n\n* \u00a79.1.3.1: unclear what \"Evidence tuple\" refers to.\n\n* Table 3: \"ECT Type\" in the heading is used but not introduced anywhere.  IIUC, ECT \"types\" are condition, selection, addition.  This should be introduced in \u00a79.1\n\n* Table 3: cmtype is not just mandatory, it's `evidence`, we should say that.  Even better we should describe what the profiled ECT for evidence looks like in CDDL:\n```\nECT-evidence = {\n  environment: environment-map\n  element-list: [ + element-map ]\n  authority: [ + $crypto-key-type-choice ]\n  cmtype: &(evidence: 2)\n  ? profile: $profile-type-choice\n}\n```\n\n* \u00a79.1.3.2 \"Evidence is transformed from an external representation to an internal representation as specified in Section ...\".  \"as specified in\" seems to refer to the transformation, but it instead it refers to the internal representation.  Rephrase for clarity, e.g.: \"Evidence is transformed using a suitable evidence transformation algorithm into the internal representaion described in Section ...\"\"\n\n* \u00a79.1.3.2: \"If the Evidence does not have a value for the mandatory ae fields, the Verifier MUST NOT process the Evidence.\" => \"if any of the ECTs obtained from the transformation of evidence doesn't have all the mandatory fields populated => abort appraisal\"\n\n* \u00a79.1.3.2: \"The handling of Evidence transformation algorithms is out of scope for this document.\" unsure what \"the handling of\" refers to.\n\n* \u00a79.1.3.2: add ref to rats-evidence-trans spec (as an example of well-known)\n\n* \u00a79.1.3.2: \"[...] or supplied dynamically\" unclear what \"supplied dynamically\" refers to\n\n* \u00a79.1.3.2 (fix hardcoded ref to Section 4.14)\n\n* \u00a79.1.4: remove useless \"Upon processing of CoRIMs containing Reference Value Triples, the RV Triples are transformed to an internal representation.\"\n\n* \u00a79.1.4.1: maybe start with \"When CoRIMs containing reference value triples are processed, the triples are transformed into an internal representation using `rv`\n\n* \u00a79.1.4.1: \"which is a list of ECTs that contains possible states and a list of ECTs that contain actual states asserted with RVP authority.\" is not an accurate description of the `rv` \"relation\" data item.\n\n* \u00a79.1.4.1: why is `rv` condition-addition? also, \"actual state\" coming from RVs seems inappropriate (or at the very list artificial)?  It should say that the actual state (addition) part starts empty, and only when \"corroborated\" the actual state is populated with the matching \"elements\"\n\n* \u00a79.1.4.1: \"possible state\" should be \"reference state\" to align with rats-endorsements and \u00a71.1 Terminology: \"This document uses the terms \"actual state\" and \"reference state\" as defined in Section 2 of [I-D.ietf-rats-endorsements].\"\n\n* Table 4: in the condition ECT, shoud cmtype==evidence ? (note: profile is a bit pesky to match...)\n\n* Table 4: \"Reference Values tuple\" what \"tuple\" is this referring to?\n\n* \u00a79.1.4.2 is a bit borked:\n\n0. define input and output upfront with names and types\n1. the \"`rv` list entry is allocated\" should be given a name that can be used\n2. Step 3: `rv` (type) is used as a name for the list entry (which is another, anonymous, type)\n3. Step 3: `element-map` and `measurement-map` can't be copied as-is because they are different types: It should be:\n```pseudocode\nFOREACH e IN rvt.ref-claims:\n    em := NEW(element-map)\n    IF e.mkey {\n        COPY(e.mkey, em.element-id)\n    }\n    COPY(e.mval, em.element-claims)\n    rv-list-entry.condition.element-list.APPEND(em)\n```\n\n* \u00a79.1.4.2 as well as all the other transformations apart from the key triples and CES triple seems to ignore `authorized-by` is there any reason?\n\n* \u00a79.1.5, title: it's a mouthful.  s/Endorsed Value Triple, Conditional Endorsement Triple & Conditional Endorsement Series Triples/Endorsed Values/ and then in the body say what we mean by \"Endorsed Values\".  Also, perhaps it's also a misnomer because it's only about the internal representation rather than generic \"processing\"\n\n* \u00a79.1.5.1: \"the additions that are added\" ... proposed reflow: \"The internal representation of Endorsed Values uses the ev and evs relations, which are lists of ECTs that describe the matching conditions and additions if these conditions are met. The ev relation applies to Endorsed Values (EV) and Conditional Endorsement (CE) triples. The evs relation applies to Conditional Endorsement Series (CES) Triples.\"\n\n* \u00a79.1.5.1: \"Note, when ev relation is for EV Triple, then the element-list inside condition is Optional while it is Mandatory for CE Triple.\"  why optional?  it should  be empty since EV triples have a simple environment, not a stateful environment.\n\n* Table 5: condition element-list Mandatory is wrong\n\n* Table 5: addition cmtype MUST be endorsement\n\n* \u00a79.1.5.2: remove unnecessary nesting\n\n* \u00a79.1.5.2.1: the algorithm seem to describe a single triple transformation\n\n* \u00a79.1.5.2.1: Step 3.ii is not entirely correct (type mismatch)\n\n* \u00a79.1.5.2.2: the algorithm seem to describe a single triple transformation\n\n* \u00a79.1.5.2.2: Steps 3.{i,ii} are not entirely correct (type mismatch)\n\n* \u00a79.1.5.2.3: ditto\n\n* \u00a79.1.6: state clearly that keys are treated as endorsements => they are mapped into `ev`\n\n* \u00a79.1.6.2: title \"Key Verification Triples Transformation\" misleading \"Key Verification Triples\" are undefined\n\n* \u00a79.1.6.2, Step 3.ii: `keylist` should be `key-list`\n\n* \u00a79.1.6.2, Step 3.ii: the key should be appended to the intrep-keys not copied\n\n* \u00a79.1.6.2, Step 3.iii and Step 3.iv should be under Step 3.ii\n\n* \u00a79.1.6.2, Step 4: \"Identity or Attest Key Endorsement conceptual message\" <- those are not conceptual messages\n\n* \u00a79.1.7.1: I like the use of groups (we should use the same in the other intreps)\n\n* \u00a79.1.7.1: if \"Domain Membership is expressed in a single ECT\" what's the reason for multiplicity in `dm` ?  Is it per-triple?\n\n* \u00a79.1.7.1: definition is unclear.  isn't this similar to DDT def in \u00a79.1.8.1?\n\n* \u00a79.1.7.2, Step 2.i: it's not a copy, it's an assign\n\n* \u00a79.1.7.2, Step 3.i: it's not a copy, it's an assign\n\n* \u00a79.1.7.2, Step 4.ii: unclear what DMT.members[e] means.  Also COPY doesn't look appropriate: Should it be \"APPEND(e, domain.members)\" instead\n\n* \u00a79.1.8: typo: \"ECT trustees list\" => \"ECT `trustees` list\"\n\n* \u00a79.1.8: \"The cmtype is inclusive of trustee\", it's confusing because cmtype is not cumulative.  Maybe simplify to \"The `cmtype` is set to `trustee`\"\n\n* \u00a79.1.8, Step 5.i: unclear what dde.trustees[e] means.  Also COPY doesn't look appropriate: Should it be \"APPEND(e, dde.trustees)\" instead\n\n* \u00a79.1.8: missing check: the graph MUST have no cycles and is directed (this is probably also true for the DMT graph)\n\n* \u00a79.2: \"After context initialization, additional inputs are held back until appraisal processing has completed.\" unclear which \"additional inputs\" is this referring to?\n\n* \u00a79.2.1.1: it says: \"revoked by an authorized source.\" but what is the CoRIM revocation method this alludes to is unclear\n\n* \u00a79.2.1.1: it says: \"Any CoRIM that has been secured by a cryptographic mechanism that fails validation MUST be discarded. An example of such a mechanism is a digital signature.\"  what other examples exist?  This can be rewritten more straightforwardly as: \"If a CoRIM is digitally signed and the signature cannot be verified, it MUST be discarded.\"\n\n* \u00a79.2.1.2: this can be merged into the part of 9.2.1.1 that talks about crypto protection and authorized sources\n\n* \u00a79.2.1.4: this should be before 9.2.1.3 because it directly influences the way \"the verifier chooses tags from the selected CoRIMs\"\n\n* \u00a79.2.2: \"Discovery of Evidence sources is untrusted. Verifiers may rely on conveyance protocol specific context to identify an Evidence source, which is the Evidence input oracle for appraisal.\" unsure what this is supposed to mean.  In general evidence can be collected by relying party and forwarded to the verifier, or collected by the verifier directly from the attester via API exposed by the attester (background check), or submitted by the attester to the verifier via verifier provided API (passport).  I suggest either dropping it or replacing it with something less nebulous.\n\n* \u00a79.2.2.1: no need to sub-section this.  suggest merging it with the parent section.\n\n* \u00a79.2.2.1, second para: add ref to UCCS sec-cons\n\n* \u00a79.2.2.1: would benefit from some simple editorial work, but it's otherwise quite good.\n\n* \u00a79.2.2.1: \"Once Evidence is validated it is transformed into an internal representation as given in Section 9.1.3.\" can be dropped: the next section is literally \"Input Transformations\"\n\n* \u00a79.2.3: drop \", or Policies\"\n\n* \u00a79.2.3: \"as given below. See Section 9.2.4\" drop and merge with 9.2.3.1\n\n* \u00a79.2.4: title: \"Internal Representation of Appraisal Claims Set (ACS)\" is confusing since there is no external repr of ACS\n\n* \u00a79.2.4: unclear why this is its own section rather than being part of \u00a79.2.3\n\n* \u00a79.2.4: it looks like a fragment rather than a cohesive piece of info. maybe it could go somewhere else, not sure, but as-is it doesn't look right\n\n* \u00a79.2.4: typo: \"Table Table 8\"\n\n* \u00a79.2.4, Table 8: ECT type should be \"all\" rather than \"n/a\" -- alt. the column could be dropped altogether\n\n* \u00a79.3: \"[...] CoRIM Appraisal Context and an Evidence Appraisal Policy are used by the Verifier to find CoMID triples which match the ACS\".  I have a few issues with this sentence:\n  1.  \"Evidence Appraisal Policy\" == \"Appraisal Policy for Evidence\"? (if so, no need to use new terms)\n  2. I don't think Appraisal Policy should be part of the phases 2,3,4\n\n* \u00a79.3: \"Triples that specify an ACS matching condition will augment the ACS with Endorsements if the condition is met.\" I don't think this is the case for reference value triples.\n\n* \u00a79.3, second para: first and second sentence don't seem to be correlated (However?)\n\n* \u00a79.3, second para: third sentence: \"If a triple condition does not match, then the Verifier continues to process other triples.\" this is true also if the condition match though...\n\n* \u00a79.3.1: there is no new information here.  drop it?\n\n* \u00a79.3.1.1: \"The ACS contains Evidence ECTs (from Attesters) and Endorsement ECTs (e.g. from endorsed-triple-record).\" and not reference values?\n\n* \u00a79.3.1.1: \"CoMID Reference Values will be matched against the ACS following the comparison rules in Section 9.4.\" this reads like a stray sentence.\n\n* \u00a79.3.1.1: third para: \"Each Endorsement ECT contains the environment and internal representation of measurement-maps as extracted from an endorsed-triple-record. When an endorsed-triple-record is transformed to Endorsements ECTs it indicates that the authority named by measurement-map.authorized-by asserts that the actual state of one or more Claims within the Target Environment, as identified by environment-map, have the measurement values in measurement-map.mval.\" is incomprehensible.\n\n* \u00a79.3.1.1: fifth para: \"Each Claim is encoded as an ECT. The environment-map, the mkey or element-id, and a key within measurement-values-map encode the name of the Claim. The value matching that key within measurement-values-map is the actual state of the Claim.\" doesn't apply to key- and domain-related claims\n\n* \u00a79.3.1.1: seventh para: \"If two Claims have the same environment-map encoding then this does not trigger special encoding in the Verifier. The Verifier follows instructions in the CoRIM file which tell it how claims are related.\"  unclear what these two sentences mean\n\n* \u00a79.3.1.1: general comment: there are only three requirements in a section with title \"ACS Processing Requirements\".  What is the rest of it doing?\n\n* \u00a79.3.1.1: \"If Evidence or Endorsements from different sources has the same environment-map and authorized-by then the measurement-values-maps are merged.\" unclear what this refers to\n\n* \u00a79.3.1.1: what is a \"state-triple\" ?\n\n* \u00a79.3.1.1: last two paragraphs talk about \"merged measurement-values-map\" but it's not clear \"merging\" works\n\n* \u00a79.3.1.1.1: why is this its own subsection?  Can it be merged with the parent section?\n\n* \u00a79.3.1.1.1: \"Triples interface with the ACS\" they don't: the internalised ECT does. \n\n* \u00a79.3.1.1.1: \"Most triples use an environment-map field to select the ACS entries to match ...\" most? what are the exceptions?\n\n* \u00a79.1 (general): the shape of `ae`\n```\nae = [\n  addition: [ + ECT ]\n]\n```\nis different from `rv`\n```\nrv = [ + {\n  condition: ECT\n  addition: ECT\n} ]\n```\nshould instead be:\n```\nae = [ + {\n  addition: ECT\n} ]\n```\nhowever, endorsed values relations\n```\nev = [\n  condition: [ + ECT ]\n  addition: [ + ECT ]\n]\n```\nlook more like evidence (which sort-a makes sense)\nhowever, should that be wrapped in an (anonymous) object? like\n```\nev = [ + {\n  condition: [ + ECT ]\n  addition: [ + ECT ]\n} ]\n```\n\n\n* \u00a79.4.6. typo in title: Measurement values map map Comparison\n\n> <digression>\n> cross check Sergei's review https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506\n> </digression>\n\n> <digression>\n> we need to clarify the semantics of 1-to-n triples in matching.\n> and (related) to evidence ingestion and transformation.\n> is 1-to-n just compression, or does it carry matching semantics (i.e., the \"sibling\" measurements need to be matched en-bloc?)\n> <digression>\n",
       "createdAt": "2026-03-30T13:08:53Z",
-      "updatedAt": "2026-03-30T13:08:53Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-06-24T14:09:19Z",
+      "closedAt": "2026-06-24T14:09:19Z",
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati : How much of this has now been accomplished??",
+          "createdAt": "2026-06-24T14:03:11Z",
+          "updatedAt": "2026-06-24T14:03:11Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Marked as resolved via PR #576 ",
+          "createdAt": "2026-06-24T14:09:19Z",
+          "updatedAt": "2026-06-24T14:09:19Z"
+        }
+      ]
     },
     {
       "number": 569,
@@ -14671,6 +14686,22 @@
       "body": "Section [8.2.4.2.1. ](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-8.2.4.2.1)[Processing rv Relations](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-processing-rv-relations)\nDetails simple matching of RV Condition with Evidence ECT (i.e. cmType: Evidence)\n\nHowever this is not that straightforward, as RV: Condition ECT Elements is not exactly like to like that of Evidence: Addition ECT.\nThere is no profile in the RV:Condition where as Evidence:Addition ECT has, so direct match is not possible.\n\nWe need to specify better what claims and environment elements needs matching!",
       "createdAt": "2026-06-05T14:23:30Z",
       "updatedAt": "2026-06-05T14:23:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 599,
+      "id": "I_kwDOH6-tI88AAAABGYL8eg",
+      "title": "description for `authority` field  not matching with CDDL definition of `ECT-common`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/599",
+      "state": "OPEN",
+      "author": "ajay-fuji",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "CDDL definition for `ECT-common` has `authority` as optional field.\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/2983a74d6b5bc7cd5e25f09f491e5ace61ec5990/cddl/intrep-ect-common.cddl#L3\nBut in the description of `authority` field under [Section 8.2.2.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-ect), it is mentioned as a mandatoy field. \n<img width=\"623\" height=\"50\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/a82e329d-07f3-496f-92da-45ff85119b18\" />",
+      "createdAt": "2026-06-23T05:43:33Z",
+      "updatedAt": "2026-06-23T05:43:33Z",
       "closedAt": null,
       "comments": []
     }
@@ -88123,7 +88154,7 @@
       "labels": [],
       "body": "Changes related to issue #580 to separate domain membership and trust dependency transformation and processing.",
       "createdAt": "2026-05-26T23:10:10Z",
-      "updatedAt": "2026-06-22T12:16:56Z",
+      "updatedAt": "2026-06-24T11:27:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "0e1b001cdd886ddd2c71ce665809924d66f199cc",
@@ -88397,6 +88428,46 @@
           "createdAt": "2026-06-17T18:22:40Z",
           "updatedAt": "2026-06-17T18:22:40Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABD-LoGg",
+          "commit": {
+            "abbreviatedOid": "6d68d4e"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "CHANGES_REQUESTED",
+          "body": "I found some time this week to go through the pseudo code examples and am a bit puzzled by the T-ECT divergence from the other pseudo code patterns. Is that necessary? Is it possible to adapt to the existing pattern (e.g. how conditions are met and thereby the ACS is augmented)?",
+          "createdAt": "2026-06-24T10:57:58Z",
+          "updatedAt": "2026-06-24T11:01:31Z",
+          "comments": [
+            {
+              "originalPosition": 318,
+              "body": "This pseudo code pattern seems to diverge significantly from the ones that is associated with the other ECT type patterns (i.e. the pseudo code starting at L2698 in \"Figure 45: Match and Augment Algorithm\"). Is there any way that we can align this part with the other existing parts in main?",
+              "createdAt": "2026-06-24T10:57:58Z",
+              "updatedAt": "2026-06-24T11:01:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABD-Y_sQ",
+          "commit": {
+            "abbreviatedOid": "6d68d4e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-06-24T11:27:24Z",
+          "updatedAt": "2026-06-24T11:27:24Z",
+          "comments": [
+            {
+              "originalPosition": 318,
+              "body": "Let us discuss these anomalies and try to progress this today!",
+              "createdAt": "2026-06-24T11:27:24Z",
+              "updatedAt": "2026-06-24T11:27:24Z"
+            }
+          ]
         }
       ]
     },
@@ -90150,6 +90221,48 @@
           "body": "LGTM",
           "createdAt": "2026-06-19T15:38:20Z",
           "updatedAt": "2026-06-19T15:38:20Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 600,
+      "id": "PR_kwDOH6-tI87qBxrH",
+      "title": "Small editorial fixes in the \u201creconciliation\" section",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/600",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "* [fix spurious capitalisation](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/2fe5bd9aa03f84bd16775db9d6dd7611b056b8f3) \r\n* [remove redundant sentence](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/345a9e85a95333904082ac9497a2ce3fd4fbb1af) \r\n* [s/CoRIM Verifier/CoRIM Processor/](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/94e467cd2f8f3a0476c9657d530b93c68faddb4a)",
+      "createdAt": "2026-06-24T09:02:59Z",
+      "updatedAt": "2026-06-24T11:26:32Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "2983a74d6b5bc7cd5e25f09f491e5ace61ec5990",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "typos",
+      "headRefOid": "c30d2a4d36cc68b4cfe0ecb253a25a40ce874c88",
+      "closedAt": "2026-06-24T11:26:27Z",
+      "mergedAt": "2026-06-24T11:26:27Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e534a54ef1adc3e6504c1952f4d76ca761cbceee"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABD-Ykyg",
+          "commit": {
+            "abbreviatedOid": "c30d2a4"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-06-24T11:26:20Z",
+          "updatedAt": "2026-06-24T11:26:20Z",
           "comments": []
         }
       ]
