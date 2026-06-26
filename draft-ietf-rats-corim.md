@@ -2827,22 +2827,15 @@ TDGs need not be isomorphs of DMGs; but they can be a subset.
 The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
 
 ~~~ pseudocode
-FUNC process-trust-dep( acs: acs, td: sa.td) -> ACS {
-    temp-acs := acs
-    IF sa.td::IS-ACYCLIC() == FALSE THEN RETURN -1
-    FOREACH item IN sa.td:
-        IF acs::IS-MEMBER(item.environment)
-            FOREACH trustee IN item.trustees:
-                IF acs::IS-MEMBER(trustee.environment):
-                        CONTINUE
-                ELSE GET NEXT item
-            temp-acs::APPEND(item)
-    IF temp-acs::IS-ACYCLC() == TRUE THEN
-        acs::MERGE(temp-acs)
-        RETURN acs
-    ELSE
-        RETURN -1
-}
+FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
+    FOREACH dm-item IN ACS.ECT(.cm==domain):
+        IF condition.environment == dm-item.environment:
+            FOREACH trustee IN condition.trustees:
+                IF !trustee::IS-MEMBER(condition.trustees):
+                    BREAK   # break inner loop, try another dm-item
+            RETURN TRUE
+
+    RETURN FALSE
 ~~~
 {: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
 
