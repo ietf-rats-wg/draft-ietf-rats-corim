@@ -2066,7 +2066,6 @@ The following describes the specialized members of the `T-ECT`.
 
 * `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
 
-
 A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
 In a Trust ECT, the `environment` attribute encodes the name of the Claim.
 The value of the Claim is encoded in the `trustees` attributes.
@@ -2273,14 +2272,35 @@ Therefore, the `environment` attribute is excluded from the ECT condition.
 
 ##### Trust Dependencies {#sec-ir-trust-dep}
 
-The internal representation of Trust Dependency uses the `td` relation ({{fig-td}}), whereby each `T-ECT` corresponds to a `trust-dependency-triple-record`.
+The internal representation of Trust Dependency uses the `td` relation ({{fig-td}}), whereby each `td-item` corresponds to a `trust-dependency-triple-record`.
 
 ~~~ cddl
 {::include cddl/intrep-trust-dep.cddl}
 ~~~
 {: #fig-td title="Trust Dependency Relation"}
 
-A trust dependency relation is added if the target domain and all of the trustee domains are accepted domain members.
+~~~ cddl
+{::include cddl/intrep-trust-dep-item.cddl}
+~~~
+{: #fig-td-item title="Trust Dependency Item"}
+
+{{fig-td-ect-cond}} shows the profiled `T-ECT` for Trust Dependency conditions.
+
+~~~ cddl
+{::include cddl/intrep-ect-trust-dep-condition.cddl}
+~~~
+{: #fig-td-ect-cond title="Profiled ECT for Trust Dependency (condition)"}
+
+Both the `trustees` and `environment` are used for matching.
+
+{{fig-td-ect-add}} shows the profiled `T-ECT` for Trust Dependency additions.
+
+~~~ cddl
+{::include cddl/intrep-ect-trust-dep-addition.cddl}
+~~~
+{: #fig-td-ect-add title="Profiled ECT for Trust Dependency (addition)"}
+
+A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
 
 #### ACS
 
