@@ -2831,7 +2831,7 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
     FOREACH dm-item IN ACS.ECT(.cm==domain):
         IF condition.environment == dm-item.environment:
             FOREACH trustee IN condition.trustees:
-                IF !trustee::IS-MEMBER(condition.trustees):
+                IF !trustee::IS-MEMBER(dm-item.members):
                     BREAK   # break inner loop, try another dm-item
             RETURN TRUE
 
