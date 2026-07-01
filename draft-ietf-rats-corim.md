@@ -2066,7 +2066,6 @@ The following describes the specialized members of the `T-ECT`.
 
 * `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
 
-
 A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
 In a Trust ECT, the `environment` attribute encodes the name of the Claim.
 The value of the Claim is encoded in the `trustees` attributes.
@@ -2273,14 +2272,39 @@ Therefore, the `environment` attribute is excluded from the ECT condition.
 
 ##### Trust Dependencies {#sec-ir-trust-dep}
 
-The internal representation of Trust Dependency uses the `td` relation ({{fig-td}}), whereby each `T-ECT` corresponds to a `trust-dependency-triple-record`.
+The internal representation of Trust Dependency uses the `td` relation ({{fig-td}}), whereby each `td-item` corresponds to a `trust-dependency-triple-record`.
 
 ~~~ cddl
 {::include cddl/intrep-trust-dep.cddl}
 ~~~
 {: #fig-td title="Trust Dependency Relation"}
 
-A trust dependency relation is added if the target domain and all of the trustee domains are accepted domain members.
+~~~ cddl
+{::include cddl/intrep-trust-dep-item.cddl}
+~~~
+{: #fig-td-item title="Trust Dependency Item"}
+
+{{fig-td-ect-cond}} shows the profiled `T-ECT` for Trust Dependency conditions.
+
+~~~ cddl
+{::include cddl/intrep-ect-trust-dep-condition.cddl}
+~~~
+{: #fig-td-ect-cond title="Profiled ECT for Trust Dependency (condition)"}
+
+Both the `trustees` and `environment` are used for matching.
+
+{{fig-td-ect-add}} shows the profiled `T-ECT` for Trust Dependency additions.
+
+~~~ cddl
+{::include cddl/intrep-ect-trust-dep-addition.cddl}
+~~~
+{: #fig-td-ect-add title="Profiled ECT for Trust Dependency (addition)"}
+
+Before the `td` relation is added to the Staging Area, the graph it describes MUST be checked to ensure that it is a directed acyclic graph.
+If a cycle is detected, the `td` MUST NOT be added to the Staging Area and this condition SHOULD be logged.
+Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.
+
+A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
 
 #### ACS
 
@@ -2700,7 +2724,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                acs::APPEND(item.addition)
+                IF acs::CHECK(item.addition):
+                    acs::APPEND(item.addition)
 
     RETURN acs
 }
@@ -2709,8 +2734,12 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
 
 The `acs::MATCH` operation depends on the type of relation.
 The matching logic for each type of relation is described in the following sections.
+The `acs::CHECK` operation does consistency checks.
+The checking logic for each type of relation is described in the following sections.
 The `acs::APPEND` operation also depends on the type of relation.
-This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see {{sec-proc-rv}} for an example of the latter).
+This could involve simply appending the addition ECT.
+
+The addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.
 
 #### Ordering of Relations
 
@@ -2805,24 +2834,18 @@ TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS.
 TDGs need not be isomorphs of DMGs; but they can be a subset.
 
 The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
+This matching algorithm is the plug-in for the parameter `item-condition` of `acs::MATCH` defined in {{algo-match-and-augment}}.
 
 ~~~ pseudocode
-FUNC process-trust-dep( acs: acs, td: sa.td) -> ACS {
-    temp-acs := acs
-    IF sa.td::IS-ACYCLIC() == FALSE THEN RETURN -1
-    FOREACH item IN sa.td:
-        IF acs::IS-MEMBER(item.environment)
-            FOREACH trustee IN item.trustees:
-                IF acs::IS-MEMBER(trustee.environment):
-                        CONTINUE
-                ELSE GET NEXT item
-            temp-acs::APPEND(item)
-    IF temp-acs::IS-ACYCLC() == TRUE THEN
-        acs::MERGE(temp-acs)
-        RETURN acs
-    ELSE
-        RETURN -1
-}
+FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
+    FOREACH dm-item IN ACS.ECT(.cm==member):
+        IF condition.environment == dm-item.environment:
+            FOREACH trustee IN condition.trustees:
+                IF !trustee::IS-MEMBER(dm-item.members):
+                    BREAK   # break inner loop, try another dm-item
+            RETURN TRUE
+
+    RETURN FALSE
 ~~~
 {: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
 
