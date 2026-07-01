@@ -2825,6 +2825,7 @@ TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS.
 TDGs need not be isomorphs of DMGs; but they can be a subset.
 
 The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
+This matching algorithm is the plug-in for the parameter `item-condition` of `acs::MATCH` defined in {{algo-match-and-augment}}.
 
 ~~~ pseudocode
 FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
