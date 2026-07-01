@@ -2734,6 +2734,9 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
 
 The `acs::MATCH` operation depends on the type of relation.
 The matching logic for each type of relation is described in the following sections.
+The `acs::CHECK` operation does consistency checks. 
+The checking logic each type of relation is described in the following sections.
+
 The `acs::APPEND` operation also depends on the type of relation.
 This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see {{sec-proc-rv}} for an example of the latter).
 
