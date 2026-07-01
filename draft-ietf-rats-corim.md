@@ -2629,9 +2629,10 @@ FUNC transform(
 ) -> domain-item {
     item := domain-item::NEW()
     item.condition.members = T.members
+
     item.addition.environment = T.domain-id
-    item.addition.authority = signer
     item.addition.members = T.members
+    item.addition.authority = signer
 
     IF profile:
         item.addition.profile = profile
@@ -2655,11 +2656,16 @@ FUNC transform(
 ) -> trust-dependency-item
     item := T-ECT::NEW()
 
-    item.trustees = T.trustees
-    item.ECT-common.environment = T.domain-id
-    item.ECT-common.authority = signer
+    item.condition.environment = T.domain-id
+    item.condition.members = T.members
+
+    item.addition.environment = T.domain-id
+    item.addition.members = T.members
+    item.addition.authority = signer
+
     IF profile:
-        item.ECT-common.profile = profile
+        item.addition.profile = profile
+
     RETURN item
 }
 ~~~
@@ -2803,17 +2809,11 @@ Add all the verified keys to the addition ECT's `key-list` and add the addition 
 
 ##### Processing `dm` Relations {#sec-proc-dm}
 
-<cref>
-[TODO]
-This section needs to be rewritten to include processing pseudo code.
-Note: If the Ordering of Relations section defines pseudo code for acs::SORT() then pseudo code in these sections doesn't need to include it as they can assume the input ACS is already sorted.
-</cref>
-
 Domain Membership relations describe the expected topological arrangement of the Attester.
 
-Domains are matched with ACS entries by iterating through the dm list, in the staging area.
+Domains are matched with ACS entries by iterating through the `dm` list, in the staging area.
 
-The following algorithm assumes that the graph described by the condition ECTs in the dm relation is acyclic.
+The acs::CHECK() does acyclic graph consistency checks of the condition ECTs in the `dm` relation.
 
 For each dm entry (D-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
 
@@ -2822,7 +2822,7 @@ The matching dm entry is pruned from the dm list.
 
 If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.
 
-If there are additions to ACS, then the above algorithm is repeated, till there are no more additions. When there are no more additions to ACS the algorithm is terminated.
+If there are additions to ACS, then the above algorithm is repeated, until there are no more additions. When there are no more additions to ACS the algorithm is terminated.
 
 This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.
@@ -2831,7 +2831,7 @@ This specification does not mandate any specific topological sorting algorithm.
 
 The objective of processing a `td` relation is to verify that each edge in a trust dependency graph (TDG) has a corresponding edge in a domain membership graph (DMG).
 TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS.
-TDGs need not be isomorphs of DMGs; but they can be a subset.
+TDGs need not be isomorphs of DMGs.
 
 The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
 This matching algorithm is the plug-in for the parameter `item-condition` of `acs::MATCH` defined in {{algo-match-and-augment}}.
@@ -2849,10 +2849,16 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
 ~~~
 {: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
 
-Subsequent processing phases SHOULD evaluate the TDG against ACS corroborated Evidence to ensure trustee graphs are also trusted.
-For example, a TE with corroborated Evidence that has a trustee, TE_2, should ensure TE_2 also has corroborated Evidence before TE is considered trustworthey.
-Additionally, a trust dependency might specify a strength of function requirement for TE.
-The trust dependency implies TE_2 should have a minimum strength of function as TE.
+The ACS::CHECK() function does acyclic graph consistency checks of the condition ECTs in the `td` relation.
+
+The ACS:: APPEND() function adds the dm-item.addition to the ACS.
+
+Subsequent to the append, the ACS acyclic consistency check needs to be performed.
+
+Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
+For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
+Additionally, a trust dependency might specify a strength of function requirement for TE-1.
+The trust dependency implies TE-2 should have a minimum strength of function as TE-1.
 
 #### Rules of Comparison {#sec-comparison-rules}
 
