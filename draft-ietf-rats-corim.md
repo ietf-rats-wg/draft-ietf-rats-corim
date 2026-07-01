@@ -2740,6 +2740,8 @@ The checking logic for each type of relation is described in the following secti
 The `acs::APPEND` operation also depends on the type of relation.
 This could involve simply appending the addition ECT.
 
+The addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.
+
 #### Ordering of Relations
 
 The order in which items within relations are processed is important.
