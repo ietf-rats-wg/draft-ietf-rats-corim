@@ -2724,7 +2724,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                acs::APPEND(item.addition)
+                IF acs::CHECK(item.addition):
+                    acs::APPEND(item.addition)
 
     RETURN acs
 }
@@ -2833,7 +2834,7 @@ This matching algorithm is the plug-in for the parameter `item-condition` of `ac
 
 ~~~ pseudocode
 FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
-    FOREACH dm-item IN ACS.ECT(.cm==domain):
+    FOREACH dm-item IN ACS.ECT(.cm==member):
         IF condition.environment == dm-item.environment:
             FOREACH trustee IN condition.trustees:
                 IF !trustee::IS-MEMBER(dm-item.members):
