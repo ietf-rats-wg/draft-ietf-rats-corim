@@ -2738,7 +2738,7 @@ The `acs::CHECK` operation does consistency checks.
 The checking logic for each type of relation is described in the following sections.
 
 The `acs::APPEND` operation also depends on the type of relation.
-This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see {{sec-proc-rv}} for an example of the latter).
+This could involve simply appending the addition ECT.
 
 #### Ordering of Relations
 
