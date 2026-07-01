@@ -2300,6 +2300,10 @@ Both the `trustees` and `environment` are used for matching.
 ~~~
 {: #fig-td-ect-add title="Profiled ECT for Trust Dependency (addition)"}
 
+Before the `td` relation is added to the Staging Area, the graph it describes MUST be checked to ensure that it is a directed acyclic graph.
+If a cycle is detected, the `td` MUST NOT be added to the Staging Area and this condition SHOULD be logged.
+Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.
+
 A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
 
 #### ACS
