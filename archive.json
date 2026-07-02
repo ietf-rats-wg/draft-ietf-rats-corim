@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-28T04:26:22.771250+00:00",
+  "timestamp": "2026-07-02T04:08:07.479007+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14621,7 +14621,7 @@
       "labels": [],
       "body": "The \"selection matching\" prose made my head spin. I left the section untouched because I am not sure that I understand it well enough to apply any changes. Someone else needs to have a go at it.",
       "createdAt": "2026-06-05T12:28:35Z",
-      "updatedAt": "2026-06-18T10:40:15Z",
+      "updatedAt": "2026-07-02T02:53:16Z",
       "closedAt": null,
       "comments": [
         {
@@ -14630,6 +14630,13 @@
           "body": "@nedmsmith Please re-review, Conditional Endorsement Series Triples!",
           "createdAt": "2026-06-18T10:40:15Z",
           "updatedAt": "2026-06-18T10:40:15Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm assuming the \"head spinning\" is due to the variation in the condition-addition pattern that bifurcates the condition into condition+selection (followed by addition). \n\nI can add prose to make this more clear. \n\nIt may be less clear that the internal representation expects to build something like a database \"cursor\" of ACS entries that are \"selected\" for further matching logic. This means the acs::MATCH result is staged for furthur consideration. (Note that another PR anticipates the need for integrity checking prior to doing acs:APPEND). \n\nThe series triples anticipate something like:\n- cursor = acs::MATCH() followed by\n- item = cursor::MATCH()\n- acs::append(item)\n- - etc...\n\nThe cursor::MATCH() algorithm has nuanced matching semantics that are not appropriate for acs::MATCH(). \n\nPossibly, it makes sense to describe the two state matching in the processing section for endorsement series since that is where the MATCH/APPEND logic is or in the transformation section since that is where the condition and addition structures are populated.\n\nThe match_and_augment algorithm in section 8.2.4 continues to be problematic. In this case, because the input to MATCH is `item.condition` rather than `item`. Item is assigned by various interp relations that have different structures. In the case of series endorsements, the relation type is `evs` not `ev` which means passing only `item.condition` to MATCH means only half of the matching criteria is passed in. it would be much less problematic if only `item` is passed. That way the respective sub-sections can clarify how the sub-structures in item are applied. Otherwise, I need a acs::MATCH2() function that passes `item.condition` and `item.series`.\n\n\n\n",
+          "createdAt": "2026-07-02T02:05:13Z",
+          "updatedAt": "2026-07-02T02:53:16Z"
         }
       ]
     },
@@ -14638,15 +14645,15 @@
       "id": "I_kwDOH6-tI88AAAABEf8VHQ",
       "title": "Triple processing description cleanup",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/592",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "I'd rather refer to \u00a78 for processing than describe it vaguely here, because duplication introduces the risk of inconsistencies. However, if we decide that a high-level description of the processing is acceptable, we need to clearly introduce the concept of ACS and possibly that of transformation earlier.\n\n",
       "createdAt": "2026-06-05T12:29:20Z",
-      "updatedAt": "2026-06-22T12:51:41Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-01T16:43:42Z",
+      "closedAt": "2026-07-01T16:43:42Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -88154,13 +88161,13 @@
       "labels": [],
       "body": "Changes related to issue #580 to separate domain membership and trust dependency transformation and processing.",
       "createdAt": "2026-05-26T23:10:10Z",
-      "updatedAt": "2026-06-24T11:27:24Z",
+      "updatedAt": "2026-07-01T22:22:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "0e1b001cdd886ddd2c71ce665809924d66f199cc",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "trust-dependency",
-      "headRefOid": "6d68d4e1183bfa20485f48ca5cabf18b49232f12",
+      "headRefOid": "b2a6157d8265b16953fae234631ce31b8cc96b5a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -88207,6 +88214,13 @@
           "body": "gentle reminder to henk and thomas to review final edits!!",
           "createdAt": "2026-06-22T12:16:47Z",
           "updatedAt": "2026-06-22T12:16:56Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati @henkbirkholz :\r\n\r\nWe have merged Thomas's changes back to this branch AND did quite a good tidy up.\r\n\r\nPlease give a final look.\r\n\r\ni plan to merge it on Friday",
+          "createdAt": "2026-07-01T22:22:36Z",
+          "updatedAt": "2026-07-01T22:22:54Z"
         }
       ],
       "reviews": [
@@ -90270,28 +90284,412 @@
     {
       "number": 601,
       "id": "PR_kwDOH6-tI87q7htA",
-      "title": "[WIP] Trust dependency adjustments",
+      "title": "Trust dependency adjustments",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/601",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "* data structure alignment\r\n* MATCH pseudo-code missing",
       "createdAt": "2026-06-26T10:03:39Z",
-      "updatedAt": "2026-06-26T13:56:52Z",
+      "updatedAt": "2026-07-01T15:15:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "trust-dependency",
       "baseRefOid": "6d68d4e1183bfa20485f48ca5cabf18b49232f12",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "trust-dependency-adjust",
-      "headRefOid": "840f49e00f8d32d6d5e269ba9b6f719c8abe10ab",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "headRefOid": "bd3775c0626d81de98a9378060bb68ac661f7759",
+      "closedAt": "2026-07-01T15:14:53Z",
+      "mergedAt": "2026-07-01T15:14:53Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "1e6f209e770feeebca93cf8ae035ea357b5cf897"
+      },
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith PLease see my suggested changes on top of What Thomas had earlier proposed.",
+          "createdAt": "2026-06-30T23:24:04Z",
+          "updatedAt": "2026-06-30T23:24:04Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEnSTOA",
+          "commit": {
+            "abbreviatedOid": "840f49e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-06-30T22:52:45Z",
+          "updatedAt": "2026-06-30T22:52:46Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "```suggestion\n                IF !trustee::IS-MEMBER(dm-item.members):\n```",
+              "createdAt": "2026-06-30T22:52:45Z",
+              "updatedAt": "2026-06-30T22:52:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEqfOJg",
+          "commit": {
+            "abbreviatedOid": "8d7e546"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T10:19:39Z",
+          "updatedAt": "2026-07-01T10:19:40Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\nThe matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.\nThis matching algorithm is the plug-in for the parameter `item-condition` of `acs::MATCH` defined in {{algo-match-and-augment}}.\n```",
+              "createdAt": "2026-07-01T10:19:40Z",
+              "updatedAt": "2026-07-01T10:27:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEqfSQA",
+          "commit": {
+            "abbreviatedOid": "8d7e546"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T10:19:50Z",
+          "updatedAt": "2026-07-01T10:19:51Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "No, please.  This undoes the essence of the PR!\r\n\r\nThe high-order bit here is to bring the exceptional processing path back into the fold.",
+              "createdAt": "2026-07-01T10:19:50Z",
+              "updatedAt": "2026-07-01T10:19:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEqfdDw",
+          "commit": {
+            "abbreviatedOid": "8d7e546"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T10:20:18Z",
+          "updatedAt": "2026-07-01T10:20:18Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "with the addition above, I hope it becomes clear that this suggested change is not necessary.",
+              "createdAt": "2026-07-01T10:20:18Z",
+              "updatedAt": "2026-07-01T10:20:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEqg6Gg",
+          "commit": {
+            "abbreviatedOid": "8d7e546"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T10:23:46Z",
+          "updatedAt": "2026-07-01T10:23:46Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "No need for this.  As the MATCH function is an ACS method, the parameter is passed in implicitly.",
+              "createdAt": "2026-07-01T10:23:46Z",
+              "updatedAt": "2026-07-01T10:23:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEqueeQ",
+          "commit": {
+            "abbreviatedOid": "59e48db"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "with the elaboration on function intent and the DAG-check illustration this looks pretty good to me.",
+          "createdAt": "2026-07-01T10:56:55Z",
+          "updatedAt": "2026-07-01T10:56:55Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEq4Fcg",
+          "commit": {
+            "abbreviatedOid": "59e48db"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see my comment",
+          "createdAt": "2026-07-01T11:17:30Z",
+          "updatedAt": "2026-07-01T11:26:07Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "You MUST provide the high level entry, otherwise MATCH on its own has a little meaning",
+              "createdAt": "2026-07-01T11:17:31Z",
+              "updatedAt": "2026-07-01T11:26:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABErOjpQ",
+          "commit": {
+            "abbreviatedOid": "59e48db"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T12:04:40Z",
+          "updatedAt": "2026-07-01T12:04:40Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "The high-level context is already there.  It\u2019s https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#figure-43, which is referenced in L2832.",
+              "createdAt": "2026-07-01T12:04:40Z",
+              "updatedAt": "2026-07-01T12:04:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABErPtXw",
+          "commit": {
+            "abbreviatedOid": "8d7e546"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T12:07:07Z",
+          "updatedAt": "2026-07-01T12:07:07Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "I thought we are describing functions as simple Algorithm rather than Object Oriented Methods. Either way, I am not too fussy about representations, so long as it is consistent!",
+              "createdAt": "2026-07-01T12:07:07Z",
+              "updatedAt": "2026-07-01T12:07:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABErRT9Q",
+          "commit": {
+            "abbreviatedOid": "8d7e546"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T12:10:51Z",
+          "updatedAt": "2026-07-01T12:10:51Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "If there is a need of a specific Algorithm documentation, like this then it MUST be self consistent\r\n\r\nSIMPLY documenting Matching without what is the outcome of Matching is grossly in-adequate.\r\n\r\nIf documented, we document what is the MATCH CRITERION.\r\n\r\nIf matched what gets added, in where.\r\n\r\nOTHERWISE, do NOT represent the DDT algorithm at all!",
+              "createdAt": "2026-07-01T12:10:51Z",
+              "updatedAt": "2026-07-01T12:10:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsVO9w",
+          "commit": {
+            "abbreviatedOid": "59e48db"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T14:16:45Z",
+          "updatedAt": "2026-07-01T14:16:45Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "```suggestion\n    FOREACH dm-item IN ACS.ECT(.cm==member):\n```",
+              "createdAt": "2026-07-01T14:16:45Z",
+              "updatedAt": "2026-07-01T14:16:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsgs3g",
+          "commit": {
+            "abbreviatedOid": "59e48db"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T14:38:02Z",
+          "updatedAt": "2026-07-01T14:38:02Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\n            IF acs::MATCH(item.condition):\n                IF acs::CHECK(item.addition):\n```",
+              "createdAt": "2026-07-01T14:38:02Z",
+              "updatedAt": "2026-07-01T14:38:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEshNBg",
+          "commit": {
+            "abbreviatedOid": "59e48db"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T14:39:04Z",
+          "updatedAt": "2026-07-01T14:39:04Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\n                    acs::APPEND(item.addition)\n```",
+              "createdAt": "2026-07-01T14:39:04Z",
+              "updatedAt": "2026-07-01T14:39:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsp1bg",
+          "commit": {
+            "abbreviatedOid": "f1e937d"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T14:57:04Z",
+          "updatedAt": "2026-07-01T14:57:28Z",
+          "comments": [
+            {
+              "originalPosition": 65,
+              "body": "```suggestion\nThe checking logic for each type of relation is described in the following sections.\n```",
+              "createdAt": "2026-07-01T14:57:04Z",
+              "updatedAt": "2026-07-01T14:57:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsrOQw",
+          "commit": {
+            "abbreviatedOid": "db26f6a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T15:00:00Z",
+          "updatedAt": "2026-07-01T15:00:00Z",
+          "comments": [
+            {
+              "originalPosition": 68,
+              "body": "```suggestion\nThis could involve simply appending the addition ECT.\n```",
+              "createdAt": "2026-07-01T15:00:00Z",
+              "updatedAt": "2026-07-01T15:00:00Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEssS-w",
+          "commit": {
+            "abbreviatedOid": "41f949c"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T15:02:12Z",
+          "updatedAt": "2026-07-01T15:02:12Z",
+          "comments": [
+            {
+              "originalPosition": 69,
+              "body": "```suggestion\nThis could involve simply appending the addition ECT.\n\nThe addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.\n```",
+              "createdAt": "2026-07-01T15:02:12Z",
+              "updatedAt": "2026-07-01T15:02:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsttoQ",
+          "commit": {
+            "abbreviatedOid": "5283fba"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T15:04:52Z",
+          "updatedAt": "2026-07-01T15:04:52Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "```suggestion\n```",
+              "createdAt": "2026-07-01T15:04:52Z",
+              "updatedAt": "2026-07-01T15:04:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsugGQ",
+          "commit": {
+            "abbreviatedOid": "de3691b"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T15:06:31Z",
+          "updatedAt": "2026-07-01T15:06:31Z",
+          "comments": [
+            {
+              "originalPosition": 66,
+              "body": "Resolved",
+              "createdAt": "2026-07-01T15:06:31Z",
+              "updatedAt": "2026-07-01T15:06:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEsu5SA",
+          "commit": {
+            "abbreviatedOid": "de3691b"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-01T15:07:12Z",
+          "updatedAt": "2026-07-01T15:07:12Z",
+          "comments": [
+            {
+              "originalPosition": 74,
+              "body": "resolved",
+              "createdAt": "2026-07-01T15:07:12Z",
+              "updatedAt": "2026-07-01T15:07:12Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
