@@ -2822,7 +2822,8 @@ The matching dm entry is pruned from the dm list.
 
 If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.
 
-If there are additions to ACS, then the above algorithm is repeated, until there are no more additions. When there are no more additions to ACS the algorithm is terminated.
+If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
+The algorithm is terminated when there are no more additions to ACS.
 
 This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.
