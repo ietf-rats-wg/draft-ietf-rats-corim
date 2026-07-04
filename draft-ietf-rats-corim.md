@@ -1414,9 +1414,12 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 
 ### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
-The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
-The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
-The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding problematic repetition of search criteria.
+The Conditional Endorsement Series Triple is used when an Endorser wants to add Claims with differing values based on conditions that have differing Claims values.
+For example, if version 1.0 of a component has a Common Vulnerability and Exporsure (CVE), but version 2.0b does not, a series condition might contain `version` = "1.0" and an addition `cve` = "CVE_PLACEHOLDER". Another series condition might contain `version` = "2.0" and an addition `cve` = "NONE".
+As soon as the condition value is matched the remaining conditions can be ignored.
+
+The Conditional Endorsement Series Triple has two forms of conditions, those that are in the series list and those that are common to all series items.
+The common conditions are separated out of the series list for convenience.
 
 The Conditional Endorsement Series Triple has the following structure:
 
@@ -1429,45 +1432,27 @@ The Conditional Endorsement Series Triple has the following structure:
 
 The `conditional-endorsement-series-triple-record` has the following parameters:
 
-* `condition`: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
-The condition consists of an `environment-map`, a (possibly empty) `claims-list`, and an optional `authorized-by`.
+* `common-condition`: Matching conditions that are common to every item in the series.
+Common conditions include `environment-map`, (optional) `claims-list`, and (optional) `authorized-by`.
 
-* `series`: A sequence of selection-addition tuples.
+* `series`: A list of `conditional-series-record` items where each item's condition uses the same type measurements, but differ in value.
 
-The `conditional-series-record` has the following parameters:
+The `conditional-series-record` has the following elements:
 
-* `selection`: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's `condition` result.
+* `condition`: Match conditions where the same type of measurements appear in each series item, but with different values. Each series item is paired with an `addition` series item.
 
-* `addition`: Endorsements that are added if the `selection` criteria are satisfied.
+* `addition`: Claims to be added when its paired `condition` matches.
+Addition Claims are added to the ACS record matching `common-condition`.`environment`.
 
-##### Condition Matching
+##### Matching Considerations
 
-The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., `environment-map`) and optionally measurements (i.e., `claims-list`) or authority (i.e., `authorized-by`).
-Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.
-
-Note that `measurement-map` can also specify authority criteria. To avoid conflicting criteria, the `authorized-by` in `condition` takes precedence over the `authorized-by` in `measurement-map`.
-
-##### Selection Matching
-
-Every `conditional-series-record` selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each `conditional-series-record`.
-For example, if a selection matches on 3 `measurement-map` statements; `mkey` is the same for all 3 statements and `mval` contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every `conditional-series-record` in the series.
-
-These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+For consistent results, every series item condition MUST use the same measurement types; differing only in terms of measurement values.
+This requirement also extends to use of `mkey` in `measurement-map`.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
 The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
 
-##### Processing the Addition
-
-To process a `conditional-endorsement-series-record` the selection criteria in `condition` entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
-If the selection criteria are satisfied, the `series` tuples are processed.
-
-The `series` array contains an ordered list of `conditional-series-record` entries.
-Evaluation order begins at list position 0.
-
-For each `series` entry, if the `selection` criteria matches an entry found in the `condition` result, the `series` `addition` is combined with the `environment-map` from the `condition` result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.
-
-The first `series` entry that successfully matches the `selection` criteria terminates `series` processing.
+Note: `authorized-by` in `common-condition` takes precedence over the `authorized-by` in `condition`.
 
 ### Device Identity Triple {#sec-comid-triple-identity}
 
@@ -2467,8 +2452,14 @@ FUNC transform(
 ~~~
 {: #algo-ce-transform title="Conditional Endorsement Triple Transformation"}
 
-A `conditional-endorsement-series-triple-record` ({{triple-ces}}) is transformed into an `evs-item` ({{fig-evs}}) as described in {{algo-ces-transform}}.
-(The code reuses the `mm_to_em` and `mms_to_ems` functions from {{algo-mm-to-em}}.)
+Each `conditional-endorsement-series-triple-record` ({{triple-ces}}) is transformed into an `evs-item` ({{fig-evs}}) as described in {{algo-ces-transform}}.
+(The pseudocode reuses the `mms_to_ems` function defined in {{algo-mm-to-em}}.)
+
+The `conditional-endorsement-series-triple-record` contains a condition that is common to all series items.
+Each entry in the series is a `conditional-series-record` with conditions that have differing values and additions that are specific to those values.
+
+The internal representation for a conditional endorsement series consists of a list of condition-addition pairs where the common condition in the series is replicated for each series item.
+The transformation algorithm combines the common conditions with each series item condition to simplify Verifier processing (see {{sec-proc-evs-rel}}).
 
 ~~~ pseudocode
 FUNC transform(
@@ -2476,22 +2467,29 @@ FUNC transform(
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -> evs-item {
-    FOREACH s in T.series:
-       item := series-item::NEW()
-       item.condition.environment = s.condition.environment
-       item.condition.element-list = mms_to_ems(s.condition.claims-list)
-       IF s.condition.authorized-by:
-           item.condition.authority = s.condition.authorized-by
-
-       item.addition.environment = s.condition.environment
-       se := mm_to_em(s.selection)
-       item.condition.element-list::APPEND(se)
-       item.addition.cmtype = `endorsements`
-       item.addition.authority = signer
+    evsitem := evs-item::NEW()
+    FOREACH csr in T.series:
+       // stage the condition
+       sitem := series-item::NEW()
+       sitem.condition.environment = T.condition.environment
+       ems1 = mms_to_ems(T.condition.claims-list)
+       sitem.condition.element-list = ems1
+       ems2 := mms_to_ems(csr.condition)
+       sitem.condition.element-list::APPEND(ems2)
+       IF T.condition.authorized-by:
+           sitem.condition.authority = T.condition.authorized-by
+       ELSE_IF csr.series.condition.authorized-by:
+           sitem.condition.authority = csr.series.condition.authorized-by
+       // stage the addition
+       sitem.addition.environment = T.condition.environment
+       ems3 = mms_to_ems(csr.addition)
+       sitem.addition.element-list = ems3
+       sitem.addition.cmtype = `endorsements`
+       sitem.addition.authority = signer
        IF profile:
-           item.addition.profile = profile
-
-    RETURN item
+           sitem.addition.profile = profile
+       evsitem[index-of(sitem)] = sitem.
+    RETURN evsitem
 }
 ~~~
 {: #algo-ces-transform title="Conditional Endorsement Series Triple Transformation"}
@@ -2676,9 +2674,13 @@ For each `ev` entry, the condition ECT is compared with an ACS ECT with `cmtype`
 If the two match, the addition ECT is added to the ACS.
 
 
-##### Processing `evs` Relations
+##### Processing `evs` Relations {#sec-proc-evs-rel}
 
-The Conditional Endorsement Series relation is processed using a modified `match_and_augment` function (see {{algo-match-and-augment}}) where a SERIES-MATCH() replaces the MATCH() function (see {{algo-series-match-and-augment}}).
+The Conditional Endorsement Series relation is processed using a modified `match_and_augment` function (see {{algo-match-and-augment}}) where SERIES-MATCH() calls MATCH() (see {{algo-series-match-and-augment}}).
+
+The first series item that matches terminates processing of subsequent series items.
+
+The matched item is appended to the ACS.
 
 ~~~ pseudocode
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
@@ -2690,21 +2692,14 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     RETURN acs
 }
 
-FUNC SERIES-MATCH(acs: ACS, sitem: series-item)
+FUNC SERIES-MATCH(acs: ACS, series: SERIES)
     -> Endorsement-addition-ECT {
-    FOREACH item IN sitem:
-        IF acs::MATCH(item.condition):
-            RETURN item.addition
+    FOREACH sitem IN series:
+        IF acs::MATCH(sitem.condition):
+            RETURN sitem.addition
 }
 ~~~
 {: #algo-series-match-and-augment title="Series Match and Augment Algorithm"}
-
-The `match-and-augment` function uses the `evs` list in the staging area `sa`.
-For each `evs` item, the condition ECT is matched with an ACS ECT with `cmtype` 0, 1 or 2 (i.e. `reference values`, `endorsements` or `evidence`) using a traditional acs::MATCH().
-
-If they match, the `evs` series array is iterated.
-For each series entry, if the selection ECT matches an ACS ECT, the addition ECT is added to the ACS.
-Series iteration terminates either when the first matching series entry has been processed, or when no series entries match.
 
 ##### Processing `keys` Relations
 
