@@ -3470,16 +3470,18 @@ If the search criteria are satisfied, the <code>endorsements</code> entries are 
           <h4 id="name-conditional-endorsement-ser">
 <a href="#section-5.1.8" class="section-number selfRef">5.1.8. </a><a href="#name-conditional-endorsement-ser" class="section-name selfRef">Conditional Endorsement Series Triple</a>
           </h4>
-<p id="section-5.1.8-1">The Conditional Endorsement Series Triple employs a 2-stage matching convention to assert endorsed values based on an initial condition match followed by a series selection match. If both the condition and selection criteria are satisfied, a set of endorsed values are added to the matching triple records. The condition match identifies the set of Claims to which the selection criteria are applied.
-The selection specifies a pattern of measurements that, if present, controls when a focused set of endorsed values are to be asserted.
-The 2-stage approach enables Endorsement authors the ability to craft powerful search criteria while avoiding problematic repetition of search criteria.<a href="#section-5.1.8-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.8-2">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.8-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-1">The Conditional Endorsement Series Triple is used when an Endorser wants to add Claims with differing values based on conditions that have differing Claims values.
+For example, if version 1.0 of a component has a Common Vulnerability and Exporsure (CVE), but version 2.0b does not, a series condition might contain <code>version</code> = "1.0" and an addition <code>cve</code> = "CVE_PLACEHOLDER". Another series condition might contain <code>version</code> = "2.0" and an addition <code>cve</code> = "NONE".
+As soon as the condition value is matched the remaining conditions can be ignored.<a href="#section-5.1.8-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-2">The Conditional Endorsement Series Triple has two forms of conditions, those that are in the series list and those that are common to all series items.
+The common conditions are separated out of the series list for convenience.<a href="#section-5.1.8-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-3">The Conditional Endorsement Series Triple has the following structure:<a href="#section-5.1.8-3" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-seri"></span><div id="triple-ces">
 <figure id="figure-4">
-            <div class="lang-cddl sourcecode" id="section-5.1.8-3.1">
+            <div class="lang-cddl sourcecode" id="section-5.1.8-4.1">
 <pre>
 conditional-endorsement-series-triple-record = [
-  condition: [
+  common-condition: [
     environment: environment-map
     claims-list: [ * measurement-map ]
     ? authorized-by: [ + $crypto-key-type-choice ]
@@ -3488,7 +3490,7 @@ conditional-endorsement-series-triple-record = [
 ]
 
 conditional-series-record = [
-  selection: [ + measurement-map]
+  condition: [ + measurement-map]
   addition: [ + measurement-map ]
 ]
 </pre>
@@ -3497,59 +3499,37 @@ conditional-series-record = [
 <a href="#name-conditional-endorsement-seri" class="selfRef">Conditional Endorsement Series Triple Definition</a>
             </figcaption></figure>
 </div>
-<p id="section-5.1.8-4">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.8-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-5">The <code>conditional-endorsement-series-triple-record</code> has the following parameters:<a href="#section-5.1.8-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.8-5.1">
-              <p id="section-5.1.8-5.1.1"><code>condition</code>: Initial selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the current set of accepted Claims.
-The condition consists of an <code>environment-map</code>, a (possibly empty) <code>claims-list</code>, and an optional <code>authorized-by</code>.<a href="#section-5.1.8-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.8-6.1">
+              <p id="section-5.1.8-6.1.1"><code>common-condition</code>: Matching conditions that are common to every item in the series.
+Common conditions include <code>environment-map</code>, (optional) <code>claims-list</code>, and (optional) <code>authorized-by</code>.<a href="#section-5.1.8-6.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.8-5.2">
-              <p id="section-5.1.8-5.2.1"><code>series</code>: A sequence of selection-addition tuples.<a href="#section-5.1.8-5.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.8-6.2">
+              <p id="section-5.1.8-6.2.1"><code>series</code>: A list of <code>conditional-series-record</code> items where each item's condition uses the same type measurements, but differ in value.<a href="#section-5.1.8-6.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.8-6">The <code>conditional-series-record</code> has the following parameters:<a href="#section-5.1.8-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.8-7">The <code>conditional-series-record</code> has the following elements:<a href="#section-5.1.8-7" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.8-7.1">
-              <p id="section-5.1.8-7.1.1"><code>selection</code>: Secondary selection criteria that locates Evidence, corroborated Evidence, or Endorsements from the initial selection criteria's <code>condition</code> result.<a href="#section-5.1.8-7.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.8-8.1">
+              <p id="section-5.1.8-8.1.1"><code>condition</code>: Match conditions where the same type of measurements appear in each series item, but with different values. Each series item is paired with an <code>addition</code> series item.<a href="#section-5.1.8-8.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.8-7.2">
-              <p id="section-5.1.8-7.2.1"><code>addition</code>: Endorsements that are added if the <code>selection</code> criteria are satisfied.<a href="#section-5.1.8-7.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.8-8.2">
+              <p id="section-5.1.8-8.2.1"><code>addition</code>: Claims to be added when its paired <code>condition</code> matches.
+Addition Claims are added to the ACS record matching <code>common-condition</code>.<code>environment</code>.<a href="#section-5.1.8-8.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<div id="condition-matching">
+<div id="matching-considerations">
 <section id="section-5.1.8.1">
-            <h5 id="name-condition-matching">
-<a href="#section-5.1.8.1" class="section-number selfRef">5.1.8.1. </a><a href="#name-condition-matching" class="section-name selfRef">Condition Matching</a>
+            <h5 id="name-matching-considerations">
+<a href="#section-5.1.8.1" class="section-number selfRef">5.1.8.1. </a><a href="#name-matching-considerations" class="section-name selfRef">Matching Considerations</a>
             </h5>
-<p id="section-5.1.8.1-1">The condition matching criteria is applied to the set of Claims the Verifier has previously accepted. The criteria is expressed in terms of environments (i.e., <code>environment-map</code>) and optionally measurements (i.e., <code>claims-list</code>) or authority (i.e., <code>authorized-by</code>).
-Condition matching is intended to powerfully enable broad or narrow searches that serve as staging for subsequent selection matching.<a href="#section-5.1.8.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.8.1-2">Note that <code>measurement-map</code> can also specify authority criteria. To avoid conflicting criteria, the <code>authorized-by</code> in <code>condition</code> takes precedence over the <code>authorized-by</code> in <code>measurement-map</code>.<a href="#section-5.1.8.1-2" class="pilcrow">¶</a></p>
-<div id="selection-matching">
-<section id="section-5.1.8.1.1">
-              <h6 id="name-selection-matching">
-<a href="#section-5.1.8.1.1" class="section-number selfRef">5.1.8.1.1. </a><a href="#name-selection-matching" class="section-name selfRef">Selection Matching</a>
-              </h6>
-<p id="section-5.1.8.1.1-1">Every <code>conditional-series-record</code> selection MUST select the same mkeys where every selected mkey's corresponding set of code points represented as mval.key MUST be the same across each <code>conditional-series-record</code>.
-For example, if a selection matches on 3 <code>measurement-map</code> statements; <code>mkey</code> is the same for all 3 statements and <code>mval</code> contains only A= variable-X, B= variable-Y, and C= variable-Z (exactly the set of code points A, B, and C) respectively for every <code>conditional-series-record</code> in the series.<a href="#section-5.1.8.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.8.1.1-2">These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+<p id="section-5.1.8.1-1">For consistent results, every series item condition MUST use the same measurement types; differing only in terms of measurement values.
+This requirement also extends to use of <code>mkey</code> in <code>measurement-map</code>.
 Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
-The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.<a href="#section-5.1.8.1.1-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="processing-the-addition">
-<section id="section-5.1.8.1.2">
-              <h6 id="name-processing-the-addition">
-<a href="#section-5.1.8.1.2" class="section-number selfRef">5.1.8.1.2. </a><a href="#name-processing-the-addition" class="section-name selfRef">Processing the Addition</a>
-              </h6>
-<p id="section-5.1.8.1.2-1">To process a <code>conditional-endorsement-series-record</code> the selection criteria in <code>condition</code> entries are matched with existing Evidence, corroborated Evidence, and Endorsements.
-If the selection criteria are satisfied, the <code>series</code> tuples are processed.<a href="#section-5.1.8.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.8.1.2-2">The <code>series</code> array contains an ordered list of <code>conditional-series-record</code> entries.
-Evaluation order begins at list position 0.<a href="#section-5.1.8.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.8.1.2-3">For each <code>series</code> entry, if the <code>selection</code> criteria matches an entry found in the <code>condition</code> result, the <code>series</code> <code>addition</code> is combined with the <code>environment-map</code> from the <code>condition</code> result to form a new Endorsement entry.
-The new entry is added to the existing set of Endorsements.<a href="#section-5.1.8.1.2-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.8.1.2-4">The first <code>series</code> entry that successfully matches the <code>selection</code> criteria terminates <code>series</code> processing.<a href="#section-5.1.8.1.2-4" class="pilcrow">¶</a></p>
-</section>
-</div>
+The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
+These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.<a href="#section-5.1.8.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.8.1-2">Note: <code>authorized-by</code> in <code>common-condition</code> takes precedence over the <code>authorized-by</code> in <code>condition</code>.<a href="#section-5.1.8.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -4776,7 +4756,6 @@ Note that when the <code>ev</code> relation is for an EV triple, the optional <c
 evs = [ + evs-item ]
 
 evs-item = {
-  condition: Endorsement-condition-ECT
   series: [ + series-item ]
 }
 
@@ -5251,33 +5230,44 @@ FUNC transform(
 <a href="#name-conditional-endorsement-tripl" class="selfRef">Conditional Endorsement Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.3.7.3-6">A <code>conditional-endorsement-series-triple-record</code> (<a href="#triple-ces" class="auto internal xref">Figure 4</a>) is transformed into an <code>evs-item</code> (<a href="#fig-evs" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 38</a>.
-(The code reuses the <code>mm_to_em</code> and <code>mms_to_ems</code> functions from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.2.3.7.3-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.7.3-6">Each <code>conditional-endorsement-series-triple-record</code> (<a href="#triple-ces" class="auto internal xref">Figure 4</a>) is transformed into an <code>evs-item</code> (<a href="#fig-evs" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 38</a>.
+(The pseudocode reuses the <code>mms_to_ems</code> function defined in <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.2.3.7.3-6" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.7.3-7">The <code>conditional-endorsement-series-triple-record</code> contains a condition that is common to all series items.
+Each entry in the series is a <code>conditional-series-record</code> with conditions that have differing values and additions that are specific to those values.<a href="#section-8.2.3.7.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.2.3.7.3-8">The internal representation for a conditional endorsement series consists of a list of condition-addition pairs where the common condition in the series is replicated for each series item.
+The transformation algorithm combines the common conditions with each series item condition to simplify Verifier processing (see <a href="#sec-proc-evs-rel" class="auto internal xref">Section 8.2.4.3.2</a>).<a href="#section-8.2.3.7.3-8" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-serie"></span><div id="algo-ces-transform">
 <figure id="figure-38">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.3.7.3-7.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.3.7.3-9.1">
 <pre>
 FUNC transform(
     T: conditional-endorsement-series-triple-record,
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -&gt; evs-item {
-    FOREACH s in T.series:
-       item := series-item::NEW()
-       item.condition.environment = s.condition.environment
-       item.condition.element-list = mms_to_ems(s.condition.claims-list)
-       IF s.condition.authorized-by:
-           item.condition.authority = s.condition.authorized-by
-
-       item.addition.environment = s.condition.environment
-       se := mm_to_em(s.selection)
-       item.condition.element-list::APPEND(se)
-       item.addition.cmtype = `endorsements`
-       item.addition.authority = signer
+    evsitem := evs-item::NEW()
+    FOREACH csr in T.series:
+       // stage the condition
+       sitem := series-item::NEW()
+       sitem.condition.environment = T.condition.environment
+       ems1 = mms_to_ems(T.condition.claims-list)
+       sitem.condition.element-list = ems1
+       ems2 := mms_to_ems(csr.condition)
+       sitem.condition.element-list::APPEND(ems2)
+       IF T.condition.authorized-by:
+           sitem.condition.authority = T.condition.authorized-by
+       ELSE_IF csr.series.condition.authorized-by:
+           sitem.condition.authority = csr.series.condition.authorized-by
+       // stage the addition
+       sitem.addition.environment = T.condition.environment
+       ems3 = mms_to_ems(csr.addition)
+       sitem.addition.element-list = ems3
+       sitem.addition.cmtype = `endorsements`
+       sitem.addition.authority = signer
        IF profile:
-           item.addition.profile = profile
-
-    RETURN item
+           sitem.addition.profile = profile
+       evsitem[index-of(sitem)] = sitem.
+    RETURN evsitem
 }
 </pre>
 </div>
@@ -5529,15 +5519,17 @@ For each <code>ev</code> entry, the condition ECT is compared with an ACS ECT wi
 If the two match, the addition ECT is added to the ACS.<a href="#section-8.2.4.3.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="processing-evs-relations">
+<div id="sec-proc-evs-rel">
 <section id="section-8.2.4.3.2">
               <h6 id="name-processing-evs-relations">
 <a href="#section-8.2.4.3.2" class="section-number selfRef">8.2.4.3.2. </a><a href="#name-processing-evs-relations" class="section-name selfRef">Processing <code>evs</code> Relations</a>
               </h6>
-<p id="section-8.2.4.3.2-1">The Conditional Endorsement Series relation is processed using a modified <code>match_and_augment</code> function (see <a href="#algo-match-and-augment" class="auto internal xref">Figure 43</a>) where a SERIES-MATCH() replaces the MATCH() function (see <a href="#algo-series-match-and-augment" class="auto internal xref">Figure 44</a>).<a href="#section-8.2.4.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.2-1">The Conditional Endorsement Series relation is processed using a modified <code>match_and_augment</code> function (see <a href="#algo-match-and-augment" class="auto internal xref">Figure 43</a>) where SERIES-MATCH() calls MATCH() (see <a href="#algo-series-match-and-augment" class="auto internal xref">Figure 44</a>).<a href="#section-8.2.4.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.2-2">The first series item that matches terminates processing of subsequent series items.<a href="#section-8.2.4.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.2.4.3.2-3">The matched item is appended to the ACS.<a href="#section-8.2.4.3.2-3" class="pilcrow">¶</a></p>
 <span id="name-series-match-and-augment-al"></span><div id="algo-series-match-and-augment">
 <figure id="figure-44">
-                <div class="lang-pseudocode sourcecode" id="section-8.2.4.3.2-2.1">
+                <div class="lang-pseudocode sourcecode" id="section-8.2.4.3.2-4.1">
 <pre>
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
@@ -5548,11 +5540,11 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     RETURN acs
 }
 
-FUNC SERIES-MATCH(acs: ACS, sitem: series-item)
+FUNC SERIES-MATCH(acs: ACS, series: SERIES)
     -&gt; Endorsement-addition-ECT {
-    FOREACH item IN sitem:
-        IF acs::MATCH(item.condition):
-            RETURN item.addition
+    FOREACH sitem IN series:
+        IF acs::MATCH(sitem.condition):
+            RETURN sitem.addition
 }
 </pre>
 </div>
@@ -5560,11 +5552,6 @@ FUNC SERIES-MATCH(acs: ACS, sitem: series-item)
 <a href="#name-series-match-and-augment-al" class="selfRef">Series Match and Augment Algorithm</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.2.4.3.2-3">The <code>match-and-augment</code> function uses the <code>evs</code> list in the staging area <code>sa</code>.
-For each <code>evs</code> item, the condition ECT is matched with an ACS ECT with <code>cmtype</code> 0, 1 or 2 (i.e. <code>reference values</code>, <code>endorsements</code> or <code>evidence</code>) using a traditional acs::MATCH().<a href="#section-8.2.4.3.2-3" class="pilcrow">¶</a></p>
-<p id="section-8.2.4.3.2-4">If they match, the <code>evs</code> series array is iterated.
-For each series entry, if the selection ECT matches an ACS ECT, the addition ECT is added to the ACS.
-Series iteration terminates either when the first matching series entry has been processed, or when no series entries match.<a href="#section-8.2.4.3.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="processing-keys-relations">
@@ -8432,7 +8419,7 @@ comid-entity-map = entity-map&lt;$comid-role-type-choice, $$comid-\
 $comid-role-type-choice /= &amp;(tag-creator: 0) / &amp;(creator: 1) / &amp;(\
                                                        maintainer: 2)
 conditional-endorsement-series-triple-record = [
-  condition: [
+  common-condition: [
         environment: environment-map,
         claims-list: [* measurement-map],
         ? authorized-by: [+ $crypto-key-type-choice],
@@ -8440,7 +8427,7 @@ conditional-endorsement-series-triple-record = [
   series: [+ conditional-series-record],
 ]
 conditional-series-record = [
-  selection: [+ measurement-map],
+  condition: [+ measurement-map],
   addition: [+ measurement-map],
 ]
 COSE_Key = {
