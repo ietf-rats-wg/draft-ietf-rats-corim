@@ -2476,30 +2476,20 @@ FUNC transform(
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -> evs-item {
-    item := evs-item::NEW()
-
-    item.addition.cmtype = endorsements
-
-    item.condition.environment = T.condition.environment
-
-    item.condition.element-list = mms_to_ems(T.condition.claims-list)
-
-    IF T.condition.authorized-by:
-        item.condition.authority = T.condition.authorized-by
-
     FOREACH s in T.series:
-        item.series.selection.environment = T.condition.environment
-        se := mm_to_em(s.selection)
-        item.series.selection.element-list::APPEND(se)
+       item := series-item::NEW()
+       item.condition.environment = s.condition.environment
+       item.condition.element-list = mms_to_ems(s.condition.claims-list)
+       IF s.condition.authorized-by:
+           item.condition.authority = s.condition.authorized-by
 
-        item.series.addition.environment = T.condition.environment
-        ae := mm_to_em(s.addition)
-        item.series.addition.element-list::APPEND(ae)
-
-    item.series.addition.authority = signer
-
-    IF profile:
-        item.series.addition.profile = profile
+       item.addition.environment = s.condition.environment
+       se := mm_to_em(s.selection)
+       item.condition.element-list::APPEND(se)
+       item.addition.cmtype = `endorsements`
+       item.addition.authority = signer
+       IF profile:
+           item.addition.profile = profile
 
     RETURN item
 }
@@ -2688,8 +2678,30 @@ If the two match, the addition ECT is added to the ACS.
 
 ##### Processing `evs` Relations
 
-Conditional Endorsement Series are matched with ACS entries by iterating through the `evs` list.
-For each `evs` entry, the condition ECT is compared with an ACS ECT with `cmtype` 0, 1 or 2 (i.e. reference values, endorsements or evidence).
+The Conditional Endorsement Series relation is processed using a modified `match_and_augment` function (see {{algo-match-and-augment}}) where a SERIES-MATCH() replaces the MATCH() function (see {{algo-series-match-and-augment}}).
+
+~~~ pseudocode
+FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
+    FOREACH rel IN sa:
+        FOREACH item IN rel:
+            IF ser-add = SERIES-MATCH(acs, item.series):
+                acs::APPEND(ser-add)
+
+    RETURN acs
+}
+
+FUNC SERIES-MATCH(acs: ACS, sitem: series-item)
+    -> Endorsement-addition-ECT {
+    FOREACH item IN sitem:
+        IF acs::MATCH(item.condition):
+            RETURN item.addition
+}
+~~~
+{: #algo-series-match-and-augment title="Series Match and Augment Algorithm"}
+
+The `match-and-augment` function uses the `evs` list in the staging area `sa`.
+For each `evs` item, the condition ECT is matched with an ACS ECT with `cmtype` 0, 1 or 2 (i.e. `reference values`, `endorsements` or `evidence`) using a traditional acs::MATCH().
+
 If they match, the `evs` series array is iterated.
 For each series entry, if the selection ECT matches an ACS ECT, the addition ECT is added to the ACS.
 Series iteration terminates either when the first matching series entry has been processed, or when no series entries match.
