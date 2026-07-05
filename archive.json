@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-02T04:08:07.479007+00:00",
+  "timestamp": "2026-07-05T04:06:22.331688+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14621,7 +14621,7 @@
       "labels": [],
       "body": "The \"selection matching\" prose made my head spin. I left the section untouched because I am not sure that I understand it well enough to apply any changes. Someone else needs to have a go at it.",
       "createdAt": "2026-06-05T12:28:35Z",
-      "updatedAt": "2026-07-02T02:53:16Z",
+      "updatedAt": "2026-07-02T05:37:19Z",
       "closedAt": null,
       "comments": [
         {
@@ -14637,6 +14637,13 @@
           "body": "I'm assuming the \"head spinning\" is due to the variation in the condition-addition pattern that bifurcates the condition into condition+selection (followed by addition). \n\nI can add prose to make this more clear. \n\nIt may be less clear that the internal representation expects to build something like a database \"cursor\" of ACS entries that are \"selected\" for further matching logic. This means the acs::MATCH result is staged for furthur consideration. (Note that another PR anticipates the need for integrity checking prior to doing acs:APPEND). \n\nThe series triples anticipate something like:\n- cursor = acs::MATCH() followed by\n- item = cursor::MATCH()\n- acs::append(item)\n- - etc...\n\nThe cursor::MATCH() algorithm has nuanced matching semantics that are not appropriate for acs::MATCH(). \n\nPossibly, it makes sense to describe the two state matching in the processing section for endorsement series since that is where the MATCH/APPEND logic is or in the transformation section since that is where the condition and addition structures are populated.\n\nThe match_and_augment algorithm in section 8.2.4 continues to be problematic. In this case, because the input to MATCH is `item.condition` rather than `item`. Item is assigned by various interp relations that have different structures. In the case of series endorsements, the relation type is `evs` not `ev` which means passing only `item.condition` to MATCH means only half of the matching criteria is passed in. it would be much less problematic if only `item` is passed. That way the respective sub-sections can clarify how the sub-structures in item are applied. Otherwise, I need a acs::MATCH2() function that passes `item.condition` and `item.series`.\n\n\n\n",
           "createdAt": "2026-07-02T02:05:13Z",
           "updatedAt": "2026-07-02T02:53:16Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It may be less clear that the internal representation expects to build something like a database \"cursor\" of ACS entries that are \"selected\" for further matching logic. This means the acs::MATCH result is staged for furthur consideration. (Note that another PR anticipates the need for integrity checking prior to doing acs:APPEND).\n\nWhen intrep\u2019ing, the selection part could be moved under the condition instead of being part of the series.  Since selection is an integral part of matching, I think this would be a more natural approach, and wouldn\u2019t require multiplying the processing sites.\n\n",
+          "createdAt": "2026-07-02T05:37:19Z",
+          "updatedAt": "2026-07-02T05:38:01Z"
         }
       ]
     },
@@ -14709,6 +14716,22 @@
       "body": "CDDL definition for `ECT-common` has `authority` as optional field.\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/2983a74d6b5bc7cd5e25f09f491e5ace61ec5990/cddl/intrep-ect-common.cddl#L3\nBut in the description of `authority` field under [Section 8.2.2.1](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#name-ect), it is mentioned as a mandatoy field. \n<img width=\"623\" height=\"50\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/a82e329d-07f3-496f-92da-45ff85119b18\" />",
       "createdAt": "2026-06-23T05:43:33Z",
       "updatedAt": "2026-06-23T05:43:33Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 602,
+      "id": "I_kwDOH6-tI88AAAABHpNqPQ",
+      "title": "DDT requires domain-membership and forces trivial self-membership DMTs",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/602",
+      "state": "OPEN",
+      "author": "dkumar-nv",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Given `domain-type = environment-map` and DDT trustees typed as `[+ domain-type]`, it is natural to author a DDT that references environments already present in Evidence. E.g., `[root, [env-A, env-B]]` where `env-A` and `env-B` are Target Environments the attester reports measurements for.\n\nHowever, \u00a75.1.11.2 requires normatively that \"_All of the DDT subjects (domain-id) and objects (trustees) MUST also be domain members for the DDT expression to be processed_\", and the DDT processing algorithm in \u00a79.3.4.6 enforces this by checking `ACS.cmtype` contains `domain-member` for both `dde.environment` and each trustee. Evidence transformation (\u00a79.1.3) produces ACS entries with `cmtype = evidence`, not `domain-member`. The only way an ACS entry acquires `cmtype = domain-member` is via DMT processing (\u00a79.1.7.2 step 2, \u00a79.3.4.5).\n\nConsequence: to reference an evidence-provided environment as a DDT trustee, the CoRIM author must include a trivial self-membership DMT such as `[env-A, [env-A]]` purely to promote env-A's cmtype. This adds no semantic content.\n\n**Requests for clarification / consideration**:\n\n1. Is the requirement to have DDT participants pre-declared as domain-members via a DMT intentional, or an incidental consequence of the ACS cmtype model?\n2. If intentional, it'd be great to state the informative rationale (topology declaration must be explicit before dependency can be asserted) in the spec.\n3. If not strictly intentional, consider one of the following relaxations:\n3.1. Allow DDT processing to implicitly treat any DDT subject/trustee whose environment matches an ACS entry with `cmtype \u2208 {evidence, reference-values}` as a domain-member for the purpose of DDT evaluation (i.e., promote-on-reference).\n3.2. Alternatively, allow a DDT to introduce domain-member ECTs directly for its subject and trustees (analogous to how DMT introduces the subject).\n3.3. Or, at minimum, document the \"self-membership DMT\" pattern as an idiom in a non-normative section so implementers converge on it.\n",
+      "createdAt": "2026-07-04T06:28:31Z",
+      "updatedAt": "2026-07-04T06:28:31Z",
       "closedAt": null,
       "comments": []
     }
@@ -88161,13 +88184,13 @@
       "labels": [],
       "body": "Changes related to issue #580 to separate domain membership and trust dependency transformation and processing.",
       "createdAt": "2026-05-26T23:10:10Z",
-      "updatedAt": "2026-07-01T22:22:54Z",
+      "updatedAt": "2026-07-02T16:00:40Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "0e1b001cdd886ddd2c71ce665809924d66f199cc",
+      "baseRefOid": "e534a54ef1adc3e6504c1952f4d76ca761cbceee",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "trust-dependency",
-      "headRefOid": "b2a6157d8265b16953fae234631ce31b8cc96b5a",
+      "headRefOid": "82edec28b06899fa187c16490773270d54c4356b",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -88221,6 +88244,13 @@
           "body": "@thomas-fossati @henkbirkholz :\r\n\r\nWe have merged Thomas's changes back to this branch AND did quite a good tidy up.\r\n\r\nPlease give a final look.\r\n\r\ni plan to merge it on Friday",
           "createdAt": "2026-07-01T22:22:36Z",
           "updatedAt": "2026-07-01T22:22:54Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati & @henkbirkholz, We can merge some of your suggested editorial corrections, however, you both had earlier blocked the PR Merge due to fundamental change in the nature of the PR changes for TD.\r\n\r\nI hope the Fundamental differences have been resolved, in terms of retaining the `Common and Simple` structure of MATCH, CHECK and APPEND.\r\n\r\nIf you are in general happy please make sure you remove the block on Merge, as we have to release this PR before the cut-off.",
+          "createdAt": "2026-07-02T13:47:11Z",
+          "updatedAt": "2026-07-02T13:47:11Z"
         }
       ],
       "reviews": [
@@ -88480,6 +88510,148 @@
               "body": "Let us discuss these anomalies and try to progress this today!",
               "createdAt": "2026-06-24T11:27:24Z",
               "updatedAt": "2026-06-24T11:27:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEyr15Q",
+          "commit": {
+            "abbreviatedOid": "b2a6157"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "",
+          "createdAt": "2026-07-02T10:19:02Z",
+          "updatedAt": "2026-07-02T10:45:33Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "This check could be moved to the acceptance criteria for the intrep transform.",
+              "createdAt": "2026-07-02T10:19:02Z",
+              "updatedAt": "2026-07-02T10:45:33Z"
+            },
+            {
+              "originalPosition": 58,
+              "body": "```suggestion\nIf there are additions to ACS, then the above algorithm is repeated until there are no more additions.\nThe algorithm is terminated when there are no more additions to ACS.\n```",
+              "createdAt": "2026-07-02T10:21:17Z",
+              "updatedAt": "2026-07-02T10:45:33Z"
+            },
+            {
+              "originalPosition": 403,
+              "body": "Let me start by saying that, in principle, I am not against a separate `CHECK()` function if there is a reason for a check that cannot be encoded as part of the `MATCH()`, but that is not the case here.\nIn fact, in the case of `td` relations, the acyclicity check is performed in the intrep transform (see L2303).\nTherefore, if the `td` graph is guaranteed to be acyclic at the time of the transform, the resulting trust dependency graph (residing in the ACS) is, by design, a strict subset of the original `td` relation and can never contain cycles.\nIOW, `CHECK()` is a no-op, so it can be removed without loss of functionality.",
+              "createdAt": "2026-07-02T10:44:58Z",
+              "updatedAt": "2026-07-02T10:45:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEy5eGw",
+          "commit": {
+            "abbreviatedOid": "b2a6157"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-02T10:50:37Z",
+          "updatedAt": "2026-07-02T10:50:37Z",
+          "comments": [
+            {
+              "originalPosition": 403,
+              "body": "@thomas-fossati , When new item get added to the existing ACS, it can change the composition of the ACS such that the Resultant ACS, which includes item.addition, can created Cyclicity. This CHECK() is addressing this!!",
+              "createdAt": "2026-07-02T10:50:37Z",
+              "updatedAt": "2026-07-02T10:50:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEy4IEA",
+          "commit": {
+            "abbreviatedOid": "c2e9c45"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Some more suggested changes.",
+          "createdAt": "2026-07-02T10:46:57Z",
+          "updatedAt": "2026-07-02T11:27:55Z",
+          "comments": [
+            {
+              "originalPosition": 404,
+              "body": "```suggestion\n                acs::APPEND(item.addition)\n```",
+              "createdAt": "2026-07-02T10:46:58Z",
+              "updatedAt": "2026-07-02T11:27:24Z"
+            },
+            {
+              "originalPosition": 395,
+              "body": "This can go now, given we have incorporated #601 \n```suggestion\n```",
+              "createdAt": "2026-07-02T10:50:06Z",
+              "updatedAt": "2026-07-02T11:27:24Z"
+            },
+            {
+              "originalPosition": 393,
+              "body": "There is no such thing as \"augmented ACS\u201d.\nIt seems to me that the original L2646 was better.",
+              "createdAt": "2026-07-02T10:52:48Z",
+              "updatedAt": "2026-07-02T11:27:24Z"
+            },
+            {
+              "originalPosition": 403,
+              "body": "@yogeshbdeshpande Before you enter `match_and_augment` the `td` is guaranteed to be acyclic (see L2303).\r\nTherefore, adding items from the `td` list can\u2019t cause the creation of a cycle.",
+              "createdAt": "2026-07-02T10:54:52Z",
+              "updatedAt": "2026-07-02T11:27:24Z"
+            },
+            {
+              "originalPosition": 271,
+              "body": "```suggestion\nBefore the `td` relation is added to the Staging Area, the trust dependency graph it describes MUST be checked to ensure that it is a directed acyclic graph.\n```",
+              "createdAt": "2026-07-02T11:20:57Z",
+              "updatedAt": "2026-07-02T11:27:24Z"
+            },
+            {
+              "originalPosition": 272,
+              "body": "```suggestion\nIf a cycle is detected, the `td` relation MUST NOT be added to the Staging Area, and this condition SHOULD be logged.\nThis is a prerequisite for the `match_and_augment` algorithm described in {{algo-match-and-augment}}.\n```",
+              "createdAt": "2026-07-02T11:21:31Z",
+              "updatedAt": "2026-07-02T11:27:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABEzlgWA",
+          "commit": {
+            "abbreviatedOid": "b2a6157"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-02T12:42:06Z",
+          "updatedAt": "2026-07-02T12:42:06Z",
+          "comments": [
+            {
+              "originalPosition": 403,
+              "body": "May be we should discuss, given the lack of time before the release, the CHECK() as you said in principle does not hurt.\r\n\r\nI think the larger concern is not the input been cyclic, but how two items (individually) acyclic one in ACS and one outside of ACS coming in, together and inadvertently creating cycles. ",
+              "createdAt": "2026-07-02T12:42:06Z",
+              "updatedAt": "2026-07-02T12:42:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABE1ONwg",
+          "commit": {
+            "abbreviatedOid": "b2a6157"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-02T16:00:40Z",
+          "updatedAt": "2026-07-02T16:00:40Z",
+          "comments": [
+            {
+              "originalPosition": 403,
+              "body": "> May be we should discuss, given the lack of time before the release, the CHECK() as you said in principle does not hurt.\r\n\r\nI didn't say that it doesn't hurt.  What I said is that, in principle, I am not against modifying the `match_and_augment` algorithm; however, there must be a good reason for doing so.  And the rationale I have heard is not convincing.\r\n\r\n> I think the larger concern is not the input been cyclic, but how two items (individually) acyclic one in ACS and one outside of ACS coming in, together and inadvertently creating cycles.\r\n\r\nStarting with an acyclic graph, e.g., $$G = A \\rightarrow B \\rightarrow C$$, any subgraph you carve out will still be acyclic.\r\nThe trust dependency graph structure is entirely determined by the initial shape of the `td` relation.  If the graph encoded by the `td` relation is acyclic, the computed trust dependency graph will also be acyclic.",
+              "createdAt": "2026-07-02T16:00:40Z",
+              "updatedAt": "2026-07-02T16:00:40Z"
             }
           ]
         }
@@ -90690,6 +90862,34 @@
           ]
         }
       ]
+    },
+    {
+      "number": 603,
+      "id": "PR_kwDOH6-tI87t8gXh",
+      "title": "Series triple, transformation and processing updates",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/603",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "Modified conditional endorsement series triple, transformation and processing sections to improve readability and to better align with the use of acs::MATCH(). The series array now calls acs::MATCH() for each item in the series. Since the series array iterator terminates upon the first successful match, the acs::APPEND() can be called streight away.\r\n\r\nRelates to issue #591 ",
+      "createdAt": "2026-07-04T23:16:40Z",
+      "updatedAt": "2026-07-04T23:26:34Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "e534a54ef1adc3e6504c1952f4d76ca761cbceee",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "series-triple",
+      "headRefOid": "2985255fb8e807ecf6fb4e5b01fc35b3c1e8c08c",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
