@@ -2288,8 +2288,9 @@ Both the `trustees` and `environment` are used for matching.
 ~~~
 {: #fig-td-ect-add title="Profiled ECT for Trust Dependency (addition)"}
 
-Before the `td` relation is added to the Staging Area, the graph it describes MUST be checked to ensure that it is a directed acyclic graph.
-If a cycle is detected, the `td` MUST NOT be added to the Staging Area and this condition SHOULD be logged.
+Before the `td` relation is added to the Staging Area, the trust dependency graph it describes MUST be checked to ensure that it is a directed acyclic graph.
+If a cycle is detected, the `td` relation MUST NOT be added to the Staging Area, and this condition SHOULD be logged.
+This is a prerequisite for the `match_and_augment` algorithm described in {{algo-match-and-augment}}.
 Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.
 
 A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
@@ -2710,16 +2711,13 @@ If there is a match, the additions in the matched relation are added to the ACS,
 Otherwise, the algorithm moves on to the next relation.
 Any augmentations to the ACS (i.e., the `acs::APPEND` operation in {{algo-match-and-augment}}) MUST be atomic.
 Once all the relations in the staging area have been processed, the CoRIM processor forwards the augmented ACS to subsequent appraisal processors as needed.
-Not all CoRIM triples follow the match and augment procedure exactly.
-For example, trust dependency doesn't specify an item.condition syntax, as the check for domain membership prerequisite is algorithmic.
 
 ~~~ pseudocode
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                IF acs::CHECK(item.addition):
-                    acs::APPEND(item.addition)
+                acs::APPEND(item.addition)
 
     RETURN acs
 }
