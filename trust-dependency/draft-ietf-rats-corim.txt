@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 3 January 2027                                           Linaro
+Expires: 6 January 2027                                           Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                             2 July 2026
+                                                             5 July 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 January 2027.
+   This Internet-Draft will expire on 6 January 2027.
 
 Copyright Notice
 
@@ -3248,12 +3248,14 @@ Table of Contents
 
           Figure 36: Profiled ECT for Trust Dependency (addition)
 
-   Before the td relation is added to the Staging Area, the graph it
-   describes MUST be checked to ensure that it is a directed acyclic
-   graph.  If a cycle is detected, the td MUST NOT be added to the
-   Staging Area and this condition SHOULD be logged.  Please note that a
-   subsequent Appraisal Policy for Evidence may decide not to produce
-   Attestation Results in this case.
+   Before the td relation is added to the Staging Area, the trust
+   dependency graph it describes MUST be checked to ensure that it is a
+   directed acyclic graph.  If a cycle is detected, the td relation MUST
+   NOT be added to the Staging Area, and this condition SHOULD be
+   logged.  This is a prerequisite for the match_and_augment algorithm
+   described in Figure 48.  Please note that a subsequent Appraisal
+   Policy for Evidence may decide not to produce Attestation Results in
+   this case.
 
    A trust dependency relation is added to the ACS if the enviroment and
    all trustess exist in the membership graph expressed by the dm
@@ -3768,17 +3770,13 @@ Table of Contents
    acs::APPEND operation in Figure 48) MUST be atomic.  Once all the
    relations in the staging area have been processed, the CoRIM
    processor forwards the augmented ACS to subsequent appraisal
-   processors as needed.  Not all CoRIM triples follow the match and
-   augment procedure exactly.  For example, trust dependency doesn't
-   specify an item.condition syntax, as the check for domain membership
-   prerequisite is algorithmic.
+   processors as needed.
 
    FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
        FOREACH rel IN sa:
            FOREACH item IN rel:
                IF acs::MATCH(item.condition):
-                   IF acs::CHECK(item.addition):
-                       acs::APPEND(item.addition)
+                   acs::APPEND(item.addition)
 
        RETURN acs
    }
