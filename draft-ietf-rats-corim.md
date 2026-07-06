@@ -1418,7 +1418,7 @@ The Conditional Endorsement Series Triple is used when an Endorser wants to matc
 For example, if version 1.0 of a component has a Common Vulnerability and Exposure (CVE), but version 2.0 does not, a series condition might contain `version` = "1.0" and an addition `cve` = "CVE_PLACEHOLDER". Another series condition might contain `version` = "2.0" and an addition `cve` = "CVE_NONE".
 As soon as the condition value is matched the remaining conditions can be ignored.
 
-The Conditional Endorsement Series Triple has two forms of conditions, those that are in the series list and those that are common to all series items.
+The Conditional Endorsement Series Triple has two forms of conditions,  those that are common to all series list items and those that are specific to a particular item in the series.
 The common conditions are separated out of the series list for convenience.
 
 The Conditional Endorsement Series Triple has the following structure:
