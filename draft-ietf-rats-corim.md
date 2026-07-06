@@ -2717,7 +2717,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                acs::APPEND(item.addition)
+                IF acs::CHECK(item.addition):
+                        acs::APPEND(item.addition)
 
     RETURN acs
 }
