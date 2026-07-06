@@ -693,7 +693,7 @@ OTI Triples:
 * Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
 * Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
-* Domain dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-domain-dependency}}).
+* Trust dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-trust-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
 * CoMID-CoSWID linking triples: associating a Target Environment with existing CoSWID Payload tags ({{sec-comid-triple-coswid}}).
 
@@ -872,7 +872,7 @@ The following describes each member of the `triples-map`:
   Described in {{sec-comid-triple-attest-key}}.
 
 * `dependency-triples` (index 4): Triples describing trust relationships between domains.
-  Described in {{sec-comid-triple-domain-dependency}}.
+  Described in {{sec-comid-triple-trust-dependency}}.
 
 * `membership-triples` (index 5): Triples describing topological relationships between (sub-)modules.
   Described in {{sec-comid-triple-domain-membership}}.
@@ -1521,9 +1521,9 @@ The Verifier MAY report key verification results as part of an error reporting f
 
 See {{sec-comid-triple-identity}} for additional details.
 
-### Triples for domain definitions {#sec-comid-domains}
+### Triples for domain definition {#sec-comid-domains}
 
-A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+A domain is a graphical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type.
 
@@ -1531,7 +1531,7 @@ The following CDDL describes domain type.
 {::include cddl/domain-type.cddl}
 ~~~
 
-Domain structure is defined with the following types of triples.
+Domain structure is defined in terms of directed acyclic graphs (DAG) describing membership and trust dependency using the following types of triples.
 
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
@@ -1544,19 +1544,21 @@ This allows a topological description of an Attester to be expressed by linking 
 If the Verifier Appraisal policy requires Domain Membership, the Domain Membership Triple is used to match an Attester's reference composition with the actual composition represented in Evidence.
 
 Representing members of a DMT as domains enables the recursive construction of an entity's topology, such as a Composite Device (see {{Section 3.3 of -rats-arch}}), where multiple lower-level domains can be aggregated into a higher-level domain.
-The domain topology must be acyclic.
+The domain topology MUST be acyclic.
 
 ~~~ cddl
 {::include cddl/domain-membership-triple-record.cddl}
 ~~~
 {: #triple-dm title="Domain Membership Triple Definition"}
 
-#### Domain Dependency Triple {#sec-comid-triple-domain-dependency}
+Domain membership triples are transformed into an internal representation (see {{sec-trans-domain-mem}}) then processed as described in {{sec-proc-dm}}.
 
-A Domain Dependency Triple (DDT) links a domain to a set of *trustee* domains.
-A domain dependency triple is used by an Endorser to assert that a trust dependency exists between various components.
-A DDT specifies which component (identified by `domain-id`) depends on which other components (identified by `trustees`) for proper operation.
-A series of DDTs can be used to describe the trust dependencies of a system of components as a graph.
+#### Trust Dependency Triple {#sec-comid-triple-trust-dependency}
+
+A Trust Dependency Triple (TDT) links a domain to a set of *trustee* domains.
+A trust dependency triple is used by an Endorser to assert that a trust dependency exists between various components.
+A TDT specifies which component (identified by `domain-id`) depends on which other components (identified by `trustees`) for proper operation.
+A series of TDTs can be used to describe the trust dependencies of a system of components as a graph.
 CoRIM uses `environment-map` to identify components and groupings of components (i.e., domains).
 
 Trust dependency means that an environment can only be fully trusted if one or more trustee environments have been appraised and found to be trustworthy.
@@ -1573,25 +1575,25 @@ Consequently, the OS loader is a trustee domain of the OS.
 Alternatively, trust in a peripheral device might depend on trustworthy operation of a peripheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
 
-DDTs cannot create domains.
-Instead, DDT processing first checks that a `domain-id` has already been accepted into the ACS before adding trust dependencies.
+TDTs cannot create domains.
+Instead, TDT processing first checks that a `domain-id` has already been accepted into the ACS before adding trust dependencies.
 
-The domain dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
+The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
 The triple predicate asserts that a trust appraisal of `domain-id` is not complete without appraisal of the `trustees`.
 
 ~~~ cddl
-{::include cddl/domain-dependency-triple-record.cddl}
+{::include cddl/trust-dependency-triple-record.cddl}
 ~~~
-{: #triple-dd title="Domain Dependency Triple Definition"}
+{: #triple-td title="Trust Dependency Triple Definition"}
 
-All of the DDT subjects (`domain-id`) and objects (`trustees`) MUST also be domain members for the DDT expression to be processed.
+All of the TDT subjects (`domain-id`) and objects (`trustees`) MUST also be domain members for the TDT expression to be processed.
 
 Trust dependency graphs are acyclic, meaning a `domain-id` MUST NOT appear in the `trustees` list or within a trustee's subtree.
 
-A terminating "leaf" trustee is a "root of trust" for that subtree.
-Leaf trustees SHOULD have a corresponding Endorsement triple.
-Verifiers MAY use DDTs with appraisal policies to assess the veracity of domain-to-trustee linkages.
+A terminus trustee can be thought of as a "root of trust" for a trust dependency graph.
+Terminus trustees SHOULD have a corresponding Endorsement triple.
+Verifiers MAY use TDTs with appraisal policies to assess the veracity of domain-to-trustee linkages.
 
 Trust dependency typically exists if any of the following are true:
 
@@ -1599,7 +1601,7 @@ Trust dependency typically exists if any of the following are true:
 * A trustee executes security-relevant code in response to an execution thread that originates from the `domain-id` environment.
 * A trustee is a component embedded within another component identified by `domain-id`.
 
-Trust dependency processing is described in {{sec-proc-dd}}.
+Trust dependency triples are transformed into an internal representation (see {{sec-trans-trust-dep}}) then processed as described in {{sec-proc-td}}.
 
 ### CoMID-CoSWID Linking Triple {#sec-comid-triple-coswid}
 
@@ -1909,7 +1911,9 @@ An ECT ({{fig-ect}}) can be one of the following specializations:
 
 * `E-ECT` (Element ECT): used to represent Evidence, Reference Value and Endorsement Claims, as detailed in {{sec-element-ect}};
 
-* `D-ECT` (Domain ECT): used to represent domain membership and trust dependencies Claims, as detailed in {{sec-domain-ect}};
+* `M-ECT` (Domain Membership ECT): used to represent domain membership Claims, as detailed in {{sec-domain-ect}};
+
+* `T-ECT` (Trust Dependency ECT): used to represent trust dependency Claims, as detailed in {{sec-domain-ect}};
 
 * `K-ECT` (Key ECT): used to represent Identity and Attestation keys, as detailed in {{sec-key-ect}}.
 
@@ -1997,32 +2001,53 @@ Any duplicates MUST be pruned.
 Two `element-map`s containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged.
 These are effectively two different acceptable states that need to be processed separately.
 
-##### Domain ECT {#sec-domain-ect}
+##### Domain Membership ECT {#sec-domain-ect}
 
-A Domain ECT (`D-ECT`) is used to represent domain membership and trust dependency Claims between environments.
-It describes the direct relationship between a specific node in the membership or trust dependency graph (i.e., the parent `environment`) and the nodes to which it is connected (i.e., the `children`).
+A Domain Membership ECT (`M-ECT`) is used to represent domain membership Claims between environments.
+It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes that comprises the domain.
 
 ~~~ cddl
-{::include cddl/intrep-d-ect.cddl}
+{::include cddl/intrep-m-ect.cddl}
 ~~~
-{: #fig-d-ect title="Domain ECT"}
+{: #fig-d-ect title="Domain Membership ECT"}
 
-The following describes the specialized members of the `D-ECT`.
+The following describes the specialized members of the `M-ECT`.
 
-* `children`: Identifies the set of members of the domain rooted in the parent `environment`.
-
-* `kind`: Identifies the type of Domain triple that originated the tuple: `member` stands for Domain Membership, `trustee` is for Domain Dependency.
-
-**Claim Names.**
+* `members`: Identifies the set of members of the domain rooted in the parent `environment`.
 
 A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
 In a Domain ECT, the `environment` attribute encodes the name of the Claim.
-The value of the Claim is encoded in the `kind` and `children` attributes.
+The value of the Claim is encoded in the `members` attributes.
 
 **Merge Rules.**
 
-If two Domain ECTs have the same `environment`, `kind`, `authority` and `profile` then their `children` are merged.
+If two Domain ECTs have the same `environment`, `authority` and `profile` then their `members` are merged.
 Any duplicates MUST be pruned.
+
+
+##### Trust Dependency ECT {#sec-trust-ect}
+
+A Trust Depedency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
+It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprises the trust chain.
+
+~~~ cddl
+{::include cddl/intrep-t-ect.cddl}
+~~~
+{: #fig-t-ect title="Trust Dependency ECT"}
+
+The following describes the specialized members of the `T-ECT`.
+
+* `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
+
+A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
+In a Trust ECT, the `environment` attribute encodes the name of the Claim.
+The value of the Claim is encoded in the `trustees` attributes.
+
+**Merge Rules.**
+
+If two Trust ECTs have the same `environment`, `authority` and `profile` then their `trustees` are merged.
+Any duplicates MUST be pruned.
+
 
 ##### Key ECT {#sec-key-ect}
 
@@ -2187,14 +2212,7 @@ Specialise condition/addition ECTs.
 Define constraints.
 </cref>
 
-##### Domains {#sec-ir-domains}
-
-The internal representation of domains uses a common `domain-item` structure:
-
-~~~ cddl
-{::include cddl/intrep-domain-item.cddl}
-~~~
-{: #fig-dm-item title="Domain Item"}
+##### Domain Memberships {#sec-ir-domain-mem}
 
 The internal representation of Domain Membership uses the `dm` relation ({{fig-dm}}), whereby each `domain-item` corresponds to a `domain-membership-triple-record`.
 
@@ -2203,29 +2221,64 @@ The internal representation of Domain Membership uses the `dm` relation ({{fig-d
 ~~~
 {: #fig-dm title="Domain Membership Relation"}
 
-The internal representation of Domain Dependency uses the `dd` relation ({{fig-dd}}), whereby each `domain-item` corresponds to a `domain-dependency-triple-record`.
-
 ~~~ cddl
-{::include cddl/intrep-domain-dep.cddl}
+{::include cddl/intrep-domain-item.cddl}
 ~~~
-{: #fig-dd title="Domain Dependency Relation"}
+{: #fig-dm-item title="Domain Item"}
 
-{{fig-domain-ect-cond}} shows the profiled Domain ECT for both Domain Membership and Dependency conditions.
+{{fig-domain-ect-cond}} shows the profiled Domain ECT for Domain Membership conditions.
 
 ~~~ cddl
 {::include cddl/intrep-ect-domain-condition.cddl}
 ~~~
-{: #fig-domain-ect-cond title="Profiled ECT for Domain Membership and Dependency (condition)"}
+{: #fig-domain-ect-cond title="Profiled ECT for Domain Membership (condition)"}
 
-Only the `children` are used for matching, not the `environment`.
+Only the `members` are used for matching, not the `environment`.
 Therefore, the `environment` attribute is excluded from the ECT condition.
 
-{{fig-domain-ect-add}} shows the profiled Domain ECT for both Domain Membership and Dependency additions.
+{{fig-domain-ect-add}} shows the profiled Domain ECT for Domain Membership additions.
 
 ~~~ cddl
 {::include cddl/intrep-ect-domain-addition.cddl}
 ~~~
-{: #fig-domain-ect-add title="Profiled ECT for Domain Membership and Dependency (addition)"}
+{: #fig-domain-ect-add title="Profiled ECT for Domain Membership (addition)"}
+
+##### Trust Dependencies {#sec-ir-trust-dep}
+
+The internal representation of Trust Dependency uses the `td` relation ({{fig-td}}), whereby each `td-item` corresponds to a `trust-dependency-triple-record`.
+
+~~~ cddl
+{::include cddl/intrep-trust-dep.cddl}
+~~~
+{: #fig-td title="Trust Dependency Relation"}
+
+~~~ cddl
+{::include cddl/intrep-trust-dep-item.cddl}
+~~~
+{: #fig-td-item title="Trust Dependency Item"}
+
+{{fig-td-ect-cond}} shows the profiled `T-ECT` for Trust Dependency conditions.
+
+~~~ cddl
+{::include cddl/intrep-ect-trust-dep-condition.cddl}
+~~~
+{: #fig-td-ect-cond title="Profiled ECT for Trust Dependency (condition)"}
+
+Both the `trustees` and `environment` are used for matching.
+
+{{fig-td-ect-add}} shows the profiled `T-ECT` for Trust Dependency additions.
+
+~~~ cddl
+{::include cddl/intrep-ect-trust-dep-addition.cddl}
+~~~
+{: #fig-td-ect-add title="Profiled ECT for Trust Dependency (addition)"}
+
+Before the `td` relation is added to the Staging Area, the trust dependency graph it describes MUST be checked to ensure that it is a directed acyclic graph.
+If a cycle is detected, the `td` relation MUST NOT be added to the Staging Area, and this condition SHOULD be logged.
+This is a prerequisite for the `match_and_augment` algorithm described in {{algo-match-and-augment}}.
+Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.
+
+A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
 
 #### ACS
 
@@ -2539,28 +2592,23 @@ FUNC transform(
 
 Note that keys are added under the authority of the verifier.
 
-##### Domains
+##### Domain Membership Transformation {#sec-trans-domain-mem}
 
-Domains transformation involves mapping Domain Membership and Domain Dependency triples into a `dm` or `dd` relation (see {{sec-ir-domains}}).
+Domain membership transformation maps Domain Membership triples into `dm` relations (see {{sec-ir-domain-mem}}).
 
-In any case, before being added to the respective relation, a `domain-membership-triple-record` ({{triple-dm}}) or a `domain-dependency-triple-record` ({{triple-dd}}) is transformed into a `domain-item` ({{fig-dm-item}}) as described in {{algo-domain-transform}}.
+Prior to adding a domain membership relation, a `domain-membership-triple-record` ({{triple-dm}}) is transformed into a `domain-item` ({{fig-dm}}) using the domain membership transformation algorithm {{algo-domain-member-transform}}.
 
 ~~~ pseudocode
 FUNC transform(
-    T: domain-membership-triple-record / domain-dependency-triple-record
+    T: domain-membership-triple-record
     signer: [ + $crypto-key-type-choice ],
     profile: $profile-type-choice
 ) -> domain-item {
     item := domain-item::NEW()
-
-    IF TYPEOF(T) == domain-membership-triple-record:
-        item.condition.kind = item.addition.kind = member
-        item.condition.children = T.members
-    ELIF TYPEOF(T) == domain-dependency-triple-record:
-        item.condition.kind = item.addition.kind = trustee
-        item.condition.children = T.trustees
+    item.condition.members = T.members
 
     item.addition.environment = T.domain-id
+    item.addition.members = T.members
     item.addition.authority = signer
 
     IF profile:
@@ -2569,7 +2617,38 @@ FUNC transform(
     RETURN item
 }
 ~~~
-{: #algo-domain-transform title="Domain Triple Transformation"}
+{: #algo-domain-member-transform title="Domain Membership Transformation"}
+
+Subsequent to transformation the domain membership relations are processed using the domain membershp processing algorithm {{sec-proc-dm}}.
+
+##### Trust Dependency Transformation {#sec-trans-trust-dep}
+
+Prior to adding a trust dependency relation, Trust Dependency triples `trust-dependency-triple-record` ({{triple-td}}) are transformed into `td` relations (see {{sec-ir-trust-dep}}) using the trust dependency transformation algorithm {{algo-trust-dependency-transform}}.
+
+~~~ pseudocode
+FUNC transform(
+    T: trust-dependcy-triple-record,
+    signer: [ + $crypto-key-type-choice ],
+    profile: $profile-type-choice
+) -> trust-dependency-item
+    item := T-ECT::NEW()
+
+    item.condition.environment = T.domain-id
+    item.condition.members = T.members
+
+    item.addition.environment = T.domain-id
+    item.addition.members = T.members
+    item.addition.authority = signer
+
+    IF profile:
+        item.addition.profile = profile
+
+    RETURN item
+}
+~~~
+{: #algo-trust-dependency-transform title="Trust Dependency Transformation"}
+
+Subsequent to transformation, the trust dependency relations are processed using the trust dependency processing algorithm {{sec-proc-td}}.
 
 #### Appraisal Context Initialization {#sec-appraisal-ctx-init}
 
@@ -2586,7 +2665,7 @@ FUNC init_acs(ae: ae) -> ACS {
 ~~~
 {: #algo-init-acs title="ACS Initialization"}
 
-The staging area is loaded with `rv`, `ev`, `evs`, `keys`, `dm` and `dd` relations, in that order.
+The staging area is loaded with `rv`, `ev`, `evs`, `keys`, `dm` and `td` relations, in that order.
 
 ~~~ pseudocode
 FUNC init_staging_area(
@@ -2595,7 +2674,7 @@ FUNC init_staging_area(
     evs: evs,
     keys: keys,
     dm: dm,
-    dd: dd,
+    dd: td,
 ) -> StagingArea {
     sa := StagingArea::NEW()
 
@@ -2604,7 +2683,7 @@ FUNC init_staging_area(
     IF evs:  sa::APPEND(evs)
     IF keys: sa::APPEND(keys)
     IF dm:   sa::APPEND(dm)
-    IF dd:   sa::APPEND(dd)
+    IF td:   sa::APPEND(td)
 
     RETURN sa
 }
@@ -2613,20 +2692,21 @@ FUNC init_staging_area(
 
 ### ACS Augmentation (Phases 2, 3 and 4) {#sec-match-and-augment}
 
-This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester.
+This section describes the "match and augment" algorithm, through which the ACS is updated incrementally to reflect the actual state of the Attester as asserted by RATS Roles (i.e., Attester, Reference Value Provider, and Endorser).
 
-At a high level, the process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
+Generally, the match and augment process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
 If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
 Otherwise, the algorithm moves on to the next relation.
 Any augmentations to the ACS (i.e., the `acs::APPEND` operation in {{algo-match-and-augment}}) MUST be atomic.
-Once all the relations in the staging area have been processed, the algorithm terminates and the computed ACS is handed over to the subsequent appraisal phases by the CoRIM processor.
+Once all the relations in the staging area have been processed, the CoRIM processor forwards the augmented ACS to subsequent appraisal processors as needed.
 
 ~~~ pseudocode
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                acs::APPEND(item.addition)
+                IF acs::CHECK(item.addition):
+                        acs::APPEND(item.addition)
 
     RETURN acs
 }
@@ -2635,8 +2715,12 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
 
 The `acs::MATCH` operation depends on the type of relation.
 The matching logic for each type of relation is described in the following sections.
+The `acs::CHECK` operation does consistency checks.
+The checking logic for each type of relation is described in the following sections.
 The `acs::APPEND` operation also depends on the type of relation.
-This could involve simply appending the addition ECT, or it could be a more complex operation involving further manipulation of the addition ECT before appending (see {{sec-proc-rv}} for an example of the latter).
+This could involve simply appending the addition ECT.
+
+The addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.
 
 #### Ordering of Relations
 
@@ -2721,34 +2805,55 @@ Add all the verified keys to the addition ECT's `key-list` and add the addition 
 
 Domain Membership relations describe the expected topological arrangement of the Attester.
 
-Domains are matched with ACS entries by iterating through the `dm` list.
+Domains are matched with ACS entries by iterating through the `dm` list, in the staging area.
 
-The following algorithm assumes that the graph described by the condition ECTs in the `dm` relation is acyclic.
-It also assumes that the `dm-item`s in the `dm` relation are topologically sorted (bottom up, from leaves to root).
-This allows the algorithm to execute in one pass.
+The acs::CHECK() does acyclic graph consistency checks of the condition ECTs in the `dm` relation.
 
-For each `dm` entry, the condition ECT is compared with either an ACS Element ECT with `cmtype` 2 (i.e., evidence) or a Domain ECT with `kind` 0 (i.e., member).
-All other ECTs are ignored.
+For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
 
-If all the `children` environments in the condition ECT have a matching ECT in the ACS, the ECT addition is added to the ACS.
-Otherwise, processing moves to processing the next `dm` entry.
+If all the `member` environments in the condition ECT have a matching ECT in the ACS, the `addition ECT` is added to the ACS.
+The matching dm entry is pruned from the dm list.
 
-##### Processing `dd` Relations {#sec-proc-dd}
+If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.
 
-Essentially, the objective of processing a `dd` relation is to verify that each edge in a domain dependency graph (DDG) has a corresponding edge in a domain membership graph (DMG).
-(Note that DDGs need not be isomorphs of DMGs; they can be a subset.)
+If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
+The algorithm is terminated when there are no more additions to ACS.
 
-The same assumptions regarding acyclicity and pre-sorting of the relation items as in {{sec-proc-dm}} apply.
+This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
+This specification does not mandate any specific topological sorting algorithm.
 
-The matching logic needs to ensure that all the `dd` items can be paired with an existing Domain Membership ECT.
-Pairing is successful if the `environment` and all the `children` in the condition ECT are found in the  `environment` or in the `children` of at least one Domain ECT with `kind` 0 (i.e., member).
-If pairing is successful for all the items in the `dd` relation, the all the addition ECTs are added to the ACS.
+##### Processing `td` Relations {#sec-proc-td}
 
-If, in a later processing phase, an appraisal policy for trust dependency exists, the DDG can be further evaluated.
-For example, a trust dependency policy might specify a strength of function requirement for how Evidence about a TE is integrity protected by its AE.
+The objective of processing a `td` relation is to verify that each edge in a trust dependency graph (TDG) has a corresponding edge in a domain membership graph (DMG).
+TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS.
+TDGs need not be isomorphs of DMGs.
 
-The subsequent Verifier stages or Relying Party processing of the ACS may be affected if domain dependency ECTs are not added to the ACS.
-For example, trust in an ACS entry that depends on `trustee` ACS entries may not be considered.
+The matching algorithm ensures that the `td` items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
+This matching algorithm is the plug-in for the parameter `item-condition` of `acs::MATCH` defined in {{algo-match-and-augment}}.
+
+~~~ pseudocode
+FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
+    FOREACH dm-item IN ACS.ECT(.cm==member):
+        IF condition.environment == dm-item.environment:
+            FOREACH trustee IN condition.trustees:
+                IF !trustee::IS-MEMBER(dm-item.members):
+                    BREAK   # break inner loop, try another dm-item
+            RETURN TRUE
+
+    RETURN FALSE
+~~~
+{: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
+
+The ACS::CHECK() function does acyclic graph consistency checks of the condition ECTs in the `td` relation.
+
+The ACS:: APPEND() function adds the dm-item.addition to the ACS.
+
+Subsequent to the append, the ACS acyclic consistency check needs to be performed.
+
+Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
+For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
+Additionally, a trust dependency might specify a strength of function requirement for TE-1.
+The trust dependency implies TE-2 should have a minimum strength of function as TE-1.
 
 #### Rules of Comparison {#sec-comparison-rules}
 
@@ -2759,7 +2864,7 @@ This section provides a normative description of the rules for comparing ECT ele
 When comparing a C-ECT against the ACS, the processor iterates over all ACS entries and attempts to match the C-ECT with each ACS entry.
 Typically, the comparison is between ECTs of the same type (i.e., Element ECTs are compared with Element ECTs, Key ECTs with Key ECTs and Domain ECTs with Domain ECTs).
 However, ECTs of different types can sometimes be compared if the comparison is based on common attributes ({{fig-ect-common}}).
-See {{sec-proc-dm}} for an example of this, where the `environment`s of `D-ECT`s and `E-ECT`s are compared.
+See {{sec-proc-dm}} for an example of this, where the `environment`s of `M-ECT`s and `E-ECT`s are compared.
 
 Conceptually, the processor creates a "matched entries" set and populates it with all ACS entries that match the C-ECT.
 If, after visiting all the entries in the ACS, the matched entries set is not empty, the C-ECT matches the ACS.
@@ -2770,7 +2875,7 @@ If the condition ECT contains a profile, but the profile does not define an algo
 
 The specific comparisons performed depend on the type of relation being processed.
 In general, the processor will perform comparisons based on `environment` (see {{sec-compare-environment}}) as well as more specialized comparisons based on the type of ECT matched.
-Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list` (<cref>[TODO]</cref>), and Domain ECTs will typically match on `children` (see {{sec-compare-environment}}).
+Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list`, Domain Membership ECTs will typically match on `members` (see {{sec-proc-dm}}) and Trust Dependency ECTs will typically match on `trustees` (see {{sec-proc-td}}).
 
 <cref>
 [TBC]
