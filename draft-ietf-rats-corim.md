@@ -1435,7 +1435,7 @@ The `conditional-endorsement-series-triple-record` has the following parameters:
 * `common-condition`: Matching conditions that are common to every item in the series.
 Common conditions include `environment-map`, (optional) `claims-list`, and (optional) `authorized-by`.
 
-* `series`: A list of `conditional-series-record` items where each item's condition uses the same type measurements, but differ in value.
+* `series`: A list of `conditional-series-record` items where each item's condition uses the same type of measurements, meaning same label(code point) inside measurement-values-map, but differ in value.
 
 The `conditional-series-record` has the following elements:
 
