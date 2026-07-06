@@ -2802,7 +2802,7 @@ Domains are matched with ACS entries by iterating through the `dm` list, in the 
 
 The acs::CHECK() does acyclic graph consistency checks of the condition ECTs in the `dm` relation.
 
-For each dm entry (D-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
+For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
 
 If all the `member` environments in the condition ECT have a matching ECT in the ACS, the `addition ECT` is added to the ACS.
 The matching dm entry is pruned from the dm list.
@@ -2857,7 +2857,7 @@ This section provides a normative description of the rules for comparing ECT ele
 When comparing a C-ECT against the ACS, the processor iterates over all ACS entries and attempts to match the C-ECT with each ACS entry.
 Typically, the comparison is between ECTs of the same type (i.e., Element ECTs are compared with Element ECTs, Key ECTs with Key ECTs and Domain ECTs with Domain ECTs).
 However, ECTs of different types can sometimes be compared if the comparison is based on common attributes ({{fig-ect-common}}).
-See {{sec-proc-dm}} for an example of this, where the `environment`s of `D-ECT`s and `E-ECT`s are compared.
+See {{sec-proc-dm}} for an example of this, where the `environment`s of `M-ECT`s and `E-ECT`s are compared.
 
 Conceptually, the processor creates a "matched entries" set and populates it with all ACS entries that match the C-ECT.
 If, after visiting all the entries in the ACS, the matched entries set is not empty, the C-ECT matches the ACS.
