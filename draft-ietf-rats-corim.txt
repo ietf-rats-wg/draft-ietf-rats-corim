@@ -1966,23 +1966,26 @@ Table of Contents
 
 5.1.8.  Conditional Endorsement Series Triple
 
-   The Conditional Endorsement Series Triple employs a 2-stage matching
-   convention to assert endorsed values based on an initial condition
-   match followed by a series selection match.  If both the condition
-   and selection criteria are satisfied, a set of endorsed values are
-   added to the matching triple records.  The condition match identifies
-   the set of Claims to which the selection criteria are applied.  The
-   selection specifies a pattern of measurements that, if present,
-   controls when a focused set of endorsed values are to be asserted.
-   The 2-stage approach enables Endorsement authors the ability to craft
-   powerful search criteria while avoiding problematic repetition of
-   search criteria.
+   The Conditional Endorsement Series Triple is used when an Endorser
+   wants to match Claims of the same type (for example version) but with
+   differing values.  If the conditions are met, new Claims are added as
+   Endorsements.  For example, if version 1.0 of a component has a
+   Common Vulnerability and Exposure (CVE), but version 2.0 does not, a
+   series condition might contain version = "1.0" and an addition cve =
+   "CVE_PLACEHOLDER".  Another series condition might contain version =
+   "2.0" and an addition cve = "CVE_NONE".  As soon as the condition
+   value is matched the remaining conditions can be ignored.
+
+   The Conditional Endorsement Series Triple has two forms of
+   conditions, those that are common to all series list items and those
+   that are specific to a particular item in the series.  The common
+   conditions are separated out of the series list for convenience.
 
    The Conditional Endorsement Series Triple has the following
    structure:
 
    conditional-endorsement-series-triple-record = [
-     condition: [
+     common-condition: [
        environment: environment-map
        claims-list: [ * measurement-map ]
        ? authorized-by: [ + $crypto-key-type-choice ]
@@ -1991,7 +1994,7 @@ Table of Contents
    ]
 
    conditional-series-record = [
-     selection: [ + measurement-map]
+     condition: [ + measurement-map]
      addition: [ + measurement-map ]
    ]
 
@@ -2000,71 +2003,39 @@ Table of Contents
    The conditional-endorsement-series-triple-record has the following
    parameters:
 
-   *  condition: Initial selection criteria that locates Evidence,
-      corroborated Evidence, or Endorsements from the current set of
-      accepted Claims.  The condition consists of an environment-map, a
-      (possibly empty) claims-list, and an optional authorized-by.
+   *  common-condition: Matching conditions that are common to every
+      item in the series.  Common conditions include environment-map,
+      (optional) claims-list, and (optional) authorized-by.
 
-   *  series: A sequence of selection-addition tuples.
+   *  series: A list of conditional-series-record items where each
+      item's condition uses the same type of measurements, meaning same
+      label(code point) inside measurement-values-map, but differ in
+      value.
 
-   The conditional-series-record has the following parameters:
+   The conditional-series-record has the following elements:
 
-   *  selection: Secondary selection criteria that locates Evidence,
-      corroborated Evidence, or Endorsements from the initial selection
-      criteria's condition result.
+   *  condition: Match conditions where the same type of measurements
+      appear in each series item, but with different values.  Each
+      series item is paired with an addition series item.
 
-   *  addition: Endorsements that are added if the selection criteria
-      are satisfied.
+   *  addition: Claims to be added when its paired condition matches.
+      Addition Claims are added to the ACS record matching common-
+      condition.environment.
 
-5.1.8.1.  Condition Matching
+5.1.8.1.  Matching Considerations
 
-   The condition matching criteria is applied to the set of Claims the
-   Verifier has previously accepted.  The criteria is expressed in terms
-   of environments (i.e., environment-map) and optionally measurements
-   (i.e., claims-list) or authority (i.e., authorized-by).  Condition
-   matching is intended to powerfully enable broad or narrow searches
-   that serve as staging for subsequent selection matching.
+   For consistent results, every series item condition MUST use the same
+   measurement types; differing only in terms of measurement values.
+   This requirement also extends to use of mkey in measurement-map.
+   Series entries are ordered such that the most precise match is
+   evaluated first and least precise match is evaluated last.  The first
+   series condition that matches terminates series matching and the
+   endorsement values are added to the Attester's actual state.  These
+   restrictions ensure that evaluation order does not change the meaning
+   of the triple during the appraisal process.
 
-   Note that measurement-map can also specify authority criteria.  To
-   avoid conflicting criteria, the authorized-by in condition takes
-   precedence over the authorized-by in measurement-map.
-
-5.1.8.1.1.  Selection Matching
-
-   Every conditional-series-record selection MUST select the same mkeys
-   where every selected mkey's corresponding set of code points
-   represented as mval.key MUST be the same across each conditional-
-   series-record.  For example, if a selection matches on 3 measurement-
-   map statements; mkey is the same for all 3 statements and mval
-   contains only A= variable-X, B= variable-Y, and C= variable-Z
-   (exactly the set of code points A, B, and C) respectively for every
-   conditional-series-record in the series.
-
-   These restrictions ensure that evaluation order does not change the
-   meaning of the triple during the appraisal process.  Series entries
-   are ordered such that the most precise match is evaluated first and
-   least precise match is evaluated last.  The first series condition
-   that matches terminates series matching and the endorsement values
-   are added to the Attester's actual state.
-
-5.1.8.1.2.  Processing the Addition
-
-   To process a conditional-endorsement-series-record the selection
-   criteria in condition entries are matched with existing Evidence,
-   corroborated Evidence, and Endorsements.  If the selection criteria
-   are satisfied, the series tuples are processed.
-
-   The series array contains an ordered list of conditional-series-
-   record entries.  Evaluation order begins at list position 0.
-
-   For each series entry, if the selection criteria matches an entry
-   found in the condition result, the series addition is combined with
-   the environment-map from the condition result to form a new
-   Endorsement entry.  The new entry is added to the existing set of
-   Endorsements.
-
-   The first series entry that successfully matches the selection
-   criteria terminates series processing.
+   Note: authorized-by in common-condition takes precedence over the
+   authorized-by in condition.
 
 5.1.9.  Device Identity Triple
 
@@ -3090,12 +3061,11 @@ Table of Contents
    evs = [ + evs-item ]
 
    evs-item = {
-     condition: Endorsement-condition-ECT
      series: [ + series-item ]
    }
 
    series-item = [
-     selection: [ + Endorsement-selection-ECT ]
+     condition: [ + Endorsement-condition-ECT ]
      addition: [ + Endorsement-addition-ECT ]
    ]
 
@@ -3558,42 +3528,50 @@ Table of Contents
 
           Figure 41: Conditional Endorsement Triple Transformation
 
-   A conditional-endorsement-series-triple-record (Figure 4) is
+   Each conditional-endorsement-series-triple-record (Figure 4) is
    transformed into an evs-item (Figure 24) as described in Figure 42.
-   (The code reuses the mm_to_em and mms_to_ems functions from
-   Figure 14.)
+   (The pseudocode reuses the mms_to_ems function defined in Figure 14.)
+
+   The conditional-endorsement-series-triple-record contains a condition
+   that is common to all series items.  Each entry in the series is a
+   conditional-series-record with conditions that have differing values
+   and additions that are specific to those values.
+
+   The internal representation for a conditional endorsement series
+   consists of a list of condition-addition pairs where the common
+   condition in the series is replicated for each series item.  The
+   transformation algorithm combines the common conditions with each
+   series item condition to simplify Verifier processing (see
+   Section 8.2.4.3.2).
 
    FUNC transform(
        T: conditional-endorsement-series-triple-record,
        signer: [ + $crypto-key-type-choice ],
        profile: $profile-type-choice
    ) -> evs-item {
-       item := evs-item::NEW()
-
-       item.addition.cmtype = endorsements
-
-       item.condition.environment = T.condition.environment
-
-       item.condition.element-list = mms_to_ems(T.condition.claims-list)
-
-       IF T.condition.authorized-by:
-           item.condition.authority = T.condition.authorized-by
-
-       FOREACH s in T.series:
-           item.series.selection.environment = T.condition.environment
-           se := mm_to_em(s.selection)
-           item.series.selection.element-list::APPEND(se)
-
-           item.series.addition.environment = T.condition.environment
-           ae := mm_to_em(s.addition)
-           item.series.addition.element-list::APPEND(ae)
-
-       item.series.addition.authority = signer
-
-       IF profile:
-           item.series.addition.profile = profile
-
-       RETURN item
+       evsitem := evs-item::NEW()
+       FOREACH csr in T.series:
+          // stage the condition
+          sitem := series-item::NEW()
+          sitem.condition.environment = T.condition.environment
+          ems1 = mms_to_ems(T.condition.claims-list)
+          sitem.condition.element-list = ems1
+          ems2 := mms_to_ems(csr.condition)
+          sitem.condition.element-list::APPEND(ems2)
+          IF T.condition.authorized-by:
+              sitem.condition.authority = T.condition.authorized-by
+          ELSE_IF csr.series.condition.authorized-by:
+              sitem.condition.authority = csr.series.condition.authorized-by
+          // stage the addition
+          sitem.addition.environment = T.condition.environment
+          ems3 = mms_to_ems(csr.addition)
+          sitem.addition.element-list = ems3
+          sitem.addition.cmtype = `endorsements`
+          sitem.addition.authority = signer
+          IF profile:
+              sitem.addition.profile = profile
+          evsitem[index-of(sitem)] = sitem
+       RETURN evsitem
    }
 
       Figure 42: Conditional Endorsement Series Triple Transformation
@@ -3848,14 +3826,32 @@ Table of Contents
 
 8.2.4.3.2.  Processing evs Relations
 
-   Conditional Endorsement Series are matched with ACS entries by
-   iterating through the evs list.  For each evs entry, the condition
-   ECT is compared with an ACS ECT with cmtype 0, 1 or 2 (i.e. reference
-   values, endorsements or evidence).  If they match, the evs series
-   array is iterated.  For each series entry, if the selection ECT
-   matches an ACS ECT, the addition ECT is added to the ACS.  Series
-   iteration terminates either when the first matching series entry has
-   been processed, or when no series entries match.
+   The Conditional Endorsement Series relation is processed using a
+   modified match_and_augment function (see Figure 48) where SERIES-
+   MATCH() calls MATCH() (see Figure 49).
+
+   The first series item that matches terminates processing of
+   subsequent series items.
+
+   The matched item is appended to the ACS.
+
+   FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
+       FOREACH rel IN sa:
+           FOREACH item IN rel:
+               IF ser-add = SERIES-MATCH(acs, item.series):
+                   acs::APPEND(ser-add)
+
+       RETURN acs
+   }
+
+   FUNC SERIES-MATCH(acs: ACS, series: SERIES)
+       -> Endorsement-addition-ECT {
+       FOREACH sitem IN series:
+           IF acs::MATCH(sitem.condition):
+               RETURN sitem.addition
+   }
+
+               Figure 49: Series Match and Augment Algorithm
 
 8.2.4.3.3.  Processing keys Relations
 
@@ -3938,7 +3934,7 @@ Table of Contents
 
        RETURN FALSE
 
-               Figure 49: Process Trust Dependency Algorithm
+               Figure 50: Process Trust Dependency Algorithm
 
    The ACS::CHECK() function does acyclic graph consistency checks of
    the condition ECTs in the td relation.
@@ -4150,7 +4146,7 @@ Table of Contents
    therefore treats the minimum SVN as an exact state, rather than as
    something to be compared with inequality.
 
-   The pseudocode for the above algorithm is shown in Figure 50.
+   The pseudocode for the above algorithm is shown in Figure 51.
 
    FUNC compare(
        c_ect: svn-type-choice,
@@ -4181,7 +4177,7 @@ Table of Contents
        RETURN TYPEOF(v) == svn OR TYPEOF(v) == tagged-svn
    }
 
-                         Figure 50: SVN Comparison
+                         Figure 51: SVN Comparison
 
 8.2.4.4.5.4.  Comparison for digests entries
 
@@ -4368,7 +4364,7 @@ Table of Contents
       according to the PSA Certified scheme.
 
    The manufacturer's CoRIM contains a single CoMID with two Reference
-   Values triples (see Figure 51) describing two acceptable states of
+   Values triples (see Figure 52) describing two acceptable states of
    the Attester.  The Attester is identified by the class attribute
    Implementation ID with the value 6163..3031.  One state has a digest
    of 9a27..86aa for the "PRoT" component, and the other has a digest of
@@ -4445,11 +4441,11 @@ Table of Contents
      }
    }
 
-                   Figure 51: Example Manufacturer CoMID
+                   Figure 52: Example Manufacturer CoMID
 
    The CoMID from the certifier contains a Conditional Endorsement
    triple that describes the Attester who was granted the security
-   certification 1234567890123 - 12345 (see Figure 52).  This Attester
+   certification 1234567890123 - 12345 (see Figure 53).  This Attester
    has Implementation ID 6163..3031 and the digest associated with the
    "PRoT" component is 9a27..86aa.  In the triple, the security
    certification is represented as endorsements, while the target
@@ -4522,7 +4518,7 @@ Table of Contents
      }
    }
 
-                     Figure 52: Example Certifier CoMID
+                     Figure 53: Example Certifier CoMID
 
    For the remainder of this section, we will assume that the CoRIM
    containing this CoMID is signed using the certifier's certificate,
@@ -4540,7 +4536,7 @@ Table of Contents
    been validated, input transformations can start.
 
    The two Reference Values triples from the manufacturer's CoMID are
-   mapped to their corresponding rv-items (Figure 53, Figure 54) using
+   mapped to their corresponding rv-items (Figure 54, Figure 55) using
    the transformations defined in Figure 39.
 
    The first triple:
@@ -4590,7 +4586,7 @@ Table of Contents
      }
    }
 
-                     Figure 53: First rv Relation Item
+                     Figure 54: First rv Relation Item
 
    The second triple:
 
@@ -4639,14 +4635,14 @@ Table of Contents
      }
    }
 
-                     Figure 54: Second rv Relation Item
+                     Figure 55: Second rv Relation Item
 
    Note the authorities in the addition ECT of both items, which are set
    to 482e..78b3, and correspond to the thumbprint of the manufacturer's
    signing certificate.
 
    The Conditional Endorsement triple from the certifier's CoMID is
-   mapped to its corresponding ev-item (Figure 55) using the
+   mapped to its corresponding ev-item (Figure 56) using the
    transformation defined in Figure 41.
 
    {
@@ -4707,7 +4703,7 @@ Table of Contents
      ]
    }
 
-                Figure 55: First (and only) ev Relation Item
+                Figure 56: First (and only) ev Relation Item
 
    Note the authority in the addition ECT, which is set to 768f..75b1,
    and corresponds to the thumbprint of the certifier's signing
@@ -4757,7 +4753,7 @@ Table of Contents
      }
    }
 
-                             Figure 56: ae-item
+                             Figure 57: ae-item
 
    Note the authority in the ECT, which is set to MFkw..Lg==", and
    corresponds to the Attester's PEM-encoded SPKI.
@@ -4772,9 +4768,9 @@ Table of Contents
    The first relation to be processed is rv, according to the rules
    described in Section 8.2.4.2.1.
 
-   The condition of the first rv-item (Figure 53) is matched against the
+   The condition of the first rv-item (Figure 54) is matched against the
    ACS which, at this time, contains a single ECT obtained from the ae-
-   item (Figure 56).  The cmtype of the ACS-ECT is 2 (evidence), which
+   item (Figure 57).  The cmtype of the ACS-ECT is 2 (evidence), which
    is exactly the type rv-items need to match against.  When the two are
    compared, it is found that the environments of the rv-item condition
    and the ACS-ECT match (note that the instance identifier in the ACS-
@@ -4788,7 +4784,7 @@ Table of Contents
 
    The ACS now contains two ECTs, one with cmtype 2 (evidence), and a
    second one with cmtype 0 (reference-value) that corroborates the
-   first one with manufacturer authority (Figure 57).
+   first one with manufacturer authority (Figure 58).
 
    [
      / Evidence ECT / {
@@ -4864,9 +4860,9 @@ Table of Contents
      }
    ]
 
-                  Figure 57: ACS State after Corroboration
+                  Figure 58: ACS State after Corroboration
 
-   The algorithm then moves on to the second rv-item (Figure 54),
+   The algorithm then moves on to the second rv-item (Figure 55),
    checking its condition against the ACS.  Once again, the ACS-ECT with
    cmtype 2 (evidence) is selected for matching.  This time, the
    environments match, but the state represented in the rv-item's
@@ -4875,7 +4871,7 @@ Table of Contents
 
    Next, the ev relation is popped from the Staging Area for processing
    according to the rules described in Section 8.2.4.3.1.  The condition
-   of the first (and only) ev-item (Figure 55) is then matched against
+   of the first (and only) ev-item (Figure 56) is then matched against
    the ACS.  The only applicable ACS-ECT is the one with cmtype 2
    (evidence).
    // The fact that {{sec-proc-ev-rel}} requires matching against
@@ -4893,7 +4889,7 @@ Table of Contents
    with manufacturer authority, and a third one with cmtype 1
    (endorsements) which adds the PSA certification identifier as an
    endorsed value for the appraised environment with certifier's
-   authority (Figure 58).
+   authority (Figure 59).
 
    [
      / Evidence ECT / {
@@ -4995,7 +4991,7 @@ Table of Contents
      }
    ]
 
-            Figure 58: ACS State after Endorsements Augmentation
+            Figure 59: ACS State after Endorsements Augmentation
 
    At this point, all the relations in the Staging Area have been
    processed, and the match_and_augment algorithm (Figure 48)
@@ -6110,7 +6106,7 @@ Appendix A.  Base CoRIM CDDL
    $comid-role-type-choice /= &(tag-creator: 0) / &(creator: 1) / &(\
                                                           maintainer: 2)
    conditional-endorsement-series-triple-record = [
-     condition: [
+     common-condition: [
            environment: environment-map,
            claims-list: [* measurement-map],
            ? authorized-by: [+ $crypto-key-type-choice],
@@ -6118,7 +6114,7 @@ Appendix A.  Base CoRIM CDDL
      series: [+ conditional-series-record],
    ]
    conditional-series-record = [
-     selection: [+ measurement-map],
+     condition: [+ measurement-map],
      addition: [+ measurement-map],
    ]
    COSE_Key = {
