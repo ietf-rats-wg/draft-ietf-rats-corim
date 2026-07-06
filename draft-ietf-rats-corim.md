@@ -1415,7 +1415,7 @@ If the search criteria are satisfied, the `endorsements` entries are asserted wi
 ### Conditional Endorsement Series Triple {#sec-comid-triple-cond-series}
 
 The Conditional Endorsement Series Triple is used when an Endorser wants to add Claims with differing values based on conditions that have differing Claims values.
-For example, if version 1.0 of a component has a Common Vulnerability and Exporsure (CVE), but version 2.0b does not, a series condition might contain `version` = "1.0" and an addition `cve` = "CVE_PLACEHOLDER". Another series condition might contain `version` = "2.0" and an addition `cve` = "NONE".
+For example, if version 1.0 of a component has a Common Vulnerability and Exposure (CVE), but version 2.0 does not, a series condition might contain `version` = "1.0" and an addition `cve` = "CVE_PLACEHOLDER". Another series condition might contain `version` = "2.0" and an addition `cve` = "CVE_NONE".
 As soon as the condition value is matched the remaining conditions can be ignored.
 
 The Conditional Endorsement Series Triple has two forms of conditions, those that are in the series list and those that are common to all series items.
