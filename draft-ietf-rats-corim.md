@@ -2488,7 +2488,7 @@ FUNC transform(
        sitem.addition.authority = signer
        IF profile:
            sitem.addition.profile = profile
-       evsitem[index-of(sitem)] = sitem.
+       evsitem[index-of(sitem)] = sitem
     RETURN evsitem
 }
 ~~~
