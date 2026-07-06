@@ -2868,7 +2868,7 @@ If the condition ECT contains a profile, but the profile does not define an algo
 
 The specific comparisons performed depend on the type of relation being processed.
 In general, the processor will perform comparisons based on `environment` (see {{sec-compare-environment}}) as well as more specialized comparisons based on the type of ECT matched.
-Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list` (<cref>[TODO]</cref>), and Domain ECTs will typically match on `members` (see {{sec-compare-environment}}).
+Element ECTs will match on `element-list` (see {{sec-compare-element-list}}), Key ECTs will match on `key-list`, Domain Membership ECTs will typically match on `members` (see {{sec-proc-dm}}) and Trust Dependency ECTs will typically match on `trustees` (see {{sec-proc-td}}).
 
 <cref>
 [TBC]
