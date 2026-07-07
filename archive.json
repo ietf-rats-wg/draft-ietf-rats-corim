@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-05T04:06:22.331688+00:00",
+  "timestamp": "2026-07-07T04:03:00.721523+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14466,7 +14466,7 @@
       "id": "I_kwDOH6-tI88AAAABC3wFmg",
       "title": "Re-work Domain Membership and Trust Depedency Triple post CoRIM Revamp",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/580",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -14475,8 +14475,8 @@
       "labels": [],
       "body": "Following discussion on PR #576 \ud83d\udc4d \nFollowing has been agreed:\n\nResolve DDT Algorithm as under:\n\n------------------\n\nFollowing up on today's meeting. The DDT logic can be sumarized from one line in section 5: \"A DDT specifies which component (identified by domain-id) depends on which other components (identified by trustees) for proper operation.\"\n\nThe condition isn't expressed in terms of a triple subject/object relationship. It is whether or not the DDT subject/object are all represented in the membership graph.\n\nThere is an issue with conflating the membership ECT with the trust dependency ECT in that the condition logic for membership omits environment because it wants to enforce a bottom-up construction of a membership graph.\n\nThe trust graph is not intended to be isomorphic to the membership graph. It does say it should be acyclic. From the perspective of a single triple, that just means the domain-id should not be in the trustee list. It doesn't try to specify an algorithm for cycle detection.\n\nThe problem with overloading the member and trust dep ECTs is they have different goals and semantics. In one case environment condition is not needed and the other case it is needed. By conflating them, a new value kind was created that allows if-then logic that deconflates them. But if the structures were fully orthogonal there is no need for a kind value. Right now the logic is:\nIF kind=member then condition.environment is empty\nELSE IF kind=dependency then condition.environment is populated.\n\nMy proposal is to define another ECT specialization M-ECT for member ECT and remove D-ECT to be trust dependency specific aka T-ECT.\n\nThis will remove kind entirely and chileren can be avoided using the wording that most closely resonates (i.e., members for M-ECT and trustees for T-ECT). This will make documenting things more straight forward - which is the overall objective.\n\nThe overall changes would be:\n\nECT = E-ECT / T-ECT / K-ECT / M-ECT\n\n// Membership \nM-ECT = {\n  ECT-common\n  members: [ + environment-map ]\n}\n\nmember-condition-ect = ({\n  authority: [ + $crypto-key-type-choice ]\n  ? profile: $profile-type-choice\n  members: [ + environment-map ]\n}) .within M-ECT\n\nmember-addition-ect = ({\n  environment: environment-map\n  authority: [ + $crypto-key-type-choice ]\n  ? profile: $profile-type-choice\n  members: [ + environment-map ]\n}) .within M-ECT\n\ndm = [ + member-item ]\n\nmember-item = {\n  condition: member-condition-ECT\n  addition: member-addition-ECT\n}\n\n// Trust Dependency\nT-ECT = {\n  ECT-common\n  trustees: [ + environment-map ]\n}\n\ndd = [ + trust-dep-item ]\n\ntrust-dep-item = {\n  condition: T-ECT\n  addition: T-ECT\n}\nkind is eliminated (implicit in CDDL structure naming).\nNo need for conditional logic on kind to switch on optionality of environment.\nThe intuitive members and trustees can be used directly without introducing children which is biased toward hierarchies vs. graphs.\nGraph isomorphism between members and trustees is more intuitively obvious.\nA cycle detection / prevention algorthm can be a class built-in function. e.g.:\n\ndd::MAKE-ACYCLIC()\nThe revised pseudocode for dd processing would be:\n\nFUNC append_acs( dd: dd) -> ACS {\n    dd::MAKE-ACYCLIC()\n    FOREACH item IN dd:\n        IF acs::IS-MEMBER(item.condition.environment)\n            FOREACH trustee IN item.condition.trustees:\n                IF acs::IS-MEMBER(trustee.environment):\n                        CONTINUE\n                ELSE GET NEXT item\n            acs::APPEND(item.addition)\n    RETURN acs\n}\nThe pseudo code tests that both the environment and list of trustees are in the set of M-ECTs in the ACS. If yes, then add the trustor-trustee relationships. The MAKE-ACYCLIC function ensures the trustor-trustee relationships are secure before adding them to the ACS. There could be lots of impmlementation specific approaches that enforce security - but it is out of scope for the corim spec.\nNote: A set of disjointed dd expressions is still acyclic.\n\nNote: Section 5 can be reworded to be less presumptive toward hierarchies as the graph structure.\n\n----------------------------\n\nFollowing decisions were made\n1. Rename Domain Dependency Triple to Trust Dependency Triple (TDT)\n2. Split the Common D-ECT  to separate ECT Structures, call it D-ECT and T-ECT.\n3. State the assumptions of Graph theory, i.e. been Acyclic. The staging areas of D-ECT and T-ECT  to be Acyclic.\n4. D-ECT in staging area to be topologically sorted.\n5. Pros should say these are required, and if Topo sorting is not done, then mention about recursive  processing logic in the processing section of DMT (atleast).\n6. Agreed to first merge PR #576 and then re-base the `ect-restruct-updated` branch to the new `main` post merge and this issue is applied to `ect-restruct-updated` branch.",
       "createdAt": "2026-05-20T15:11:05Z",
-      "updatedAt": "2026-06-22T12:54:04Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-06T17:20:39Z",
+      "closedAt": "2026-07-06T17:20:39Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -14484,6 +14484,13 @@
           "body": "This issue will be closed one PR #582 is resolved!",
           "createdAt": "2026-06-22T12:54:04Z",
           "updatedAt": "2026-06-22T12:54:04Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "PR #580 merged hence closing this!",
+          "createdAt": "2026-07-06T17:20:39Z",
+          "updatedAt": "2026-07-06T17:20:39Z"
         }
       ]
     },
@@ -14612,7 +14619,7 @@
       "id": "I_kwDOH6-tI88AAAABEf8Cxg",
       "title": "Conditional Series editorial pass",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/591",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -14621,8 +14628,8 @@
       "labels": [],
       "body": "The \"selection matching\" prose made my head spin. I left the section untouched because I am not sure that I understand it well enough to apply any changes. Someone else needs to have a go at it.",
       "createdAt": "2026-06-05T12:28:35Z",
-      "updatedAt": "2026-07-02T05:37:19Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-06T17:21:00Z",
+      "closedAt": "2026-07-06T17:21:00Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -14644,6 +14651,13 @@
           "body": "> It may be less clear that the internal representation expects to build something like a database \"cursor\" of ACS entries that are \"selected\" for further matching logic. This means the acs::MATCH result is staged for furthur consideration. (Note that another PR anticipates the need for integrity checking prior to doing acs:APPEND).\n\nWhen intrep\u2019ing, the selection part could be moved under the condition instead of being part of the series.  Since selection is an integral part of matching, I think this would be a more natural approach, and wouldn\u2019t require multiplying the processing sites.\n\n",
           "createdAt": "2026-07-02T05:37:19Z",
           "updatedAt": "2026-07-02T05:38:01Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Now that PR #603 is merged closing this!",
+          "createdAt": "2026-07-06T17:21:00Z",
+          "updatedAt": "2026-07-06T17:21:00Z"
         }
       ]
     },
@@ -14727,11 +14741,69 @@
       "state": "OPEN",
       "author": "dkumar-nv",
       "authorAssociation": "CONTRIBUTOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith"
+      ],
       "labels": [],
       "body": "Given `domain-type = environment-map` and DDT trustees typed as `[+ domain-type]`, it is natural to author a DDT that references environments already present in Evidence. E.g., `[root, [env-A, env-B]]` where `env-A` and `env-B` are Target Environments the attester reports measurements for.\n\nHowever, \u00a75.1.11.2 requires normatively that \"_All of the DDT subjects (domain-id) and objects (trustees) MUST also be domain members for the DDT expression to be processed_\", and the DDT processing algorithm in \u00a79.3.4.6 enforces this by checking `ACS.cmtype` contains `domain-member` for both `dde.environment` and each trustee. Evidence transformation (\u00a79.1.3) produces ACS entries with `cmtype = evidence`, not `domain-member`. The only way an ACS entry acquires `cmtype = domain-member` is via DMT processing (\u00a79.1.7.2 step 2, \u00a79.3.4.5).\n\nConsequence: to reference an evidence-provided environment as a DDT trustee, the CoRIM author must include a trivial self-membership DMT such as `[env-A, [env-A]]` purely to promote env-A's cmtype. This adds no semantic content.\n\n**Requests for clarification / consideration**:\n\n1. Is the requirement to have DDT participants pre-declared as domain-members via a DMT intentional, or an incidental consequence of the ACS cmtype model?\n2. If intentional, it'd be great to state the informative rationale (topology declaration must be explicit before dependency can be asserted) in the spec.\n3. If not strictly intentional, consider one of the following relaxations:\n3.1. Allow DDT processing to implicitly treat any DDT subject/trustee whose environment matches an ACS entry with `cmtype \u2208 {evidence, reference-values}` as a domain-member for the purpose of DDT evaluation (i.e., promote-on-reference).\n3.2. Alternatively, allow a DDT to introduce domain-member ECTs directly for its subject and trustees (analogous to how DMT introduces the subject).\n3.3. Or, at minimum, document the \"self-membership DMT\" pattern as an idiom in a non-normative section so implementers converge on it.\n",
       "createdAt": "2026-07-04T06:28:31Z",
-      "updatedAt": "2026-07-04T06:28:31Z",
+      "updatedAt": "2026-07-06T21:34:42Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@nedmsmith Can you please have a look?",
+          "createdAt": "2026-07-06T21:34:09Z",
+          "updatedAt": "2026-07-06T21:34:09Z"
+        }
+      ]
+    },
+    {
+      "number": 604,
+      "id": "I_kwDOH6-tI88AAAABHunagA",
+      "title": "Re-evaluate the need for a CHECK() Routine - in Section 8.2.4",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/604",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Within the design team, there is a differing views on the need for a ACS:CHECK() Routine.\n\n\nThis issue tracks the discussion whether CHECK() is required or not?\n\nOne example where CHECK() may be relevant upon a successful MATCH is given below!\n\n> Line 2788 through 2799, can be performed as part of CHECK() routine. \n\n _Originally posted by @yogeshbdeshpande in [#582](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/582/changes/BASE..6d68d4e1183bfa20485f48ca5cabf18b49232f12#r3525227338)_",
+      "createdAt": "2026-07-05T16:36:09Z",
+      "updatedAt": "2026-07-05T16:36:09Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 605,
+      "id": "I_kwDOH6-tI88AAAABHuqiMA",
+      "title": "Investigate whether, ACS:CHECK() for dm items in the staging area can be moved to Internal Transformations!",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/605",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> This check could be moved to the acceptance criteria for the intrep transform. \n\n _Originally posted by @thomas-fossati in [#582](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/582/changes#r3512262213)_",
+      "createdAt": "2026-07-05T16:52:25Z",
+      "updatedAt": "2026-07-05T16:52:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 606,
+      "id": "I_kwDOH6-tI88AAAABH1y8Tw",
+      "title": "Add a Comparison Section - for Internal of DMT and TDT",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/606",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "> probably we need a Comparison section, for individual items of Domain Membership and Trust Dependency to be done in future \n\n _Originally posted by @yogeshbdeshpande in [#582](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/582/changes#r3530508430)_",
+      "createdAt": "2026-07-06T16:33:07Z",
+      "updatedAt": "2026-07-06T16:33:07Z",
       "closedAt": null,
       "comments": []
     }
@@ -88177,24 +88249,26 @@
       "id": "PR_kwDOH6-tI87fm3MP",
       "title": "Rework required by issue #580",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/582",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Changes related to issue #580 to separate domain membership and trust dependency transformation and processing.",
       "createdAt": "2026-05-26T23:10:10Z",
-      "updatedAt": "2026-07-02T16:00:40Z",
+      "updatedAt": "2026-07-06T16:39:36Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e534a54ef1adc3e6504c1952f4d76ca761cbceee",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "trust-dependency",
-      "headRefOid": "82edec28b06899fa187c16490773270d54c4356b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "3aab62442a8634f8fe2ae9e7466d516cf32bc09c",
+      "closedAt": "2026-07-06T16:39:36Z",
+      "mergedAt": "2026-07-06T16:39:36Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "790969d7c489702c86ecb7ce55829764246f6c51"
+      },
       "comments": [
         {
           "author": "nedmsmith",
@@ -88251,6 +88325,13 @@
           "body": "@thomas-fossati & @henkbirkholz, We can merge some of your suggested editorial corrections, however, you both had earlier blocked the PR Merge due to fundamental change in the nature of the PR changes for TD.\r\n\r\nI hope the Fundamental differences have been resolved, in terms of retaining the `Common and Simple` structure of MATCH, CHECK and APPEND.\r\n\r\nIf you are in general happy please make sure you remove the block on Merge, as we have to release this PR before the cut-off.",
           "createdAt": "2026-07-02T13:47:11Z",
           "updatedAt": "2026-07-02T13:47:11Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "All, I plan to remove CHECK() in 8.2.4 and rework this PR to align it better.\r\n\r\nWe MUST submit this and then only make Release 11 of CoRIM..\r\n\r\nOtherwise the efforts will not be reflected...",
+          "createdAt": "2026-07-05T09:26:03Z",
+          "updatedAt": "2026-07-05T09:26:03Z"
         }
       ],
       "reviews": [
@@ -88652,6 +88733,116 @@
               "body": "> May be we should discuss, given the lack of time before the release, the CHECK() as you said in principle does not hurt.\r\n\r\nI didn't say that it doesn't hurt.  What I said is that, in principle, I am not against modifying the `match_and_augment` algorithm; however, there must be a good reason for doing so.  And the rationale I have heard is not convincing.\r\n\r\n> I think the larger concern is not the input been cyclic, but how two items (individually) acyclic one in ACS and one outside of ACS coming in, together and inadvertently creating cycles.\r\n\r\nStarting with an acyclic graph, e.g., $$G = A \\rightarrow B \\rightarrow C$$, any subgraph you carve out will still be acyclic.\r\nThe trust dependency graph structure is entirely determined by the initial shape of the `td` relation.  If the graph encoded by the `td` relation is acyclic, the computed trust dependency graph will also be acyclic.",
               "createdAt": "2026-07-02T16:00:40Z",
               "updatedAt": "2026-07-02T16:00:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFBDIkQ",
+          "commit": {
+            "abbreviatedOid": "43a1718"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-05T16:25:35Z",
+          "updatedAt": "2026-07-05T16:25:35Z",
+          "comments": [
+            {
+              "originalPosition": 393,
+              "body": "The Augmented ACS is coming from the title of this section, which is line 2705 above!",
+              "createdAt": "2026-07-05T16:25:35Z",
+              "updatedAt": "2026-07-05T16:25:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFBDgAw",
+          "commit": {
+            "abbreviatedOid": "43a1718"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-05T16:29:01Z",
+          "updatedAt": "2026-07-05T16:29:01Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Line 2788 through 2799, can be performed as part of CHECK() routine.",
+              "createdAt": "2026-07-05T16:29:01Z",
+              "updatedAt": "2026-07-05T16:29:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFBFI2g",
+          "commit": {
+            "abbreviatedOid": "43a1718"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see the comments",
+          "createdAt": "2026-07-05T16:51:13Z",
+          "updatedAt": "2026-07-06T16:15:10Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "The intrep transform ONLY work on the individual triple at one time. It does not do any dependency scanning taking into account other triples, in the staging area",
+              "createdAt": "2026-07-05T16:51:13Z",
+              "updatedAt": "2026-07-06T16:15:10Z"
+            },
+            {
+              "originalPosition": 49,
+              "body": "see issue #605 ",
+              "createdAt": "2026-07-05T16:53:06Z",
+              "updatedAt": "2026-07-06T16:15:10Z"
+            },
+            {
+              "originalPosition": 393,
+              "body": "Please also read line 2709",
+              "createdAt": "2026-07-05T16:53:33Z",
+              "updatedAt": "2026-07-06T16:15:10Z"
+            },
+            {
+              "originalPosition": 318,
+              "body": "The psuedo code is now aligned with condition, addition pattern described in the general representation!",
+              "createdAt": "2026-07-05T16:55:56Z",
+              "updatedAt": "2026-07-06T16:15:10Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\n            IF acs::MATCH(item.condition):\n                IF acs::CHECK(item.addition):\n```",
+              "createdAt": "2026-07-06T16:14:05Z",
+              "updatedAt": "2026-07-06T16:15:10Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\n                        acs::APPEND(item.addition)\n```",
+              "createdAt": "2026-07-06T16:14:30Z",
+              "updatedAt": "2026-07-06T16:15:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFG_leQ",
+          "commit": {
+            "abbreviatedOid": "decd080"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-06T16:32:37Z",
+          "updatedAt": "2026-07-06T16:32:37Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "probably we need a Comparison section, for individual items of Domain Membership and Trust Dependency to be done in future",
+              "createdAt": "2026-07-06T16:32:37Z",
+              "updatedAt": "2026-07-06T16:32:37Z"
             }
           ]
         }
@@ -90868,7 +91059,7 @@
       "id": "PR_kwDOH6-tI87t8gXh",
       "title": "Series triple, transformation and processing updates",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/603",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -90877,19 +91068,175 @@
       "labels": [],
       "body": "Modified conditional endorsement series triple, transformation and processing sections to improve readability and to better align with the use of acs::MATCH(). The series array now calls acs::MATCH() for each item in the series. Since the series array iterator terminates upon the first successful match, the acs::APPEND() can be called streight away.\r\n\r\nRelates to issue #591 ",
       "createdAt": "2026-07-04T23:16:40Z",
-      "updatedAt": "2026-07-04T23:26:34Z",
+      "updatedAt": "2026-07-06T17:19:33Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e534a54ef1adc3e6504c1952f4d76ca761cbceee",
+      "baseRefOid": "790969d7c489702c86ecb7ce55829764246f6c51",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "series-triple",
-      "headRefOid": "2985255fb8e807ecf6fb4e5b01fc35b3c1e8c08c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "4a98428c9d0c507a1606245d886613338e16aad9",
+      "closedAt": "2026-07-06T17:19:33Z",
+      "mergedAt": "2026-07-06T17:19:33Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "3d81e94a5e344475d754a47b82ecce8e80766906"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFBGlVw",
+          "commit": {
+            "abbreviatedOid": "2985255"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-05T17:11:34Z",
+          "updatedAt": "2026-07-05T17:11:34Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "It is not clear with the line:\n\n` each item's condition uses the same type measurements, but differ in value.`",
+              "createdAt": "2026-07-05T17:11:34Z",
+              "updatedAt": "2026-07-05T17:11:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFBGqfg",
+          "commit": {
+            "abbreviatedOid": "2985255"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-05T17:12:49Z",
+          "updatedAt": "2026-07-05T17:12:50Z",
+          "comments": [
+            {
+              "originalPosition": 34,
+              "body": "```suggestion\n* `series`: A list of `conditional-series-record` items where each item's condition uses the same type of measurements, meaning same label(code point) inside measurement-values-map, but differ in value.\n```",
+              "createdAt": "2026-07-05T17:12:49Z",
+              "updatedAt": "2026-07-05T17:12:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFHH5Gw",
+          "commit": {
+            "abbreviatedOid": "2985255"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-06T16:50:07Z",
+          "updatedAt": "2026-07-06T16:50:07Z",
+          "comments": [
+            {
+              "originalPosition": 142,
+              "body": "```suggestion\n       evsitem[index-of(sitem)] = sitem\n```",
+              "createdAt": "2026-07-06T16:50:07Z",
+              "updatedAt": "2026-07-06T16:50:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFHNglw",
+          "commit": {
+            "abbreviatedOid": "7a1eae8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-06T17:01:35Z",
+          "updatedAt": "2026-07-06T17:01:35Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\nFor example, if version 1.0 of a component has a Common Vulnerability and Exposure (CVE), but version 2.0 does not, a series condition might contain `version` = \"1.0\" and an addition `cve` = \"CVE_PLACEHOLDER\". Another series condition might contain `version` = \"2.0\" and an addition `cve` = \"CVE_NONE\".\n```",
+              "createdAt": "2026-07-06T17:01:35Z",
+              "updatedAt": "2026-07-06T17:01:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFHQWmQ",
+          "commit": {
+            "abbreviatedOid": "37d6754"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-06T17:08:16Z",
+          "updatedAt": "2026-07-06T17:08:16Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "```suggestion\nThe Conditional Endorsement Series Triple is used when an Endorser wants to match Claims of the same type (for example `version`) but with differing values.  If the conditions are met, new Claims are added as Endorsements.\n```",
+              "createdAt": "2026-07-06T17:08:16Z",
+              "updatedAt": "2026-07-06T17:08:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFHR44w",
+          "commit": {
+            "abbreviatedOid": "6fa5d18"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-06T17:11:50Z",
+          "updatedAt": "2026-07-06T17:11:50Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "just improve Line 1421 and 1422",
+              "createdAt": "2026-07-06T17:11:50Z",
+              "updatedAt": "2026-07-06T17:11:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFHSyxg",
+          "commit": {
+            "abbreviatedOid": "6fa5d18"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-07-06T17:14:10Z",
+          "updatedAt": "2026-07-06T17:14:10Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "```suggestion\nThe Conditional Endorsement Series Triple has two forms of conditions,  those that are common to all series list items and those that are specific to a particular item in the series.\n```",
+              "createdAt": "2026-07-06T17:14:10Z",
+              "updatedAt": "2026-07-06T17:14:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABFHT5WA",
+          "commit": {
+            "abbreviatedOid": "4a98428"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-07-06T17:16:53Z",
+          "updatedAt": "2026-07-06T17:17:22Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
