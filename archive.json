@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-07T04:03:00.721523+00:00",
+  "timestamp": "2026-07-12T03:35:53.710966+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14390,7 +14390,7 @@
       ],
       "body": "Imagine a HW Register which has two possible reference values: 0 and 1. I am trying to find out the complete list of spec allowed methods and have listed 4 options below. Can I please get feedback on the allowed list of spec compliant options?\n\n### Option 1 (Use anonymous values in measurement-values-map. Violation of spec)\nThe approach below looks conceptually most reasonable to me but violates \"Two or more measurement-map entries within the same environment MUST populate mkey\". Is there a reason, though, why spec prohibits multiple anonymous measurement-map entries when they correspond to same measured element and no other measured element is part of same environment?\n\n**Note**: Veraison/cocli does not throw any error with the option below\n```\n{\n  \"environment\": {\n    \"class\": {\n      \"vendor\": \"ACME\",\n      \"model\": \"HW Register Value\"\n    }\n  },\n  \"measurements\": [\n    {\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AA==\"\n        }\n      }\n    },\n    {\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AQ==\"\n        }\n      }\n    }\n  ]\n}\n```\nOption 2 (Duplicate the environment while using anonymous value in measurement-values-map to side step spec violation)\nThe approach below does not seem to violate \"Two or more measurement-map entries within the same environment MUST populate mkey\" but is effectively the same as Option 1.\n\n**Question**: Is there any text in spec that prevents the below? Is the verifier supposed to reject a CoRIM that looks like below?\n```\n{\n  \"environment\": {\n    \"class\": {\n      \"vendor\": \"ACME\",\n      \"model\": \"HW Register Value\"\n    }\n  },\n  \"measurements\": [\n    {\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AA==\"\n        }\n      }\n    }\n  ]\n}\n\n\n{\n  \"environment\": {\n    \"class\": {\n      \"vendor\": \"ACME\",\n      \"model\": \"HW Register Value\"\n    }\n  },\n  \"measurements\": [\n    {\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AQ==\"\n        }\n      }\n    }\n  ]\n}\n```\n\n### Option 3 (Dummy mkey to meet spec requirement of no more than 1 anonymous measurement-values-map)\nNotice that I have used the same mkey value for both reference values since if I give them different names, there is no way for verifier to know that they correspond to the same measured element. This option seems appears unclean since it forces both evidence and CoRIM to have dummy mkey\n```\n{\n  \"environment\": {\n    \"class\": {\n      \"vendor\": \"ACME\",\n      \"model\": \"HW Register Value\"\n    }\n  },\n  \"measurements\": [\n    {\n      \"key\": {\n        \"type\": \"string\",\n        \"value\": \"Allowed value\"\n      },\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AA==\"\n        }\n      }\n    },\n    {\n      \"key\": {\n        \"type\": \"string\",\n        \"value\": \"Allowed value\"\n      },\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AQ==\"\n        }\n      }\n    }\n  ]\n}\n```\n      \n### Option 4 (Same as Option 2 but using mkey in case Option 2 is disallowed)\n```\n{\n  \"environment\": {\n    \"class\": {\n      \"vendor\": \"ACME\",\n      \"model\": \"HW Register Value\"\n    }\n  },\n  \"measurements\": [\n    {\n      \"key\": {\n        \"type\": \"string\",\n        \"value\": \"Allowed value\"\n      },\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AA==\"\n        }\n      }\n    }\n  ]\n}\n\n\n{\n  \"environment\": {\n    \"class\": {\n      \"vendor\": \"ACME\",\n      \"model\": \"HW Register Value\"\n    }\n  },\n  \"measurements\": [\n    {\n      \"key\": {\n        \"type\": \"string\",\n        \"value\": \"Allowed value\"\n      },\n      \"value\": {\n        \"raw-value\": {\n          \"type\": \"bytes\",\n          \"value\": \"AQ==\"\n        }\n      }\n    }\n  ]\n}\n```",
       "createdAt": "2026-04-04T22:57:55Z",
-      "updatedAt": "2026-06-05T13:43:20Z",
+      "updatedAt": "2026-07-10T09:43:56Z",
       "closedAt": "2026-06-05T13:43:20Z",
       "comments": [
         {
@@ -14413,6 +14413,13 @@
           "body": "@dhawalfs1 That is in context of `MKey`, when used. We will still correct or delete the text altogether to remove ambiguity",
           "createdAt": "2026-04-15T12:24:00Z",
           "updatedAt": "2026-04-15T12:24:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Adding a note to summarise the state according to version -11 of the spec:\n\nIn corim-11, the previous restriction:\n\n> _\"A single anonymous measurement-map is allowed within the same environment.  Two or more measurement-map entries within the same environment MUST populate mkey.\"_\n\nis gone.\n\ncorim-11 also has a new requirement:\n\n> _\"Different reference states for a Target Environment MUST be expressed using separate reference-triple-record entries.\"_\n\nTherefore, options 2 and 4 in the issue would be valid according to the current spec (you need two ref-val triples to express two alternative allowed states), while options 1 and 3 wouldn't.",
+          "createdAt": "2026-07-10T09:33:35Z",
+          "updatedAt": "2026-07-10T09:43:56Z"
         }
       ]
     },
@@ -14804,6 +14811,22 @@
       "body": "> probably we need a Comparison section, for individual items of Domain Membership and Trust Dependency to be done in future \n\n _Originally posted by @yogeshbdeshpande in [#582](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/582/changes#r3530508430)_",
       "createdAt": "2026-07-06T16:33:07Z",
       "updatedAt": "2026-07-06T16:33:07Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 608,
+      "id": "I_kwDOH6-tI88AAAABIVw23Q",
+      "title": "typo in ACS initialization description",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/608",
+      "state": "OPEN",
+      "author": "ajay-fuji",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "In [Section 8.2.3.8 Appraisal Context Initialization](https://www.ietf.org/archive/id/draft-ietf-rats-corim-11.html#name-appraisal-context-initializ),\nstatement -  \n> The ACS is initialized with all the addition ECTs in the ev relation\n\nincorrectly mentions `ae` as `ev`. \nAlthough [Figure 46](https://www.ietf.org/archive/id/draft-ietf-rats-corim-11.html#figure-46): [ACS Initialization](https://www.ietf.org/archive/id/draft-ietf-rats-corim-11.html#name-acs-initialization) mentioned it correctly as `ae`. ",
+      "createdAt": "2026-07-10T11:39:29Z",
+      "updatedAt": "2026-07-10T11:39:29Z",
       "closedAt": null,
       "comments": []
     }
