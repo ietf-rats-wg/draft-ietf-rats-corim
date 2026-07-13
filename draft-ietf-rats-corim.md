@@ -1026,8 +1026,7 @@ competence.
 ##### Measurement Keys {#sec-comid-mkey}
 
 A Measurement Key is an identifier for a measured element.
-It can be used to identify the type of measured element (see {{-cca-endorsements}}) or to identify
-multiple measured element instances within the same environment.
+It can be used to identify the type of measured element (see {{-cca-endorsements}} or SPDM Manifest's blocks originating from a specific environment) or to identify multiple measured element instances within the same environment.
 The initial types defined are OID, UUID, uint, and tstr.
 
 ~~~ cddl
