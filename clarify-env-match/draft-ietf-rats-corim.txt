@@ -4008,21 +4008,21 @@ Table of Contents
 
    The processor MUST compare each attribute which is present in the
    C-ECT's environment with the corresponding attribute in the ACS-ECT's
-   environment using binary comparison.  Note that this criterion
-   applies not only to the top-level attributes of the environment, but
-   also recursively to attributes at any nesting level.  Before
-   performing the binary comparison, the processor SHOULD convert the
-   attributes in both environments into a form that meets the CBOR core
-   deterministic encoding requirements described in Section 4.2 of
-   [STD94].
+   environment using binary comparison.  Before performing the binary
+   comparison, the processor SHOULD convert the attributes in both
+   environments into a form that meets the CBOR core deterministic
+   encoding requirements described in Section 4.2 of [STD94].
 
    If all the attributes which are present in the C-ECT environment
    (e.g., instance-id or group-id) are also present in the ACS-ECT and
    are binary identical, the two environments match.  Otherwise, the
    environments do not match.
 
-   Any attribute that is present in the ACS-ECT but not in the C-ECT is
-   ignored in the comparison.
+   In other words, a match succeeds when the C-ECT's environment is
+   contained in the ACS-ECT's environment - i.e., for every field path
+   defined in the C-ECT's environment, the ACS-ECT's environment defines
+   the same path with an equal value.  Any attribute that is present in
+   the ACS-ECT but not in the C-ECT is ignored in the comparison.
 
 8.2.4.4.2.  Authority Comparison
 
