@@ -213,6 +213,19 @@ Typically, the entity asserting a Claim should have knowledge, expertise, or con
 Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
+Attribute Path:
+: A sequence of one or more attribute identifiers that denotes a value within a structured data object by successive selection from a root value.
+Each identifier in the sequence names the next attribute to select; the final identifier in the sequence names the value reached by the path.
+An Attribute Path is said to be **defined** in a given value if every prefix of the path exists in that value; otherwise, the path is **undefined** in that value.
+In this document, structured data objects are typically CBOR maps whose attributes are identified by CDDL member names (for example, `instance`, `class`, `class-id`).
+Attribute Paths are used when comparing nested data structures during appraisal (see {{sec-comparison-rules}}).
+For example, in an `environment-map`, `class.class-id` is an Attribute Path that selects the `class-id` member of the nested `class-map`.
+
+Attribute Path Containment:
+: A comparison relation between two structured data objects A and B in which A is said to **contain** B when, for every Attribute Path defined in B, the same Attribute Path is defined in A and the values at that path are equal.
+Attributes present in A but not in B are ignored.
+See {{sec-compare-environment}} for an example of Attribute Path Containment applied to `environment-map` comparison.
+
 Authority:
 : The entity that asserts a Claim.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
@@ -2894,7 +2907,7 @@ Before performing the binary comparison, the processor SHOULD convert the attrib
 If all the attributes which are present in the C-ECT `environment` (e.g., `instance-id` or `group-id`) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.
 
-In other words, a match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` - i.e., for every attribute path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
+In other words, a match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
 Any attribute that is present in the ACS-ECT but not in the C-ECT is ignored in the comparison.
 
 ##### Authority Comparison {#sec-compare-authority}
