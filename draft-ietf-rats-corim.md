@@ -91,7 +91,7 @@ normative:
   I-D.ietf-rats-eat-measured-component: eat-mc
   IANA.language-subtag-registry: language-subtag
   X.690: CCITT.X690.2002
-  I-D.ietf-cose-hash-envelope: cose-hash-envelope
+  RFC9995: cose-hash-envelope
 
 informative:
   RFC7519: jwt
