@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-07-26T03:37:13.543983+00:00",
+  "timestamp": "2026-07-28T03:17:00.067731+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14762,7 +14762,7 @@
       "labels": [],
       "body": "Given `domain-type = environment-map` and DDT trustees typed as `[+ domain-type]`, it is natural to author a DDT that references environments already present in Evidence. E.g., `[root, [env-A, env-B]]` where `env-A` and `env-B` are Target Environments the attester reports measurements for.\n\nHowever, \u00a75.1.11.2 requires normatively that \"_All of the DDT subjects (domain-id) and objects (trustees) MUST also be domain members for the DDT expression to be processed_\", and the DDT processing algorithm in \u00a79.3.4.6 enforces this by checking `ACS.cmtype` contains `domain-member` for both `dde.environment` and each trustee. Evidence transformation (\u00a79.1.3) produces ACS entries with `cmtype = evidence`, not `domain-member`. The only way an ACS entry acquires `cmtype = domain-member` is via DMT processing (\u00a79.1.7.2 step 2, \u00a79.3.4.5).\n\nConsequence: to reference an evidence-provided environment as a DDT trustee, the CoRIM author must include a trivial self-membership DMT such as `[env-A, [env-A]]` purely to promote env-A's cmtype. This adds no semantic content.\n\n**Requests for clarification / consideration**:\n\n1. Is the requirement to have DDT participants pre-declared as domain-members via a DMT intentional, or an incidental consequence of the ACS cmtype model?\n2. If intentional, it'd be great to state the informative rationale (topology declaration must be explicit before dependency can be asserted) in the spec.\n3. If not strictly intentional, consider one of the following relaxations:\n3.1. Allow DDT processing to implicitly treat any DDT subject/trustee whose environment matches an ACS entry with `cmtype \u2208 {evidence, reference-values}` as a domain-member for the purpose of DDT evaluation (i.e., promote-on-reference).\n3.2. Alternatively, allow a DDT to introduce domain-member ECTs directly for its subject and trustees (analogous to how DMT introduces the subject).\n3.3. Or, at minimum, document the \"self-membership DMT\" pattern as an idiom in a non-normative section so implementers converge on it.\n",
       "createdAt": "2026-07-04T06:28:31Z",
-      "updatedAt": "2026-07-06T21:34:42Z",
+      "updatedAt": "2026-07-27T06:17:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -14771,6 +14771,13 @@
           "body": "@nedmsmith Can you please have a look?",
           "createdAt": "2026-07-06T21:34:09Z",
           "updatedAt": "2026-07-06T21:34:09Z"
+        },
+        {
+          "author": "dkumar-nv",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@nedmsmith ,\nCan you please take a look?",
+          "createdAt": "2026-07-27T06:17:47Z",
+          "updatedAt": "2026-07-27T06:17:47Z"
         }
       ]
     },
@@ -91380,13 +91387,13 @@
       "labels": [],
       "body": "Extend CoSWID`version-scheme` to include the `binary` scheme and its encoding details.\r\nAlso add the registration request.",
       "createdAt": "2026-07-13T10:18:03Z",
-      "updatedAt": "2026-07-14T12:51:39Z",
+      "updatedAt": "2026-07-27T17:46:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "3d81e94a5e344475d754a47b82ecce8e80766906",
+      "baseRefOid": "c2ed4cebb47d2992745d63eb98782f1ffa5ee321",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "binary-version",
-      "headRefOid": "d93da00ecaba23ef350278dba9d72e220a370470",
+      "headRefOid": "6cc8284d8ab4b802035aedff4613929fa19ca1fc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -91657,13 +91664,13 @@
       "labels": [],
       "body": "Extract the common \"sub-shape\" matching pattern into a glossary definition (\"attribute path containment\") and use this definition wherever the pattern appears.\r\n\r\nAlso define \"range satisfaction\" to anchor the idea of range matching more rigorously.\r\n\r\n\r\nNOTE: this builds on top of (and further refines) #611 ",
       "createdAt": "2026-07-15T15:59:12Z",
-      "updatedAt": "2026-07-16T12:23:36Z",
+      "updatedAt": "2026-07-27T17:44:33Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "c2ed4cebb47d2992745d63eb98782f1ffa5ee321",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "containment",
-      "headRefOid": "8cb291fa0b95ae2adaabfdd1b5f89e846b4d50c8",
+      "headRefOid": "4dcd5a0abde3306689d1875525877064decf35c3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -91696,6 +91703,46 @@
       "mergeCommit": null,
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 616,
+      "id": "PR_kwDOH6-tI8728QQN",
+      "title": "fix: missing `int-range` entry in the mvm",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/616",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "For some reasons we forgot to add it...",
+      "createdAt": "2026-07-27T13:52:10Z",
+      "updatedAt": "2026-07-27T15:16:46Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "c2ed4cebb47d2992745d63eb98782f1ffa5ee321",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "int-range-pull-it-all-together",
+      "headRefOid": "953339440c8ae019676c47e6f2322f7ccf0ac533",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABHWu9zg",
+          "commit": {
+            "abbreviatedOid": "9533394"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-07-27T15:16:46Z",
+          "updatedAt": "2026-07-27T15:16:46Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
