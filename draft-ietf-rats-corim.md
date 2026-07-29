@@ -140,6 +140,13 @@ informative:
     date: January 24, 2024,
     target: https://trustedcomputinggroup.org/resource/tpm-library-specification/
   IEEE-802.OandA: DOI.10.1109/IEEESTD.2014.6847097
+  DSP0274:
+    title: "Security Protocol and Data Model (SPDM) Specification"
+    author:
+      org: Distributed Management Task Force
+    seriesinfo: Version 1.4.1
+    date: July 02, 2026
+    target: https://www.dmtf.org/dsp/DSP0274
 
 entity:
   SELF: "RFCthis"
