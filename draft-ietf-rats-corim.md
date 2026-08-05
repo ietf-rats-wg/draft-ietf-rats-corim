@@ -1832,7 +1832,7 @@ A comment begins with "//" and extends to the end of the line.
 
 ### Types
 
-All type names in this pseudocode are taken directly from the CDDL rules defined in this document.
+Pseudocode Type names are taken directly from the CDDL {{-cddl}}.
 There is no separate type language; type annotations on function parameters, return values, and variable bindings reuse CDDL type expressions verbatim.
 A reader familiar with the CDDL schemas in this document can read the algorithms without any additional type translation.
 
