@@ -1823,6 +1823,144 @@ and
 Appraisal Policy
 are used with the meanings defined in {{sec-glossary}}.
 
+## Pseudocode Notation {#sec-pseudocode-notation}
+
+The algorithms in pseudocode are meant for readability and not for execution.
+The following pseudocode notation is used throughout this document.
+
+### Comments
+
+A comment begins with "//" and extends to the end of the line.
+
+~~~ pseudocode
+// this is a comment
+~~~
+
+### Types
+
+Pseudocode Type names are taken directly from the CDDL {{-cddl}}.
+There is no separate type language; type annotations on function parameters, return values, and variable bindings reuse CDDL type expressions verbatim.
+A reader familiar with the CDDL schemas in this document can read the algorithms without any additional type translation.
+
+A bare name refers to a CDDL rule:
+
+~~~ pseudocode
+measurement-map
+ACS
+StagingArea
+~~~
+
+The CDDL notation "\[ + T \]" denotes a non-empty array of elements of type T:
+
+~~~ pseudocode
+[ + measurement-map ]
+~~~
+
+An extensible CDDL socket type is prefixed with "$":
+
+~~~ pseudocode
+$crypto-key-type-choice
+$profile-type-choice
+~~~
+
+The CDDL "/" operator separates the alternatives of a union type:
+
+~~~ pseudocode
+attest-key-triple-record / identity-triple-record
+~~~
+
+### Variables
+
+A variable is introduced and assigned a value using the ":=" operator:
+
+~~~ pseudocode
+item := rv-item::NEW()
+~~~
+
+A previously introduced variable or a field of a structured value is updated using "=":
+
+~~~ pseudocode
+item.addition.cmtype = reference-values
+~~~
+
+### Functions
+
+A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:
+
+~~~ pseudocode
+FUNC name(param: type, ...) -> return-type {
+    ...
+}
+~~~
+
+A RETURN statement exits the enclosing function and yields the specified value to the caller:
+
+~~~ pseudocode
+RETURN value
+~~~
+
+### Expressions
+
+The TYPEOF operator yields the CDDL type of a value at runtime.
+Used with "==", it dispatches on the alternatives of a CDDL union type:
+
+~~~ pseudocode
+IF TYPEOF(T) == attest-key-triple-record:
+    ...
+ELIF TYPEOF(T) == identity-triple-record:
+    ...
+~~~
+
+The "~" prefix operator unwraps a CBOR-tagged value to its untagged content, corresponding to the CDDL unwrap idiom:
+
+~~~ pseudocode
+ELIF TYPEOF(v) == tagged-svn:
+    RETURN ~v
+~~~
+
+### Conditionals
+
+An IF statement tests a condition and executes its body if the condition is true.
+One or more ELIF clauses test additional conditions in order.
+An optional ELSE clause provides a fallback:
+
+~~~ pseudocode
+IF condition:
+    ...
+ELIF condition:
+    ...
+ELSE:
+    ...
+~~~
+
+### Iteration
+
+A FOREACH statement iterates over the elements of a collection in order:
+
+~~~ pseudocode
+FOREACH item IN collection:
+    ...
+~~~
+
+A BREAK statement exits the innermost enclosing FOREACH immediately.
+
+### Primitive Operations
+
+The pseudocode uses a "Receiver::OPERATION(args)" calling convention to invoke well-known operations on typed values.
+All operation names are uppercase.
+
+| Operation | Meaning |
+|-----------|---------|
+| `T::NEW()` | Construct a new zero-value instance of CDDL type T |
+| `collection::APPEND(item)` | Append item to a collection; when item is itself a list, all its elements are appended |
+| `acs::MATCH(condition)` | Test whether condition matches any entry in the ACS; the matching rules are relation-specific and defined in {{sec-comparison-rules}} |
+| `acs::CHECK(addition)` | Run consistency checks on addition before appending it to the ACS |
+| `acs::APPEND(addition)` | Atomically append addition to the ACS |
+| `x::MEMBEROF(collection)` | Test whether x is a member of collection |
+| `INDEXOF(x)` | Return the position of x within its enclosing sequence |
+{: #tbl-pseudocode-ops title="Primitive Operations"}
+
+
 ## Appraisal Logical Phases {#sec-appraisal-phases}
 
 For clarity, the appraisal procedure is divided into several logical phases.
@@ -2537,7 +2675,7 @@ FUNC transform(
        sitem.condition.element-list::APPEND(ems2)
        IF T.condition.authorized-by:
            sitem.condition.authority = T.condition.authorized-by
-       ELSE_IF csr.series.condition.authorized-by:
+       ELIF csr.series.condition.authorized-by:
            sitem.condition.authority = csr.series.condition.authorized-by
        // stage the addition
        sitem.addition.environment = T.condition.environment
@@ -2547,7 +2685,7 @@ FUNC transform(
        sitem.addition.authority = signer
        IF profile:
            sitem.addition.profile = profile
-       evsitem[index-of(sitem)] = sitem
+       evsitem[INDEXOF(sitem)] = sitem
     RETURN evsitem
 }
 ~~~
@@ -2684,7 +2822,7 @@ FUNC init_staging_area(
 ) -> StagingArea {
     sa := StagingArea::NEW()
 
-    IF rv    sa::APPEND(rv)
+    IF rv:   sa::APPEND(rv)
     IF ev:   sa::APPEND(ev)
     IF evs:  sa::APPEND(evs)
     IF keys: sa::APPEND(keys)
@@ -2842,7 +2980,7 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
     FOREACH dm-item IN ACS.ECT(.cm==member):
         IF condition.environment == dm-item.environment:
             FOREACH trustee IN condition.trustees:
-                IF !trustee::IS-MEMBER(dm-item.members):
+                IF !trustee::MEMBEROF(dm-item.members):
                     BREAK   # break inner loop, try another dm-item
             RETURN TRUE
 
