@@ -2309,37 +2309,25 @@ The `evs` relation ({{fig-evs}}) applies to Conditional Endorsement Series (CES)
 ~~~
 {: #fig-evs title="Endorsed Values Series Relation"}
 
-The `evs` relation compares the condition ECTs with the ACS.
-<cref>
-[TBC]
-There is only one ECT in the condition.
-The description doesn't seem to match the data format.
-</cref>
-If all the ECTs are found in the ACS, each entry in the series list is evaluated.
-The selection ECTs are then compared with the ACS.
-If the selection criteria are met, the addition ECTs are added to the ACS and the series evaluation ends.
-If the selection criteria are not satisfied, evaluation proceeds to the next series list entry.
+The `evs` relation contains a list of series items.
+Each series item contains a list of condition ECTs and a list of addition ECTs.
+The condition ECTs are compared with the ACS.
+If the condition criteria are satisfied, the addition ECTs are added to the ACS and the series evaluation ends.
+If the condition criteria are not satisfied, evaluation proceeds to the next series item.
 
-{{fig-ev-cond}} shows the profiled Element ECT an Endorsed Value condition.
+{{fig-ev-cond}} shows the profiled Element ECT for an Endorsed Value condition.
 
 ~~~ cddl
 {::include cddl/intrep-ect-endval-condition.cddl}
 ~~~
-{: #fig-ev-cond title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (condition)"}
+{: #fig-ev-cond title="Profiled condition ECT for ev and evs relations"}
 
-{{fig-ev-sel}} shows the profiled Element ECT an Endorsed Value selection.
-
-~~~ cddl
-{::include cddl/intrep-ect-endval-selection.cddl}
-~~~
-{: #fig-ev-sel title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (selection)"}
-
-{{fig-ev-add}} shows the profiled Element ECT an Endorsed Value addition.
+{{fig-ev-add}} shows the profiled Element ECT for an Endorsed Value addition.
 
 ~~~ cddl
 {::include cddl/intrep-ect-endval-addition.cddl}
 ~~~
-{: #fig-ev-add title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (addition)"}
+{: #fig-ev-add title="Profiled addition ECT for ev and evs relations"}
 
 ##### Keys {#sec-ir-keys}
 
