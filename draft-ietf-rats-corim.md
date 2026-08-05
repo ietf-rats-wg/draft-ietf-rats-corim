@@ -91,7 +91,8 @@ normative:
   I-D.ietf-rats-eat-measured-component: eat-mc
   IANA.language-subtag-registry: language-subtag
   X.690: CCITT.X690.2002
-  I-D.ietf-cose-hash-envelope: cose-hash-envelope
+  RFC9995: cose-hash-envelope
+  RFC4648: base-n-encodings
 
 informative:
   RFC7519: jwt
@@ -1105,6 +1106,10 @@ The following describes each member of the `measurement-values-map`.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
+* `int-range` (index 15): An integer value or an inclusive integer range that can be compared with linear order.
+  Described in {{sec-comid-int-range}}.
+  Comparison rules are defined in {{sec-match-int-range}}.
+
 ##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -1118,16 +1123,17 @@ The following describes each member of the `version-map`:
 
 * `version` (index 0): the version string
 
-* `version-scheme` (index 1): an optional indicator of the versioning
-  convention used in the `version` attribute.
-  Defined in {{Section 4.1 of -coswid}}.
-  The CDDL is copied below for convenience.
+* `version-scheme` (index 1): an optional indicator of the versioning convention used in the `version` attribute.
+  Defined in {{Section 4.1 of -coswid}} and extended with the `binary` scheme described in {{iana-swid-version-scheme}}.
+  When the value of the `version-scheme` is `binary`, the value of the `version` field is encoded as base64url ({{Section 5 of -base-n-encodings}}), without padding.
+  The CDDL (including the new `binary` version scheme) is copied below for convenience.
 
 ~~~ cddl
 $version-scheme /= &(multipartnumeric: 1)
 $version-scheme /= &(multipartnumeric-suffix: 2)
 $version-scheme /= &(alphanumeric: 3)
 $version-scheme /= &(decimal: 4)
+$version-scheme /= &(binary: 5)
 $version-scheme /= &(semver: 16384)
 $version-scheme /= int / text
 ~~~
@@ -1822,6 +1828,144 @@ Appraisal Claims Set (ACS),
 and
 Appraisal Policy
 are used with the meanings defined in {{sec-glossary}}.
+
+## Pseudocode Notation {#sec-pseudocode-notation}
+
+The algorithms in pseudocode are meant for readability and not for execution.
+The following pseudocode notation is used throughout this document.
+
+### Comments
+
+A comment begins with "//" and extends to the end of the line.
+
+~~~ pseudocode
+// this is a comment
+~~~
+
+### Types
+
+Pseudocode Type names are taken directly from the CDDL {{-cddl}}.
+There is no separate type language; type annotations on function parameters, return values, and variable bindings reuse CDDL type expressions verbatim.
+A reader familiar with the CDDL schemas in this document can read the algorithms without any additional type translation.
+
+A bare name refers to a CDDL rule:
+
+~~~ pseudocode
+measurement-map
+ACS
+StagingArea
+~~~
+
+The CDDL notation "\[ + T \]" denotes a non-empty array of elements of type T:
+
+~~~ pseudocode
+[ + measurement-map ]
+~~~
+
+An extensible CDDL socket type is prefixed with "$":
+
+~~~ pseudocode
+$crypto-key-type-choice
+$profile-type-choice
+~~~
+
+The CDDL "/" operator separates the alternatives of a union type:
+
+~~~ pseudocode
+attest-key-triple-record / identity-triple-record
+~~~
+
+### Variables
+
+A variable is introduced and assigned a value using the ":=" operator:
+
+~~~ pseudocode
+item := rv-item::NEW()
+~~~
+
+A previously introduced variable or a field of a structured value is updated using "=":
+
+~~~ pseudocode
+item.addition.cmtype = reference-values
+~~~
+
+### Functions
+
+A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:
+
+~~~ pseudocode
+FUNC name(param: type, ...) -> return-type {
+    ...
+}
+~~~
+
+A RETURN statement exits the enclosing function and yields the specified value to the caller:
+
+~~~ pseudocode
+RETURN value
+~~~
+
+### Expressions
+
+The TYPEOF operator yields the CDDL type of a value at runtime.
+Used with "==", it dispatches on the alternatives of a CDDL union type:
+
+~~~ pseudocode
+IF TYPEOF(T) == attest-key-triple-record:
+    ...
+ELIF TYPEOF(T) == identity-triple-record:
+    ...
+~~~
+
+The "~" prefix operator unwraps a CBOR-tagged value to its untagged content, corresponding to the CDDL unwrap idiom:
+
+~~~ pseudocode
+ELIF TYPEOF(v) == tagged-svn:
+    RETURN ~v
+~~~
+
+### Conditionals
+
+An IF statement tests a condition and executes its body if the condition is true.
+One or more ELIF clauses test additional conditions in order.
+An optional ELSE clause provides a fallback:
+
+~~~ pseudocode
+IF condition:
+    ...
+ELIF condition:
+    ...
+ELSE:
+    ...
+~~~
+
+### Iteration
+
+A FOREACH statement iterates over the elements of a collection in order:
+
+~~~ pseudocode
+FOREACH item IN collection:
+    ...
+~~~
+
+A BREAK statement exits the innermost enclosing FOREACH immediately.
+
+### Primitive Operations
+
+The pseudocode uses a "Receiver::OPERATION(args)" calling convention to invoke well-known operations on typed values.
+All operation names are uppercase.
+
+| Operation | Meaning |
+|-----------|---------|
+| `T::NEW()` | Construct a new zero-value instance of CDDL type T |
+| `collection::APPEND(item)` | Append item to a collection; when item is itself a list, all its elements are appended |
+| `acs::MATCH(condition)` | Test whether condition matches any entry in the ACS; the matching rules are relation-specific and defined in {{sec-comparison-rules}} |
+| `acs::CHECK(addition)` | Run consistency checks on addition before appending it to the ACS |
+| `acs::APPEND(addition)` | Atomically append addition to the ACS |
+| `x::MEMBEROF(collection)` | Test whether x is a member of collection |
+| `INDEXOF(x)` | Return the position of x within its enclosing sequence |
+{: #tbl-pseudocode-ops title="Primitive Operations"}
+
 
 ## Appraisal Logical Phases {#sec-appraisal-phases}
 
@@ -2537,7 +2681,7 @@ FUNC transform(
        sitem.condition.element-list::APPEND(ems2)
        IF T.condition.authorized-by:
            sitem.condition.authority = T.condition.authorized-by
-       ELSE_IF csr.series.condition.authorized-by:
+       ELIF csr.series.condition.authorized-by:
            sitem.condition.authority = csr.series.condition.authorized-by
        // stage the addition
        sitem.addition.environment = T.condition.environment
@@ -2547,7 +2691,7 @@ FUNC transform(
        sitem.addition.authority = signer
        IF profile:
            sitem.addition.profile = profile
-       evsitem[index-of(sitem)] = sitem
+       evsitem[INDEXOF(sitem)] = sitem
     RETURN evsitem
 }
 ~~~
@@ -2684,7 +2828,7 @@ FUNC init_staging_area(
 ) -> StagingArea {
     sa := StagingArea::NEW()
 
-    IF rv    sa::APPEND(rv)
+    IF rv:   sa::APPEND(rv)
     IF ev:   sa::APPEND(ev)
     IF evs:  sa::APPEND(evs)
     IF keys: sa::APPEND(keys)
@@ -2842,7 +2986,7 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
     FOREACH dm-item IN ACS.ECT(.cm==member):
         IF condition.environment == dm-item.environment:
             FOREACH trustee IN condition.trustees:
-                IF !trustee::IS-MEMBER(dm-item.members):
+                IF !trustee::MEMBEROF(dm-item.members):
                     BREAK   # break inner loop, try another dm-item
             RETURN TRUE
 
@@ -3083,7 +3227,7 @@ Instead, if an entry is found, the digest comparison proceeds as defined in {{se
 Note that it is not required for all the entries in the C-ECT to be used during matching: the C-ECT may represent only a subset of the device's register space.
 In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a C-ECT could describe a subset of PCRs.
 
-###### Comparison for int-range entries
+###### Comparison for int-range entries {#sec-match-int-range}
 
 The ACS-ECT value stored under `measurement-values-map` codepoint 15 is an int range value of `int-range-type-choice`.
 
@@ -3776,6 +3920,14 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 | application/rim+cbor | - | TBD1 | {{&SELF}} |
 | application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
+
+## New Software ID Version Scheme Value {#iana-swid-version-scheme}
+
+IANA is requested to register the following Version Scheme Name in the "Software ID Version Scheme Values" registry within the "Software ID Values" {{!IANA.software-id}} registry group.
+
+| Index | Version Scheme Name | Reference |
+|---
+| 5	| binary | {{sec-comid-version}} of {{&SELF}} |
 
 --- back
 
