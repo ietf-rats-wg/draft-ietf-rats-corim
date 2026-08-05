@@ -117,7 +117,6 @@ INTREP_FRAGS += intrep-ect-refval-condition.cddl
 INTREP_FRAGS += intrep-ect-refval-addition.cddl
 INTREP_FRAGS += intrep-ect-endval-condition.cddl
 INTREP_FRAGS += intrep-ect-endval-addition.cddl
-INTREP_FRAGS += intrep-ect-endval-selection.cddl
 INTREP_FRAGS += intrep-ect-domain-condition.cddl
 INTREP_FRAGS += intrep-ect-domain-addition.cddl
 INTREP_FRAGS += intrep-ect-key-condition.cddl
