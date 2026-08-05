@@ -92,6 +92,7 @@ normative:
   IANA.language-subtag-registry: language-subtag
   X.690: CCITT.X690.2002
   RFC9995: cose-hash-envelope
+  RFC4648: base-n-encodings
 
 informative:
   RFC7519: jwt
@@ -1116,16 +1117,17 @@ The following describes each member of the `version-map`:
 
 * `version` (index 0): the version string
 
-* `version-scheme` (index 1): an optional indicator of the versioning
-  convention used in the `version` attribute.
-  Defined in {{Section 4.1 of -coswid}}.
-  The CDDL is copied below for convenience.
+* `version-scheme` (index 1): an optional indicator of the versioning convention used in the `version` attribute.
+  Defined in {{Section 4.1 of -coswid}} and extended with the `binary` scheme described in {{iana-swid-version-scheme}}.
+  When the value of the `version-scheme` is `binary`, the value of the `version` field is encoded as base64url ({{Section 5 of -base-n-encodings}}), without padding.
+  The CDDL (including the new `binary` version scheme) is copied below for convenience.
 
 ~~~ cddl
 $version-scheme /= &(multipartnumeric: 1)
 $version-scheme /= &(multipartnumeric-suffix: 2)
 $version-scheme /= &(alphanumeric: 3)
 $version-scheme /= &(decimal: 4)
+$version-scheme /= &(binary: 5)
 $version-scheme /= &(semver: 16384)
 $version-scheme /= int / text
 ~~~
@@ -3912,6 +3914,14 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 | application/rim+cbor | - | TBD1 | {{&SELF}} |
 | application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
+
+## New Software ID Version Scheme Value {#iana-swid-version-scheme}
+
+IANA is requested to register the following Version Scheme Name in the "Software ID Version Scheme Values" registry within the "Software ID Values" {{!IANA.software-id}} registry group.
+
+| Index | Version Scheme Name | Reference |
+|---
+| 5	| binary | {{sec-comid-version}} of {{&SELF}} |
 
 --- back
 
