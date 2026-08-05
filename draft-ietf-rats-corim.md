@@ -1099,6 +1099,10 @@ The following describes each member of the `measurement-values-map`.
 
 * `integrity-registers` (index 14): A group of one or more named measurements associated with the environment.  Described in {{sec-comid-integrity-registers}}.
 
+* `int-range` (index 15): An integer value or an inclusive integer range that can be compared with linear order.
+  Described in {{sec-comid-int-range}}.
+  Comparison rules are defined in {{sec-match-int-range}}.
+
 ##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -3215,7 +3219,7 @@ Instead, if an entry is found, the digest comparison proceeds as defined in {{se
 Note that it is not required for all the entries in the C-ECT to be used during matching: the C-ECT may represent only a subset of the device's register space.
 In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a C-ECT could describe a subset of PCRs.
 
-###### Comparison for int-range entries
+###### Comparison for int-range entries {#sec-match-int-range}
 
 The ACS-ECT value stored under `measurement-values-map` codepoint 15 is an int range value of `int-range-type-choice`.
 
