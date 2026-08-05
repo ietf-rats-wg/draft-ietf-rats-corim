@@ -1819,8 +1819,8 @@ are used with the meanings defined in {{sec-glossary}}.
 
 ## Pseudocode Notation {#sec-pseudocode-notation}
 
-The algorithms in this section are expressed in an informal pseudocode that is intended to be read, not executed.
-The following basic and somewhat casually defined notation is used throughout.
+The algorithms in pseudocode are meant for readability and not for execution.
+The following pseudocode notation is used throughout this document.
 
 ### Comments
 
