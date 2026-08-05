@@ -123,14 +123,23 @@ Table of Contents
      7.7.  Digest
      7.8.  Tagged Bytes Type
    8.  Reference Verifier
-     8.1.  Appraisal Logical Phases
-     8.2.  The CoRIM Processor
-       8.2.1.  High-Level View
-       8.2.2.  Data Structures
-       8.2.3.  Input Validation and Transformation (Phase 1)
-       8.2.4.  ACS Augmentation (Phases 2, 3 and 4)
-       8.2.5.  Handoff
-       8.2.6.  Example Appraisal
+     8.1.  Pseudocode Notation
+       8.1.1.  Comments
+       8.1.2.  Types
+       8.1.3.  Variables
+       8.1.4.  Functions
+       8.1.5.  Expressions
+       8.1.6.  Conditionals
+       8.1.7.  Iteration
+       8.1.8.  Primitive Operations
+     8.2.  Appraisal Logical Phases
+     8.3.  The CoRIM Processor
+       8.3.1.  High-Level View
+       8.3.2.  Data Structures
+       8.3.3.  Input Validation and Transformation (Phase 1)
+       8.3.4.  ACS Augmentation (Phases 2, 3 and 4)
+       8.3.5.  Handoff
+       8.3.6.  Example Appraisal
    9.  Implementation Status
      9.1.  Veraison
    10. Security and Privacy Considerations
@@ -150,6 +159,7 @@ Table of Contents
        11.12.1.  rim+cbor
        11.12.2.  rim+cose
      11.13. CoAP Content-Formats Registration
+     11.14. New Software ID Version Scheme Value
    12. References
      12.1.  Normative References
      12.2.  Informative References
@@ -407,7 +417,7 @@ Table of Contents
    specification uses CDDL to define both the exact structure of the
    CoRIM and a theoretical data model for the ACS.  However, the exact
    way a Verifier's software is implemented to realize the internal
-   representation is up to the implementor.  Section 8.2 describes these
+   representation is up to the implementor.  Section 8.3 describes these
    reconciliation principles in detail.  Once the ACS is built and the
    conversation is consistent, the ACS is available for processing of
    subsequent phases.
@@ -751,7 +761,7 @@ Table of Contents
       type" carried in the CoRIM payload.
 
    Or, when the payload is signed indirectly using a Hash Envelope
-   ([I-D.ietf-cose-hash-envelope]):
+   ([RFC9995]):
 
    *  payload_hash_alg (index 258): The hash algorithm used to produce
       the payload.
@@ -1521,11 +1531,16 @@ Table of Contents
       supported formats.  An Attesting Environment determines that keys
       are protected as part of Claims collection.  Appraisal verifies
       that, for each value in cryptokeys, there is a matching Reference
-      Value entry.  Matching is described in Section 8.2.4.4.5.6.
+      Value entry.  Matching is described in Section 8.3.4.4.5.6.
 
    *  integrity-registers (index 14): A group of one or more named
       measurements associated with the environment.  Described in
       Section 5.1.4.7.
+
+   *  int-range (index 15): An integer value or an inclusive integer
+      range that can be compared with linear order.  Described in
+      Section 5.1.4.8.  Comparison rules are defined in
+      Section 8.3.4.4.5.8.
 
 5.1.4.5.3.  Version
 
@@ -1545,12 +1560,17 @@ Table of Contents
 
    *  version-scheme (index 1): an optional indicator of the versioning
       convention used in the version attribute.  Defined in Section 4.1
-      of [RFC9393].  The CDDL is copied below for convenience.
+      of [RFC9393] and extended with the binary scheme described in
+      Section 11.14.  When the value of the version-scheme is binary,
+      the value of the version field is encoded as base64url (Section 5
+      of [RFC4648]), without padding.  The CDDL (including the new
+      binary version scheme) is copied below for convenience.
 
    $version-scheme /= &(multipartnumeric: 1)
    $version-scheme /= &(multipartnumeric-suffix: 2)
    $version-scheme /= &(alphanumeric: 3)
    $version-scheme /= &(decimal: 4)
+   $version-scheme /= &(binary: 5)
    $version-scheme /= &(semver: 16384)
    $version-scheme /= int / text
 
@@ -2189,8 +2209,8 @@ Table of Contents
                Figure 7: Domain Membership Triple Definition
 
    Domain membership triples are transformed into an internal
-   representation (see Section 8.2.3.7.5) then processed as described in
-   Section 8.2.4.3.4.
+   representation (see Section 8.3.3.7.5) then processed as described in
+   Section 8.3.4.3.4.
 
 5.1.11.2.  Trust Dependency Triple
 
@@ -2209,7 +2229,7 @@ Table of Contents
    trustee environments it depends on exist, have been appraised and are
    found to be trustworthy.
 
-   The first four phases of appraisal (see Section 8.2.4) might not
+   The first four phases of appraisal (see Section 8.3.4) might not
    determine whether a component is trustworthy.  Subsequent Verifier
    stages or Relying Party processing might be needed to finalize
    trustworthiness.  Therefore, the trustworthiness of trustee domains
@@ -2269,8 +2289,8 @@ Table of Contents
       identified by domain-id.
 
    Trust dependency triples are transformed into an internal
-   representation (see Section 8.2.3.7.6) then processed as described in
-   Section 8.2.4.3.5.
+   representation (see Section 8.3.3.7.6) then processed as described in
+   Section 8.3.4.3.5.
 
 5.1.12.  CoMID-CoSWID Linking Triple
 
@@ -2515,7 +2535,150 @@ Table of Contents
    and Appraisal Policy are used with the meanings defined in
    Section 1.1.1.
 
-8.1.  Appraisal Logical Phases
+8.1.  Pseudocode Notation
+
+   The algorithms in pseudocode are meant for readability and not for
+   execution.  The following pseudocode notation is used throughout this
+   document.
+
+8.1.1.  Comments
+
+   A comment begins with "//" and extends to the end of the line.
+
+   // this is a comment
+
+8.1.2.  Types
+
+   Pseudocode Type names are taken directly from the CDDL [RFC8610].
+   There is no separate type language; type annotations on function
+   parameters, return values, and variable bindings reuse CDDL type
+   expressions verbatim.  A reader familiar with the CDDL schemas in
+   this document can read the algorithms without any additional type
+   translation.
+
+   A bare name refers to a CDDL rule:
+
+   measurement-map
+   ACS
+   StagingArea
+
+   The CDDL notation "[ + T ]" denotes a non-empty array of elements of
+   type T:
+
+   [ + measurement-map ]
+
+   An extensible CDDL socket type is prefixed with "$":
+
+   $crypto-key-type-choice
+   $profile-type-choice
+
+   The CDDL "/" operator separates the alternatives of a union type:
+
+   attest-key-triple-record / identity-triple-record
+
+8.1.3.  Variables
+
+   A variable is introduced and assigned a value using the ":="
+   operator:
+
+   item := rv-item::NEW()
+
+   A previously introduced variable or a field of a structured value is
+   updated using "=":
+
+   item.addition.cmtype = reference-values
+
+8.1.4.  Functions
+
+   A function is introduced by the FUNC keyword, followed by its name, a
+   parenthesised parameter list with CDDL type annotations, and a return
+   type:
+
+   FUNC name(param: type, ...) -> return-type {
+       ...
+   }
+
+   A RETURN statement exits the enclosing function and yields the
+   specified value to the caller:
+
+   RETURN value
+
+8.1.5.  Expressions
+
+   The TYPEOF operator yields the CDDL type of a value at runtime.  Used
+   with "==", it dispatches on the alternatives of a CDDL union type:
+
+   IF TYPEOF(T) == attest-key-triple-record:
+       ...
+   ELIF TYPEOF(T) == identity-triple-record:
+       ...
+
+   The "~" prefix operator unwraps a CBOR-tagged value to its untagged
+   content, corresponding to the CDDL unwrap idiom:
+
+   ELIF TYPEOF(v) == tagged-svn:
+       RETURN ~v
+
+8.1.6.  Conditionals
+
+   An IF statement tests a condition and executes its body if the
+   condition is true.  One or more ELIF clauses test additional
+   conditions in order.  An optional ELSE clause provides a fallback:
+
+   IF condition:
+       ...
+   ELIF condition:
+       ...
+   ELSE:
+       ...
+
+8.1.7.  Iteration
+
+   A FOREACH statement iterates over the elements of a collection in
+   order:
+
+   FOREACH item IN collection:
+       ...
+
+   A BREAK statement exits the innermost enclosing FOREACH immediately.
+
+8.1.8.  Primitive Operations
+
+   The pseudocode uses a "Receiver::OPERATION(args)" calling convention
+   to invoke well-known operations on typed values.  All operation names
+   are uppercase.
+
+     +==========================+====================================+
+     | Operation                | Meaning                            |
+     +==========================+====================================+
+     | T::NEW()                 | Construct a new zero-value         |
+     |                          | instance of CDDL type T            |
+     +--------------------------+------------------------------------+
+     | collection::APPEND(item) | Append item to a collection; when  |
+     |                          | item is itself a list, all its     |
+     |                          | elements are appended              |
+     +--------------------------+------------------------------------+
+     | acs::MATCH(condition)    | Test whether condition matches any |
+     |                          | entry in the ACS; the matching     |
+     |                          | rules are relation-specific and    |
+     |                          | defined in Section 8.3.4.4         |
+     +--------------------------+------------------------------------+
+     | acs::CHECK(addition)     | Run consistency checks on addition |
+     |                          | before appending it to the ACS     |
+     +--------------------------+------------------------------------+
+     | acs::APPEND(addition)    | Atomically append addition to the  |
+     |                          | ACS                                |
+     +--------------------------+------------------------------------+
+     | x::MEMBEROF(collection)  | Test whether x is a member of      |
+     |                          | collection                         |
+     +--------------------------+------------------------------------+
+     | INDEXOF(x)               | Return the position of x within    |
+     |                          | its enclosing sequence             |
+     +--------------------------+------------------------------------+
+
+                       Table 3: Primitive Operations
+
+8.2.  Appraisal Logical Phases
 
    For clarity, the appraisal procedure is divided into several logical
    phases.
@@ -2576,19 +2739,19 @@ Table of Contents
    Please note that a detailed description of subsequent phases is
    beyond the scope of this document.  They are mentioned here to
    provide an overview of the appraisal procedure.  The CoRIM processor
-   described in Section 8.2 describes the handoff interface between
+   described in Section 8.3 describes the handoff interface between
    Phase 4 and the subsequent phases in terms of the computed ACS.
 
-8.2.  The CoRIM Processor
+8.3.  The CoRIM Processor
 
    This document assumes that Verifier implementations will differ.  In
    order to describe normative Verifier behaviour, this section presents
    a reference Verifier and illustrates how the data is utilized within
-   the appraisal phases detailed in Section 8.1.  If the Verifier
+   the appraisal phases detailed in Section 8.2.  If the Verifier
    operates on CoRIM documents, it is RECOMMENDED that it follows this
    algorithm.
 
-8.2.1.  High-Level View
+8.3.1.  High-Level View
 
    The RATS Verifier takes Evidence, Reference Values, Endorsements and
    an Appraisal Policy for Evidence as inputs, and produces Attestation
@@ -2676,12 +2839,12 @@ Table of Contents
    Policy evaluation and Attestation Results computation, repackaging
    and signing.
 
-8.2.2.  Data Structures
+8.3.2.  Data Structures
 
    This section describes the data structures used by the CoRIM
    processor.
 
-8.2.2.1.  ECT
+8.3.2.1.  ECT
 
    The Environment-Claim Tuple is a core internal construct of the CoRIM
    Verifier.  It is used to describe a feature (or "Claim") of the
@@ -2697,16 +2860,16 @@ Table of Contents
    An ECT (Figure 11) can be one of the following specializations:
 
    *  E-ECT (Element ECT): used to represent Evidence, Reference Value
-      and Endorsement Claims, as detailed in Section 8.2.2.1.1;
+      and Endorsement Claims, as detailed in Section 8.3.2.1.1;
 
    *  M-ECT (Domain Membership ECT): used to represent domain membership
-      Claims, as detailed in Section 8.2.2.1.2;
+      Claims, as detailed in Section 8.3.2.1.2;
 
    *  T-ECT (Trust Dependency ECT): used to represent trust dependency
-      Claims, as detailed in Section 8.2.2.1.2;
+      Claims, as detailed in Section 8.3.2.1.2;
 
    *  K-ECT (Key ECT): used to represent Identity and Attestation keys,
-      as detailed in Section 8.2.2.1.4.
+      as detailed in Section 8.3.2.1.4.
 
    ECT = E-ECT /
          M-ECT /
@@ -2751,9 +2914,9 @@ Table of Contents
       contained the original triple from which this ECT was obtained.
       This is an optional attribute in an ECT.  If no profile is used,
       the attribute is omitted, and the only comparison rules that apply
-      are those specified in Section 8.2.4.4.
+      are those specified in Section 8.3.4.4.
 
-8.2.2.1.1.  Element ECT
+8.3.2.1.1.  Element ECT
 
    An Element ECT (E-ECT) is used to represent Evidence, Reference Value
    and Endorsement Claims.
@@ -2831,7 +2994,7 @@ Table of Contents
    effectively two different acceptable states that need to be processed
    separately.
 
-8.2.2.1.2.  Domain Membership ECT
+8.3.2.1.2.  Domain Membership ECT
 
    A Domain Membership ECT (M-ECT) is used to represent domain
    membership Claims between environments.  It describes the direct
@@ -2860,7 +3023,7 @@ Table of Contents
    If two Domain ECTs have the same environment, authority and profile
    then their members are merged.  Any duplicates MUST be pruned.
 
-8.2.2.1.3.  Trust Dependency ECT
+8.3.2.1.3.  Trust Dependency ECT
 
    A Trust Depedency ECT (T-ECT) is used to represent trust dependency
    Claims between environments.  It describes the direct relationship
@@ -2889,7 +3052,7 @@ Table of Contents
    If two Trust ECTs have the same environment, authority and profile
    then their trustees are merged.  Any duplicates MUST be pruned.
 
-8.2.2.1.4.  Key ECT
+8.3.2.1.4.  Key ECT
 
    A Key ECT (K-ECT) is used to represent Identity and Attestation keys.
 
@@ -2931,7 +3094,7 @@ Table of Contents
 
    No merge rules are specified for a Key ECT.
 
-8.2.2.2.  Internal Representation
+8.3.2.2.  Internal Representation
 
    This section describes how the relevant RATS Conceptual Messages are
    represented within the CoRIM processor.  This internal representation
@@ -2948,7 +3111,7 @@ Table of Contents
    // [TODO] Merge §2.1 and §2.2. to explain the high-level principles
    // before delving into the details.
 
-8.2.2.2.1.  Evidence
+8.3.2.2.1.  Evidence
 
    The internal representation of Evidence uses the ae relation.
 
@@ -2979,7 +3142,7 @@ Table of Contents
 
    All E-ECT attributes are mandatory, except profile.
 
-8.2.2.2.2.  Reference Values
+8.3.2.2.2.  Reference Values
 
    The internal representation of Reference Values uses the rv relation
    where each rv-item corresponds to a reference-triple-record.
@@ -2998,7 +3161,7 @@ Table of Contents
    ECTs matches the Evidence ECTs, the Evidence ECTs are re-asserted
    with the RVP authority carried in the addition ECT and the cmtype set
    to reference-values.  The re-asserted ECTs are added to the ACS.
-   Refer to Section 8.2.4.2 for how the rv entries are processed.
+   Refer to Section 8.3.4.2 for how the rv entries are processed.
 
    Figure 21 shows the profiled Element ECT for a Reference Values
    condition.
@@ -3033,7 +3196,7 @@ Table of Contents
    found during processing, rather than when the triple is transformed
    into the internal representation.  Therefore, it may be absent.
 
-8.2.2.2.3.  Endorsed Values
+8.3.2.2.3.  Endorsed Values
 
    The internal representation of Endorsed Values uses the ev and evs
    relations.  These are lists of ECTs that describe matching conditions
@@ -3117,7 +3280,7 @@ Table of Contents
       Figure 27: Profiled ECT for Endorsed Values and Endorsed Values
                           Series tuples (addition)
 
-8.2.2.2.4.  Keys
+8.3.2.2.4.  Keys
 
    The internal representation of Attest Key and Device Identity triples
    uses the keys relation (Figure 28), whereby each key-item corresponds
@@ -3135,7 +3298,7 @@ Table of Contents
 
    // [TODO] Specialise condition/addition ECTs.  Define constraints.
 
-8.2.2.2.5.  Domain Memberships
+8.3.2.2.5.  Domain Memberships
 
    The internal representation of Domain Membership uses the dm relation
    (Figure 29), whereby each domain-item corresponds to a domain-
@@ -3179,7 +3342,7 @@ Table of Contents
 
           Figure 32: Profiled ECT for Domain Membership (addition)
 
-8.2.2.2.6.  Trust Dependencies
+8.3.2.2.6.  Trust Dependencies
 
    The internal representation of Trust Dependency uses the td relation
    (Figure 33), whereby each td-item corresponds to a trust-dependency-
@@ -3233,7 +3396,7 @@ Table of Contents
    all trustess exist in the membership graph expressed by the dm
    relation (Figure 29) in the ACS.
 
-8.2.2.3.  ACS
+8.3.2.3.  ACS
 
    The ACS (Figure 37) is a list of ECTs that represent the Attester's
    actual state as determined by various authoritative sources
@@ -3249,7 +3412,7 @@ Table of Contents
 
    The ACS is initialized with Evidence Claims and is then populated
    with Reference Values and Endorsement Claims via the "match and
-   augment" algorithm (see Section 8.2.4) implemented by the CoRIM
+   augment" algorithm (see Section 8.3.4) implemented by the CoRIM
    processor.
 
    Once the staging area has been drained by the CoRIM processor,
@@ -3262,7 +3425,7 @@ Table of Contents
    to the existing ACS at the end has the same effect as inserting it
    anywhere else.
 
-8.2.2.4.  Staging Area
+8.3.2.4.  Staging Area
 
    The staging area (Figure 38) is a list of the relations corresponding
    to the transformed triples.
@@ -3282,10 +3445,10 @@ Table of Contents
    the staging area depends on whether a triple exists and has been
    successfully transformed.
 
-8.2.3.  Input Validation and Transformation (Phase 1)
+8.3.3.  Input Validation and Transformation (Phase 1)
 
    This section provides a detailed description of Phase 1, which was
-   outlined at a high level in Section 8.1, explaining how the relevant
+   outlined at a high level in Section 8.2, explaining how the relevant
    Conceptual Messages are ingested by the CoRIM processor.
 
    During the initialization phase, various Conceptual Message inputs
@@ -3302,7 +3465,7 @@ Table of Contents
    Once initialization is complete, no further inputs are accepted until
    the appraisal processing is finished.
 
-8.2.3.1.  CoRIM Selection
+8.3.3.1.  CoRIM Selection
 
    All available CoRIMs tags are collected.
 
@@ -3318,7 +3481,7 @@ Table of Contents
    Further selection criteria may be applied to the CoRIM contents at
    later stages.
 
-8.2.3.2.  CoRIM Trust Anchors
+8.3.3.2.  CoRIM Trust Anchors
 
    If CoRIM tags are signed, the signatures MUST be validated using the
    appropriate trust anchors available to the Verifier.  The Verifier is
@@ -3330,7 +3493,7 @@ Table of Contents
    MUST have a valid certification path to one of the Verifier's trust
    anchors.
 
-8.2.3.3.  Tags Extraction and Validation
+8.3.3.3.  Tags Extraction and Validation
 
    The Verifier extracts tags from the selected CoRIMs, including CoMID,
    CoSWID, CoTL, and CoTS.
@@ -3340,7 +3503,7 @@ Table of Contents
    resolved.  An example of a cross-referenced triple is a CoMID-CoSWID
    linking triple described in Section 5.1.12.
 
-8.2.3.4.  CoTL Extraction
+8.3.3.4.  CoTL Extraction
 
    (This section is not applicable if the Verifier appraisal policy does
    not require CoTLs.)
@@ -3364,7 +3527,7 @@ Table of Contents
    Once the Verifier has processed all CoTLs, it MUST discard any tags
    that have not been activated by a CoTL.
 
-8.2.3.5.  Evidence Collection
+8.3.3.5.  Evidence Collection
 
    The Verifier communicates with Attesters to gather Evidence.
    Discovery of Evidence sources is untrusted.  Verifiers may rely on
@@ -3372,13 +3535,13 @@ Table of Contents
    which acts as the Evidence input oracle for appraisal.
 
    The collected Evidence is then transformed into an internal
-   representation (see Section 8.2.2.2.1), making it suitable for
+   representation (see Section 8.3.2.2.1), making it suitable for
    appraisal processing.
 
    The exact protocol used to collect Evidence is out of scope of this
    specification.
 
-8.2.3.6.  Cryptographic Validation of Evidence
+8.3.3.6.  Cryptographic Validation of Evidence
 
    If Evidence is cryptographically signed, it is validated before being
    transformed into an internal representation.
@@ -3406,15 +3569,15 @@ Table of Contents
    Verifier MUST NOT process Evidence that is not successfully
    validated.
 
-8.2.3.7.  Input Transformation
+8.3.3.7.  Input Transformation
 
    This section describes how the relevant RATS Conceptual Messages are
    transformed upon ingestion by the CoRIM processor.
 
-8.2.3.7.1.  Evidence
+8.3.3.7.1.  Evidence
 
    Evidence transformation involves mapping Evidence into one or more
-   Evidence-ECTs (see Section 8.2.2.2.1), and adding them to the
+   Evidence-ECTs (see Section 8.3.2.2.1), and adding them to the
    addition list of an ae relation.  Evidence transformation algorithms
    may be well-known (e.g., [I-D.ietf-rats-evidence-trans]), defined by
    a CoRIM profile (see Section 4.1.4), or supplied dynamically.
@@ -3425,10 +3588,10 @@ Table of Contents
    for all the mandatory Evidence-ECT attributes.  Otherwise, the CoRIM
    processor MUST reject the Evidence.
 
-8.2.3.7.2.  Reference Values
+8.3.3.7.2.  Reference Values
 
    Reference Values transformation involves mapping Reference Value
-   triples into into an rv relation (see Section 8.2.2.2.2).  Each
+   triples into into an rv relation (see Section 8.3.2.2.2).  Each
    reference-triple-record (Figure 1) is transformed into an rv-item
    (Figure 20) as described in Figure 39.  (The code reuses the
    mms_to_ems function from Figure 14.)
@@ -3463,10 +3626,10 @@ Table of Contents
    satisfied by an Evidence ECT before we can copy the matched claims
    from the Evidence ECT to the addition ECT.
 
-8.2.3.7.3.  Endorsed Values
+8.3.3.7.3.  Endorsed Values
 
    Endorsed Values transformation involves mapping EV, CE and CES
-   triples into into ev or evs relations (see Section 8.2.2.2.3).
+   triples into into ev or evs relations (see Section 8.3.2.2.3).
 
    A endorsed-triple-record (Figure 2) is transformed into an ev-item
    (Figure 23) as described in Figure 40.  (The code reuses the
@@ -3544,7 +3707,7 @@ Table of Contents
    condition in the series is replicated for each series item.  The
    transformation algorithm combines the common conditions with each
    series item condition to simplify Verifier processing (see
-   Section 8.2.4.3.2).
+   Section 8.3.4.3.2).
 
    FUNC transform(
        T: conditional-endorsement-series-triple-record,
@@ -3562,7 +3725,7 @@ Table of Contents
           sitem.condition.element-list::APPEND(ems2)
           IF T.condition.authorized-by:
               sitem.condition.authority = T.condition.authorized-by
-          ELSE_IF csr.series.condition.authorized-by:
+          ELIF csr.series.condition.authorized-by:
               sitem.condition.authority = csr.series.condition.authorized-by
           // stage the addition
           sitem.addition.environment = T.condition.environment
@@ -3572,16 +3735,16 @@ Table of Contents
           sitem.addition.authority = signer
           IF profile:
               sitem.addition.profile = profile
-          evsitem[index-of(sitem)] = sitem
+          evsitem[INDEXOF(sitem)] = sitem
        RETURN evsitem
    }
 
       Figure 42: Conditional Endorsement Series Triple Transformation
 
-8.2.3.7.4.  Keys
+8.3.3.7.4.  Keys
 
    Keys transformation involves mapping Attest Key and Device Identity
-   triples into into a key relation (see Section 8.2.2.2.4).
+   triples into into a key relation (see Section 8.3.2.2.4).
 
    An attest-key-triple-record (Figure 6) or an identity-triple-record
    (Figure 5) is transformed into a key-item (Figure 28) as described in
@@ -3625,10 +3788,10 @@ Table of Contents
 
    Note that keys are added under the authority of the verifier.
 
-8.2.3.7.5.  Domain Membership Transformation
+8.3.3.7.5.  Domain Membership Transformation
 
    Domain membership transformation maps Domain Membership triples into
-   dm relations (see Section 8.2.2.2.5).
+   dm relations (see Section 8.3.2.2.5).
 
    Prior to adding a domain membership relation, a domain-membership-
    triple-record (Figure 7) is transformed into a domain-item
@@ -3657,13 +3820,13 @@ Table of Contents
 
    Subsequent to transformation the domain membership relations are
    processed using the domain membershp processing algorithm
-   Section 8.2.4.3.4.
+   Section 8.3.4.3.4.
 
-8.2.3.7.6.  Trust Dependency Transformation
+8.3.3.7.6.  Trust Dependency Transformation
 
    Prior to adding a trust dependency relation, Trust Dependency triples
    trust-dependency-triple-record (Figure 8) are transformed into td
-   relations (see Section 8.2.2.2.6) using the trust dependency
+   relations (see Section 8.3.2.2.6) using the trust dependency
    transformation algorithm Figure 45.
 
    FUNC transform(
@@ -3690,9 +3853,9 @@ Table of Contents
 
    Subsequent to transformation, the trust dependency relations are
    processed using the trust dependency processing algorithm
-   Section 8.2.4.3.5.
+   Section 8.3.4.3.5.
 
-8.2.3.8.  Appraisal Context Initialization
+8.3.3.8.  Appraisal Context Initialization
 
    At the end of Phase 1 all of the extracted and validated tags are
    loaded into an "appraisal context", consisting of the ACS and the
@@ -3721,7 +3884,7 @@ Table of Contents
    ) -> StagingArea {
        sa := StagingArea::NEW()
 
-       IF rv    sa::APPEND(rv)
+       IF rv:   sa::APPEND(rv)
        IF ev:   sa::APPEND(ev)
        IF evs:  sa::APPEND(evs)
        IF keys: sa::APPEND(keys)
@@ -3733,7 +3896,7 @@ Table of Contents
 
                    Figure 47: Staging Area Initialization
 
-8.2.4.  ACS Augmentation (Phases 2, 3 and 4)
+8.3.4.  ACS Augmentation (Phases 2, 3 and 4)
 
    This section describes the "match and augment" algorithm, through
    which the ACS is updated incrementally to reflect the actual state of
@@ -3775,7 +3938,7 @@ Table of Contents
    The addition could result in inconsistent ACS.  Additional ACS
    consistency checking might be needed.
 
-8.2.4.1.  Ordering of Relations
+8.3.4.1.  Ordering of Relations
 
    The order in which items within relations are processed is important.
    Processing a relation may result in ACS modifications that affect the
@@ -3789,12 +3952,12 @@ Table of Contents
    relations have been topologically sorted prior to loading into the
    staging area (Figure 47).
 
-8.2.4.2.  Reference Values Corroboration and Augmentation (Phase 3)
+8.3.4.2.  Reference Values Corroboration and Augmentation (Phase 3)
 
    Corroboration is the process of determining whether actual Attester
    state (as contained in the ACS) can be satisfied by Reference Values.
 
-8.2.4.2.1.  Processing rv Relations
+8.3.4.2.1.  Processing rv Relations
 
    Reference Values are matched with ACS entries by iterating through
    the rv list.  For each rv entry, the condition ECT is compared
@@ -3811,14 +3974,14 @@ Table of Contents
    evidence ECT, which has been re-asserted under the authority of the
    Reference Value Provider.
 
-8.2.4.3.  Endorsed Values Augmentation (Phase 4)
+8.3.4.3.  Endorsed Values Augmentation (Phase 4)
 
    Endorsed values augmentation is the process of adding Claims about
    the Attester's actual state with Endorser authority rather than
    Attester authority.  Augmentation is predicated on a certain
    condition matching the actual state currently encoded in the ACS.
 
-8.2.4.3.1.  Processing ev Relations
+8.3.4.3.1.  Processing ev Relations
 
    Endorsed Values and Conditional Endorsed Values are matched with ACS
    entries by iterating through the ev list.  For each ev entry, the
@@ -3826,7 +3989,7 @@ Table of Contents
    (i.e., reference-values, endorsements or evidence).  If the two
    match, the addition ECT is added to the ACS.
 
-8.2.4.3.2.  Processing evs Relations
+8.3.4.3.2.  Processing evs Relations
 
    The Conditional Endorsement Series relation is processed using a
    modified match_and_augment function (see Figure 48) where SERIES-
@@ -3855,7 +4018,7 @@ Table of Contents
 
                Figure 49: Series Match and Augment Algorithm
 
-8.2.4.3.3.  Processing keys Relations
+8.3.4.3.3.  Processing keys Relations
 
    Keys relations identify cryptographic keys that require additional
    key verification steps.
@@ -3881,7 +4044,7 @@ Table of Contents
    Add all the verified keys to the addition ECT's key-list and add the
    addition ECT to the ACS.
 
-8.2.4.3.4.  Processing dm Relations
+8.3.4.3.4.  Processing dm Relations
 
    Domain Membership relations describe the expected topological
    arrangement of the Attester.
@@ -3913,7 +4076,7 @@ Table of Contents
    specification does not mandate any specific topological sorting
    algorithm.
 
-8.2.4.3.5.  Processing td Relations
+8.3.4.3.5.  Processing td Relations
 
    The objective of processing a td relation is to verify that each edge
    in a trust dependency graph (TDG) has a corresponding edge in a
@@ -3930,7 +4093,7 @@ Table of Contents
        FOREACH dm-item IN ACS.ECT(.cm==member):
            IF condition.environment == dm-item.environment:
                FOREACH trustee IN condition.trustees:
-                   IF !trustee::IS-MEMBER(dm-item.members):
+                   IF !trustee::MEMBEROF(dm-item.members):
                        BREAK   # break inner loop, try another dm-item
                RETURN TRUE
 
@@ -3955,10 +4118,10 @@ Table of Contents
    strength of function requirement for TE-1.  The trust dependency
    implies TE-2 should have a minimum strength of function as TE-1.
 
-8.2.4.4.  Rules of Comparison
+8.3.4.4.  Rules of Comparison
 
    The matching component of the "match and augment" algorithm (see
-   Section 8.2.4) relies on a standardized set of comparison rules for
+   Section 8.3.4) relies on a standardized set of comparison rules for
    ECTs.  These rules depend on the type of elements being compared.
    This section provides a normative description of the rules for
    comparing ECT elements found in relation conditions (referred to as
@@ -3971,7 +4134,7 @@ Table of Contents
    Element ECTs are compared with Element ECTs, Key ECTs with Key ECTs
    and Domain ECTs with Domain ECTs).  However, ECTs of different types
    can sometimes be compared if the comparison is based on common
-   attributes (Figure 12).  See Section 8.2.4.3.4 for an example of
+   attributes (Figure 12).  See Section 8.3.4.3.4 for an example of
    this, where the environments of M-ECTs and E-ECTs are compared.
 
    Conceptually, the processor creates a "matched entries" set and
@@ -3990,12 +4153,12 @@ Table of Contents
 
    The specific comparisons performed depend on the type of relation
    being processed.  In general, the processor will perform comparisons
-   based on environment (see Section 8.2.4.4.1) as well as more
+   based on environment (see Section 8.3.4.4.1) as well as more
    specialized comparisons based on the type of ECT matched.  Element
-   ECTs will match on element-list (see Section 8.2.4.4.3), Key ECTs
+   ECTs will match on element-list (see Section 8.3.4.4.3), Key ECTs
    will match on key-list, Domain Membership ECTs will typically match
-   on members (see Section 8.2.4.3.4) and Trust Dependency ECTs will
-   typically match on trustees (see Section 8.2.4.3.5).
+   on members (see Section 8.3.4.3.4) and Trust Dependency ECTs will
+   typically match on trustees (see Section 8.3.4.3.5).
 
 
    // [TBC] Check, for each relation processing, where authority
@@ -4006,7 +4169,7 @@ Table of Contents
    C-ECT matches the ACS-ECT.  If any attributes do not match, the C-ECT
    does not match the ACS-ECT.
 
-8.2.4.4.1.  Environment Comparison
+8.3.4.4.1.  Environment Comparison
 
    The processor MUST compare each attribute which is present in the
    C-ECT's environment with the corresponding attribute in the ACS-ECT's
@@ -4023,7 +4186,7 @@ Table of Contents
    Any attribute that is present in the ACS-ECT but not in the C-ECT is
    ignored in the comparison.
 
-8.2.4.4.2.  Authority Comparison
+8.3.4.4.2.  Authority Comparison
 
    The comparison between a C-ECT's authority value and an ACS-ECT's
    authority value is as follows: if every entry in the C-ECT authority
@@ -4037,7 +4200,7 @@ Table of Contents
    processor MUST treat them as equal if their deterministic CBOR
    encoding is binary equal.
 
-8.2.4.4.3.  Element List Comparison
+8.3.4.4.3.  Element List Comparison
 
    A C-ECT's element-list matches an ACS-ETC's element-list if all the
    element-maps in the C-ECT's element-list match the element-maps in
@@ -4047,9 +4210,9 @@ Table of Contents
    in the C-ECT's is ignored in the comparison.
 
    The rules for matching element-maps are described in
-   Section 8.2.4.4.4.
+   Section 8.3.4.4.4.
 
-8.2.4.4.4.  Element Map Comparison
+8.3.4.4.4.  Element Map Comparison
 
    The C-ECT's element-map matches an ACS-ECT's element-map if both the
    element-id and element-claims match.
@@ -4062,9 +4225,9 @@ Table of Contents
    Section 4.2 of [STD94].
 
    The rules for matching element-claims are described in
-   Section 8.2.4.4.5.
+   Section 8.3.4.4.5.
 
-8.2.4.4.5.  Measurement Values Map Comparison
+8.3.4.4.5.  Measurement Values Map Comparison
 
    The C-ECT's element-claims match an ACS-ECT's element-claims if:
 
@@ -4076,9 +4239,9 @@ Table of Contents
    Otherwise, the element claims do not match.
 
    The rules for matching a single measurement-values-map attribute are
-   described in Section 8.2.4.4.5.1
+   described in Section 8.3.4.4.5.1
 
-8.2.4.4.5.1.  Comparison of a Single Measurement Values Map Attribute
+8.3.4.4.5.1.  Comparison of a Single Measurement Values Map Attribute
 
    The algorithm used to compare two values of a measurement-values-map
    attribute depends on the attribute's type.
@@ -4104,7 +4267,7 @@ Table of Contents
    The following subsections define the comparison algorithms for the
    measurement-values-map attributes defined by this specification.
 
-8.2.4.4.5.2.  Comparison for version entries
+8.3.4.4.5.2.  Comparison for version entries
 
    The value stored under measurement-values-map codepoint 0 is of type
    version-map.
@@ -4113,7 +4276,7 @@ Table of Contents
    colloquial versions that cannot specify ordering, two version-map
    values can only be compared for equality.
 
-8.2.4.4.5.3.  Comparison for svn entries
+8.3.4.4.5.3.  Comparison for svn entries
 
    The value stored under measurement-values-map codepoint 1 is a
    security version number of type svn-type-choice.
@@ -4181,7 +4344,7 @@ Table of Contents
 
                          Figure 51: SVN Comparison
 
-8.2.4.4.5.4.  Comparison for digests entries
+8.3.4.4.5.4.  Comparison for digests entries
 
    A digests entry contains one or more digests, each measuring the same
    object.  When multiple digests are provided, each represents a
@@ -4222,7 +4385,7 @@ Table of Contents
    associated with the common hash algorithm identifiers match, the
    comparison returns true.
 
-8.2.4.4.5.5.  Comparison for raw-value entries
+8.3.4.4.5.5.  Comparison for raw-value entries
 
    A raw-value entry contains binary data.
 
@@ -4260,7 +4423,7 @@ Table of Contents
    The comparison returns true if, for every bit position in the mask
    whose value is 1, the corresponding bits in both values are equal.
 
-8.2.4.4.5.6.  Comparison for cryptokeys entries
+8.3.4.4.5.6.  Comparison for cryptokeys entries
 
    The CBOR tag of the first entry in the C-ECT cryptokeys array is
    compared with the CBOR tag of the first entry of the ACS-ECT
@@ -4273,21 +4436,21 @@ Table of Contents
    array, the C-ECT cryptokeys match.  Otherwise, the C-ECT cryptokeys
    do not match.
 
-8.2.4.4.5.7.  Comparison for Integrity Registers
+8.3.4.4.5.7.  Comparison for Integrity Registers
 
    For each Integrity Register entry in the C-ECT, the processor will
    use the associated identifier (i.e., integrity-register-id-type-
    choice) to look up the matching Integrity Register entry in the ACS-
    ECT.  If no matching entry is found, the comparison MUST return
    false.  Instead, if an entry is found, the digest comparison proceeds
-   as defined in Section 8.2.4.4.5.4 after equivalence has been
+   as defined in Section 8.3.4.4.5.4 after equivalence has been
    established according to Section 5.1.4.7.  Note that it is not
    required for all the entries in the C-ECT to be used during matching:
    the C-ECT may represent only a subset of the device's register space.
    In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while
    a C-ECT could describe a subset of PCRs.
 
-8.2.4.4.5.8.  Comparison for int-range entries
+8.3.4.4.5.8.  Comparison for int-range entries
 
    The ACS-ECT value stored under measurement-values-map codepoint 15 is
    an int range value of int-range-type-choice.
@@ -4327,7 +4490,7 @@ Table of Contents
       -  CONDITION.max is null or ENTRY.max is an int that is less than
          or equal to CONDITION.max.
 
-8.2.4.4.6.  Profile-directed Comparison
+8.3.4.4.6.  Profile-directed Comparison
 
    A profile MUST specify comparison algorithms for its additions to
    $-prefixed CoRIM CDDL codepoints when this specification does not
@@ -4337,7 +4500,7 @@ Table of Contents
    Note that the processor may compare Reference Values in any order, so
    the comparison SHOULD NOT be stateful.
 
-8.2.5.  Handoff
+8.3.5.  Handoff
 
    Once all the relations in the staging area have been processed, the
    computed ACS is ready to be handed over to the verifier for further
@@ -4349,13 +4512,13 @@ Table of Contents
    does not need to know all the details in order to make a trust
    decision.
 
-8.2.6.  Example Appraisal
+8.3.6.  Example Appraisal
 
    The following example describes the appraisal of a PSA Attester
    [RFC9783] from the fictitious vendor "Acme Inc.", which uses the
    CoRIM profile documented in [I-D.fdb-rats-psa-endorsements].
 
-8.2.6.1.  Input CoRIMs
+8.3.6.1.  Input CoRIMs
 
    In this scenario, the Verifier obtains two CoRIM files from two
    different actors in the supply chain:
@@ -4526,15 +4689,15 @@ Table of Contents
    containing this CoMID is signed using the certifier's certificate,
    which has a thumbprint of 768f..75b1.
 
-8.2.6.2.  Input Evidence
+8.3.6.2.  Input Evidence
 
    The Verifier obtains Evidence from a PSA Attester in the format
    described in [RFC9783] and verifies its cryptographic integrity and
    validity.
 
-8.2.6.3.  Internal Representations
+8.3.6.3.  Internal Representations
 
-   As described in Section 8.2.3, once all the "raw" inputs and have
+   As described in Section 8.3.3, once all the "raw" inputs and have
    been validated, input transformations can start.
 
    The two Reference Values triples from the manufacturer's CoMID are
@@ -4760,15 +4923,15 @@ Table of Contents
    Note the authority in the ECT, which is set to MFkw..Lg==", and
    corresponds to the Attester's PEM-encoded SPKI.
 
-8.2.6.4.  Appraisal
+8.3.6.4.  Appraisal
 
-   As described in Section 8.2.3.8, the appraisal context is
+   As described in Section 8.3.3.8, the appraisal context is
    bootstrapped by loading the ae ECT(s) into the ACS, and the rv and ev
    relations into the Staging Area.  Then, ACS augmentation described in
-   Section 8.2.4 can begin.
+   Section 8.3.4 can begin.
 
    The first relation to be processed is rv, according to the rules
-   described in Section 8.2.4.2.1.
+   described in Section 8.3.4.2.1.
 
    The condition of the first rv-item (Figure 54) is matched against the
    ACS which, at this time, contains a single ECT obtained from the ae-
@@ -4872,7 +5035,7 @@ Table of Contents
    the ACS.
 
    Next, the ev relation is popped from the Staging Area for processing
-   according to the rules described in Section 8.2.4.3.1.  The condition
+   according to the rules described in Section 8.3.4.3.1.  The condition
    of the first (and only) ev-item (Figure 56) is then matched against
    the ACS.  The only applicable ACS-ECT is the one with cmtype 2
    (evidence).
@@ -5043,7 +5206,7 @@ Table of Contents
 
       3.  CoRIM Processor (https://github.com/veraison/cover) provides a
           library for appraisal of Evidence by processing CoRIMs as
-          outlined in Section 8.2 of this specification.
+          outlined in Section 8.3 of this specification.
 
       In addition to the base CoRIM Libraries, the cocli package
       (https://github.com/veraison/cocli) uses the golang API above (as
@@ -5211,7 +5374,7 @@ Table of Contents
    | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
-                                  Table 3
+                                  Table 4
 
    Tags designated as "Earmarked for CoRIM" can be reassigned by IANA
    based on advice from the designated expert for the CBOR Tags
@@ -5234,7 +5397,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 4: CoRIM Map Items
+                          Table 5: CoRIM Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5261,7 +5424,7 @@ Table of Contents
                 | 3-255 | Unassigned     |               |
                 +-------+----------------+---------------+
 
-                     Table 5: CoRIM Map Items Initial
+                     Table 6: CoRIM Map Items Initial
                               Registrations
 
 11.4.  CoRIM Entity Map Registry
@@ -5281,7 +5444,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 6: CoRIM Entity Map Items
+                      Table 7: CoRIM Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5308,7 +5471,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 7: CoRIM Entity Map Items Initial Registrations
+           Table 8: CoRIM Entity Map Items Initial Registrations
 
 11.5.  CoRIM Signer Map Registry
 
@@ -5327,7 +5490,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 8: CoRIM Signer Map Items
+                      Table 9: CoRIM Signer Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5346,7 +5509,7 @@ Table of Contents
                   | 2-255 | Unassigned  |               |
                   +-------+-------------+---------------+
 
-                      Table 9: CoRIM Signer Map Items
+                      Table 10: CoRIM Signer Map Items
                            Initial Registrations
 
 11.6.  CoMID Map Registry
@@ -5366,7 +5529,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                         Table 10: CoMID Map Items
+                         Table 11: CoMID Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5391,7 +5554,7 @@ Table of Contents
                  | 5-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                    Table 11: CoMID Map Items Initial
+                    Table 12: CoMID Map Items Initial
                               Registrations
 
 11.7.  CoMID Entity Map Registry
@@ -5411,7 +5574,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                      Table 12: CoMID Entity Map Items
+                      Table 13: CoMID Entity Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5438,7 +5601,7 @@ Table of Contents
     | 3-255 | Unassigned  |                  |                        |
     +-------+-------------+------------------+------------------------+
 
-           Table 13: CoMID Entity Map Items Initial Registrations
+           Table 14: CoMID Entity Map Items Initial Registrations
 
 11.8.  CoMID Triples Map Registry
 
@@ -5459,7 +5622,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-              Table 14: CoMID Triples Map Items Registration
+              Table 15: CoMID Triples Map Items Registration
                                 Procedures
 
    All negative values are reserved for Private Use.
@@ -5506,7 +5669,7 @@ Table of Contents
        | 11-18446744073709551616 | Unassigned     |               |
        +-------------------------+----------------+---------------+
 
-         Table 15: CoMID Triples Map Items Initial Registrations
+         Table 16: CoMID Triples Map Items Initial Registrations
 
 11.9.  CoMID Measurement Values Map Registry
 
@@ -5527,7 +5690,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-               Table 16: CoMID Measurement Values Map Items
+               Table 17: CoMID Measurement Values Map Items
                          Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5574,7 +5737,7 @@ Table of Contents
     |16-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
-        Table 17: Measurement Values Map Items Initial Registrations
+        Table 18: Measurement Values Map Items Initial Registrations
 
 11.10.  CoMID Flags Map Registry
 
@@ -5595,7 +5758,7 @@ Table of Contents
          | 65536-18446744073709551616 | First come first served |
          +----------------------------+-------------------------+
 
-         Table 18: CoMID Flags Map Items Registration Procedures
+         Table 19: CoMID Flags Map Items Registration Procedures
 
    All negative values are reserved for Private Use.
 
@@ -5631,7 +5794,7 @@ Table of Contents
    |11-18446744073709551616|Unassigned                  |             |
    +-----------------------+----------------------------+-------------+
 
-             Table 19: Flags Map Items Initial Registrations
+             Table 20: Flags Map Items Initial Registrations
 
 11.11.  CoTL Map Registry
 
@@ -5650,7 +5813,7 @@ Table of Contents
                    | 128-255 | Specification Required  |
                    +---------+-------------------------+
 
-                          Table 20: CoTL Map Items
+                          Table 21: CoTL Map Items
                           Registration Procedures
 
    All negative values are reserved for Private Use.
@@ -5671,7 +5834,7 @@ Table of Contents
                  | 3-255 | Unassigned   |               |
                  +-------+--------------+---------------+
 
-                     Table 21: CoTL Map Items Initial
+                     Table 22: CoTL Map Items Initial
                               Registrations
 
 11.12.  New Media Types
@@ -5687,7 +5850,7 @@ Table of Contents
    | rim+cose | application/rim+cose | RFCthis, (Section 11.12.2) |
    +----------+----------------------+----------------------------+
 
-                      Table 22: New Media Types
+                      Table 23: New Media Types
 
 11.12.1.  rim+cbor
 
@@ -5757,18 +5920,25 @@ Table of Contents
    | application/rim+cose | -              | TBD2 | RFCthis   |
    +----------------------+----------------+------+-----------+
 
-                  Table 23: New Content-Formats
+                  Table 24: New Content-Formats
+
+11.14.  New Software ID Version Scheme Value
+
+   IANA is requested to register the following Version Scheme Name in
+   the "Software ID Version Scheme Values" registry within the "Software
+   ID Values" [IANA.software-id] registry group.
+
+      +=======+=====================+==============================+
+      | Index | Version Scheme Name | Reference                    |
+      +=======+=====================+==============================+
+      | 5     | binary              | Section 5.1.4.5.3 of RFCthis |
+      +-------+---------------------+------------------------------+
+
+                                 Table 25
 
 12.  References
 
 12.1.  Normative References
-
-   [I-D.ietf-cose-hash-envelope]
-              Steele, O., Lasker, S., and H. Birkholz, "COSE Hash
-              Envelope", Work in Progress, Internet-Draft, draft-ietf-
-              cose-hash-envelope-10, 15 November 2025,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
-              hash-envelope-10>.
 
    [I-D.ietf-rats-eat-measured-component]
               Frost, S., Fossati, T., Tschofenig, H., and H. Birkholz,
@@ -5803,10 +5973,18 @@ Table of Contents
               IANA, "Media Types",
               <https://www.iana.org/assignments/media-types>.
 
+   [IANA.software-id]
+              IANA, "Software ID Values",
+              <https://www.iana.org/assignments/software-id>.
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <https://www.rfc-editor.org/rfc/rfc4648>.
 
    [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
               Housley, R., and W. Polk, "Internet X.509 Public Key
@@ -5859,6 +6037,11 @@ Table of Contents
               Wallace, "The Entity Attestation Token (EAT)", RFC 9711,
               DOI 10.17487/RFC9711, April 2025,
               <https://www.rfc-editor.org/rfc/rfc9711>.
+
+   [RFC9995]  Steele, O., Lasker, S., and H. Birkholz, "CBOR Object
+              Signing and Encryption (COSE) Hash Envelope", RFC 9995,
+              DOI 10.17487/RFC9995, July 2026,
+              <https://www.rfc-editor.org/rfc/rfc9995>.
 
    [STD66]    Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
