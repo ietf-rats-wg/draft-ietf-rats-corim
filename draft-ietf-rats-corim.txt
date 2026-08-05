@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 30 January 2027                                          Linaro
+Expires: 6 February 2027                                          Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                            29 July 2026
+                                                           5 August 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 January 2027.
+   This Internet-Draft will expire on 6 February 2027.
 
 Copyright Notice
 
@@ -150,6 +150,7 @@ Table of Contents
        11.12.1.  rim+cbor
        11.12.2.  rim+cose
      11.13. CoAP Content-Formats Registration
+     11.14. New Software ID Version Scheme Value
    12. References
      12.1.  Normative References
      12.2.  Informative References
@@ -1548,12 +1549,17 @@ Table of Contents
 
    *  version-scheme (index 1): an optional indicator of the versioning
       convention used in the version attribute.  Defined in Section 4.1
-      of [RFC9393].  The CDDL is copied below for convenience.
+      of [RFC9393] and extended with the binary scheme described in
+      Section 11.14.  When the value of the version-scheme is binary,
+      the value of the version field is encoded as base64url (Section 5
+      of [RFC4648]), without padding.  The CDDL (including the new
+      binary version scheme) is copied below for convenience.
 
    $version-scheme /= &(multipartnumeric: 1)
    $version-scheme /= &(multipartnumeric-suffix: 2)
    $version-scheme /= &(alphanumeric: 3)
    $version-scheme /= &(decimal: 4)
+   $version-scheme /= &(binary: 5)
    $version-scheme /= &(semver: 16384)
    $version-scheme /= int / text
 
@@ -5762,6 +5768,20 @@ Table of Contents
 
                   Table 23: New Content-Formats
 
+11.14.  New Software ID Version Scheme Value
+
+   IANA is requested to register the following Version Scheme Name in
+   the "Software ID Version Scheme Values" registry within the "Software
+   ID Values" [IANA.software-id] registry group.
+
+      +=======+=====================+==============================+
+      | Index | Version Scheme Name | Reference                    |
+      +=======+=====================+==============================+
+      | 5     | binary              | Section 5.1.4.5.3 of RFCthis |
+      +-------+---------------------+------------------------------+
+
+                                 Table 24
+
 12.  References
 
 12.1.  Normative References
@@ -5799,10 +5819,18 @@ Table of Contents
               IANA, "Media Types",
               <https://www.iana.org/assignments/media-types>.
 
+   [IANA.software-id]
+              IANA, "Software ID Values",
+              <https://www.iana.org/assignments/software-id>.
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <https://www.rfc-editor.org/rfc/rfc4648>.
 
    [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
               Housley, R., and W. Polk, "Internet X.509 Public Key
