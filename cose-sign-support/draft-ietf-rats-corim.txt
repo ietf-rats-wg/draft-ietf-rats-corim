@@ -88,10 +88,12 @@ Table of Contents
        4.1.4.  Profile Types
        4.1.5.  Entities
      4.2.  Signed CoRIM
-       4.2.1.  Protected Header Map
-       4.2.2.  CWT Claims
-       4.2.3.  Meta Map
-       4.2.4.  Unprotected CoRIM Header Map
+       4.2.1.  Signing with single signature
+       4.2.2.  Protected Header Map
+       4.2.3.  CWT Claims
+       4.2.4.  Meta Map
+       4.2.5.  Unprotected CoRIM Header Map
+       4.2.6.  Signing with multiple signatures
      4.3.  Signer authority of securely conveyed unsigned CoRIM
        4.3.1.  CoRIM collections
    5.  Concise Module Identifier (CoMID)
@@ -669,17 +671,22 @@ Table of Contents
 
    Signing a CoRIM follows the procedures defined in CBOR Object Signing
    and Encryption [STD96].  A CoRIM tag MUST be wrapped either in a
-   COSE_Sign1 structure or a COSE_Sign structure.  The COSE_Sign
-   structure MUST be used when: 1.  Multiple authorities need to sign
-   the same unsigned CoRIM payload or 2.  Single authority needs to sign
-   the same unsigned CoRIM payload using different signing algorithms.
+   COSE_Sign1 structure or a COSE_Sign structure.
+
+   The COSE_Sign structure MUST be used when: 1.  Multiple authorities
+   need to sign the same unsigned CoRIM payload or 2.  Single authority
+   needs to sign the same unsigned CoRIM payload using different signing
+   algorithms.  Please refer to Section 4.2.6 for details on multi
+   signature CoRIM.
 
    The CoRIM MUST be signed by the CoRIM creator.
+
+4.2.1.  Signing with single signature
 
    When using COSE_Sign1 the following CDDL specification defines a
    restrictive subset of COSE header parameters that MUST be used in the
    protected header alongside additional information about the CoRIM
-   encoded in a corim-meta-map (Section 4.2.3) or alternatively in a
+   encoded in a corim-meta-map (Section 4.2.4) or alternatively in a
    CWT-Claims ([RFC9597]).
 
    COSE-Sign1-corim = [
@@ -709,18 +716,7 @@ Table of Contents
    *  signature: A COSE signature block, as defined in Section 4 of
       [STD96].
 
-   When using COSE_Sign the following CDDL specification defines, the
-   overall structure.  Note: When using COSE_Sign, the top level Header
-   parameters of the CoRIM structure is not to be set and hence zeroed
-   out as per the COSE Specification requirements.
-
-   The Signer structure of each authority signing the CoRIM uses the
-   same pattern of a restrictive subset of COSE header parameters that
-   MUST be used in the protected header alongside additional information
-   about the CoRIM encoded in a corim-meta-map (Section 4.2.3) or
-   alternatively in a CWT-Claims ([RFC9597]).
-
-4.2.1.  Protected Header Map
+4.2.2.  Protected Header Map
 
    ; protected corim header map needs to contain at least one of
    ; corim-meta (8) or CWT-Claims (15)
@@ -756,7 +752,7 @@ Table of Contents
    parameters plus additional metadata.  Additional metadata can either
    be carried in a CWT_Claims (index: 15) parameter as defined by
    [RFC9597], or in a corim-meta map as a legacy alternative, described
-   in Section 4.2.3.
+   in Section 4.2.4.
 
    The following describes each child item of this map.
 
@@ -787,7 +783,7 @@ Table of Contents
       with a signed CoRIM.  Described in [RFC9597].
 
    *  corim-meta (index 8): A map that contains metadata associated with
-      a signed CoRIM.  Described in Section 4.2.3.
+      a signed CoRIM.  Described in Section 4.2.4.
 
    Documents MAY include both CWT-Claims and corim-meta, in which case
    the signer MUST ensure that their contents are semantically
@@ -798,7 +794,7 @@ Table of Contents
    Additional data can be included in the COSE header map as per
    (Section 3 of [STD96]).
 
-4.2.2.  CWT Claims
+4.2.3.  CWT Claims
 
    The CWT Claims ([RFC9597]) map identifies the entity that created and
    signed the CoRIM.  This ensures the consumer is able to identify
@@ -810,7 +806,7 @@ Table of Contents
    The following describes each child item of this group.
 
    *  iss (index 1): Issuer or signer for the CoRIM, formerly signer-
-      name or signer-uri in Section 4.2.3.1.
+      name or signer-uri in Section 4.2.4.1.
 
    *  sub (index 2): Optional - identifies the CoRIM document,
       equivalent to a string representation of $corim-id-type-choice
@@ -824,7 +820,7 @@ Table of Contents
    *  nbf (index 5): Not before time, formerly signature-validity in
       Section 7.3.
 
-4.2.3.  Meta Map
+4.2.4.  Meta Map
 
    The CoRIM meta map identifies the entity or entities that create and
    sign the CoRIM.  This ensures the consumer is able to identify
@@ -838,12 +834,12 @@ Table of Contents
    The following describes each child item of this group.
 
    *  signer (index 0): Information about the entity that signs the
-      CoRIM.  Described in Section 4.2.3.1.
+      CoRIM.  Described in Section 4.2.4.1.
 
    *  signature-validity (index 1): Validity period for the CoRIM.
       Described in Section 7.3.
 
-4.2.3.1.  Signer Map
+4.2.4.1.  Signer Map
 
    corim-signer-map = {
      &(signer-name: 0) => $entity-name-type-choice
@@ -859,11 +855,44 @@ Table of Contents
    *  $$corim-signer-map-extension: Extension point for future expansion
       of the Signer map.
 
-4.2.4.  Unprotected CoRIM Header Map
+4.2.5.  Unprotected CoRIM Header Map
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
    }
+
+4.2.6.  Signing with multiple signatures
+
+   When using COSE_Sign the following CDDL specification defines, the
+   overall structure.  Note: When using COSE_Sign, the top level Header
+   parameters of the CoRIM structure MUST not be set and hence should
+   zeroed out as per the guidance specified in COSE Specification.
+
+   COSE-Sign1-corim = [
+     protected: bstr .cbor protected-corim-header-map
+     unprotected: unprotected-corim-header-map
+     payload: bstr .cbor tagged-unsigned-corim-map /
+                         hash-envelope-digest /
+                         nil
+     signature: bstr
+   ]
+
+   hash-envelope-digest = bstr
+
+   Multiple signatures in a COSE_sign CoRIM MUST be set using the CDDL
+   as given below.
+
+   signature_structure = [
+     protected: bstr .cbor protected-corim-header-map
+     unprotected: unprotected-corim-header-map
+     signature: bstr
+   ]
+
+   The Signer structure of each authority signing the CoRIM uses the
+   same pattern of a restrictive subset of COSE header parameters that
+   MUST be used in the protected header alongside additional information
+   about the CoRIM encoded in a corim-meta-map (Section 4.2.4) or
+   alternatively in a CWT-Claims ([RFC9597]).
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
