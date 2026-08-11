@@ -505,10 +505,20 @@ The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` 
 ~~~
 
 Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption {{-cose}}. A CoRIM tag MUST be wrapped in a COSE_Sign1 structure.
+Encryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
+COSE_Sign structure.
+
+The COSE_Sign structure MUST be used when:
+
+1. Multiple authorities need to sign the same unsigned CoRIM payload; or
+2. Single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
+Please refer to {{sec-mult-sign}} for details on multi signature CoRIM.
+
 The CoRIM MUST be signed by the CoRIM creator.
 
-The following CDDL specification defines a restrictive subset of COSE header
+### Signing with One Signer
+
+When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
 information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
@@ -528,7 +538,11 @@ The following describes each child element of this type.
 
 * `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
 
-### Protected Header Map
+### Header Parameters  {#sec-header}
+
+This section describes the header parameters of a signed CoRIM using a single signature (COSE-Sign1) or multiple signatures (COSE_Sign).
+
+#### Protected Header Map
 
 ~~~ cddl
 {::include cddl/protected-corim-header-map.cddl}
@@ -566,7 +580,7 @@ Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the sign
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
-### CWT Claims {#cwt-claims}
+#### CWT Claims {#cwt-claims}
 
 The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
@@ -584,7 +598,7 @@ Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 
 * `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
-### Meta Map {#sec-corim-meta}
+#### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
@@ -616,11 +630,31 @@ Described in {{sec-common-validity}}.
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
 Signer map.
 
-### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
+#### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
 ~~~ cddl
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
+
+### Signing with Multiple Signers {#sec-mult-sign}
+
+When using COSE_Sign the following CDDL specification defines the overall structure.
+Note: When using COSE_Sign, the top level Header parameters of the CoRIM structure MUST not be set
+and hence should zeroed out as per the guidance specified in COSE Specification.
+
+~~~ cddl
+{::include cddl/cose-sign1-corim.cddl}
+~~~
+
+When multiple authorities sign an unsigned CoRIM or multiple different signatures are used by an authority to sign an unsigned CoRIM,
+the details about each signature is added in each entry of the signature structure array, as shown below.
+
+~~~ cddl
+{::include cddl/signature-structure.cddl}
+~~~
+
+Refer to {{sec-header}} when setting the header parameters associated to each authority signing the CoRIM.
+
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
@@ -2481,6 +2515,9 @@ The Verifier is expected to have a trust anchor store.
 The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the `x5chain` in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
+
+If the CoRIM is signed by multiple authorities, each signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
+A Verifier Owner may choose to relax this based on its own Appraisal Policy for Evidence.
 
 #### Tags Extraction and Validation
 
