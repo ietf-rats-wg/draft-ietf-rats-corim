@@ -637,7 +637,7 @@ Signer map.
 
 ### Signing with Multiple Signers {#sec-mult-sign}
 
-When using COSE_Sign the following CDDL specification defines, the overall structure.
+When using COSE_Sign the following CDDL specification defines the overall structure.
 Note: When using COSE_Sign, the top level Header parameters of the CoRIM structure MUST not be set
 and hence should zeroed out as per the guidance specified in COSE Specification.
 
