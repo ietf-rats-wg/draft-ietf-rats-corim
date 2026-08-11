@@ -2379,7 +2379,7 @@ The way in which these trust anchors are provisioned in the Verifier is beyond t
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the `x5chain` in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
 
-If the CoRIM is signed by multiple authorities, each signature, MUST be verified before accepting the CoRIM for further Verifier Processing.
+If the CoRIM is signed by multiple authorities, each signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
 A Verifier owner may choose to relax this based on its own Appraisal Policy for Evidence.
 
 #### Tags Extraction and Validation
