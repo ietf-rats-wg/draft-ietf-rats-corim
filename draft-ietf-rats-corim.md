@@ -652,7 +652,7 @@ the details about each signature is added in each entry of the signature structu
 {::include cddl/signature-structure.cddl}
 ~~~
 
-Refer to {{sec-header}} when setting the header parameters associated to each authority, signing the CoRIM.
+Refer to {{sec-header}} when setting the header parameters associated to each authority signing the CoRIM.
 
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
