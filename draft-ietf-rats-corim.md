@@ -515,7 +515,7 @@ Please refer to {{sec-mult-sign}} for details on multi signature CoRIM.
 
 The CoRIM MUST be signed by the CoRIM creator.
 
-### Signing with single signature
+### Signing with One Signer
 
 When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
