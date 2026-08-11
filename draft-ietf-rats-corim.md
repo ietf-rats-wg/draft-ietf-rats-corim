@@ -2380,7 +2380,7 @@ If the CoRIM is signed, it should include at least one certificate (e.g., as par
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
 
 If the CoRIM is signed by multiple authorities, each signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
-A Verifier owner may choose to relax this based on its own Appraisal Policy for Evidence.
+A Verifier Owner may choose to relax this based on its own Appraisal Policy for Evidence.
 
 #### Tags Extraction and Validation
 
