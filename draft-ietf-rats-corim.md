@@ -508,6 +508,7 @@ Encryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structu
 COSE_Sign structure.
 
 The COSE_Sign structure MUST be used when:
+
 1. Multiple authorities need to sign the same unsigned CoRIM payload; or
 2. Single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
 Please refer to {{sec-mult-sign}} for details on multi signature CoRIM.
