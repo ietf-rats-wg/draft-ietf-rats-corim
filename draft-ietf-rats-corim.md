@@ -635,7 +635,7 @@ Signer map.
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
 
-### Signing with multiple signatures {#sec-mult-sign}
+### Signing with Multiple Signers {#sec-mult-sign}
 
 When using COSE_Sign the following CDDL specification defines, the overall structure.
 Note: When using COSE_Sign, the top level Header parameters of the CoRIM structure MUST not be set
