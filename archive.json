@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-09T02:11:17.788643+00:00",
+  "timestamp": "2026-08-11T02:10:18.519502+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -91348,7 +91348,7 @@
     {
       "number": 609,
       "id": "PR_kwDOH6-tI87xAH16",
-      "title": "Adding mkey ussage to distiguish SPDM manifest blocks (in list of examples)",
+      "title": "Adding mkey usage to distiguish SPDM manifest blocks (in list of examples)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/609",
       "state": "OPEN",
       "author": "henkbirkholz",
@@ -91357,7 +91357,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-07-13T09:48:22Z",
-      "updatedAt": "2026-08-05T14:37:41Z",
+      "updatedAt": "2026-08-10T07:34:14Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5b21f29f2dc32552aaf65f610e301bf8c1ec5d3d",
@@ -91441,6 +91441,32 @@
               "body": "```suggestion\nIt can be used to identify the type of measured element (see {{-cca-endorsements}}), or to index an SPDM [DSP0274] measurements block originating from a specific target environment, or to identify multiple measured element instances within the same environment.\n```",
               "createdAt": "2026-07-29T15:39:52Z",
               "updatedAt": "2026-07-29T15:40:08Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABI7vOug",
+          "commit": {
+            "abbreviatedOid": "7b782a9"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-10T07:21:03Z",
+          "updatedAt": "2026-08-10T07:24:22Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "link ref\n\n```suggestion\nIt can be used to identify the type of measured element (see {{-cca-endorsements}}), or to index an SPDM {{SPDM}} measurements block originating from a specific target environment, or to identify multiple measured element instances within the same environment.\n```",
+              "createdAt": "2026-08-10T07:21:03Z",
+              "updatedAt": "2026-08-10T07:24:22Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "de-anonymise ref\n\n```suggestion\n  SPDM:\n```",
+              "createdAt": "2026-08-10T07:21:17Z",
+              "updatedAt": "2026-08-10T07:24:22Z"
             }
           ]
         }
@@ -92065,7 +92091,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-08-08T09:04:04Z",
+      "updatedAt": "2026-08-10T11:07:49Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "479d5c80ff4aba7754b07c94e3a867ebaede9bac",
@@ -92095,6 +92121,146 @@
               "body": "```suggestion\nsigned-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)\n```",
               "createdAt": "2026-07-29T14:06:21Z",
               "updatedAt": "2026-07-29T14:06:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABI876gA",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "a few comments inline ",
+          "createdAt": "2026-08-10T10:17:43Z",
+          "updatedAt": "2026-08-10T11:07:47Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "this already exists in cose-sign1-corim.cddl\n\nwe could either:\n* remove this instance (`cddlc` will do the right thing)\n* factor it out in a separate hash-envelope-digest.cddl which is used by both sign and sign1 CDDL fragments.",
+              "createdAt": "2026-08-10T10:17:44Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 79,
+              "body": "hmm, I don't think we want to include this here.  Shouldn't it be:\n\n```suggestion\n{::include cddl/cose-sign-corim.cddl}\n```",
+              "createdAt": "2026-08-10T10:19:16Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 76,
+              "body": "A couple of problems with this paragraph:\n\n* NLNS\n* repetition with L639\n* confusing requirements (MUST / should)\n* incorrect reference to \"CoRIM structure\"\n* imprecise reference to \"COSE Specification\"\n\nI suggest a simpler:\n\n```suggestion\nNote that the top-level header parameters MUST be empty.\n```",
+              "createdAt": "2026-08-10T10:32:42Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "streamline\n\n```suggestion\n  unprotected: {}\n  payload: bstr .cbor tagged-unsigned-corim-map /\n                      hash-envelope-digest /\n                      nil\n  signatures: [2* signature_structure]\n]\n\nhash-envelope-digest = bstr\n```",
+              "createdAt": "2026-08-10T10:35:45Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 2,
+              "body": "spurious empty lines (would create unneeded vertical space when rendered)\n\n```suggestion\n```",
+              "createdAt": "2026-08-10T10:37:03Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 3,
+              "body": "use `-` instead of `_` as separator -- as in the rest of the document.",
+              "createdAt": "2026-08-10T10:38:18Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "I think `MUST` is unwarranted here.\nIMO, this should be offered as an option for the supply chain.\nThis essentially depends on the arrangements between the cooperating entities, which we cannot dictate at the spec level.\n\n\n```suggestion\nThe COSE_Sign structure MAY be used when:\n```",
+              "createdAt": "2026-08-10T10:43:11Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "Need a NL to activate the enumerated list environment:\n\n```suggestion\nThe COSE_Sign structure MUST be used when:\n\n```",
+              "createdAt": "2026-08-10T10:44:10Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "without a NL it will be clumped to the last item in the enumeration:\n\n```suggestion\n\nPlease refer to {{sec-mult-sign}} for details on multi signature CoRIM.\n```",
+              "createdAt": "2026-08-10T10:46:18Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\nRefer to {{sec-mult-sign}} for details on multi signature CoRIM.\n```",
+              "createdAt": "2026-08-10T10:47:09Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 24,
+              "body": "align with COSE terminology\n\n```suggestion\n### Signing with One Signer\n```",
+              "createdAt": "2026-08-10T10:47:59Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "```suggestion\n### Signing with Multiple Signers {#sec-mult-sign}\n```",
+              "createdAt": "2026-08-10T10:48:47Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 17,
+              "body": "```suggestion\n1. Multiple authorities need to sign the same unsigned CoRIM payload; or\n```",
+              "createdAt": "2026-08-10T10:51:27Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 18,
+              "body": "```suggestion\n2. A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.\n```",
+              "createdAt": "2026-08-10T10:51:42Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 19,
+              "body": "```suggestion\nPlease refer to {{sec-mult-sign}} for details on multi-signature CoRIM.\n```",
+              "createdAt": "2026-08-10T10:52:06Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 37,
+              "body": "align with COSE terminology\n\n```suggestion\nThis section describes the header parameters of a signed CoRIM using a single signer (COSE-Sign1) or multiple signers (COSE_Sign).\n```",
+              "createdAt": "2026-08-10T10:53:31Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 74,
+              "body": "spurious comma\n\n```suggestion\nWhen using COSE_Sign the following CDDL specification defines the overall structure.\n```",
+              "createdAt": "2026-08-10T10:53:49Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "grammar + reference the data item directly\n\n```suggestion\nthe details about each signature are added to each entry in the `signature-structure` array, as shown below.\n```",
+              "createdAt": "2026-08-10T10:55:56Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 89,
+              "body": "spurious comma\n\n```suggestion\nRefer to {{sec-header}} when setting the header parameters associated to each authority signing the CoRIM.\n```",
+              "createdAt": "2026-08-10T10:58:27Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 278,
+              "body": "spurious comma\n\n```suggestion\nIf the CoRIM is signed by multiple authorities, each signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.\n```",
+              "createdAt": "2026-08-10T11:04:22Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
+            },
+            {
+              "originalPosition": 279,
+              "body": "```suggestion\nA Verifier Owner may choose to relax this based on its own Appraisal Policy for Evidence.\n```",
+              "createdAt": "2026-08-10T11:05:08Z",
+              "updatedAt": "2026-08-10T11:07:47Z"
             }
           ]
         }
