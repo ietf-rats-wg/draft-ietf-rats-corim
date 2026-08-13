@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-11T02:10:18.519502+00:00",
+  "timestamp": "2026-08-13T02:29:42.336635+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14911,6 +14911,44 @@
           "body": "Thanks for spotting Greg, we just discussed this in our meeting today, and ack your observation!",
           "createdAt": "2026-08-05T16:04:35Z",
           "updatedAt": "2026-08-05T16:04:35Z"
+        }
+      ]
+    },
+    {
+      "number": 621,
+      "id": "I_kwDOH6-tI88AAAABMWJmPg",
+      "title": "No string data type in measurement-values-map",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/621",
+      "state": "OPEN",
+      "author": "gkostal",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "_[This was discussed in the CCC Attestation SIG meeting on 8/11/26]_\n\nA common scenario in my work is to add an endorsed claim that uses a tstr data type for the key and value.  For example, I might want to add an endorsement key of \"azure-compliance-status\" with an endorsement value of \"azure-compliant-cvm\".  \n\nWith the current CDDL definition, the only text (or tstr) data types in the measurement-values-map are \"serial-number\" and \"name\" -- neither of which make sense for my scenario:  \n\n- **serial-number (index 8)**: A text string representing the product serial number.\n- **name (index 11)**: a name associated with the measured environment.\n\n```\nmeasurement-values-map = non-empty<{\n  ? &(version: 0) => version-map\n  ? &(svn: 1) => svn-type-choice\n  ? &(digests: 2) => digests-type\n  ? &(flags: 3) => flags-map\n  ? (\n      &(raw-value: 4) => $raw-value-type-choice,\n      ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type\n    )\n  ? &(mac-addr: 6) => mac-addr-type-choice\n  ? &(ip-addr: 7) => ip-addr-type-choice\n  ? &(serial-number: 8) => text\n  ? &(ueid: 9) => ueid-type\n  ? &(uuid: 10) => uuid-type\n  ? &(name: 11) => text\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\n  ? &(integrity-registers: 14) => integrity-registers\n  ? &(int-range: 15) => int-range-type-choice\n  * $$measurement-values-map-extension\n}>\n```\n\nCan the measurement-values-map be updated to include a string datatype?  Perhaps:\n\n```\n  ? &(string: 16) => text\n```\n\nThis is the one that's immediately causing me issues.  But looking at the CDDL primitive data types, I can envision I'll eventually wrestle with this issue for \"bool\" and \"uint\" also.  Perhaps also:\n\n```\n  ? &(bool: 17) => bool\n  ? &(uint: 18) => uint\n```\n\n",
+      "createdAt": "2026-08-11T18:47:13Z",
+      "updatedAt": "2026-08-12T16:07:03Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It sounds like a very reasonable addition to include basic types alongside the more specialised ones.\n\nI suspect this would also avoid creating lots of redundant, site-specific `measurement-values-map-extension`s in the long run.\n\nIn case it wasn't clear, I am violent agreement :-)",
+          "createdAt": "2026-08-12T10:43:20Z",
+          "updatedAt": "2026-08-12T10:43:20Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We discussed this idea a long time ago, but we didn't have clarity on what it would mean for interoperability at the verifier vs. the RP. Since then we fleshed out verifier processing quite clearly and verifiers just need to know how to compare values (exact match, ranges etc). The additional semantics (IP address, key, device name, ....) imply decision criteria that is applied by relying parties - or at least verifier phases after phase 4 (all of which are out of scope for section 8 in Corim). \n\nSupporting primitive data types in corim means the post phase-4 semantics are interpreted by the subsequent phases / RP processors. The implication is these processors must rely on mkey for decision-making semantics. Since mkey is chosen by the corim author and not defined in RFC, interoperability is not guaranteed. \n\nThis is not a novel case in corim as `name` and `int-range`, and `raw-value` rely on measurement-map to provide semantic context. \n\nThe question for corim design team is what wording is appropriate to highlight interoperability considerations that are out of scope for this spec, but possibly in scope for some other IETF document / profile? Maybe we should have a section on \"Interoperabilitly Considerations\" at the level of Privacy and Security considerations. But maybe the section on phases 5 - 7, if it still exists, would be the right place too.",
+          "createdAt": "2026-08-12T15:26:02Z",
+          "updatedAt": "2026-08-12T16:01:01Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Supporting primimtive data types could explode, but should also not be haphazard. For example, we have int-range that includes int, but not uint-range which would include uint. But maybe we can overload uint into int-range; in which case we don't need uint?\n\nWe have `name` 11: text already. The labels `name` and `string` are throw away at the end of the day. \n\nAlso, does it make sense to have arrays of primitive types? The Intel profile defines arrays of primitive types - hence there is prescedent for that. Crytpokeys and integrity registers include array semantics already. Maybe you want something like: \n```\n? &(strings : 16) => [ + text ]\n? &(bool: 17) => bool\n? &(bools: 18) => [ + bool ]\n? &(uint: 19) => uint-range-type-choice // includes uint or maybe int-range already satisfies the use case for uint\n? &(uints: 20) => [ + uint ]\n// ect...\n```\n\nNeed to double check that next available tag is 16. TCG may have used some of these.\n\n",
+          "createdAt": "2026-08-12T15:56:05Z",
+          "updatedAt": "2026-08-12T16:07:03Z"
         }
       ]
     }
@@ -92089,20 +92127,28 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "",
+      "body": "Fix #583",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-08-10T11:07:49Z",
+      "updatedAt": "2026-08-12T16:29:33Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "479d5c80ff4aba7754b07c94e3a867ebaede9bac",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-support",
-      "headRefOid": "b0af10aa234a032de823dfbea754c3439425a915",
+      "headRefOid": "001584540589b7644958c2d9374bb9e571227c44",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The core of the PR is to add support for COSE_Sign which I agree with. Most of the discusion is around whether normative language is needed. The PR focuses on alg agility use case. COSE_Sign has multiple possible locations for header metadata that could result in redundant / conflicting information. Consequently, there should be language in RFC that describes scoping rules. It surprises me that COSE wouldn't have this language already. If Corim adds it, then COSE adds it later, and it contradicts Corim, then that would force a change to corim. It seems best to not have normative language about scoping rules, but rather document \"assumed\" or \"expected\" scoping rules. \r\n\r\nThat is to say outer layer headers are used unless inner layer headers are populated. Since, in the scope of the PR, there is only one signer, there is no need to describe what it means to have different but legitimate header content.\r\n\r\nThe other use cases related to multiple signers and counter signatures are out of scope for the PR. Nevertheless, the scoping rules are assumed to be the same regardless of use case context. In a multi-principal use case, header contents could differ depending on the signer. These cases imply there is some sort of verifier policy that decides whether the payload (corim) is valid - but this is out of scope for this PR and for the corim spec. ",
+          "createdAt": "2026-08-12T16:19:46Z",
+          "updatedAt": "2026-08-12T16:23:08Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI88AAAABHqYPrA",
@@ -92186,9 +92232,9 @@
             },
             {
               "originalPosition": 19,
-              "body": "without a NL it will be clumped to the last item in the enumeration:\n\n```suggestion\n\nPlease refer to {{sec-mult-sign}} for details on multi signature CoRIM.\n```",
+              "body": "without a NL it will be clumped to the last item in the enumeration:\n\n```suggestion\n\nSee {{sec-mult-sign}} for details on multi signature CoRIM.\n```",
               "createdAt": "2026-08-10T10:46:18Z",
-              "updatedAt": "2026-08-10T11:07:47Z"
+              "updatedAt": "2026-08-11T11:12:25Z"
             },
             {
               "originalPosition": 19,
@@ -92263,6 +92309,379 @@
               "updatedAt": "2026-08-10T11:07:47Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGTMNw",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:07:33Z",
+          "updatedAt": "2026-08-11T11:07:34Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "It is more consistent to break out re-used items in separate cddl definition fragments.\n\nBut! That requires a separate description in the text as well. Is that fine? It would a add a few more lines of text.",
+              "createdAt": "2026-08-11T11:07:33Z",
+              "updatedAt": "2026-08-11T11:07:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGTY1g",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:08:01Z",
+          "updatedAt": "2026-08-11T11:08:01Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "lgtm",
+              "createdAt": "2026-08-11T11:08:01Z",
+              "updatedAt": "2026-08-11T11:08:01Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGTkTw",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:08:23Z",
+          "updatedAt": "2026-08-11T11:08:24Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": ":+1:",
+              "createdAt": "2026-08-11T11:08:24Z",
+              "updatedAt": "2026-08-11T11:08:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGTsKA",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:08:40Z",
+          "updatedAt": "2026-08-11T11:08:41Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "kebab case ftw",
+              "createdAt": "2026-08-11T11:08:40Z",
+              "updatedAt": "2026-08-11T11:08:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGUZQg",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:10:01Z",
+          "updatedAt": "2026-08-11T11:10:01Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "Which would allow for nesting COSE_Sign1 envelopes to achieve the same? Is there a requirement for that? It seems... to allow for unnecessary overhead if we water down the MUST.",
+              "createdAt": "2026-08-11T11:10:01Z",
+              "updatedAt": "2026-08-11T11:10:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGUgaQ",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:10:15Z",
+          "updatedAt": "2026-08-11T11:10:15Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": ":+1:",
+              "createdAt": "2026-08-11T11:10:15Z",
+              "updatedAt": "2026-08-11T11:10:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGVh8A",
+          "commit": {
+            "abbreviatedOid": "bede928"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:12:41Z",
+          "updatedAt": "2026-08-11T11:12:41Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "edited the suggestion, removing the \"please\"",
+              "createdAt": "2026-08-11T11:12:41Z",
+              "updatedAt": "2026-08-11T11:12:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGV8AA",
+          "commit": {
+            "abbreviatedOid": "bede928"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:13:39Z",
+          "updatedAt": "2026-08-11T11:13:40Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "oh. that was redundant. See/Refer. Same same. We can pick in choose in like 20 sec in a meeting.",
+              "createdAt": "2026-08-11T11:13:39Z",
+              "updatedAt": "2026-08-11T11:13:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGWQyA",
+          "commit": {
+            "abbreviatedOid": "bede928"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:14:26Z",
+          "updatedAt": "2026-08-11T11:14:26Z",
+          "comments": [
+            {
+              "originalPosition": 19,
+              "body": "if we want to that (which I am fine with), please apply consistently (there was a suggested that showed the same issue and was not fixed).",
+              "createdAt": "2026-08-11T11:14:26Z",
+              "updatedAt": "2026-08-11T11:14:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGWdoA",
+          "commit": {
+            "abbreviatedOid": "bede928"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:14:53Z",
+          "updatedAt": "2026-08-11T11:14:53Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "\ud83d\udc4d ",
+              "createdAt": "2026-08-11T11:14:53Z",
+              "updatedAt": "2026-08-11T11:14:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGWviw",
+          "commit": {
+            "abbreviatedOid": "7c16f8a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:15:33Z",
+          "updatedAt": "2026-08-11T11:15:34Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "lgtm",
+              "createdAt": "2026-08-11T11:15:33Z",
+              "updatedAt": "2026-08-11T11:15:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGW5tA",
+          "commit": {
+            "abbreviatedOid": "7c16f8a"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:15:50Z",
+          "updatedAt": "2026-08-11T11:15:50Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "\ud83d\udc4d ",
+              "createdAt": "2026-08-11T11:15:50Z",
+              "updatedAt": "2026-08-11T11:15:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGXgkg",
+          "commit": {
+            "abbreviatedOid": "b30de98"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:16:50Z",
+          "updatedAt": "2026-08-11T11:16:50Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "lgtm",
+              "createdAt": "2026-08-11T11:16:50Z",
+              "updatedAt": "2026-08-11T11:16:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGXwMw",
+          "commit": {
+            "abbreviatedOid": "b30de98"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:17:22Z",
+          "updatedAt": "2026-08-11T11:17:22Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "\ud83d\udc4d ",
+              "createdAt": "2026-08-11T11:17:22Z",
+              "updatedAt": "2026-08-11T11:17:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGuRyw",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T12:05:34Z",
+          "updatedAt": "2026-08-11T12:05:34Z",
+          "comments": [
+            {
+              "originalPosition": 16,
+              "body": "I may be old-fashioned (cfr. PEM and all that \ud83d\ude04), but I have been conditioned to think that mechanisms should be offered as options that users can decide to implement based on local policies and arrangements, rather than being forced upon them.",
+              "createdAt": "2026-08-11T12:05:34Z",
+              "updatedAt": "2026-08-11T12:05:34Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJR1xKA",
+          "commit": {
+            "abbreviatedOid": "0015845"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-12T14:32:15Z",
+          "updatedAt": "2026-08-12T14:32:15Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\nThe COSE_Sign structure MUST be used when a single authority needs to sign the same unsigned CoRIM payload using different signing algorithms, for exampl, to support PQ transition.\nPlease refer to {{sec-mult-sign}} for details on multi signature CoRIM.\n```",
+              "createdAt": "2026-08-12T14:32:15Z",
+              "updatedAt": "2026-08-12T14:32:15Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJS6mZQ",
+          "commit": {
+            "abbreviatedOid": "0015845"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-12T16:25:58Z",
+          "updatedAt": "2026-08-12T16:25:58Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "COSE RFCs already define when to use COSE_Sign / COSE_Sign1 to support alg agility, multiple signers, countersignature use cases. This spec should reference the appropriate RFCs. No normative language is needed IMO.",
+              "createdAt": "2026-08-12T16:25:58Z",
+              "updatedAt": "2026-08-12T16:25:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJS8Dlw",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-12T16:28:36Z",
+          "updatedAt": "2026-08-12T16:28:37Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "I'm more comfortable if we can avoid introducing normative language and focus on language that describes header scope (which should have been included in COSE RFCs already, but if not describes corim assumption for scoping).",
+              "createdAt": "2026-08-12T16:28:36Z",
+              "updatedAt": "2026-08-12T16:28:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJS8l_g",
+          "commit": {
+            "abbreviatedOid": "0015845"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "See comments",
+          "createdAt": "2026-08-12T16:29:32Z",
+          "updatedAt": "2026-08-12T16:29:32Z",
+          "comments": []
         }
       ]
     },
@@ -92278,7 +92697,7 @@
       "labels": [],
       "body": "Removed intrep-ect-endval-selection.cddl file and reworded the evs section to remove selection terminology and remove the intrep cddl content.\r\nFixes #618 ",
       "createdAt": "2026-08-05T16:07:05Z",
-      "updatedAt": "2026-08-05T16:27:18Z",
+      "updatedAt": "2026-08-11T11:23:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "5b21f29f2dc32552aaf65f610e301bf8c1ec5d3d",
@@ -92381,6 +92800,26 @@
               "body": "ditto",
               "createdAt": "2026-08-05T16:27:18Z",
               "updatedAt": "2026-08-05T16:27:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABJGanug",
+          "commit": {
+            "abbreviatedOid": "1b2d931"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-08-11T11:23:16Z",
+          "updatedAt": "2026-08-11T11:23:17Z",
+          "comments": [
+            {
+              "originalPosition": 17,
+              "body": "as is seems fine",
+              "createdAt": "2026-08-11T11:23:17Z",
+              "updatedAt": "2026-08-11T11:23:17Z"
             }
           ]
         }
