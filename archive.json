@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-13T02:29:42.336635+00:00",
+  "timestamp": "2026-08-16T01:45:45.879863+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14926,7 +14926,7 @@
       "labels": [],
       "body": "_[This was discussed in the CCC Attestation SIG meeting on 8/11/26]_\n\nA common scenario in my work is to add an endorsed claim that uses a tstr data type for the key and value.  For example, I might want to add an endorsement key of \"azure-compliance-status\" with an endorsement value of \"azure-compliant-cvm\".  \n\nWith the current CDDL definition, the only text (or tstr) data types in the measurement-values-map are \"serial-number\" and \"name\" -- neither of which make sense for my scenario:  \n\n- **serial-number (index 8)**: A text string representing the product serial number.\n- **name (index 11)**: a name associated with the measured environment.\n\n```\nmeasurement-values-map = non-empty<{\n  ? &(version: 0) => version-map\n  ? &(svn: 1) => svn-type-choice\n  ? &(digests: 2) => digests-type\n  ? &(flags: 3) => flags-map\n  ? (\n      &(raw-value: 4) => $raw-value-type-choice,\n      ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type\n    )\n  ? &(mac-addr: 6) => mac-addr-type-choice\n  ? &(ip-addr: 7) => ip-addr-type-choice\n  ? &(serial-number: 8) => text\n  ? &(ueid: 9) => ueid-type\n  ? &(uuid: 10) => uuid-type\n  ? &(name: 11) => text\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\n  ? &(integrity-registers: 14) => integrity-registers\n  ? &(int-range: 15) => int-range-type-choice\n  * $$measurement-values-map-extension\n}>\n```\n\nCan the measurement-values-map be updated to include a string datatype?  Perhaps:\n\n```\n  ? &(string: 16) => text\n```\n\nThis is the one that's immediately causing me issues.  But looking at the CDDL primitive data types, I can envision I'll eventually wrestle with this issue for \"bool\" and \"uint\" also.  Perhaps also:\n\n```\n  ? &(bool: 17) => bool\n  ? &(uint: 18) => uint\n```\n\n",
       "createdAt": "2026-08-11T18:47:13Z",
-      "updatedAt": "2026-08-12T16:07:03Z",
+      "updatedAt": "2026-08-13T09:16:47Z",
       "closedAt": null,
       "comments": [
         {
@@ -14949,6 +14949,13 @@
           "body": "Supporting primimtive data types could explode, but should also not be haphazard. For example, we have int-range that includes int, but not uint-range which would include uint. But maybe we can overload uint into int-range; in which case we don't need uint?\n\nWe have `name` 11: text already. The labels `name` and `string` are throw away at the end of the day. \n\nAlso, does it make sense to have arrays of primitive types? The Intel profile defines arrays of primitive types - hence there is prescedent for that. Crytpokeys and integrity registers include array semantics already. Maybe you want something like: \n```\n? &(strings : 16) => [ + text ]\n? &(bool: 17) => bool\n? &(bools: 18) => [ + bool ]\n? &(uint: 19) => uint-range-type-choice // includes uint or maybe int-range already satisfies the use case for uint\n? &(uints: 20) => [ + uint ]\n// ect...\n```\n\nNeed to double check that next available tag is 16. TCG may have used some of these.\n\n",
           "createdAt": "2026-08-12T15:56:05Z",
           "updatedAt": "2026-08-12T16:07:03Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I was thinking of something as high-level as:\n\n```\n? &(string-set: 1000) => [ + text ]\n? &(binary-string-set: 1001) => [ + bytes ]\n? &(bool-set: 1002) => [ + bool ]\n? &(number-set: 1003) => [ + number ]\n```\n\nwhere the semantics are entirely defined by the environment-map/mkey combo.\n\nIt looks like this would subsume a lot of different use cases without exploding the representation space.\n\n",
+          "createdAt": "2026-08-13T09:16:47Z",
+          "updatedAt": "2026-08-13T09:16:47Z"
         }
       ]
     }
