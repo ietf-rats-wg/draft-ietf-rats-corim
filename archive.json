@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-16T01:45:45.879863+00:00",
+  "timestamp": "2026-08-18T01:38:46.344227+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14926,7 +14926,7 @@
       "labels": [],
       "body": "_[This was discussed in the CCC Attestation SIG meeting on 8/11/26]_\n\nA common scenario in my work is to add an endorsed claim that uses a tstr data type for the key and value.  For example, I might want to add an endorsement key of \"azure-compliance-status\" with an endorsement value of \"azure-compliant-cvm\".  \n\nWith the current CDDL definition, the only text (or tstr) data types in the measurement-values-map are \"serial-number\" and \"name\" -- neither of which make sense for my scenario:  \n\n- **serial-number (index 8)**: A text string representing the product serial number.\n- **name (index 11)**: a name associated with the measured environment.\n\n```\nmeasurement-values-map = non-empty<{\n  ? &(version: 0) => version-map\n  ? &(svn: 1) => svn-type-choice\n  ? &(digests: 2) => digests-type\n  ? &(flags: 3) => flags-map\n  ? (\n      &(raw-value: 4) => $raw-value-type-choice,\n      ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type\n    )\n  ? &(mac-addr: 6) => mac-addr-type-choice\n  ? &(ip-addr: 7) => ip-addr-type-choice\n  ? &(serial-number: 8) => text\n  ? &(ueid: 9) => ueid-type\n  ? &(uuid: 10) => uuid-type\n  ? &(name: 11) => text\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\n  ? &(integrity-registers: 14) => integrity-registers\n  ? &(int-range: 15) => int-range-type-choice\n  * $$measurement-values-map-extension\n}>\n```\n\nCan the measurement-values-map be updated to include a string datatype?  Perhaps:\n\n```\n  ? &(string: 16) => text\n```\n\nThis is the one that's immediately causing me issues.  But looking at the CDDL primitive data types, I can envision I'll eventually wrestle with this issue for \"bool\" and \"uint\" also.  Perhaps also:\n\n```\n  ? &(bool: 17) => bool\n  ? &(uint: 18) => uint\n```\n\n",
       "createdAt": "2026-08-11T18:47:13Z",
-      "updatedAt": "2026-08-13T09:16:47Z",
+      "updatedAt": "2026-08-17T12:31:53Z",
       "closedAt": null,
       "comments": [
         {
@@ -14956,6 +14956,48 @@
           "body": "I was thinking of something as high-level as:\n\n```\n? &(string-set: 1000) => [ + text ]\n? &(binary-string-set: 1001) => [ + bytes ]\n? &(bool-set: 1002) => [ + bool ]\n? &(number-set: 1003) => [ + number ]\n```\n\nwhere the semantics are entirely defined by the environment-map/mkey combo.\n\nIt looks like this would subsume a lot of different use cases without exploding the representation space.\n\n",
           "createdAt": "2026-08-13T09:16:47Z",
           "updatedAt": "2026-08-13T09:16:47Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "On further thought, the addition of such new \"generic\" entries gives us an opportunity to introduce the \"matchers\" concept that we discussed a few times in the past, and to develop the tag-driven matching already used by `int-range` and `min-svn` more extensively.\nThis would mean that these new entries are created with pre-canned matching criteria, so we wouldn't need to add new codepoints in the mvm map in order to add new matching logic in the future.\n\n```\nmvm = {\n  ? &(type: m) => MATCH-CRITERIA-FOR(type)\n}\n```\nwhere\n```\nMATCH-CRITERIA-FOR(type) = MATCH-CRITERION-1-FOR(type) /\n                           MATCH-CRITERION-2-FOR(type) /\n                           ... /\n                           MATCH-CRITERION-n-FOR(type)\n```\n\nEach `MATCH-CRITERION-i-FOR` would be selected from a set of predefined matching logic options -- e.g., exact match, range match, set match -- that are compatible with the type.  For example, \"exact\" and \"set\" matchers make sense on all types, whereas \"range\" match would only be defined on numeric types.\n\nIn CDDL terms:\n```\nexact-match<type> = #6.123000(type) ; the one and only thing to match -- could just be the untagged \"type\", see (*)\nrange-match<type> = #6.123001([ type / null, type / null ]) ; min and max (null means infinity)\nset-match<type> = #6.123002([ 2* type ]) ; two or more alternative, acceptable states\n\nbasic-type-matching-criteria<type> = exact-match<type> /\n                                     set-match<type>\n\nnumeric-type-matching-criteria<type> = basic-type-matching-criteria<type> /\n                                       range-match<type>\n```\nSo that:\n```\nmvm = {\n  ; ...\n  ? &(bool: 1000) => basic-type-matching-criteria<bool>\n  ? &(number: 1001) => numeric-type-matching-criteria<number>\n  ? &(text: 1002) => basic-matching-criteria<text>\n  ? &(bytes: 1003) => basic-matching-criteria<bytes>\n}\n```\n\n(*) Note that using the bare type to mean \"exact\" matching may be a way to add the matchers functionality into some of the existing mvm types in a backwards compatible manner.",
+          "createdAt": "2026-08-17T08:52:59Z",
+          "updatedAt": "2026-08-17T12:31:53Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Clearly, an obvious requirement here is that to use any of these new keys, an associated CoRIM profile must be present that explicitly and unambiguously describes how the environment-map and mkey are populated when the mvm contains one of these new generic types.\n\n(Note that this is also true for the existing `int-range` type).",
+          "createdAt": "2026-08-17T09:12:28Z",
+          "updatedAt": "2026-08-17T12:08:57Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "> Clearly, an obvious requirement here is that to use any of these new keys, an associated CoRIM profile must be present.\n\nI mostly agree. There are a few tangible options here how to render the semantics persistent and immutable: starting an I-D, providing a spec with a release tag on github or provide a persitent resource (e.g. with a DOI) via your web a RATS entity web resource (e.g. silicon vendor website providing a CoRIM profile).\n\nBest case scenario all CoRIM profiles become RFC via standards track or ISE.",
+          "createdAt": "2026-08-17T09:18:31Z",
+          "updatedAt": "2026-08-17T09:18:31Z"
+        },
+        {
+          "author": "gkostal",
+          "authorAssociation": "NONE",
+          "body": "If CoRIM ends up defining set matching, can it also cover subset matching?  This is required for TPM TCG log verification (e.g., db, dbx, etc.).",
+          "createdAt": "2026-08-17T10:38:04Z",
+          "updatedAt": "2026-08-17T10:42:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If CoRIM ends up defining set matching, can it also cover subset matching? This is required for TPM TCG log verification (e.g., db, dbx, etc.).\n\nSorry, I am not familiar with that.  Can you explain the semantics and perhaps put forward some CDDL? ;-)",
+          "createdAt": "2026-08-17T10:52:25Z",
+          "updatedAt": "2026-08-17T10:52:25Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "CDDL cannot address this (well, with the exception of adding yet another matching criteria to a map that was initially for measurements, was then extended for endorsements, and now is further extended to contain matching criteria).\n\nBut there also might be no problem to solve here: Greg, please correct me, if I am wrong, but what you are referring to is basically: \"a subset of reference values from CoRIM has to match all the entries in a event log\", yes? Or do you want a subset of a CoRIM's measurement values only to apply to a certain event log?",
+          "createdAt": "2026-08-17T12:09:58Z",
+          "updatedAt": "2026-08-17T12:09:58Z"
         }
       ]
     }
