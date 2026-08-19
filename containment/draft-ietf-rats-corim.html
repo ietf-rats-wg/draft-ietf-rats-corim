@@ -5082,18 +5082,13 @@ series-item = [
 <a href="#name-endorsed-values-series-rela" class="selfRef">Endorsed Values Series Relation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.2.2.3-7">The <code>evs</code> relation compares the condition ECTs with the ACS.
-<span class="cref">
-[TBC]
-There is only one ECT in the condition.
-The description doesn't seem to match the data format.
-</span>
-If all the ECTs are found in the ACS, each entry in the series list is evaluated.
-The selection ECTs are then compared with the ACS.
-If the selection criteria are met, the addition ECTs are added to the ACS and the series evaluation ends.
-If the selection criteria are not satisfied, evaluation proceeds to the next series list entry.<a href="#section-8.3.2.2.3-7" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.2.3-8"><a href="#fig-ev-cond" class="auto internal xref">Figure 25</a> shows the profiled Element ECT an Endorsed Value condition.<a href="#section-8.3.2.2.3-8" class="pilcrow">¶</a></p>
-<span id="name-profiled-ect-for-endorsed-v"></span><div id="fig-ev-cond">
+<p id="section-8.3.2.2.3-7">The <code>evs</code> relation contains a list of series items.
+Each series item contains a list of condition ECTs and a list of addition ECTs.
+The condition ECTs are compared with the ACS.
+If the condition criteria are satisfied, the addition ECTs are added to the ACS and the series evaluation ends.
+If the condition criteria are not satisfied, evaluation proceeds to the next series item.<a href="#section-8.3.2.2.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.3-8"><a href="#fig-ev-cond" class="auto internal xref">Figure 25</a> shows the profiled Element ECT for an Endorsed Value condition.<a href="#section-8.3.2.2.3-8" class="pilcrow">¶</a></p>
+<span id="name-profiled-condition-ect-for-"></span><div id="fig-ev-cond">
 <figure id="figure-25">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.3-9.1">
 <pre>
@@ -5105,29 +5100,13 @@ Endorsement-condition-ECT = ({
 </pre>
 </div>
 <figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
-<a href="#name-profiled-ect-for-endorsed-v" class="selfRef">Profiled ECT for Endorsed Values and Endorsed Values Series tuples (condition)</a>
+<a href="#name-profiled-condition-ect-for-" class="selfRef">Profiled condition ECT for ev and evs relations</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.2.2.3-10"><a href="#fig-ev-sel" class="auto internal xref">Figure 26</a> shows the profiled Element ECT an Endorsed Value selection.<a href="#section-8.3.2.2.3-10" class="pilcrow">¶</a></p>
-<span id="name-profiled-ect-for-endorsed-va"></span><div id="fig-ev-sel">
+<p id="section-8.3.2.2.3-10"><a href="#fig-ev-add" class="auto internal xref">Figure 26</a> shows the profiled Element ECT for an Endorsed Value addition.<a href="#section-8.3.2.2.3-10" class="pilcrow">¶</a></p>
+<span id="name-profiled-addition-ect-for-e"></span><div id="fig-ev-add">
 <figure id="figure-26">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.3-11.1">
-<pre>
-Endorsement-selection-ECT = ({
-  environment: environment-map
-  element-list: [ + element-map ]
-  ? authority: [ + $crypto-key-type-choice ]
-}) .within E-ECT
-</pre>
-</div>
-<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
-<a href="#name-profiled-ect-for-endorsed-va" class="selfRef">Profiled ECT for Endorsed Values and Endorsed Values Series tuples (selection)</a>
-                </figcaption></figure>
-</div>
-<p id="section-8.3.2.2.3-12"><a href="#fig-ev-add" class="auto internal xref">Figure 27</a> shows the profiled Element ECT an Endorsed Value addition.<a href="#section-8.3.2.2.3-12" class="pilcrow">¶</a></p>
-<span id="name-profiled-ect-for-endorsed-val"></span><div id="fig-ev-add">
-<figure id="figure-27">
-                <div class="lang-cddl sourcecode" id="section-8.3.2.2.3-13.1">
 <pre>
 Endorsement-addition-ECT = ({
   environment: environment-map
@@ -5138,8 +5117,8 @@ Endorsement-addition-ECT = ({
 }) .within E-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-27" class="selfRef">Figure 27</a>:
-<a href="#name-profiled-ect-for-endorsed-val" class="selfRef">Profiled ECT for Endorsed Values and Endorsed Values Series tuples (addition)</a>
+<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
+<a href="#name-profiled-addition-ect-for-e" class="selfRef">Profiled addition ECT for ev and evs relations</a>
                 </figcaption></figure>
 </div>
 </section>
@@ -5149,9 +5128,9 @@ Endorsement-addition-ECT = ({
               <h6 id="name-keys">
 <a href="#section-8.3.2.2.4" class="section-number selfRef">8.3.2.2.4. </a><a href="#name-keys" class="section-name selfRef">Keys</a>
               </h6>
-<p id="section-8.3.2.2.4-1">The internal representation of Attest Key and Device Identity triples uses the <code>keys</code> relation (<a href="#fig-k" class="auto internal xref">Figure 28</a>), whereby each <code>key-item</code> corresponds to either an <code>attest-key-triple-record</code> or an <code>identity-triple-record</code>.<a href="#section-8.3.2.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.4-1">The internal representation of Attest Key and Device Identity triples uses the <code>keys</code> relation (<a href="#fig-k" class="auto internal xref">Figure 27</a>), whereby each <code>key-item</code> corresponds to either an <code>attest-key-triple-record</code> or an <code>identity-triple-record</code>.<a href="#section-8.3.2.2.4-1" class="pilcrow">¶</a></p>
 <span id="name-keys-relation"></span><div id="fig-k">
-<figure id="figure-28">
+<figure id="figure-27">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.4-2.1">
 <pre>
 keys = [ + key-item ]
@@ -5162,7 +5141,7 @@ key-item = {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-28" class="selfRef">Figure 28</a>:
+<figcaption><a href="#figure-27" class="selfRef">Figure 27</a>:
 <a href="#name-keys-relation" class="selfRef">Keys Relation</a>
                 </figcaption></figure>
 </div>
@@ -5178,20 +5157,20 @@ Define constraints.
               <h6 id="name-domain-memberships">
 <a href="#section-8.3.2.2.5" class="section-number selfRef">8.3.2.2.5. </a><a href="#name-domain-memberships" class="section-name selfRef">Domain Memberships</a>
               </h6>
-<p id="section-8.3.2.2.5-1">The internal representation of Domain Membership uses the <code>dm</code> relation (<a href="#fig-dm" class="auto internal xref">Figure 29</a>), whereby each <code>domain-item</code> corresponds to a <code>domain-membership-triple-record</code>.<a href="#section-8.3.2.2.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.5-1">The internal representation of Domain Membership uses the <code>dm</code> relation (<a href="#fig-dm" class="auto internal xref">Figure 28</a>), whereby each <code>domain-item</code> corresponds to a <code>domain-membership-triple-record</code>.<a href="#section-8.3.2.2.5-1" class="pilcrow">¶</a></p>
 <span id="name-domain-membership-relation"></span><div id="fig-dm">
-<figure id="figure-29">
+<figure id="figure-28">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.5-2.1">
 <pre>
 dm = [ + domain-item ]
 </pre>
 </div>
-<figcaption><a href="#figure-29" class="selfRef">Figure 29</a>:
+<figcaption><a href="#figure-28" class="selfRef">Figure 28</a>:
 <a href="#name-domain-membership-relation" class="selfRef">Domain Membership Relation</a>
                 </figcaption></figure>
 </div>
 <span id="name-domain-item"></span><div id="fig-dm-item">
-<figure id="figure-30">
+<figure id="figure-29">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.5-3.1">
 <pre>
 domain-item = {
@@ -5200,13 +5179,13 @@ domain-item = {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-30" class="selfRef">Figure 30</a>:
+<figcaption><a href="#figure-29" class="selfRef">Figure 29</a>:
 <a href="#name-domain-item" class="selfRef">Domain Item</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.2.2.5-4"><a href="#fig-domain-ect-cond" class="auto internal xref">Figure 31</a> shows the profiled Domain ECT for Domain Membership conditions.<a href="#section-8.3.2.2.5-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.5-4"><a href="#fig-domain-ect-cond" class="auto internal xref">Figure 30</a> shows the profiled Domain ECT for Domain Membership conditions.<a href="#section-8.3.2.2.5-4" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-domain-mem"></span><div id="fig-domain-ect-cond">
-<figure id="figure-31">
+<figure id="figure-30">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.5-5.1">
 <pre>
 Domain-condition-ECT = ({
@@ -5216,15 +5195,15 @@ Domain-condition-ECT = ({
 }) .within M-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-31" class="selfRef">Figure 31</a>:
+<figcaption><a href="#figure-30" class="selfRef">Figure 30</a>:
 <a href="#name-profiled-ect-for-domain-mem" class="selfRef">Profiled ECT for Domain Membership (condition)</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.3.2.2.5-6">Only the <code>members</code> are used for matching, not the <code>environment</code>.
 Therefore, the <code>environment</code> attribute is excluded from the ECT condition.<a href="#section-8.3.2.2.5-6" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.2.5-7"><a href="#fig-domain-ect-add" class="auto internal xref">Figure 32</a> shows the profiled Domain ECT for Domain Membership additions.<a href="#section-8.3.2.2.5-7" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.5-7"><a href="#fig-domain-ect-add" class="auto internal xref">Figure 31</a> shows the profiled Domain ECT for Domain Membership additions.<a href="#section-8.3.2.2.5-7" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-domain-memb"></span><div id="fig-domain-ect-add">
-<figure id="figure-32">
+<figure id="figure-31">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.5-8.1">
 <pre>
 Domain-addition-ECT = ({
@@ -5235,7 +5214,7 @@ Domain-addition-ECT = ({
 }) .within M-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-32" class="selfRef">Figure 32</a>:
+<figcaption><a href="#figure-31" class="selfRef">Figure 31</a>:
 <a href="#name-profiled-ect-for-domain-memb" class="selfRef">Profiled ECT for Domain Membership (addition)</a>
                 </figcaption></figure>
 </div>
@@ -5246,20 +5225,20 @@ Domain-addition-ECT = ({
               <h6 id="name-trust-dependencies">
 <a href="#section-8.3.2.2.6" class="section-number selfRef">8.3.2.2.6. </a><a href="#name-trust-dependencies" class="section-name selfRef">Trust Dependencies</a>
               </h6>
-<p id="section-8.3.2.2.6-1">The internal representation of Trust Dependency uses the <code>td</code> relation (<a href="#fig-td" class="auto internal xref">Figure 33</a>), whereby each <code>td-item</code> corresponds to a <code>trust-dependency-triple-record</code>.<a href="#section-8.3.2.2.6-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.6-1">The internal representation of Trust Dependency uses the <code>td</code> relation (<a href="#fig-td" class="auto internal xref">Figure 32</a>), whereby each <code>td-item</code> corresponds to a <code>trust-dependency-triple-record</code>.<a href="#section-8.3.2.2.6-1" class="pilcrow">¶</a></p>
 <span id="name-trust-dependency-relation"></span><div id="fig-td">
-<figure id="figure-33">
+<figure id="figure-32">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.6-2.1">
 <pre>
 td = [ + td-item ]
 </pre>
 </div>
-<figcaption><a href="#figure-33" class="selfRef">Figure 33</a>:
+<figcaption><a href="#figure-32" class="selfRef">Figure 32</a>:
 <a href="#name-trust-dependency-relation" class="selfRef">Trust Dependency Relation</a>
                 </figcaption></figure>
 </div>
 <span id="name-trust-dependency-item"></span><div id="fig-td-item">
-<figure id="figure-34">
+<figure id="figure-33">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.6-3.1">
 <pre>
 td-item = {
@@ -5268,13 +5247,13 @@ td-item = {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-34" class="selfRef">Figure 34</a>:
+<figcaption><a href="#figure-33" class="selfRef">Figure 33</a>:
 <a href="#name-trust-dependency-item" class="selfRef">Trust Dependency Item</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.2.2.6-4"><a href="#fig-td-ect-cond" class="auto internal xref">Figure 35</a> shows the profiled <code>T-ECT</code> for Trust Dependency conditions.<a href="#section-8.3.2.2.6-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.6-4"><a href="#fig-td-ect-cond" class="auto internal xref">Figure 34</a> shows the profiled <code>T-ECT</code> for Trust Dependency conditions.<a href="#section-8.3.2.2.6-4" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-trust-depe"></span><div id="fig-td-ect-cond">
-<figure id="figure-35">
+<figure id="figure-34">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.6-5.1">
 <pre>
 Trust-Dependency-condition-ECT = ({
@@ -5285,14 +5264,14 @@ Trust-Dependency-condition-ECT = ({
 }) .within T-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-35" class="selfRef">Figure 35</a>:
+<figcaption><a href="#figure-34" class="selfRef">Figure 34</a>:
 <a href="#name-profiled-ect-for-trust-depe" class="selfRef">Profiled ECT for Trust Dependency (condition)</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.3.2.2.6-6">Both the <code>trustees</code> and <code>environment</code> are used for matching.<a href="#section-8.3.2.2.6-6" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.2.6-7"><a href="#fig-td-ect-add" class="auto internal xref">Figure 36</a> shows the profiled <code>T-ECT</code> for Trust Dependency additions.<a href="#section-8.3.2.2.6-7" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.6-7"><a href="#fig-td-ect-add" class="auto internal xref">Figure 35</a> shows the profiled <code>T-ECT</code> for Trust Dependency additions.<a href="#section-8.3.2.2.6-7" class="pilcrow">¶</a></p>
 <span id="name-profiled-ect-for-trust-depen"></span><div id="fig-td-ect-add">
-<figure id="figure-36">
+<figure id="figure-35">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.2.6-8.1">
 <pre>
 Trust-Dependency-addition-ECT = ({
@@ -5303,15 +5282,15 @@ Trust-Dependency-addition-ECT = ({
 }) .within T-ECT
 </pre>
 </div>
-<figcaption><a href="#figure-36" class="selfRef">Figure 36</a>:
+<figcaption><a href="#figure-35" class="selfRef">Figure 35</a>:
 <a href="#name-profiled-ect-for-trust-depen" class="selfRef">Profiled ECT for Trust Dependency (addition)</a>
                 </figcaption></figure>
 </div>
 <p id="section-8.3.2.2.6-9">Before the <code>td</code> relation is added to the Staging Area, the trust dependency graph it describes MUST be checked to ensure that it is a directed acyclic graph.
 If a cycle is detected, the <code>td</code> relation MUST NOT be added to the Staging Area, and this condition SHOULD be logged.
-This is a prerequisite for the <code>match_and_augment</code> algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 48</a>.
+This is a prerequisite for the <code>match_and_augment</code> algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a>.
 Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.<a href="#section-8.3.2.2.6-9" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.2.6-10">A trust dependency relation is added to the ACS if the <code>enviroment</code> and all <code>trustess</code> exist in the membership graph expressed by the <code>dm</code> relation (<a href="#fig-dm" class="auto internal xref">Figure 29</a>) in the ACS.<a href="#section-8.3.2.2.6-10" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.6-10">A trust dependency relation is added to the ACS if the <code>enviroment</code> and all <code>trustess</code> exist in the membership graph expressed by the <code>dm</code> relation (<a href="#fig-dm" class="auto internal xref">Figure 28</a>) in the ACS.<a href="#section-8.3.2.2.6-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5321,15 +5300,15 @@ Please note that a subsequent Appraisal Policy for Evidence may decide not to pr
             <h5 id="name-acs">
 <a href="#section-8.3.2.3" class="section-number selfRef">8.3.2.3. </a><a href="#name-acs" class="section-name selfRef">ACS</a>
             </h5>
-<p id="section-8.3.2.3-1">The ACS (<a href="#fig-acs" class="auto internal xref">Figure 37</a>) is a list of ECTs that represent the Attester's actual state as determined by various authoritative sources (Reference Value Providers and Endorsers) collected by the Verifier.<a href="#section-8.3.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.3-1">The ACS (<a href="#fig-acs" class="auto internal xref">Figure 36</a>) is a list of ECTs that represent the Attester's actual state as determined by various authoritative sources (Reference Value Providers and Endorsers) collected by the Verifier.<a href="#section-8.3.2.3-1" class="pilcrow">¶</a></p>
 <span id="name-acs-2"></span><div id="fig-acs">
-<figure id="figure-37">
+<figure id="figure-36">
               <div class="lang-cddl sourcecode" id="section-8.3.2.3-2.1">
 <pre>
 ACS = [ + ECT ]
 </pre>
 </div>
-<figcaption><a href="#figure-37" class="selfRef">Figure 37</a>:
+<figcaption><a href="#figure-36" class="selfRef">Figure 36</a>:
 <a href="#name-acs-2" class="selfRef">ACS</a>
               </figcaption></figure>
 </div>
@@ -5346,9 +5325,9 @@ Logically, as the ACS represents the conjunction of all claims, adding an ECT en
             <h5 id="name-staging-area">
 <a href="#section-8.3.2.4" class="section-number selfRef">8.3.2.4. </a><a href="#name-staging-area" class="section-name selfRef">Staging Area</a>
             </h5>
-<p id="section-8.3.2.4-1">The staging area (<a href="#fig-sa" class="auto internal xref">Figure 38</a>) is a list of the relations corresponding to the transformed triples.<a href="#section-8.3.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.4-1">The staging area (<a href="#fig-sa" class="auto internal xref">Figure 37</a>) is a list of the relations corresponding to the transformed triples.<a href="#section-8.3.2.4-1" class="pilcrow">¶</a></p>
 <span id="name-staging-area-2"></span><div id="fig-sa">
-<figure id="figure-38">
+<figure id="figure-37">
               <div class="lang-cddl sourcecode" id="section-8.3.2.4-2.1">
 <pre>
 StagingArea = [
@@ -5361,7 +5340,7 @@ StagingArea = [
 ]
 </pre>
 </div>
-<figcaption><a href="#figure-38" class="selfRef">Figure 38</a>:
+<figcaption><a href="#figure-37" class="selfRef">Figure 37</a>:
 <a href="#name-staging-area-2" class="selfRef">Staging Area</a>
               </figcaption></figure>
 </div>
@@ -5486,10 +5465,10 @@ Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.3.3.
 <a href="#section-8.3.3.7.2" class="section-number selfRef">8.3.3.7.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
               </h6>
 <p id="section-8.3.3.7.2-1">Reference Values transformation involves mapping Reference Value triples into into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.3.2.2.2</a>).
-Each <code>reference-triple-record</code> (<a href="#triple-rv" class="auto internal xref">Figure 1</a>) is transformed into an <code>rv-item</code> (<a href="#fig-rv" class="auto internal xref">Figure 20</a>) as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 39</a>.
+Each <code>reference-triple-record</code> (<a href="#triple-rv" class="auto internal xref">Figure 1</a>) is transformed into an <code>rv-item</code> (<a href="#fig-rv" class="auto internal xref">Figure 20</a>) as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 38</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.3.3.7.2-1" class="pilcrow">¶</a></p>
 <span id="name-reference-value-triple-tran"></span><div id="algo-rv-transform">
-<figure id="figure-39">
+<figure id="figure-38">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.2-2.1">
 <pre>
 FUNC transform(
@@ -5515,7 +5494,7 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-39" class="selfRef">Figure 39</a>:
+<figcaption><a href="#figure-38" class="selfRef">Figure 38</a>:
 <a href="#name-reference-value-triple-tran" class="selfRef">Reference Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5529,10 +5508,10 @@ Since they may contain ranges rather than individual values (see, for example, <
 <a href="#section-8.3.3.7.3" class="section-number selfRef">8.3.3.7.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
               </h6>
 <p id="section-8.3.3.7.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.3.2.2.3</a>).<a href="#section-8.3.3.7.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.7.3-2">A <code>endorsed-triple-record</code> (<a href="#triple-ev" class="auto internal xref">Figure 2</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 40</a>.
+<p id="section-8.3.3.7.3-2">A <code>endorsed-triple-record</code> (<a href="#triple-ev" class="auto internal xref">Figure 2</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 39</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.3.3.7.3-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-value-triple-trans"></span><div id="algo-ev-transform">
-<figure id="figure-40">
+<figure id="figure-39">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.3-3.1">
 <pre>
 FUNC transform(
@@ -5560,14 +5539,14 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-40" class="selfRef">Figure 40</a>:
+<figcaption><a href="#figure-39" class="selfRef">Figure 39</a>:
 <a href="#name-endorsed-value-triple-trans" class="selfRef">Endorsed Value Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.3.7.3-4">A <code>conditional-endorsement-triple-record</code> (<a href="#triple-ce" class="auto internal xref">Figure 3</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 41</a>.
+<p id="section-8.3.3.7.3-4">A <code>conditional-endorsement-triple-record</code> (<a href="#triple-ce" class="auto internal xref">Figure 3</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ce-transform" class="auto internal xref">Figure 40</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.3.3.7.3-4" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-tripl"></span><div id="algo-ce-transform">
-<figure id="figure-41">
+<figure id="figure-40">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.3-5.1">
 <pre>
 FUNC transform(
@@ -5597,18 +5576,18 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-41" class="selfRef">Figure 41</a>:
+<figcaption><a href="#figure-40" class="selfRef">Figure 40</a>:
 <a href="#name-conditional-endorsement-tripl" class="selfRef">Conditional Endorsement Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.3.7.3-6">Each <code>conditional-endorsement-series-triple-record</code> (<a href="#triple-ces" class="auto internal xref">Figure 4</a>) is transformed into an <code>evs-item</code> (<a href="#fig-evs" class="auto internal xref">Figure 24</a>) as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 42</a>.
+<p id="section-8.3.3.7.3-6">Each <code>conditional-endorsement-series-triple-record</code> (<a href="#triple-ces" class="auto internal xref">Figure 4</a>) is transformed into an <code>evs-item</code> (<a href="#fig-evs" class="auto internal xref">Figure 24</a>) as described in <a href="#algo-ces-transform" class="auto internal xref">Figure 41</a>.
 (The pseudocode reuses the <code>mms_to_ems</code> function defined in <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.3.3.7.3-6" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.7.3-7">The <code>conditional-endorsement-series-triple-record</code> contains a condition that is common to all series items.
 Each entry in the series is a <code>conditional-series-record</code> with conditions that have differing values and additions that are specific to those values.<a href="#section-8.3.3.7.3-7" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.7.3-8">The internal representation for a conditional endorsement series consists of a list of condition-addition pairs where the common condition in the series is replicated for each series item.
 The transformation algorithm combines the common conditions with each series item condition to simplify Verifier processing (see <a href="#sec-proc-evs-rel" class="auto internal xref">Section 8.3.4.3.2</a>).<a href="#section-8.3.3.7.3-8" class="pilcrow">¶</a></p>
 <span id="name-conditional-endorsement-serie"></span><div id="algo-ces-transform">
-<figure id="figure-42">
+<figure id="figure-41">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.3-9.1">
 <pre>
 FUNC transform(
@@ -5642,7 +5621,7 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-42" class="selfRef">Figure 42</a>:
+<figcaption><a href="#figure-41" class="selfRef">Figure 41</a>:
 <a href="#name-conditional-endorsement-serie" class="selfRef">Conditional Endorsement Series Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5654,9 +5633,9 @@ FUNC transform(
 <a href="#section-8.3.3.7.4" class="section-number selfRef">8.3.3.7.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
               </h6>
 <p id="section-8.3.3.7.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.3.2.2.4</a>).<a href="#section-8.3.3.7.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.7.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 28</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 43</a>.<a href="#section-8.3.3.7.4-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 27</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 42</a>.<a href="#section-8.3.3.7.4-2" class="pilcrow">¶</a></p>
 <span id="name-key-triple-transformation"></span><div id="algo-key-transform">
-<figure id="figure-43">
+<figure id="figure-42">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.4-3.1">
 <pre>
 FUNC transform(
@@ -5694,7 +5673,7 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-43" class="selfRef">Figure 43</a>:
+<figcaption><a href="#figure-42" class="selfRef">Figure 42</a>:
 <a href="#name-key-triple-transformation" class="selfRef">Key Triple Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5707,9 +5686,9 @@ FUNC transform(
 <a href="#section-8.3.3.7.5" class="section-number selfRef">8.3.3.7.5. </a><a href="#name-domain-membership-transform" class="section-name selfRef">Domain Membership Transformation</a>
               </h6>
 <p id="section-8.3.3.7.5-1">Domain membership transformation maps Domain Membership triples into <code>dm</code> relations (see <a href="#sec-ir-domain-mem" class="auto internal xref">Section 8.3.2.2.5</a>).<a href="#section-8.3.3.7.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.7.5-2">Prior to adding a domain membership relation, a <code>domain-membership-triple-record</code> (<a href="#triple-dm" class="auto internal xref">Figure 7</a>) is transformed into a <code>domain-item</code> (<a href="#fig-dm" class="auto internal xref">Figure 29</a>) using the domain membership transformation algorithm <a href="#algo-domain-member-transform" class="auto internal xref">Figure 44</a>.<a href="#section-8.3.3.7.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.5-2">Prior to adding a domain membership relation, a <code>domain-membership-triple-record</code> (<a href="#triple-dm" class="auto internal xref">Figure 7</a>) is transformed into a <code>domain-item</code> (<a href="#fig-dm" class="auto internal xref">Figure 28</a>) using the domain membership transformation algorithm <a href="#algo-domain-member-transform" class="auto internal xref">Figure 43</a>.<a href="#section-8.3.3.7.5-2" class="pilcrow">¶</a></p>
 <span id="name-domain-membership-transforma"></span><div id="algo-domain-member-transform">
-<figure id="figure-44">
+<figure id="figure-43">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.5-3.1">
 <pre>
 FUNC transform(
@@ -5731,7 +5710,7 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-44" class="selfRef">Figure 44</a>:
+<figcaption><a href="#figure-43" class="selfRef">Figure 43</a>:
 <a href="#name-domain-membership-transforma" class="selfRef">Domain Membership Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5743,9 +5722,9 @@ FUNC transform(
               <h6 id="name-trust-dependency-transforma">
 <a href="#section-8.3.3.7.6" class="section-number selfRef">8.3.3.7.6. </a><a href="#name-trust-dependency-transforma" class="section-name selfRef">Trust Dependency Transformation</a>
               </h6>
-<p id="section-8.3.3.7.6-1">Prior to adding a trust dependency relation, Trust Dependency triples <code>trust-dependency-triple-record</code> (<a href="#triple-td" class="auto internal xref">Figure 8</a>) are transformed into <code>td</code> relations (see <a href="#sec-ir-trust-dep" class="auto internal xref">Section 8.3.2.2.6</a>) using the trust dependency transformation algorithm <a href="#algo-trust-dependency-transform" class="auto internal xref">Figure 45</a>.<a href="#section-8.3.3.7.6-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.6-1">Prior to adding a trust dependency relation, Trust Dependency triples <code>trust-dependency-triple-record</code> (<a href="#triple-td" class="auto internal xref">Figure 8</a>) are transformed into <code>td</code> relations (see <a href="#sec-ir-trust-dep" class="auto internal xref">Section 8.3.2.2.6</a>) using the trust dependency transformation algorithm <a href="#algo-trust-dependency-transform" class="auto internal xref">Figure 44</a>.<a href="#section-8.3.3.7.6-1" class="pilcrow">¶</a></p>
 <span id="name-trust-dependency-transformat"></span><div id="algo-trust-dependency-transform">
-<figure id="figure-45">
+<figure id="figure-44">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.6-2.1">
 <pre>
 FUNC transform(
@@ -5769,7 +5748,7 @@ FUNC transform(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-45" class="selfRef">Figure 45</a>:
+<figcaption><a href="#figure-44" class="selfRef">Figure 44</a>:
 <a href="#name-trust-dependency-transformat" class="selfRef">Trust Dependency Transformation</a>
                 </figcaption></figure>
 </div>
@@ -5786,7 +5765,7 @@ FUNC transform(
 <p id="section-8.3.3.8-1">At the end of Phase 1 all of the extracted and validated tags are loaded into an "appraisal context", consisting of the ACS and the staging area.
 The ACS is initialized with all the addition ECTs in the <code>ev</code> relation:<a href="#section-8.3.3.8-1" class="pilcrow">¶</a></p>
 <span id="name-acs-initialization"></span><div id="algo-init-acs">
-<figure id="figure-46">
+<figure id="figure-45">
               <div class="lang-pseudocode sourcecode" id="section-8.3.3.8-2.1">
 <pre>
 FUNC init_acs(ae: ae) -&gt; ACS {
@@ -5797,13 +5776,13 @@ FUNC init_acs(ae: ae) -&gt; ACS {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-46" class="selfRef">Figure 46</a>:
+<figcaption><a href="#figure-45" class="selfRef">Figure 45</a>:
 <a href="#name-acs-initialization" class="selfRef">ACS Initialization</a>
               </figcaption></figure>
 </div>
 <p id="section-8.3.3.8-3">The staging area is loaded with <code>rv</code>, <code>ev</code>, <code>evs</code>, <code>keys</code>, <code>dm</code> and <code>td</code> relations, in that order.<a href="#section-8.3.3.8-3" class="pilcrow">¶</a></p>
 <span id="name-staging-area-initialization"></span><div id="algo-init-sa">
-<figure id="figure-47">
+<figure id="figure-46">
               <div class="lang-pseudocode sourcecode" id="section-8.3.3.8-4.1">
 <pre>
 FUNC init_staging_area(
@@ -5827,7 +5806,7 @@ FUNC init_staging_area(
 }
 </pre>
 </div>
-<figcaption><a href="#figure-47" class="selfRef">Figure 47</a>:
+<figcaption><a href="#figure-46" class="selfRef">Figure 46</a>:
 <a href="#name-staging-area-initialization" class="selfRef">Staging Area Initialization</a>
               </figcaption></figure>
 </div>
@@ -5844,10 +5823,10 @@ FUNC init_staging_area(
 <p id="section-8.3.4-2">Generally, the match and augment process involves pulling relations from the staging area one by one, in a specific order, and matching their conditions against the current state of the ACS according to the matching rules defined for each relation.
 If there is a match, the additions in the matched relation are added to the ACS, thereby providing its "augmentation".
 Otherwise, the algorithm moves on to the next relation.
-Any augmentations to the ACS (i.e., the <code>acs::APPEND</code> operation in <a href="#algo-match-and-augment" class="auto internal xref">Figure 48</a>) MUST be atomic.
+Any augmentations to the ACS (i.e., the <code>acs::APPEND</code> operation in <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a>) MUST be atomic.
 Once all the relations in the staging area have been processed, the CoRIM processor forwards the augmented ACS to subsequent appraisal processors as needed.<a href="#section-8.3.4-2" class="pilcrow">¶</a></p>
 <span id="name-match-and-augment-algorithm"></span><div id="algo-match-and-augment">
-<figure id="figure-48">
+<figure id="figure-47">
             <div class="lang-pseudocode sourcecode" id="section-8.3.4-3.1">
 <pre>
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
@@ -5861,7 +5840,7 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-48" class="selfRef">Figure 48</a>:
+<figcaption><a href="#figure-47" class="selfRef">Figure 47</a>:
 <a href="#name-match-and-augment-algorithm" class="selfRef">Match and Augment Algorithm</a>
             </figcaption></figure>
 </div>
@@ -5881,7 +5860,7 @@ This could involve simply appending the addition ECT.<a href="#section-8.3.4-4" 
 Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
 The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an <code>environment</code> matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
-The "match and augment" algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 48</a> assumes that relations have been topologically sorted prior to loading into the staging area (<a href="#algo-init-sa" class="auto internal xref">Figure 47</a>).<a href="#section-8.3.4.1-1" class="pilcrow">¶</a></p>
+The "match and augment" algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a> assumes that relations have been topologically sorted prior to loading into the staging area (<a href="#algo-init-sa" class="auto internal xref">Figure 46</a>).<a href="#section-8.3.4.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-proc-rv">
@@ -5933,11 +5912,11 @@ If the two match, the addition ECT is added to the ACS.<a href="#section-8.3.4.3
               <h6 id="name-processing-evs-relations">
 <a href="#section-8.3.4.3.2" class="section-number selfRef">8.3.4.3.2. </a><a href="#name-processing-evs-relations" class="section-name selfRef">Processing <code>evs</code> Relations</a>
               </h6>
-<p id="section-8.3.4.3.2-1">The Conditional Endorsement Series relation is processed using a modified <code>match_and_augment</code> function (see <a href="#algo-match-and-augment" class="auto internal xref">Figure 48</a>) where SERIES-MATCH() calls MATCH() (see <a href="#algo-series-match-and-augment" class="auto internal xref">Figure 49</a>).<a href="#section-8.3.4.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.2-1">The Conditional Endorsement Series relation is processed using a modified <code>match_and_augment</code> function (see <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a>) where SERIES-MATCH() calls MATCH() (see <a href="#algo-series-match-and-augment" class="auto internal xref">Figure 48</a>).<a href="#section-8.3.4.3.2-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.2-2">The first series item that matches terminates processing of subsequent series items.<a href="#section-8.3.4.3.2-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.2-3">The matched item is appended to the ACS.<a href="#section-8.3.4.3.2-3" class="pilcrow">¶</a></p>
 <span id="name-series-match-and-augment-al"></span><div id="algo-series-match-and-augment">
-<figure id="figure-49">
+<figure id="figure-48">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.4.3.2-4.1">
 <pre>
 FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
@@ -5957,7 +5936,7 @@ FUNC SERIES-MATCH(acs: ACS, series: SERIES)
 }
 </pre>
 </div>
-<figcaption><a href="#figure-49" class="selfRef">Figure 49</a>:
+<figcaption><a href="#figure-48" class="selfRef">Figure 48</a>:
 <a href="#name-series-match-and-augment-al" class="selfRef">Series Match and Augment Algorithm</a>
                 </figcaption></figure>
 </div>
@@ -6014,9 +5993,9 @@ This specification does not mandate any specific topological sorting algorithm.<
 TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS.
 TDGs need not be isomorphs of DMGs.<a href="#section-8.3.4.3.5-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.5-2">The matching algorithm ensures that the <code>td</code> items queued for addition to the ACS are also Domain Membership ECTs already contained in the ACS.
-This matching algorithm is the plug-in for the parameter <code>item-condition</code> of <code>acs::MATCH</code> defined in <a href="#algo-match-and-augment" class="auto internal xref">Figure 48</a>.<a href="#section-8.3.4.3.5-2" class="pilcrow">¶</a></p>
+This matching algorithm is the plug-in for the parameter <code>item-condition</code> of <code>acs::MATCH</code> defined in <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a>.<a href="#section-8.3.4.3.5-2" class="pilcrow">¶</a></p>
 <span id="name-process-trust-dependency-al"></span><div id="algo-process-trust-dep">
-<figure id="figure-50">
+<figure id="figure-49">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.4.3.5-3.1">
 <pre>
 FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -&gt; bool {
@@ -6030,7 +6009,7 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -&gt; bool {
     RETURN FALSE
 </pre>
 </div>
-<figcaption><a href="#figure-50" class="selfRef">Figure 50</a>:
+<figcaption><a href="#figure-49" class="selfRef">Figure 49</a>:
 <a href="#name-process-trust-dependency-al" class="selfRef">Process Trust Dependency Algorithm</a>
                 </figcaption></figure>
 </div>
@@ -6185,9 +6164,9 @@ The comparison MUST return true if the <code>uint</code> values are equal.<a hre
                 </ul>
 <p id="section-8.3.4.4.5.3-6">A minimum SVN is only meaningful as an entry value when it is an endorsed value that has been added to the ACS.
 The condition therefore treats the minimum SVN as an exact state, rather than as something to be compared with inequality.<a href="#section-8.3.4.4.5.3-6" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.4.5.3-7">The pseudocode for the above algorithm is shown in <a href="#fig-comp-svn" class="auto internal xref">Figure 51</a>.<a href="#section-8.3.4.4.5.3-7" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.3-7">The pseudocode for the above algorithm is shown in <a href="#fig-comp-svn" class="auto internal xref">Figure 50</a>.<a href="#section-8.3.4.4.5.3-7" class="pilcrow">¶</a></p>
 <span id="name-svn-comparison"></span><div id="fig-comp-svn">
-<figure id="figure-51">
+<figure id="figure-50">
                   <div class="lang-pseudocode sourcecode" id="section-8.3.4.4.5.3-8.1">
 <pre>
 FUNC compare(
@@ -6220,7 +6199,7 @@ FUNC is_plain_svn(v: svn-type-choice) -&gt; bool {
 }
 </pre>
 </div>
-<figcaption><a href="#figure-51" class="selfRef">Figure 51</a>:
+<figcaption><a href="#figure-50" class="selfRef">Figure 50</a>:
 <a href="#name-svn-comparison" class="selfRef">SVN Comparison</a>
                   </figcaption></figure>
 </div>
@@ -6381,12 +6360,12 @@ This information can then be encoded in an Attestation Result that can be unders
                 <p id="section-8.3.6.1-2.2.1">A certifier (Certifier Inc.), which has evaluated the device according to the PSA Certified scheme.<a href="#section-8.3.6.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-8.3.6.1-3">The manufacturer's CoRIM contains a single CoMID with two Reference Values triples (see <a href="#ex-comid-rvt" class="auto internal xref">Figure 52</a>) describing two acceptable states of the Attester.
+<p id="section-8.3.6.1-3">The manufacturer's CoRIM contains a single CoMID with two Reference Values triples (see <a href="#ex-comid-rvt" class="auto internal xref">Figure 51</a>) describing two acceptable states of the Attester.
 The Attester is identified by the class attribute Implementation ID with the value <code>6163..3031</code>.
 One state has a digest of <code>9a27..86aa</code> for the "PRoT" component, and the other has a digest of <code>a3fe..5065</code>.<a href="#section-8.3.6.1-3" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.1-4">For the remainder of this section, we will assume that the CoRIM containing this CoMID is signed using the manufacturer's certificate, which has a thumbprint of <code>482e..78b3</code>.<a href="#section-8.3.6.1-4" class="pilcrow">¶</a></p>
 <span id="name-example-manufacturer-comid"></span><div id="ex-comid-rvt">
-<figure id="figure-52">
+<figure id="figure-51">
               <div class="breakable lang-cbor-diag sourcecode" id="section-8.3.6.1-5.1">
 <pre>
 / concise-mid-tag / {
@@ -6457,15 +6436,15 @@ One state has a digest of <code>9a27..86aa</code> for the "PRoT" component, and 
 }
 </pre>
 </div>
-<figcaption><a href="#figure-52" class="selfRef">Figure 52</a>:
+<figcaption><a href="#figure-51" class="selfRef">Figure 51</a>:
 <a href="#name-example-manufacturer-comid" class="selfRef">Example Manufacturer CoMID</a>
               </figcaption></figure>
 </div>
-<p id="section-8.3.6.1-6">The CoMID from the certifier contains a Conditional Endorsement triple that describes the Attester who was granted the security certification <code>1234567890123 - 12345</code> (see <a href="#ex-comid-cet" class="auto internal xref">Figure 53</a>).
+<p id="section-8.3.6.1-6">The CoMID from the certifier contains a Conditional Endorsement triple that describes the Attester who was granted the security certification <code>1234567890123 - 12345</code> (see <a href="#ex-comid-cet" class="auto internal xref">Figure 52</a>).
 This Attester has Implementation ID <code>6163..3031</code> and the digest associated with the "PRoT" component is <code>9a27..86aa</code>.
 In the triple, the security certification is represented as <code>endorsements</code>, while the target identification information is represented as <code>conditions</code>.<a href="#section-8.3.6.1-6" class="pilcrow">¶</a></p>
 <span id="name-example-certifier-comid"></span><div id="ex-comid-cet">
-<figure id="figure-53">
+<figure id="figure-52">
               <div class="breakable lang-cbor-diag sourcecode" id="section-8.3.6.1-7.1">
 <pre>
 / concise-mid-tag / {
@@ -6536,7 +6515,7 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-53" class="selfRef">Figure 53</a>:
+<figcaption><a href="#figure-52" class="selfRef">Figure 52</a>:
 <a href="#name-example-certifier-comid" class="selfRef">Example Certifier CoMID</a>
               </figcaption></figure>
 </div>
@@ -6557,10 +6536,10 @@ In the triple, the security certification is represented as <code>endorsements</
 <a href="#section-8.3.6.3" class="section-number selfRef">8.3.6.3. </a><a href="#name-internal-representations" class="section-name selfRef">Internal Representations</a>
             </h5>
 <p id="section-8.3.6.3-1">As described in <a href="#sec-phase-1" class="auto internal xref">Section 8.3.3</a>, once all the "raw" inputs and have been validated, input transformations can start.<a href="#section-8.3.6.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.6.3-2">The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding <code>rv-item</code>s (<a href="#ex-rv-item-1" class="auto internal xref">Figure 54</a>, <a href="#ex-rv-item-2" class="auto internal xref">Figure 55</a>) using the transformations defined in <a href="#algo-rv-transform" class="auto internal xref">Figure 39</a>.<a href="#section-8.3.6.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.3-2">The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding <code>rv-item</code>s (<a href="#ex-rv-item-1" class="auto internal xref">Figure 53</a>, <a href="#ex-rv-item-2" class="auto internal xref">Figure 54</a>) using the transformations defined in <a href="#algo-rv-transform" class="auto internal xref">Figure 38</a>.<a href="#section-8.3.6.3-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.3-3">The first triple:<a href="#section-8.3.6.3-3" class="pilcrow">¶</a></p>
 <span id="name-first-rv-relation-item"></span><div id="ex-rv-item-1">
-<figure id="figure-54">
+<figure id="figure-53">
               <div class="lang-cbor-diag sourcecode" id="section-8.3.6.3-4.1">
 <pre>
 {
@@ -6609,13 +6588,13 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-54" class="selfRef">Figure 54</a>:
+<figcaption><a href="#figure-53" class="selfRef">Figure 53</a>:
 <a href="#name-first-rv-relation-item" class="selfRef">First rv Relation Item</a>
               </figcaption></figure>
 </div>
 <p id="section-8.3.6.3-5">The second triple:<a href="#section-8.3.6.3-5" class="pilcrow">¶</a></p>
 <span id="name-second-rv-relation-item"></span><div id="ex-rv-item-2">
-<figure id="figure-55">
+<figure id="figure-54">
               <div class="lang-cbor-diag sourcecode" id="section-8.3.6.3-6.1">
 <pre>
 {
@@ -6664,14 +6643,14 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-55" class="selfRef">Figure 55</a>:
+<figcaption><a href="#figure-54" class="selfRef">Figure 54</a>:
 <a href="#name-second-rv-relation-item" class="selfRef">Second rv Relation Item</a>
               </figcaption></figure>
 </div>
 <p id="section-8.3.6.3-7">Note the authorities in the addition ECT of both items, which are set to <code>482e..78b3</code>, and correspond to the thumbprint of the manufacturer's signing certificate.<a href="#section-8.3.6.3-7" class="pilcrow">¶</a></p>
-<p id="section-8.3.6.3-8">The Conditional Endorsement triple from the certifier's CoMID is mapped to its corresponding <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 56</a>) using the transformation defined in <a href="#algo-ce-transform" class="auto internal xref">Figure 41</a>.<a href="#section-8.3.6.3-8" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.3-8">The Conditional Endorsement triple from the certifier's CoMID is mapped to its corresponding <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 55</a>) using the transformation defined in <a href="#algo-ce-transform" class="auto internal xref">Figure 40</a>.<a href="#section-8.3.6.3-8" class="pilcrow">¶</a></p>
 <span id="name-first-and-only-ev-relation-"></span><div id="ex-ev-item">
-<figure id="figure-56">
+<figure id="figure-55">
               <div class="breakable lang-cbor-diag sourcecode" id="section-8.3.6.3-9.1">
 <pre>
 {
@@ -6733,14 +6712,14 @@ In the triple, the security certification is represented as <code>endorsements</
 }
 </pre>
 </div>
-<figcaption><a href="#figure-56" class="selfRef">Figure 56</a>:
+<figcaption><a href="#figure-55" class="selfRef">Figure 55</a>:
 <a href="#name-first-and-only-ev-relation-" class="selfRef">First (and only) ev Relation Item</a>
               </figcaption></figure>
 </div>
 <p id="section-8.3.6.3-10">Note the authority in the addition ECT, which is set to <code>768f..75b1</code>, and corresponds to the thumbprint of the certifier's signing certificate.<a href="#section-8.3.6.3-10" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.3-11">Evidence from the PSA Attester is transformed into the corresponding <code>ae-item</code> using the transformation defined in <span>[<a href="#I-D.fdb-rats-psa-endorsements" class="cite xref">I-D.fdb-rats-psa-endorsements</a>]</span>:<a href="#section-8.3.6.3-11" class="pilcrow">¶</a></p>
 <span id="name-ae-item"></span><div id="ex-ae-item">
-<figure id="figure-57">
+<figure id="figure-56">
               <div class="lang-cbor-diag sourcecode" id="section-8.3.6.3-12.1">
 <pre>
 {
@@ -6784,7 +6763,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 }
 </pre>
 </div>
-<figcaption><a href="#figure-57" class="selfRef">Figure 57</a>:
+<figcaption><a href="#figure-56" class="selfRef">Figure 56</a>:
 <a href="#name-ae-item" class="selfRef">ae-item</a>
               </figcaption></figure>
 </div>
@@ -6799,16 +6778,16 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 <p id="section-8.3.6.4-1">As described in <a href="#sec-appraisal-ctx-init" class="auto internal xref">Section 8.3.3.8</a>, the appraisal context is bootstrapped by loading the <code>ae</code> ECT(s) into the ACS, and the <code>rv</code> and <code>ev</code> relations into the Staging Area.
 Then, ACS augmentation described in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.3.4</a> can begin.<a href="#section-8.3.6.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.4-2">The first relation to be processed is <code>rv</code>, according to the rules described in <a href="#sec-proc-rv-rel" class="auto internal xref">Section 8.3.4.2.1</a>.<a href="#section-8.3.6.4-2" class="pilcrow">¶</a></p>
-<p id="section-8.3.6.4-3">The condition of the first <code>rv-item</code> (<a href="#ex-rv-item-1" class="auto internal xref">Figure 54</a>) is matched against the ACS which, at this time, contains a single ECT obtained from the <code>ae-item</code> (<a href="#ex-ae-item" class="auto internal xref">Figure 57</a>).
+<p id="section-8.3.6.4-3">The condition of the first <code>rv-item</code> (<a href="#ex-rv-item-1" class="auto internal xref">Figure 53</a>) is matched against the ACS which, at this time, contains a single ECT obtained from the <code>ae-item</code> (<a href="#ex-ae-item" class="auto internal xref">Figure 56</a>).
 The <code>cmtype</code> of the ACS-ECT is 2 (evidence), which is exactly the type <code>rv-item</code>s need to match against.
 When the two are compared, it is found that the environments of the <code>rv-item</code> condition and the ACS-ECT match (note that the instance identifier in the ACS-ECT is ignored because it is not present in the <code>rv-item</code>).
 The matching algorithm then proceeds to try to match the respective <code>element-list</code>s.
 Both lists contain a single element, whose ID and claims are a perfect match.
 Therefore, all the matching criteria are satisfied and the <code>rv-item</code> addition ECT is appended to the ACS.
 Before this addition is made, the matched element from the <code>rv-item</code> condition is copied to the addition <code>element-list</code>.<a href="#section-8.3.6.4-3" class="pilcrow">¶</a></p>
-<p id="section-8.3.6.4-4">The ACS now contains two ECTs, one with <code>cmtype</code> 2 (evidence), and a second one with <code>cmtype</code> 0 (reference-value) that corroborates the first one with manufacturer authority (<a href="#ex-acs-1" class="auto internal xref">Figure 58</a>).<a href="#section-8.3.6.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.4-4">The ACS now contains two ECTs, one with <code>cmtype</code> 2 (evidence), and a second one with <code>cmtype</code> 0 (reference-value) that corroborates the first one with manufacturer authority (<a href="#ex-acs-1" class="auto internal xref">Figure 57</a>).<a href="#section-8.3.6.4-4" class="pilcrow">¶</a></p>
 <span id="name-acs-state-after-corroborati"></span><div id="ex-acs-1">
-<figure id="figure-58">
+<figure id="figure-57">
               <div class="alignLeft art-text artwork" id="section-8.3.6.4-5.1">
 <pre>
 [
@@ -6886,16 +6865,16 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 ]
 </pre>
 </div>
-<figcaption><a href="#figure-58" class="selfRef">Figure 58</a>:
+<figcaption><a href="#figure-57" class="selfRef">Figure 57</a>:
 <a href="#name-acs-state-after-corroborati" class="selfRef">ACS State after Corroboration</a>
               </figcaption></figure>
 </div>
-<p id="section-8.3.6.4-6">The algorithm then moves on to the second <code>rv-item</code> (<a href="#ex-rv-item-2" class="auto internal xref">Figure 55</a>), checking its condition against the ACS.
+<p id="section-8.3.6.4-6">The algorithm then moves on to the second <code>rv-item</code> (<a href="#ex-rv-item-2" class="auto internal xref">Figure 54</a>), checking its condition against the ACS.
 Once again, the ACS-ECT with <code>cmtype</code> 2 (evidence) is selected for matching.
 This time, the environments match, but the state represented in the <code>rv-item</code>'s <code>element-list</code> is not (the digest differs).
 This results in a no-op on the ACS.<a href="#section-8.3.6.4-6" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.4-7">Next, the <code>ev</code> relation is popped from the Staging Area for processing according to the rules described in <a href="#sec-proc-ev-rel" class="auto internal xref">Section 8.3.4.3.1</a>.
-The condition of the first (and only) <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 56</a>) is then matched against the ACS.
+The condition of the first (and only) <code>ev-item</code> (<a href="#ex-ev-item" class="auto internal xref">Figure 55</a>) is then matched against the ACS.
 The only applicable ACS-ECT is the one with <code>cmtype</code> 2 (evidence).
 <span class="cref">
 The fact that {{sec-proc-ev-rel}} requires matching against reference values seems incorrect.
@@ -6903,9 +6882,9 @@ The fact that {{sec-proc-ev-rel}} requires matching against reference values see
 When compared, the environment in the <code>ev-item</code> condition matches that of the ACS-ECT (again, the instance identifier in the ACS-ECT is ignored because it is not present in the <code>ev-item</code>), and the matching algorithm proceeds to try to match the respective <code>element-list</code>s.
 Both lists contain a single element, whose ID and claims are an exact match.
 Therefore, all the matching criteria are satisfied and the <code>ev-item</code> addition ECT is appended to the ACS.<a href="#section-8.3.6.4-7" class="pilcrow">¶</a></p>
-<p id="section-8.3.6.4-8">The ACS now contains three ECTs, one with <code>cmtype</code> 2 (evidence), a second with <code>cmtype</code> 0 (reference-value), which corroborates the first with manufacturer authority, and a third one with <code>cmtype</code> 1 (endorsements) which adds the PSA certification identifier as an endorsed value for the appraised environment with certifier's authority (<a href="#ex-acs-2" class="auto internal xref">Figure 59</a>).<a href="#section-8.3.6.4-8" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.4-8">The ACS now contains three ECTs, one with <code>cmtype</code> 2 (evidence), a second with <code>cmtype</code> 0 (reference-value), which corroborates the first with manufacturer authority, and a third one with <code>cmtype</code> 1 (endorsements) which adds the PSA certification identifier as an endorsed value for the appraised environment with certifier's authority (<a href="#ex-acs-2" class="auto internal xref">Figure 58</a>).<a href="#section-8.3.6.4-8" class="pilcrow">¶</a></p>
 <span id="name-acs-state-after-endorsement"></span><div id="ex-acs-2">
-<figure id="figure-59">
+<figure id="figure-58">
               <div class="alignLeft art-text artwork" id="section-8.3.6.4-9.1">
 <pre>
 [
@@ -7009,11 +6988,11 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 ]
 </pre>
 </div>
-<figcaption><a href="#figure-59" class="selfRef">Figure 59</a>:
+<figcaption><a href="#figure-58" class="selfRef">Figure 58</a>:
 <a href="#name-acs-state-after-endorsement" class="selfRef">ACS State after Endorsements Augmentation</a>
               </figcaption></figure>
 </div>
-<p id="section-8.3.6.4-10">At this point, all the relations in the Staging Area have been processed, and the <code>match_and_augment</code> algorithm (<a href="#algo-match-and-augment" class="auto internal xref">Figure 48</a>) terminates, returning the computed ACS.<a href="#section-8.3.6.4-10" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.4-10">At this point, all the relations in the Staging Area have been processed, and the <code>match_and_augment</code> algorithm (<a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a>) terminates, returning the computed ACS.<a href="#section-8.3.6.4-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
