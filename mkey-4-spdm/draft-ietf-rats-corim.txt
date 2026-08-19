@@ -3108,8 +3108,6 @@ Table of Contents
    (e.g., Evidence) or they require more sophisticated matching criteria
    that cannot be expressed solely via a condition (e.g., Conditional
    Endorsement Series).
-   // [TODO] Merge §2.1 and §2.2. to explain the high-level principles
-   // before delving into the details.
 
 8.3.2.2.1.  Evidence
 
@@ -3236,16 +3234,15 @@ Table of Contents
 
                  Figure 24: Endorsed Values Series Relation
 
-   The evs relation compares the condition ECTs with the ACS.
-   // [TBC] There is only one ECT in the condition.  The description
-   // doesn't seem to match the data format.  If all the ECTs are found
-   in the ACS, each entry in the series list is evaluated.  The
-   selection ECTs are then compared with the ACS.  If the selection
-   criteria are met, the addition ECTs are added to the ACS and the
-   series evaluation ends.  If the selection criteria are not satisfied,
-   evaluation proceeds to the next series list entry.
+   The evs relation contains a list of series items.  Each series item
+   contains a list of condition ECTs and a list of addition ECTs.  The
+   condition ECTs are compared with the ACS.  If the condition criteria
+   are satisfied, the addition ECTs are added to the ACS and the series
+   evaluation ends.  If the condition criteria are not satisfied,
+   evaluation proceeds to the next series item.
 
-   Figure 25 shows the profiled Element ECT an Endorsed Value condition.
+   Figure 25 shows the profiled Element ECT for an Endorsed Value
+   condition.
 
    Endorsement-condition-ECT = ({
      environment: environment-map
@@ -3253,21 +3250,10 @@ Table of Contents
      ? authority: [ + $crypto-key-type-choice ]
    }) .within E-ECT
 
-      Figure 25: Profiled ECT for Endorsed Values and Endorsed Values
-                         Series tuples (condition)
+         Figure 25: Profiled condition ECT for ev and evs relations
 
-   Figure 26 shows the profiled Element ECT an Endorsed Value selection.
-
-   Endorsement-selection-ECT = ({
-     environment: environment-map
-     element-list: [ + element-map ]
-     ? authority: [ + $crypto-key-type-choice ]
-   }) .within E-ECT
-
-      Figure 26: Profiled ECT for Endorsed Values and Endorsed Values
-                         Series tuples (selection)
-
-   Figure 27 shows the profiled Element ECT an Endorsed Value addition.
+   Figure 26 shows the profiled Element ECT for an Endorsed Value
+   addition.
 
    Endorsement-addition-ECT = ({
      environment: environment-map
@@ -3277,13 +3263,12 @@ Table of Contents
      ? profile: $profile-type-choice
    }) .within E-ECT
 
-      Figure 27: Profiled ECT for Endorsed Values and Endorsed Values
-                          Series tuples (addition)
+         Figure 26: Profiled addition ECT for ev and evs relations
 
 8.3.2.2.4.  Keys
 
    The internal representation of Attest Key and Device Identity triples
-   uses the keys relation (Figure 28), whereby each key-item corresponds
+   uses the keys relation (Figure 27), whereby each key-item corresponds
    to either an attest-key-triple-record or an identity-triple-record.
 
    keys = [ + key-item ]
@@ -3293,7 +3278,7 @@ Table of Contents
      addition: Key-addition-ECT
    }
 
-                          Figure 28: Keys Relation
+                          Figure 27: Keys Relation
 
 
    // [TODO] Specialise condition/addition ECTs.  Define constraints.
@@ -3301,21 +3286,21 @@ Table of Contents
 8.3.2.2.5.  Domain Memberships
 
    The internal representation of Domain Membership uses the dm relation
-   (Figure 29), whereby each domain-item corresponds to a domain-
+   (Figure 28), whereby each domain-item corresponds to a domain-
    membership-triple-record.
 
    dm = [ + domain-item ]
 
-                   Figure 29: Domain Membership Relation
+                   Figure 28: Domain Membership Relation
 
    domain-item = {
      condition: Domain-condition-ECT
      addition: Domain-addition-ECT
    }
 
-                           Figure 30: Domain Item
+                           Figure 29: Domain Item
 
-   Figure 31 shows the profiled Domain ECT for Domain Membership
+   Figure 30 shows the profiled Domain ECT for Domain Membership
    conditions.
 
    Domain-condition-ECT = ({
@@ -3324,13 +3309,13 @@ Table of Contents
      ? profile: $profile-type-choice
    }) .within M-ECT
 
-         Figure 31: Profiled ECT for Domain Membership (condition)
+         Figure 30: Profiled ECT for Domain Membership (condition)
 
    Only the members are used for matching, not the environment.
    Therefore, the environment attribute is excluded from the ECT
    condition.
 
-   Figure 32 shows the profiled Domain ECT for Domain Membership
+   Figure 31 shows the profiled Domain ECT for Domain Membership
    additions.
 
    Domain-addition-ECT = ({
@@ -3340,26 +3325,26 @@ Table of Contents
      members: [ + environment-map ]
    }) .within M-ECT
 
-          Figure 32: Profiled ECT for Domain Membership (addition)
+          Figure 31: Profiled ECT for Domain Membership (addition)
 
 8.3.2.2.6.  Trust Dependencies
 
    The internal representation of Trust Dependency uses the td relation
-   (Figure 33), whereby each td-item corresponds to a trust-dependency-
+   (Figure 32), whereby each td-item corresponds to a trust-dependency-
    triple-record.
 
    td = [ + td-item ]
 
-                    Figure 33: Trust Dependency Relation
+                    Figure 32: Trust Dependency Relation
 
    td-item = {
      condition: Trust-Dependency-condition-ECT
      addition: Trust-Dependency-addition-ECT
    }
 
-                      Figure 34: Trust Dependency Item
+                      Figure 33: Trust Dependency Item
 
-   Figure 35 shows the profiled T-ECT for Trust Dependency conditions.
+   Figure 34 shows the profiled T-ECT for Trust Dependency conditions.
 
    Trust-Dependency-condition-ECT = ({
      environment: environment-map
@@ -3368,11 +3353,11 @@ Table of Contents
      trustees: [ + environment-map ]
    }) .within T-ECT
 
-          Figure 35: Profiled ECT for Trust Dependency (condition)
+          Figure 34: Profiled ECT for Trust Dependency (condition)
 
    Both the trustees and environment are used for matching.
 
-   Figure 36 shows the profiled T-ECT for Trust Dependency additions.
+   Figure 35 shows the profiled T-ECT for Trust Dependency additions.
 
    Trust-Dependency-addition-ECT = ({
      environment: environment-map
@@ -3381,30 +3366,30 @@ Table of Contents
      trustees: [ + environment-map ]
    }) .within T-ECT
 
-          Figure 36: Profiled ECT for Trust Dependency (addition)
+          Figure 35: Profiled ECT for Trust Dependency (addition)
 
    Before the td relation is added to the Staging Area, the trust
    dependency graph it describes MUST be checked to ensure that it is a
    directed acyclic graph.  If a cycle is detected, the td relation MUST
    NOT be added to the Staging Area, and this condition SHOULD be
    logged.  This is a prerequisite for the match_and_augment algorithm
-   described in Figure 48.  Please note that a subsequent Appraisal
+   described in Figure 47.  Please note that a subsequent Appraisal
    Policy for Evidence may decide not to produce Attestation Results in
    this case.
 
    A trust dependency relation is added to the ACS if the enviroment and
    all trustess exist in the membership graph expressed by the dm
-   relation (Figure 29) in the ACS.
+   relation (Figure 28) in the ACS.
 
 8.3.2.3.  ACS
 
-   The ACS (Figure 37) is a list of ECTs that represent the Attester's
+   The ACS (Figure 36) is a list of ECTs that represent the Attester's
    actual state as determined by various authoritative sources
    (Reference Value Providers and Endorsers) collected by the Verifier.
 
    ACS = [ + ECT ]
 
-                               Figure 37: ACS
+                               Figure 36: ACS
 
    The authority attribute in each ECT represents one such source, while
    the Claims in the ECT are statements made by that source about the
@@ -3427,7 +3412,7 @@ Table of Contents
 
 8.3.2.4.  Staging Area
 
-   The staging area (Figure 38) is a list of the relations corresponding
+   The staging area (Figure 37) is a list of the relations corresponding
    to the transformed triples.
 
    StagingArea = [
@@ -3439,7 +3424,7 @@ Table of Contents
      ? dd,
    ]
 
-                          Figure 38: Staging Area
+                          Figure 37: Staging Area
 
    All relations are optional.  Whether a given relation is present in
    the staging area depends on whether a triple exists and has been
@@ -3593,7 +3578,7 @@ Table of Contents
    Reference Values transformation involves mapping Reference Value
    triples into into an rv relation (see Section 8.3.2.2.2).  Each
    reference-triple-record (Figure 1) is transformed into an rv-item
-   (Figure 20) as described in Figure 39.  (The code reuses the
+   (Figure 20) as described in Figure 38.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
    FUNC transform(
@@ -3618,7 +3603,7 @@ Table of Contents
        RETURN item
    }
 
-              Figure 39: Reference Value Triple Transformation
+              Figure 38: Reference Value Triple Transformation
 
    Note that the ref-claims are not copied to the addition ECT.  Since
    they may contain ranges rather than individual values (see, for
@@ -3632,7 +3617,7 @@ Table of Contents
    triples into into ev or evs relations (see Section 8.3.2.2.3).
 
    A endorsed-triple-record (Figure 2) is transformed into an ev-item
-   (Figure 23) as described in Figure 40.  (The code reuses the
+   (Figure 23) as described in Figure 39.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
    FUNC transform(
@@ -3659,10 +3644,10 @@ Table of Contents
        RETURN item
    }
 
-              Figure 40: Endorsed Value Triple Transformation
+              Figure 39: Endorsed Value Triple Transformation
 
    A conditional-endorsement-triple-record (Figure 3) is transformed
-   into an ev-item (Figure 23) as described in Figure 41.  (The code
+   into an ev-item (Figure 23) as described in Figure 40.  (The code
    reuses the mms_to_ems function from Figure 14.)
 
    FUNC transform(
@@ -3691,10 +3676,10 @@ Table of Contents
        RETURN item
    }
 
-          Figure 41: Conditional Endorsement Triple Transformation
+          Figure 40: Conditional Endorsement Triple Transformation
 
    Each conditional-endorsement-series-triple-record (Figure 4) is
-   transformed into an evs-item (Figure 24) as described in Figure 42.
+   transformed into an evs-item (Figure 24) as described in Figure 41.
    (The pseudocode reuses the mms_to_ems function defined in Figure 14.)
 
    The conditional-endorsement-series-triple-record contains a condition
@@ -3739,7 +3724,7 @@ Table of Contents
        RETURN evsitem
    }
 
-      Figure 42: Conditional Endorsement Series Triple Transformation
+      Figure 41: Conditional Endorsement Series Triple Transformation
 
 8.3.3.7.4.  Keys
 
@@ -3747,8 +3732,8 @@ Table of Contents
    triples into into a key relation (see Section 8.3.2.2.4).
 
    An attest-key-triple-record (Figure 6) or an identity-triple-record
-   (Figure 5) is transformed into a key-item (Figure 28) as described in
-   Figure 43.
+   (Figure 5) is transformed into a key-item (Figure 27) as described in
+   Figure 42.
 
    FUNC transform(
        T: attest-key-triple-record / identity-triple-record,
@@ -3784,7 +3769,7 @@ Table of Contents
        RETURN item
    }
 
-                    Figure 43: Key Triple Transformation
+                    Figure 42: Key Triple Transformation
 
    Note that keys are added under the authority of the verifier.
 
@@ -3795,8 +3780,8 @@ Table of Contents
 
    Prior to adding a domain membership relation, a domain-membership-
    triple-record (Figure 7) is transformed into a domain-item
-   (Figure 29) using the domain membership transformation algorithm
-   Figure 44.
+   (Figure 28) using the domain membership transformation algorithm
+   Figure 43.
 
    FUNC transform(
        T: domain-membership-triple-record
@@ -3816,7 +3801,7 @@ Table of Contents
        RETURN item
    }
 
-                Figure 44: Domain Membership Transformation
+                Figure 43: Domain Membership Transformation
 
    Subsequent to transformation the domain membership relations are
    processed using the domain membershp processing algorithm
@@ -3827,7 +3812,7 @@ Table of Contents
    Prior to adding a trust dependency relation, Trust Dependency triples
    trust-dependency-triple-record (Figure 8) are transformed into td
    relations (see Section 8.3.2.2.6) using the trust dependency
-   transformation algorithm Figure 45.
+   transformation algorithm Figure 44.
 
    FUNC transform(
        T: trust-dependcy-triple-record,
@@ -3849,7 +3834,7 @@ Table of Contents
        RETURN item
    }
 
-                 Figure 45: Trust Dependency Transformation
+                 Figure 44: Trust Dependency Transformation
 
    Subsequent to transformation, the trust dependency relations are
    processed using the trust dependency processing algorithm
@@ -3869,7 +3854,7 @@ Table of Contents
        RETURN acs
    }
 
-                       Figure 46: ACS Initialization
+                       Figure 45: ACS Initialization
 
    The staging area is loaded with rv, ev, evs, keys, dm and td
    relations, in that order.
@@ -3894,7 +3879,7 @@ Table of Contents
        RETURN sa
    }
 
-                   Figure 47: Staging Area Initialization
+                   Figure 46: Staging Area Initialization
 
 8.3.4.  ACS Augmentation (Phases 2, 3 and 4)
 
@@ -3910,7 +3895,7 @@ Table of Contents
    the additions in the matched relation are added to the ACS, thereby
    providing its "augmentation".  Otherwise, the algorithm moves on to
    the next relation.  Any augmentations to the ACS (i.e., the
-   acs::APPEND operation in Figure 48) MUST be atomic.  Once all the
+   acs::APPEND operation in Figure 47) MUST be atomic.  Once all the
    relations in the staging area have been processed, the CoRIM
    processor forwards the augmented ACS to subsequent appraisal
    processors as needed.
@@ -3925,7 +3910,7 @@ Table of Contents
        RETURN acs
    }
 
-                   Figure 48: Match and Augment Algorithm
+                   Figure 47: Match and Augment Algorithm
 
    The acs::MATCH operation depends on the type of relation.  The
    matching logic for each type of relation is described in the
@@ -3948,9 +3933,9 @@ Table of Contents
    matching the condition.  This can be achieved by sorting the
    relations before processing, repeating the processing of some
    relations after ACS modifications, or using other algorithms.  The
-   "match and augment" algorithm described in Figure 48 assumes that
+   "match and augment" algorithm described in Figure 47 assumes that
    relations have been topologically sorted prior to loading into the
-   staging area (Figure 47).
+   staging area (Figure 46).
 
 8.3.4.2.  Reference Values Corroboration and Augmentation (Phase 3)
 
@@ -3992,8 +3977,8 @@ Table of Contents
 8.3.4.3.2.  Processing evs Relations
 
    The Conditional Endorsement Series relation is processed using a
-   modified match_and_augment function (see Figure 48) where SERIES-
-   MATCH() calls MATCH() (see Figure 49).
+   modified match_and_augment function (see Figure 47) where SERIES-
+   MATCH() calls MATCH() (see Figure 48).
 
    The first series item that matches terminates processing of
    subsequent series items.
@@ -4016,7 +4001,7 @@ Table of Contents
                RETURN sitem.addition
    }
 
-               Figure 49: Series Match and Augment Algorithm
+               Figure 48: Series Match and Augment Algorithm
 
 8.3.4.3.3.  Processing keys Relations
 
@@ -4087,7 +4072,7 @@ Table of Contents
    The matching algorithm ensures that the td items queued for addition
    to the ACS are also Domain Membership ECTs already contained in the
    ACS.  This matching algorithm is the plug-in for the parameter item-
-   condition of acs::MATCH defined in Figure 48.
+   condition of acs::MATCH defined in Figure 47.
 
    FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
        FOREACH dm-item IN ACS.ECT(.cm==member):
@@ -4099,7 +4084,7 @@ Table of Contents
 
        RETURN FALSE
 
-               Figure 50: Process Trust Dependency Algorithm
+               Figure 49: Process Trust Dependency Algorithm
 
    The ACS::CHECK() function does acyclic graph consistency checks of
    the condition ECTs in the td relation.
@@ -4311,7 +4296,7 @@ Table of Contents
    therefore treats the minimum SVN as an exact state, rather than as
    something to be compared with inequality.
 
-   The pseudocode for the above algorithm is shown in Figure 51.
+   The pseudocode for the above algorithm is shown in Figure 50.
 
    FUNC compare(
        c_ect: svn-type-choice,
@@ -4342,7 +4327,7 @@ Table of Contents
        RETURN TYPEOF(v) == svn OR TYPEOF(v) == tagged-svn
    }
 
-                         Figure 51: SVN Comparison
+                         Figure 50: SVN Comparison
 
 8.3.4.4.5.4.  Comparison for digests entries
 
@@ -4529,7 +4514,7 @@ Table of Contents
       according to the PSA Certified scheme.
 
    The manufacturer's CoRIM contains a single CoMID with two Reference
-   Values triples (see Figure 52) describing two acceptable states of
+   Values triples (see Figure 51) describing two acceptable states of
    the Attester.  The Attester is identified by the class attribute
    Implementation ID with the value 6163..3031.  One state has a digest
    of 9a27..86aa for the "PRoT" component, and the other has a digest of
@@ -4606,11 +4591,11 @@ Table of Contents
      }
    }
 
-                   Figure 52: Example Manufacturer CoMID
+                   Figure 51: Example Manufacturer CoMID
 
    The CoMID from the certifier contains a Conditional Endorsement
    triple that describes the Attester who was granted the security
-   certification 1234567890123 - 12345 (see Figure 53).  This Attester
+   certification 1234567890123 - 12345 (see Figure 52).  This Attester
    has Implementation ID 6163..3031 and the digest associated with the
    "PRoT" component is 9a27..86aa.  In the triple, the security
    certification is represented as endorsements, while the target
@@ -4683,7 +4668,7 @@ Table of Contents
      }
    }
 
-                     Figure 53: Example Certifier CoMID
+                     Figure 52: Example Certifier CoMID
 
    For the remainder of this section, we will assume that the CoRIM
    containing this CoMID is signed using the certifier's certificate,
@@ -4701,8 +4686,8 @@ Table of Contents
    been validated, input transformations can start.
 
    The two Reference Values triples from the manufacturer's CoMID are
-   mapped to their corresponding rv-items (Figure 54, Figure 55) using
-   the transformations defined in Figure 39.
+   mapped to their corresponding rv-items (Figure 53, Figure 54) using
+   the transformations defined in Figure 38.
 
    The first triple:
 
@@ -4751,7 +4736,7 @@ Table of Contents
      }
    }
 
-                     Figure 54: First rv Relation Item
+                     Figure 53: First rv Relation Item
 
    The second triple:
 
@@ -4800,15 +4785,15 @@ Table of Contents
      }
    }
 
-                     Figure 55: Second rv Relation Item
+                     Figure 54: Second rv Relation Item
 
    Note the authorities in the addition ECT of both items, which are set
    to 482e..78b3, and correspond to the thumbprint of the manufacturer's
    signing certificate.
 
    The Conditional Endorsement triple from the certifier's CoMID is
-   mapped to its corresponding ev-item (Figure 56) using the
-   transformation defined in Figure 41.
+   mapped to its corresponding ev-item (Figure 55) using the
+   transformation defined in Figure 40.
 
    {
      "condition": [
@@ -4868,7 +4853,7 @@ Table of Contents
      ]
    }
 
-                Figure 56: First (and only) ev Relation Item
+                Figure 55: First (and only) ev Relation Item
 
    Note the authority in the addition ECT, which is set to 768f..75b1,
    and corresponds to the thumbprint of the certifier's signing
@@ -4918,7 +4903,7 @@ Table of Contents
      }
    }
 
-                             Figure 57: ae-item
+                             Figure 56: ae-item
 
    Note the authority in the ECT, which is set to MFkw..Lg==", and
    corresponds to the Attester's PEM-encoded SPKI.
@@ -4933,9 +4918,9 @@ Table of Contents
    The first relation to be processed is rv, according to the rules
    described in Section 8.3.4.2.1.
 
-   The condition of the first rv-item (Figure 54) is matched against the
+   The condition of the first rv-item (Figure 53) is matched against the
    ACS which, at this time, contains a single ECT obtained from the ae-
-   item (Figure 57).  The cmtype of the ACS-ECT is 2 (evidence), which
+   item (Figure 56).  The cmtype of the ACS-ECT is 2 (evidence), which
    is exactly the type rv-items need to match against.  When the two are
    compared, it is found that the environments of the rv-item condition
    and the ACS-ECT match (note that the instance identifier in the ACS-
@@ -4949,7 +4934,7 @@ Table of Contents
 
    The ACS now contains two ECTs, one with cmtype 2 (evidence), and a
    second one with cmtype 0 (reference-value) that corroborates the
-   first one with manufacturer authority (Figure 58).
+   first one with manufacturer authority (Figure 57).
 
    [
      / Evidence ECT / {
@@ -5025,9 +5010,9 @@ Table of Contents
      }
    ]
 
-                  Figure 58: ACS State after Corroboration
+                  Figure 57: ACS State after Corroboration
 
-   The algorithm then moves on to the second rv-item (Figure 55),
+   The algorithm then moves on to the second rv-item (Figure 54),
    checking its condition against the ACS.  Once again, the ACS-ECT with
    cmtype 2 (evidence) is selected for matching.  This time, the
    environments match, but the state represented in the rv-item's
@@ -5036,7 +5021,7 @@ Table of Contents
 
    Next, the ev relation is popped from the Staging Area for processing
    according to the rules described in Section 8.3.4.3.1.  The condition
-   of the first (and only) ev-item (Figure 56) is then matched against
+   of the first (and only) ev-item (Figure 55) is then matched against
    the ACS.  The only applicable ACS-ECT is the one with cmtype 2
    (evidence).
    // The fact that {{sec-proc-ev-rel}} requires matching against
@@ -5054,7 +5039,7 @@ Table of Contents
    with manufacturer authority, and a third one with cmtype 1
    (endorsements) which adds the PSA certification identifier as an
    endorsed value for the appraised environment with certifier's
-   authority (Figure 59).
+   authority (Figure 58).
 
    [
      / Evidence ECT / {
@@ -5156,10 +5141,10 @@ Table of Contents
      }
    ]
 
-            Figure 59: ACS State after Endorsements Augmentation
+            Figure 58: ACS State after Endorsements Augmentation
 
    At this point, all the relations in the Staging Area have been
-   processed, and the match_and_augment algorithm (Figure 48)
+   processed, and the match_and_augment algorithm (Figure 47)
    terminates, returning the computed ACS.
 
 9.  Implementation Status
