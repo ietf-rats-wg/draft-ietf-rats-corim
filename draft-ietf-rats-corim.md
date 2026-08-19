@@ -141,6 +141,13 @@ informative:
     date: January 24, 2024,
     target: https://trustedcomputinggroup.org/resource/tpm-library-specification/
   IEEE-802.OandA: DOI.10.1109/IEEESTD.2014.6847097
+  SPDM:
+    title: "Security Protocol and Data Model (SPDM) Specification"
+    author:
+      org: Distributed Management Task Force
+    seriesinfo: Version 1.4.1
+    date: July 02, 2026
+    target: https://www.dmtf.org/dsp/DSP0274
 
 entity:
   SELF: "RFCthis"
@@ -1047,8 +1054,7 @@ competence.
 ##### Measurement Keys {#sec-comid-mkey}
 
 A Measurement Key is an identifier for a measured element.
-It can be used to identify the type of measured element (see {{-cca-endorsements}}) or to identify
-multiple measured element instances within the same environment.
+It can be used to identify the type of measured element (see {{-cca-endorsements}}), or to index an SPDM {{SPDM}} measurements block originating from a specific target environment, or to identify multiple measured element instances within the same environment.
 The initial types defined are OID, UUID, uint, and tstr.
 
 ~~~ cddl
