@@ -268,6 +268,34 @@ Table of Contents
       and under what conditions.  See also "Appraisal Policy for
       Evidence" in [RFC9334].
 
+   Attribute Path:
+      A sequence of one or more attribute identifiers that denotes a
+      value within a structured data object by successive selection from
+      a root value.  Each identifier in the sequence names the next
+      attribute to select; the final identifier in the sequence names
+      the value reached by the path.  An Attribute Path is said to be
+      *defined* in a given value if every prefix of the path exists in
+      that value; otherwise, the path is *undefined* in that value.  In
+      this document, structured data objects are typically CBOR maps
+      whose attributes are identified by CDDL member names (for example,
+      instance, class, class-id).  Attribute Paths are used when
+      comparing nested data structures during appraisal (see
+      Section 8.3.4.4).
+
+   Attribute Path Containment:
+      A comparison relation between two structured data objects,
+      conventionally named the *condition* (C) and the *entry* (A), in
+      which C is said to be *contained in* A when: 1. for every
+      Attribute Path defined in C, the same Attribute Path is defined in
+      A; and 2. for each such path, the value in A *satisfies* the value
+      in C.  Attributes present in A but not in C are ignored.  Unless
+      otherwise specified for a given attribute type, *satisfies* means
+      that the two values are equal.  Type-specific satisfaction rules -
+      including range membership and minimum bound checks - are defined
+      in Section 8.3.4.4.5.1 and in profile extensions (see
+      Section 8.3.4.4.6).  See Section 8.3.4.4.1 and Section 8.3.4.4.5
+      for examples.
+
    Authority:
       The entity that asserts a Claim.  Typically, a Claim is asserted
       using a cryptographic key to digitally sign the Claim.  A
@@ -333,6 +361,15 @@ Table of Contents
       Values, which are used by the Verifier to assess the trust state
       of the Attester.  See also [TNC.Arch], and Section 9.5.5 of
       [TPM2.Part1].
+
+   Range Satisfaction:
+      A value satisfaction relation in which an entry value is said to
+      satisfy a condition value when the entry lies within the bounds
+      expressed by the condition.  For example, an int entry satisfies
+      an int-range condition when the entry is within the condition's
+      inclusive bounds (see Section 5.1.4.8), and an svn entry satisfies
+      a tagged-min-svn condition when the entry is greater than or equal
+      to the condition's minimum (see Section 5.1.4.5.4).
 
    Reference Values:
       A set of values that represent the desired or undesired state of
@@ -4166,8 +4203,12 @@ Table of Contents
    are binary identical, the two environments match.  Otherwise, the
    environments do not match.
 
-   Any attribute that is present in the ACS-ECT but not in the C-ECT is
-   ignored in the comparison.
+   In other words, a match succeeds when the C-ECT's environment is
+   contained in the ACS-ECT's environment as defined by Attribute Path
+   Containment (see Section 1.1.1) - i.e., for every Attribute Path
+   defined in the C-ECT's environment, the ACS-ECT's environment defines
+   the same path with an equal value.  Any attribute that is present in
+   the ACS-ECT but not in the C-ECT is ignored in the comparison.
 
 8.3.4.4.2.  Authority Comparison
 
@@ -4200,6 +4241,13 @@ Table of Contents
    The C-ECT's element-map matches an ACS-ECT's element-map if both the
    element-id and element-claims match.
 
+   element-claims matching uses Attribute Path Containment (see
+   Section 1.1.1): every Attribute Path defined in the C-ECT's element-
+   claims MUST be defined in the ACS-ECT's element-claims, and the ACS-
+   ECT value at each such path MUST satisfy the corresponding C-ECT
+   value according to the rules in Section 8.3.4.4.5.1; additional
+   attributes in the ACS-ECT are ignored.
+
    Two element-ids are considered the same if they are either both
    omitted, or both present with binary identical deterministic
    encodings.  Before performing the binary comparison, the processor
@@ -4212,25 +4260,33 @@ Table of Contents
 
 8.3.4.4.5.  Measurement Values Map Comparison
 
-   The C-ECT's element-claims match an ACS-ECT's element-claims if:
-
-   1.  Each attribute in the C-ECT's measurement-values-map is also
-       present in the ACS-ECT's measurement-values-map; and
-
-   2.  The attribute values match.
+   The C-ECT's element-claims match an ACS-ECT's element-claims when the
+   C-ECT's element-claims is contained in the ACS-ECT's element-claims
+   as defined by Attribute Path Containment (Section 1.1.1).  At each
+   Attribute Path present in both maps, the ACS-ECT value MUST satisfy
+   the C-ECT value.  For most attribute types, satisfaction means
+   equality; for range and bound types (for example, int-range and
+   tagged-min-svn), satisfaction means that the ACS-ECT value lies
+   within the bounds expressed by the C-ECT value, as specified in
+   Section 8.3.4.4.5.1.
 
    Otherwise, the element claims do not match.
 
    The rules for matching a single measurement-values-map attribute are
-   described in Section 8.3.4.4.5.1
+   described in Section 8.3.4.4.5.1.
 
 8.3.4.4.5.1.  Comparison of a Single Measurement Values Map Attribute
 
    The algorithm used to compare two values of a measurement-values-map
    attribute depends on the attribute's type.
 
-   The processor needs to select the appropriate algorithm for the given
-   attribute, including any extensions defined by a supported profile.
+   In Attribute Path Containment comparisons (Section 1.1.1), the C-ECT
+   value at an Attribute Path plays the role of the *condition* and the
+   ACS-ECT value at the same path plays the role of the *entry*. The
+   comparison algorithms in this section define when an entry value
+   *satisfies* a condition value at that path.  The processor needs to
+   select the appropriate algorithm for the given attribute, including
+   any extensions defined by a supported profile.
 
    Non-negative codepoints represent standard data representations.  The
    comparison algorithms for these are defined in this document (in the
