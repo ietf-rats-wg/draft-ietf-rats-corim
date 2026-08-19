@@ -221,6 +221,22 @@ Typically, the entity asserting a Claim should have knowledge, expertise, or con
 Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
+Attribute Path:
+: A sequence of one or more attribute identifiers that denotes a value within a structured data object by successive selection from a root value.
+Each identifier in the sequence names the next attribute to select; the final identifier in the sequence names the value reached by the path.
+An Attribute Path is said to be **defined** in a given value if every prefix of the path exists in that value; otherwise, the path is **undefined** in that value.
+In this document, structured data objects are typically CBOR maps whose attributes are identified by CDDL member names (for example, `instance`, `class`, `class-id`).
+Attribute Paths are used when comparing nested data structures during appraisal (see {{sec-comparison-rules}}).
+
+Attribute Path Containment:
+: A comparison relation between two structured data objects, conventionally named the **condition** (C) and the **entry** (A), in which C is said to be **contained in** A when:
+1. for every Attribute Path defined in C, the same Attribute Path is defined in A; and
+2. for each such path, the value in A **satisfies** the value in C.
+Attributes present in A but not in C are ignored.
+Unless otherwise specified for a given attribute type, **satisfies** means that the two values are equal.
+Type-specific satisfaction rules - including range membership and minimum bound checks - are defined in {{sec-match-one-codepoint}} and in profile extensions (see {{sec-compare-profile}}).
+See {{sec-compare-environment}} and {{sec-compare-mvm}} for examples.
+
 Authority:
 : The entity that asserts a Claim.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
@@ -267,6 +283,10 @@ The object of a Measurement could be the invariant part of a firmware component 
 A measured object is part of the Attester's Target Environment.
 Expected, or "golden," Measurements are compiled as Reference Values, which are used by the Verifier to assess the trust state of the Attester.
 See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
+
+Range Satisfaction:
+: A value satisfaction relation in which an entry value is said to satisfy a condition value when the entry lies within the bounds expressed by the condition.
+For example, an `int` entry satisfies an `int-range` condition when the entry is within the condition's inclusive bounds (see {{sec-comid-int-range}}), and an `svn` entry satisfies a `tagged-min-svn` condition when the entry is greater than or equal to the condition's minimum (see {{sec-comid-svn}}).
 
 Reference Values:
 : A set of values that represent the desired or undesired state of an Attester.
@@ -3029,6 +3049,7 @@ Before performing the binary comparison, the processor SHOULD convert the attrib
 If all the attributes which are present in the C-ECT `environment` (e.g., `instance-id` or `group-id`) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.
 
+In other words, a match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
 Any attribute that is present in the ACS-ECT but not in the C-ECT is ignored in the comparison.
 
 ##### Authority Comparison {#sec-compare-authority}
@@ -3052,6 +3073,8 @@ The rules for matching `element-map`s are described in {{sec-compare-element-map
 
 The C-ECT's `element-map` matches an ACS-ECT's `element-map` if both the `element-id` and `element-claims` match.
 
+`element-claims` matching uses Attribute Path Containment (see {{sec-glossary}}): every Attribute Path defined in the C-ECT's `element-claims` MUST be defined in the ACS-ECT's `element-claims`, and the ACS-ECT value at each such path MUST satisfy the corresponding C-ECT value according to the rules in {{sec-match-one-codepoint}}; additional attributes in the ACS-ECT are ignored.
+
 Two `element-id`s are considered the same if they are either both omitted, or both present with binary identical deterministic encodings.
 Before performing the binary comparison, the processor SHOULD convert the `element-id` attributes into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
 
@@ -3059,19 +3082,20 @@ The rules for matching `element-claims` are described in {{sec-compare-mvm}}.
 
 ##### Measurement Values Map Comparison {#sec-compare-mvm}
 
-The C-ECT's `element-claims` match an ACS-ECT's `element-claims` if:
-
-1. Each attribute in the C-ECT's `measurement-values-map` is also present in the ACS-ECT's `measurement-values-map`; and
-1. The attribute values match.
+The C-ECT's `element-claims` match an ACS-ECT's `element-claims` when the C-ECT's `element-claims` is contained in the ACS-ECT's `element-claims` as defined by Attribute Path Containment ({{sec-glossary}}).
+At each Attribute Path present in both maps, the ACS-ECT value MUST satisfy the C-ECT value.
+For most attribute types, satisfaction means equality; for range and bound types (for example, `int-range` and `tagged-min-svn`), satisfaction means that the ACS-ECT value lies within the bounds expressed by the C-ECT value, as specified in {{sec-match-one-codepoint}}.
 
 Otherwise, the element claims do not match.
 
-The rules for matching a single `measurement-values-map` attribute are described in {{sec-match-one-codepoint}}
+The rules for matching a single `measurement-values-map` attribute are described in {{sec-match-one-codepoint}}.
 
 ###### Comparison of a Single Measurement Values Map Attribute {#sec-match-one-codepoint}
 
 The algorithm used to compare two values of a `measurement-values-map` attribute depends on the attribute's type.
 
+In Attribute Path Containment comparisons ({{sec-glossary}}), the C-ECT value at an Attribute Path plays the role of the **condition** and the ACS-ECT value at the same path plays the role of the **entry**.
+The comparison algorithms in this section define when an entry value **satisfies** a condition value at that path.
 The processor needs to select the appropriate algorithm for the given attribute, including any extensions defined by a supported profile.
 
 Non-negative codepoints represent standard data representations.
@@ -3083,7 +3107,6 @@ Negative codepoints represent profile-defined data representations.
 The processor MUST use the attribute name, the profile associated with the condition ECT, and, if present, the CBOR tag value to select the comparison algorithm.
 
 If the processor is unable to determine the applicable comparison algorithm for an attribute, it MUST behave as though the C-ECT does not match the ACS-ECT.
-
 
 The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.
 
