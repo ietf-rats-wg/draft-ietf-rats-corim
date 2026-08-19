@@ -2226,10 +2226,7 @@ This internal representation is based on the concept of "relations", which in tu
 Typically, a relation is structured as a "condition" ECT that specifies the matching criteria used to compare entries in the ACS, along with an "addition" ECT that is appended to the ACS if the specified condition are met.
 While this is the common structure, some relations may differ slightly from the condition/addition pattern.
 This is because they either do not require a condition (e.g., Evidence) or they require more sophisticated matching criteria that cannot be expressed solely via a condition (e.g., Conditional Endorsement Series).
-<cref>
-[TODO]
-Merge §2.1 and §2.2. to explain the high-level principles before delving into the details.
-</cref>
+
 
 ##### Evidence {#sec-ir-evidence}
 
