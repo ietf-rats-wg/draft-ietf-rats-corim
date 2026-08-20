@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-18T01:38:46.344227+00:00",
+  "timestamp": "2026-08-20T01:39:23.643622+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14762,7 +14762,7 @@
       "labels": [],
       "body": "Given `domain-type = environment-map` and DDT trustees typed as `[+ domain-type]`, it is natural to author a DDT that references environments already present in Evidence. E.g., `[root, [env-A, env-B]]` where `env-A` and `env-B` are Target Environments the attester reports measurements for.\n\nHowever, \u00a75.1.11.2 requires normatively that \"_All of the DDT subjects (domain-id) and objects (trustees) MUST also be domain members for the DDT expression to be processed_\", and the DDT processing algorithm in \u00a79.3.4.6 enforces this by checking `ACS.cmtype` contains `domain-member` for both `dde.environment` and each trustee. Evidence transformation (\u00a79.1.3) produces ACS entries with `cmtype = evidence`, not `domain-member`. The only way an ACS entry acquires `cmtype = domain-member` is via DMT processing (\u00a79.1.7.2 step 2, \u00a79.3.4.5).\n\nConsequence: to reference an evidence-provided environment as a DDT trustee, the CoRIM author must include a trivial self-membership DMT such as `[env-A, [env-A]]` purely to promote env-A's cmtype. This adds no semantic content.\n\n**Requests for clarification / consideration**:\n\n1. Is the requirement to have DDT participants pre-declared as domain-members via a DMT intentional, or an incidental consequence of the ACS cmtype model?\n2. If intentional, it'd be great to state the informative rationale (topology declaration must be explicit before dependency can be asserted) in the spec.\n3. If not strictly intentional, consider one of the following relaxations:\n3.1. Allow DDT processing to implicitly treat any DDT subject/trustee whose environment matches an ACS entry with `cmtype \u2208 {evidence, reference-values}` as a domain-member for the purpose of DDT evaluation (i.e., promote-on-reference).\n3.2. Alternatively, allow a DDT to introduce domain-member ECTs directly for its subject and trustees (analogous to how DMT introduces the subject).\n3.3. Or, at minimum, document the \"self-membership DMT\" pattern as an idiom in a non-normative section so implementers converge on it.\n",
       "createdAt": "2026-07-04T06:28:31Z",
-      "updatedAt": "2026-07-27T06:17:47Z",
+      "updatedAt": "2026-08-19T14:25:58Z",
       "closedAt": null,
       "comments": [
         {
@@ -14778,6 +14778,20 @@
           "body": "@nedmsmith ,\nCan you please take a look?",
           "createdAt": "2026-07-27T06:17:47Z",
           "updatedAt": "2026-07-27T06:17:47Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "hey @nedmsmith , any chance you can take a look at this so that we can discuss it in the weekly tomorrow?",
+          "createdAt": "2026-08-18T08:02:01Z",
+          "updatedAt": "2026-08-18T08:02:01Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed with Ned and Henk on 08/19/2026\n\nUnder the following two agreed upon points:\n1. domain and environment equivalency\n2. DDTs are not allowed to instantiate new domains (i.e., they need to hang off domains that have been synthesized via Evidence and endorsed values triples)\n\nwe agreed that DDTs are dependent on domains and can therefore be provided without DMTs.\n\n@yogeshbdeshpande @fchinchilla @steven-bellock can you ACK/NACK this as well?",
+          "createdAt": "2026-08-19T14:25:57Z",
+          "updatedAt": "2026-08-19T14:25:57Z"
         }
       ]
     },
@@ -14888,15 +14902,15 @@
       "id": "I_kwDOH6-tI88AAAABLS5HTQ",
       "title": "Is Endorsement-selection-ECT used?",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/618",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gkostal",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "I see `Endorsement-selection-ECT` defined in the specification, but I don't see it referenced anywhere.",
       "createdAt": "2026-08-03T18:24:20Z",
-      "updatedAt": "2026-08-05T16:04:35Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-19T14:57:30Z",
+      "closedAt": "2026-08-19T14:57:30Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -14926,7 +14940,7 @@
       "labels": [],
       "body": "_[This was discussed in the CCC Attestation SIG meeting on 8/11/26]_\n\nA common scenario in my work is to add an endorsed claim that uses a tstr data type for the key and value.  For example, I might want to add an endorsement key of \"azure-compliance-status\" with an endorsement value of \"azure-compliant-cvm\".  \n\nWith the current CDDL definition, the only text (or tstr) data types in the measurement-values-map are \"serial-number\" and \"name\" -- neither of which make sense for my scenario:  \n\n- **serial-number (index 8)**: A text string representing the product serial number.\n- **name (index 11)**: a name associated with the measured environment.\n\n```\nmeasurement-values-map = non-empty<{\n  ? &(version: 0) => version-map\n  ? &(svn: 1) => svn-type-choice\n  ? &(digests: 2) => digests-type\n  ? &(flags: 3) => flags-map\n  ? (\n      &(raw-value: 4) => $raw-value-type-choice,\n      ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type\n    )\n  ? &(mac-addr: 6) => mac-addr-type-choice\n  ? &(ip-addr: 7) => ip-addr-type-choice\n  ? &(serial-number: 8) => text\n  ? &(ueid: 9) => ueid-type\n  ? &(uuid: 10) => uuid-type\n  ? &(name: 11) => text\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\n  ? &(integrity-registers: 14) => integrity-registers\n  ? &(int-range: 15) => int-range-type-choice\n  * $$measurement-values-map-extension\n}>\n```\n\nCan the measurement-values-map be updated to include a string datatype?  Perhaps:\n\n```\n  ? &(string: 16) => text\n```\n\nThis is the one that's immediately causing me issues.  But looking at the CDDL primitive data types, I can envision I'll eventually wrestle with this issue for \"bool\" and \"uint\" also.  Perhaps also:\n\n```\n  ? &(bool: 17) => bool\n  ? &(uint: 18) => uint\n```\n\n",
       "createdAt": "2026-08-11T18:47:13Z",
-      "updatedAt": "2026-08-17T12:31:53Z",
+      "updatedAt": "2026-08-19T10:37:04Z",
       "closedAt": null,
       "comments": [
         {
@@ -14960,9 +14974,9 @@
         {
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
-          "body": "On further thought, the addition of such new \"generic\" entries gives us an opportunity to introduce the \"matchers\" concept that we discussed a few times in the past, and to develop the tag-driven matching already used by `int-range` and `min-svn` more extensively.\nThis would mean that these new entries are created with pre-canned matching criteria, so we wouldn't need to add new codepoints in the mvm map in order to add new matching logic in the future.\n\n```\nmvm = {\n  ? &(type: m) => MATCH-CRITERIA-FOR(type)\n}\n```\nwhere\n```\nMATCH-CRITERIA-FOR(type) = MATCH-CRITERION-1-FOR(type) /\n                           MATCH-CRITERION-2-FOR(type) /\n                           ... /\n                           MATCH-CRITERION-n-FOR(type)\n```\n\nEach `MATCH-CRITERION-i-FOR` would be selected from a set of predefined matching logic options -- e.g., exact match, range match, set match -- that are compatible with the type.  For example, \"exact\" and \"set\" matchers make sense on all types, whereas \"range\" match would only be defined on numeric types.\n\nIn CDDL terms:\n```\nexact-match<type> = #6.123000(type) ; the one and only thing to match -- could just be the untagged \"type\", see (*)\nrange-match<type> = #6.123001([ type / null, type / null ]) ; min and max (null means infinity)\nset-match<type> = #6.123002([ 2* type ]) ; two or more alternative, acceptable states\n\nbasic-type-matching-criteria<type> = exact-match<type> /\n                                     set-match<type>\n\nnumeric-type-matching-criteria<type> = basic-type-matching-criteria<type> /\n                                       range-match<type>\n```\nSo that:\n```\nmvm = {\n  ; ...\n  ? &(bool: 1000) => basic-type-matching-criteria<bool>\n  ? &(number: 1001) => numeric-type-matching-criteria<number>\n  ? &(text: 1002) => basic-matching-criteria<text>\n  ? &(bytes: 1003) => basic-matching-criteria<bytes>\n}\n```\n\n(*) Note that using the bare type to mean \"exact\" matching may be a way to add the matchers functionality into some of the existing mvm types in a backwards compatible manner.",
+          "body": "On further thought, the addition of such new \"generic\" entries gives us an opportunity to introduce the \"matchers\" concept that we discussed a few times in the past, and to develop the tag-driven matching already used by `int-range` and `min-svn` more extensively.\nThis would mean that these new entries are created with pre-canned matching criteria, so we wouldn't need to add new codepoints in the mvm map in order to add new matching logic in the future.\n\n```\nmvm = {\n  ? &(type: m) => MATCH-CRITERIA-FOR(type)\n}\n```\nwhere\n```\nMATCH-CRITERIA-FOR(type) = MATCH-CRITERION-1-FOR(type) /\n                           MATCH-CRITERION-2-FOR(type) /\n                           ... /\n                           MATCH-CRITERION-n-FOR(type)\n```\n\nEach `MATCH-CRITERION-i-FOR` would be selected from a set of predefined matching logic options -- e.g., exact match, range match, set match -- that are compatible with the type.  For example, \"exact\" and \"set\" matchers make sense on all types, whereas \"range\" match would only be defined on numeric types.\n\nA set of sensible \"atom\" matchers could be:\n\n| syntax | semantics |\n|--------|--------|\n| `exact-match<type> = #6.123000(type)` | the one and only value to match -- could just be the untagged \"type\", see (*) |\n| `range-match<type> = #6.123001([ type / null, type / null ])` | min and max (null means infinity) |\n| `set-match<type> = #6.123002([ 2* type ])` | two or more alternative, acceptable states | \n\nwhich can be grouped into more expressive \"matchers\":\n```\nbasic-matcher<type> = exact-match<type> /\n                      set-match<type>\n\nnumeric-matcher<type> = basic-type-matching-criteria<type> /\n                        range-match<type>\n```\nSo that:\n```\nmvm = {\n  ; ...\n  ? &(bool: 1000) => basic-matcher<bool>\n  ? &(number: 1001) => numeric-matcher<number>\n  ? &(text: 1002) => basic-matcher<text>\n  ? &(bytes: 1003) => basic-matcher<bytes>\n}\n```\n\n(*) Note that using the bare type to mean \"exact\" matching may be a way to add the matchers functionality into some of the existing mvm types in a backwards compatible manner.",
           "createdAt": "2026-08-17T08:52:59Z",
-          "updatedAt": "2026-08-17T12:31:53Z"
+          "updatedAt": "2026-08-18T20:46:40Z"
         },
         {
           "author": "thomas-fossati",
@@ -14998,6 +15012,62 @@
           "body": "CDDL cannot address this (well, with the exception of adding yet another matching criteria to a map that was initially for measurements, was then extended for endorsements, and now is further extended to contain matching criteria).\n\nBut there also might be no problem to solve here: Greg, please correct me, if I am wrong, but what you are referring to is basically: \"a subset of reference values from CoRIM has to match all the entries in a event log\", yes? Or do you want a subset of a CoRIM's measurement values only to apply to a certain event log?",
           "createdAt": "2026-08-17T12:09:58Z",
           "updatedAt": "2026-08-17T12:09:58Z"
+        },
+        {
+          "author": "dkumar-nv",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Is it possible to support all the types defined by CBOR in base CoRIM and require profiling only for complex types built on top of basic types? Currently, boolean appears to be most important missing type.\n\nFWIW, for my string use cases, I have been using mval.name with semantics coming from mkey.",
+          "createdAt": "2026-08-18T05:42:40Z",
+          "updatedAt": "2026-08-18T05:42:40Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Is it possible to support all the types defined by CBOR in base CoRIM and require profiling only for complex types built on top of basic types?\n\nYeah, that's what I tried to capture in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/621#issuecomment-5313887640, with the \"matcher\" logic on top.\n\nNote that `number` is a shorthand for `uint / nint / float16 / float32 / float64` (see [CDDL prelude](https://datatracker.ietf.org/doc/html/rfc8610#appendix-D)) to avoid unneeded map keys explosion (and also match the JSON data model).\n(I have left out `null` as it didn't seem to add value per se, but all the other CBOR scalar types should be there.)\n\n> FWIW, for my string use cases, I have been using mval.name with semantics coming from mkey.\n\nYep, that's also what Greg and likely other CoRIM authors do.  Whether or not this constitutes semantic abuse depends on the nature of the encoded string :-)\n\nThe above proposal (modulo the necessary tweaks) seems to strike the right balance between allowing expressivity and minimising pressure on the mvm extension registry.\n\nEssentially, extensions would only need to be defined for compound types.",
+          "createdAt": "2026-08-18T07:18:18Z",
+          "updatedAt": "2026-08-18T07:20:27Z"
+        },
+        {
+          "author": "gkostal",
+          "authorAssociation": "NONE",
+          "body": "@thomas-fossati @henkbirkholz \n\n>But there also might be no problem to solve here: Greg, please correct me, if I am wrong, but what you are referring to is basically: \"a subset of reference values from CoRIM has to match all the entries in a event log\", yes? Or do you want a subset of a CoRIM's measurement values only to apply to a certain event log?\n\nA verifier appraising a TPM TCG log needs subset matching both ways.  For PK, KEK and db, the set in the evidence must be a subset of the set in the CoRIM.  For dbx, the set in the CoRIM must be a subset of the set in the evidence.\n\n>Can you explain the semantics and perhaps put forward some CDDL?\n\nI'll try on the semantics (I am not an expert).  CDDL is beyond my skill set.  :-)  As part of secure boot, UEFI will record the set of trusted keys/certs used for PK, KEK, and db in the TCG log.  PK allows KEK updates.  KEK allows db updates.  db defines allowed boot images (they are signed by a key/cert in db).  Additionally, UEFI will record the set of forbidden boot image hash values in dbx in the TCG log.\n\nConceptually:\n* TCG log contains four sets: PK, KEK, db, dbx.  \n* CoRIM contains four sets (could be in reference value or endorsement): PK-allowed, KEK-allowed, db-allowed, dbx-required.\n\nVerification needs to ensure:\n* TCG-log.PK is a subset of CoRIM.PK-allowed\n* TCG-log.KEK is a subset of CoRIM.KEK-allowed\n* TCG-log.db is a subset of CoRIM.db-allowed\n* TCG-log.dbx is a superset of CoRIM.dbx-required\n\nIf it's of any help, currently MAA is doing all of this set arithmetic after converting all of the data structures to strings.",
+          "createdAt": "2026-08-18T19:30:47Z",
+          "updatedAt": "2026-08-18T19:30:47Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [snip]\n>\n> Conceptually:\n> \n> * TCG log contains four sets: PK, KEK, db, dbx.\n> * CoRIM contains four sets (could be in reference value or endorsement): PK-allowed, KEK-allowed, db-allowed, dbx-required.\n\nThanks for the very clear explanation.\n\nTo start jotting down some CDDL there's one key detail missing: what type are the elements in each set?\n\n",
+          "createdAt": "2026-08-18T20:37:51Z",
+          "updatedAt": "2026-08-18T20:37:51Z"
+        },
+        {
+          "author": "gkostal",
+          "authorAssociation": "NONE",
+          "body": ">what type are the elements in each set?\n\ntstr and bstr?  tstr is what MAA uses currently (i.e., strings).  bstr seems like it might also be useful also (e.g., no need to transform evidence that's already a bstr into a tstr).",
+          "createdAt": "2026-08-18T20:58:12Z",
+          "updatedAt": "2026-08-18T20:58:12Z"
+        },
+        {
+          "author": "dkumar-nv",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "CoRIM defines $crypto-key-type-choice which covers\n1. Public keys\n2. Certs\n3. digests\nI imagine the above cover the data types in PK, KEK, db and dbx.\n\nNow given that measurement-values-map.cryptokeys is an array of $crypto-key-type-choice, \"TCG-log.dbx is a superset of CoRIM.dbx-required\" may be possible easily if [Comparison for cryptokeys entries](https://datatracker.ietf.org/doc/html/draft-ietf-rats-corim-11#name-comparison-for-cryptokeys-e) does not require index matching and allows for either subset operation (Is array in CoRIM a subset of array in evidence) or at least continuing to the next index in evidence if the current one doesn't match. Changes to [Comparison for cryptokeys entries](https://datatracker.ietf.org/doc/html/draft-ietf-rats-corim-11#name-comparison-for-cryptokeys-e) might be worth making regardless of Greg's ask unless index match was meant to add some security value.\n\nThe other three cases feel tricky since the subset definition allows attester to send fewer entries than actually exist in UEFI DB and successfully satisfy CoRIM. Is there a precedence for this type of pattern elsewhere in CoRIM?",
+          "createdAt": "2026-08-19T02:08:42Z",
+          "updatedAt": "2026-08-19T02:08:42Z"
+        },
+        {
+          "author": "gkostal",
+          "authorAssociation": "NONE",
+          "body": "The data types for PK, KEK are keys or certs.  The data types for db, dbx are keys, certs or image digests.  It seems that there are (at least?) two ways to model the data -- based on its content or based on the hash of the content.  Given the unique mapping characteristics of a hash function, the set operations over either will be equivalent.  \n\n**Model the data structure**\n\nSomething like:\n\n```\nsecure-boot-entry =\n    digest /\n    $crypto-key-type-choice /\n    certificate-id\n\nsecure-boot-set = [ * secure-boot-entry ]\n```\n\n**Normalize the data to hash values**\n\nSomething like:\n\n```\nsecure-boot-object-id = digest\nsecure-boot-set = [ * secure-boot-object-id ]\n```\n\nMAA is doing the latter currently, we just happen to be using a string for the hex encoded hash values instead of a byte array.\n",
+          "createdAt": "2026-08-19T10:35:01Z",
+          "updatedAt": "2026-08-19T10:35:01Z"
+        },
+        {
+          "author": "gkostal",
+          "authorAssociation": "NONE",
+          "body": "On a related note, the Intel CoRIM specification includes support for some set operations.  I have not had time yet to fully digest (pardon the unintentional pun!) what is described here.\n\nhttps://datatracker.ietf.org/doc/html/draft-cds-rats-intel-corim-profile-07#autoid-43",
+          "createdAt": "2026-08-19T10:37:04Z",
+          "updatedAt": "2026-08-19T10:37:04Z"
         }
       ]
     }
@@ -91437,24 +91507,26 @@
       "id": "PR_kwDOH6-tI87xAH16",
       "title": "Adding mkey usage to distiguish SPDM manifest blocks (in list of examples)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/609",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "henkbirkholz",
       "authorAssociation": "MEMBER",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-07-13T09:48:22Z",
-      "updatedAt": "2026-08-10T07:34:14Z",
+      "updatedAt": "2026-08-19T15:05:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "5b21f29f2dc32552aaf65f610e301bf8c1ec5d3d",
+      "baseRefOid": "9139c154ce16f94ed531255505ba99075790756e",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "mkey-4-spdm",
-      "headRefOid": "7b782a9d6b5c6e2752a279b0dcd3b99917d0d54c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "13a16558d931db11c3692c609b7efafcba5b9083",
+      "closedAt": "2026-08-19T15:05:13Z",
+      "mergedAt": "2026-08-19T15:05:13Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "0b855af932e388cb42b308cf8ad404226acc7bdb"
+      },
       "comments": [
         {
           "author": "fchinchilla",
@@ -91556,6 +91628,19 @@
               "updatedAt": "2026-08-10T07:24:22Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABKHKgXw",
+          "commit": {
+            "abbreviatedOid": "13a1655"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-08-19T14:59:29Z",
+          "updatedAt": "2026-08-19T15:02:46Z",
+          "comments": []
         }
       ]
     },
@@ -91882,50 +91967,65 @@
       "id": "PR_kwDOH6-tI87yG4ZV",
       "title": "Define Attribute Path Containment and apply it where appropriate",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/613",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Extract the common \"sub-shape\" matching pattern into a glossary definition (\"attribute path containment\") and use this definition wherever the pattern appears.\r\n\r\nAlso define \"range satisfaction\" to anchor the idea of range matching more rigorously.\r\n\r\n\r\nNOTE: this builds on top of (and further refines) #611 ",
       "createdAt": "2026-07-15T15:59:12Z",
-      "updatedAt": "2026-08-05T14:37:23Z",
+      "updatedAt": "2026-08-19T15:00:37Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "5b21f29f2dc32552aaf65f610e301bf8c1ec5d3d",
+      "baseRefOid": "773f7da2bd9d7804993c25894dee8d5a7b353a3d",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "containment",
-      "headRefOid": "3787e954275ebc4a85e0249aec6943398827f95c",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6026ddca7a49715d7149f6909fa2c7b413bcec5a",
+      "closedAt": "2026-08-19T15:00:34Z",
+      "mergedAt": "2026-08-19T15:00:34Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "9139c154ce16f94ed531255505ba99075790756e"
+      },
       "comments": [],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI88AAAABHrCYwg",
           "commit": {
-            "abbreviatedOid": "3787e95"
+            "abbreviatedOid": "6026ddc"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-07-29T15:10:12Z",
-          "updatedAt": "2026-08-05T14:37:22Z",
+          "updatedAt": "2026-08-19T14:57:46Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABIgJSpw",
           "commit": {
-            "abbreviatedOid": "3787e95"
+            "abbreviatedOid": "6026ddc"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "lgtm",
           "createdAt": "2026-08-05T14:37:10Z",
-          "updatedAt": "2026-08-05T14:37:22Z",
+          "updatedAt": "2026-08-19T14:57:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABKHIIUg",
+          "commit": {
+            "abbreviatedOid": "6026ddc"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-08-19T14:55:31Z",
+          "updatedAt": "2026-08-19T14:57:47Z",
           "comments": []
         }
       ]
@@ -92178,7 +92278,7 @@
       "labels": [],
       "body": "Fix #583",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-08-12T16:29:33Z",
+      "updatedAt": "2026-08-19T14:53:18Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "479d5c80ff4aba7754b07c94e3a867ebaede9bac",
@@ -92196,6 +92296,13 @@
           "body": "The core of the PR is to add support for COSE_Sign which I agree with. Most of the discusion is around whether normative language is needed. The PR focuses on alg agility use case. COSE_Sign has multiple possible locations for header metadata that could result in redundant / conflicting information. Consequently, there should be language in RFC that describes scoping rules. It surprises me that COSE wouldn't have this language already. If Corim adds it, then COSE adds it later, and it contradicts Corim, then that would force a change to corim. It seems best to not have normative language about scoping rules, but rather document \"assumed\" or \"expected\" scoping rules. \r\n\r\nThat is to say outer layer headers are used unless inner layer headers are populated. Since, in the scope of the PR, there is only one signer, there is no need to describe what it means to have different but legitimate header content.\r\n\r\nThe other use cases related to multiple signers and counter signatures are out of scope for the PR. Nevertheless, the scoping rules are assumed to be the same regardless of use case context. In a multi-principal use case, header contents could differ depending on the signer. These cases imply there is some sort of verifier policy that decides whether the payload (corim) is valid - but this is out of scope for this PR and for the corim spec. ",
           "createdAt": "2026-08-12T16:19:46Z",
           "updatedAt": "2026-08-12T16:23:08Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed on the 08/19/2026:\r\n\r\nThis PR should be clearly scoped to the related issue (https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/583) rather than trying to cover multiple different use cases:\r\n1. all the signatures are made by the same authority (this must be very clearly stated in the prose)\r\n2. different keys may have different lifetimes\r\n3. meta-map goes in the top-level phdr (and so do the exp and nbf if carried as claims-in-header)\r\n\r\nAlso: if we need to cover other use cases (e.g., counter-signatures), these should have a separate associated issue.\r\n",
+          "createdAt": "2026-08-19T14:53:18Z",
+          "updatedAt": "2026-08-19T14:53:18Z"
         }
       ],
       "reviews": [
@@ -92739,24 +92846,26 @@
       "id": "PR_kwDOH6-tI877KrO4",
       "title": "fixes issue 618",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/619",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Removed intrep-ect-endval-selection.cddl file and reworded the evs section to remove selection terminology and remove the intrep cddl content.\r\nFixes #618 ",
       "createdAt": "2026-08-05T16:07:05Z",
-      "updatedAt": "2026-08-11T11:23:17Z",
+      "updatedAt": "2026-08-19T14:57:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "5b21f29f2dc32552aaf65f610e301bf8c1ec5d3d",
+      "baseRefOid": "479d5c80ff4aba7754b07c94e3a867ebaede9bac",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fix-issue-618",
-      "headRefOid": "1b2d9316eb1091876509ab527db5518b59402955",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "03b3c690b0f30529ad47462433c6a97974127598",
+      "closedAt": "2026-08-19T14:57:29Z",
+      "mergedAt": "2026-08-19T14:57:29Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "773f7da2bd9d7804993c25894dee8d5a7b353a3d"
+      },
       "comments": [],
       "reviews": [
         {
@@ -92871,6 +92980,45 @@
               "updatedAt": "2026-08-11T11:23:17Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABKG3PDg",
+          "commit": {
+            "abbreviatedOid": "03b3c69"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-08-19T14:28:19Z",
+          "updatedAt": "2026-08-19T14:28:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABKG3P4w",
+          "commit": {
+            "abbreviatedOid": "03b3c69"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "\ud83d\udea2 it!",
+          "createdAt": "2026-08-19T14:28:20Z",
+          "updatedAt": "2026-08-19T14:28:58Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABKHIjPQ",
+          "commit": {
+            "abbreviatedOid": "03b3c69"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-08-19T14:56:13Z",
+          "updatedAt": "2026-08-19T14:56:13Z",
+          "comments": []
         }
       ]
     },
