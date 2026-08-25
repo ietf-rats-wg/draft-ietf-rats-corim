@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-20T01:39:23.643622+00:00",
+  "timestamp": "2026-08-25T01:39:51.240298+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14762,7 +14762,7 @@
       "labels": [],
       "body": "Given `domain-type = environment-map` and DDT trustees typed as `[+ domain-type]`, it is natural to author a DDT that references environments already present in Evidence. E.g., `[root, [env-A, env-B]]` where `env-A` and `env-B` are Target Environments the attester reports measurements for.\n\nHowever, \u00a75.1.11.2 requires normatively that \"_All of the DDT subjects (domain-id) and objects (trustees) MUST also be domain members for the DDT expression to be processed_\", and the DDT processing algorithm in \u00a79.3.4.6 enforces this by checking `ACS.cmtype` contains `domain-member` for both `dde.environment` and each trustee. Evidence transformation (\u00a79.1.3) produces ACS entries with `cmtype = evidence`, not `domain-member`. The only way an ACS entry acquires `cmtype = domain-member` is via DMT processing (\u00a79.1.7.2 step 2, \u00a79.3.4.5).\n\nConsequence: to reference an evidence-provided environment as a DDT trustee, the CoRIM author must include a trivial self-membership DMT such as `[env-A, [env-A]]` purely to promote env-A's cmtype. This adds no semantic content.\n\n**Requests for clarification / consideration**:\n\n1. Is the requirement to have DDT participants pre-declared as domain-members via a DMT intentional, or an incidental consequence of the ACS cmtype model?\n2. If intentional, it'd be great to state the informative rationale (topology declaration must be explicit before dependency can be asserted) in the spec.\n3. If not strictly intentional, consider one of the following relaxations:\n3.1. Allow DDT processing to implicitly treat any DDT subject/trustee whose environment matches an ACS entry with `cmtype \u2208 {evidence, reference-values}` as a domain-member for the purpose of DDT evaluation (i.e., promote-on-reference).\n3.2. Alternatively, allow a DDT to introduce domain-member ECTs directly for its subject and trustees (analogous to how DMT introduces the subject).\n3.3. Or, at minimum, document the \"self-membership DMT\" pattern as an idiom in a non-normative section so implementers converge on it.\n",
       "createdAt": "2026-07-04T06:28:31Z",
-      "updatedAt": "2026-08-19T14:25:58Z",
+      "updatedAt": "2026-08-24T20:43:03Z",
       "closedAt": null,
       "comments": [
         {
@@ -14792,6 +14792,13 @@
           "body": "Discussed with Ned and Henk on 08/19/2026\n\nUnder the following two agreed upon points:\n1. domain and environment equivalency\n2. DDTs are not allowed to instantiate new domains (i.e., they need to hang off domains that have been synthesized via Evidence and endorsed values triples)\n\nwe agreed that DDTs are dependent on domains and can therefore be provided without DMTs.\n\n@yogeshbdeshpande @fchinchilla @steven-bellock can you ACK/NACK this as well?",
           "createdAt": "2026-08-19T14:25:57Z",
           "updatedAt": "2026-08-19T14:25:57Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@steven-bellock ACKs this.",
+          "createdAt": "2026-08-24T20:43:03Z",
+          "updatedAt": "2026-08-24T20:43:03Z"
         }
       ]
     },
@@ -92278,7 +92285,7 @@
       "labels": [],
       "body": "Fix #583",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-08-19T14:53:18Z",
+      "updatedAt": "2026-08-24T10:01:48Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "479d5c80ff4aba7754b07c94e3a867ebaede9bac",
@@ -92303,6 +92310,13 @@
           "body": "Discussed on the 08/19/2026:\r\n\r\nThis PR should be clearly scoped to the related issue (https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/583) rather than trying to cover multiple different use cases:\r\n1. all the signatures are made by the same authority (this must be very clearly stated in the prose)\r\n2. different keys may have different lifetimes\r\n3. meta-map goes in the top-level phdr (and so do the exp and nbf if carried as claims-in-header)\r\n\r\nAlso: if we need to cover other use cases (e.g., counter-signatures), these should have a separate associated issue.\r\n",
           "createdAt": "2026-08-19T14:53:18Z",
           "updatedAt": "2026-08-19T14:53:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Discussed on the 08/19/2026:\r\n> \r\n> This PR should be clearly scoped to the related issue (#583) rather than trying to cover multiple different use cases:\r\n> \r\n> 1. all the signatures are made by the same authority (this must be very clearly stated in the prose)\r\n> 2. different keys may have different lifetimes\r\n> 3. meta-map goes in the top-level phdr (and so do the exp and nbf if carried as claims-in-header)\r\n> \r\n> Also: if we need to cover other use cases (e.g., counter-signatures), these should have a separate associated issue.\r\n\r\n@thomas-fossati and others present on the call on 08/19/2026\r\n\r\nI agree at minimum this PR MUST address the original issue reported.\r\n\r\nHowever, multiple signatures on the same payload from multiple authorities, is a valid use case, and the tools and mechanisms present in the CDDL, very much support this.\r\n\r\nWe can work on the language that at minimum atleast one Signer Credentials must be Verified before accepting the CoRIM.\r\n\r\nWe can work on the explanation to delegate clearly Among \"N\" Signers the responsibility of:\r\na. Which Signer Verification is Mandatory \r\nb. Which Signer Verification is Optional \r\nto the Verifier Owner Policy and clearly specify these in an unambiguous manner..\r\n\r\nIf we leave this use-case, very soon, we will have to re-work on the specification, as the current scope becomes too restrictive.",
+          "createdAt": "2026-08-24T10:01:48Z",
+          "updatedAt": "2026-08-24T10:01:48Z"
         }
       ],
       "reviews": [
