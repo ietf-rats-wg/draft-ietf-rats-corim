@@ -2104,6 +2104,7 @@ In an Element ECT, it is the target environment to which the elements belong.
 In a Domain ECT, it is the parent environment to which the child domains are related.
 In a Key ECT, it is the environment to which the keys belong.
 In all cases, Environments are identified using instance, class, or group identifiers.
+This is a mandatory attribute in an ECT.
 
 * `authority`: Identifies the entity that issued the tuple.
 The authority of a given ECT is typically established through a digital signature on the Claim.
