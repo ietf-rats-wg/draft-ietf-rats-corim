@@ -2808,7 +2808,7 @@ Subsequent to transformation, the trust dependency relations are processed using
 #### Appraisal Context Initialization {#sec-appraisal-ctx-init}
 
 At the end of Phase 1 all of the extracted and validated tags are loaded into an "appraisal context", consisting of the ACS and the staging area.
-The ACS is initialized with all the addition ECTs in the `ev` relation:
+The ACS is initialized with all the addition ECTs in the `ae` relation:
 
 ~~~ pseudocode
 FUNC init_acs(ae: ae) -> ACS {
