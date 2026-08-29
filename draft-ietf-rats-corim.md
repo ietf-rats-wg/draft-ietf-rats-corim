@@ -274,7 +274,7 @@ Environment-Claim Tuple (ECT):
 The ECT also contains Authority which identifies the entity that authored the ECT.
 
 Instance ID:
-: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
+: An identifier of an Environment instance, such as the serial number of a hardware module.
 See also {{Section 4.2.1 of -eat}}.
 
 Measurement:
@@ -354,7 +354,7 @@ The CDDL definitions in this document follows the naming conventions illustrated
 
 A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
 A CoRIM can be digitally signed with a COSE {{-cose}} signature.
-A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.
+A tag is a structured, machine-readable data format used to identify, describe, and manage modules or components of a system.
 
 Tags can be of different types:
 
@@ -367,7 +367,7 @@ Tags can be of different types:
 CoRIM allows for new types of tags to be added in future specifications.
 For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
 
-Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
+Each CoRIM contains an identifier to distinguish a CoRIM from other CoRIMs.
 
 CoRIM can also carry the following optional metadata:
 
@@ -405,7 +405,7 @@ constraints MUST be followed when creating or validating a CoRIM map.
 
 The following describes each child item of this map.
 
-* `id` (index 0): A unique identifier to identify a CoRIM. Described
+* `id` (index 0): An identifier for a CoRIM. Described
   in {{sec-corim-id}}.
 
 * `tags` (index 1):  An array of one or more CoMID, CoSWID or CoTL tags.  Described
@@ -493,7 +493,7 @@ Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
 
-The profile identifier uniquely identifies a documented profile.  Any changes
+The profile identifier identifies a documented profile.  Any changes
 to the profile, even the slightest deviation, is considered a different profile
 that MUST have a different identifier.
 
@@ -695,7 +695,7 @@ The following example demonstrates these recommendations for bundling CoRIMs wit
 
 A CoMID tag contains information about hardware, firmware, or module composition.
 
-Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
+Each CoMID has an ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
 
 A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -719,7 +719,7 @@ MTI Triples:
 OTI Triples:
 
 * Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
-* Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
+* Device Identity triples: containing cryptographic credentials - for example, an IDevID - identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Trust dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-trust-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
@@ -752,7 +752,7 @@ The following describes each member of the `concise-mid-tag` map.
   textual values within a given context MUST be considered expressed in the
   specified language.
 
-* `tag-identity` (index 1): A `tag-identity-map` containing unique
+* `tag-identity` (index 1): A `tag-identity-map` containing
   identification information for the CoMID.
   Described in {{sec-comid-tag-id}}.
 
@@ -778,7 +778,7 @@ The following describes each member of the `concise-mid-tag` map.
 
 The following describes each member of the `tag-identity-map`.
 
-* `tag-id` (index 0): A universally unique identifier for the CoMID.
+* `tag-id` (index 0): An identifier for the CoMID.
   Described in {{sec-tag-id}}.
 
 * `tag-version` (index 1): Optional versioning information for the `tag-id`.
@@ -790,7 +790,7 @@ The following describes each member of the `tag-identity-map`.
 {::include cddl/tag-id-type-choice.cddl}
 ~~~
 
-A Tag ID is either a 16-byte binary string, or a textual identifier, uniquely
+A Tag ID is either a 16-byte binary string, or a textual identifier
 referencing the CoMID. The tag identifier MUST be globally unique. Failure to
 ensure global uniqueness can create ambiguity in tag use since the tag-id
 serves as the global key for matching, lookups and linking. If represented as a
@@ -849,7 +849,7 @@ tag (the source) and another CoMID tag (the target).
 
 The following describes each member of the `tag-identity-map`.
 
-* `linked-tag-id` (index 0): Unique identifier for the target tag.
+* `linked-tag-id` (index 0): Identifier for the target tag.
   See {{sec-tag-id}}.
 
 * `tag-rel` (index 1): the kind of relation linking the source tag to the
@@ -935,7 +935,7 @@ The following describes each member of the `environment-map`:
 * `class` (index 0): Contains "class" attributes associated with the module.
   Described in {{sec-comid-class}}.
 
-* `instance` (index 1): Contains a unique identifier of a module's instance.
+* `instance` (index 1): Contains an identifier of a module's instance.
   Described in {{sec-comid-instance}}.
 
 * `group` (index 2): identifier for a group of instances, e.g., if an
@@ -996,7 +996,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 
 #### Environment Group {#sec-comid-group}
 
-A group carries a unique identifier that is reliably bound to a group of
+A group carries an identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
@@ -1307,7 +1307,7 @@ Ultimately, the discovered keys have to be successfully byte-by-byte compared wi
 #### Integrity Registers {#sec-comid-integrity-registers}
 
 An Integrity Registers map groups together one or more measured "objects".
-Each measured object has a unique identifier and one or more associated digests.
+Each measured object has an identifier and one or more associated digests.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
 The digests use `digests-type` semantics ({{sec-common-hash-entry}}).
 
@@ -1639,7 +1639,7 @@ Trust dependency triples are transformed into an internal representation (see {{
 
 A CoSWID triple relates reference measurements contained in one or more CoSWIDs
 to a Target Environment. The subject identifies a Target Environment, the
-object one or more unique tag identifiers of existing CoSWIDs, and the
+object one or more tag identifiers of existing CoSWIDs, and the
 predicate asserts that these contain the expected (i.e., reference)
 measurements for the Target Environment.
 
@@ -1702,7 +1702,7 @@ The CDDL specification for the `concise-tl-tag` map and additional grammatical r
 
 The following describes each member of the `concise-tl-tag` map.
 
-* `tag-identity` (index 0): A `tag-identity-map` containing unique
+* `tag-identity` (index 0): A `tag-identity-map` containing
   identification information for the CoTL.
   Described in {{sec-comid-tag-id}}.
 
