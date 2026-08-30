@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-08-27T08:48:36.956691+00:00",
+  "timestamp": "2026-08-30T04:59:26.472177+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14897,15 +14897,19 @@
       "id": "I_kwDOH6-tI88AAAABIVw23Q",
       "title": "typo in ACS initialization description",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/608",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ajay-fuji",
       "authorAssociation": "NONE",
-      "assignees": [],
-      "labels": [],
+      "assignees": [
+        "steven-bellock"
+      ],
+      "labels": [
+        "Verifier_Processing"
+      ],
       "body": "In [Section 8.2.3.8 Appraisal Context Initialization](https://www.ietf.org/archive/id/draft-ietf-rats-corim-11.html#name-appraisal-context-initializ),\nstatement -  \n> The ACS is initialized with all the addition ECTs in the ev relation\n\nincorrectly mentions `ae` as `ev`. \nAlthough [Figure 46](https://www.ietf.org/archive/id/draft-ietf-rats-corim-11.html#figure-46): [ACS Initialization](https://www.ietf.org/archive/id/draft-ietf-rats-corim-11.html#name-acs-initialization) mentioned it correctly as `ae`. ",
       "createdAt": "2026-07-10T11:39:29Z",
-      "updatedAt": "2026-08-25T09:13:13Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-28T12:35:22Z",
+      "closedAt": "2026-08-28T12:35:22Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -15003,10 +15007,12 @@
       "assignees": [
         "thomas-fossati"
       ],
-      "labels": [],
+      "labels": [
+        "Info_or_Data_Model"
+      ],
       "body": "_[This was discussed in the CCC Attestation SIG meeting on 8/11/26]_\n\nA common scenario in my work is to add an endorsed claim that uses a tstr data type for the key and value.  For example, I might want to add an endorsement key of \"azure-compliance-status\" with an endorsement value of \"azure-compliant-cvm\".  \n\nWith the current CDDL definition, the only text (or tstr) data types in the measurement-values-map are \"serial-number\" and \"name\" -- neither of which make sense for my scenario:  \n\n- **serial-number (index 8)**: A text string representing the product serial number.\n- **name (index 11)**: a name associated with the measured environment.\n\n```\nmeasurement-values-map = non-empty<{\n  ? &(version: 0) => version-map\n  ? &(svn: 1) => svn-type-choice\n  ? &(digests: 2) => digests-type\n  ? &(flags: 3) => flags-map\n  ? (\n      &(raw-value: 4) => $raw-value-type-choice,\n      ? &(raw-value-mask-DEPRECATED: 5) => raw-value-mask-type\n    )\n  ? &(mac-addr: 6) => mac-addr-type-choice\n  ? &(ip-addr: 7) => ip-addr-type-choice\n  ? &(serial-number: 8) => text\n  ? &(ueid: 9) => ueid-type\n  ? &(uuid: 10) => uuid-type\n  ? &(name: 11) => text\n  ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]\n  ? &(integrity-registers: 14) => integrity-registers\n  ? &(int-range: 15) => int-range-type-choice\n  * $$measurement-values-map-extension\n}>\n```\n\nCan the measurement-values-map be updated to include a string datatype?  Perhaps:\n\n```\n  ? &(string: 16) => text\n```\n\nThis is the one that's immediately causing me issues.  But looking at the CDDL primitive data types, I can envision I'll eventually wrestle with this issue for \"bool\" and \"uint\" also.  Perhaps also:\n\n```\n  ? &(bool: 17) => bool\n  ? &(uint: 18) => uint\n```\n\n",
       "createdAt": "2026-08-11T18:47:13Z",
-      "updatedAt": "2026-08-27T00:32:10Z",
+      "updatedAt": "2026-08-28T04:11:29Z",
       "closedAt": null,
       "comments": [
         {
@@ -93168,9 +93174,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Add basic types (bool, number, string and bytes) to the measurement values map.  Also, enable --- for these new types only -- the expression of within-set and within-range match semantics (in addition to exact match) via a specialised \"matcher\" CBOR tag.\r\n\r\nAddress #621 \r\n\r\nNOTE: I have used 20 as the base for the new codepoints (marking 16-19 as reserved) because I believe I heard Ned say that some are already in use by the TCG.  If I dreamed that, let me know and I can left-shift.\r\n",
+      "body": "Add basic types (bool, number, string and bytes) to the measurement values map.  Also, enable -- for these new types only -- the expression of within-set and within-range match semantics (in addition to exact match) via a specialised \"matcher\" CBOR tag.\r\n\r\nAddress #621 \r\n\r\nNOTE: I have used 20 as the base for the new codepoints (marking 16-19 as reserved) because I believe I heard Ned say that some are already in use by the TCG.  If I dreamed that, let me know and I can left-shift.\r\n",
       "createdAt": "2026-08-26T16:35:14Z",
-      "updatedAt": "2026-08-26T16:40:28Z",
+      "updatedAt": "2026-08-27T20:14:10Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "0b855af932e388cb42b308cf8ad404226acc7bdb",
@@ -93182,6 +93188,152 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 623,
+      "id": "PR_kwDOH6-tI88AAAABBQeNaA",
+      "title": "update Thomas affiliation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/623",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Also fix CODEOWNERS",
+      "createdAt": "2026-08-27T20:20:13Z",
+      "updatedAt": "2026-08-28T08:18:58Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "0b855af932e388cb42b308cf8ad404226acc7bdb",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "thomas-affil",
+      "headRefOid": "e0be3b37e9c8bd2339ec39445030ff5e21f7dfa7",
+      "closedAt": "2026-08-28T08:18:54Z",
+      "mergedAt": "2026-08-28T08:18:53Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "85bbe57f53fc89b654a48558cfa38e4a145cef2f"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABLLmqBg",
+          "commit": {
+            "abbreviatedOid": "e0be3b3"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-08-27T20:24:47Z",
+          "updatedAt": "2026-08-27T20:24:47Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABLPVDAA",
+          "commit": {
+            "abbreviatedOid": "e0be3b3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2026-08-28T08:18:37Z",
+          "updatedAt": "2026-08-28T08:18:37Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 624,
+      "id": "PR_kwDOH6-tI88AAAABBSsKgw",
+      "title": "Fix appraisal context relation typo",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/624",
+      "state": "MERGED",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "bug"
+      ],
+      "body": "Fix #608.",
+      "createdAt": "2026-08-28T04:09:00Z",
+      "updatedAt": "2026-08-28T14:29:52Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "85bbe57f53fc89b654a48558cfa38e4a145cef2f",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-608",
+      "headRefOid": "55213b15fdbdb2d4baad3c9cc2bce4145258b188",
+      "closedAt": "2026-08-28T12:35:21Z",
+      "mergedAt": "2026-08-28T12:35:21Z",
+      "mergedBy": "thomas-fossati",
+      "mergeCommit": {
+        "oid": "b27b9d86f23bfe13b75898fb44accb85075900c1"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABLPcKzA",
+          "commit": {
+            "abbreviatedOid": "55213b1"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-08-28T08:33:45Z",
+          "updatedAt": "2026-08-28T12:09:51Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABLQ73pA",
+          "commit": {
+            "abbreviatedOid": "55213b1"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "\ud83d\ude4f ",
+          "createdAt": "2026-08-28T12:08:42Z",
+          "updatedAt": "2026-08-28T12:09:51Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 625,
+      "id": "PR_kwDOH6-tI88AAAABBalDNA",
+      "title": "Remove 'unique' wording from identifier descriptions",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/625",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix #555.",
+      "createdAt": "2026-08-29T04:10:29Z",
+      "updatedAt": "2026-08-29T04:37:23Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-555",
+      "headRefOid": "e9de456332b6b04385affdff0bbdde2d0b2fd04b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This should, hopefully, not be too controversial. But we will find out in the review.",
+          "createdAt": "2026-08-29T04:12:24Z",
+          "updatedAt": "2026-08-29T04:12:24Z"
+        }
+      ],
       "reviews": []
     }
   ]
