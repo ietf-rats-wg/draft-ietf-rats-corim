@@ -1130,19 +1130,19 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-int-range}}.
   Comparison rules are defined in {{sec-match-int-range}}.
 
-* `bool` (index 20): A boolean value with configurable matching semantics.
+* `bool` (index 16): A boolean value with configurable matching semantics.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bool}}.
 
-* `number` (index 21): A numeric value with configurable matching semantics, including range and set matching.
+* `number` (index 17): A numeric value with configurable matching semantics, including range and set matching.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-number}}.
 
-* `text` (index 22): A text string with configurable matching semantics.
+* `text` (index 18): A text string with configurable matching semantics.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-text}}.
 
-* `bytes` (index 23): A byte string with configurable matching semantics.
+* `bytes` (index 19): A byte string with configurable matching semantics.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bytes}}.
 
@@ -1379,7 +1379,7 @@ The signed integer range representation is an inclusive range unless either `min
 
 #### Type Matchers {#sec-comid-matchers}
 
-The `measurement-values-map` entries at indices 20–23 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
+The `measurement-values-map` entries at indices 16–19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
 Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
 
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
@@ -3290,7 +3290,7 @@ The comparison MUST return true if and only if all the following conditions are 
 
 ###### Comparison for bool entries {#sec-match-bool}
 
-The value stored under `measurement-values-map` codepoint 20 is of type `bool-matcher`.
+The value stored under `measurement-values-map` codepoint 16 is of type `bool-matcher`.
 
 If the C-ECT value is a bare `bool`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3298,7 +3298,7 @@ If the C-ECT value is a `tagged-bool-set` (CBOR tag 566), the comparison MUST re
 
 ###### Comparison for number entries {#sec-match-number}
 
-The value stored under `measurement-values-map` codepoint 21 is of type `number-matcher`.
+The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
 
 If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3312,7 +3312,7 @@ If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST 
 
 ###### Comparison for text entries {#sec-match-text}
 
-The value stored under `measurement-values-map` codepoint 22 is of type `text-matcher`.
+The value stored under `measurement-values-map` codepoint 18 is of type `text-matcher`.
 
 If the C-ECT value is a bare `text`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3320,7 +3320,7 @@ If the C-ECT value is a `tagged-text-set` (CBOR tag 566), the comparison MUST re
 
 ###### Comparison for bytes entries {#sec-match-bytes}
 
-The value stored under `measurement-values-map` codepoint 23 is of type `bytes-matcher`.
+The value stored under `measurement-values-map` codepoint 19 is of type `bytes-matcher`.
 
 If the C-ECT value is a bare `bytes`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3795,12 +3795,11 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 13    | cryptokeys                | {{&SELF}}     |
 | 14    | integrity-registers       | {{&SELF}}     |
 | 15    | int-range                 | {{&SELF}}     |
-| 16-19 | (reserved)                | {{&SELF}}     |
-| 20    | bool                      | {{&SELF}}     |
-| 21    | number                    | {{&SELF}}     |
-| 22    | text                      | {{&SELF}}     |
-| 23    | bytes                     | {{&SELF}}     |
-| 24-18446744073709551616 | Unassigned | |
+| 16    | bool                      | {{&SELF}}     |
+| 17    | number                    | {{&SELF}}     |
+| 18    | text                      | {{&SELF}}     |
+| 19    | bytes                     | {{&SELF}}     |
+| 20-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
