@@ -1390,6 +1390,8 @@ Rather than adding a separate codepoint for each desired matching criterion, the
 {::include cddl/matcher.cddl}
 ~~~
 
+Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.
+
 ### Reference Values Triple {#sec-comid-triple-refval}
 
 Reference Values Triples describe the possible intended states of an Attester.
