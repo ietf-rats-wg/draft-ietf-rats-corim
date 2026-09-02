@@ -1511,10 +1511,10 @@ Table of Contents
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
      ? &(int-range: 15) => int-range-type-choice
-     ? &(bool: 20) => bool-matcher
-     ? &(number: 21) => number-matcher
-     ? &(text: 22) => text-matcher
-     ? &(bytes: 23) => bytes-matcher
+     ? &(bool: 16) => bool-matcher
+     ? &(number: 17) => number-matcher
+     ? &(text: 18) => text-matcher
+     ? &(bytes: 19) => bytes-matcher
      * $$measurement-values-map-extension
    }>
 
@@ -1583,20 +1583,20 @@ Table of Contents
       Section 5.1.4.8.  Comparison rules are defined in
       Section 8.3.4.4.5.8.
 
-   *  bool (index 20): A boolean value with configurable matching
+   *  bool (index 16): A boolean value with configurable matching
       semantics.  Described in Section 5.1.4.9.  Comparison rules are
       defined in Section 8.3.4.4.5.9.
 
-   *  number (index 21): A numeric value with configurable matching
+   *  number (index 17): A numeric value with configurable matching
       semantics, including range and set matching.  Described in
       Section 5.1.4.9.  Comparison rules are defined in
       Section 8.3.4.4.5.10.
 
-   *  text (index 22): A text string with configurable matching
+   *  text (index 18): A text string with configurable matching
       semantics.  Described in Section 5.1.4.9.  Comparison rules are
       defined in Section 8.3.4.4.5.11.
 
-   *  bytes (index 23): A byte string with configurable matching
+   *  bytes (index 19): A byte string with configurable matching
       semantics.  Described in Section 5.1.4.9.  Comparison rules are
       defined in Section 8.3.4.4.5.12.
 
@@ -1909,7 +1909,7 @@ Table of Contents
 
 5.1.4.9.  Type Matchers
 
-   The measurement-values-map entries at indices 20–23 support generic
+   The measurement-values-map entries at indices 16–19 support generic
    boolean, numeric, text, and byte-string measurements with
    configurable matching semantics.  Rather than adding a separate
    codepoint for each desired matching criterion, these entries use
@@ -4596,7 +4596,7 @@ Table of Contents
 
 8.3.4.4.5.9.  Comparison for bool entries
 
-   The value stored under measurement-values-map codepoint 20 is of type
+   The value stored under measurement-values-map codepoint 16 is of type
    bool-matcher.
 
    If the C-ECT value is a bare bool, an equality comparison is
@@ -4608,7 +4608,7 @@ Table of Contents
 
 8.3.4.4.5.10.  Comparison for number entries
 
-   The value stored under measurement-values-map codepoint 21 is of type
+   The value stored under measurement-values-map codepoint 17 is of type
    number-matcher.
 
    If the C-ECT value is a bare number, an equality comparison is
@@ -4632,7 +4632,7 @@ Table of Contents
 
 8.3.4.4.5.11.  Comparison for text entries
 
-   The value stored under measurement-values-map codepoint 22 is of type
+   The value stored under measurement-values-map codepoint 18 is of type
    text-matcher.
 
    If the C-ECT value is a bare text, an equality comparison is
@@ -4644,7 +4644,7 @@ Table of Contents
 
 8.3.4.4.5.12.  Comparison for bytes entries
 
-   The value stored under measurement-values-map codepoint 23 is of type
+   The value stored under measurement-values-map codepoint 19 is of type
    bytes-matcher.
 
    If the C-ECT value is a bare bytes, an equality comparison is
@@ -5905,17 +5905,15 @@ Table of Contents
     +-----------------------+---------------------------+-------------+
     |15                     | int-range                 |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |16-19                  | (reserved)                |RFCthis      |
+    |16                     | bool                      |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |20                     | bool                      |RFCthis      |
+    |17                     | number                    |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |21                     | number                    |RFCthis      |
+    |18                     | text                      |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |22                     | text                      |RFCthis      |
+    |19                     | bytes                     |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |23                     | bytes                     |RFCthis      |
-    +-----------------------+---------------------------+-------------+
-    |24-18446744073709551616| Unassigned                |             |
+    |20-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
         Table 18: Measurement Values Map Items Initial Registrations
@@ -6624,10 +6622,10 @@ Appendix A.  Base CoRIM CDDL
        ? &(cryptokeys: 13) => [+ $crypto-key-type-choice],
        ? &(integrity-registers: 14) => integrity-registers,
        ? &(int-range: 15) => int-range-type-choice,
-       ? &(bool: 20) => bool-matcher,
-       ? &(number: 21) => number-matcher,
-       ? &(text: 22) => text-matcher,
-       ? &(bytes: 23) => bytes-matcher,
+       ? &(bool: 16) => bool-matcher,
+       ? &(number: 17) => number-matcher,
+       ? &(text: 18) => text-matcher,
+       ? &(bytes: 19) => bytes-matcher,
        * $$measurement-values-map-extension,
    }>
    non-empty<M> = M .and ({+ any => any})
