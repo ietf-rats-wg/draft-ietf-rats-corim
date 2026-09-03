@@ -1130,6 +1130,22 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-int-range}}.
   Comparison rules are defined in {{sec-match-int-range}}.
 
+* `bool` (index 16): A boolean value with configurable matching semantics.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-bool}}.
+
+* `number` (index 17): A numeric value with configurable matching semantics, including range and set matching.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-number}}.
+
+* `text` (index 18): A text string with configurable matching semantics.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-text}}.
+
+* `bytes` (index 19): A byte string with configurable matching semantics.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-bytes}}.
+
 ##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -1360,6 +1376,21 @@ An int range is represented with either major type 0 or major type 1 ints.
 ~~~
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
+
+#### Type Matchers {#sec-comid-matchers}
+
+The `measurement-values-map` entries at indices 16–19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
+Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
+
+* Bare (untagged) value means exact match: the target value must equal the entry's value.
+* CBOR tag 566 (`tagged-*-set`) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
+* CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+~~~ cddl
+{::include cddl/matcher.cddl}
+~~~
+
+Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.
 
 ### Reference Values Triple {#sec-comid-triple-refval}
 
@@ -3257,6 +3288,44 @@ The comparison MUST return true if and only if all the following conditions are 
     + CONDITION.min is `null` or ENTRY.min is an `int` that is greater than or equal to CONDITION.min
     + CONDITION.max is `null` or ENTRY.max is an `int` that is less than or equal to CONDITION.max.
 
+###### Comparison for bool entries {#sec-match-bool}
+
+The value stored under `measurement-values-map` codepoint 16 is of type `bool-matcher`.
+
+If the C-ECT value is a bare `bool`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-bool-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for number entries {#sec-match-number}
+
+The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
+
+If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-number-range` (CBOR tag 565), `null` in the first element represents negative infinity (no lower bound) and `null` in the second element represents positive infinity (no upper bound).
+The comparison MUST return true if and only if both of the following conditions are met:
+
+*  The C-ECT `min` is `null` or the ACS-ECT value is greater than or equal to `min`.
+*  The C-ECT `max` is `null` or the ACS-ECT value is less than or equal to `max`.
+
+If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for text entries {#sec-match-text}
+
+The value stored under `measurement-values-map` codepoint 18 is of type `text-matcher`.
+
+If the C-ECT value is a bare `text`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-text-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for bytes entries {#sec-match-bytes}
+
+The value stored under `measurement-values-map` codepoint 19 is of type `bytes-matcher`.
+
+If the C-ECT value is a bare `bytes`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-bytes-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
 ##### Profile-directed Comparison {#sec-compare-profile}
 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
@@ -3515,7 +3584,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
-| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     565 | `array`             | tagged-number-range, see {{sec-comid-matchers}}                 | {{&SELF}} |
+|     566 | `array`             | tagged-{bool,number,text,bytes}-set, see {{sec-comid-matchers}} | {{&SELF}} |
+| 567-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
@@ -3724,7 +3795,11 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 13    | cryptokeys                | {{&SELF}}     |
 | 14    | integrity-registers       | {{&SELF}}     |
 | 15    | int-range                 | {{&SELF}}     |
-| 16-18446744073709551616 | Unassigned | |
+| 16    | bool                      | {{&SELF}}     |
+| 17    | number                    | {{&SELF}}     |
+| 18    | text                      | {{&SELF}}     |
+| 19    | bytes                     | {{&SELF}}     |
+| 20-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
@@ -3949,6 +4024,7 @@ IANA is requested to register the following Version Scheme Name in the "Software
 {:unnumbered}
 
 The authors would like to thank the following people for their review and comments on this document:
+{{{Greg Kostal}}},
 {{{Carl Wallace}}},
 {{{Hannes Tschofenig}}},
 {{{Steven Bellock}}},
