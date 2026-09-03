@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-01T04:43:09.416773+00:00",
+  "timestamp": "2026-09-03T04:02:39.076308+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14120,9 +14120,9 @@
       "labels": [
         "mustfix"
       ],
-      "body": "The document is liberal in its use of the word `unique`. In many cases the word can be removed entirely without consequence. In other cases the scope of uniqueness needs to be specified to remove ambiguity.",
+      "body": "The document is liberal in its use of the word `unique`. In many cases the word can be removed entirely without consequence.",
       "createdAt": "2026-03-06T17:29:08Z",
-      "updatedAt": "2026-05-14T13:23:10Z",
+      "updatedAt": "2026-09-02T17:47:21Z",
       "closedAt": null,
       "comments": [
         {
@@ -14609,7 +14609,7 @@
       "labels": [],
       "body": "We say that additional details about key protection or provisioning can be supplied via EVTs, but it's not clear to me how that would work.\nWe say that the keys produce endorsements, but what form do these take exactly? Also, is it one per key? This seems to mirror the lack of precise information that we also have in \u00a78.\nThere are a few SHOULDs here, but none of them explain when it is OK to skip the requirement.",
       "createdAt": "2026-06-05T12:27:33Z",
-      "updatedAt": "2026-06-18T10:39:19Z",
+      "updatedAt": "2026-09-02T17:54:17Z",
       "closedAt": null,
       "comments": [
         {
@@ -14618,6 +14618,13 @@
           "body": "@nedmsmith can you please take this..?",
           "createdAt": "2026-06-18T10:39:08Z",
           "updatedAt": "2026-06-18T10:39:08Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think this issue should be addressed in consert with PRs for both corim and evidence-trans drafts. The evidence transformation says that ACS K-ECT entries will result from the triples being used in evidence. But the corim processing language currently only describes processing key-list from the endorsement triples. It should also include key-list from any K-ECTs that matched the condition. \n\nThere is a subtle consideration with the condition structure in that key-list is mandatory. If the goal were to match K-ECTs already in the ACS, then requiring an endorsement that adds more keys might not make sense. Hence, key-list in corim key triples should be optional IMO.\n\nFinally, if a key is to be verified happens to have been verified in a previous stage (stage - 1) then the Verifier can optimize it algorithm an avoid verifying it again, it can just add it to the addition ECT and go to the next key.\n\nAnother aspect that may or may not be necessary to document is if the trust anchor payload is included in a corim, does that imply it can be used when verifying K-ECT triples? Should language be stronger that it MUST be used to avoid Verifier asserting a different trust anchor policy - maybe it's own configured policy - which is currently the assumed default. ",
+          "createdAt": "2026-09-02T17:54:17Z",
+          "updatedAt": "2026-09-02T17:54:17Z"
         }
       ]
     },
@@ -15161,6 +15168,131 @@
           "body": ">This was discussed in the CCC Attestation SIG meeting on 8/11/26\n\nYou can listen to the discussion [here](https://youtu.be/ItLI8LfpYXw?t=1534).",
           "createdAt": "2026-08-27T00:32:10Z",
           "updatedAt": "2026-08-27T00:32:10Z"
+        }
+      ]
+    },
+    {
+      "number": 626,
+      "id": "I_kwDOH6-tI88AAAABPKSLkQ",
+      "title": "Remote Attestation COSE_sign Use Cases with Multi Signers",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/626",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Multi-Party Supply Chain & Software Attestation:\nScenario 1: A firmware update for an industrial device or automotive ECU must be approved by both the original software developer and a compliance auditor.\n\nRole of COSE_Sign: The binary payload (the firmware image, or its digest or SBOM) is wrapped in a single COSE_Sign structure containing two independent COSE_Signature items\u2014one from the vendor's private key and one from the auditor's key. The device's bootloader verifies both signatures before applying the update.\n\nCorrespondingly an Attestation Verifier may want to check both the Signatures, before accepting a CoRIM.\n\nIn the absence of COSE_Sign, a Verifier may have to process the same CoRIM Payload with two distinct signatures - thus two separate messages issued at a separate time, then link them somehow to meet its policy requirements. \n\nScenario: High-value cryptographic operations in restricted hardware (like secure elements or satellite ground stations) require an **M**-of **N** multi-signature consensus.\n\nRole of COSE_Sign: Instead of wrapping signatures inside nested structures\u2014which bloats memory and processing costs on microcontrollers\u2014COSE_Sign natively contains an array of signatures over a shared header and payload.\n\nIdentical to Scenario 1, a little different flavor:\n\nOften in the Industry there is a requirement that an artifact or claims about an artifact needs to be signed by multiple parties. For example, consider the case of firmware or a software prior to be accepted on a device be signed by:\n\na. Component Manufacturer\nb. Device Manufacturer\nc. Enterprise Deployment Authority\n\nAll three signatures from these authorities must cover the same payload, but each signer has its key, algorithm, certificate chain and protected headers.\n\n_An Attestation Verifier May Want to Ensure that the Received CoRIM coming from the Supply Chain is been signed as a valid content, from the Component Manufacturer (stating that it is the correct FW Digest), Device Manufacturer(it is applicable to this Target Environment) and an independent Deployment authority re-asserting the same CoRIM as valid_ \n\nThis demands generation of a single CoRIM for the FW Claims, be it revision, svn or digest and be signed by:\na. Component Manufacturer\nb. Device Manufacturer \nc. Deployment Authority\n\nThis avoids three identical CoRIMs with three distinct signatures been sent to a Verifier.\n",
+      "createdAt": "2026-09-01T13:24:10Z",
+      "updatedAt": "2026-09-02T15:50:19Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Scenario: A firmware update for an industrial device or automotive ECU must be approved by both the original software developer and a compliance auditor.\n\nIs this a SUIT use case rather than a CoRIM one?  As it is described, it seems to apply to the device update manager/boot loader rather than the attestation verifier.\n\n> Scenario: High-value cryptographic operations in restricted hardware (like secure elements or satellite ground stations) require an M-of N multi-signature consensus.\n\nIn this scenario, it's unclear who is consuming the CoRIM.",
+          "createdAt": "2026-09-01T13:31:17Z",
+          "updatedAt": "2026-09-01T13:31:17Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I have clarified the corresponding impact for attestation use case as well, though there is a striking similarity with SUIT use case, I admit\n",
+          "createdAt": "2026-09-01T13:38:52Z",
+          "updatedAt": "2026-09-01T13:38:52Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati please review again..",
+          "createdAt": "2026-09-01T13:41:16Z",
+          "updatedAt": "2026-09-01T13:41:16Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I have clarified the corresponding impact for attestation use case as well, though there is a striking similarity with SUIT use case, I admit\n\nOK, thanks.  I have read the updated description, but I am still struggling to derive a compelling argument from the scenarios.\n\n(Maybe it'd help if you labelled them explicitly.)\n\nThe first scenario centres on the bootloader (_\"The device's bootloader verifies both signatures before applying the update.\"_).\nSo far, so good - this is perfectly clear to me.\nHowever, I do not understand how the requirement regarding the update payload intended for the bootloader can automatically imply the same requirement for the verifier.\nWhy does the attestation verifier need to see and validate the same authorisation chain as the bootloader?\nPerhaps there are times when this is necessary - I'm not saying that it isn't - but the reason is not clear from the description.\n\nI think we need to tell the story from the verifier's perspective: when/why does a verifier need two or more authorities to assert the same CoRIM payload?",
+          "createdAt": "2026-09-01T14:09:50Z",
+          "updatedAt": "2026-09-01T14:09:50Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The scenario \"High-value cryptographic operations in restricted hardware\" is still unclear about what is signed and who needs to verify the signature(s).",
+          "createdAt": "2026-09-01T14:10:32Z",
+          "updatedAt": "2026-09-01T14:10:32Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The scenario \"Identical to Scenario 1, a little different flavor\" has the same framing problem that I highlighted in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/626#issuecomment-5495254761",
+          "createdAt": "2026-09-01T14:13:08Z",
+          "updatedAt": "2026-09-01T14:13:08Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Have tried to explain the Applicability more clearly and explicitly in \"Identical to Scenario 1 section\", also thinking a bit more, I also feel an Independent Endorsement about the FW Identified by a Target Environment can be Vouched by Multiple Independent Signers, perhaps is even more compelling use case for having it in the CoRIM Specification",
+          "createdAt": "2026-09-01T14:29:13Z",
+          "updatedAt": "2026-09-01T14:29:38Z"
+        },
+        {
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "body": "I tried to derive some explicit requirements from the scenario description and I am still struggling, tbh. I understand the following sentiment, but that also does not really help me to understand the explicit problem that is solved. \n\n>  I also feel an Independent Endorsement about the FW Identified by a Target Environment can be Vouched by Multiple Independent Signers\n\nAlso I am not in the clear what procedure to follow to make  these signatures end up in the signature array in an orderly manner in the end (but that really is secondary to the \"why do it in the first place\").",
+          "createdAt": "2026-09-01T16:09:37Z",
+          "updatedAt": "2026-09-01T16:09:37Z"
+        },
+        {
+          "author": "fchinchilla",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Another possible use case is same entity signing the same CoRIM payload with multiple algorithms (ECDSA, ML-DSA).",
+          "createdAt": "2026-09-02T15:10:49Z",
+          "updatedAt": "2026-09-02T15:10:49Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Another possible use case is same entity signing the same CoRIM payload with multiple algorithms (ECDSA, ML-DSA).\n\nThat use case is covered by https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/583",
+          "createdAt": "2026-09-02T15:50:19Z",
+          "updatedAt": "2026-09-02T15:50:19Z"
+        }
+      ]
+    },
+    {
+      "number": 627,
+      "id": "I_kwDOH6-tI88AAAABPYhZdQ",
+      "title": "Clarify domain of uniqueness",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/627",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is a follow-up to #555, and https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/625#issuecomment-5512229385.\n\nWhile #555 removes the word `unique` from many places in the specification, it is still present in other places, and the domain of its uniqueness should be expressed. @thomas-fossati recommends possibly leveraging JWT's definition of Collision-Resistant.",
+      "createdAt": "2026-09-02T17:46:53Z",
+      "updatedAt": "2026-09-02T21:48:00Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "gmandyam",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Doesn't the use of the uuid type result in implicit uniqueness?  If so, I would recommend keeping consistent with uniqueness as defined in https://www.rfc-editor.org/info/rfc9562/#section-6.8.  One possibility is to clarify that CoRIM identifiers that make use of the uuid option MUST be unique within the context of the CoRIM issuer.  \n\nI don't think collision resistance captures the intent behind uniqueness for uuid per the IETF RFC.  ",
+          "createdAt": "2026-09-02T18:27:45Z",
+          "updatedAt": "2026-09-02T18:27:45Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">within the context of the CoRIM issuer.\n\nThe CoRIM specification should encourage this amongst all the \"good\" actors that create CoRIMs, but that does not preclude \"bad\" or \"incompetent\" actors creating CoRIMs who do not follow the rules. So while the specification may say that an identifier is a UUID, that does not guarantee its global uniqueness.",
+          "createdAt": "2026-09-02T21:38:07Z",
+          "updatedAt": "2026-09-02T21:38:07Z"
+        },
+        {
+          "author": "gmandyam",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": ">So while the specification may say that an identifier is a UUID, that does not guarantee its global uniqueness.\n\nI was thinking that the spec can require local uniqueness ('local uniqueness' being defined in https://www.rfc-editor.org/info/rfc9562/#section-6.8) within an issuer's context when UUIDs are used.  ",
+          "createdAt": "2026-09-02T21:48:00Z",
+          "updatedAt": "2026-09-02T21:48:00Z"
         }
       ]
     }
@@ -93176,19 +93308,201 @@
       "labels": [],
       "body": "Add basic types (bool, number, string and bytes) to the measurement values map.  Also, enable -- for these new types only -- the expression of within-set and within-range match semantics (in addition to exact match) via a specialised \"matcher\" CBOR tag.\r\n\r\nAddress #621 \r\n\r\nNOTE: I have used 20 as the base for the new codepoints (marking 16-19 as reserved) because I believe I heard Ned say that some are already in use by the TCG.  If I dreamed that, let me know and I can left-shift.\r\n",
       "createdAt": "2026-08-26T16:35:14Z",
-      "updatedAt": "2026-08-27T20:14:10Z",
+      "updatedAt": "2026-09-02T19:07:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "0b855af932e388cb42b308cf8ad404226acc7bdb",
+      "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "basic-mvm-types",
-      "headRefOid": "36819451f37f06ac0e8369e9445df7fa60732736",
+      "headRefOid": "154565748a6fc4056eba347ae73193cb7f4b1038",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> some comments to be resolved before merge!\r\n\r\ndone, please check the diff!",
+          "createdAt": "2026-09-02T15:37:23Z",
+          "updatedAt": "2026-09-02T15:37:23Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL3UKBQ",
+          "commit": {
+            "abbreviatedOid": "842ca07"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T14:43:32Z",
+          "updatedAt": "2026-09-02T14:43:32Z",
+          "comments": [
+            {
+              "originalPosition": 104,
+              "body": "Ned, Henk to check, whether 16-19 is reserved or not?",
+              "createdAt": "2026-09-02T14:43:32Z",
+              "updatedAt": "2026-09-02T14:43:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL3Ub3w",
+          "commit": {
+            "abbreviatedOid": "842ca07"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T14:43:58Z",
+          "updatedAt": "2026-09-02T14:43:58Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Add suitable narrative to explain these are base types and meaning defined in profiles.",
+              "createdAt": "2026-09-02T14:43:58Z",
+              "updatedAt": "2026-09-02T14:43:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL3UpHQ",
+          "commit": {
+            "abbreviatedOid": "842ca07"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "some comments to be resolved before merge!",
+          "createdAt": "2026-09-02T14:44:17Z",
+          "updatedAt": "2026-09-02T14:44:17Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL3Vp4g",
+          "commit": {
+            "abbreviatedOid": "842ca07"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T14:45:46Z",
+          "updatedAt": "2026-09-02T14:45:47Z",
+          "comments": [
+            {
+              "originalPosition": 104,
+              "body": "Ned confirms that the only reserved codepoint is 12.  So, it seems we can use 16-19 instead.",
+              "createdAt": "2026-09-02T14:45:46Z",
+              "updatedAt": "2026-09-02T14:45:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL3ybww",
+          "commit": {
+            "abbreviatedOid": "842ca07"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T15:27:27Z",
+          "updatedAt": "2026-09-02T15:27:27Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "addressed in a32e204",
+              "createdAt": "2026-09-02T15:27:27Z",
+              "updatedAt": "2026-09-02T15:27:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL34tjw",
+          "commit": {
+            "abbreviatedOid": "842ca07"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T15:36:57Z",
+          "updatedAt": "2026-09-02T15:36:57Z",
+          "comments": [
+            {
+              "originalPosition": 104,
+              "body": "addressed in 4e9ae81",
+              "createdAt": "2026-09-02T15:36:57Z",
+              "updatedAt": "2026-09-02T15:36:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL4aP6A",
+          "commit": {
+            "abbreviatedOid": "1545657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T16:30:17Z",
+          "updatedAt": "2026-09-02T16:30:17Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Line 24 is repeat of line 20",
+              "createdAt": "2026-09-02T16:30:17Z",
+              "updatedAt": "2026-09-02T16:30:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL4a2Fg",
+          "commit": {
+            "abbreviatedOid": "1545657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "please check",
+          "createdAt": "2026-09-02T16:31:19Z",
+          "updatedAt": "2026-09-02T16:31:55Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "Any reason for repetition from 24-27?",
+              "createdAt": "2026-09-02T16:31:19Z",
+              "updatedAt": "2026-09-02T16:31:55Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL58YoQ",
+          "commit": {
+            "abbreviatedOid": "1545657"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-02T19:07:25Z",
+          "updatedAt": "2026-09-02T19:07:26Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "yes, tag 566 means \u201cin-set\u201d matcher, irrespective of the type.",
+              "createdAt": "2026-09-02T19:07:26Z",
+              "updatedAt": "2026-09-02T19:07:26Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 623,
@@ -93314,7 +93628,7 @@
       "labels": [],
       "body": "Fix #555.",
       "createdAt": "2026-08-29T04:10:29Z",
-      "updatedAt": "2026-08-31T01:51:59Z",
+      "updatedAt": "2026-09-02T16:36:43Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
@@ -93332,6 +93646,20 @@
           "body": "This should, hopefully, not be too controversial. But we will find out in the review.",
           "createdAt": "2026-08-29T04:12:24Z",
           "updatedAt": "2026-08-29T04:12:24Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Follow-up to the discussion at the CoRIM weekly meeting on 09/02/2026.\r\n\r\nRegarding replacing \"uniqueness\" with \"collision-resistance\", I believe that the definition of \"Collision-Resistant Name\" in [Section 2 of JWT](https://www.rfc-editor.org/info/rfc7519/#section-2) can be used as-is and applied to all CoRIM identifiers.",
+          "createdAt": "2026-09-02T15:42:31Z",
+          "updatedAt": "2026-09-02T15:42:31Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati let me file a separate issue for that. Regardless of how `unique` is defined, this pull request can stand apart from that.",
+          "createdAt": "2026-09-02T16:36:43Z",
+          "updatedAt": "2026-09-02T16:36:43Z"
         }
       ],
       "reviews": []
