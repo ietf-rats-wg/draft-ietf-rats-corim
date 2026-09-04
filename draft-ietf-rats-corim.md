@@ -695,7 +695,7 @@ The following example demonstrates these recommendations for bundling CoRIMs wit
 
 A CoMID tag contains information about hardware, firmware, or module composition.
 
-Each CoMID has an ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
+Each CoMID has an ID that is used to identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
 
 A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -979,7 +979,7 @@ The following describes each member of the `class-map`:
 
 #### Environment Instance {#sec-comid-instance}
 
-An `instance-id` is a unique value that identifies a Target Environment instance.
+An `instance-id` identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
 For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
 See {{Section 4.1 of -pkix-cert}}.
