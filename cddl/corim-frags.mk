@@ -77,11 +77,13 @@ CORIM_FRAGS += corim-meta-map.cddl
 CORIM_FRAGS += corim-role-type-choice.cddl
 CORIM_FRAGS += corim-signer-map.cddl
 CORIM_FRAGS += cose-sign1-corim.cddl
+CORIM_FRAGS += cose-sign-corim.cddl
 CORIM_FRAGS += profile-type-choice.cddl
 CORIM_FRAGS += cwt-claims.cddl
 CORIM_FRAGS += protected-corim-header-map.cddl
 CORIM_FRAGS += signed-corim.cddl
 CORIM_FRAGS += tagged-concise-swid-tag.cddl
+CORIM_FRAGS += signature-structure.cddl
 
 CORIM_IMPORTS += eatmc=measured-component
 
