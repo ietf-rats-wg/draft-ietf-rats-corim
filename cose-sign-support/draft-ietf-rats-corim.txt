@@ -869,10 +869,18 @@ Table of Contents
 
 4.2.3.  Signing with Multiple Signers
 
+   Often in the industry, there are cases, when an Endorser or a
+   Reference Value Provider needs to generate multiple signatures over
+   the same unsigned CoRIM.  This may be needed in order to support
+   multiple signature algorithms (such as ECDSA, single ML-DSA and
+   Hybrid ML-DSA), over the same CoRIM, thus avoiding the need to
+   generate multiple identical CoRIMs.  Alternatively, the same unsigned
+   CoRIM containing a Reference Value or Endorsement needs to be signed
+   by multiple different signers, such as a component manufacturer and a
+   device manufacturer.
+
    When using COSE_Sign the following CDDL specification defines the
-   overall structure.  Note: When using COSE_Sign, the top level Header
-   parameters of the CoRIM structure MUST not be set and hence should
-   zeroed out as per the guidance specified in COSE Specification.
+   overall structure.
 
    COSE-Sign-corim = [
      protected: bstr .size 0,
@@ -884,9 +892,11 @@ Table of Contents
    ]
 
    When multiple authorities sign an unsigned CoRIM or multiple
-   different signatures are used by an authority to sign an unsigned
-   CoRIM, the details about each signature are added to each entry in
-   the signature-structure array, as shown below.
+   different signatures are used by an authority, the details about each
+   signature are added to each entry in the signature-structure array,
+   as shown below.
+
+   The top level Header parameters of the CoRIM structure MUST be empty.
 
    signature-structure = [
      protected: bstr .cbor protected-corim-header-map
@@ -3372,20 +3382,23 @@ Table of Contents
 
 8.2.3.2.  CoRIM Trust Anchors
 
-   If CoRIM tags are signed, the signatures MUST be validated using the
+   If CoRIM tags are signed, the signatures MUST be verified using the
    appropriate trust anchors available to the Verifier.  The Verifier is
-   expected to have a trust anchor store.  The way in which these trust
-   anchors are provisioned in the Verifier is beyond the scope of this
-   specification.  If the CoRIM is signed, it should include at least
-   one certificate (e.g., as part of the x5chain in the COSE header)
-   that corresponds to the key pair used for signing.  This certificate
-   MUST have a valid certification path to one of the Verifier's trust
-   anchors.
+   expected to have a trust anchor store.  If the CoRIM is signed, it
+   should include at least one certificate (e.g., as part of the x5chain
+   in the COSE header) that corresponds to the key pair used for
+   signing.  This certificate MUST have a valid certification path to
+   one of the Verifier's trust anchors.
 
-   If the CoRIM is signed by multiple authorities, each signature MUST
-   be verified before the CoRIM can be accepted for further processing
-   by the Verifier.  A Verifier Owner may choose to relax this based on
-   its own Appraisal Policy for Evidence.
+   If the CoRIM is signed by multiple authorities, at least ONE
+   signature MUST be verified before the CoRIM can be accepted for
+   further processing by the Verifier.  A Verifier Appraisal Policy for
+   Evidence may require more signatures to be verified before accepting
+   the CoRIM.  It is expected that for each of these signers, the
+   corresponding trust anchors are provisioned in the Verifier.
+
+   The way in which these trust anchors are provisioned in the Verifier
+   is beyond the scope of this specification.
 
 8.2.3.3.  Tags Extraction and Validation
 
