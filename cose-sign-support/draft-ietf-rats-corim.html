@@ -2262,14 +2262,13 @@ unprotected-corim-header-map = {
           <h4 id="name-signing-with-multiple-signe">
 <a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-signing-with-multiple-signe" class="section-name selfRef">Signing with Multiple Signers</a>
           </h4>
-<p id="section-4.2.3-1">Often in the industry, there are cases, when an Endorser or a Reference Value Provider needs to generate multiple
-signatures over the same unsigned CoRIM.
+<p id="section-4.2.3-1">Often in the industry, there are cases, when an Endorser or a Reference Value Provider needs to generate multiple signatures over the same unsigned CoRIM.
 This may be needed in order to support multiple signature algorithms (such as ECDSA, single ML-DSA and Hybrid ML-DSA), over the same CoRIM,
-thus avoiding the need to generate multiple identical CoRIMs.
-Alternatively, the same unsigned CoRIM containing a Reference Value or Endorsement needs to be signed by multiple different signers, such as
-a component manufacturer and a device manufacturer.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-2">When using COSE_Sign the following CDDL specification defines the overall structure.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-4.2.3-3">
+thus avoiding the need to generate multiple identical CoRIMs.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-2">Alternatively, the same unsigned CoRIM containing a Reference Values or Endorsements needs to be signed by multiple different signers, such as
+a component manufacturer and a device manufacturer.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-3">When using COSE_Sign the following CDDL specification defines the overall structure.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.2.3-4">
 <pre>
 COSE-Sign-corim = [
   protected: bstr .size 0,
@@ -2279,21 +2278,21 @@ COSE-Sign-corim = [
                       nil
   signatures: [2* signature-structure]
 ]
-</pre><a href="#section-4.2.3-3" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.3-4" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2.3-4">When multiple authorities sign an unsigned CoRIM or multiple different signatures are used by an authority,
-the details about each signature are added to each entry in the <code>signature-structure</code> array, as shown below.<a href="#section-4.2.3-4" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-5">The top level Header parameters of the CoRIM structure MUST be empty.<a href="#section-4.2.3-5" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-4.2.3-6">
+<p id="section-4.2.3-5">When multiple authorities sign an unsigned CoRIM or multiple different signatures are used by an authority,
+the details about each signature are added to each entry in the <code>signature-structure</code> array, as shown below.<a href="#section-4.2.3-5" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-6">The top level Header parameters of the CoRIM structure MUST be empty.<a href="#section-4.2.3-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.2.3-7">
 <pre>
 signature-structure = [
   protected: bstr .cbor protected-corim-header-map
   unprotected: unprotected-corim-header-map
   signature: bstr
 ]
-</pre><a href="#section-4.2.3-6" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.3-7" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2.3-7">Refer to <a href="#sec-header" class="auto internal xref">Section 4.2.2</a> when setting the header parameters associated to each authority signing the CoRIM.<a href="#section-4.2.3-7" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-8">Refer to <a href="#sec-header" class="auto internal xref">Section 4.2.2</a> when setting the header parameters associated to each authority signing the CoRIM.<a href="#section-4.2.3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
