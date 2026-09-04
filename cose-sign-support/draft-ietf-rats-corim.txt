@@ -880,7 +880,7 @@ Table of Contents
      payload: bstr .cbor tagged-unsigned-corim-map /
                          hash-envelope-digest /
                          nil
-     signatures: [2* signature_structure]
+     signatures: [2* signature-structure]
    ]
 
    When multiple authorities sign an unsigned CoRIM or multiple
@@ -888,7 +888,7 @@ Table of Contents
    CoRIM, the details about each signature are added to each entry in
    the signature-structure array, as shown below.
 
-   signature_structure = [
+   signature-structure = [
      protected: bstr .cbor protected-corim-header-map
      unprotected: unprotected-corim-header-map
      signature: bstr
@@ -6098,7 +6098,7 @@ Appendix A.  Base CoRIM CDDL
      unprotected: {},
      payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
                                                            digest / nil,
-     signatures: [2*signature_structure],
+     signatures: [2*signature-structure],
    ]
    $profile-type-choice /= uri / tagged-oid-type
    cwt-claims = {
@@ -6132,7 +6132,7 @@ Appendix A.  Base CoRIM CDDL
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
    signed-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)
    tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
-   signature_structure = [
+   signature-structure = [
      protected: bstr .cbor protected-corim-header-map,
      unprotected: unprotected-corim-header-map,
      signature: bstr,

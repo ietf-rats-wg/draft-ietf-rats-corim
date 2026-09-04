@@ -2273,7 +2273,7 @@ COSE-Sign-corim = [
   payload: bstr .cbor tagged-unsigned-corim-map /
                       hash-envelope-digest /
                       nil
-  signatures: [2* signature_structure]
+  signatures: [2* signature-structure]
 ]
 </pre><a href="#section-4.2.3-2" class="pilcrow">¶</a>
 </div>
@@ -2281,7 +2281,7 @@ COSE-Sign-corim = [
 the details about each signature are added to each entry in the <code>signature-structure</code> array, as shown below.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.2.3-4">
 <pre>
-signature_structure = [
+signature-structure = [
   protected: bstr .cbor protected-corim-header-map
   unprotected: unprotected-corim-header-map
   signature: bstr
@@ -8564,7 +8564,7 @@ COSE-Sign-corim = [
   unprotected: {},
   payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
                                                         digest / nil,
-  signatures: [2*signature_structure],
+  signatures: [2*signature-structure],
 ]
 $profile-type-choice /= uri / tagged-oid-type
 cwt-claims = {
@@ -8598,7 +8598,7 @@ corim-meta-identity = (&amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map)
 cwt-claims-identity = (&amp;(CWT-Claims: 15) =&gt; cwt-claims)
 signed-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)
 tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
-signature_structure = [
+signature-structure = [
   protected: bstr .cbor protected-corim-header-map,
   unprotected: unprotected-corim-header-map,
   signature: bstr,
