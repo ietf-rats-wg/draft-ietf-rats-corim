@@ -510,7 +510,7 @@ COSE_Sign structure.
 The COSE_Sign structure MAY be used when:
 
 1. Multiple authorities need to sign the same unsigned CoRIM payload; or
-2. Single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
+2. A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
 
 See {{sec-mult-sign}} for details on multi signature CoRIM.
 
@@ -540,7 +540,7 @@ The following describes each child element of this type.
 
 ### Header Parameters  {#sec-header}
 
-This section describes the header parameters of a signed CoRIM using a single signature (COSE-Sign1) or multiple signatures (COSE_Sign).
+This section describes the header parameters of a signed CoRIM using a single signer (COSE-Sign1) or multiple signers (COSE_Sign).
 
 #### Protected Header Map
 
@@ -638,16 +638,23 @@ Signer map.
 
 ### Signing with Multiple Signers {#sec-mult-sign}
 
+Often in the industry, there are cases, when an Endorser or a Reference Value Provider needs to generate multiple signatures over the same unsigned CoRIM.
+This may be needed in order to support multiple signature algorithms (such as ECDSA, single ML-DSA and Hybrid ML-DSA), over the same CoRIM,
+thus avoiding the need to generate multiple identical CoRIMs.
+
+Alternatively, the same unsigned CoRIM containing a Reference Values or Endorsements needs to be signed by multiple different signers, such as
+a component manufacturer and a device manufacturer.
+
 When using COSE_Sign the following CDDL specification defines the overall structure.
-Note: When using COSE_Sign, the top level Header parameters of the CoRIM structure MUST not be set
-and hence should zeroed out as per the guidance specified in COSE Specification.
 
 ~~~ cddl
-{::include cddl/cose-sign1-corim.cddl}
+{::include cddl/cose-sign-corim.cddl}
 ~~~
 
-When multiple authorities sign an unsigned CoRIM or multiple different signatures are used by an authority to sign an unsigned CoRIM,
-the details about each signature is added in each entry of the signature structure array, as shown below.
+When multiple authorities sign an unsigned CoRIM or multiple different signatures are used by an authority,
+the details about each signature are added to each entry in the `signature-structure` array, as shown below.
+
+The top level Header parameters of the CoRIM structure MUST be empty.
 
 ~~~ cddl
 {::include cddl/signature-structure.cddl}
@@ -2374,14 +2381,16 @@ Further selection criteria may be applied to the CoRIM contents at later stages.
 
 #### CoRIM Trust Anchors
 
-If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors available to the Verifier.
+If CoRIM tags are signed, the signatures MUST be verified using the appropriate trust anchors available to the Verifier.
 The Verifier is expected to have a trust anchor store.
-The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the `x5chain` in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
 
-If the CoRIM is signed by multiple authorities, each signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
-A Verifier Owner may choose to relax this based on its own Appraisal Policy for Evidence.
+If the CoRIM is signed by multiple authorities, at least ONE signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
+A Verifier Appraisal Policy for Evidence may require more signatures to be verified before accepting the CoRIM.
+It is expected that for each of these signers, the corresponding trust anchors are provisioned in the Verifier.
+
+The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 
 #### Tags Extraction and Validation
 
