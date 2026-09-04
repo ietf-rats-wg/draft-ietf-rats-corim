@@ -5144,11 +5144,8 @@ key-item = {
 <a href="#name-keys-relation" class="selfRef">Keys Relation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.2.2.4-3"><span class="cref">
-[TODO]
-Specialise condition/addition ECTs.
-Define constraints.
-</span><a href="#section-8.3.2.2.4-3" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.4-3">If <code>key-item</code> is used to transform Evidence, <code>key-item.condition</code> is omitted since Evidence addition is unconditional.
+Nevertheless, <code>key-item.addition</code> is merely staged for addition pending successful key verification checks.<a href="#section-8.3.2.2.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-ir-domain-mem">
@@ -5631,9 +5628,9 @@ FUNC transform(
               <h6 id="name-keys-2">
 <a href="#section-8.3.3.7.4" class="section-number selfRef">8.3.3.7.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
               </h6>
-<p id="section-8.3.3.7.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.3.2.2.4</a>).<a href="#section-8.3.3.7.4-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.7.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 27</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 42</a>.<a href="#section-8.3.3.7.4-2" class="pilcrow">¶</a></p>
-<span id="name-key-triple-transformation"></span><div id="algo-key-transform">
+<p id="section-8.3.3.7.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>keys</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.3.2.2.4</a>).<a href="#section-8.3.3.7.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 27</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 42</a> pseudocode.<a href="#section-8.3.3.7.4-2" class="pilcrow">¶</a></p>
+<span id="name-key-triples-transformation"></span><div id="algo-key-transform">
 <figure id="figure-42">
                 <div class="lang-pseudocode sourcecode" id="section-8.3.3.7.4-3.1">
 <pre>
@@ -5673,10 +5670,11 @@ FUNC transform(
 </pre>
 </div>
 <figcaption><a href="#figure-42" class="selfRef">Figure 42</a>:
-<a href="#name-key-triple-transformation" class="selfRef">Key Triple Transformation</a>
+<a href="#name-key-triples-transformation" class="selfRef">Key Triples Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.3.7.4-4">Note that keys are added under the authority of the verifier.<a href="#section-8.3.3.7.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.4-4">Note that keys are added under the authority of the verifier because the key verification check is performed by the Verifier.<a href="#section-8.3.3.7.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.4-5">After the <code>keys</code> relations are staged, processing commences as decribed in <a href="#sec-proc-keys" class="auto internal xref">Section 8.3.4.3.3</a>.<a href="#section-8.3.3.7.4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-trans-domain-mem">
@@ -5941,28 +5939,19 @@ FUNC SERIES-MATCH(acs: ACS, series: SERIES)
 </div>
 </section>
 </div>
-<div id="processing-keys-relations">
+<div id="sec-proc-keys">
 <section id="section-8.3.4.3.3">
               <h6 id="name-processing-keys-relations">
 <a href="#section-8.3.4.3.3" class="section-number selfRef">8.3.4.3.3. </a><a href="#name-processing-keys-relations" class="section-name selfRef">Processing <code>keys</code> Relations</a>
               </h6>
-<p id="section-8.3.4.3.3-1">Keys relations identify cryptographic keys that require additional key verification steps.<a href="#section-8.3.4.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.3-2">Keys are matched with ACS entries by iterating through the <code>keys</code> list.
-For each <code>keys</code> entry, the condition ECT is compared with an ACS ECT with <code>cmtype</code> 1 or 2 (i.e., endorsements or evidence).
-If they match, perform the following steps for each key in the condition ECT <code>key-list</code>:<a href="#section-8.3.4.3.3-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-8.3.4.3.3-3">
-<li id="section-8.3.4.3.3-3.1">
-                  <p id="section-8.3.4.3.3-3.1.1">Verify the certificate signatures for each certificate in the certification path.<a href="#section-8.3.4.3.3-3.1.1" class="pilcrow">¶</a></p>
-</li>
-                <li id="section-8.3.4.3.3-3.2">
-                  <p id="section-8.3.4.3.3-3.2.1">Verify the revocation status for each certificate in the certification path.<a href="#section-8.3.4.3.3-3.2.1" class="pilcrow">¶</a></p>
-</li>
-                <li id="section-8.3.4.3.3-3.3">
-                  <p id="section-8.3.4.3.3-3.3.1">Verify the key usage restrictions that are appropriate for <code>key-type</code>.<a href="#section-8.3.4.3.3-3.3.1" class="pilcrow">¶</a></p>
-</li>
-              </ol>
-<p id="section-8.3.4.3.3-4">A key that successfully passes the above checks is said to be verified.<a href="#section-8.3.4.3.3-4" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.3-5">Add all the verified keys to the addition ECT's <code>key-list</code> and add the addition ECT to the ACS.<a href="#section-8.3.4.3.3-5" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.3-1">Keys relations identify cryptographic keys that require additional key verification steps before being appended to the ACS.
+Processing follows the algorithm as defined in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.3.4</a>.
+The <code>keys</code> list is iterated for each <code>key-item</code> where the <code>acs::MATCH()</code> function uses<code>condition</code>, if specified, to search the ACS for preexisting conditions.
+Match conditions may return a variety of results including <code>Evidence-addition-ECT</code>, <code>Reference-Value-addition-ECT</code>, <code>Endorsement-addition-ECT</code>, and <code>Key-addition-ECT</code> ECTs.
+If <code>Evidence-addition-ECT</code>, <code>Reference-Value-addition-ECT</code>, or <code>Endorsement-addition-ECT</code> are matched, the <code>element-list.element-map.measurement-values-map.cryptokeys</code> list is appended to <code>key-item.addition.key-list</code>.
+If <code>Key-addition-ECT</code> ECTs are matched, its <code>key-list</code> is appended to <code>key-item.addition.key-list</code>.<a href="#section-8.3.4.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.3-2">The <code>acs::CHECK()</code> function is called with <code>key-item.addition.key-list</code> where key verification, such as <span><a href="https://rfc-editor.org/rfc/rfc5280#section-6" class="relref">Section 6</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span> is applied.<a href="#section-8.3.4.3.3-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.3-3">A key that successfully validates is retained in <code>key-item.addition.key-list</code> and the <code>acs::APPEND()</code> function is used to append verified keys to the ACS.<a href="#section-8.3.4.3.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-proc-dm">
