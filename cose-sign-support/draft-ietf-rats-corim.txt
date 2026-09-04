@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 12 February 2027                                         Linaro
+Expires: 8 March 2027                                             Linaro
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                          11 August 2026
+                                                        4 September 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 February 2027.
+   This Internet-Draft will expire on 8 March 2027.
 
 Copyright Notice
 
@@ -670,14 +670,15 @@ Table of Contents
    and Encryption [STD96].  A CoRIM tag MUST be wrapped either in a
    COSE_Sign1 structure or a COSE_Sign structure.
 
-   The COSE_Sign structure MUST be used when:
+   The COSE_Sign structure MAY be used when:
 
    1.  Multiple authorities need to sign the same unsigned CoRIM
        payload; or
 
-   2.  Single authority needs to sign the same unsigned CoRIM payload
-       using different signing algorithms.  Please refer to
-       Section 4.2.3 for details on multi signature CoRIM.
+   2.  A single authority needs to sign the same unsigned CoRIM payload
+       using different signing algorithms.
+
+   See Section 4.2.3 for details on multi signature CoRIM.
 
    The CoRIM MUST be signed by the CoRIM creator.
 
@@ -719,7 +720,7 @@ Table of Contents
 4.2.2.  Header Parameters
 
    This section describes the header parameters of a signed CoRIM using
-   a single signature (COSE-Sign1) or multiple signatures (COSE_Sign).
+   a single signer (COSE-Sign1) or multiple signers (COSE_Sign).
 
 4.2.2.1.  Protected Header Map
 
@@ -873,21 +874,19 @@ Table of Contents
    parameters of the CoRIM structure MUST not be set and hence should
    zeroed out as per the guidance specified in COSE Specification.
 
-   COSE-Sign1-corim = [
-     protected: bstr .cbor protected-corim-header-map
-     unprotected: unprotected-corim-header-map
+   COSE-Sign-corim = [
+     protected: bstr .size 0,
+     unprotected: {}
      payload: bstr .cbor tagged-unsigned-corim-map /
                          hash-envelope-digest /
                          nil
-     signature: bstr
+     signatures: [2* signature_structure]
    ]
-
-   hash-envelope-digest = bstr
 
    When multiple authorities sign an unsigned CoRIM or multiple
    different signatures are used by an authority to sign an unsigned
-   CoRIM, the details about each signature is added in each entry of the
-   signature structure array, as shown below.
+   CoRIM, the details about each signature are added to each entry in
+   the signature-structure array, as shown below.
 
    signature_structure = [
      protected: bstr .cbor protected-corim-header-map
@@ -6096,12 +6095,11 @@ Appendix A.  Base CoRIM CDDL
    hash-envelope-digest = bstr
    COSE-Sign-corim = [
      protected: bstr .size 0,
-     unprotected: empty_body_unprotected_header,
+     unprotected: {},
      payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
                                                            digest / nil,
      signatures: [2*signature_structure],
    ]
-   empty_body_unprotected_header = {}
    $profile-type-choice /= uri / tagged-oid-type
    cwt-claims = {
      &(iss: 1) => tstr,
