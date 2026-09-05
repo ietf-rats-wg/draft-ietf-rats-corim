@@ -1450,7 +1450,7 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
 * `endorsement`: Additional Endorsement Claims.
 
-To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+To process an `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
@@ -2629,7 +2629,7 @@ Since they may contain ranges rather than individual values (see, for example, {
 
 Endorsed Values transformation involves mapping EV, CE and CES triples into `ev` or `evs` relations (see {{sec-ir-endval}}).
 
-A `endorsed-triple-record` ({{triple-ev}}) is transformed into an `ev-item` ({{fig-ev}}) as described in {{algo-ev-transform}}.
+An `endorsed-triple-record` ({{triple-ev}}) is transformed into an `ev-item` ({{fig-ev}}) as described in {{algo-ev-transform}}.
 (The code reuses the `mms_to_ems` function from {{algo-mm-to-em}}.)
 
 ~~~ pseudocode
@@ -3270,7 +3270,7 @@ In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a C-ECT co
 
 The ACS-ECT value stored under `measurement-values-map` codepoint 15 is an int range value of `int-range-type-choice`.
 
-Consider an `int` ACS-ECT value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
+Consider an `int` ACS-ECT value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against either another `int` or an `int-range` named CONDITION.
 
 *  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
 
