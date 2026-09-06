@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-03T04:02:39.076308+00:00",
+  "timestamp": "2026-09-06T04:10:03.838559+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -97,6 +97,11 @@
       "name": "profiling",
       "description": "",
       "color": "369017"
+    },
+    {
+      "name": "-12",
+      "description": "Version -12 of the draft",
+      "color": "c9e606"
     }
   ],
   "issues": [
@@ -14122,7 +14127,7 @@
       ],
       "body": "The document is liberal in its use of the word `unique`. In many cases the word can be removed entirely without consequence.",
       "createdAt": "2026-03-06T17:29:08Z",
-      "updatedAt": "2026-09-02T17:47:21Z",
+      "updatedAt": "2026-09-03T17:47:12Z",
       "closedAt": null,
       "comments": [
         {
@@ -14131,6 +14136,13 @@
           "body": "@steven-bellock any update on this issue..?",
           "createdAt": "2026-05-14T13:23:10Z",
           "updatedAt": "2026-05-14T13:23:10Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">@steven-bellock any update on this issue..?\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/625 is out for review.",
+          "createdAt": "2026-09-03T17:47:12Z",
+          "updatedAt": "2026-09-03T17:47:12Z"
         }
       ]
     },
@@ -14609,7 +14621,7 @@
       "labels": [],
       "body": "We say that additional details about key protection or provisioning can be supplied via EVTs, but it's not clear to me how that would work.\nWe say that the keys produce endorsements, but what form do these take exactly? Also, is it one per key? This seems to mirror the lack of precise information that we also have in \u00a78.\nThere are a few SHOULDs here, but none of them explain when it is OK to skip the requirement.",
       "createdAt": "2026-06-05T12:27:33Z",
-      "updatedAt": "2026-09-02T17:54:17Z",
+      "updatedAt": "2026-09-04T21:12:26Z",
       "closedAt": null,
       "comments": [
         {
@@ -14625,6 +14637,13 @@
           "body": "I think this issue should be addressed in consert with PRs for both corim and evidence-trans drafts. The evidence transformation says that ACS K-ECT entries will result from the triples being used in evidence. But the corim processing language currently only describes processing key-list from the endorsement triples. It should also include key-list from any K-ECTs that matched the condition. \n\nThere is a subtle consideration with the condition structure in that key-list is mandatory. If the goal were to match K-ECTs already in the ACS, then requiring an endorsement that adds more keys might not make sense. Hence, key-list in corim key triples should be optional IMO.\n\nFinally, if a key is to be verified happens to have been verified in a previous stage (stage - 1) then the Verifier can optimize it algorithm an avoid verifying it again, it can just add it to the addition ECT and go to the next key.\n\nAnother aspect that may or may not be necessary to document is if the trust anchor payload is included in a corim, does that imply it can be used when verifying K-ECT triples? Should language be stronger that it MUST be used to avoid Verifier asserting a different trust anchor policy - maybe it's own configured policy - which is currently the assumed default. ",
           "createdAt": "2026-09-02T17:54:17Z",
           "updatedAt": "2026-09-02T17:54:17Z"
+        },
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "relates to PR#28 in draft-ietf-rats-evidence-trans",
+          "createdAt": "2026-09-04T21:12:25Z",
+          "updatedAt": "2026-09-04T21:12:25Z"
         }
       ]
     },
@@ -15270,7 +15289,7 @@
       "labels": [],
       "body": "This is a follow-up to #555, and https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/625#issuecomment-5512229385.\n\nWhile #555 removes the word `unique` from many places in the specification, it is still present in other places, and the domain of its uniqueness should be expressed. @thomas-fossati recommends possibly leveraging JWT's definition of Collision-Resistant.",
       "createdAt": "2026-09-02T17:46:53Z",
-      "updatedAt": "2026-09-02T21:48:00Z",
+      "updatedAt": "2026-09-04T01:54:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -15293,8 +15312,88 @@
           "body": ">So while the specification may say that an identifier is a UUID, that does not guarantee its global uniqueness.\n\nI was thinking that the spec can require local uniqueness ('local uniqueness' being defined in https://www.rfc-editor.org/info/rfc9562/#section-6.8) within an issuer's context when UUIDs are used.  ",
           "createdAt": "2026-09-02T21:48:00Z",
           "updatedAt": "2026-09-02T21:48:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "CoRIM identifiers are not exclusively UUIDs.   They can be OIDs, text string, and all sorts of stuff really, because of extensibility.\n\nI'd use \"collision-resistant name\" as the general requirement and then add a note that when UUIDs are used, the local-uniqueness guidance in RFC 9562 \u00a76.8 applies.",
+          "createdAt": "2026-09-03T18:26:32Z",
+          "updatedAt": "2026-09-03T18:26:32Z"
+        },
+        {
+          "author": "gmandyam",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> CoRIM identifiers are not exclusively UUIDs. They can be OIDs, text string, and all sorts of stuff really, because of extensibility.\n\nYes, which is why I stated \"within an issuer's context when UUIDs are used.\".  BTW - NIST claims that OIDs are globally unique:  https://csrc.nist.gov/glossary/term/object_identifier.  \n\n> I'd use \"collision-resistant name\" as the general requirement and then add a note that when UUIDs are used, the local-uniqueness guidance in RFC 9562 \u00a76.8 applies.\n\nCollision resistance means one thing in the context of hashes (e.g. https://datatracker.ietf.org/doc/html/rfc9381#name-vrf-security-properties).  I don't know if it means the same thing for text strings.  How would you define it?",
+          "createdAt": "2026-09-03T22:24:05Z",
+          "updatedAt": "2026-09-03T22:24:05Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > I'd use \"collision-resistant name\" as the general requirement and then add a note that when UUIDs are used, the local-uniqueness guidance in RFC 9562 \u00a76.8 applies.\n> \n> Collision resistance means one thing in the context of hashes (e.g. https://datatracker.ietf.org/doc/html/rfc9381#name-vrf-security-properties). I don't know if it means the same thing for text strings. How would you define it?\n\nMy proposal is to reuse/reference the definition provided by RFC 7519:\n\n```\nCollision-Resistant Name\n      A name in a namespace that enables names to be allocated in a\n      manner such that they are highly unlikely to collide with other\n      names.  Examples of collision-resistant namespaces include: Domain\n      Names, Object Identifiers (OIDs) as defined in the ITU-T X.660 and\n      X.670 Recommendation series, and Universally Unique IDentifiers\n      (UUIDs) [RFC4122].  When using an administratively delegated\n      namespace, the definer of a name needs to take reasonable\n      precautions to ensure they are in control of the portion of the\n      namespace they use to define the name.\n```\n\nand say that the identifiers used in CoRIM (e.g. tag IDs, class IDs, instance IDs, group IDs, etc.) must be/contain a Collision-Resistant Name \u2014 akin to to what JWT calls a \"public name\".\n",
+          "createdAt": "2026-09-04T01:54:57Z",
+          "updatedAt": "2026-09-04T01:54:57Z"
         }
       ]
+    },
+    {
+      "number": 628,
+      "id": "I_kwDOH6-tI88AAAABPfKedw",
+      "title": "PR #622 makes code point 564, int-range redundant",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/628",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "mustfix",
+        "-12"
+      ],
+      "body": "Introduction of PR 622, makes the int-range as redundant.\n\nThis issue tracks two things:\n\n1. Investigate, which profile uses code point 564, request them to migrate to 565 code point\n2. Delete int-range (code point 564 reserved) as duplication adds confusion...\n\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/622#discussion_r3922601152_\n            ",
+      "createdAt": "2026-09-03T08:34:50Z",
+      "updatedAt": "2026-09-03T08:45:03Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Rather than \"Delete int-range\" we should deprecate it.  Similar to what we did with the raw-value-mask.",
+          "createdAt": "2026-09-03T08:37:04Z",
+          "updatedAt": "2026-09-03T08:37:04Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Rather than \"Delete int-range\" we should deprecate it. Similar to what we did with the raw-value-mask.\n\nAgree and then nothing is stopping us to make a guidance in the existing PR, not to use int-range now, as we did with raw-value, when new changes were introduced...",
+          "createdAt": "2026-09-03T08:40:21Z",
+          "updatedAt": "2026-09-03T08:40:21Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'd rather do it in one go rather than incrementally.  Sufficient to make this issue a must-fix for -12.",
+          "createdAt": "2026-09-03T08:43:47Z",
+          "updatedAt": "2026-09-03T08:43:47Z"
+        }
+      ]
+    },
+    {
+      "number": 631,
+      "id": "I_kwDOH6-tI88AAAABP5RagA",
+      "title": "CoRIM entity roles",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/631",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "Info_or_Data_Model"
+      ],
+      "body": "https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-4.1.5-2 says\n\n>The only role defined in this specification for a CoRIM Entity is manifest-creator.\n\nHowever https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-4.1.5-4 says\n```\n$corim-role-type-choice /= &(manifest-creator: 1)\n$corim-role-type-choice /= &(manifest-signer: 2)\n```\nIn addition\n>The corim-entity-map MUST NOT contain two entities with the manifest-signer role.\n\nshould be (something like)\n>The corim-entity-map MUST NOT contain two or more entities with the manifest-signer role.",
+      "createdAt": "2026-09-05T23:38:43Z",
+      "updatedAt": "2026-09-05T23:38:43Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -92503,13 +92602,13 @@
       "labels": [],
       "body": "Fix #583",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-08-24T10:01:48Z",
+      "updatedAt": "2026-09-04T14:18:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "479d5c80ff4aba7754b07c94e3a867ebaede9bac",
+      "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-support",
-      "headRefOid": "001584540589b7644958c2d9374bb9e571227c44",
+      "headRefOid": "348447ee22ff3750c010880abb37d739a8dbddf6",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -93070,6 +93169,106 @@
           "createdAt": "2026-08-12T16:29:32Z",
           "updatedAt": "2026-08-12T16:29:32Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNG6ZA",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:13:21Z",
+          "updatedAt": "2026-09-04T14:13:22Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "I have removed it from cose-sign, as there is only single line been duplicated, hence i did not felt the need to create a separate file.",
+              "createdAt": "2026-09-04T14:13:21Z",
+              "updatedAt": "2026-09-04T14:13:22Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNHM5Q",
+          "commit": {
+            "abbreviatedOid": "b0af10a"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:13:49Z",
+          "updatedAt": "2026-09-04T14:13:49Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "This is required, otherwise, the structure will be ambigous.",
+              "createdAt": "2026-09-04T14:13:49Z",
+              "updatedAt": "2026-09-04T14:13:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNIK-Q",
+          "commit": {
+            "abbreviatedOid": "0015845"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:15:20Z",
+          "updatedAt": "2026-09-04T14:15:20Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "I have added some context, as to why COSE_Sign is relevant to CoRIM. We cannot just arbitrarily insert COSE_Sign without setting minimal context..",
+              "createdAt": "2026-09-04T14:15:20Z",
+              "updatedAt": "2026-09-04T14:15:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNJTKQ",
+          "commit": {
+            "abbreviatedOid": "348447e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:17:06Z",
+          "updatedAt": "2026-09-04T14:17:06Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "need to remove `a` prior to reference values",
+              "createdAt": "2026-09-04T14:17:06Z",
+              "updatedAt": "2026-09-04T14:17:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNKOeA",
+          "commit": {
+            "abbreviatedOid": "0015845"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:18:26Z",
+          "updatedAt": "2026-09-04T14:18:26Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "please re-review this aspect..",
+              "createdAt": "2026-09-04T14:18:26Z",
+              "updatedAt": "2026-09-04T14:18:26Z"
+            }
+          ]
         }
       ]
     },
@@ -93308,13 +93507,13 @@
       "labels": [],
       "body": "Add basic types (bool, number, string and bytes) to the measurement values map.  Also, enable -- for these new types only -- the expression of within-set and within-range match semantics (in addition to exact match) via a specialised \"matcher\" CBOR tag.\r\n\r\nAddress #621 \r\n\r\nNOTE: I have used 20 as the base for the new codepoints (marking 16-19 as reserved) because I believe I heard Ned say that some are already in use by the TCG.  If I dreamed that, let me know and I can left-shift.\r\n",
       "createdAt": "2026-08-26T16:35:14Z",
-      "updatedAt": "2026-09-02T19:07:26Z",
+      "updatedAt": "2026-09-03T08:43:39Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "basic-mvm-types",
-      "headRefOid": "154565748a6fc4056eba347ae73193cb7f4b1038",
+      "headRefOid": "dcc6f216ef5793fbf69fe5cca40e3f7ce2e4af64",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -93501,6 +93700,152 @@
               "updatedAt": "2026-09-02T19:07:26Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_FrNw",
+          "commit": {
+            "abbreviatedOid": "1545657"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T07:59:35Z",
+          "updatedAt": "2026-09-03T07:59:35Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "ah, I didn't notice this was the cbor-tags.txt file :-)\r\n\r\nApparently I managed to run `make cbor-tags.txt` more than once.  Should be fixed in [dcc6f21](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/622/commits/dcc6f216ef5793fbf69fe5cca40e3f7ce2e4af64)",
+              "createdAt": "2026-09-03T07:59:35Z",
+              "updatedAt": "2026-09-03T07:59:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_MlzQ",
+          "commit": {
+            "abbreviatedOid": "1545657"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T08:13:10Z",
+          "updatedAt": "2026-09-03T08:13:10Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "> ah, I didn't notice this was the cbor-tags.txt file :-)\r\n> \r\n> Apparently I managed to run `make cbor-tags.txt` more than once. Should be fixed in [dcc6f21](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/622/commits/dcc6f216ef5793fbf69fe5cca40e3f7ce2e4af64)\r\n\r\nFinally you see the benefit of my review, now you are paying serious attention... :)",
+              "createdAt": "2026-09-03T08:13:10Z",
+              "updatedAt": "2026-09-03T08:13:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_OWfA",
+          "commit": {
+            "abbreviatedOid": "dcc6f21"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T08:16:23Z",
+          "updatedAt": "2026-09-03T08:16:23Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "Does introduction of line 565 makes existing line 564 redundant. Shall we do this clean-up now instead of waiting for someone else to point at it in future?",
+              "createdAt": "2026-09-03T08:16:23Z",
+              "updatedAt": "2026-09-03T08:16:23Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_OeOA",
+          "commit": {
+            "abbreviatedOid": "dcc6f21"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "please have a look at my last comment",
+          "createdAt": "2026-09-03T08:16:37Z",
+          "updatedAt": "2026-09-03T08:16:37Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_W45w",
+          "commit": {
+            "abbreviatedOid": "dcc6f21"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T08:30:38Z",
+          "updatedAt": "2026-09-03T08:30:39Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "I don't know who's using int-range atm and I'd like this to be an incremental change, not a disruptive one.\r\n\r\nIt might be worth adding a tracking issue, though, to reach out to users of int-range and perhaps sort out a deprecation story.",
+              "createdAt": "2026-09-03T08:30:38Z",
+              "updatedAt": "2026-09-03T08:30:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_d54w",
+          "commit": {
+            "abbreviatedOid": "1545657"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T08:41:04Z",
+          "updatedAt": "2026-09-03T08:41:04Z",
+          "comments": [
+            {
+              "originalPosition": 9,
+              "body": "blame the limited source code context that GitHub provides around the comment :-)",
+              "createdAt": "2026-09-03T08:41:04Z",
+              "updatedAt": "2026-09-03T08:41:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_fNng",
+          "commit": {
+            "abbreviatedOid": "dcc6f21"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T08:43:02Z",
+          "updatedAt": "2026-09-03T08:43:02Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "tracked by issue #628 ",
+              "createdAt": "2026-09-03T08:43:02Z",
+              "updatedAt": "2026-09-03T08:43:02Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABL_fo2Q",
+          "commit": {
+            "abbreviatedOid": "dcc6f21"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! We will sort out the deprecation story via issue 628",
+          "createdAt": "2026-09-03T08:43:39Z",
+          "updatedAt": "2026-09-03T08:43:39Z",
+          "comments": []
         }
       ]
     },
@@ -93628,13 +93973,13 @@
       "labels": [],
       "body": "Fix #555.",
       "createdAt": "2026-08-29T04:10:29Z",
-      "updatedAt": "2026-09-02T16:36:43Z",
+      "updatedAt": "2026-09-04T18:38:04Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-555",
-      "headRefOid": "e9de456332b6b04385affdff0bbdde2d0b2fd04b",
+      "headRefOid": "8e3513685841ee5680d5aaaeb2edde52fcc164fc",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -93662,6 +94007,293 @@
           "updatedAt": "2026-09-02T16:36:43Z"
         }
       ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMG2cDw",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "gmandyam",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-03T22:34:47Z",
+          "updatedAt": "2026-09-03T22:34:47Z",
+          "comments": [
+            {
+              "originalPosition": 50,
+              "body": "If we remove the uniqueness requirement, can we ensure that the CoMID can be unambiguously identified?",
+              "createdAt": "2026-09-03T22:34:47Z",
+              "updatedAt": "2026-09-03T22:34:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMG24xA",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "gmandyam",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "One comment on the use of the term 'unambiguously', but I don't think it needs to block merge.",
+          "createdAt": "2026-09-03T22:36:08Z",
+          "updatedAt": "2026-09-03T22:36:08Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMMEvPQ",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T12:28:50Z",
+          "updatedAt": "2026-09-04T12:28:50Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "A general comment applicable to all references of unique.\n\n\nWe should have a common statement to state that \n\nAll the Identifiers in this document are unique such that they are collision resistant by means of identifier uniqueness or name scoping.\n\n",
+              "createdAt": "2026-09-04T12:28:50Z",
+              "updatedAt": "2026-09-04T12:28:50Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMMFGoQ",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "please see comment",
+          "createdAt": "2026-09-04T12:29:36Z",
+          "updatedAt": "2026-09-04T12:29:58Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I am happy to approve this PR, if we make the statement either in this PR or create an issue (and hence a separate PR) to address the issue!",
+              "createdAt": "2026-09-04T12:29:36Z",
+              "updatedAt": "2026-09-04T12:29:58Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNRtwQ",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:29:05Z",
+          "updatedAt": "2026-09-04T14:29:06Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "@yogeshbdeshpande see https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/627.",
+              "createdAt": "2026-09-04T14:29:05Z",
+              "updatedAt": "2026-09-04T14:29:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMNgKxw",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T14:47:42Z",
+          "updatedAt": "2026-09-04T14:47:43Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Thank you @steven-bellock.\r\n\r\nJust one last question, I assume you have checked all similar instances of keyword `unique`\r\n\r\nJust want to avoid repetition of the same PR again and again!",
+              "createdAt": "2026-09-04T14:47:42Z",
+              "updatedAt": "2026-09-04T14:47:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMN_YkQ",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T15:29:32Z",
+          "updatedAt": "2026-09-04T15:29:32Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "Does 442 also suffer from the same `unique` plague. I think so!",
+              "createdAt": "2026-09-04T15:29:32Z",
+              "updatedAt": "2026-09-04T15:29:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMN_7mg",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T15:30:23Z",
+          "updatedAt": "2026-09-04T15:30:24Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "What about this one?",
+              "createdAt": "2026-09-04T15:30:24Z",
+              "updatedAt": "2026-09-04T15:30:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMOAgsQ",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Checked and I believe at 2 More places, uniqueness needs tidy up!!!",
+          "createdAt": "2026-09-04T15:31:17Z",
+          "updatedAt": "2026-09-04T15:31:17Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMO5i4A",
+          "commit": {
+            "abbreviatedOid": "e9de456"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-04T17:08:55Z",
+          "updatedAt": "2026-09-04T17:12:06Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "I think\n>within the context of a CoRIM issuer.\n\nmakes it acceptable.",
+              "createdAt": "2026-09-04T17:08:56Z",
+              "updatedAt": "2026-09-04T17:12:06Z"
+            },
+            {
+              "originalPosition": 1,
+              "body": "Yes, it can probably be removed here.",
+              "createdAt": "2026-09-04T17:10:03Z",
+              "updatedAt": "2026-09-04T17:12:07Z"
+            },
+            {
+              "originalPosition": 50,
+              "body": ">Each CoMID has an ID that is used to identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.\n\nYes, that seems to work.",
+              "createdAt": "2026-09-04T17:11:47Z",
+              "updatedAt": "2026-09-04T17:12:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMO9m3w",
+          "commit": {
+            "abbreviatedOid": "8e35136"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! Thanks for addressing my comments!",
+          "createdAt": "2026-09-04T17:17:25Z",
+          "updatedAt": "2026-09-04T17:17:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABMPp1mQ",
+          "commit": {
+            "abbreviatedOid": "8e35136"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks a lot!",
+          "createdAt": "2026-09-04T18:38:04Z",
+          "updatedAt": "2026-09-04T18:38:04Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 629,
+      "id": "PR_kwDOH6-tI88AAAABCRGMuA",
+      "title": "Keys transformation and processing - issue590",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/629",
+      "state": "OPEN",
+      "author": "nedmsmith",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "PR updates key triple transformation and processing sections. \r\nSee Issue #590.\r\nAlso see [PR #28 in draft-ietf-rats-evidence-trans repo. ](https://github.com/ietf-rats-wg/draft-ietf-rats-evidence-trans/pull/28)",
+      "createdAt": "2026-09-04T22:12:33Z",
+      "updatedAt": "2026-09-04T23:14:11Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "keys-issue590",
+      "headRefOid": "4729ef7cb6cc4f335f27ff3a9cee28159d774186",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Observe that key-list in Key-addition-ECT could rely on being populated from keys found by the condition criteria. Hence, it may not be necessary to populate key-list in a identity or attest-key triple. However, since the identity and attest-key triples transformation treats the key-list as both condition and addition, the intrep K-ECT is required for both condition and addition. The possibly peculiar side effect is you can't specify a key as a condition without also verifying it. Maybe that is safer?\r\n\r\nIf a new key triple is defined that has two key lists (condition, addition) then it would be possible to describe path relationships. For example, there could be three key-items in `keys` relation where:\r\n(condition: Key1, addition: Key2)\r\n(condition: Key2, addition: Key3)\r\n(condition: key3, addition: Key4) \r\n\r\nKey1 could be an EE key where Key2 is its issuer, and so forth for Keys 3 and 4. Key4 could be a trust anchor found in a CoTS entry. \r\n\r\nThis has the property that path construction can be facilitated by the vendor who generates the corim / attester device. But it could be more flexible describing a path through a graph involving multiple entities. It is not a replacement for a cert path or a trusted route (e.g., nasr) but it seems helpful for defining related principals.\r\n",
+          "createdAt": "2026-09-04T22:29:07Z",
+          "updatedAt": "2026-09-04T23:14:11Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 630,
+      "id": "PR_kwDOH6-tI88AAAABCXAWVA",
+      "title": "Fix terminology and wording typos",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/630",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-09-05T22:24:32Z",
+      "updatedAt": "2026-09-05T22:32:12Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "editorial1",
+      "headRefOid": "6c34ca82fc343a85fb7abbfa8141483f12b75cac",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
       "reviews": []
     }
   ]
