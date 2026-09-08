@@ -255,7 +255,8 @@ Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
 Domain:
-: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+: A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -1555,7 +1556,7 @@ See {{sec-comid-triple-identity}} for additional details.
 
 ### Triples for domain definition {#sec-comid-domains}
 
-A domain is a graphical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+Domain triples assert graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type.
 
@@ -1607,8 +1608,12 @@ Consequently, the OS loader is a trustee domain of the OS.
 Alternatively, trust in a peripheral device might depend on trustworthy operation of a peripheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
 
-TDTs cannot create domains.
-Instead, TDT processing first checks that a `domain-id` has already been accepted into the ACS before adding trust dependencies.
+TDTs cannot instantiate domains.
+Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust‑dependency triples.
+
+Environments that have been accepted into the ACE are automatically considered Domains.
+
+Consequently, TDTs may describe trust‑dependency semantics for any Environment that has been accepted into the ACS.
 
 The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
