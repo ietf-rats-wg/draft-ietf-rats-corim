@@ -4275,6 +4275,12 @@ FUNC name(param: type, ...) -&gt; return-type {
 RETURN value
 </pre><a href="#section-8.1.4-4" class="pilcrow">¶</a>
 </div>
+<p id="section-8.1.4-5">A FAIL statement immediately aborts the enclosing top-level FUNC without yielding a value, signaling to the caller that the operation did not complete successfully:<a href="#section-8.1.4-5" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-8.1.4-6">
+<pre>
+FAIL
+</pre><a href="#section-8.1.4-6" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="expressions">
@@ -4379,8 +4385,7 @@ All operation names are uppercase.<a href="#section-8.1.8-1" class="pilcrow">¶<
                 <td class="text-left" rowspan="1" colspan="1">
                   <code>acs::APPEND(addition)</code>
 </td>
-                <td class="text-left" rowspan="1" colspan="1">Atomically append addition to the ACS, subject to a relation-specific pre-condition on addition and post-condition on the resulting ACS, both defined in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.3.4</a>
-</td>
+                <td class="text-left" rowspan="1" colspan="1">Attempt to atomically append addition to the ACS; returns TRUE on success, or FALSE (leaving the ACS unchanged) if the relation-specific pre-condition on addition or post-condition on the resulting ACS, both defined in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.3.4</a>, is not satisfied</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -5891,7 +5896,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                acs::APPEND(item.addition)
+                IF !acs::APPEND(item.addition):
+                    FAIL
 
     RETURN acs
 }
@@ -5914,7 +5920,8 @@ The matching logic for each type of relation is described in the following secti
           </ul>
 <p id="section-8.3.4-7">Both conditions are relation-specific; the concrete criteria for each relation are described in the following sections.
 If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a no-op (i.e., always satisfied) for that relation.<a href="#section-8.3.4-7" class="pilcrow">¶</a></p>
-<p id="section-8.3.4-8"><code>acs::APPEND</code> is atomic with respect to both conditions: if the post-condition would not hold, the append does not take effect and the ACS is left unchanged.<a href="#section-8.3.4-8" class="pilcrow">¶</a></p>
+<p id="section-8.3.4-8"><code>acs::APPEND</code> fails, leaving the ACS unchanged, if either the pre-condition or the post-condition does not hold.
+A failure of <code>acs::APPEND</code> MUST cause <code>match_and_augment</code> to terminate immediately, without processing any further relations or items: the appraisal that invoked it is thereby considered to have failed.<a href="#section-8.3.4-8" class="pilcrow">¶</a></p>
 <div id="ordering-of-relations">
 <section id="section-8.3.4.1">
             <h5 id="name-ordering-of-relations">
@@ -5987,7 +5994,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF ser-add = SERIES-MATCH(acs, item.series):
-                acs::APPEND(ser-add)
+                IF !acs::APPEND(ser-add):
+                    FAIL
 
     RETURN acs
 }

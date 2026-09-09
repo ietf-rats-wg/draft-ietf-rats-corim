@@ -2701,6 +2701,12 @@ Table of Contents
 
    RETURN value
 
+   A FAIL statement immediately aborts the enclosing top-level FUNC
+   without yielding a value, signaling to the caller that the operation
+   did not complete successfully:
+
+   FAIL
+
 8.1.5.  Expressions
 
    The TYPEOF operator yields the CDDL type of a value at runtime.  Used
@@ -2746,35 +2752,39 @@ Table of Contents
    to invoke well-known operations on typed values.  All operation names
    are uppercase.
 
-    +==========================+=====================================+
-    | Operation                | Meaning                             |
-    +==========================+=====================================+
-    | T::NEW()                 | Construct a new zero-value instance |
-    |                          | of CDDL type T                      |
-    +--------------------------+-------------------------------------+
-    | collection::APPEND(item) | Append item to a collection; when   |
-    |                          | item is itself a list, all its      |
-    |                          | elements are appended               |
-    +--------------------------+-------------------------------------+
-    | acs::MATCH(condition)    | Test whether condition matches any  |
-    |                          | entry in the ACS; the matching      |
-    |                          | rules are relation-specific and     |
-    |                          | defined in Section 8.3.4.4          |
-    +--------------------------+-------------------------------------+
-    | acs::APPEND(addition)    | Atomically append addition to the   |
-    |                          | ACS, subject to a relation-specific |
-    |                          | pre-condition on addition and post- |
-    |                          | condition on the resulting ACS,     |
-    |                          | both defined in Section 8.3.4       |
-    +--------------------------+-------------------------------------+
-    | x::MEMBEROF(collection)  | Test whether x is a member of       |
-    |                          | collection                          |
-    +--------------------------+-------------------------------------+
-    | INDEXOF(x)               | Return the position of x within its |
-    |                          | enclosing sequence                  |
-    +--------------------------+-------------------------------------+
+   +==========================+========================================+
+   | Operation                | Meaning                                |
+   +==========================+========================================+
+   | T::NEW()                 | Construct a new zero-value             |
+   |                          | instance of CDDL type T                |
+   +--------------------------+----------------------------------------+
+   | collection::APPEND(item) | Append item to a collection; when      |
+   |                          | item is itself a list, all its         |
+   |                          | elements are appended                  |
+   +--------------------------+----------------------------------------+
+   | acs::MATCH(condition)    | Test whether condition matches         |
+   |                          | any entry in the ACS; the              |
+   |                          | matching rules are relation-           |
+   |                          | specific and defined in                |
+   |                          | Section 8.3.4.4                        |
+   +--------------------------+----------------------------------------+
+   | acs::APPEND(addition)    | Attempt to atomically append           |
+   |                          | addition to the ACS; returns TRUE      |
+   |                          | on success, or FALSE (leaving the      |
+   |                          | ACS unchanged) if the relation-        |
+   |                          | specific pre-condition on              |
+   |                          | addition or post-condition on the      |
+   |                          | resulting ACS, both defined in         |
+   |                          | Section 8.3.4, is not satisfied        |
+   +--------------------------+----------------------------------------+
+   | x::MEMBEROF(collection)  | Test whether x is a member of          |
+   |                          | collection                             |
+   +--------------------------+----------------------------------------+
+   | INDEXOF(x)               | Return the position of x within        |
+   |                          | its enclosing sequence                 |
+   +--------------------------+----------------------------------------+
 
-                      Table 3: Primitive Operations
+                       Table 3: Primitive Operations
 
 8.2.  Appraisal Logical Phases
 
@@ -4002,7 +4012,8 @@ Table of Contents
        FOREACH rel IN sa:
            FOREACH item IN rel:
                IF acs::MATCH(item.condition):
-                   acs::APPEND(item.addition)
+                   IF !acs::APPEND(item.addition):
+                       FAIL
 
        RETURN acs
    }
@@ -4028,9 +4039,11 @@ Table of Contents
    that condition is assumed to be a no-op (i.e., always satisfied) for
    that relation.
 
-   acs::APPEND is atomic with respect to both conditions: if the post-
-   condition would not hold, the append does not take effect and the ACS
-   is left unchanged.
+   acs::APPEND fails, leaving the ACS unchanged, if either the pre-
+   condition or the post-condition does not hold.  A failure of
+   acs::APPEND MUST cause match_and_augment to terminate immediately,
+   without processing any further relations or items: the appraisal that
+   invoked it is thereby considered to have failed.
 
 8.3.4.1.  Ordering of Relations
 
@@ -4098,7 +4111,8 @@ Table of Contents
        FOREACH rel IN sa:
            FOREACH item IN rel:
                IF ser-add = SERIES-MATCH(acs, item.series):
-                   acs::APPEND(ser-add)
+                   IF !acs::APPEND(ser-add):
+                       FAIL
 
        RETURN acs
    }
