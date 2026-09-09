@@ -3738,6 +3738,7 @@ The registry uses integer values as index values for items in the `triples-map` 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3772,6 +3773,7 @@ The registry uses integer values as index values for items in multiple triples' 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3815,6 +3817,7 @@ The registry uses integer values as index values for items in `measurement-value
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
