@@ -1513,6 +1513,10 @@ Table of Contents
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
      ? &(int-range: 15) => int-range-type-choice
+     ? &(bool: 16) => bool-matcher
+     ? &(number: 17) => number-matcher
+     ? &(text: 18) => text-matcher
+     ? &(bytes: 19) => bytes-matcher
      * $$measurement-values-map-extension
    }>
 
@@ -1580,6 +1584,23 @@ Table of Contents
       range that can be compared with linear order.  Described in
       Section 5.1.4.8.  Comparison rules are defined in
       Section 8.3.4.4.5.8.
+
+   *  bool (index 16): A boolean value with configurable matching
+      semantics.  Described in Section 5.1.4.9.  Comparison rules are
+      defined in Section 8.3.4.4.5.9.
+
+   *  number (index 17): A numeric value with configurable matching
+      semantics, including range and set matching.  Described in
+      Section 5.1.4.9.  Comparison rules are defined in
+      Section 8.3.4.4.5.10.
+
+   *  text (index 18): A text string with configurable matching
+      semantics.  Described in Section 5.1.4.9.  Comparison rules are
+      defined in Section 8.3.4.4.5.11.
+
+   *  bytes (index 19): A byte string with configurable matching
+      semantics.  Described in Section 5.1.4.9.  Comparison rules are
+      defined in Section 8.3.4.4.5.12.
 
 5.1.4.5.3.  Version
 
@@ -1887,6 +1908,48 @@ Table of Contents
    The signed integer range representation is an inclusive range unless
    either min or max are infinite as represented by null, in which case,
    each infinity is necessarily exclusive.
+
+5.1.4.9.  Type Matchers
+
+   The measurement-values-map entries at indices 16–19 support generic
+   boolean, numeric, text, and byte-string measurements with
+   configurable matching semantics.  Rather than adding a separate
+   codepoint for each desired matching criterion, these entries use
+   CBOR-tagged wrappers to encode the matching logic alongside the
+   value:
+
+   *  Bare (untagged) value means exact match: the target value must
+      equal the entry's value.
+
+   *  CBOR tag 566 (tagged-*-set) means set match: the target value must
+      equal one of the values in the array; at least two alternatives
+      MUST be provided.
+
+   *  CBOR tag 565 (tagged-number-range, numeric types only) means range
+      match: the target value must lie within the inclusive [min, max]
+      interval; null means unbounded.
+
+   ; Set match: target value must equal one of the listed alternatives (two or more)
+   tagged-bool-set = #6.566([2* bool])
+   tagged-number-set = #6.566([2* number])
+   tagged-text-set = #6.566([2* text])
+   tagged-bytes-set = #6.566([2* bytes])
+
+   ; Range match: target value must lie within the inclusive [min, max] interval
+   ; null means unbounded.  Defined for numeric types only.
+   tagged-number-range = #6.565([number / null, number / null])
+
+   ; Composed matchers: the bare type means exact match
+   bool-matcher = bool / tagged-bool-set
+   number-matcher = number / tagged-number-range / tagged-number-set
+   text-matcher = text / tagged-text-set
+   bytes-matcher = bytes / tagged-bytes-set
+
+   Because these entries carry no inherent meaning beyond their
+   primitive type and matching criterion, a profile using them MUST
+   define what measured attribute each entry represents, the unit or
+   encoding of the value, and any constraints on acceptable values
+   beyond what the matcher already expresses.
 
 5.1.5.  Reference Values Triple
 
@@ -2287,11 +2350,8 @@ Table of Contents
 
    TDTs cannot instantiate domains.  Instead, TDT processing first
    verifies that a domain-id has already been accepted into the ACS
-   before adding any trust-dependency triples.
-
-   Environments that have been accepted into the ACS are automatically
-   considered Domains.
-
+   before adding any trust-dependency triples.  Environments that have
+   been accepted into the ACE are automatically considered Domains.
    Consequently, TDTs may describe trust-dependency semantics for any
    Environment that has been accepted into the ACS.
 
@@ -4539,6 +4599,66 @@ Table of Contents
       -  CONDITION.max is null or ENTRY.max is an int that is less than
          or equal to CONDITION.max.
 
+8.3.4.4.5.9.  Comparison for bool entries
+
+   The value stored under measurement-values-map codepoint 16 is of type
+   bool-matcher.
+
+   If the C-ECT value is a bare bool, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-bool-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
+8.3.4.4.5.10.  Comparison for number entries
+
+   The value stored under measurement-values-map codepoint 17 is of type
+   number-matcher.
+
+   If the C-ECT value is a bare number, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-number-range (CBOR tag 565), null in
+   the first element represents negative infinity (no lower bound) and
+   null in the second element represents positive infinity (no upper
+   bound).  The comparison MUST return true if and only if both of the
+   following conditions are met:
+
+   *  The C-ECT min is null or the ACS-ECT value is greater than or
+      equal to min.
+
+   *  The C-ECT max is null or the ACS-ECT value is less than or equal
+      to max.
+
+   If the C-ECT value is a tagged-number-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
+8.3.4.4.5.11.  Comparison for text entries
+
+   The value stored under measurement-values-map codepoint 18 is of type
+   text-matcher.
+
+   If the C-ECT value is a bare text, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-text-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
+8.3.4.4.5.12.  Comparison for bytes entries
+
+   The value stored under measurement-values-map codepoint 19 is of type
+   bytes-matcher.
+
+   If the C-ECT value is a bare bytes, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-bytes-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
 8.3.4.4.6.  Profile-directed Comparison
 
    A profile MUST specify comparison algorithms for its additions to
@@ -5420,7 +5540,14 @@ Table of Contents
    | 564     | array       | tagged-int-range, see         | RFCthis   |
    |         |             | Section 5.1.4.8               |           |
    +---------+-------------+-------------------------------+-----------+
-   | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
+   | 565     | array       | tagged-number-range, see      | RFCthis   |
+   |         |             | Section 5.1.4.9               |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 566     | array       | tagged-                       | RFCthis   |
+   |         |             | {bool,number,text,bytes}-     |           |
+   |         |             | set, see Section 5.1.4.9      |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 567-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
                                   Table 4
@@ -5783,7 +5910,15 @@ Table of Contents
     +-----------------------+---------------------------+-------------+
     |15                     | int-range                 |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |16-18446744073709551616| Unassigned                |             |
+    |16                     | bool                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |17                     | number                    |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |18                     | text                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |19                     | bytes                     |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |20-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
         Table 18: Measurement Values Map Items Initial Registrations
@@ -6447,6 +6582,18 @@ Appendix A.  Base CoRIM CDDL
    tagged-int-range = #6.564(int-range)
    positive-inf = null
    negative-inf = null
+   tagged-bool-set = #6.566([2*bool])
+   tagged-number-set = #6.566([2*number])
+   tagged-text-set = #6.566([2*text])
+   tagged-bytes-set = #6.566([2*bytes])
+   tagged-number-range = #6.565([
+       number / null,
+       number / null,
+   ])
+   bool-matcher = bool / tagged-bool-set
+   number-matcher = number / tagged-number-range / tagged-number-set
+   text-matcher = text / tagged-text-set
+   bytes-matcher = bytes / tagged-bytes-set
    linked-tag-map = {
      &(linked-tag-id: 0) => $tag-id-type-choice,
      &(tag-rel: 1) => $tag-rel-type-choice,
@@ -6480,6 +6627,10 @@ Appendix A.  Base CoRIM CDDL
        ? &(cryptokeys: 13) => [+ $crypto-key-type-choice],
        ? &(integrity-registers: 14) => integrity-registers,
        ? &(int-range: 15) => int-range-type-choice,
+       ? &(bool: 16) => bool-matcher,
+       ? &(number: 17) => number-matcher,
+       ? &(text: 18) => text-matcher,
+       ? &(bytes: 19) => bytes-matcher,
        * $$measurement-values-map-extension,
    }>
    non-empty<M> = M .and ({+ any => any})
@@ -6821,9 +6972,10 @@ Appendix A.  Base CoRIM CDDL
 Acknowledgments
 
    The authors would like to thank the following people for their review
-   and comments on this document: Carl Wallace, Hannes Tschofenig,
-   Steven Bellock, Jag Raman, Giri Mandyam, Jeremy O'Donoghue, Michael
-   Richardson, Dhawal Kumar, Spencer Gilson, and Sergei Trofimov.
+   and comments on this document: Greg Kostal, Carl Wallace, Hannes
+   Tschofenig, Steven Bellock, Jag Raman, Giri Mandyam, Jeremy
+   O'Donoghue, Michael Richardson, Dhawal Kumar, Spencer Gilson, and
+   Sergei Trofimov.
 
 Contributors
 
