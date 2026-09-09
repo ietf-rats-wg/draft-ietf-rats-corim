@@ -1956,6 +1956,12 @@ A RETURN statement exits the enclosing function and yields the specified value t
 RETURN value
 ~~~
 
+A FAIL statement immediately aborts the enclosing top-level FUNC without yielding a value, signaling to the caller that the operation did not complete successfully:
+
+~~~ pseudocode
+FAIL
+~~~
+
 ### Expressions
 
 The TYPEOF operator yields the CDDL type of a value at runtime.
@@ -2011,7 +2017,7 @@ All operation names are uppercase.
 | `T::NEW()` | Construct a new zero-value instance of CDDL type T |
 | `collection::APPEND(item)` | Append item to a collection; when item is itself a list, all its elements are appended |
 | `acs::MATCH(condition)` | Test whether condition matches any entry in the ACS; the matching rules are relation-specific and defined in {{sec-comparison-rules}} |
-| `acs::APPEND(addition)` | Atomically append addition to the ACS, subject to a relation-specific pre-condition on addition and post-condition on the resulting ACS, both defined in {{sec-match-and-augment}} |
+| `acs::APPEND(addition)` | Attempt to atomically append addition to the ACS; returns TRUE on success, or FALSE (leaving the ACS unchanged) if the relation-specific pre-condition on addition or post-condition on the resulting ACS, both defined in {{sec-match-and-augment}}, is not satisfied |
 | `x::MEMBEROF(collection)` | Test whether x is a member of collection |
 | `INDEXOF(x)` | Return the position of x within its enclosing sequence |
 {: #tbl-pseudocode-ops title="Primitive Operations"}
@@ -2890,7 +2896,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                acs::APPEND(item.addition)
+                IF !acs::APPEND(item.addition):
+                    FAIL
 
     RETURN acs
 }
@@ -2908,7 +2915,8 @@ The `acs::APPEND` operation is defined by a pre-condition and a post-condition:
 Both conditions are relation-specific; the concrete criteria for each relation are described in the following sections.
 If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a no-op (i.e., always satisfied) for that relation.
 
-`acs::APPEND` is atomic with respect to both conditions: if the post-condition would not hold, the append does not take effect and the ACS is left unchanged.
+`acs::APPEND` fails, leaving the ACS unchanged, if either the pre-condition or the post-condition does not hold.
+A failure of `acs::APPEND` MUST cause `match_and_augment` to terminate immediately, without processing any further relations or items: the appraisal that invoked it is thereby considered to have failed.
 
 #### Ordering of Relations
 
@@ -2959,7 +2967,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF ser-add = SERIES-MATCH(acs, item.series):
-                acs::APPEND(ser-add)
+                IF !acs::APPEND(ser-add):
+                    FAIL
 
     RETURN acs
 }
