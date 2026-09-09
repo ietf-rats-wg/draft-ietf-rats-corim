@@ -1871,7 +1871,7 @@ When used as an identifier the responsible allocator entity SHOULD ensure unique
 
 # Reference Verifier {#sec-reference-verifier}
 
-This section outlines the behaviour of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
+This section outlines the behavior of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
 
 In the remainder of this section, the terms
 Environment,
@@ -1945,7 +1945,7 @@ item.addition.cmtype = reference-values
 
 ### Functions
 
-A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:
+A function is introduced by the FUNC keyword, followed by its name, a parenthesized parameter list with CDDL type annotations, and a return type:
 
 ~~~ pseudocode
 FUNC name(param: type, ...) -> return-type {
@@ -2070,7 +2070,7 @@ The CoRIM processor described in {{sec-corim-processor}} describes the handoff i
 ## The CoRIM Processor {#sec-corim-processor}
 
 This document assumes that Verifier implementations will differ.
-In order to describe normative Verifier behaviour, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in {{sec-appraisal-phases}}.
+In order to describe normative Verifier behavior, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in {{sec-appraisal-phases}}.
 If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.
 
 ### High-Level View
@@ -2398,7 +2398,7 @@ The internal representation of Attest Key and Device Identity triples uses the `
 
 <cref>
 [TODO]
-Specialise condition/addition ECTs.
+Specialize condition/addition ECTs.
 Define constraints.
 </cref>
 
@@ -2915,7 +2915,7 @@ The addition could result in inconsistent ACS.  Additional ACS consistency check
 #### Ordering of Relations
 
 The order in which items within relations are processed is important.
-Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
+Processing a relation may result in ACS modifications that affect the matching behavior of other relations.
 The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
 The "match and augment" algorithm described in {{algo-match-and-augment}} assumes that relations have been topologically sorted prior to loading into the staging area ({{algo-init-sa}}).
@@ -3009,7 +3009,7 @@ If there is no match, processing moves to the next dm entry, till the list is ex
 If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
 The algorithm is terminated when there are no more additions to ACS.
 
-This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
+This algorithm can be optimized to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.
 
 ##### Processing `td` Relations {#sec-proc-td}
