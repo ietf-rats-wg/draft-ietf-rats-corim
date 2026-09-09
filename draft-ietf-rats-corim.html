@@ -1597,7 +1597,8 @@ See also <span><a href="https://rfc-editor.org/rfc/rfc9711#section-4.2.4" class=
             <dd class="break"></dd>
 <dt id="section-1.1.1-2.17">Domain:</dt>
             <dd style="margin-left: 1.5em" id="section-1.1.1-2.18">
-              <p id="section-1.1.1-2.18.1">A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.<a href="#section-1.1.1-2.18.1" class="pilcrow">¶</a></p>
+              <p id="section-1.1.1-2.18.1">A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.<a href="#section-1.1.1-2.18.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-1.1.1-2.19">Endorsed values:</dt>
@@ -3758,7 +3759,7 @@ attest-key-triple-record = [
           <h4 id="name-triples-for-domain-definiti">
 <a href="#section-5.1.11" class="section-number selfRef">5.1.11. </a><a href="#name-triples-for-domain-definiti" class="section-name selfRef">Triples for domain definition</a>
           </h4>
-<p id="section-5.1.11-1">A domain is a graphical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.<a href="#section-5.1.11-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.11-1">Domain triples assert graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.<a href="#section-5.1.11-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.11-2">The following CDDL describes domain type.<a href="#section-5.1.11-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.11-3">
 <pre>
@@ -3816,8 +3817,10 @@ For example, trust in an operating system (OS) might depend on trustworthy loadi
 Consequently, the OS loader is a trustee domain of the OS.
 Alternatively, trust in a peripheral device might depend on trustworthy operation of a peripheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.<a href="#section-5.1.11.2-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.11.2-5">TDTs cannot create domains.
-Instead, TDT processing first checks that a <code>domain-id</code> has already been accepted into the ACS before adding trust dependencies.<a href="#section-5.1.11.2-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.11.2-5">TDTs cannot instantiate domains.
+Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust‑dependency triples.
+Environments that have been accepted into the ACE are automatically considered Domains.
+Consequently, TDTs may describe trust‑dependency semantics for any Environment that has been accepted into the ACS.<a href="#section-5.1.11.2-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.11.2-6">The trust dependency triple subject (<code>domain-id</code>) identifies the member domain (see <a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.11.1</a>) that has trustees.
 The triple object <code>trustees</code> lists the domains that are trustees of the subject domain.
 The triple predicate asserts that a trust appraisal of <code>domain-id</code> is not complete without appraisal of the <code>trustees</code>.<a href="#section-5.1.11.2-6" class="pilcrow">¶</a></p>
