@@ -1451,7 +1451,7 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
 * `endorsement`: Additional Endorsement Claims.
 
-To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+To process an `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
@@ -2107,7 +2107,7 @@ The Environment-Claim Tuple is a core internal construct of the CoRIM Verifier.
 It is used to describe a feature (or "Claim") of the appraised environment alongside relevant metadata.
 All ECTs, except those containing Evidence Claims, are typically obtained from CoMID triples.
 
-Claims in ECTs have a both name and a value.
+Claims in ECTs have both a name and a value.
 The value represents the state associated with the Claim.
 This specification does not assign any special meaning to Claim names; it only specifies the rules for determining whether two Claim names are the same.
 
@@ -2231,7 +2231,7 @@ Any duplicates MUST be pruned.
 
 ##### Trust Dependency ECT {#sec-trust-ect}
 
-A Trust Depedency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
+A Trust Dependency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
 It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprises the trust chain.
 
 ~~~ cddl
@@ -2241,7 +2241,7 @@ It describes the direct relationship between a specific node in the trust domain
 
 The following describes the specialized members of the `T-ECT`.
 
-* `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
+* `trustees`: Identifies the set of environments that becomes a part of a trust chain to the parent `environment`.
 
 A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
 In a Trust ECT, the `environment` attribute encodes the name of the Claim.
@@ -2467,7 +2467,7 @@ If a cycle is detected, the `td` relation MUST NOT be added to the Staging Area,
 This is a prerequisite for the `match_and_augment` algorithm described in {{algo-match-and-augment}}.
 Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.
 
-A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
+A trust dependency relation is added to the ACS if the `environment` and all `trustees` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
 
 #### ACS
 
@@ -2596,7 +2596,7 @@ Otherwise, the CoRIM processor MUST reject the Evidence.
 
 ##### Reference Values {#sec-trans-reference-values}
 
-Reference Values transformation involves mapping Reference Value triples into into an `rv` relation (see {{sec-ir-refval}}).
+Reference Values transformation involves mapping Reference Value triples into an `rv` relation (see {{sec-ir-refval}}).
 Each `reference-triple-record` ({{triple-rv}}) is transformed into an `rv-item` ({{fig-rv}}) as described in {{algo-rv-transform}}.
 (The code reuses the `mms_to_ems` function from {{algo-mm-to-em}}.)
 
@@ -2630,9 +2630,9 @@ Since they may contain ranges rather than individual values (see, for example, {
 
 ##### Endorsed Values {#sec-trans-endorsed-values}
 
-Endorsed Values transformation involves mapping EV, CE and CES triples into into `ev` or `evs` relations (see {{sec-ir-endval}}).
+Endorsed Values transformation involves mapping EV, CE and CES triples into `ev` or `evs` relations (see {{sec-ir-endval}}).
 
-A `endorsed-triple-record` ({{triple-ev}}) is transformed into an `ev-item` ({{fig-ev}}) as described in {{algo-ev-transform}}.
+An `endorsed-triple-record` ({{triple-ev}}) is transformed into an `ev-item` ({{fig-ev}}) as described in {{algo-ev-transform}}.
 (The code reuses the `mms_to_ems` function from {{algo-mm-to-em}}.)
 
 ~~~ pseudocode
@@ -2738,7 +2738,7 @@ FUNC transform(
 
 ##### Keys
 
-Keys transformation involves mapping Attest Key and Device Identity triples into into a `key` relation (see {{sec-ir-keys}}).
+Keys transformation involves mapping Attest Key and Device Identity triples into a `key` relation (see {{sec-ir-keys}}).
 
 An `attest-key-triple-record` ({{triple-ak}}) or an `identity-triple-record` ({{triple-di}}) is transformed into a `key-item` ({{fig-k}}) as described in {{algo-key-transform}}.
 
@@ -3273,7 +3273,7 @@ In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a C-ECT co
 
 The ACS-ECT value stored under `measurement-values-map` codepoint 15 is an int range value of `int-range-type-choice`.
 
-Consider an `int` ACS-ECT value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
+Consider an `int` ACS-ECT value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against either another `int` or an `int-range` named CONDITION.
 
 *  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
 
@@ -3381,7 +3381,7 @@ The Verifier obtains Evidence from a PSA Attester in the format described in {{-
 
 #### Internal Representations
 
-As described in {{sec-phase-1}}, once all the "raw" inputs and have been validated, input transformations can start.
+As described in {{sec-phase-1}}, once all the "raw" inputs have been validated, input transformations can start.
 
 The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding `rv-item`s ({{ex-rv-item-1}}, {{ex-rv-item-2}}) using the transformations defined in {{algo-rv-transform}}.
 
