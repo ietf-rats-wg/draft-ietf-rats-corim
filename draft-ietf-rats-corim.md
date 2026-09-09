@@ -2111,7 +2111,7 @@ For instance, a signature of the authoritative supply chain entity over the CoRI
 It is represented as the key material by which the authority (and corresponding provenance) of the tuple can be determined.
 A typical example is the authority's PKIX certificate.
 This attribute is mandatory in an addition ECT, and therefore in every ECT held in the ACS.
-`ECT-common` ({{fig-ect-common}}) itself leaves `authority` optional because it is also the basis for condition ECTs, and not every relation uses `authority` as a matching criterion.
+`ECT-common` ({{fig-ect-common}}) itself defines `authority` as optional because it is also the basis for condition ECTs, and not every relation uses `authority` as a matching criterion.
 
 * `profile`: The profile that defines the domain of interpretation of this tuple.
 This is the `profile` attribute of the CoRIM that contained the original triple from which this ECT was obtained.
