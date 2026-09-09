@@ -3098,7 +3098,7 @@ When comparing two `$crypto-key-type-choice` items for equality, the processor M
 
 ##### Element List Comparison {#sec-compare-element-list}
 
-A C-ECT's `element-list` matches an ACS-ETC's `element-list` if all the `element-map`s in the C-ECT's `element-list` match the `element-map`s in the ACS-ECT's `element-list`.
+A C-ECT's `element-list` matches an ACS-ECT's `element-list` if all the `element-map`s in the C-ECT's `element-list` match the `element-map`s in the ACS-ECT's `element-list`.
 
 Any `element-map` that is present in the ACS-ECT's `element-list` but not in the C-ECT's is ignored in the comparison.
 
