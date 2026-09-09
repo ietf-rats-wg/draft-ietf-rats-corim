@@ -251,6 +251,13 @@ Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
+Collision-Resistant Name:
+: As defined in {{Section 2 of -jwt}}:
+_"A name in a namespace that enables names to be allocated in a manner such that they are highly unlikely to collide with other names.
+Examples of collision-resistant namespaces include: Domain Names, Object Identifiers (OIDs) as defined in the ITU-T X.660 and X.670 Recommendation series, and Universally Unique IDentifiers (UUIDs) [RFC4122].
+When using an administratively delegated namespace, the definer of a name needs to take reasonable precautions to ensure they are in control of the portion of the namespace they use to define the name."_
+CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.
+
 Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
@@ -792,13 +799,14 @@ The following describes each member of the `tag-identity-map`.
 ~~~
 
 A Tag ID is either a 16-byte binary string, or a textual identifier
-referencing the CoMID. The tag identifier MUST be globally unique. Failure to
-ensure global uniqueness can create ambiguity in tag use since the tag-id
+referencing the CoMID. The tag identifier MUST be a Collision-Resistant Name (see {{sec-glossary}}). Failure to
+ensure collision resistance can create ambiguity in tag use since the tag-id
 serves as the global key for matching, lookups and linking. If represented as a
 16-byte binary string, the identifier MUST be a valid universally unique
-identifier as defined by {{-uuid}}. There are no strict guidelines on how the
+identifier as defined by {{-uuid}}, and SHOULD follow the local uniqueness
+guidance of {{Section 6.8 of -uuid}}. There are no strict guidelines on how the
 identifier is structured, but examples include a 16-byte GUID (e.g., class 4
-UUID) {{-uuid}}, or a URI {{-uri}}.
+UUID) {{-uuid}}, or a URI {{-uri}}, for example `urn:example:widget:firmware:1.0.0`.
 
 #### Tag Version {#sec-tag-version}
 
@@ -924,8 +932,8 @@ context (triple) in which the environment is used.
 An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
-An environment MUST be globally unique.
-The combination of values within `class-map` MUST combine to form a globally unique identifier.
+An environment MUST be identified by a Collision-Resistant Name (see {{sec-glossary}}).
+The combination of values within `class-map` MUST combine to form a Collision-Resistant Name.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
@@ -1863,7 +1871,7 @@ Each entry in the `digests-type` MUST have a unique `alg` value.
 An opaque, variable-length byte string.
 It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
 Its semantics are defined by the context in which it is found, and by the overarching CoRIM profile.
-When used as an identifier the responsible allocator entity SHOULD ensure uniqueness within the context that it is used.
+When used as an identifier, the value MUST be a Collision-Resistant Name (see {{sec-glossary}}); the responsible allocator entity is responsible for ensuring this property holds within the context in which the identifier is used.
 
 ~~~ cddl
 {::include cddl/tagged-bytes.cddl}
