@@ -2112,7 +2112,6 @@ It is represented as the key material by which the authority (and corresponding 
 A typical example is the authority's PKIX certificate.
 This attribute is mandatory in an addition ECT, and therefore in every ECT held in the ACS.
 `ECT-common` ({{fig-ect-common}}) itself leaves `authority` optional because it is also the basis for condition ECTs, and not every relation uses `authority` as a matching criterion.
-Where a relation's condition ECT does use it for matching, the attribute is mandatory there too (see the per-relation processing rules below and {{sec-compare-authority}}).
 
 * `profile`: The profile that defines the domain of interpretation of this tuple.
 This is the `profile` attribute of the CoRIM that contained the original triple from which this ECT was obtained.
