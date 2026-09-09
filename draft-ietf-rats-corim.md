@@ -848,7 +848,7 @@ tag (the source) and another CoMID tag (the target).
 {::include cddl/linked-tag-map.cddl}
 ~~~
 
-The following describes each member of the `tag-identity-map`.
+The following describes each member of the `linked-tag-map`.
 
 * `linked-tag-id` (index 0): Identifier for the target tag.
   See {{sec-tag-id}}.
