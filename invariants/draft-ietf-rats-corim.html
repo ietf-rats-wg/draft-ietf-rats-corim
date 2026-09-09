@@ -1624,7 +1624,7 @@ The ECT also contains Authority which identifies the entity that authored the EC
             <dd class="break"></dd>
 <dt id="section-1.1.1-2.25">Instance ID:</dt>
             <dd style="margin-left: 1.5em" id="section-1.1.1-2.26">
-              <p id="section-1.1.1-2.26.1">An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
+              <p id="section-1.1.1-2.26.1">An identifier of an Environment instance, such as the serial number of a hardware module.
 See also <span><a href="https://rfc-editor.org/rfc/rfc9711#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#RFC9711" class="cite xref">RFC9711</a>]</span>.<a href="#section-1.1.1-2.26.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
@@ -1838,7 +1838,7 @@ Once the ACS is built and the conversation is consistent, the ACS is available f
       </h2>
 <p id="section-4-1">A CoRIM is a collection of tags and related metadata in a concise CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span> encoding.
 A CoRIM can be digitally signed with a COSE <span>[<a href="#STD96" class="cite xref">STD96</a>]</span> signature.
-A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.<a href="#section-4-1" class="pilcrow">¶</a></p>
+A tag is a structured, machine-readable data format used to identify, describe, and manage modules or components of a system.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">Tags can be of different types:<a href="#section-4-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-3.1">
@@ -1853,7 +1853,7 @@ A tag is a structured, machine-readable data format used to uniquely identify, d
       </ul>
 <p id="section-4-4">CoRIM allows for new types of tags to be added in future specifications.
 For example, Concise Trust Anchor Stores (CoTS) (<span>[<a href="#I-D.ietf-rats-concise-ta-stores" class="cite xref">I-D.ietf-rats-concise-ta-stores</a>]</span>) is currently being defined as a standard CoRIM extension.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-5">Each CoRIM contains an identifier to distinguish a CoRIM from other CoRIMs.<a href="#section-4-5" class="pilcrow">¶</a></p>
 <p id="section-4-6">CoRIM can also carry the following optional metadata:<a href="#section-4-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4-7.1">
@@ -1909,7 +1909,7 @@ unsigned-corim-map = corim-map
 <p id="section-4.1-3">The following describes each child item of this map.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-4.1">
-            <p id="section-4.1-4.1.1"><code>id</code> (index 0): A unique identifier to identify a CoRIM. Described
+            <p id="section-4.1-4.1.1"><code>id</code> (index 0): An identifier for a CoRIM. Described
 in <a href="#sec-corim-id" class="auto internal xref">Section 4.1.1</a>.<a href="#section-4.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.1-4.2">
@@ -2026,7 +2026,7 @@ Exercised extension points SHOULD preserve the intent of the original semantics.
 <p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media type defined in <a href="#sec-mt-rim-cbor" class="auto internal xref">Section 11.12.1</a> with the <code>profile</code> parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.<a href="#section-4.1.4-5" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-6">A profile identifier is either an OID <span>[<a href="#RFC9090" class="cite xref">RFC9090</a>]</span> or a URL <span>[<a href="#STD66" class="cite xref">STD66</a>]</span>.<a href="#section-4.1.4-6" class="pilcrow">¶</a></p>
-<p id="section-4.1.4-7">The profile identifier uniquely identifies a documented profile.  Any changes
+<p id="section-4.1.4-7">The profile identifier identifies a documented profile.  Any changes
 to the profile, even the slightest deviation, is considered a different profile
 that MUST have a different identifier.<a href="#section-4.1.4-7" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-8">The CoRIM profile must describe at a minimum the following:  (a) how cryptographic verification key material is represented (e.g., using Attestation Keys triples, or CoTS tags), and
@@ -2399,7 +2399,7 @@ It is RECOMMENDED for a <code>corim-locator-map</code> containing local URIs to 
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-concise-module-identifier-c" class="section-name selfRef">Concise Module Identifier (CoMID)</a>
       </h2>
 <p id="section-5-1">A CoMID tag contains information about hardware, firmware, or module composition.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<p id="section-5-2">Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-2">Each CoMID has an ID that is used to identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.<a href="#section-5-2" class="pilcrow">¶</a></p>
 <p id="section-5-3">A CoMID defines several types of Claims, using "triples" semantics.<a href="#section-5-3" class="pilcrow">¶</a></p>
 <p id="section-5-4">At a high level, a triple is a statement that links a subject to an object via a predicate.
 CoMID triples typically encode assertions made by the CoRIM author about Attesting or Target Environments and their security features, for example measurements, cryptographic key material, etc.<a href="#section-5-4" class="pilcrow">¶</a></p>
@@ -2428,7 +2428,7 @@ For example, deployment environments may have constrained resources, limited cod
           <p id="section-5-9.1.1">Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm (<a href="#sec-comid-triple-cond-endors" class="auto internal xref">Section 5.1.7</a>).<a href="#section-5-9.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-5-9.2">
-          <p id="section-5-9.2.1">Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device (<a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.9</a>).<a href="#section-5-9.2.1" class="pilcrow">¶</a></p>
+          <p id="section-5-9.2.1">Device Identity triples: containing cryptographic credentials - for example, an IDevID - identifying a device (<a href="#sec-comid-triple-identity" class="auto internal xref">Section 5.1.9</a>).<a href="#section-5-9.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-5-9.3">
           <p id="section-5-9.3.1">Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester (<a href="#sec-comid-triple-attest-key" class="auto internal xref">Section 5.1.10</a>).<a href="#section-5-9.3.1" class="pilcrow">¶</a></p>
@@ -2481,7 +2481,7 @@ textual values within a given context MUST be considered expressed in the
 specified language.<a href="#section-5.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-4.2">
-            <p id="section-5.1-4.2.1"><code>tag-identity</code> (index 1): A <code>tag-identity-map</code> containing unique
+            <p id="section-5.1-4.2.1"><code>tag-identity</code> (index 1): A <code>tag-identity-map</code> containing
 identification information for the CoMID.
 Described in <a href="#sec-comid-tag-id" class="auto internal xref">Section 5.1.1</a>.<a href="#section-5.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
@@ -2519,7 +2519,7 @@ tag-identity-map = {
 <p id="section-5.1.1-2">The following describes each member of the <code>tag-identity-map</code>.<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.1-3.1">
-              <p id="section-5.1.1-3.1.1"><code>tag-id</code> (index 0): A universally unique identifier for the CoMID.
+              <p id="section-5.1.1-3.1.1"><code>tag-id</code> (index 0): An identifier for the CoMID.
 Described in <a href="#sec-tag-id" class="auto internal xref">Section 5.1.1.1</a>.<a href="#section-5.1.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.1-3.2">
@@ -2538,7 +2538,7 @@ $tag-id-type-choice /= tstr
 $tag-id-type-choice /= uuid-type
 </pre><a href="#section-5.1.1.1-1" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.1.1-2">A Tag ID is either a 16-byte binary string, or a textual identifier, uniquely
+<p id="section-5.1.1.1-2">A Tag ID is either a 16-byte binary string, or a textual identifier
 referencing the CoMID. The tag identifier MUST be globally unique. Failure to
 ensure global uniqueness can create ambiguity in tag use since the tag-id
 serves as the global key for matching, lookups and linking. If represented as a
@@ -2624,7 +2624,7 @@ linked-tag-map = {
 <p id="section-5.1.3-3">The following describes each member of the <code>tag-identity-map</code>.<a href="#section-5.1.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.3-4.1">
-              <p id="section-5.1.3-4.1.1"><code>linked-tag-id</code> (index 0): Unique identifier for the target tag.
+              <p id="section-5.1.3-4.1.1"><code>linked-tag-id</code> (index 0): Identifier for the target tag.
 See <a href="#sec-tag-id" class="auto internal xref">Section 5.1.1.1</a>.<a href="#section-5.1.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-5.1.3-4.2">
@@ -2758,7 +2758,7 @@ environment-map = non-empty&lt;{
 Described in <a href="#sec-comid-class" class="auto internal xref">Section 5.1.4.2</a>.<a href="#section-5.1.4.1-6.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.1-6.2">
-                <p id="section-5.1.4.1-6.2.1"><code>instance</code> (index 1): Contains a unique identifier of a module's instance.
+                <p id="section-5.1.4.1-6.2.1"><code>instance</code> (index 1): Contains an identifier of a module's instance.
 Described in <a href="#sec-comid-instance" class="auto internal xref">Section 5.1.4.3</a>.<a href="#section-5.1.4.1-6.2.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-5.1.4.1-6.3">
@@ -2828,7 +2828,7 @@ different index value.<a href="#section-5.1.4.2-4.5.1" class="pilcrow">¶</a></p
             <h5 id="name-environment-instance">
 <a href="#section-5.1.4.3" class="section-number selfRef">5.1.4.3. </a><a href="#name-environment-instance" class="section-name selfRef">Environment Instance</a>
             </h5>
-<p id="section-5.1.4.3-1">An <code>instance-id</code> is a unique value that identifies a Target Environment instance.
+<p id="section-5.1.4.3-1">An <code>instance-id</code> identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
 For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the <code>instance-id</code> might be created from that subject public key.
 See <span><a href="https://rfc-editor.org/rfc/rfc5280#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.
@@ -2857,7 +2857,7 @@ $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
             <h5 id="name-environment-group">
 <a href="#section-5.1.4.4" class="section-number selfRef">5.1.4.4. </a><a href="#name-environment-group" class="section-name selfRef">Environment Group</a>
             </h5>
-<p id="section-5.1.4.4-1">A group carries a unique identifier that is reliably bound to a group of
+<p id="section-5.1.4.4-1">A group carries an identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.4-2">The types defined for a group identifier are UUID and variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>).<a href="#section-5.1.4.4-2" class="pilcrow">¶</a></p>
@@ -2970,6 +2970,10 @@ measurement-values-map = non-empty&lt;{
   ? &amp;(cryptokeys: 13) =&gt; [ + $crypto-key-type-choice ]
   ? &amp;(integrity-registers: 14) =&gt; integrity-registers
   ? &amp;(int-range: 15) =&gt; int-range-type-choice
+  ? &amp;(bool: 16) =&gt; bool-matcher
+  ? &amp;(number: 17) =&gt; number-matcher
+  ? &amp;(text: 18) =&gt; text-matcher
+  ? &amp;(bytes: 19) =&gt; bytes-matcher
   * $$measurement-values-map-extension
 }&gt;
 </pre><a href="#section-5.1.4.5.2-3" class="pilcrow">¶</a>
@@ -3042,6 +3046,26 @@ Matching is described in <a href="#sec-cryptokeys-matching" class="auto internal
                   <p id="section-5.1.4.5.2-5.15.1"><code>int-range</code> (index 15): An integer value or an inclusive integer range that can be compared with linear order.
 Described in <a href="#sec-comid-int-range" class="auto internal xref">Section 5.1.4.8</a>.
 Comparison rules are defined in <a href="#sec-match-int-range" class="auto internal xref">Section 8.3.4.4.5.8</a>.<a href="#section-5.1.4.5.2-5.15.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.4.5.2-5.16">
+                  <p id="section-5.1.4.5.2-5.16.1"><code>bool</code> (index 16): A boolean value with configurable matching semantics.
+Described in <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>.
+Comparison rules are defined in <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a>.<a href="#section-5.1.4.5.2-5.16.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.4.5.2-5.17">
+                  <p id="section-5.1.4.5.2-5.17.1"><code>number</code> (index 17): A numeric value with configurable matching semantics, including range and set matching.
+Described in <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>.
+Comparison rules are defined in <a href="#sec-match-number" class="auto internal xref">Section 8.3.4.4.5.10</a>.<a href="#section-5.1.4.5.2-5.17.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.4.5.2-5.18">
+                  <p id="section-5.1.4.5.2-5.18.1"><code>text</code> (index 18): A text string with configurable matching semantics.
+Described in <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>.
+Comparison rules are defined in <a href="#sec-match-text" class="auto internal xref">Section 8.3.4.4.5.11</a>.<a href="#section-5.1.4.5.2-5.18.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.4.5.2-5.19">
+                  <p id="section-5.1.4.5.2-5.19.1"><code>bytes</code> (index 19): A byte string with configurable matching semantics.
+Described in <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>.
+Comparison rules are defined in <a href="#sec-match-bytes" class="auto internal xref">Section 8.3.4.4.5.12</a>.<a href="#section-5.1.4.5.2-5.19.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 </section>
@@ -3331,7 +3355,7 @@ tagged-pkix-asn1der-cert-type = #6.562(bstr)
 <a href="#section-5.1.4.7" class="section-number selfRef">5.1.4.7. </a><a href="#name-integrity-registers" class="section-name selfRef">Integrity Registers</a>
             </h5>
 <p id="section-5.1.4.7-1">An Integrity Registers map groups together one or more measured "objects".
-Each measured object has a unique identifier and one or more associated digests.
+Each measured object has an identifier and one or more associated digests.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
 The digests use <code>digests-type</code> semantics (<a href="#sec-common-hash-entry" class="auto internal xref">Section 7.7</a>).<a href="#section-5.1.4.7-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.7-2">
@@ -3394,6 +3418,46 @@ negative-inf = null
 </pre><a href="#section-5.1.4.8-2" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.4.8-3">The signed integer range representation is an inclusive range unless either <code>min</code> or <code>max</code> are infinite as represented by <code>null</code>, in which case, each infinity is necessarily exclusive.<a href="#section-5.1.4.8-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-comid-matchers">
+<section id="section-5.1.4.9">
+            <h5 id="name-type-matchers">
+<a href="#section-5.1.4.9" class="section-number selfRef">5.1.4.9. </a><a href="#name-type-matchers" class="section-name selfRef">Type Matchers</a>
+            </h5>
+<p id="section-5.1.4.9-1">The <code>measurement-values-map</code> entries at indices 16–19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
+Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:<a href="#section-5.1.4.9-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.4.9-2.1">
+                <p id="section-5.1.4.9-2.1.1">Bare (untagged) value means exact match: the target value must equal the entry's value.<a href="#section-5.1.4.9-2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.9-2.2">
+                <p id="section-5.1.4.9-2.2.1">CBOR tag 566 (<code>tagged-*-set</code>) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.<a href="#section-5.1.4.9-2.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.4.9-2.3">
+                <p id="section-5.1.4.9-2.3.1">CBOR tag 565 (<code>tagged-number-range</code>, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; <code>null</code> means unbounded.<a href="#section-5.1.4.9-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<div class="lang-cddl sourcecode" id="section-5.1.4.9-3">
+<pre>
+; Set match: target value must equal one of the listed alternatives (two or more)
+tagged-bool-set = #6.566([2* bool])
+tagged-number-set = #6.566([2* number])
+tagged-text-set = #6.566([2* text])
+tagged-bytes-set = #6.566([2* bytes])
+
+; Range match: target value must lie within the inclusive [min, max] interval
+; null means unbounded.  Defined for numeric types only.
+tagged-number-range = #6.565([number / null, number / null])
+
+; Composed matchers: the bare type means exact match
+bool-matcher = bool / tagged-bool-set
+number-matcher = number / tagged-number-range / tagged-number-set
+text-matcher = text / tagged-text-set
+bytes-matcher = bytes / tagged-bytes-set
+</pre><a href="#section-5.1.4.9-3" class="pilcrow">¶</a>
+</div>
+<p id="section-5.1.4.9-4">Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3481,7 +3545,7 @@ endorsed-triple-record = [
               <p id="section-5.1.6-5.2.1"><code>endorsement</code>: Additional Endorsement Claims.<a href="#section-5.1.6-5.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-5.1.6-6">To process a <code>endorsed-triple-record</code>, its <code>condition</code> is compared with existing Evidence, corroborated Evidence, and Endorsements.
+<p id="section-5.1.6-6">To process an <code>endorsed-triple-record</code>, its <code>condition</code> is compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.<a href="#section-5.1.6-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -3800,7 +3864,7 @@ Verifiers MAY use TDTs with appraisal policies to assess the veracity of domain-
           </h4>
 <p id="section-5.1.12-1">A CoSWID triple relates reference measurements contained in one or more CoSWIDs
 to a Target Environment. The subject identifies a Target Environment, the
-object one or more unique tag identifiers of existing CoSWIDs, and the
+object one or more tag identifiers of existing CoSWIDs, and the
 predicate asserts that these contain the expected (i.e., reference)
 measurements for the Target Environment.<a href="#section-5.1.12-1" class="pilcrow">¶</a></p>
 <span id="name-comid-coswid-linking-triple-"></span><div id="triple-ccl">
@@ -3894,7 +3958,7 @@ concise-tl-tag = {
 <p id="section-6.1-3">The following describes each member of the <code>concise-tl-tag</code> map.<a href="#section-6.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.1-4.1">
-            <p id="section-6.1-4.1.1"><code>tag-identity</code> (index 0): A <code>tag-identity-map</code> containing unique
+            <p id="section-6.1-4.1.1"><code>tag-identity</code> (index 0): A <code>tag-identity-map</code> containing
 identification information for the CoTL.
 Described in <a href="#sec-comid-tag-id" class="auto internal xref">Section 5.1.1</a>.<a href="#section-6.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
@@ -4633,7 +4697,7 @@ The computed ACS can then be handed over to subsequent appraisal phases, such as
 <p id="section-8.3.2.1-1">The Environment-Claim Tuple is a core internal construct of the CoRIM Verifier.
 It is used to describe a feature (or "Claim") of the appraised environment alongside relevant metadata.
 All ECTs, except those containing Evidence Claims, are typically obtained from CoMID triples.<a href="#section-8.3.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.1-2">Claims in ECTs have a both name and a value.
+<p id="section-8.3.2.1-2">Claims in ECTs have both a name and a value.
 The value represents the state associated with the Claim.
 This specification does not assign any special meaning to Claim names; it only specifies the rules for determining whether two Claim names are the same.<a href="#section-8.3.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1-3">An ECT (<a href="#fig-ect" class="auto internal xref">Figure 11</a>) can be one of the following specializations:<a href="#section-8.3.2.1-3" class="pilcrow">¶</a></p>
@@ -4828,7 +4892,7 @@ Any duplicates MUST be pruned.<a href="#section-8.3.2.1.2-7" class="pilcrow">¶<
               <h6 id="name-trust-dependency-ect">
 <a href="#section-8.3.2.1.3" class="section-number selfRef">8.3.2.1.3. </a><a href="#name-trust-dependency-ect" class="section-name selfRef">Trust Dependency ECT</a>
               </h6>
-<p id="section-8.3.2.1.3-1">A Trust Depedency ECT (<code>T-ECT</code>) is used to represent trust dependency Claims between environments.
+<p id="section-8.3.2.1.3-1">A Trust Dependency ECT (<code>T-ECT</code>) is used to represent trust dependency Claims between environments.
 It describes the direct relationship between a specific node in the trust domain (i.e., the parent <code>environment</code>) and the <code>trustees</code> nodes that comprises the trust chain.<a href="#section-8.3.2.1.3-1" class="pilcrow">¶</a></p>
 <span id="name-trust-dependency-ect-2"></span><div id="fig-t-ect">
 <figure id="figure-16">
@@ -4847,7 +4911,7 @@ T-ECT = {
 <p id="section-8.3.2.1.3-3">The following describes the specialized members of the <code>T-ECT</code>.<a href="#section-8.3.2.1.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.3.2.1.3-4.1">
-                  <p id="section-8.3.2.1.3-4.1.1"><code>trustees</code>: Identifies the set of environments that becomes a part of a trust chainto the parent <code>environment</code>.<a href="#section-8.3.2.1.3-4.1.1" class="pilcrow">¶</a></p>
+                  <p id="section-8.3.2.1.3-4.1.1"><code>trustees</code>: Identifies the set of environments that becomes a part of a trust chain to the parent <code>environment</code>.<a href="#section-8.3.2.1.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
               </ul>
 <p id="section-8.3.2.1.3-5">A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
@@ -5284,7 +5348,7 @@ Trust-Dependency-addition-ECT = ({
 If a cycle is detected, the <code>td</code> relation MUST NOT be added to the Staging Area, and this condition SHOULD be logged.
 This is a prerequisite for the <code>match_and_augment</code> algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a>.
 Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.<a href="#section-8.3.2.2.6-9" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.2.6-10">A trust dependency relation is added to the ACS if the <code>enviroment</code> and all <code>trustess</code> exist in the membership graph expressed by the <code>dm</code> relation (<a href="#fig-dm" class="auto internal xref">Figure 28</a>) in the ACS.<a href="#section-8.3.2.2.6-10" class="pilcrow">¶</a></p>
+<p id="section-8.3.2.2.6-10">A trust dependency relation is added to the ACS if the <code>environment</code> and all <code>trustees</code> exist in the membership graph expressed by the <code>dm</code> relation (<a href="#fig-dm" class="auto internal xref">Figure 28</a>) in the ACS.<a href="#section-8.3.2.2.6-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5458,7 +5522,7 @@ Otherwise, the CoRIM processor MUST reject the Evidence.<a href="#section-8.3.3.
               <h6 id="name-reference-values-2">
 <a href="#section-8.3.3.7.2" class="section-number selfRef">8.3.3.7.2. </a><a href="#name-reference-values-2" class="section-name selfRef">Reference Values</a>
               </h6>
-<p id="section-8.3.3.7.2-1">Reference Values transformation involves mapping Reference Value triples into into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.3.2.2.2</a>).
+<p id="section-8.3.3.7.2-1">Reference Values transformation involves mapping Reference Value triples into an <code>rv</code> relation (see <a href="#sec-ir-refval" class="auto internal xref">Section 8.3.2.2.2</a>).
 Each <code>reference-triple-record</code> (<a href="#triple-rv" class="auto internal xref">Figure 1</a>) is transformed into an <code>rv-item</code> (<a href="#fig-rv" class="auto internal xref">Figure 20</a>) as described in <a href="#algo-rv-transform" class="auto internal xref">Figure 38</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.3.3.7.2-1" class="pilcrow">¶</a></p>
 <span id="name-reference-value-triple-tran"></span><div id="algo-rv-transform">
@@ -5501,8 +5565,8 @@ Since they may contain ranges rather than individual values (see, for example, <
               <h6 id="name-endorsed-values-2">
 <a href="#section-8.3.3.7.3" class="section-number selfRef">8.3.3.7.3. </a><a href="#name-endorsed-values-2" class="section-name selfRef">Endorsed Values</a>
               </h6>
-<p id="section-8.3.3.7.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.3.2.2.3</a>).<a href="#section-8.3.3.7.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.7.3-2">A <code>endorsed-triple-record</code> (<a href="#triple-ev" class="auto internal xref">Figure 2</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 39</a>.
+<p id="section-8.3.3.7.3-1">Endorsed Values transformation involves mapping EV, CE and CES triples into <code>ev</code> or <code>evs</code> relations (see <a href="#sec-ir-endval" class="auto internal xref">Section 8.3.2.2.3</a>).<a href="#section-8.3.3.7.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.3-2">An <code>endorsed-triple-record</code> (<a href="#triple-ev" class="auto internal xref">Figure 2</a>) is transformed into an <code>ev-item</code> (<a href="#fig-ev" class="auto internal xref">Figure 23</a>) as described in <a href="#algo-ev-transform" class="auto internal xref">Figure 39</a>.
 (The code reuses the <code>mms_to_ems</code> function from <a href="#algo-mm-to-em" class="auto internal xref">Figure 14</a>.)<a href="#section-8.3.3.7.3-2" class="pilcrow">¶</a></p>
 <span id="name-endorsed-value-triple-trans"></span><div id="algo-ev-transform">
 <figure id="figure-39">
@@ -5626,7 +5690,7 @@ FUNC transform(
               <h6 id="name-keys-2">
 <a href="#section-8.3.3.7.4" class="section-number selfRef">8.3.3.7.4. </a><a href="#name-keys-2" class="section-name selfRef">Keys</a>
               </h6>
-<p id="section-8.3.3.7.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.3.2.2.4</a>).<a href="#section-8.3.3.7.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.4-1">Keys transformation involves mapping Attest Key and Device Identity triples into a <code>key</code> relation (see <a href="#sec-ir-keys" class="auto internal xref">Section 8.3.2.2.4</a>).<a href="#section-8.3.3.7.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.7.4-2">An <code>attest-key-triple-record</code> (<a href="#triple-ak" class="auto internal xref">Figure 6</a>) or an <code>identity-triple-record</code> (<a href="#triple-di" class="auto internal xref">Figure 5</a>) is transformed into a <code>key-item</code> (<a href="#fig-k" class="auto internal xref">Figure 27</a>) as described in <a href="#algo-key-transform" class="auto internal xref">Figure 42</a>.<a href="#section-8.3.3.7.4-2" class="pilcrow">¶</a></p>
 <span id="name-key-triple-transformation"></span><div id="algo-key-transform">
 <figure id="figure-42">
@@ -6276,7 +6340,7 @@ In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a C-ECT co
 <a href="#section-8.3.4.4.5.8" class="section-number selfRef">8.3.4.4.5.8. </a><a href="#name-comparison-for-int-range-en" class="section-name selfRef">Comparison for int-range entries</a>
                 </h6>
 <p id="section-8.3.4.4.5.8-1">The ACS-ECT value stored under <code>measurement-values-map</code> codepoint 15 is an int range value of <code>int-range-type-choice</code>.<a href="#section-8.3.4.4.5.8-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.4.5.8-2">Consider an <code>int</code> ACS-ECT value named ENTRY in a <code>measurement-values-map</code> codepoint (e.g., 15) that allows comparing <code>int</code> against a either another <code>int</code> or an <code>int-range</code> named CONDITION.<a href="#section-8.3.4.4.5.8-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.8-2">Consider an <code>int</code> ACS-ECT value named ENTRY in a <code>measurement-values-map</code> codepoint (e.g., 15) that allows comparing <code>int</code> against either another <code>int</code> or an <code>int-range</code> named CONDITION.<a href="#section-8.3.4.4.5.8-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-8.3.4.4.5.8-3.1">
                     <p id="section-8.3.4.4.5.8-3.1.1">If CONDITION is an <code>int</code> then an equality comparison is performed with ENTRY.<a href="#section-8.3.4.4.5.8-3.1.1" class="pilcrow">¶</a></p>
@@ -6312,6 +6376,56 @@ The comparison MUST return true if and only if all the following conditions are 
                     </ul>
 </li>
                 </ul>
+</section>
+</div>
+<div id="sec-match-bool">
+<section id="section-8.3.4.4.5.9">
+                <h6 id="name-comparison-for-bool-entries">
+<a href="#section-8.3.4.4.5.9" class="section-number selfRef">8.3.4.4.5.9. </a><a href="#name-comparison-for-bool-entries" class="section-name selfRef">Comparison for bool entries</a>
+                </h6>
+<p id="section-8.3.4.4.5.9-1">The value stored under <code>measurement-values-map</code> codepoint 16 is of type <code>bool-matcher</code>.<a href="#section-8.3.4.4.5.9-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.9-2">If the C-ECT value is a bare <code>bool</code>, an equality comparison is performed with the ACS-ECT value.<a href="#section-8.3.4.4.5.9-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.9-3">If the C-ECT value is a <code>tagged-bool-set</code> (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.<a href="#section-8.3.4.4.5.9-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-match-number">
+<section id="section-8.3.4.4.5.10">
+                <h6 id="name-comparison-for-number-entri">
+<a href="#section-8.3.4.4.5.10" class="section-number selfRef">8.3.4.4.5.10. </a><a href="#name-comparison-for-number-entri" class="section-name selfRef">Comparison for number entries</a>
+                </h6>
+<p id="section-8.3.4.4.5.10-1">The value stored under <code>measurement-values-map</code> codepoint 17 is of type <code>number-matcher</code>.<a href="#section-8.3.4.4.5.10-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.10-2">If the C-ECT value is a bare <code>number</code>, an equality comparison is performed with the ACS-ECT value.<a href="#section-8.3.4.4.5.10-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.10-3">If the C-ECT value is a <code>tagged-number-range</code> (CBOR tag 565), <code>null</code> in the first element represents negative infinity (no lower bound) and <code>null</code> in the second element represents positive infinity (no upper bound).
+The comparison MUST return true if and only if both of the following conditions are met:<a href="#section-8.3.4.4.5.10-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.3.4.4.5.10-4.1">
+                    <p id="section-8.3.4.4.5.10-4.1.1">The C-ECT <code>min</code> is <code>null</code> or the ACS-ECT value is greater than or equal to <code>min</code>.<a href="#section-8.3.4.4.5.10-4.1.1" class="pilcrow">¶</a></p>
+</li>
+                  <li class="normal" id="section-8.3.4.4.5.10-4.2">
+                    <p id="section-8.3.4.4.5.10-4.2.1">The C-ECT <code>max</code> is <code>null</code> or the ACS-ECT value is less than or equal to <code>max</code>.<a href="#section-8.3.4.4.5.10-4.2.1" class="pilcrow">¶</a></p>
+</li>
+                </ul>
+<p id="section-8.3.4.4.5.10-5">If the C-ECT value is a <code>tagged-number-set</code> (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.<a href="#section-8.3.4.4.5.10-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-match-text">
+<section id="section-8.3.4.4.5.11">
+                <h6 id="name-comparison-for-text-entries">
+<a href="#section-8.3.4.4.5.11" class="section-number selfRef">8.3.4.4.5.11. </a><a href="#name-comparison-for-text-entries" class="section-name selfRef">Comparison for text entries</a>
+                </h6>
+<p id="section-8.3.4.4.5.11-1">The value stored under <code>measurement-values-map</code> codepoint 18 is of type <code>text-matcher</code>.<a href="#section-8.3.4.4.5.11-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.11-2">If the C-ECT value is a bare <code>text</code>, an equality comparison is performed with the ACS-ECT value.<a href="#section-8.3.4.4.5.11-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.11-3">If the C-ECT value is a <code>tagged-text-set</code> (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.<a href="#section-8.3.4.4.5.11-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-match-bytes">
+<section id="section-8.3.4.4.5.12">
+                <h6 id="name-comparison-for-bytes-entrie">
+<a href="#section-8.3.4.4.5.12" class="section-number selfRef">8.3.4.4.5.12. </a><a href="#name-comparison-for-bytes-entrie" class="section-name selfRef">Comparison for bytes entries</a>
+                </h6>
+<p id="section-8.3.4.4.5.12-1">The value stored under <code>measurement-values-map</code> codepoint 19 is of type <code>bytes-matcher</code>.<a href="#section-8.3.4.4.5.12-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.12-2">If the C-ECT value is a bare <code>bytes</code>, an equality comparison is performed with the ACS-ECT value.<a href="#section-8.3.4.4.5.12-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.5.12-3">If the C-ECT value is a <code>tagged-bytes-set</code> (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.<a href="#section-8.3.4.4.5.12-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -6535,7 +6649,7 @@ In the triple, the security certification is represented as <code>endorsements</
             <h5 id="name-internal-representations">
 <a href="#section-8.3.6.3" class="section-number selfRef">8.3.6.3. </a><a href="#name-internal-representations" class="section-name selfRef">Internal Representations</a>
             </h5>
-<p id="section-8.3.6.3-1">As described in <a href="#sec-phase-1" class="auto internal xref">Section 8.3.3</a>, once all the "raw" inputs and have been validated, input transformations can start.<a href="#section-8.3.6.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.3-1">As described in <a href="#sec-phase-1" class="auto internal xref">Section 8.3.3</a>, once all the "raw" inputs have been validated, input transformations can start.<a href="#section-8.3.6.3-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.3-2">The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding <code>rv-item</code>s (<a href="#ex-rv-item-1" class="auto internal xref">Figure 53</a>, <a href="#ex-rv-item-2" class="auto internal xref">Figure 54</a>) using the transformations defined in <a href="#algo-rv-transform" class="auto internal xref">Figure 38</a>.<a href="#section-8.3.6.3-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.6.3-3">The first triple:<a href="#section-8.3.6.3-3" class="pilcrow">¶</a></p>
 <span id="name-first-rv-relation-item"></span><div id="ex-rv-item-1">
@@ -7358,7 +7472,25 @@ The integrity of code and data during execution is an explicit objective, for ex
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">565-599</td>
+              <td class="text-left" rowspan="1" colspan="1">565</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>array</code>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">tagged-number-range, see <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">566</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <code>array</code>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">tagged-{bool,number,text,bytes}-set, see <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>
+</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">567-599</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <code>any</code>
 </td>
@@ -8034,7 +8166,27 @@ Assignments consist of an integer index value, the item name, and a reference to
               <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">16-18446744073709551616</td>
+              <td class="text-left" rowspan="1" colspan="1">16</td>
+              <td class="text-left" rowspan="1" colspan="1">bool</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">17</td>
+              <td class="text-left" rowspan="1" colspan="1">number</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">18</td>
+              <td class="text-left" rowspan="1" colspan="1">text</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">19</td>
+              <td class="text-left" rowspan="1" colspan="1">bytes</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">20-18446744073709551616</td>
               <td class="text-left" rowspan="1" colspan="1">Unassigned</td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
@@ -8969,6 +9121,18 @@ int-range = [
 tagged-int-range = #6.564(int-range)
 positive-inf = null
 negative-inf = null
+tagged-bool-set = #6.566([2*bool])
+tagged-number-set = #6.566([2*number])
+tagged-text-set = #6.566([2*text])
+tagged-bytes-set = #6.566([2*bytes])
+tagged-number-range = #6.565([
+    number / null,
+    number / null,
+])
+bool-matcher = bool / tagged-bool-set
+number-matcher = number / tagged-number-range / tagged-number-set
+text-matcher = text / tagged-text-set
+bytes-matcher = bytes / tagged-bytes-set
 linked-tag-map = {
   &amp;(linked-tag-id: 0) =&gt; $tag-id-type-choice,
   &amp;(tag-rel: 1) =&gt; $tag-rel-type-choice,
@@ -9002,6 +9166,10 @@ measurement-values-map = non-empty&lt;{
     ? &amp;(cryptokeys: 13) =&gt; [+ $crypto-key-type-choice],
     ? &amp;(integrity-registers: 14) =&gt; integrity-registers,
     ? &amp;(int-range: 15) =&gt; int-range-type-choice,
+    ? &amp;(bool: 16) =&gt; bool-matcher,
+    ? &amp;(number: 17) =&gt; number-matcher,
+    ? &amp;(text: 18) =&gt; text-matcher,
+    ? &amp;(bytes: 19) =&gt; bytes-matcher,
     * $$measurement-values-map-extension,
 }&gt;
 non-empty&lt;M&gt; = M .and ({+ any =&gt; any})
@@ -9349,6 +9517,7 @@ cbor-ip.ipv6-address = bytes .size 16
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
 <p id="appendix-B-1">The authors would like to thank the following people for their review and comments on this document:
+<span class="contact-name">Greg Kostal</span>,
 <span class="contact-name">Carl Wallace</span>,
 <span class="contact-name">Hannes Tschofenig</span>,
 <span class="contact-name">Steven Bellock</span>,
