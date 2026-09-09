@@ -2361,11 +2361,8 @@ The internal representation of Attest Key and Device Identity triples uses the `
 ~~~
 {: #fig-k title="Keys Relation"}
 
-<cref>
-[TODO]
-Specialise condition/addition ECTs.
-Define constraints.
-</cref>
+If `key-item` is used to transform Evidence, `key-item.condition` is omitted since Evidence addition is unconditional.
+Nevertheless, `key-item.addition` is merely staged for addition pending successful key verification checks.
 
 ##### Domain Memberships {#sec-ir-domain-mem}
 
@@ -2704,9 +2701,9 @@ FUNC transform(
 
 ##### Keys
 
-Keys transformation involves mapping Attest Key and Device Identity triples into into a `key` relation (see {{sec-ir-keys}}).
+Keys transformation involves mapping Attest Key and Device Identity triples into into a `keys` relation (see {{sec-ir-keys}}).
 
-An `attest-key-triple-record` ({{triple-ak}}) or an `identity-triple-record` ({{triple-di}}) is transformed into a `key-item` ({{fig-k}}) as described in {{algo-key-transform}}.
+An `attest-key-triple-record` ({{triple-ak}}) or an `identity-triple-record` ({{triple-di}}) is transformed into a `key-item` ({{fig-k}}) as described in {{algo-key-transform}} pseudocode.
 
 ~~~ pseudocode
 FUNC transform(
@@ -2743,9 +2740,11 @@ FUNC transform(
     RETURN item
 }
 ~~~
-{: #algo-key-transform title="Key Triple Transformation"}
+{: #algo-key-transform title="Key Triples Transformation"}
 
-Note that keys are added under the authority of the verifier.
+Note that keys are added under the authority of the verifier because the key verification check is performed by the Verifier.
+
+After the `keys` relations are staged, processing commences as decribed in {{sec-proc-keys}}.
 
 ##### Domain Membership Transformation {#sec-trans-domain-mem}
 
@@ -2940,21 +2939,18 @@ FUNC SERIES-MATCH(acs: ACS, series: SERIES)
 ~~~
 {: #algo-series-match-and-augment title="Series Match and Augment Algorithm"}
 
-##### Processing `keys` Relations
+##### Processing `keys` Relations {#sec-proc-keys}
 
-Keys relations identify cryptographic keys that require additional key verification steps.
+Keys relations identify cryptographic keys that require additional key verification steps before being appended to the ACS.
+Processing follows the algorithm as defined in {{sec-match-and-augment}}.
+The `keys` list is iterated for each `key-item` where the `acs::MATCH()` function uses`condition`, if specified, to search the ACS for preexisting keys.
+Match conditions may return a variety of results including `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, `Endorsement-addition-ECT`, and `Key-addition-ECT` ECTs.
+If `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, or `Endorsement-addition-ECT` are matched, the `element-list.element-map.measurement-values-map.cryptokeys` list is appended to `key-item.addition.key-list`.
+If `Key-addition-ECT` ECTs are matched, its `key-list` is appended to `key-item.addition.key-list`.
 
-Keys are matched with ACS entries by iterating through the `keys` list.
-For each `keys` entry, the condition ECT is compared with an ACS ECT with `cmtype` 1 or 2 (i.e., endorsements or evidence).
-If they match, perform the following steps for each key in the condition ECT `key-list`:
+The `acs::CHECK()` function is called with `key-item.addition.key-list` where key verification, such as {{Section 6 of -pkix-cert}} is applied.
 
-1. Verify the certificate signatures for each certificate in the certification path.
-1. Verify the revocation status for each certificate in the certification path.
-1. Verify the key usage restrictions that are appropriate for `key-type`.
-
-A key that successfully passes the above checks is said to be verified.
-
-Add all the verified keys to the addition ECT's `key-list` and add the addition ECT to the ACS.
+A key that successfully validates is retained in `key-item.addition.key-list` and the `acs::APPEND()` function is used to append verified keys to the ACS.
 
 ##### Processing `dm` Relations {#sec-proc-dm}
 
