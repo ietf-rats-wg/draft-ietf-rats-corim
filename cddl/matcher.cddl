@@ -1,0 +1,15 @@
+; Set match: target value must equal one of the listed alternatives (two or more)
+tagged-bool-set = #6.566([2* bool])
+tagged-number-set = #6.566([2* number])
+tagged-text-set = #6.566([2* text])
+tagged-bytes-set = #6.566([2* bytes])
+
+; Range match: target value must lie within the inclusive [min, max] interval
+; null means unbounded.  Defined for numeric types only.
+tagged-number-range = #6.565([number / null, number / null])
+
+; Composed matchers: the bare type means exact match
+bool-matcher = bool / tagged-bool-set
+number-matcher = number / tagged-number-range / tagged-number-set
+text-matcher = text / tagged-text-set
+bytes-matcher = bytes / tagged-bytes-set
