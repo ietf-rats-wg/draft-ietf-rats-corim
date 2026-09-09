@@ -3641,11 +3641,11 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoRIM Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name | Value Type | Specification
+| Index | Item Name | Value Type | Description | Specification |
 |---
-| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |
-| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. |
-| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. |
+| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. | {{&SELF}} |
+| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. | {{&SELF}} |
+| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. | {{&SELF}} |
 | 3-255 | Unassigned
 {: #tbl-iana-corim-entity-map-items title="CoRIM Entity Map Items Initial Registrations"}
 
@@ -3721,11 +3721,11 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name | Value Type | Specification
+| Index | Item Name | Value Type | Description | Specification |
 |---
-| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |
-| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. |
-| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. |
+| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. | {{&SELF}} |
+| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. | {{&SELF}} |
+| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. | {{&SELF}} |
 | 3-255 | Unassigned
 {: #tbl-iana-comid-entity-map-items title="CoMID Entity Map Items Initial Registrations"}
 
