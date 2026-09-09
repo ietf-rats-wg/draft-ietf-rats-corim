@@ -256,7 +256,7 @@ Composite Attester:
 
 Domain:
 : A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
-Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the Attester, not to introduce additional semantic entities.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -2780,7 +2780,7 @@ FUNC transform(
 ~~~
 {: #algo-key-transform title="Key Triple Transformation"}
 
-Note that keys are added under the authority of the verifier.
+Note that keys are added under the authority of the Verifier.
 
 ##### Domain Membership Transformation {#sec-trans-domain-mem}
 
@@ -2916,7 +2916,7 @@ The addition could result in inconsistent ACS.  Additional ACS consistency check
 
 The order in which items within relations are processed is important.
 Processing a relation may result in ACS modifications that affect the matching behavior of other relations.
-The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
+The Verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
 The "match and augment" algorithm described in {{algo-match-and-augment}} assumes that relations have been topologically sorted prior to loading into the staging area ({{algo-init-sa}}).
 
@@ -3041,7 +3041,7 @@ The ACS:: APPEND() function adds the dm-item.addition to the ACS.
 Subsequent to the append, the ACS acyclic consistency check needs to be performed.
 
 Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
-For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
+For example, a Target Environment (TE-1) with corroborated Evidence that has another trustee Target Environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
 Additionally, a trust dependency might specify a strength of function requirement for TE-1.
 The trust dependency implies TE-2 should have a minimum strength of function as TE-1.
 
@@ -3339,7 +3339,7 @@ Note that the processor may compare Reference Values in any order, so the compar
 
 ### Handoff
 
-Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the verifier for further processing in subsequent phases.
+Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the Verifier for further processing in subsequent phases.
 Typically, the ACS is passed to a policy engine that applies a policy to deduce high-level characteristics of the Attester from the low-level information contained in the ACS.
 This information can then be encoded in an Attestation Result that can be understood by a Relying Party, which does not need to know all the details in order to make a trust decision.
 
