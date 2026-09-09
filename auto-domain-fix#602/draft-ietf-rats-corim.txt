@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 12 March 2027                                            NVIDIA
+Expires: 13 March 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        8 September 2026
+                                                        9 September 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 March 2027.
+   This Internet-Draft will expire on 13 March 2027.
 
 Copyright Notice
 
@@ -350,9 +350,8 @@ Table of Contents
       Authority which identifies the entity that authored the ECT.
 
    Instance ID:
-      An identifier of an Environment that is unique to that Environment
-      instance, such as the serial number of a hardware module.  See
-      also Section 4.2.1 of [RFC9711].
+      An identifier of an Environment instance, such as the serial
+      number of a hardware module.  See also Section 4.2.1 of [RFC9711].
 
    Measurement:
       A value associated with specific security characteristics of an
@@ -501,8 +500,8 @@ Table of Contents
    A CoRIM is a collection of tags and related metadata in a concise
    CBOR [STD94] encoding.  A CoRIM can be digitally signed with a COSE
    [STD96] signature.  A tag is a structured, machine-readable data
-   format used to uniquely identify, describe, and manage modules or
-   components of a system.
+   format used to identify, describe, and manage modules or components
+   of a system.
 
    Tags can be of different types:
 
@@ -521,8 +520,8 @@ Table of Contents
    ([I-D.ietf-rats-concise-ta-stores]) is currently being defined as a
    standard CoRIM extension.
 
-   Each CoRIM contains a unique identifier to distinguish a CoRIM from
-   other CoRIMs.
+   Each CoRIM contains an identifier to distinguish a CoRIM from other
+   CoRIMs.
 
    CoRIM can also carry the following optional metadata:
 
@@ -579,8 +578,8 @@ Table of Contents
 
    The following describes each child item of this map.
 
-   *  id (index 0): A unique identifier to identify a CoRIM.  Described
-      in Section 4.1.1.
+   *  id (index 0): An identifier for a CoRIM.  Described in
+      Section 4.1.1.
 
    *  tags (index 1): An array of one or more CoMID, CoSWID or CoTL
       tags.  Described in Section 4.1.2.
@@ -678,8 +677,8 @@ Table of Contents
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
 
-   The profile identifier uniquely identifies a documented profile.  Any
-   changes to the profile, even the slightest deviation, is considered a
+   The profile identifier identifies a documented profile.  Any changes
+   to the profile, even the slightest deviation, is considered a
    different profile that MUST have a different identifier.
 
    The CoRIM profile must describe at a minimum the following: (a) how
@@ -1024,9 +1023,9 @@ Table of Contents
    A CoMID tag contains information about hardware, firmware, or module
    composition.
 
-   Each CoMID has a unique ID that is used to unambiguously identify
-   CoMID instances when cross referencing CoMID tags, for example in
-   typed link relations, or in a CoTL tag.
+   Each CoMID has an ID that is used to identify CoMID instances when
+   cross referencing CoMID tags, for example in typed link relations, or
+   in a CoTL tag.
 
    A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -1069,8 +1068,7 @@ Table of Contents
       (Section 5.1.7).
 
    *  Device Identity triples: containing cryptographic credentials -
-      for example, an IDevID - uniquely identifying a device
-      (Section 5.1.9).
+      for example, an IDevID - identifying a device (Section 5.1.9).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
@@ -1122,7 +1120,7 @@ Table of Contents
       values within a given context MUST be considered expressed in the
       specified language.
 
-   *  tag-identity (index 1): A tag-identity-map containing unique
+   *  tag-identity (index 1): A tag-identity-map containing
       identification information for the CoMID.  Described in
       Section 5.1.1.
 
@@ -1149,8 +1147,8 @@ Table of Contents
 
    The following describes each member of the tag-identity-map.
 
-   *  tag-id (index 0): A universally unique identifier for the CoMID.
-      Described in Section 5.1.1.1.
+   *  tag-id (index 0): An identifier for the CoMID.  Described in
+      Section 5.1.1.1.
 
    *  tag-version (index 1): Optional versioning information for the
       tag-id.  Described in Section 5.1.1.2.
@@ -1160,15 +1158,15 @@ Table of Contents
    $tag-id-type-choice /= tstr
    $tag-id-type-choice /= uuid-type
 
-   A Tag ID is either a 16-byte binary string, or a textual identifier,
-   uniquely referencing the CoMID.  The tag identifier MUST be globally
-   unique.  Failure to ensure global uniqueness can create ambiguity in
-   tag use since the tag-id serves as the global key for matching,
-   lookups and linking.  If represented as a 16-byte binary string, the
-   identifier MUST be a valid universally unique identifier as defined
-   by [RFC9562].  There are no strict guidelines on how the identifier
-   is structured, but examples include a 16-byte GUID (e.g., class 4
-   UUID) [RFC9562], or a URI [STD66].
+   A Tag ID is either a 16-byte binary string, or a textual identifier
+   referencing the CoMID.  The tag identifier MUST be globally unique.
+   Failure to ensure global uniqueness can create ambiguity in tag use
+   since the tag-id serves as the global key for matching, lookups and
+   linking.  If represented as a 16-byte binary string, the identifier
+   MUST be a valid universally unique identifier as defined by
+   [RFC9562].  There are no strict guidelines on how the identifier is
+   structured, but examples include a 16-byte GUID (e.g., class 4 UUID)
+   [RFC9562], or a URI [STD66].
 
 5.1.1.2.  Tag Version
 
@@ -1222,8 +1220,8 @@ Table of Contents
 
    The following describes each member of the tag-identity-map.
 
-   *  linked-tag-id (index 0): Unique identifier for the target tag.
-      See Section 5.1.1.1.
+   *  linked-tag-id (index 0): Identifier for the target tag.  See
+      Section 5.1.1.1.
 
    *  tag-rel (index 1): the kind of relation linking the source tag to
       the target identified by linked-tag-id.
@@ -1331,8 +1329,8 @@ Table of Contents
    *  class (index 0): Contains "class" attributes associated with the
       module.  Described in Section 5.1.4.2.
 
-   *  instance (index 1): Contains a unique identifier of a module's
-      instance.  Described in Section 5.1.4.3.
+   *  instance (index 1): Contains an identifier of a module's instance.
+      Described in Section 5.1.4.3.
 
    *  group (index 2): identifier for a group of instances, e.g., if an
       anonymization scheme is used.  Described in Section 5.1.4.4.
@@ -1382,16 +1380,16 @@ Table of Contents
 
 5.1.4.3.  Environment Instance
 
-   An instance-id is a unique value that identifies a Target Environment
-   instance.  The identifier is reliably bound to the Target
-   Environment.  For example, if an X.509 certificate's subject public
-   key is unique for each instance of a target environment, the
-   instance-id might be created from that subject public key.  See
-   Section 4.1 of [RFC5280].  Alternatively, if the certificate's
-   subject public key is large, the instance-id might be a key
-   identifier that is a digest of that public key.  See Section 4.2.1.2
-   of [RFC5280].  The key identifier is reliably bound to the subject
-   public key because the identifier is a digest of the key.
+   An instance-id identifies a Target Environment instance.  The
+   identifier is reliably bound to the Target Environment.  For example,
+   if an X.509 certificate's subject public key is unique for each
+   instance of a target environment, the instance-id might be created
+   from that subject public key.  See Section 4.1 of [RFC5280].
+   Alternatively, if the certificate's subject public key is large, the
+   instance-id might be a key identifier that is a digest of that public
+   key.  See Section 4.2.1.2 of [RFC5280].  The key identifier is
+   reliably bound to the subject public key because the identifier is a
+   digest of the key.
 
    The types defined for an instance identifier are CBOR tagged
    expressions of UEID, UUID, variable-length opaque byte string
@@ -1409,8 +1407,8 @@ Table of Contents
 
 5.1.4.4.   Environment Group
 
-   A group carries a unique identifier that is reliably bound to a group
-   of Attesters, for example when a number of Attester are hidden in the
+   A group carries an identifier that is reliably bound to a group of
+   Attesters, for example when a number of Attester are hidden in the
    same anonymity set.
 
    The types defined for a group identifier are UUID and variable-length
@@ -1830,11 +1828,11 @@ Table of Contents
 5.1.4.7.  Integrity Registers
 
    An Integrity Registers map groups together one or more measured
-   "objects".  Each measured object has a unique identifier and one or
-   more associated digests.  Identifiers are either unsigned integers or
-   text strings and their type matters, e.g., unsigned integer 5 is
-   distinct from the text string "5".  The digests use digests-type
-   semantics (Section 7.7).
+   "objects".  Each measured object has an identifier and one or more
+   associated digests.  Identifiers are either unsigned integers or text
+   strings and their type matters, e.g., unsigned integer 5 is distinct
+   from the text string "5".  The digests use digests-type semantics
+   (Section 7.7).
 
    integrity-register-id-type-choice = uint / text
 
@@ -2343,7 +2341,7 @@ Table of Contents
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
-   Target Environment, the object one or more unique tag identifiers of
+   Target Environment, the object one or more tag identifiers of
    existing CoSWIDs, and the predicate asserts that these contain the
    expected (i.e., reference) measurements for the Target Environment.
 
@@ -2430,7 +2428,7 @@ Table of Contents
 
    The following describes each member of the concise-tl-tag map.
 
-   *  tag-identity (index 0): A tag-identity-map containing unique
+   *  tag-identity (index 0): A tag-identity-map containing
       identification information for the CoTL.  Described in
       Section 5.1.1.
 
