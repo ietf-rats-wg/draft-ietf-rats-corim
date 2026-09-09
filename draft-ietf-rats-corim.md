@@ -1611,7 +1611,7 @@ The bus controller is therefore a trustee domain of the peripheral device.
 TDTs cannot instantiate domains.
 Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust‑dependency triples.
 
-Environments that have been accepted into the ACE are automatically considered Domains.
+Environments that have been accepted into the ACS are automatically considered Domains.
 
 Consequently, TDTs may describe trust‑dependency semantics for any Environment that has been accepted into the ACS.
 
