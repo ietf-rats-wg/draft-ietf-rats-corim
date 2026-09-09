@@ -320,9 +320,13 @@ Table of Contents
       Devices or Layered Attesters.
 
    Domain:
-      A domain is a hierarchical description of a Composite Attester in
-      terms of its constituent Environments and their compositional
-      relationships.
+      A Domain is the hierarchical container used to describe a
+      Composite Attester in terms of its constituent Environments and
+      the compositional relationships among them.  Every Environment
+      implicitly defines a Domain; therefore, any triple that creates an
+      Environment also creates a corresponding Domain.  Domains exist to
+      organize the structural composition of the attester, not to
+      introduce additional semantic entities.
 
    Endorsed values:
       A set of characteristics of an Attester that do not appear in
@@ -346,9 +350,8 @@ Table of Contents
       Authority which identifies the entity that authored the ECT.
 
    Instance ID:
-      An identifier of an Environment that is unique to that Environment
-      instance, such as the serial number of a hardware module.  See
-      also Section 4.2.1 of [RFC9711].
+      An identifier of an Environment instance, such as the serial
+      number of a hardware module.  See also Section 4.2.1 of [RFC9711].
 
    Measurement:
       A value associated with specific security characteristics of an
@@ -497,8 +500,8 @@ Table of Contents
    A CoRIM is a collection of tags and related metadata in a concise
    CBOR [STD94] encoding.  A CoRIM can be digitally signed with a COSE
    [STD96] signature.  A tag is a structured, machine-readable data
-   format used to uniquely identify, describe, and manage modules or
-   components of a system.
+   format used to identify, describe, and manage modules or components
+   of a system.
 
    Tags can be of different types:
 
@@ -517,8 +520,8 @@ Table of Contents
    ([I-D.ietf-rats-concise-ta-stores]) is currently being defined as a
    standard CoRIM extension.
 
-   Each CoRIM contains a unique identifier to distinguish a CoRIM from
-   other CoRIMs.
+   Each CoRIM contains an identifier to distinguish a CoRIM from other
+   CoRIMs.
 
    CoRIM can also carry the following optional metadata:
 
@@ -575,8 +578,8 @@ Table of Contents
 
    The following describes each child item of this map.
 
-   *  id (index 0): A unique identifier to identify a CoRIM.  Described
-      in Section 4.1.1.
+   *  id (index 0): An identifier for a CoRIM.  Described in
+      Section 4.1.1.
 
    *  tags (index 1): An array of one or more CoMID, CoSWID or CoTL
       tags.  Described in Section 4.1.2.
@@ -674,8 +677,8 @@ Table of Contents
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
 
-   The profile identifier uniquely identifies a documented profile.  Any
-   changes to the profile, even the slightest deviation, is considered a
+   The profile identifier identifies a documented profile.  Any changes
+   to the profile, even the slightest deviation, is considered a
    different profile that MUST have a different identifier.
 
    The CoRIM profile must describe at a minimum the following: (a) how
@@ -1020,9 +1023,9 @@ Table of Contents
    A CoMID tag contains information about hardware, firmware, or module
    composition.
 
-   Each CoMID has a unique ID that is used to unambiguously identify
-   CoMID instances when cross referencing CoMID tags, for example in
-   typed link relations, or in a CoTL tag.
+   Each CoMID has an ID that is used to identify CoMID instances when
+   cross referencing CoMID tags, for example in typed link relations, or
+   in a CoTL tag.
 
    A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -1065,8 +1068,7 @@ Table of Contents
       (Section 5.1.7).
 
    *  Device Identity triples: containing cryptographic credentials -
-      for example, an IDevID - uniquely identifying a device
-      (Section 5.1.9).
+      for example, an IDevID - identifying a device (Section 5.1.9).
 
    *  Attestation Key triples: containing cryptographic keys that are
       used to verify the integrity protection on the Evidence received
@@ -1118,7 +1120,7 @@ Table of Contents
       values within a given context MUST be considered expressed in the
       specified language.
 
-   *  tag-identity (index 1): A tag-identity-map containing unique
+   *  tag-identity (index 1): A tag-identity-map containing
       identification information for the CoMID.  Described in
       Section 5.1.1.
 
@@ -1145,8 +1147,8 @@ Table of Contents
 
    The following describes each member of the tag-identity-map.
 
-   *  tag-id (index 0): A universally unique identifier for the CoMID.
-      Described in Section 5.1.1.1.
+   *  tag-id (index 0): An identifier for the CoMID.  Described in
+      Section 5.1.1.1.
 
    *  tag-version (index 1): Optional versioning information for the
       tag-id.  Described in Section 5.1.1.2.
@@ -1156,15 +1158,15 @@ Table of Contents
    $tag-id-type-choice /= tstr
    $tag-id-type-choice /= uuid-type
 
-   A Tag ID is either a 16-byte binary string, or a textual identifier,
-   uniquely referencing the CoMID.  The tag identifier MUST be globally
-   unique.  Failure to ensure global uniqueness can create ambiguity in
-   tag use since the tag-id serves as the global key for matching,
-   lookups and linking.  If represented as a 16-byte binary string, the
-   identifier MUST be a valid universally unique identifier as defined
-   by [RFC9562].  There are no strict guidelines on how the identifier
-   is structured, but examples include a 16-byte GUID (e.g., class 4
-   UUID) [RFC9562], or a URI [STD66].
+   A Tag ID is either a 16-byte binary string, or a textual identifier
+   referencing the CoMID.  The tag identifier MUST be globally unique.
+   Failure to ensure global uniqueness can create ambiguity in tag use
+   since the tag-id serves as the global key for matching, lookups and
+   linking.  If represented as a 16-byte binary string, the identifier
+   MUST be a valid universally unique identifier as defined by
+   [RFC9562].  There are no strict guidelines on how the identifier is
+   structured, but examples include a 16-byte GUID (e.g., class 4 UUID)
+   [RFC9562], or a URI [STD66].
 
 5.1.1.2.  Tag Version
 
@@ -1218,8 +1220,8 @@ Table of Contents
 
    The following describes each member of the tag-identity-map.
 
-   *  linked-tag-id (index 0): Unique identifier for the target tag.
-      See Section 5.1.1.1.
+   *  linked-tag-id (index 0): Identifier for the target tag.  See
+      Section 5.1.1.1.
 
    *  tag-rel (index 1): the kind of relation linking the source tag to
       the target identified by linked-tag-id.
@@ -1327,8 +1329,8 @@ Table of Contents
    *  class (index 0): Contains "class" attributes associated with the
       module.  Described in Section 5.1.4.2.
 
-   *  instance (index 1): Contains a unique identifier of a module's
-      instance.  Described in Section 5.1.4.3.
+   *  instance (index 1): Contains an identifier of a module's instance.
+      Described in Section 5.1.4.3.
 
    *  group (index 2): identifier for a group of instances, e.g., if an
       anonymization scheme is used.  Described in Section 5.1.4.4.
@@ -1378,16 +1380,16 @@ Table of Contents
 
 5.1.4.3.  Environment Instance
 
-   An instance-id is a unique value that identifies a Target Environment
-   instance.  The identifier is reliably bound to the Target
-   Environment.  For example, if an X.509 certificate's subject public
-   key is unique for each instance of a target environment, the
-   instance-id might be created from that subject public key.  See
-   Section 4.1 of [RFC5280].  Alternatively, if the certificate's
-   subject public key is large, the instance-id might be a key
-   identifier that is a digest of that public key.  See Section 4.2.1.2
-   of [RFC5280].  The key identifier is reliably bound to the subject
-   public key because the identifier is a digest of the key.
+   An instance-id identifies a Target Environment instance.  The
+   identifier is reliably bound to the Target Environment.  For example,
+   if an X.509 certificate's subject public key is unique for each
+   instance of a target environment, the instance-id might be created
+   from that subject public key.  See Section 4.1 of [RFC5280].
+   Alternatively, if the certificate's subject public key is large, the
+   instance-id might be a key identifier that is a digest of that public
+   key.  See Section 4.2.1.2 of [RFC5280].  The key identifier is
+   reliably bound to the subject public key because the identifier is a
+   digest of the key.
 
    The types defined for an instance identifier are CBOR tagged
    expressions of UEID, UUID, variable-length opaque byte string
@@ -1405,8 +1407,8 @@ Table of Contents
 
 5.1.4.4.   Environment Group
 
-   A group carries a unique identifier that is reliably bound to a group
-   of Attesters, for example when a number of Attester are hidden in the
+   A group carries an identifier that is reliably bound to a group of
+   Attesters, for example when a number of Attester are hidden in the
    same anonymity set.
 
    The types defined for a group identifier are UUID and variable-length
@@ -1511,6 +1513,10 @@ Table of Contents
      ? &(cryptokeys: 13) => [ + $crypto-key-type-choice ]
      ? &(integrity-registers: 14) => integrity-registers
      ? &(int-range: 15) => int-range-type-choice
+     ? &(bool: 16) => bool-matcher
+     ? &(number: 17) => number-matcher
+     ? &(text: 18) => text-matcher
+     ? &(bytes: 19) => bytes-matcher
      * $$measurement-values-map-extension
    }>
 
@@ -1578,6 +1584,23 @@ Table of Contents
       range that can be compared with linear order.  Described in
       Section 5.1.4.8.  Comparison rules are defined in
       Section 8.3.4.4.5.8.
+
+   *  bool (index 16): A boolean value with configurable matching
+      semantics.  Described in Section 5.1.4.9.  Comparison rules are
+      defined in Section 8.3.4.4.5.9.
+
+   *  number (index 17): A numeric value with configurable matching
+      semantics, including range and set matching.  Described in
+      Section 5.1.4.9.  Comparison rules are defined in
+      Section 8.3.4.4.5.10.
+
+   *  text (index 18): A text string with configurable matching
+      semantics.  Described in Section 5.1.4.9.  Comparison rules are
+      defined in Section 8.3.4.4.5.11.
+
+   *  bytes (index 19): A byte string with configurable matching
+      semantics.  Described in Section 5.1.4.9.  Comparison rules are
+      defined in Section 8.3.4.4.5.12.
 
 5.1.4.5.3.  Version
 
@@ -1826,11 +1849,11 @@ Table of Contents
 5.1.4.7.  Integrity Registers
 
    An Integrity Registers map groups together one or more measured
-   "objects".  Each measured object has a unique identifier and one or
-   more associated digests.  Identifiers are either unsigned integers or
-   text strings and their type matters, e.g., unsigned integer 5 is
-   distinct from the text string "5".  The digests use digests-type
-   semantics (Section 7.7).
+   "objects".  Each measured object has an identifier and one or more
+   associated digests.  Identifiers are either unsigned integers or text
+   strings and their type matters, e.g., unsigned integer 5 is distinct
+   from the text string "5".  The digests use digests-type semantics
+   (Section 7.7).
 
    integrity-register-id-type-choice = uint / text
 
@@ -1885,6 +1908,48 @@ Table of Contents
    The signed integer range representation is an inclusive range unless
    either min or max are infinite as represented by null, in which case,
    each infinity is necessarily exclusive.
+
+5.1.4.9.  Type Matchers
+
+   The measurement-values-map entries at indices 16–19 support generic
+   boolean, numeric, text, and byte-string measurements with
+   configurable matching semantics.  Rather than adding a separate
+   codepoint for each desired matching criterion, these entries use
+   CBOR-tagged wrappers to encode the matching logic alongside the
+   value:
+
+   *  Bare (untagged) value means exact match: the target value must
+      equal the entry's value.
+
+   *  CBOR tag 566 (tagged-*-set) means set match: the target value must
+      equal one of the values in the array; at least two alternatives
+      MUST be provided.
+
+   *  CBOR tag 565 (tagged-number-range, numeric types only) means range
+      match: the target value must lie within the inclusive [min, max]
+      interval; null means unbounded.
+
+   ; Set match: target value must equal one of the listed alternatives (two or more)
+   tagged-bool-set = #6.566([2* bool])
+   tagged-number-set = #6.566([2* number])
+   tagged-text-set = #6.566([2* text])
+   tagged-bytes-set = #6.566([2* bytes])
+
+   ; Range match: target value must lie within the inclusive [min, max] interval
+   ; null means unbounded.  Defined for numeric types only.
+   tagged-number-range = #6.565([number / null, number / null])
+
+   ; Composed matchers: the bare type means exact match
+   bool-matcher = bool / tagged-bool-set
+   number-matcher = number / tagged-number-range / tagged-number-set
+   text-matcher = text / tagged-text-set
+   bytes-matcher = bytes / tagged-bytes-set
+
+   Because these entries carry no inherent meaning beyond their
+   primitive type and matching criterion, a profile using them MUST
+   define what measured attribute each entry represents, the unit or
+   encoding of the value, and any constraints on acceptable values
+   beyond what the matcher already expresses.
 
 5.1.5.  Reference Values Triple
 
@@ -1982,7 +2047,7 @@ Table of Contents
 
    *  endorsement: Additional Endorsement Claims.
 
-   To process a endorsed-triple-record, its condition is compared with
+   To process an endorsed-triple-record, its condition is compared with
    existing Evidence, corroborated Evidence, and Endorsements.  If the
    search criterion is satisfied, the endorsement is added to the
    Attester's actual state under the Endorser's authority.
@@ -2202,8 +2267,8 @@ Table of Contents
 
 5.1.11.  Triples for domain definition
 
-   A domain is a graphical description of a Composite Attester in terms
-   of its constituent Environments and their compositional
+   Domain triples assert graphical description of Attester composition
+   in terms of its constituent Environments and their compositional
    relationships.
 
    The following CDDL describes domain type.
@@ -2283,9 +2348,12 @@ Table of Contents
    peripheral device's bus controller.  The bus controller is therefore
    a trustee domain of the peripheral device.
 
-   TDTs cannot create domains.  Instead, TDT processing first checks
-   that a domain-id has already been accepted into the ACS before adding
-   trust dependencies.
+   TDTs cannot instantiate domains.  Instead, TDT processing first
+   verifies that a domain-id has already been accepted into the ACS
+   before adding any trust-dependency triples.  Environments that have
+   been accepted into the ACE are automatically considered Domains.
+   Consequently, TDTs may describe trust-dependency semantics for any
+   Environment that has been accepted into the ACS.
 
    The trust dependency triple subject (domain-id) identifies the member
    domain (see Section 5.1.11.1) that has trustees.  The triple object
@@ -2333,7 +2401,7 @@ Table of Contents
 
    A CoSWID triple relates reference measurements contained in one or
    more CoSWIDs to a Target Environment.  The subject identifies a
-   Target Environment, the object one or more unique tag identifiers of
+   Target Environment, the object one or more tag identifiers of
    existing CoSWIDs, and the predicate asserts that these contain the
    expected (i.e., reference) measurements for the Target Environment.
 
@@ -2420,7 +2488,7 @@ Table of Contents
 
    The following describes each member of the concise-tl-tag map.
 
-   *  tag-identity (index 0): A tag-identity-map containing unique
+   *  tag-identity (index 0): A tag-identity-map containing
       identification information for the CoTL.  Described in
       Section 5.1.1.
 
@@ -2889,7 +2957,7 @@ Table of Contents
    those containing Evidence Claims, are typically obtained from CoMID
    triples.
 
-   Claims in ECTs have a both name and a value.  The value represents
+   Claims in ECTs have both a name and a value.  The value represents
    the state associated with the Claim.  This specification does not
    assign any special meaning to Claim names; it only specifies the
    rules for determining whether two Claim names are the same.
@@ -3066,7 +3134,7 @@ Table of Contents
 
 8.3.2.1.3.  Trust Dependency ECT
 
-   A Trust Depedency ECT (T-ECT) is used to represent trust dependency
+   A Trust Dependency ECT (T-ECT) is used to represent trust dependency
    Claims between environments.  It describes the direct relationship
    between a specific node in the trust domain (i.e., the parent
    environment) and the trustees nodes that comprises the trust chain.
@@ -3081,7 +3149,7 @@ Table of Contents
    The following describes the specialized members of the T-ECT.
 
    *  trustees: Identifies the set of environments that becomes a part
-      of a trust chainto the parent environment.
+      of a trust chain to the parent environment.
 
    A Trust Claim specifies the type of relationship that the parent
    domain is expected to have with its trustee environments.  In a Trust
@@ -3418,8 +3486,8 @@ Table of Contents
    Policy for Evidence may decide not to produce Attestation Results in
    this case.
 
-   A trust dependency relation is added to the ACS if the enviroment and
-   all trustess exist in the membership graph expressed by the dm
+   A trust dependency relation is added to the ACS if the environment
+   and all trustees exist in the membership graph expressed by the dm
    relation (Figure 28) in the ACS.
 
 8.3.2.3.  ACS
@@ -3617,10 +3685,10 @@ Table of Contents
 8.3.3.7.2.  Reference Values
 
    Reference Values transformation involves mapping Reference Value
-   triples into into an rv relation (see Section 8.3.2.2.2).  Each
-   reference-triple-record (Figure 1) is transformed into an rv-item
-   (Figure 20) as described in Figure 38.  (The code reuses the
-   mms_to_ems function from Figure 14.)
+   triples into an rv relation (see Section 8.3.2.2.2).  Each reference-
+   triple-record (Figure 1) is transformed into an rv-item (Figure 20)
+   as described in Figure 38.  (The code reuses the mms_to_ems function
+   from Figure 14.)
 
    FUNC transform(
        T: reference-triple-record,
@@ -3655,9 +3723,9 @@ Table of Contents
 8.3.3.7.3.  Endorsed Values
 
    Endorsed Values transformation involves mapping EV, CE and CES
-   triples into into ev or evs relations (see Section 8.3.2.2.3).
+   triples into ev or evs relations (see Section 8.3.2.2.3).
 
-   A endorsed-triple-record (Figure 2) is transformed into an ev-item
+   An endorsed-triple-record (Figure 2) is transformed into an ev-item
    (Figure 23) as described in Figure 39.  (The code reuses the
    mms_to_ems function from Figure 14.)
 
@@ -3770,7 +3838,7 @@ Table of Contents
 8.3.3.7.4.  Keys
 
    Keys transformation involves mapping Attest Key and Device Identity
-   triples into into a key relation (see Section 8.3.2.2.4).
+   triples into a key relation (see Section 8.3.2.2.4).
 
    An attest-key-triple-record (Figure 6) or an identity-triple-record
    (Figure 5) is transformed into a key-item (Figure 27) as described in
@@ -4501,8 +4569,8 @@ Table of Contents
    an int range value of int-range-type-choice.
 
    Consider an int ACS-ECT value named ENTRY in a measurement-values-map
-   codepoint (e.g., 15) that allows comparing int against a either
-   another int or an int-range named CONDITION.
+   codepoint (e.g., 15) that allows comparing int against either another
+   int or an int-range named CONDITION.
 
    *  If CONDITION is an int then an equality comparison is performed
       with ENTRY.
@@ -4534,6 +4602,66 @@ Table of Contents
 
       -  CONDITION.max is null or ENTRY.max is an int that is less than
          or equal to CONDITION.max.
+
+8.3.4.4.5.9.  Comparison for bool entries
+
+   The value stored under measurement-values-map codepoint 16 is of type
+   bool-matcher.
+
+   If the C-ECT value is a bare bool, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-bool-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
+8.3.4.4.5.10.  Comparison for number entries
+
+   The value stored under measurement-values-map codepoint 17 is of type
+   number-matcher.
+
+   If the C-ECT value is a bare number, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-number-range (CBOR tag 565), null in
+   the first element represents negative infinity (no lower bound) and
+   null in the second element represents positive infinity (no upper
+   bound).  The comparison MUST return true if and only if both of the
+   following conditions are met:
+
+   *  The C-ECT min is null or the ACS-ECT value is greater than or
+      equal to min.
+
+   *  The C-ECT max is null or the ACS-ECT value is less than or equal
+      to max.
+
+   If the C-ECT value is a tagged-number-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
+8.3.4.4.5.11.  Comparison for text entries
+
+   The value stored under measurement-values-map codepoint 18 is of type
+   text-matcher.
+
+   If the C-ECT value is a bare text, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-text-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
+
+8.3.4.4.5.12.  Comparison for bytes entries
+
+   The value stored under measurement-values-map codepoint 19 is of type
+   bytes-matcher.
+
+   If the C-ECT value is a bare bytes, an equality comparison is
+   performed with the ACS-ECT value.
+
+   If the C-ECT value is a tagged-bytes-set (CBOR tag 566), the
+   comparison MUST return true if and only if the ACS-ECT value equals
+   any element of the set.
 
 8.3.4.4.6.  Profile-directed Comparison
 
@@ -4742,8 +4870,8 @@ Table of Contents
 
 8.3.6.3.  Internal Representations
 
-   As described in Section 8.3.3, once all the "raw" inputs and have
-   been validated, input transformations can start.
+   As described in Section 8.3.3, once all the "raw" inputs have been
+   validated, input transformations can start.
 
    The two Reference Values triples from the manufacturer's CoMID are
    mapped to their corresponding rv-items (Figure 53, Figure 54) using
@@ -5416,7 +5544,14 @@ Table of Contents
    | 564     | array       | tagged-int-range, see         | RFCthis   |
    |         |             | Section 5.1.4.8               |           |
    +---------+-------------+-------------------------------+-----------+
-   | 565-599 | any         | Earmarked for CoRIM           | RFCthis   |
+   | 565     | array       | tagged-number-range, see      | RFCthis   |
+   |         |             | Section 5.1.4.9               |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 566     | array       | tagged-                       | RFCthis   |
+   |         |             | {bool,number,text,bytes}-     |           |
+   |         |             | set, see Section 5.1.4.9      |           |
+   +---------+-------------+-------------------------------+-----------+
+   | 567-599 | any         | Earmarked for CoRIM           | RFCthis   |
    +---------+-------------+-------------------------------+-----------+
 
                                   Table 4
@@ -5779,7 +5914,15 @@ Table of Contents
     +-----------------------+---------------------------+-------------+
     |15                     | int-range                 |RFCthis      |
     +-----------------------+---------------------------+-------------+
-    |16-18446744073709551616| Unassigned                |             |
+    |16                     | bool                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |17                     | number                    |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |18                     | text                      |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |19                     | bytes                     |RFCthis      |
+    +-----------------------+---------------------------+-------------+
+    |20-18446744073709551616| Unassigned                |             |
     +-----------------------+---------------------------+-------------+
 
         Table 18: Measurement Values Map Items Initial Registrations
@@ -6443,6 +6586,18 @@ Appendix A.  Base CoRIM CDDL
    tagged-int-range = #6.564(int-range)
    positive-inf = null
    negative-inf = null
+   tagged-bool-set = #6.566([2*bool])
+   tagged-number-set = #6.566([2*number])
+   tagged-text-set = #6.566([2*text])
+   tagged-bytes-set = #6.566([2*bytes])
+   tagged-number-range = #6.565([
+       number / null,
+       number / null,
+   ])
+   bool-matcher = bool / tagged-bool-set
+   number-matcher = number / tagged-number-range / tagged-number-set
+   text-matcher = text / tagged-text-set
+   bytes-matcher = bytes / tagged-bytes-set
    linked-tag-map = {
      &(linked-tag-id: 0) => $tag-id-type-choice,
      &(tag-rel: 1) => $tag-rel-type-choice,
@@ -6476,6 +6631,10 @@ Appendix A.  Base CoRIM CDDL
        ? &(cryptokeys: 13) => [+ $crypto-key-type-choice],
        ? &(integrity-registers: 14) => integrity-registers,
        ? &(int-range: 15) => int-range-type-choice,
+       ? &(bool: 16) => bool-matcher,
+       ? &(number: 17) => number-matcher,
+       ? &(text: 18) => text-matcher,
+       ? &(bytes: 19) => bytes-matcher,
        * $$measurement-values-map-extension,
    }>
    non-empty<M> = M .and ({+ any => any})
@@ -6817,9 +6976,10 @@ Appendix A.  Base CoRIM CDDL
 Acknowledgments
 
    The authors would like to thank the following people for their review
-   and comments on this document: Carl Wallace, Hannes Tschofenig,
-   Steven Bellock, Jag Raman, Giri Mandyam, Jeremy O'Donoghue, Michael
-   Richardson, Dhawal Kumar, Spencer Gilson, and Sergei Trofimov.
+   and comments on this document: Greg Kostal, Carl Wallace, Hannes
+   Tschofenig, Steven Bellock, Jag Raman, Giri Mandyam, Jeremy
+   O'Donoghue, Michael Richardson, Dhawal Kumar, Spencer Gilson, and
+   Sergei Trofimov.
 
 Contributors
 
