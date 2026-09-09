@@ -3937,7 +3937,7 @@ Author/Change controller:
 : IETF
 
 Provisional registration?
-: Maybe
+: no
 
 ### rim+cose {#sec-mt-rim-cose}
 
@@ -3997,7 +3997,7 @@ Author/Change controller:
 : IETF
 
 Provisional registration?
-: Maybe
+: no
 
 ## CoAP Content-Formats Registration
 
