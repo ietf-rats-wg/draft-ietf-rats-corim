@@ -3620,7 +3620,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 3 | profile | {{&SELF}}
 | 4 | rim-validity | {{&SELF}}
 | 5 | entities | {{&SELF}}
-| 3-255 | Unassigned
+| 6-255 | Unassigned
 {: #tbl-iana-corim-map-items title="CoRIM Map Items Initial Registrations"}
 
 ## CoRIM Entity Map Registry {#sec-iana-corim-entity-map}
@@ -3705,8 +3705,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 
 ## CoMID Entity Map Registry {#sec-iana-comid-entity-map}
 
-This document defines a new registry titled "CoRIM Entity Map".
-The registry uses integer values as index values for items in `corim-entity-map` CBOR maps.
+This document defines a new registry titled "CoMID Entity Map".
+The registry uses integer values as index values for items in `comid-entity-map` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
@@ -3821,7 +3821,7 @@ Future registrations for this registry are to be made based on {{?RFC8126}} as f
 
 All negative values are reserved for Private Use.
 
-Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
+Initial registrations for the "CoMID Flags Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
 | Index | Item Name                    | Specification |
