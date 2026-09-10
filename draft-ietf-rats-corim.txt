@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 13 March 2027                                            NVIDIA
+Expires: 14 March 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                        9 September 2026
+                                                       10 September 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 March 2027.
+   This Internet-Draft will expire on 14 March 2027.
 
 Copyright Notice
 
@@ -88,10 +88,9 @@ Table of Contents
        4.1.4.  Profile Types
        4.1.5.  Entities
      4.2.  Signed CoRIM
-       4.2.1.  Protected Header Map
-       4.2.2.  CWT Claims
-       4.2.3.  Meta Map
-       4.2.4.  Unprotected CoRIM Header Map
+       4.2.1.  Signing with One Signer
+       4.2.2.  Header Parameters
+       4.2.3.  Signing with Multiple Signers
      4.3.  Signer authority of securely conveyed unsigned CoRIM
        4.3.1.  CoRIM collections
    5.  Concise Module Identifier (CoMID)
@@ -715,16 +714,31 @@ Table of Contents
 
 4.2.  Signed CoRIM
 
-   signed-corim = #6.18(COSE-Sign1-corim)
+   signed-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)
 
    Signing a CoRIM follows the procedures defined in CBOR Object Signing
-   and Encryption [STD96].  A CoRIM tag MUST be wrapped in a COSE_Sign1
-   structure.  The CoRIM MUST be signed by the CoRIM creator.
+   and Encryption [STD96].  A CoRIM tag MUST be wrapped either in a
+   COSE_Sign1 structure or a COSE_Sign structure.
 
-   The following CDDL specification defines a restrictive subset of COSE
-   header parameters that MUST be used in the protected header alongside
-   additional information about the CoRIM encoded in a corim-meta-map
-   (Section 4.2.3) or alternatively in a CWT-Claims ([RFC9597]).
+   The COSE_Sign structure may be used when:
+
+   1.  Multiple authorities need to sign the same unsigned CoRIM
+       payload; or
+
+   2.  A single authority needs to sign the same unsigned CoRIM payload
+       using different signing algorithms.
+
+   See Section 4.2.3 for details on multi-signature CoRIM.
+
+   The CoRIM MUST be signed by the CoRIM creator.
+
+4.2.1.  Signing with One Signer
+
+   When using COSE_Sign1 the following CDDL specification defines a
+   restrictive subset of COSE header parameters that MUST be used in the
+   protected header alongside additional information about the CoRIM
+   encoded in a corim-meta-map (Section 4.2.2.3) or alternatively in a
+   CWT-Claims ([RFC9597]).
 
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
@@ -753,7 +767,12 @@ Table of Contents
    *  signature: A COSE signature block, as defined in Section 4 of
       [STD96].
 
-4.2.1.  Protected Header Map
+4.2.2.  Header Parameters
+
+   This section describes the header parameters of a signed CoRIM using
+   a single signer (COSE-Sign1) or multiple signers (COSE_Sign).
+
+4.2.2.1.  Protected Header Map
 
    ; protected corim header map needs to contain at least one of
    ; corim-meta (8) or CWT-Claims (15)
@@ -789,7 +808,7 @@ Table of Contents
    parameters plus additional metadata.  Additional metadata can either
    be carried in a CWT_Claims (index: 15) parameter as defined by
    [RFC9597], or in a corim-meta map as a legacy alternative, described
-   in Section 4.2.3.
+   in Section 4.2.2.3.
 
    The following describes each child item of this map.
 
@@ -820,7 +839,7 @@ Table of Contents
       with a signed CoRIM.  Described in [RFC9597].
 
    *  corim-meta (index 8): A map that contains metadata associated with
-      a signed CoRIM.  Described in Section 4.2.3.
+      a signed CoRIM.  Described in Section 4.2.2.3.
 
    Documents MAY include both CWT-Claims and corim-meta, in which case
    the signer MUST ensure that their contents are semantically
@@ -831,7 +850,7 @@ Table of Contents
    Additional data can be included in the COSE header map as per
    (Section 3 of [STD96]).
 
-4.2.2.  CWT Claims
+4.2.2.2.  CWT Claims
 
    The CWT Claims ([RFC9597]) map identifies the entity that created and
    signed the CoRIM.  This ensures the consumer is able to identify
@@ -843,7 +862,7 @@ Table of Contents
    The following describes each child item of this group.
 
    *  iss (index 1): Issuer or signer for the CoRIM, formerly signer-
-      name or signer-uri in Section 4.2.3.1.
+      name or signer-uri in Section 4.2.2.4.
 
    *  sub (index 2): Optional - identifies the CoRIM document,
       equivalent to a string representation of $corim-id-type-choice
@@ -857,7 +876,7 @@ Table of Contents
    *  nbf (index 5): Not before time, formerly signature-validity in
       Section 7.3.
 
-4.2.3.  Meta Map
+4.2.2.3.  Meta Map
 
    The CoRIM meta map identifies the entity or entities that create and
    sign the CoRIM.  This ensures the consumer is able to identify
@@ -871,12 +890,12 @@ Table of Contents
    The following describes each child item of this group.
 
    *  signer (index 0): Information about the entity that signs the
-      CoRIM.  Described in Section 4.2.3.1.
+      CoRIM.  Described in Section 4.2.2.4.
 
    *  signature-validity (index 1): Validity period for the CoRIM.
       Described in Section 7.3.
 
-4.2.3.1.  Signer Map
+4.2.2.4.  Signer Map
 
    corim-signer-map = {
      &(signer-name: 0) => $entity-name-type-choice
@@ -892,11 +911,51 @@ Table of Contents
    *  $$corim-signer-map-extension: Extension point for future expansion
       of the Signer map.
 
-4.2.4.  Unprotected CoRIM Header Map
+4.2.2.5.  Unprotected CoRIM Header Map
 
    unprotected-corim-header-map = {
      * cose-label => cose-value
    }
+
+4.2.3.  Signing with Multiple Signers
+
+   An Endorser or a Reference Value Provider may need to generate
+   multiple signatures over the same unsigned CoRIM, e.g., to support
+   multiple signature algorithms (such as a traditional algorithm and a
+   post-quantum algorithm) without having to produce multiple identical
+   CoRIMs.
+
+   Alternatively, the same unsigned CoRIM containing a Reference Values
+   or Endorsements needs to be signed by multiple different signers,
+   such as a component manufacturer and a device manufacturer.
+
+   When using COSE_Sign the following CDDL specification defines the
+   overall structure.
+
+   COSE-Sign-corim = [
+     protected: bstr .size 0,
+     unprotected: {}
+     payload: bstr .cbor tagged-unsigned-corim-map /
+                         hash-envelope-digest /
+                         nil
+     signatures: [2* signature-structure]
+   ]
+
+   When multiple authorities sign an unsigned CoRIM or multiple
+   different signatures are used by an authority, the details about each
+   signature are added to each entry in the signature-structure array,
+   as shown below.
+
+   The top level Header parameters of the CoRIM structure MUST be empty.
+
+   signature-structure = [
+     protected: bstr .cbor protected-corim-header-map
+     unprotected: unprotected-corim-header-map
+     signature: bstr
+   ]
+
+   Refer to Section 4.2.2 when setting the header parameters associated
+   to each authority signing the CoRIM.
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
@@ -3577,15 +3636,23 @@ Table of Contents
 
 8.3.3.2.  CoRIM Trust Anchors
 
-   If CoRIM tags are signed, the signatures MUST be validated using the
+   If CoRIM tags are signed, the signatures MUST be verified using the
    appropriate trust anchors available to the Verifier.  The Verifier is
-   expected to have a trust anchor store.  The way in which these trust
-   anchors are provisioned in the Verifier is beyond the scope of this
-   specification.  If the CoRIM is signed, it should include at least
-   one certificate (e.g., as part of the x5chain in the COSE header)
-   that corresponds to the key pair used for signing.  This certificate
-   MUST have a valid certification path to one of the Verifier's trust
-   anchors.
+   expected to have a trust anchor store.  If the CoRIM is signed, it
+   should include at least one certificate (e.g., as part of the x5chain
+   in the COSE header) that corresponds to the key pair used for
+   signing.  This certificate MUST have a valid certification path to
+   one of the Verifier's trust anchors.
+
+   If the CoRIM is signed by multiple authorities, at least ONE
+   signature MUST be verified before the CoRIM can be accepted for
+   further processing by the Verifier.  A Verifier Appraisal Policy for
+   Evidence may require more signatures to be verified before accepting
+   the CoRIM.  It is expected that for each of these signers, the
+   corresponding trust anchors are provisioned in the Verifier.
+
+   The way in which these trust anchors are provisioned in the Verifier
+   is beyond the scope of this specification.
 
 8.3.3.3.  Tags Extraction and Validation
 
@@ -6413,6 +6480,13 @@ Appendix A.  Base CoRIM CDDL
      signature: bstr,
    ]
    hash-envelope-digest = bstr
+   COSE-Sign-corim = [
+     protected: bstr .size 0,
+     unprotected: {},
+     payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
+                                                           digest / nil,
+     signatures: [2*signature-structure],
+   ]
    $profile-type-choice /= uri / tagged-oid-type
    cwt-claims = {
      &(iss: 1) => tstr,
@@ -6443,8 +6517,13 @@ Appendix A.  Base CoRIM CDDL
          ) // cwt-claims-identity)
    corim-meta-identity = (&(corim-meta: 8) => bstr .cbor corim-meta-map)
    cwt-claims-identity = (&(CWT-Claims: 15) => cwt-claims)
-   signed-corim = #6.18(COSE-Sign1-corim)
+   signed-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)
    tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
+   signature-structure = [
+     protected: bstr .cbor protected-corim-header-map,
+     unprotected: unprotected-corim-header-map,
+     signature: bstr,
+   ]
    tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
    tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
    tagged-unsigned-corim-map = #6.501(unsigned-corim-map)

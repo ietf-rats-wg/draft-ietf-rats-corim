@@ -1053,7 +1053,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 13 March 2027</td>
+<td class="center">Expires 14 March 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1066,12 @@ svg {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-09" class="published">9 September 2026</time>
+<time datetime="2026-09-10" class="published">10 September 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-13">13 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-03-14">14 March 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1133,7 +1133,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 13 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1216,16 +1216,13 @@ This document specifies the information elements for representing Endorsements a
                 <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-signed-corim" class="internal xref">Signed CoRIM</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
-                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-protected-header-map" class="internal xref">Protected Header Map</a></p>
+                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-signing-with-one-signer" class="internal xref">Signing with One Signer</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
-                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-cwt-claims" class="internal xref">CWT Claims</a></p>
+                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-header-parameters" class="internal xref">Header Parameters</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.3">
-                    <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="auto internal xref">4.2.3</a>.  <a href="#name-meta-map" class="internal xref">Meta Map</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.4">
-                    <p id="section-toc.1-1.4.2.2.2.4.1"><a href="#section-4.2.4" class="auto internal xref">4.2.4</a>.  <a href="#name-unprotected-corim-header-ma" class="internal xref">Unprotected CoRIM Header Map</a></p>
+                    <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="auto internal xref">4.2.3</a>.  <a href="#name-signing-with-multiple-signe" class="internal xref">Signing with Multiple Signers</a></p>
 </li>
                 </ul>
 </li>
@@ -2073,16 +2070,32 @@ $corim-role-type-choice /= &amp;(manifest-signer: 2)
         </h3>
 <div class="lang-cddl sourcecode" id="section-4.2-1">
 <pre>
-signed-corim = #6.18(COSE-Sign1-corim)
+signed-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)
 </pre><a href="#section-4.2-1" class="pilcrow">¶</a>
 </div>
 <p id="section-4.2-2">Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption <span>[<a href="#STD96" class="cite xref">STD96</a>]</span>. A CoRIM tag MUST be wrapped in a COSE_Sign1 structure.
-The CoRIM MUST be signed by the CoRIM creator.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.2-3">The following CDDL specification defines a restrictive subset of COSE header
+Encryption <span>[<a href="#STD96" class="cite xref">STD96</a>]</span>. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
+COSE_Sign structure.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">The COSE_Sign structure may be used when:<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4.2-4">
+<li id="section-4.2-4.1">
+            <p id="section-4.2-4.1.1">Multiple authorities need to sign the same unsigned CoRIM payload; or<a href="#section-4.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-4.2-4.2">
+            <p id="section-4.2-4.2.1">A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.<a href="#section-4.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-4.2-5">See <a href="#sec-mult-sign" class="auto internal xref">Section 4.2.3</a> for details on multi-signature CoRIM.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">The CoRIM MUST be signed by the CoRIM creator.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<div id="signing-with-one-signer">
+<section id="section-4.2.1">
+          <h4 id="name-signing-with-one-signer">
+<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-signing-with-one-signer" class="section-name selfRef">Signing with One Signer</a>
+          </h4>
+<p id="section-4.2.1-1">When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a <code>corim-meta-map</code> (<a href="#sec-corim-meta" class="auto internal xref">Section 4.2.3</a>) or alternatively in a <code>CWT-Claims</code> (<span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>).<a href="#section-4.2-3" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-4.2-4">
+information about the CoRIM encoded in a <code>corim-meta-map</code> (<a href="#sec-corim-meta" class="auto internal xref">Section 4.2.2.3</a>) or alternatively in a <code>CWT-Claims</code> (<span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>).<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.2.1-2">
 <pre>
 COSE-Sign1-corim = [
   protected: bstr .cbor protected-corim-header-map
@@ -2095,31 +2108,39 @@ COSE-Sign1-corim = [
 
 hash-envelope-digest = bstr
 
-</pre><a href="#section-4.2-4" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2-5">The following describes each child element of this type.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-3">The following describes each child element of this type.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2-6.1">
-            <p id="section-4.2-6.1.1"><code>protected</code>: A CBOR Encoded protected header which is protected by the COSE
-signature. Contains information as given by Protected Header Map below.<a href="#section-4.2-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.1-4.1">
+              <p id="section-4.2.1-4.1.1"><code>protected</code>: A CBOR Encoded protected header which is protected by the COSE
+signature. Contains information as given by Protected Header Map below.<a href="#section-4.2.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-6.2">
-            <p id="section-4.2-6.2.1"><code>unprotected</code>: A COSE header that is not protected by COSE signature.<a href="#section-4.2-6.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-4.2">
+              <p id="section-4.2.1-4.2.1"><code>unprotected</code>: A COSE header that is not protected by COSE signature.<a href="#section-4.2.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-6.3">
-            <p id="section-4.2-6.3.1"><code>payload</code>: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
-When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.<a href="#section-4.2-6.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-4.3">
+              <p id="section-4.2.1-4.3.1"><code>payload</code>: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
+When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.<a href="#section-4.2.1-4.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-6.4">
-            <p id="section-4.2-6.4.1"><code>signature</code>: A COSE signature block, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9052#section-4" class="relref">Section 4</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>.<a href="#section-4.2-6.4.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-4.4">
+              <p id="section-4.2.1-4.4.1"><code>signature</code>: A COSE signature block, as defined in <span><a href="https://rfc-editor.org/rfc/rfc9052#section-4" class="relref">Section 4</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>.<a href="#section-4.2.1-4.4.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
-<div id="protected-header-map">
-<section id="section-4.2.1">
-          <h4 id="name-protected-header-map">
-<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-protected-header-map" class="section-name selfRef">Protected Header Map</a>
+          </ul>
+</section>
+</div>
+<div id="sec-header">
+<section id="section-4.2.2">
+          <h4 id="name-header-parameters">
+<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-header-parameters" class="section-name selfRef">Header Parameters</a>
           </h4>
-<div class="lang-cddl sourcecode" id="section-4.2.1-1">
+<p id="section-4.2.2-1">This section describes the header parameters of a signed CoRIM using a single signer (COSE-Sign1) or multiple signers (COSE_Sign).<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
+<div id="protected-header-map">
+<section id="section-4.2.2.1">
+            <h5 id="name-protected-header-map">
+<a href="#section-4.2.2.1" class="section-number selfRef">4.2.2.1. </a><a href="#name-protected-header-map" class="section-name selfRef">Protected Header Map</a>
+            </h5>
+<div class="lang-cddl sourcecode" id="section-4.2.2.1-1">
 <pre>
 ; protected corim header map needs to contain at least one of
 ; corim-meta (8) or CWT-Claims (15)
@@ -2150,147 +2171,185 @@ meta-group = ((
 
 corim-meta-identity = (&amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map)
 cwt-claims-identity = (&amp;(CWT-Claims: 15) =&gt; cwt-claims)
-</pre><a href="#section-4.2.1-1" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.2.1-1" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2.1-2">The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
+<p id="section-4.2.2.1-2">The CoRIM protected header map uses some common COSE header parameters plus additional metadata.
 Additional metadata can either be carried in a <code>CWT_Claims</code> (index: 15) parameter as defined by <span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>,
-or in a <code>corim-meta</code> map as a legacy alternative, described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.3</a>.<a href="#section-4.2.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.2.1-3">The following describes each child item of this map.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
+or in a <code>corim-meta</code> map as a legacy alternative, described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.2.3</a>.<a href="#section-4.2.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.2.2.1-3">The following describes each child item of this map.<a href="#section-4.2.2.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-4.1">
-              <p id="section-4.2.1-4.1.1"><code>alg</code> (index 1): An integer that identifies a signature algorithm.<a href="#section-4.2.1-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.1-4.1">
+                <p id="section-4.2.2.1-4.1.1"><code>alg</code> (index 1): An integer that identifies a signature algorithm.<a href="#section-4.2.2.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
-<p id="section-4.2.1-5">Either, when the payload is signed directly:<a href="#section-4.2.1-5" class="pilcrow">¶</a></p>
+            </ul>
+<p id="section-4.2.2.1-5">Either, when the payload is signed directly:<a href="#section-4.2.2.1-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-6.1">
-              <p id="section-4.2.1-6.1.1"><code>content-type</code> (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.<a href="#section-4.2.1-6.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.1-6.1">
+                <p id="section-4.2.2.1-6.1.1"><code>content-type</code> (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.<a href="#section-4.2.2.1-6.1.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
-<p id="section-4.2.1-7">Or, when the payload is signed indirectly using a Hash Envelope (<span>[<a href="#RFC9995" class="cite xref">RFC9995</a>]</span>):<a href="#section-4.2.1-7" class="pilcrow">¶</a></p>
+            </ul>
+<p id="section-4.2.2.1-7">Or, when the payload is signed indirectly using a Hash Envelope (<span>[<a href="#RFC9995" class="cite xref">RFC9995</a>]</span>):<a href="#section-4.2.2.1-7" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-8.1">
-              <p id="section-4.2.1-8.1.1"><code>payload_hash_alg</code> (index 258): The hash algorithm used to produce the payload.<a href="#section-4.2.1-8.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.1-8.1">
+                <p id="section-4.2.2.1-8.1.1"><code>payload_hash_alg</code> (index 258): The hash algorithm used to produce the payload.<a href="#section-4.2.2.1-8.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-8.2">
-              <p id="section-4.2.1-8.2.1"><code>payload_preimage_content_type</code> (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload.<a href="#section-4.2.1-8.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.1-8.2">
+                <p id="section-4.2.2.1-8.2.1"><code>payload_preimage_content_type</code> (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload.<a href="#section-4.2.2.1-8.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-8.3">
-              <p id="section-4.2.1-8.3.1"><code>payload_location</code> (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.<a href="#section-4.2.1-8.3.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.1-8.3">
+                <p id="section-4.2.2.1-8.3.1"><code>payload_location</code> (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.<a href="#section-4.2.2.1-8.3.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
-<p id="section-4.2.1-9">At least one of:<a href="#section-4.2.1-9" class="pilcrow">¶</a></p>
+            </ul>
+<p id="section-4.2.2.1-9">At least one of:<a href="#section-4.2.2.1-9" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-10.1">
-              <p id="section-4.2.1-10.1.1"><code>CWT-Claims</code> (index 15): A map that contains metadata associated with a signed CoRIM.
-Described in <span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>.<a href="#section-4.2.1-10.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.1-10.1">
+                <p id="section-4.2.2.1-10.1.1"><code>CWT-Claims</code> (index 15): A map that contains metadata associated with a signed CoRIM.
+Described in <span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>.<a href="#section-4.2.2.1-10.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-10.2">
-              <p id="section-4.2.1-10.2.1"><code>corim-meta</code> (index 8): A map that contains metadata associated with a signed CoRIM.
-Described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.3</a>.<a href="#section-4.2.1-10.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.1-10.2">
+                <p id="section-4.2.2.1-10.2.1"><code>corim-meta</code> (index 8): A map that contains metadata associated with a signed CoRIM.
+Described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.2.3</a>.<a href="#section-4.2.2.1-10.2.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
-<p id="section-4.2.1-11">Documents MAY include both <code>CWT-Claims</code> and <code>corim-meta</code>, in which case the signer MUST ensure that their contents are semantically identical: the <code>CWT-Claims</code> issuer (<code>iss</code>) MUST have the same value as <code>signer-name</code> in <code>corim-meta</code>, and the <code>nbf</code> and <code>exp</code> values in the <code>CWT-Claims</code> MUST match the <code>signature-validity</code> in <code>corim-meta</code>.<a href="#section-4.2.1-11" class="pilcrow">¶</a></p>
-<p id="section-4.2.1-12">Additional data can be included in the COSE header map as per (<span><a href="https://rfc-editor.org/rfc/rfc9052#section-3" class="relref">Section 3</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>).<a href="#section-4.2.1-12" class="pilcrow">¶</a></p>
+            </ul>
+<p id="section-4.2.2.1-11">Documents MAY include both <code>CWT-Claims</code> and <code>corim-meta</code>, in which case the signer MUST ensure that their contents are semantically identical: the <code>CWT-Claims</code> issuer (<code>iss</code>) MUST have the same value as <code>signer-name</code> in <code>corim-meta</code>, and the <code>nbf</code> and <code>exp</code> values in the <code>CWT-Claims</code> MUST match the <code>signature-validity</code> in <code>corim-meta</code>.<a href="#section-4.2.2.1-11" class="pilcrow">¶</a></p>
+<p id="section-4.2.2.1-12">Additional data can be included in the COSE header map as per (<span><a href="https://rfc-editor.org/rfc/rfc9052#section-3" class="relref">Section 3</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>).<a href="#section-4.2.2.1-12" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cwt-claims">
-<section id="section-4.2.2">
-          <h4 id="name-cwt-claims">
-<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-cwt-claims" class="section-name selfRef">CWT Claims</a>
-          </h4>
-<p id="section-4.2.2-1">The CWT Claims (<span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>) map identifies the entity that created and signed the CoRIM.
+<section id="section-4.2.2.2">
+            <h5 id="name-cwt-claims">
+<a href="#section-4.2.2.2" class="section-number selfRef">4.2.2.2. </a><a href="#name-cwt-claims" class="section-name selfRef">CWT Claims</a>
+            </h5>
+<p id="section-4.2.2.2-1">The CWT Claims (<span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>) map identifies the entity that created and signed the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
-To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2.2-2">The following describes each child item of this group.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
+To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.<a href="#section-4.2.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.2.2-2">The following describes each child item of this group.<a href="#section-4.2.2.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.2-3.1">
-              <p id="section-4.2.2-3.1.1"><code>iss</code> (index 1): Issuer or signer for the CoRIM, formerly <code>signer-name</code> or <code>signer-uri</code> in <a href="#sec-corim-signer" class="auto internal xref">Section 4.2.3.1</a>.<a href="#section-4.2.2-3.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.2-3.1">
+                <p id="section-4.2.2.2-3.1.1"><code>iss</code> (index 1): Issuer or signer for the CoRIM, formerly <code>signer-name</code> or <code>signer-uri</code> in <a href="#sec-corim-signer" class="auto internal xref">Section 4.2.2.4</a>.<a href="#section-4.2.2.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.2-3.2">
-              <p id="section-4.2.2-3.2.1"><code>sub</code> (index 2): Optional - identifies the CoRIM document, equivalent to a string representation of $corim-id-type-choice<a href="#section-4.2.2-3.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.2-3.2">
+                <p id="section-4.2.2.2-3.2.1"><code>sub</code> (index 2): Optional - identifies the CoRIM document, equivalent to a string representation of $corim-id-type-choice<a href="#section-4.2.2.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
-<p id="section-4.2.2-4">Additional data can be included in the CWT Claims, as per <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>, such as:<a href="#section-4.2.2-4" class="pilcrow">¶</a></p>
+            </ul>
+<p id="section-4.2.2.2-4">Additional data can be included in the CWT Claims, as per <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>, such as:<a href="#section-4.2.2.2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.2-5.1">
-              <p id="section-4.2.2-5.1.1"><code>exp</code> (index 4): Expiration time, formerly <code>signature-validity</code> in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.2-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.2-5.1">
+                <p id="section-4.2.2.2-5.1.1"><code>exp</code> (index 4): Expiration time, formerly <code>signature-validity</code> in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.2.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.2-5.2">
-              <p id="section-4.2.2-5.2.1"><code>nbf</code> (index 5): Not before time, formerly <code>signature-validity</code> in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.2-5.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.2-5.2">
+                <p id="section-4.2.2.2-5.2.1"><code>nbf</code> (index 5): Not before time, formerly <code>signature-validity</code> in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.2.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
+            </ul>
 </section>
 </div>
 <div id="sec-corim-meta">
-<section id="section-4.2.3">
-          <h4 id="name-meta-map">
-<a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-meta-map" class="section-name selfRef">Meta Map</a>
-          </h4>
-<p id="section-4.2.3-1">The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
-This ensures the consumer is able to identify credentials used to authenticate its signer.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-4.2.3-2">
+<section id="section-4.2.2.3">
+            <h5 id="name-meta-map">
+<a href="#section-4.2.2.3" class="section-number selfRef">4.2.2.3. </a><a href="#name-meta-map" class="section-name selfRef">Meta Map</a>
+            </h5>
+<p id="section-4.2.2.3-1">The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
+This ensures the consumer is able to identify credentials used to authenticate its signer.<a href="#section-4.2.2.3-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.2.2.3-2">
 <pre>
 corim-meta-map = {
   &amp;(signer: 0) =&gt; corim-signer-map
   ? &amp;(signature-validity: 1) =&gt; validity-map
 }
-</pre><a href="#section-4.2.3-2" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.2.3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2.3-3">The following describes each child item of this group.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
+<p id="section-4.2.2.3-3">The following describes each child item of this group.<a href="#section-4.2.2.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.3-4.1">
-              <p id="section-4.2.3-4.1.1"><code>signer</code> (index 0): Information about the entity that signs the CoRIM.
-Described in <a href="#sec-corim-signer" class="auto internal xref">Section 4.2.3.1</a>.<a href="#section-4.2.3-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.3-4.1">
+                <p id="section-4.2.2.3-4.1.1"><code>signer</code> (index 0): Information about the entity that signs the CoRIM.
+Described in <a href="#sec-corim-signer" class="auto internal xref">Section 4.2.2.4</a>.<a href="#section-4.2.2.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.3-4.2">
-              <p id="section-4.2.3-4.2.1"><code>signature-validity</code> (index 1): Validity period for the CoRIM.
-Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.3-4.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.3-4.2">
+                <p id="section-4.2.2.3-4.2.1"><code>signature-validity</code> (index 1): Validity period for the CoRIM.
+Described in <a href="#sec-common-validity" class="auto internal xref">Section 7.3</a>.<a href="#section-4.2.2.3-4.2.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
+            </ul>
+</section>
+</div>
 <div id="sec-corim-signer">
-<section id="section-4.2.3.1">
+<section id="section-4.2.2.4">
             <h5 id="name-signer-map">
-<a href="#section-4.2.3.1" class="section-number selfRef">4.2.3.1. </a><a href="#name-signer-map" class="section-name selfRef">Signer Map</a>
+<a href="#section-4.2.2.4" class="section-number selfRef">4.2.2.4. </a><a href="#name-signer-map" class="section-name selfRef">Signer Map</a>
             </h5>
-<div class="lang-cddl sourcecode" id="section-4.2.3.1-1">
+<div class="lang-cddl sourcecode" id="section-4.2.2.4-1">
 <pre>
 corim-signer-map = {
   &amp;(signer-name: 0) =&gt; $entity-name-type-choice
   ? &amp;(signer-uri: 1) =&gt; uri
   * $$corim-signer-map-extension
 }
-</pre><a href="#section-4.2.3.1-1" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.2.4-1" class="pilcrow">¶</a>
 </div>
 <ul class="normal">
-<li class="normal" id="section-4.2.3.1-2.1">
-                <p id="section-4.2.3.1-2.1.1"><code>signer-name</code> (index 0): Name of the organization that performs the signer
-role<a href="#section-4.2.3.1-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.2.4-2.1">
+                <p id="section-4.2.2.4-2.1.1"><code>signer-name</code> (index 0): Name of the organization that performs the signer
+role<a href="#section-4.2.2.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-4.2.3.1-2.2">
-                <p id="section-4.2.3.1-2.2.1"><code>signer-uri</code> (index 1): A URI identifying the same organization<a href="#section-4.2.3.1-2.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.4-2.2">
+                <p id="section-4.2.2.4-2.2.1"><code>signer-uri</code> (index 1): A URI identifying the same organization<a href="#section-4.2.2.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-4.2.3.1-2.3">
-                <p id="section-4.2.3.1-2.3.1"><code>$$corim-signer-map-extension</code>: Extension point for future expansion of the
-Signer map.<a href="#section-4.2.3.1-2.3.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-4.2.2.4-2.3">
+                <p id="section-4.2.2.4-2.3.1"><code>$$corim-signer-map-extension</code>: Extension point for future expansion of the
+Signer map.<a href="#section-4.2.2.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </section>
 </div>
-</section>
-</div>
 <div id="sec-corim-unprotected-header">
-<section id="section-4.2.4">
-          <h4 id="name-unprotected-corim-header-ma">
-<a href="#section-4.2.4" class="section-number selfRef">4.2.4. </a><a href="#name-unprotected-corim-header-ma" class="section-name selfRef">Unprotected CoRIM Header Map</a>
-          </h4>
-<div class="lang-cddl sourcecode" id="section-4.2.4-1">
+<section id="section-4.2.2.5">
+            <h5 id="name-unprotected-corim-header-ma">
+<a href="#section-4.2.2.5" class="section-number selfRef">4.2.2.5. </a><a href="#name-unprotected-corim-header-ma" class="section-name selfRef">Unprotected CoRIM Header Map</a>
+            </h5>
+<div class="lang-cddl sourcecode" id="section-4.2.2.5-1">
 <pre>
 unprotected-corim-header-map = {
   * cose-label =&gt; cose-value
 }
-</pre><a href="#section-4.2.4-1" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.2.5-1" class="pilcrow">¶</a>
 </div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-mult-sign">
+<section id="section-4.2.3">
+          <h4 id="name-signing-with-multiple-signe">
+<a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-signing-with-multiple-signe" class="section-name selfRef">Signing with Multiple Signers</a>
+          </h4>
+<p id="section-4.2.3-1">An Endorser or a Reference Value Provider may need to generate multiple signatures over the same unsigned CoRIM, e.g., to support multiple signature algorithms (such as a traditional algorithm and a post-quantum algorithm) without having to produce multiple identical CoRIMs.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-2">Alternatively, the same unsigned CoRIM containing a Reference Values or Endorsements needs to be signed by multiple different signers, such as
+a component manufacturer and a device manufacturer.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-3">When using COSE_Sign the following CDDL specification defines the overall structure.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.2.3-4">
+<pre>
+COSE-Sign-corim = [
+  protected: bstr .size 0,
+  unprotected: {}
+  payload: bstr .cbor tagged-unsigned-corim-map /
+                      hash-envelope-digest /
+                      nil
+  signatures: [2* signature-structure]
+]
+</pre><a href="#section-4.2.3-4" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2.3-5">When multiple authorities sign an unsigned CoRIM or multiple different signatures are used by an authority,
+the details about each signature are added to each entry in the <code>signature-structure</code> array, as shown below.<a href="#section-4.2.3-5" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-6">The top level Header parameters of the CoRIM structure MUST be empty.<a href="#section-4.2.3-6" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.2.3-7">
+<pre>
+signature-structure = [
+  protected: bstr .cbor protected-corim-header-map
+  unprotected: unprotected-corim-header-map
+  signature: bstr
+]
+</pre><a href="#section-4.2.3-7" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2.3-8">Refer to <a href="#sec-header" class="auto internal xref">Section 4.2.2</a> when setting the header parameters associated to each authority signing the CoRIM.<a href="#section-4.2.3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -5445,11 +5504,14 @@ For example, if the Evidence format is known in advance, CoRIMs using a profile 
             <h5 id="name-corim-trust-anchors">
 <a href="#section-8.3.3.2" class="section-number selfRef">8.3.3.2. </a><a href="#name-corim-trust-anchors" class="section-name selfRef">CoRIM Trust Anchors</a>
             </h5>
-<p id="section-8.3.3.2-1">If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors available to the Verifier.
+<p id="section-8.3.3.2-1">If CoRIM tags are signed, the signatures MUST be verified using the appropriate trust anchors available to the Verifier.
 The Verifier is expected to have a trust anchor store.
-The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the <code>x5chain</code> in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.<a href="#section-8.3.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.2-2">If the CoRIM is signed by multiple authorities, at least ONE signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
+A Verifier Appraisal Policy for Evidence may require more signatures to be verified before accepting the CoRIM.
+It is expected that for each of these signers, the corresponding trust anchors are provisioned in the Verifier.<a href="#section-8.3.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.2-3">The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.<a href="#section-8.3.3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="tags-extraction-and-validation">
@@ -8951,6 +9013,13 @@ COSE-Sign1-corim = [
   signature: bstr,
 ]
 hash-envelope-digest = bstr
+COSE-Sign-corim = [
+  protected: bstr .size 0,
+  unprotected: {},
+  payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
+                                                        digest / nil,
+  signatures: [2*signature-structure],
+]
 $profile-type-choice /= uri / tagged-oid-type
 cwt-claims = {
   &amp;(iss: 1) =&gt; tstr,
@@ -8981,8 +9050,13 @@ meta-group = ((
       ) // cwt-claims-identity)
 corim-meta-identity = (&amp;(corim-meta: 8) =&gt; bstr .cbor corim-meta-map)
 cwt-claims-identity = (&amp;(CWT-Claims: 15) =&gt; cwt-claims)
-signed-corim = #6.18(COSE-Sign1-corim)
+signed-corim = #6.18(COSE-Sign1-corim) / #6.98(COSE-Sign-corim)
 tagged-concise-swid-tag = #6.505(bytes .cbor coswid.concise-swid-tag)
+signature-structure = [
+  protected: bstr .cbor protected-corim-header-map,
+  unprotected: unprotected-corim-header-map,
+  signature: bstr,
+]
 tagged-concise-mid-tag = #6.506(bytes .cbor concise-mid-tag)
 tagged-concise-tl-tag = #6.508(bytes .cbor concise-tl-tag)
 tagged-unsigned-corim-map = #6.501(unsigned-corim-map)
