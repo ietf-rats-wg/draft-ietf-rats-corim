@@ -256,7 +256,7 @@ Composite Attester:
 
 Domain:
 : A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
-Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the Attester, not to introduce additional semantic entities.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -888,7 +888,7 @@ tag (the source) and another CoMID tag (the target).
 {::include cddl/linked-tag-map.cddl}
 ~~~
 
-The following describes each member of the `tag-identity-map`.
+The following describes each member of the `linked-tag-map`.
 
 * `linked-tag-id` (index 0): Identifier for the target tag.
   See {{sec-tag-id}}.
@@ -1681,7 +1681,7 @@ The bus controller is therefore a trustee domain of the peripheral device.
 
 TDTs cannot instantiate domains.
 Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust‑dependency triples.
-Environments that have been accepted into the ACE are automatically considered Domains.
+Environments that have been accepted into the ACS are automatically considered Domains.
 Consequently, TDTs may describe trust‑dependency semantics for any Environment that has been accepted into the ACS.
 
 The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
@@ -1911,7 +1911,7 @@ When used as an identifier the responsible allocator entity SHOULD ensure unique
 
 # Reference Verifier {#sec-reference-verifier}
 
-This section outlines the behaviour of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
+This section outlines the behavior of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
 
 In the remainder of this section, the terms
 Environment,
@@ -1985,7 +1985,7 @@ item.addition.cmtype = reference-values
 
 ### Functions
 
-A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:
+A function is introduced by the FUNC keyword, followed by its name, a parenthesized parameter list with CDDL type annotations, and a return type:
 
 ~~~ pseudocode
 FUNC name(param: type, ...) -> return-type {
@@ -2110,7 +2110,7 @@ The CoRIM processor described in {{sec-corim-processor}} describes the handoff i
 ## The CoRIM Processor {#sec-corim-processor}
 
 This document assumes that Verifier implementations will differ.
-In order to describe normative Verifier behaviour, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in {{sec-appraisal-phases}}.
+In order to describe normative Verifier behavior, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in {{sec-appraisal-phases}}.
 If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.
 
 ### High-Level View
@@ -2438,7 +2438,7 @@ The internal representation of Attest Key and Device Identity triples uses the `
 
 <cref>
 [TODO]
-Specialise condition/addition ECTs.
+Specialize condition/addition ECTs.
 Define constraints.
 </cref>
 
@@ -2825,7 +2825,7 @@ FUNC transform(
 ~~~
 {: #algo-key-transform title="Key Triple Transformation"}
 
-Note that keys are added under the authority of the verifier.
+Note that keys are added under the authority of the Verifier.
 
 ##### Domain Membership Transformation {#sec-trans-domain-mem}
 
@@ -2960,8 +2960,8 @@ The addition could result in inconsistent ACS.  Additional ACS consistency check
 #### Ordering of Relations
 
 The order in which items within relations are processed is important.
-Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
-The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
+Processing a relation may result in ACS modifications that affect the matching behavior of other relations.
+The Verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
 The "match and augment" algorithm described in {{algo-match-and-augment}} assumes that relations have been topologically sorted prior to loading into the staging area ({{algo-init-sa}}).
 
@@ -3054,7 +3054,7 @@ If there is no match, processing moves to the next dm entry, till the list is ex
 If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
 The algorithm is terminated when there are no more additions to ACS.
 
-This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
+This algorithm can be optimized to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.
 
 ##### Processing `td` Relations {#sec-proc-td}
@@ -3086,7 +3086,7 @@ The ACS:: APPEND() function adds the dm-item.addition to the ACS.
 Subsequent to the append, the ACS acyclic consistency check needs to be performed.
 
 Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
-For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
+For example, a Target Environment (TE-1) with corroborated Evidence that has another trustee Target Environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
 Additionally, a trust dependency might specify a strength of function requirement for TE-1.
 The trust dependency implies TE-2 should have a minimum strength of function as TE-1.
 
@@ -3143,7 +3143,7 @@ When comparing two `$crypto-key-type-choice` items for equality, the processor M
 
 ##### Element List Comparison {#sec-compare-element-list}
 
-A C-ECT's `element-list` matches an ACS-ETC's `element-list` if all the `element-map`s in the C-ECT's `element-list` match the `element-map`s in the ACS-ECT's `element-list`.
+A C-ECT's `element-list` matches an ACS-ECT's `element-list` if all the `element-map`s in the C-ECT's `element-list` match the `element-map`s in the ACS-ECT's `element-list`.
 
 Any `element-map` that is present in the ACS-ECT's `element-list` but not in the C-ECT's is ignored in the comparison.
 
@@ -3384,7 +3384,7 @@ Note that the processor may compare Reference Values in any order, so the compar
 
 ### Handoff
 
-Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the verifier for further processing in subsequent phases.
+Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the Verifier for further processing in subsequent phases.
 Typically, the ACS is passed to a policy engine that applies a policy to deduce high-level characteristics of the Attester from the low-level information contained in the ACS.
 This information can then be encoded in an Attestation Result that can be understood by a Relying Party, which does not need to know all the details in order to make a trust decision.
 
@@ -3686,11 +3686,11 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoRIM Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name | Value Type | Specification
+| Index | Item Name | Value Type | Description | Specification |
 |---
-| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |
-| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. |
-| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. |
+| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. | {{&SELF}} |
+| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. | {{&SELF}} |
+| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. | {{&SELF}} |
 | 3-255 | Unassigned
 {: #tbl-iana-corim-entity-map-items title="CoRIM Entity Map Items Initial Registrations"}
 
@@ -3766,11 +3766,11 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name | Value Type | Specification
+| Index | Item Name | Value Type | Description | Specification |
 |---
-| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |
-| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. |
-| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. |
+| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. | {{&SELF}} |
+| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. | {{&SELF}} |
+| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. | {{&SELF}} |
 | 3-255 | Unassigned
 {: #tbl-iana-comid-entity-map-items title="CoMID Entity Map Items Initial Registrations"}
 
@@ -3782,6 +3782,7 @@ The registry uses integer values as index values for items in the `triples-map` 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3816,6 +3817,7 @@ The registry uses integer values as index values for items in multiple triples' 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3859,6 +3861,7 @@ The registry uses integer values as index values for items in `measurement-value
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3979,7 +3982,7 @@ Author/Change controller:
 : IETF
 
 Provisional registration?
-: Maybe
+: no
 
 ### rim+cose {#sec-mt-rim-cose}
 
@@ -4039,7 +4042,7 @@ Author/Change controller:
 : IETF
 
 Provisional registration?
-: Maybe
+: no
 
 ## CoAP Content-Formats Registration
 
