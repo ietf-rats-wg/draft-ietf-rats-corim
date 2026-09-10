@@ -536,12 +536,12 @@ Signing a CoRIM follows the procedures defined in CBOR Object Signing and
 Encryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
 COSE_Sign structure.
 
-The COSE_Sign structure MAY be used when:
+The COSE_Sign structure may be used when:
 
 1. Multiple authorities need to sign the same unsigned CoRIM payload; or
 2. A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
 
-See {{sec-mult-sign}} for details on multi signature CoRIM.
+See {{sec-mult-sign}} for details on multi-signature CoRIM.
 
 The CoRIM MUST be signed by the CoRIM creator.
 
@@ -667,9 +667,7 @@ Signer map.
 
 ### Signing with Multiple Signers {#sec-mult-sign}
 
-Often in the industry, there are cases, when an Endorser or a Reference Value Provider needs to generate multiple signatures over the same unsigned CoRIM.
-This may be needed in order to support multiple signature algorithms (such as ECDSA, single ML-DSA and Hybrid ML-DSA), over the same CoRIM,
-thus avoiding the need to generate multiple identical CoRIMs.
+An Endorser or a Reference Value Provider may need to generate multiple signatures over the same unsigned CoRIM, e.g., to support multiple signature algorithms (such as a traditional algorithm and a post-quantum algorithm) without having to produce multiple identical CoRIMs.
 
 Alternatively, the same unsigned CoRIM containing a Reference Values or Endorsements needs to be signed by multiple different signers, such as
 a component manufacturer and a device manufacturer.
