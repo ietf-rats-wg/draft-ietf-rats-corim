@@ -2913,7 +2913,7 @@ The `acs::APPEND` operation is defined by a pre-condition and a post-condition:
 * Post-condition: the ACS resulting from the append satisfies the required consistency invariants (e.g., that a graph encoded across ACS entries remains acyclic).
 
 Both conditions are relation-specific; the concrete criteria for each relation are described in the following sections.
-If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a no-op (i.e., always satisfied) for that relation.
+If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a null operation (i.e., always satisfied) for that relation.
 
 `acs::APPEND` fails, leaving the ACS unchanged, if either the pre-condition or the post-condition does not hold.
 A failure of `acs::APPEND` MUST cause `match_and_augment` to terminate immediately, without processing any further relations or items: the appraisal that invoked it is thereby considered to have failed.
