@@ -3821,7 +3821,7 @@ Future registrations for this registry are to be made based on {{?RFC8126}} as f
 
 All negative values are reserved for Private Use.
 
-Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
+Initial registrations for the "CoMID Flags Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
 | Index | Item Name                    | Specification |
