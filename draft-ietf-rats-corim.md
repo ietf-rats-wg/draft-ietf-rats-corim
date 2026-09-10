@@ -3705,8 +3705,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 
 ## CoMID Entity Map Registry {#sec-iana-comid-entity-map}
 
-This document defines a new registry titled "CoRIM Entity Map".
-The registry uses integer values as index values for items in `corim-entity-map` CBOR maps.
+This document defines a new registry titled "CoMID Entity Map".
+The registry uses integer values as index values for items in `comid-entity-map` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
