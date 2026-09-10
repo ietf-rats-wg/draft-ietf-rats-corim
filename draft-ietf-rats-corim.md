@@ -27,8 +27,8 @@ author:
   email: henk.birkholz@ietf.contact
 - ins: T. Fossati
   name: Thomas Fossati
-  organization: Linaro
-  email: Thomas.Fossati@linaro.org
+  organization: NVIDIA
+  email: tfossati@nvidia.com
 - ins: Y. Deshpande
   name: Yogesh Deshpande
   organization: arm
@@ -92,6 +92,7 @@ normative:
   IANA.language-subtag-registry: language-subtag
   X.690: CCITT.X690.2002
   RFC9995: cose-hash-envelope
+  RFC4648: base-n-encodings
 
 informative:
   RFC7519: jwt
@@ -140,6 +141,13 @@ informative:
     date: January 24, 2024,
     target: https://trustedcomputinggroup.org/resource/tpm-library-specification/
   IEEE-802.OandA: DOI.10.1109/IEEESTD.2014.6847097
+  SPDM:
+    title: "Security Protocol and Data Model (SPDM) Specification"
+    author:
+      org: Distributed Management Task Force
+    seriesinfo: Version 1.4.1
+    date: July 02, 2026
+    target: https://www.dmtf.org/dsp/DSP0274
 
 entity:
   SELF: "RFCthis"
@@ -213,6 +221,22 @@ Typically, the entity asserting a Claim should have knowledge, expertise, or con
 Appraisal Policy resolves which entities are credible and under what conditions.
 See also "Appraisal Policy for Evidence" in {{-rats-arch}}.
 
+Attribute Path:
+: A sequence of one or more attribute identifiers that denotes a value within a structured data object by successive selection from a root value.
+Each identifier in the sequence names the next attribute to select; the final identifier in the sequence names the value reached by the path.
+An Attribute Path is said to be **defined** in a given value if every prefix of the path exists in that value; otherwise, the path is **undefined** in that value.
+In this document, structured data objects are typically CBOR maps whose attributes are identified by CDDL member names (for example, `instance`, `class`, `class-id`).
+Attribute Paths are used when comparing nested data structures during appraisal (see {{sec-comparison-rules}}).
+
+Attribute Path Containment:
+: A comparison relation between two structured data objects, conventionally named the **condition** (C) and the **entry** (A), in which C is said to be **contained in** A when:
+1. for every Attribute Path defined in C, the same Attribute Path is defined in A; and
+2. for each such path, the value in A **satisfies** the value in C.
+Attributes present in A but not in C are ignored.
+Unless otherwise specified for a given attribute type, **satisfies** means that the two values are equal.
+Type-specific satisfaction rules - including range membership and minimum bound checks - are defined in {{sec-match-one-codepoint}} and in profile extensions (see {{sec-compare-profile}}).
+See {{sec-compare-environment}} and {{sec-compare-mvm}} for examples.
+
 Authority:
 : The entity that asserts a Claim.
 Typically, a Claim is asserted using a cryptographic key to digitally sign the Claim.
@@ -231,7 +255,8 @@ Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
 Domain:
-: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+: A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -250,7 +275,7 @@ Environment-Claim Tuple (ECT):
 The ECT also contains Authority which identifies the entity that authored the ECT.
 
 Instance ID:
-: An identifier of an Environment that is unique to that Environment instance, such as the serial number of a hardware module.
+: An identifier of an Environment instance, such as the serial number of a hardware module.
 See also {{Section 4.2.1 of -eat}}.
 
 Measurement:
@@ -259,6 +284,10 @@ The object of a Measurement could be the invariant part of a firmware component 
 A measured object is part of the Attester's Target Environment.
 Expected, or "golden," Measurements are compiled as Reference Values, which are used by the Verifier to assess the trust state of the Attester.
 See also {{TNC.Arch}}, and Section 9.5.5 of {{TPM2.Part1}}.
+
+Range Satisfaction:
+: A value satisfaction relation in which an entry value is said to satisfy a condition value when the entry lies within the bounds expressed by the condition.
+For example, an `int` entry satisfies an `int-range` condition when the entry is within the condition's inclusive bounds (see {{sec-comid-int-range}}), and an `svn` entry satisfies a `tagged-min-svn` condition when the entry is greater than or equal to the condition's minimum (see {{sec-comid-svn}}).
 
 Reference Values:
 : A set of values that represent the desired or undesired state of an Attester.
@@ -326,7 +355,7 @@ The CDDL definitions in this document follows the naming conventions illustrated
 
 A CoRIM is a collection of tags and related metadata in a concise CBOR {{-cbor}} encoding.
 A CoRIM can be digitally signed with a COSE {{-cose}} signature.
-A tag is a structured, machine-readable data format used to uniquely identify, describe, and manage modules or components of a system.
+A tag is a structured, machine-readable data format used to identify, describe, and manage modules or components of a system.
 
 Tags can be of different types:
 
@@ -339,7 +368,7 @@ Tags can be of different types:
 CoRIM allows for new types of tags to be added in future specifications.
 For example, Concise Trust Anchor Stores (CoTS) ({{-ta-store}}) is currently being defined as a standard CoRIM extension.
 
-Each CoRIM contains a unique identifier to distinguish a CoRIM from other CoRIMs.
+Each CoRIM contains an identifier to distinguish a CoRIM from other CoRIMs.
 
 CoRIM can also carry the following optional metadata:
 
@@ -377,7 +406,7 @@ constraints MUST be followed when creating or validating a CoRIM map.
 
 The following describes each child item of this map.
 
-* `id` (index 0): A unique identifier to identify a CoRIM. Described
+* `id` (index 0): An identifier for a CoRIM. Described
   in {{sec-corim-id}}.
 
 * `tags` (index 1):  An array of one or more CoMID, CoSWID or CoTL tags.  Described
@@ -465,7 +494,7 @@ Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
 
-The profile identifier uniquely identifies a documented profile.  Any changes
+The profile identifier identifies a documented profile.  Any changes
 to the profile, even the slightest deviation, is considered a different profile
 that MUST have a different identifier.
 
@@ -709,7 +738,7 @@ The following example demonstrates these recommendations for bundling CoRIMs wit
 
 A CoMID tag contains information about hardware, firmware, or module composition.
 
-Each CoMID has a unique ID that is used to unambiguously identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
+Each CoMID has an ID that is used to identify CoMID instances when cross referencing CoMID tags, for example in typed link relations, or in a CoTL tag.
 
 A CoMID defines several types of Claims, using "triples" semantics.
 
@@ -733,7 +762,7 @@ MTI Triples:
 OTI Triples:
 
 * Conditional Endorsement Series triples: describing conditional endorsements that are evaluated using a special matching algorithm ({{sec-comid-triple-cond-endors}}).
-* Device Identity triples: containing cryptographic credentials - for example, an IDevID - uniquely identifying a device ({{sec-comid-triple-identity}}).
+* Device Identity triples: containing cryptographic credentials - for example, an IDevID - identifying a device ({{sec-comid-triple-identity}}).
 * Attestation Key triples: containing cryptographic keys that are used to verify the integrity protection on the Evidence received from the Attester ({{sec-comid-triple-attest-key}}).
 * Trust dependency triples: describing trust relationships between domains, i.e., collection of related environments and their measurements ({{sec-comid-triple-trust-dependency}}).
 * Domain membership triples: describing topological relationships between (sub-)modules. For example, in a composite Attester comprising multiple sub-Attesters (sub-modules), this triple can be used to define the topological relationship between lead- and sub- Attester environments ({{sec-comid-triple-domain-membership}}).
@@ -766,7 +795,7 @@ The following describes each member of the `concise-mid-tag` map.
   textual values within a given context MUST be considered expressed in the
   specified language.
 
-* `tag-identity` (index 1): A `tag-identity-map` containing unique
+* `tag-identity` (index 1): A `tag-identity-map` containing
   identification information for the CoMID.
   Described in {{sec-comid-tag-id}}.
 
@@ -792,7 +821,7 @@ The following describes each member of the `concise-mid-tag` map.
 
 The following describes each member of the `tag-identity-map`.
 
-* `tag-id` (index 0): A universally unique identifier for the CoMID.
+* `tag-id` (index 0): An identifier for the CoMID.
   Described in {{sec-tag-id}}.
 
 * `tag-version` (index 1): Optional versioning information for the `tag-id`.
@@ -804,7 +833,7 @@ The following describes each member of the `tag-identity-map`.
 {::include cddl/tag-id-type-choice.cddl}
 ~~~
 
-A Tag ID is either a 16-byte binary string, or a textual identifier, uniquely
+A Tag ID is either a 16-byte binary string, or a textual identifier
 referencing the CoMID. The tag identifier MUST be globally unique. Failure to
 ensure global uniqueness can create ambiguity in tag use since the tag-id
 serves as the global key for matching, lookups and linking. If represented as a
@@ -863,7 +892,7 @@ tag (the source) and another CoMID tag (the target).
 
 The following describes each member of the `tag-identity-map`.
 
-* `linked-tag-id` (index 0): Unique identifier for the target tag.
+* `linked-tag-id` (index 0): Identifier for the target tag.
   See {{sec-tag-id}}.
 
 * `tag-rel` (index 1): the kind of relation linking the source tag to the
@@ -949,7 +978,7 @@ The following describes each member of the `environment-map`:
 * `class` (index 0): Contains "class" attributes associated with the module.
   Described in {{sec-comid-class}}.
 
-* `instance` (index 1): Contains a unique identifier of a module's instance.
+* `instance` (index 1): Contains an identifier of a module's instance.
   Described in {{sec-comid-instance}}.
 
 * `group` (index 2): identifier for a group of instances, e.g., if an
@@ -993,7 +1022,7 @@ The following describes each member of the `class-map`:
 
 #### Environment Instance {#sec-comid-instance}
 
-An `instance-id` is a unique value that identifies a Target Environment instance.
+An `instance-id` identifies a Target Environment instance.
 The identifier is reliably bound to the Target Environment.
 For example, if an X.509 certificate's subject public key is unique for each instance of a target environment, the `instance-id` might be created from that subject public key.
 See {{Section 4.1 of -pkix-cert}}.
@@ -1010,7 +1039,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 
 #### Environment Group {#sec-comid-group}
 
-A group carries a unique identifier that is reliably bound to a group of
+A group carries an identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
 anonymity set.
 
@@ -1068,8 +1097,7 @@ competence.
 ##### Measurement Keys {#sec-comid-mkey}
 
 A Measurement Key is an identifier for a measured element.
-It can be used to identify the type of measured element (see {{-cca-endorsements}}) or to identify
-multiple measured element instances within the same environment.
+It can be used to identify the type of measured element (see {{-cca-endorsements}}), or to index an SPDM {{SPDM}} measurements block originating from a specific target environment, or to identify multiple measured element instances within the same environment.
 The initial types defined are OID, UUID, uint, and tstr.
 
 ~~~ cddl
@@ -1145,6 +1173,22 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-int-range}}.
   Comparison rules are defined in {{sec-match-int-range}}.
 
+* `bool` (index 16): A boolean value with configurable matching semantics.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-bool}}.
+
+* `number` (index 17): A numeric value with configurable matching semantics, including range and set matching.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-number}}.
+
+* `text` (index 18): A text string with configurable matching semantics.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-text}}.
+
+* `bytes` (index 19): A byte string with configurable matching semantics.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-bytes}}.
+
 ##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -1158,16 +1202,17 @@ The following describes each member of the `version-map`:
 
 * `version` (index 0): the version string
 
-* `version-scheme` (index 1): an optional indicator of the versioning
-  convention used in the `version` attribute.
-  Defined in {{Section 4.1 of -coswid}}.
-  The CDDL is copied below for convenience.
+* `version-scheme` (index 1): an optional indicator of the versioning convention used in the `version` attribute.
+  Defined in {{Section 4.1 of -coswid}} and extended with the `binary` scheme described in {{iana-swid-version-scheme}}.
+  When the value of the `version-scheme` is `binary`, the value of the `version` field is encoded as base64url ({{Section 5 of -base-n-encodings}}), without padding.
+  The CDDL (including the new `binary` version scheme) is copied below for convenience.
 
 ~~~ cddl
 $version-scheme /= &(multipartnumeric: 1)
 $version-scheme /= &(multipartnumeric-suffix: 2)
 $version-scheme /= &(alphanumeric: 3)
 $version-scheme /= &(decimal: 4)
+$version-scheme /= &(binary: 5)
 $version-scheme /= &(semver: 16384)
 $version-scheme /= int / text
 ~~~
@@ -1321,7 +1366,7 @@ Ultimately, the discovered keys have to be successfully byte-by-byte compared wi
 #### Integrity Registers {#sec-comid-integrity-registers}
 
 An Integrity Registers map groups together one or more measured "objects".
-Each measured object has a unique identifier and one or more associated digests.
+Each measured object has an identifier and one or more associated digests.
 Identifiers are either unsigned integers or text strings and their type matters, e.g., unsigned integer 5 is distinct from the text string "5".
 The digests use `digests-type` semantics ({{sec-common-hash-entry}}).
 
@@ -1374,6 +1419,21 @@ An int range is represented with either major type 0 or major type 1 ints.
 ~~~
 
 The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
+
+#### Type Matchers {#sec-comid-matchers}
+
+The `measurement-values-map` entries at indices 16–19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
+Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
+
+* Bare (untagged) value means exact match: the target value must equal the entry's value.
+* CBOR tag 566 (`tagged-*-set`) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
+* CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+~~~ cddl
+{::include cddl/matcher.cddl}
+~~~
+
+Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.
 
 ### Reference Values Triple {#sec-comid-triple-refval}
 
@@ -1433,7 +1493,7 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.
 * `endorsement`: Additional Endorsement Claims.
 
-To process a `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
+To process an `endorsed-triple-record`, its `condition` is compared with existing Evidence, corroborated Evidence, and Endorsements.
 If the search criterion is satisfied, the endorsement is added to the Attester's actual state under the Endorser's authority.
 
 ### Conditional Endorsement Triple {#sec-comid-triple-cond-endors}
@@ -1569,7 +1629,7 @@ See {{sec-comid-triple-identity}} for additional details.
 
 ### Triples for domain definition {#sec-comid-domains}
 
-A domain is a graphical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+Domain triples assert graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type.
 
@@ -1621,8 +1681,10 @@ Consequently, the OS loader is a trustee domain of the OS.
 Alternatively, trust in a peripheral device might depend on trustworthy operation of a peripheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
 
-TDTs cannot create domains.
-Instead, TDT processing first checks that a `domain-id` has already been accepted into the ACS before adding trust dependencies.
+TDTs cannot instantiate domains.
+Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust‑dependency triples.
+Environments that have been accepted into the ACE are automatically considered Domains.
+Consequently, TDTs may describe trust‑dependency semantics for any Environment that has been accepted into the ACS.
 
 The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
@@ -1653,7 +1715,7 @@ Trust dependency triples are transformed into an internal representation (see {{
 
 A CoSWID triple relates reference measurements contained in one or more CoSWIDs
 to a Target Environment. The subject identifies a Target Environment, the
-object one or more unique tag identifiers of existing CoSWIDs, and the
+object one or more tag identifiers of existing CoSWIDs, and the
 predicate asserts that these contain the expected (i.e., reference)
 measurements for the Target Environment.
 
@@ -1716,7 +1778,7 @@ The CDDL specification for the `concise-tl-tag` map and additional grammatical r
 
 The following describes each member of the `concise-tl-tag` map.
 
-* `tag-identity` (index 0): A `tag-identity-map` containing unique
+* `tag-identity` (index 0): A `tag-identity-map` containing
   identification information for the CoTL.
   Described in {{sec-comid-tag-id}}.
 
@@ -1863,6 +1925,144 @@ and
 Appraisal Policy
 are used with the meanings defined in {{sec-glossary}}.
 
+## Pseudocode Notation {#sec-pseudocode-notation}
+
+The algorithms in pseudocode are meant for readability and not for execution.
+The following pseudocode notation is used throughout this document.
+
+### Comments
+
+A comment begins with "//" and extends to the end of the line.
+
+~~~ pseudocode
+// this is a comment
+~~~
+
+### Types
+
+Pseudocode Type names are taken directly from the CDDL {{-cddl}}.
+There is no separate type language; type annotations on function parameters, return values, and variable bindings reuse CDDL type expressions verbatim.
+A reader familiar with the CDDL schemas in this document can read the algorithms without any additional type translation.
+
+A bare name refers to a CDDL rule:
+
+~~~ pseudocode
+measurement-map
+ACS
+StagingArea
+~~~
+
+The CDDL notation "\[ + T \]" denotes a non-empty array of elements of type T:
+
+~~~ pseudocode
+[ + measurement-map ]
+~~~
+
+An extensible CDDL socket type is prefixed with "$":
+
+~~~ pseudocode
+$crypto-key-type-choice
+$profile-type-choice
+~~~
+
+The CDDL "/" operator separates the alternatives of a union type:
+
+~~~ pseudocode
+attest-key-triple-record / identity-triple-record
+~~~
+
+### Variables
+
+A variable is introduced and assigned a value using the ":=" operator:
+
+~~~ pseudocode
+item := rv-item::NEW()
+~~~
+
+A previously introduced variable or a field of a structured value is updated using "=":
+
+~~~ pseudocode
+item.addition.cmtype = reference-values
+~~~
+
+### Functions
+
+A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:
+
+~~~ pseudocode
+FUNC name(param: type, ...) -> return-type {
+    ...
+}
+~~~
+
+A RETURN statement exits the enclosing function and yields the specified value to the caller:
+
+~~~ pseudocode
+RETURN value
+~~~
+
+### Expressions
+
+The TYPEOF operator yields the CDDL type of a value at runtime.
+Used with "==", it dispatches on the alternatives of a CDDL union type:
+
+~~~ pseudocode
+IF TYPEOF(T) == attest-key-triple-record:
+    ...
+ELIF TYPEOF(T) == identity-triple-record:
+    ...
+~~~
+
+The "~" prefix operator unwraps a CBOR-tagged value to its untagged content, corresponding to the CDDL unwrap idiom:
+
+~~~ pseudocode
+ELIF TYPEOF(v) == tagged-svn:
+    RETURN ~v
+~~~
+
+### Conditionals
+
+An IF statement tests a condition and executes its body if the condition is true.
+One or more ELIF clauses test additional conditions in order.
+An optional ELSE clause provides a fallback:
+
+~~~ pseudocode
+IF condition:
+    ...
+ELIF condition:
+    ...
+ELSE:
+    ...
+~~~
+
+### Iteration
+
+A FOREACH statement iterates over the elements of a collection in order:
+
+~~~ pseudocode
+FOREACH item IN collection:
+    ...
+~~~
+
+A BREAK statement exits the innermost enclosing FOREACH immediately.
+
+### Primitive Operations
+
+The pseudocode uses a "Receiver::OPERATION(args)" calling convention to invoke well-known operations on typed values.
+All operation names are uppercase.
+
+| Operation | Meaning |
+|-----------|---------|
+| `T::NEW()` | Construct a new zero-value instance of CDDL type T |
+| `collection::APPEND(item)` | Append item to a collection; when item is itself a list, all its elements are appended |
+| `acs::MATCH(condition)` | Test whether condition matches any entry in the ACS; the matching rules are relation-specific and defined in {{sec-comparison-rules}} |
+| `acs::CHECK(addition)` | Run consistency checks on addition before appending it to the ACS |
+| `acs::APPEND(addition)` | Atomically append addition to the ACS |
+| `x::MEMBEROF(collection)` | Test whether x is a member of collection |
+| `INDEXOF(x)` | Return the position of x within its enclosing sequence |
+{: #tbl-pseudocode-ops title="Primitive Operations"}
+
+
 ## Appraisal Logical Phases {#sec-appraisal-phases}
 
 For clarity, the appraisal procedure is divided into several logical phases.
@@ -1949,7 +2149,7 @@ The Environment-Claim Tuple is a core internal construct of the CoRIM Verifier.
 It is used to describe a feature (or "Claim") of the appraised environment alongside relevant metadata.
 All ECTs, except those containing Evidence Claims, are typically obtained from CoMID triples.
 
-Claims in ECTs have a both name and a value.
+Claims in ECTs have both a name and a value.
 The value represents the state associated with the Claim.
 This specification does not assign any special meaning to Claim names; it only specifies the rules for determining whether two Claim names are the same.
 
@@ -1986,7 +2186,8 @@ The authority of a given ECT is typically established through a digital signatur
 For instance, a signature of the authoritative supply chain entity over the CoRIM containing the triple from which the ECT was obtained, or the Attesting Environment that signed the Evidence from which the ECT is derived.
 It is represented as the key material by which the authority (and corresponding provenance) of the tuple can be determined.
 A typical example is the authority's PKIX certificate.
-This is a mandatory attribute in an ECT.
+This attribute is mandatory in an addition ECT, and therefore in every ECT held in the ACS.
+`ECT-common` ({{fig-ect-common}}) itself defines `authority` as optional because it is also the basis for condition ECTs, and not every relation uses `authority` as a matching criterion.
 
 * `profile`: The profile that defines the domain of interpretation of this tuple.
 This is the `profile` attribute of the CoRIM that contained the original triple from which this ECT was obtained.
@@ -2073,7 +2274,7 @@ Any duplicates MUST be pruned.
 
 ##### Trust Dependency ECT {#sec-trust-ect}
 
-A Trust Depedency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
+A Trust Dependency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
 It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprises the trust chain.
 
 ~~~ cddl
@@ -2083,7 +2284,7 @@ It describes the direct relationship between a specific node in the trust domain
 
 The following describes the specialized members of the `T-ECT`.
 
-* `trustees`: Identifies the set of environments that becomes a part of a trust chainto the parent `environment`.
+* `trustees`: Identifies the set of environments that becomes a part of a trust chain to the parent `environment`.
 
 A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
 In a Trust ECT, the `environment` attribute encodes the name of the Claim.
@@ -2128,10 +2329,7 @@ This internal representation is based on the concept of "relations", which in tu
 Typically, a relation is structured as a "condition" ECT that specifies the matching criteria used to compare entries in the ACS, along with an "addition" ECT that is appended to the ACS if the specified condition are met.
 While this is the common structure, some relations may differ slightly from the condition/addition pattern.
 This is because they either do not require a condition (e.g., Evidence) or they require more sophisticated matching criteria that cannot be expressed solely via a condition (e.g., Conditional Endorsement Series).
-<cref>
-[TODO]
-Merge §2.1 and §2.2. to explain the high-level principles before delving into the details.
-</cref>
+
 
 ##### Evidence {#sec-ir-evidence}
 
@@ -2211,37 +2409,25 @@ The `evs` relation ({{fig-evs}}) applies to Conditional Endorsement Series (CES)
 ~~~
 {: #fig-evs title="Endorsed Values Series Relation"}
 
-The `evs` relation compares the condition ECTs with the ACS.
-<cref>
-[TBC]
-There is only one ECT in the condition.
-The description doesn't seem to match the data format.
-</cref>
-If all the ECTs are found in the ACS, each entry in the series list is evaluated.
-The selection ECTs are then compared with the ACS.
-If the selection criteria are met, the addition ECTs are added to the ACS and the series evaluation ends.
-If the selection criteria are not satisfied, evaluation proceeds to the next series list entry.
+The `evs` relation contains a list of series items.
+Each series item contains a list of condition ECTs and a list of addition ECTs.
+The condition ECTs are compared with the ACS.
+If the condition criteria are satisfied, the addition ECTs are added to the ACS and the series evaluation ends.
+If the condition criteria are not satisfied, evaluation proceeds to the next series item.
 
-{{fig-ev-cond}} shows the profiled Element ECT an Endorsed Value condition.
+{{fig-ev-cond}} shows the profiled Element ECT for an Endorsed Value condition.
 
 ~~~ cddl
 {::include cddl/intrep-ect-endval-condition.cddl}
 ~~~
-{: #fig-ev-cond title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (condition)"}
+{: #fig-ev-cond title="Profiled condition ECT for ev and evs relations"}
 
-{{fig-ev-sel}} shows the profiled Element ECT an Endorsed Value selection.
-
-~~~ cddl
-{::include cddl/intrep-ect-endval-selection.cddl}
-~~~
-{: #fig-ev-sel title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (selection)"}
-
-{{fig-ev-add}} shows the profiled Element ECT an Endorsed Value addition.
+{{fig-ev-add}} shows the profiled Element ECT for an Endorsed Value addition.
 
 ~~~ cddl
 {::include cddl/intrep-ect-endval-addition.cddl}
 ~~~
-{: #fig-ev-add title="Profiled ECT for Endorsed Values and Endorsed Values Series tuples (addition)"}
+{: #fig-ev-add title="Profiled addition ECT for ev and evs relations"}
 
 ##### Keys {#sec-ir-keys}
 
@@ -2324,7 +2510,7 @@ If a cycle is detected, the `td` relation MUST NOT be added to the Staging Area,
 This is a prerequisite for the `match_and_augment` algorithm described in {{algo-match-and-augment}}.
 Please note that a subsequent Appraisal Policy for Evidence may decide not to produce Attestation Results in this case.
 
-A trust dependency relation is added to the ACS if the `enviroment` and all `trustess` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
+A trust dependency relation is added to the ACS if the `environment` and all `trustees` exist in the membership graph expressed by the `dm` relation ({{fig-dm}}) in the ACS.
 
 #### ACS
 
@@ -2458,7 +2644,7 @@ Otherwise, the CoRIM processor MUST reject the Evidence.
 
 ##### Reference Values {#sec-trans-reference-values}
 
-Reference Values transformation involves mapping Reference Value triples into into an `rv` relation (see {{sec-ir-refval}}).
+Reference Values transformation involves mapping Reference Value triples into an `rv` relation (see {{sec-ir-refval}}).
 Each `reference-triple-record` ({{triple-rv}}) is transformed into an `rv-item` ({{fig-rv}}) as described in {{algo-rv-transform}}.
 (The code reuses the `mms_to_ems` function from {{algo-mm-to-em}}.)
 
@@ -2492,9 +2678,9 @@ Since they may contain ranges rather than individual values (see, for example, {
 
 ##### Endorsed Values {#sec-trans-endorsed-values}
 
-Endorsed Values transformation involves mapping EV, CE and CES triples into into `ev` or `evs` relations (see {{sec-ir-endval}}).
+Endorsed Values transformation involves mapping EV, CE and CES triples into `ev` or `evs` relations (see {{sec-ir-endval}}).
 
-A `endorsed-triple-record` ({{triple-ev}}) is transformed into an `ev-item` ({{fig-ev}}) as described in {{algo-ev-transform}}.
+An `endorsed-triple-record` ({{triple-ev}}) is transformed into an `ev-item` ({{fig-ev}}) as described in {{algo-ev-transform}}.
 (The code reuses the `mms_to_ems` function from {{algo-mm-to-em}}.)
 
 ~~~ pseudocode
@@ -2582,7 +2768,7 @@ FUNC transform(
        sitem.condition.element-list::APPEND(ems2)
        IF T.condition.authorized-by:
            sitem.condition.authority = T.condition.authorized-by
-       ELSE_IF csr.series.condition.authorized-by:
+       ELIF csr.series.condition.authorized-by:
            sitem.condition.authority = csr.series.condition.authorized-by
        // stage the addition
        sitem.addition.environment = T.condition.environment
@@ -2592,7 +2778,7 @@ FUNC transform(
        sitem.addition.authority = signer
        IF profile:
            sitem.addition.profile = profile
-       evsitem[index-of(sitem)] = sitem
+       evsitem[INDEXOF(sitem)] = sitem
     RETURN evsitem
 }
 ~~~
@@ -2600,7 +2786,7 @@ FUNC transform(
 
 ##### Keys
 
-Keys transformation involves mapping Attest Key and Device Identity triples into into a `key` relation (see {{sec-ir-keys}}).
+Keys transformation involves mapping Attest Key and Device Identity triples into a `key` relation (see {{sec-ir-keys}}).
 
 An `attest-key-triple-record` ({{triple-ak}}) or an `identity-triple-record` ({{triple-di}}) is transformed into a `key-item` ({{fig-k}}) as described in {{algo-key-transform}}.
 
@@ -2704,7 +2890,7 @@ Subsequent to transformation, the trust dependency relations are processed using
 #### Appraisal Context Initialization {#sec-appraisal-ctx-init}
 
 At the end of Phase 1 all of the extracted and validated tags are loaded into an "appraisal context", consisting of the ACS and the staging area.
-The ACS is initialized with all the addition ECTs in the `ev` relation:
+The ACS is initialized with all the addition ECTs in the `ae` relation:
 
 ~~~ pseudocode
 FUNC init_acs(ae: ae) -> ACS {
@@ -2729,7 +2915,7 @@ FUNC init_staging_area(
 ) -> StagingArea {
     sa := StagingArea::NEW()
 
-    IF rv    sa::APPEND(rv)
+    IF rv:   sa::APPEND(rv)
     IF ev:   sa::APPEND(ev)
     IF evs:  sa::APPEND(evs)
     IF keys: sa::APPEND(keys)
@@ -2887,7 +3073,7 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
     FOREACH dm-item IN ACS.ECT(.cm==member):
         IF condition.environment == dm-item.environment:
             FOREACH trustee IN condition.trustees:
-                IF !trustee::IS-MEMBER(dm-item.members):
+                IF !trustee::MEMBEROF(dm-item.members):
                     BREAK   # break inner loop, try another dm-item
             RETURN TRUE
 
@@ -2945,6 +3131,7 @@ Before performing the binary comparison, the processor SHOULD convert the attrib
 If all the attributes which are present in the C-ECT `environment` (e.g., `instance-id` or `group-id`) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.
 
+In other words, a match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
 Any attribute that is present in the ACS-ECT but not in the C-ECT is ignored in the comparison.
 
 ##### Authority Comparison {#sec-compare-authority}
@@ -2968,6 +3155,8 @@ The rules for matching `element-map`s are described in {{sec-compare-element-map
 
 The C-ECT's `element-map` matches an ACS-ECT's `element-map` if both the `element-id` and `element-claims` match.
 
+`element-claims` matching uses Attribute Path Containment (see {{sec-glossary}}): every Attribute Path defined in the C-ECT's `element-claims` MUST be defined in the ACS-ECT's `element-claims`, and the ACS-ECT value at each such path MUST satisfy the corresponding C-ECT value according to the rules in {{sec-match-one-codepoint}}; additional attributes in the ACS-ECT are ignored.
+
 Two `element-id`s are considered the same if they are either both omitted, or both present with binary identical deterministic encodings.
 Before performing the binary comparison, the processor SHOULD convert the `element-id` attributes into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
 
@@ -2975,19 +3164,20 @@ The rules for matching `element-claims` are described in {{sec-compare-mvm}}.
 
 ##### Measurement Values Map Comparison {#sec-compare-mvm}
 
-The C-ECT's `element-claims` match an ACS-ECT's `element-claims` if:
-
-1. Each attribute in the C-ECT's `measurement-values-map` is also present in the ACS-ECT's `measurement-values-map`; and
-1. The attribute values match.
+The C-ECT's `element-claims` match an ACS-ECT's `element-claims` when the C-ECT's `element-claims` is contained in the ACS-ECT's `element-claims` as defined by Attribute Path Containment ({{sec-glossary}}).
+At each Attribute Path present in both maps, the ACS-ECT value MUST satisfy the C-ECT value.
+For most attribute types, satisfaction means equality; for range and bound types (for example, `int-range` and `tagged-min-svn`), satisfaction means that the ACS-ECT value lies within the bounds expressed by the C-ECT value, as specified in {{sec-match-one-codepoint}}.
 
 Otherwise, the element claims do not match.
 
-The rules for matching a single `measurement-values-map` attribute are described in {{sec-match-one-codepoint}}
+The rules for matching a single `measurement-values-map` attribute are described in {{sec-match-one-codepoint}}.
 
 ###### Comparison of a Single Measurement Values Map Attribute {#sec-match-one-codepoint}
 
 The algorithm used to compare two values of a `measurement-values-map` attribute depends on the attribute's type.
 
+In Attribute Path Containment comparisons ({{sec-glossary}}), the C-ECT value at an Attribute Path plays the role of the **condition** and the ACS-ECT value at the same path plays the role of the **entry**.
+The comparison algorithms in this section define when an entry value **satisfies** a condition value at that path.
 The processor needs to select the appropriate algorithm for the given attribute, including any extensions defined by a supported profile.
 
 Non-negative codepoints represent standard data representations.
@@ -2999,7 +3189,6 @@ Negative codepoints represent profile-defined data representations.
 The processor MUST use the attribute name, the profile associated with the condition ECT, and, if present, the CBOR tag value to select the comparison algorithm.
 
 If the processor is unable to determine the applicable comparison algorithm for an attribute, it MUST behave as though the C-ECT does not match the ACS-ECT.
-
 
 The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.
 
@@ -3132,7 +3321,7 @@ In TPM parlance, a TPM "quote" may report all PCRs in Evidence, while a C-ECT co
 
 The ACS-ECT value stored under `measurement-values-map` codepoint 15 is an int range value of `int-range-type-choice`.
 
-Consider an `int` ACS-ECT value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against a either another `int` or an `int-range` named CONDITION.
+Consider an `int` ACS-ECT value named ENTRY in a `measurement-values-map` codepoint (e.g., 15) that allows comparing `int` against either another `int` or an `int-range` named CONDITION.
 
 *  If CONDITION is an `int` then an equality comparison is performed with ENTRY.
 
@@ -3149,6 +3338,44 @@ Consider an `int-range` (CBOR tag 564) value named ENTRY in a `measurement-value
 The comparison MUST return true if and only if all the following conditions are true:
     + CONDITION.min is `null` or ENTRY.min is an `int` that is greater than or equal to CONDITION.min
     + CONDITION.max is `null` or ENTRY.max is an `int` that is less than or equal to CONDITION.max.
+
+###### Comparison for bool entries {#sec-match-bool}
+
+The value stored under `measurement-values-map` codepoint 16 is of type `bool-matcher`.
+
+If the C-ECT value is a bare `bool`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-bool-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for number entries {#sec-match-number}
+
+The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
+
+If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-number-range` (CBOR tag 565), `null` in the first element represents negative infinity (no lower bound) and `null` in the second element represents positive infinity (no upper bound).
+The comparison MUST return true if and only if both of the following conditions are met:
+
+*  The C-ECT `min` is `null` or the ACS-ECT value is greater than or equal to `min`.
+*  The C-ECT `max` is `null` or the ACS-ECT value is less than or equal to `max`.
+
+If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for text entries {#sec-match-text}
+
+The value stored under `measurement-values-map` codepoint 18 is of type `text-matcher`.
+
+If the C-ECT value is a bare `text`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-text-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for bytes entries {#sec-match-bytes}
+
+The value stored under `measurement-values-map` codepoint 19 is of type `bytes-matcher`.
+
+If the C-ECT value is a bare `bytes`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-bytes-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
 
 ##### Profile-directed Comparison {#sec-compare-profile}
 
@@ -3202,7 +3429,7 @@ The Verifier obtains Evidence from a PSA Attester in the format described in {{-
 
 #### Internal Representations
 
-As described in {{sec-phase-1}}, once all the "raw" inputs and have been validated, input transformations can start.
+As described in {{sec-phase-1}}, once all the "raw" inputs have been validated, input transformations can start.
 
 The two Reference Values triples from the manufacturer's CoMID are mapped to their corresponding `rv-item`s ({{ex-rv-item-1}}, {{ex-rv-item-2}}) using the transformations defined in {{algo-rv-transform}}.
 
@@ -3408,7 +3635,9 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
-| 565-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
+|     565 | `array`             | tagged-number-range, see {{sec-comid-matchers}}                 | {{&SELF}} |
+|     566 | `array`             | tagged-{bool,number,text,bytes}-set, see {{sec-comid-matchers}} | {{&SELF}} |
+| 567-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
 
@@ -3617,7 +3846,11 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 13    | cryptokeys                | {{&SELF}}     |
 | 14    | integrity-registers       | {{&SELF}}     |
 | 15    | int-range                 | {{&SELF}}     |
-| 16-18446744073709551616 | Unassigned | |
+| 16    | bool                      | {{&SELF}}     |
+| 17    | number                    | {{&SELF}}     |
+| 18    | text                      | {{&SELF}}     |
+| 19    | bytes                     | {{&SELF}}     |
+| 20-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
@@ -3822,6 +4055,14 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 | application/rim+cose | - | TBD2 | {{&SELF}} |
 {: align="left" title="New Content-Formats"}
 
+## New Software ID Version Scheme Value {#iana-swid-version-scheme}
+
+IANA is requested to register the following Version Scheme Name in the "Software ID Version Scheme Values" registry within the "Software ID Values" {{!IANA.software-id}} registry group.
+
+| Index | Version Scheme Name | Reference |
+|---
+| 5	| binary | {{sec-comid-version}} of {{&SELF}} |
+
 --- back
 
 # Base CoRIM CDDL {#sec-corim-cddl}
@@ -3834,6 +4075,7 @@ Environments (CoRE) Parameters" Registry {{!IANA.core-parameters}}:
 {:unnumbered}
 
 The authors would like to thank the following people for their review and comments on this document:
+{{{Greg Kostal}}},
 {{{Carl Wallace}}},
 {{{Hannes Tschofenig}}},
 {{{Steven Bellock}}},
