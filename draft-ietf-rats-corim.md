@@ -3620,7 +3620,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 3 | profile | {{&SELF}}
 | 4 | rim-validity | {{&SELF}}
 | 5 | entities | {{&SELF}}
-| 3-255 | Unassigned
+| 6-255 | Unassigned
 {: #tbl-iana-corim-map-items title="CoRIM Map Items Initial Registrations"}
 
 ## CoRIM Entity Map Registry {#sec-iana-corim-entity-map}
