@@ -1085,12 +1085,9 @@ The following describes each member of the `measurement-map`:
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
 
-* `authorized-by` (index 2): The cryptographic identity of the entity (individual or organization) that is
- the designated authority for measurement Claims.
- For example, the signer of a CoMID triple.
- See {{sec-crypto-keys}}.
- An entity is authoritative when it makes Claims that are inside its area of
-competence.
+* `authorized-by` (index 2): Identifies the authority—an individual or organization—under whose control an entity asserts Claims.
+The authority is represented using crypto-key-type-choice (see {{sec-crypto-keys}}), which binds the Claim to a specific cryptographic identity.
+The authorized-by element participates in the matching and augmentation process defined in {{sec-match-and-augment}}, where it provides the conditions under which a Claim is applicable.
 
 ##### Measurement Keys {#sec-comid-mkey}
 
