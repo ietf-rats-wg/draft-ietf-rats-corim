@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-10T04:14:00.519939+00:00",
+  "timestamp": "2026-09-13T04:30:47.545646+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14548,15 +14548,15 @@
       "id": "I_kwDOH6-tI88AAAABDjb3vw",
       "title": "CoRIM Needs to support Multiple Signatures, via COSE_Sign",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/583",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Need to support Multiple Signature types in CoRIM:\n\nFor a specific use case, coming from regulation (please see below) : CoRIM MUST support this.\n\nA manufacturer wishes to produce a CoRIM relating to some product or deliverable. Some customers can require single ML-DSA signature, some require hybrid ML-DSA with ECDSA, some have not yet enabled PQC crypto infrastructure and some Chinese customers require SM2-DSA. In some cases these cryptographic requirements might be regulatory.\n\nIn this case, the manufacturer either produces four internally identical but differently signed CoRIMs to comply with the present specification or it produces one multiply signed CoRIM where the same signing authority has simply used different cryptographic mechanisms to endorse. I do not think the countersignature case covers this ideally as a countersignature serves as a notarization by a different counterparty whereas in the use-case I describe - which I believe occurs inevitably in a diverse cryptographic environment - we have different mechanisms all representing endorsements by the same owner.\n\n\n",
       "createdAt": "2026-05-27T15:11:16Z",
-      "updatedAt": "2026-05-27T16:33:29Z",
-      "closedAt": null,
+      "updatedAt": "2026-09-10T15:42:16Z",
+      "closedAt": "2026-09-10T15:42:15Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -15504,9 +15504,9 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
-      "body": "Static review of `draft-ietf-rats-corim.md` (4053 lines) and the `cddl/` fragments it includes via `{::include}` by Claude Opus. Every line number and file path is a permalink pinned to commit [`d387838`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/tree/d387838ebafd6506c689dd9a663f54c0a942c464).\n\nLegend\n| Symbol | Description         |\n| ------ | ------------------- |\n| C      | Contradictions      |\n| D      | CDDL / schema       |\n| S      | Specification gaps  |\n| N      | Normative language  |\n| E      | Editorial           |\n| I      | IANA considerations | ",
+      "body": "Static review of `draft-ietf-rats-corim.md` (4053 lines) and the `cddl/` fragments it includes via `{::include}` by Claude Opus. Every line number and file path is a permalink pinned to commit [`d387838`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/tree/d387838ebafd6506c689dd9a663f54c0a942c464).\n\nLegend\n| Symbol | Description         |\n| ------ | ------------------- |\n| C      | Contradictions      |\n| D      | CDDL / schema       |\n| S      | Specification gaps  |\n| N      | Normative language  |\n| E      | Editorial           |\n| I      | IANA considerations | \n| P      | Pseudocode          |",
       "createdAt": "2026-09-09T17:49:21Z",
-      "updatedAt": "2026-09-09T22:04:39Z",
+      "updatedAt": "2026-09-11T19:42:58Z",
       "closedAt": null,
       "comments": []
     },
@@ -16493,6 +16493,246 @@
       "body": "- **Location:** [L851](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L851) (compare [L780](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L780))\n\n> ### Linked Tag {#sec-comid-linked-tag} ... The following describes each member of the **`tag-identity-map`**. * `linked-tag-id` (index 0): ...\n\nThe members listed are `linked-tag-map` members. [L780](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L780) legitimately uses the same sentence for `tag-identity-map`.\n\n**Fix:** *\"The following describes each member of the `linked-tag-map`.\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:49:53Z",
       "updatedAt": "2026-09-09T22:54:36Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 697,
+      "id": "I_kwDOH6-tI88AAAABQ4yvBg",
+      "title": "P-01 \u2014 `algo-init-sa` has a parameter named `dd` but a body that references `td`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/697",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2861-2881](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2861-L2881)\n\n```pseudocode\nFUNC init_staging_area(\n    rv: rv, ev: ev, evs: evs, keys: keys, dm: dm,\n    dd: td,                       // parameter is named dd\n) -> StagingArea {\n    ...\n    IF td:   sa::APPEND(td)       // but the body uses td\n```\n\n`td` is a *type* name here, not a bound variable; the parameter `dd` is never used. Same root cause as D-01.\n\n**Fix:** Rename the parameter to `td`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:35:40Z",
+      "updatedAt": "2026-09-11T19:35:40Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 698,
+      "id": "I_kwDOH6-tI88AAAABQ4zGxg",
+      "title": "P-02 \u2014 `algo-trust-dependency-transform` has at least five defects",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/698",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2819-2839](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819-L2839)\n\n```pseudocode\nFUNC transform(\n    T: trust-dependcy-triple-record,        // (1) typo: \"dependcy\"\n    signer: [ + $crypto-key-type-choice ],\n    profile: $profile-type-choice\n) -> trust-dependency-item                  // (2) no such type; and (3) missing \"{\"\n    item := T-ECT::NEW()                    // (4) should be td-item::NEW()\n\n    item.condition.environment = T.domain-id\n    item.condition.members = T.members      // (5) trust-dependency-triple-record\n    item.addition.environment = T.domain-id //     has no \"members\"; it has \"trustees\"\n    item.addition.members = T.members       //     and T-ECT has \"trustees\", not \"members\"\n    ...\n}\n```\n\n1. `trust-dependcy-triple-record` \u2014 misspelled type name.\n2. `trust-dependency-item` \u2014 the CDDL rule is `td-item` ([`cddl/intrep-trust-dep-item.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-trust-dep-item.cddl)).\n3. The opening `{` is missing while a closing `}` is present; every other `FUNC` in the document has both.\n4. `T-ECT::NEW()` constructs a single ECT, but the function assigns to `item.condition` and `item.addition` and returns a condition/addition pair.\n5. `T.members` does not exist \u2014 `trust-dependency-triple-record = [ domain-id, trustees ]`. Likewise `Trust-Dependency-condition-ECT` and `-addition-ECT` declare `trustees`, not `members`. Four occurrences.\n\n**Fix:** Rewrite the function, modelled on `algo-domain-member-transform`, substituting `trustees` throughout.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:36:26Z",
+      "updatedAt": "2026-09-11T19:36:26Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 699,
+      "id": "I_kwDOH6-tI88AAAABQ4zfeA",
+      "title": "P-03 \u2014 `algo-ces-transform` does not match the CES triple's CDDL",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/699",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2708-2738](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2708-L2738); [`cddl/conditional-endorsement-series-triple-record.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/conditional-endorsement-series-triple-record.cddl), [`cddl/conditional-series-record.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/conditional-series-record.cddl), [`cddl/intrep-evs.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-evs.cddl)\n\n```pseudocode\nsitem.condition.environment = T.condition.environment   // (1)\nems1 = mms_to_ems(T.condition.claims-list)              // (1)(3)(4)\nsitem.condition.element-list = ems1                     // (2)\nems2 := mms_to_ems(csr.condition)\nsitem.condition.element-list::APPEND(ems2)\nIF T.condition.authorized-by:                           // (1)\n    ...\nELIF csr.series.condition.authorized-by:                // (5)\n...\nevsitem[INDEXOF(sitem)] = sitem                         // (6)\n```\n\n1. `T.condition` does not exist. The CDDL member is **`common-condition`**. Five occurrences.\n2. `series-item.condition` and `series-item.addition` are **arrays** (`[ + Endorsement-condition-ECT ]` / `[ + Endorsement-addition-ECT ]`), not single ECTs, so `sitem.condition.environment` and `sitem.addition.*` are type errors throughout the function.\n3. `claims-list` is `[ * measurement-map ]` (possibly empty) but `mms_to_ems` is declared `(mms: [ + measurement-map ]) -> [ + element-map ]` \u2014 non-empty. The empty case is a type error.\n4. `ems1 =` and `ems3 =` use the update operator where the document's own notation ({{sec-pseudocode-notation}} [L1934-1944](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1934-L1944)) requires `:=` for introduction. `ems2 :=` on the adjacent line is correct, so this is inconsistent within one function.\n5. `csr.series.condition.authorized-by` \u2014 `csr` is already an element of `T.series`, so `csr.series` is wrong; and `csr.condition` is `[ + measurement-map ]`, a list, so `.authorized-by` is not addressable on it.\n6. `evsitem[INDEXOF(sitem)] = sitem` \u2014 `evs-item = { series: [ + series-item ] }`, so this should be `evsitem.series::APPEND(sitem)`. `INDEXOF(x)` is defined ({{tbl-pseudocode-ops}}) as *\"Return the position of x within its enclosing sequence\"*, and `sitem` is not yet in any sequence.\n\n**Fix:** Rewrite the function against the actual CDDL.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:37:16Z",
+      "updatedAt": "2026-09-11T19:37:16Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 700,
+      "id": "I_kwDOH6-tI88AAAABQ4zzCw",
+      "title": "P-04 \u2014 `algo-process-trust-dep` returns TRUE when a trustee is *not* a member",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/700",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L3025-3035](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3025-L3035)\n\n```pseudocode\nFUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {\n    FOREACH dm-item IN ACS.ECT(.cm==member):\n        IF condition.environment == dm-item.environment:\n            FOREACH trustee IN condition.trustees:\n                IF !trustee::MEMBEROF(dm-item.members):\n                    BREAK   # break inner loop, try another dm-item\n            RETURN TRUE\n\n    RETURN FALSE\n```\n\n`BREAK` exits the inner `FOREACH` and control falls straight through to `RETURN TRUE`. The function therefore returns TRUE **whenever the environment matches**, regardless of whether any trustee is a domain member \u2014 inverting the check the section exists to perform. The comment (*\"try another dm-item\"*) describes behaviour the code does not have.\n\nAdditional defects in the same block:\n\n- `ACS.ECT(.cm==member)` \u2014 `cm` is not an attribute (`cmtype` is), and `member` is not a `cm-type` value (`reference-values` / `endorsements` / `evidence` are). The notation is undefined.\n- The closing `}` is missing.\n- `#` is used for a comment, but {{sec-pseudocode-notation}} [L1893](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1893) defines `//`.\n- The function is named `ACS::MATCH` here and `acs::MATCH` in {{tbl-pseudocode-ops}}/{{algo-match-and-augment}}.\n\n**Fix:** Restructure so that failure sets a flag / `CONTINUE`s the outer loop, correct the ECT selector, close the block, and use `//`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:37:56Z",
+      "updatedAt": "2026-09-11T19:37:56Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 701,
+      "id": "I_kwDOH6-tI88AAAABQ40GoA",
+      "title": "P-05 \u2014 Three transform algorithms never set the mandatory `authority` on their condition ECTs",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/701",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2792-2810](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2792-L2810), [L2747-2781](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2747-L2781), [L2819-2839](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819-L2839); [`cddl/intrep-ect-domain-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-domain-condition.cddl), [`cddl/intrep-ect-trust-dep-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-trust-dep-condition.cddl), [`cddl/intrep-ect-key-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-key-condition.cddl)\n\nAll three condition ECTs declare `authority: [ + $crypto-key-type-choice ]` as **mandatory**. The transformations set only `item.addition.authority`; `item.condition.authority` is set in `algo-key-transform` merely as a conditional (`IF T.conditions.authorized-by:`). The objects produced therefore do not validate against their own declared types.\n\n**Fix:** Either set `condition.authority` in each transform, or make `authority` optional in the three condition ECTs (which is what `Reference-Value-condition-ECT` and `Endorsement-condition-ECT` already do).\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:38:35Z",
+      "updatedAt": "2026-09-11T19:38:35Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 702,
+      "id": "I_kwDOH6-tI88AAAABQ40WaA",
+      "title": "P-06 \u2014 `algo-init-acs` uses an undeclared variable",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/702",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2849-2856](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2849-L2856)\n\n```pseudocode\nFUNC init_acs(ae: ae) -> ACS {\n    FOREACH item IN ae:\n        acs::APPEND(item.addition)      // acs is never introduced\n    RETURN acs\n}\n```\n\n`acs` is never bound with `:=`, unlike every other algorithm in the document (`item := rv-item::NEW()`, `sa := StagingArea::NEW()`, \u2026). Additionally, `ACS = [ + ECT ]` is non-empty by construction, so the function's declared return type is unsatisfiable when `ae` is empty.\n\n**Fix:** Add `acs := ACS::NEW()` and state what happens when there is no Evidence.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:39:03Z",
+      "updatedAt": "2026-09-11T19:39:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 703,
+      "id": "I_kwDOH6-tI88AAAABQ40jFQ",
+      "title": "P-07 \u2014 `SERIES-MATCH` returns the wrong type and has no fall-through return",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/703",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2969-2976](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2969-L2976)\n\n```pseudocode\nFUNC SERIES-MATCH(acs: ACS, series: SERIES)\n    -> Endorsement-addition-ECT {\n    FOREACH sitem IN series:\n        IF acs::MATCH(sitem.condition):\n            RETURN sitem.addition\n}\n```\n\n1. `SERIES` is not a defined type. The CDDL has `series: [ + series-item ]` as a member of `evs-item`; there is no named `SERIES` rule.\n2. `sitem.addition` is `[ + Endorsement-addition-ECT ]` (an array), but the declared return type is a single `Endorsement-addition-ECT`.\n3. There is no `RETURN` on the no-match path, yet the caller tests `IF ser-add = SERIES-MATCH(...)`.\n4. That caller uses `=` (the update operator) where `:=` is required, and `ser-add` is never introduced.\n\n**Fix:** Name the series type, return the array (or a nullable single ECT with an explicit `RETURN` on fall-through), and use `:=`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:39:30Z",
+      "updatedAt": "2026-09-11T19:39:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 704,
+      "id": "I_kwDOH6-tI88AAAABQ40xSA",
+      "title": "P-08 \u2014 `algo-match-and-augment` has no failure path and inconsistent indentation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/704",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2894-2904](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2894-L2904)\n- **Prior art:** PARTIAL \u2014 [#604](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/604) debates whether `CHECK()` is needed at all; it does not note the missing failure path or the indentation defect.\n\n```pseudocode\nIF acs::MATCH(item.condition):\n    IF acs::CHECK(item.addition):\n            acs::APPEND(item.addition)      // over-indented by 8, not 4\n```\n\nThere is no `ELSE` branch, so the document never says what happens when `acs::CHECK` fails \u2014 silently dropped? logged? fatal? [L2911](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2911) (*\"The addition could result in inconsistent ACS. Additional ACS consistency checking might be needed.\"*) leaves this open with no normative language.\n\n**Fix:** Normalise indentation and specify `CHECK`-failure behaviour.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:39:59Z",
+      "updatedAt": "2026-09-11T19:39:59Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 705,
+      "id": "I_kwDOH6-tI88AAAABQ41I7w",
+      "title": "P-09 \u2014 `algo-key-transform` dereferences an optional member without guarding it",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/705",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2766](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2766), [L2770](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2770); [`cddl/identity-triple-record.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/identity-triple-record.cddl)\n\n```pseudocode\nIF T.conditions.mkey:\nIF T.conditions.authorized-by:\n```\n\n`conditions` is itself optional (`? conditions: non-empty<{...}>`). When it is absent, `T.conditions.mkey` dereferences a missing member. Every other algorithm guards optionals explicitly (`IF profile:`, `IF mm.mkey:`).\n\n**Fix:** Guard with `IF T.conditions AND T.conditions.mkey:` or an outer `IF T.conditions:`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:40:39Z",
+      "updatedAt": "2026-09-11T19:40:39Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 706,
+      "id": "I_kwDOH6-tI88AAAABQ41ULQ",
+      "title": "P-10 \u2014 `algo-domain-member-transform` parameter list is missing a comma",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/706",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2793](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2793)\n\n```pseudocode\nFUNC transform(\n    T: domain-membership-triple-record      // <- missing comma\n    signer: [ + $crypto-key-type-choice ],\n```\n\nAll other `FUNC` parameter lists in the document are comma-separated.\n\n**Fix:** Add the comma.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:40:59Z",
+      "updatedAt": "2026-09-11T19:40:59Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 707,
+      "id": "I_kwDOH6-tI88AAAABQ41u3g",
+      "title": "P-11 \u2014 `cmtype` literals are written inconsistently",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/707",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2612](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2612), [L2654](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2654), [L2730](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2730)\n\n`algo-rv-transform` ([L2612](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2612)) writes `item.addition.cmtype = reference-values`, `algo-ev-transform` ([L2654](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2654)) writes `ect-add.cmtype = endorsements`, and `algo-ces-transform` ([L2730](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2730)) writes ` sitem.addition.cmtype = \\`endorsements\\` ` \u2014 backticked. The document's pseudocode notation defines no backtick convention.\n\n**Fix:** Use the bare identifier form everywhere.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:41:48Z",
+      "updatedAt": "2026-09-11T19:41:48Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 708,
+      "id": "I_kwDOH6-tI88AAAABQ42DVw",
+      "title": "P-12 \u2014 Transform functions are all named `transform` and cannot be disambiguated",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/708",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [
+        "Verifier Processing"
+      ],
+      "body": "- **Location:** [L2605](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2605), [L2640](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2640), [L2670](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2670), [L2708](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2708), [L2747](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2747), [L2792](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2792), [L2819](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819)\n\nSeven distinct functions all named `FUNC transform(...)`, distinguished only by the CDDL type of their first parameter. The document never states that the pseudocode language supports overloading, and `algo-key-transform` already relies on `TYPEOF` dispatch *inside* one of them, showing that the intent is not uniform.\n\n**Fix:** Give each a distinct name (`transform_rv`, `transform_ev`, \u2026) or state that dispatch is on the first parameter's type.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "createdAt": "2026-09-11T19:42:29Z",
+      "updatedAt": "2026-09-11T19:42:29Z",
       "closedAt": null,
       "comments": []
     }
@@ -93703,13 +93943,13 @@
       "labels": [],
       "body": "Fix #583",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-09-09T15:35:02Z",
+      "updatedAt": "2026-09-11T08:42:31Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "b27b9d86f23bfe13b75898fb44accb85075900c1",
+      "baseRefOid": "d387838ebafd6506c689dd9a663f54c0a942c464",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-support",
-      "headRefOid": "348447ee22ff3750c010880abb37d739a8dbddf6",
+      "headRefOid": "c1dc644efba90e5effb43cdc879a411ff1e06e51",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -93742,6 +93982,83 @@
           "body": "@thomas-fossati and @henkbirkholz please review this as well...",
           "createdAt": "2026-09-09T15:35:01Z",
           "updatedAt": "2026-09-09T15:35:01Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> If we leave this use-case, very soon, we will have to re-work on the specification, as the current scope becomes too restrictive.\r\n\r\nNothing about narrowly-scoping #617 precludes a future PR against #626 once that use case is nailed down and the requirements are clear.\r\n\r\n\"Rework\" implies undoing something; this is just normal incremental process :-)\r\n",
+          "createdAt": "2026-09-10T10:20:08Z",
+          "updatedAt": "2026-09-10T10:20:08Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > If we leave this use-case, very soon, we will have to re-work on the specification, as the current scope becomes too restrictive.\r\n> \r\n> Nothing about narrowly-scoping #617 precludes a future PR against #626 once that use case is nailed down and the requirements are clear.\r\n> \r\n> \"Rework\" implies undoing something; this is just normal incremental process :-)\r\n\r\nIf I am not mistaken, CoRIM Meeting on 02nd September, we concluded that a higher level language that can encompass this requirement is fine with the team, so I made a PR which can permit mulitple Signers but at the same time, only mandate strict requirement for One Signer to be acceptable to a Verifier. Rest nothing changes as such in the PR, in terms of CDDL  ",
+          "createdAt": "2026-09-10T10:56:14Z",
+          "updatedAt": "2026-09-10T10:56:14Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**ALERT**\r\n\r\nSomehow, `main` was advanced to 6ae55229c57385c27635a8966344b631217a3452 outside the normal PR-merge process and this PR's content (apart from c1dc644efba90e5effb43cdc879a411ff1e06e51) is now on main \ud83d\ude30 \r\n\r\n\r\n\r\n\r\n",
+          "createdAt": "2026-09-10T16:00:25Z",
+          "updatedAt": "2026-09-10T16:00:25Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati How did the Merge happen?\r\n\r\nShall we remove the PR???",
+          "createdAt": "2026-09-10T16:07:04Z",
+          "updatedAt": "2026-09-10T16:07:04Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/617/changes/c1dc644efba90e5effb43cdc879a411ff1e06e51 is also strange.",
+          "createdAt": "2026-09-10T16:57:00Z",
+          "updatedAt": "2026-09-10T16:57:00Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> [c1dc644](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/c1dc644efba90e5effb43cdc879a411ff1e06e51) is also strange.\r\n\r\nYeah, that's very bizarre (line endings changed from LF to CRLF without a good reason).  But that might be a red herring given the preceding commit...",
+          "createdAt": "2026-09-10T17:10:11Z",
+          "updatedAt": "2026-09-10T17:10:11Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @thomas-fossati How did the Merge happen?\r\n\r\nI have no idea!  Did you use the GitHub UI or the command line?\r\n \r\n> Shall we remove the PR???\r\n\r\nThe PR is already merged...\r\n",
+          "createdAt": "2026-09-10T17:11:36Z",
+          "updatedAt": "2026-09-10T17:11:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > @thomas-fossati How did the Merge happen?\r\n> \r\n> I have no idea! Did you use the GitHub UI or the command line?\r\n> \r\n> > Shall we remove the PR???\r\n> \r\n> The PR is already merged...\r\n\r\nWho did the merge?",
+          "createdAt": "2026-09-10T17:15:14Z",
+          "updatedAt": "2026-09-10T17:15:14Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > > @thomas-fossati How did the Merge happen?\r\n> > \r\n> > \r\n> > I have no idea! Did you use the GitHub UI or the command line?\r\n> > > Shall we remove the PR???\r\n> > \r\n> > \r\n> > The PR is already merged...\r\n> \r\n> Who did the merge?\r\n\r\nno idea.  Your commit 6ae5522 \"Apply batched suggestions from code review\" got straight to main.  Did you use the GitHub UI or the command line?  If the latter, can you look at the shell history? ",
+          "createdAt": "2026-09-10T17:20:59Z",
+          "updatedAt": "2026-09-10T17:20:59Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@thomas-fossati & @henkbirkholz Notice that the Pull Request is still OPEN...",
+          "createdAt": "2026-09-11T08:34:31Z",
+          "updatedAt": "2026-09-11T08:34:31Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I used a normal UI, Had I triggered the Merge, then the PR would have closed, as the PR is still Open this seems to be a Github Issue,\r\n\r\nBoth My submission on the Branch (`cose-sign-support`) and @henkbirkholz  submission on the Branch (`cose-sign-support`) , went straight into the main line instead of this branch, which seems clearly to be a github issue.",
+          "createdAt": "2026-09-11T08:42:31Z",
+          "updatedAt": "2026-09-11T08:42:31Z"
         }
       ],
       "reviews": [
@@ -94381,15 +94698,111 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABMtUfUQ",
           "commit": {
-            "abbreviatedOid": "348447e"
+            "abbreviatedOid": "22e6f48"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-09-08T22:47:02Z",
-          "updatedAt": "2026-09-08T22:47:02Z",
+          "updatedAt": "2026-09-10T09:54:05Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABM_GbEA",
+          "commit": {
+            "abbreviatedOid": "22e6f48"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "The PR does not implement the single-authority scope: the meta-map/claims should be instantiated once, at the top level; the per-signature protected headers should carry very little (ideally nothing) beyond what's needed to distinguish the signature (i.e., alg, and aux key material).\n",
+          "createdAt": "2026-09-10T11:22:21Z",
+          "updatedAt": "2026-09-10T12:00:10Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "corim-meta-map (and exp/nbf, if carried as claims-in-header) goes in the top-level protected header, since it's shared by all signatures from that one authority",
+              "createdAt": "2026-09-10T11:22:21Z",
+              "updatedAt": "2026-09-10T12:00:10Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "There is no reason to use RFC2119 here\n\n```suggestion\nThe COSE_Sign structure may be used when:\n```",
+              "createdAt": "2026-09-10T11:37:01Z",
+              "updatedAt": "2026-09-10T12:00:10Z"
+            },
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\nSee {{sec-mult-sign}} for details on multi-signature CoRIM.\n```",
+              "createdAt": "2026-09-10T11:37:47Z",
+              "updatedAt": "2026-09-10T12:00:10Z"
+            },
+            {
+              "originalPosition": 70,
+              "body": "streamline (\"often in the industry\" doesn't read well in a protocol spec.)\r\n\r\n```suggestion\r\nAn Endorser or a Reference Value Provider may need to generate multiple signatures over the same unsigned CoRIM, e.g., to support multiple signature algorithms (such as a traditional algorithm and a post-quantum algorithm) without having to produce multiple identical CoRIMs.\r\n```",
+              "createdAt": "2026-09-10T11:52:45Z",
+              "updatedAt": "2026-09-10T12:00:57Z"
+            },
+            {
+              "originalPosition": 75,
+              "body": "The structure is not fit for the single-authority case.",
+              "createdAt": "2026-09-10T11:55:16Z",
+              "updatedAt": "2026-09-10T12:00:10Z"
+            },
+            {
+              "originalPosition": 82,
+              "body": "ditto",
+              "createdAt": "2026-09-10T11:55:31Z",
+              "updatedAt": "2026-09-10T12:00:10Z"
+            },
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\nIf the CoRIM is signed by multiple authorities, at least one signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.\n```",
+              "createdAt": "2026-09-10T11:55:49Z",
+              "updatedAt": "2026-09-10T12:00:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABM_nd_Q",
+          "commit": {
+            "abbreviatedOid": "22e6f48"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-10T12:20:30Z",
+          "updatedAt": "2026-09-10T12:20:31Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "ok- makes sense, I left it open deliberately, but happy to tighten up the prescription for single signer case.",
+              "createdAt": "2026-09-10T12:20:31Z",
+              "updatedAt": "2026-09-10T12:20:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABM_oLsQ",
+          "commit": {
+            "abbreviatedOid": "22e6f48"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-10T12:21:48Z",
+          "updatedAt": "2026-09-10T12:21:48Z",
+          "comments": [
+            {
+              "originalPosition": 75,
+              "body": "I will add clarifications here",
+              "createdAt": "2026-09-10T12:21:48Z",
+              "updatedAt": "2026-09-10T12:21:49Z"
+            }
+          ]
         }
       ]
     },
@@ -95880,13 +96293,13 @@
       "labels": [],
       "body": "Fix #604\r\n",
       "createdAt": "2026-09-09T15:35:47Z",
-      "updatedAt": "2026-09-09T17:27:00Z",
+      "updatedAt": "2026-09-10T15:31:15Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "31500f861d548064fd2804d8b127945aa00f6812",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "invariants",
-      "headRefOid": "aa9bfa38105d75b842adc0bb2ca679b3b4e220e1",
+      "headRefOid": "db879104570c7e1ef788a955c8c840c7751a5f70",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -95972,6 +96385,52 @@
               "updatedAt": "2026-09-09T17:27:01Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABM-9zGA",
+          "commit": {
+            "abbreviatedOid": "aa9bfa3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-09-10T11:06:08Z",
+          "updatedAt": "2026-09-10T11:06:08Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABNBbK4g",
+          "commit": {
+            "abbreviatedOid": "aa9bfa3"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-10T15:11:20Z",
+          "updatedAt": "2026-09-10T15:11:20Z",
+          "comments": [
+            {
+              "originalPosition": 50,
+              "body": "```suggestion\nIf a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a null operation (i.e., always satisfied) for that relation.\n```\n`no-op` is a little too informal for my taste.",
+              "createdAt": "2026-09-10T15:11:20Z",
+              "updatedAt": "2026-09-10T15:11:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABNBpJAA",
+          "commit": {
+            "abbreviatedOid": "db87910"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-09-10T15:31:14Z",
+          "updatedAt": "2026-09-10T15:31:14Z",
+          "comments": []
         }
       ]
     },
@@ -96017,7 +96476,7 @@
       ],
       "body": "Fix #679.",
       "createdAt": "2026-09-09T23:51:01Z",
-      "updatedAt": "2026-09-09T23:54:30Z",
+      "updatedAt": "2026-09-10T15:05:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d387838ebafd6506c689dd9a663f54c0a942c464",
@@ -96029,7 +96488,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABNBXCxQ",
+          "commit": {
+            "abbreviatedOid": "c62bd95"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "\ud83d\udea2 it!",
+          "createdAt": "2026-09-10T15:05:27Z",
+          "updatedAt": "2026-09-10T15:05:27Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 694,
@@ -96043,7 +96516,7 @@
       "labels": [],
       "body": "Then one does not need to update their e-mail address if it changes.",
       "createdAt": "2026-09-10T00:03:22Z",
-      "updatedAt": "2026-09-10T00:04:18Z",
+      "updatedAt": "2026-09-10T04:23:42Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "d387838ebafd6506c689dd9a663f54c0a942c464",
@@ -96055,7 +96528,103 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABM7f2JQ",
+          "commit": {
+            "abbreviatedOid": "a3c33cc"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-09-10T04:23:42Z",
+          "updatedAt": "2026-09-10T04:23:42Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 695,
+      "id": "PR_kwDOH6-tI88AAAABC-GAyg",
+      "title": "s/unique/collision-resistant/",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/695",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fix #627 ",
+      "createdAt": "2026-09-10T09:43:57Z",
+      "updatedAt": "2026-09-10T14:24:49Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d387838ebafd6506c689dd9a663f54c0a942c464",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "identifiers",
+      "headRefOid": "ca7323b1c11ac4f83ec0e96a80086ce4829439f2",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABM_AE8w",
+          "commit": {
+            "abbreviatedOid": "ca7323b"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "lgtm!",
+          "createdAt": "2026-09-10T11:10:15Z",
+          "updatedAt": "2026-09-10T11:10:15Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 696,
+      "id": "PR_kwDOH6-tI88AAAABDAn-5Q",
+      "title": "Fix IANA errors",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/696",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "IANA"
+      ],
+      "body": "Fix #682.\r\nFix #683.\r\nFix #684.",
+      "createdAt": "2026-09-10T14:49:31Z",
+      "updatedAt": "2026-09-10T15:00:27Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d387838ebafd6506c689dd9a663f54c0a942c464",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "iana",
+      "headRefOid": "21f9eef6677357cdc1313059bb4730ee4099a5ca",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABNBTY9A",
+          "commit": {
+            "abbreviatedOid": "21f9eef"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "thank you!",
+          "createdAt": "2026-09-10T15:00:26Z",
+          "updatedAt": "2026-09-10T15:00:26Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
