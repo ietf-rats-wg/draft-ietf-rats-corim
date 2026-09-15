@@ -745,7 +745,7 @@ tag:
 
 The following describes each member of the `concise-mid-tag` map.
 
-* `lang` (index 0): A textual language tag that conforms with IANA "Language
+* `language` (index 0): A textual language tag that conforms with IANA "Language
   Subtag Registry" {{-language-subtag}}. The context of the specified language
   applies to all sibling and descendant textual values, unless a descendant
   object has defined a different language tag. Thus, a new context is
@@ -3698,7 +3698,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 |---
 | 0 | language | {{&SELF}}
 | 1 | tag-identity | {{&SELF}}
-| 2 | entity | {{&SELF}}
+| 2 | entities | {{&SELF}}
 | 3 | linked-tags | {{&SELF}}
 | 4 | triples | {{&SELF}}
 | 5-255 | Unassigned
