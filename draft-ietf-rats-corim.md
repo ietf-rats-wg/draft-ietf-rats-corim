@@ -3080,7 +3080,7 @@ If any attributes do not match, the C-ECT does not match the ACS-ECT.
 ##### Environment Comparison {#sec-compare-environment}
 
 The processor MUST compare each attribute which is present in the C-ECT's `environment` with the corresponding attribute in the ACS-ECT's `environment` using binary comparison.
-Before performing the binary comparison, the processor SHOULD convert the attributes in both `environment`s into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
+Before performing the binary comparison, the processor MUST convert the attributes in both `environment`s into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
 
 If all the attributes which are present in the C-ECT `environment` (e.g., `instance-id` or `group-id`) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.
@@ -3112,7 +3112,7 @@ The C-ECT's `element-map` matches an ACS-ECT's `element-map` if both the `elemen
 `element-claims` matching uses Attribute Path Containment (see {{sec-glossary}}): every Attribute Path defined in the C-ECT's `element-claims` MUST be defined in the ACS-ECT's `element-claims`, and the ACS-ECT value at each such path MUST satisfy the corresponding C-ECT value according to the rules in {{sec-match-one-codepoint}}; additional attributes in the ACS-ECT are ignored.
 
 Two `element-id`s are considered the same if they are either both omitted, or both present with binary identical deterministic encodings.
-Before performing the binary comparison, the processor SHOULD convert the `element-id` attributes into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
+Before performing the binary comparison, the processor MUST convert the `element-id` attributes into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
 
 The rules for matching `element-claims` are described in {{sec-compare-mvm}}.
 
