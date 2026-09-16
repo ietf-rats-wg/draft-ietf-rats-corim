@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 14 March 2027                                            NVIDIA
+Expires: 20 March 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       10 September 2026
+                                                       16 September 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 March 2027.
+   This Internet-Draft will expire on 20 March 2027.
 
 Copyright Notice
 
@@ -320,9 +320,13 @@ Table of Contents
       Devices or Layered Attesters.
 
    Domain:
-      A domain is a hierarchical description of a Composite Attester in
-      terms of its constituent Environments and their compositional
-      relationships.
+      A Domain is the hierarchical container used to describe a
+      Composite Attester in terms of its constituent Environments and
+      the compositional relationships among them.  Every Environment
+      implicitly defines a Domain; therefore, any triple that creates an
+      Environment also creates a corresponding Domain.  Domains exist to
+      organize the structural composition of the attester, not to
+      introduce additional semantic entities.
 
    Endorsed values:
       A set of characteristics of an Attester that do not appear in
@@ -910,7 +914,7 @@ Table of Contents
    supported authority formats (e.g., if an unsigned CoRIM is received
    over a secure channel where authentication is token- or password-
    based).  If it is impossible to assert the authority of the origin,
-   the Verifier's appraisal policy MAY assert the Verifier’s authority
+   the Verifier's appraisal policy MAY assert the Verifier's authority
    as the CoRIM origin.
 
    It is out of scope of this document to specify a method of delegating
@@ -1401,7 +1405,7 @@ Table of Contents
    $instance-id-type-choice /= tagged-cert-thumbprint-type
    $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
 
-5.1.4.4.   Environment Group
+5.1.4.4.  Environment Group
 
    A group carries an identifier that is reliably bound to a group of
    Attesters, for example when a number of Attester are hidden in the
@@ -1901,13 +1905,13 @@ Table of Contents
    positive-inf = null
    negative-inf = null
 
-   The signed integer range representation is an inclusive range unless
-   either min or max are infinite as represented by null, in which case,
-   each infinity is necessarily exclusive.
+   The signed integer range representation is an inclusive range.  A min
+   or max of null means that the range is effectively unbounded in that
+   direction.
 
 5.1.4.9.  Type Matchers
 
-   The measurement-values-map entries at indices 16–19 support generic
+   The measurement-values-map entries at indices 16-19 support generic
    boolean, numeric, text, and byte-string measurements with
    configurable matching semantics.  Rather than adding a separate
    codepoint for each desired matching criterion, these entries use
@@ -2263,8 +2267,8 @@ Table of Contents
 
 5.1.11.  Triples for domain definition
 
-   A domain is a graphical description of a Composite Attester in terms
-   of its constituent Environments and their compositional
+   Domain triples assert graphical description of Attester composition
+   in terms of its constituent Environments and their compositional
    relationships.
 
    The following CDDL describes domain type.
@@ -2279,7 +2283,7 @@ Table of Contents
 
    A Domain Membership Triple (DMT) links a domain identifier to its
    member Environments.  The triple's subject is the domain identifier
-   while the triple’s object lists all the member Environments within
+   while the triple's object lists all the member Environments within
    the domain.
 
    The Domain Membership Triple allows an Endorser (for example, an
@@ -2344,9 +2348,12 @@ Table of Contents
    peripheral device's bus controller.  The bus controller is therefore
    a trustee domain of the peripheral device.
 
-   TDTs cannot create domains.  Instead, TDT processing first checks
-   that a domain-id has already been accepted into the ACS before adding
-   trust dependencies.
+   TDTs cannot instantiate domains.  Instead, TDT processing first
+   verifies that a domain-id has already been accepted into the ACS
+   before adding any trust-dependency triples.  Environments that have
+   been accepted into the ACE are automatically considered Domains.
+   Consequently, TDTs may describe trust-dependency semantics for any
+   Environment that has been accepted into the ACS.
 
    The trust dependency triple subject (domain-id) identifies the member
    domain (see Section 5.1.11.1) that has trustees.  The triple object
@@ -3015,7 +3022,11 @@ Table of Contents
       derived.  It is represented as the key material by which the
       authority (and corresponding provenance) of the tuple can be
       determined.  A typical example is the authority's PKIX
-      certificate.  This is a mandatory attribute in an ECT.
+      certificate.  This attribute is mandatory in an addition ECT, and
+      therefore in every ECT held in the ACS.  ECT-common (Figure 12)
+      itself defines authority as optional because it is also the basis
+      for condition ECTs, and not every relation uses authority as a
+      matching criterion.
 
    *  profile: The profile that defines the domain of interpretation of
       this tuple.  This is the profile attribute of the CoRIM that
@@ -5439,7 +5450,7 @@ Table of Contents
    access control function, which creates a chance for privilege
    escalation.
 
-   Therefore, the Verifier’s code and configuration, especially those of
+   Therefore, the Verifier's code and configuration, especially those of
    the CoRIM processor, are primary security assets that must be built
    and maintained as securely as possible.
 
@@ -6306,9 +6317,9 @@ Table of Contents
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "RATS
               Endorsements", Work in Progress, Internet-Draft, draft-
-              ietf-rats-endorsements-09, 2 March 2026,
+              ietf-rats-endorsements-10, 16 September 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              endorsements-09>.
+              endorsements-10>.
 
    [I-D.ietf-rats-evidence-trans]
               Damato, F., Draper, A., and N. Smith, "Evidence
