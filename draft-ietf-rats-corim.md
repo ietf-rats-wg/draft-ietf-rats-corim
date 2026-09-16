@@ -1046,7 +1046,7 @@ The following describes each member of the `measurement-map`:
 
 * `authorized-by` (index 2): Identifies the authority, an individual or organization, under whose control an entity asserts Claims.
 The authority is represented using `$crypto-key-type-choice` (see {{sec-crypto-keys}}), which binds the Claim to a specific cryptographic identity.
-The authorized-by element participates in the matching and augmentation process defined in {{sec-match-and-augment}}, where it provides the conditions under which a Claim is applicable.
+The `authorized-by` element participates in the matching and augmentation process defined in {{sec-match-and-augment}}, where it provides the conditions under which a Claim is applicable.
 
 ##### Measurement Keys {#sec-comid-mkey}
 
