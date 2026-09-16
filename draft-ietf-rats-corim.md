@@ -255,7 +255,8 @@ Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
 Domain:
-: A domain is a hierarchical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+: A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -656,7 +657,7 @@ The CoRIM signer authority is taken from the authenticated credential (e.g., OAU
 For example, this entity could be the sending peer in a secure channel.
 A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
 If the authority cannot be expressed directly via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based).
-If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier’s authority as the CoRIM origin.
+If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier's authority as the CoRIM origin.
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
@@ -994,7 +995,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-#### Environment Group {#sec-comid-group}
+#### Environment Group {#sec-comid-group}
 
 A group carries an identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -1375,11 +1376,12 @@ An int range is represented with either major type 0 or major type 1 ints.
 {::include cddl/int-range-type-choice.cddl}
 ~~~
 
-The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
+The signed integer range representation is an inclusive range.
+A `min` or `max` of `null` means that the range is effectively unbounded in that direction.
 
 #### Type Matchers {#sec-comid-matchers}
 
-The `measurement-values-map` entries at indices 16–19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
+The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
 Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
 
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
@@ -1586,7 +1588,7 @@ See {{sec-comid-triple-identity}} for additional details.
 
 ### Triples for domain definition {#sec-comid-domains}
 
-A domain is a graphical description of a Composite Attester in terms of its constituent Environments and their compositional relationships.
+Domain triples assert graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type.
 
@@ -1599,7 +1601,7 @@ Domain structure is defined in terms of directed acyclic graphs (DAG) describing
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
-The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
+The triple's subject is the domain identifier while the triple's object lists all the member Environments within the domain.
 
 The Domain Membership Triple allows an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
 This allows a topological description of an Attester to be expressed by linking a parent Environment (e.g., a lead Attester) to its child Environments (e.g., one or more sub-Attesters).
@@ -1638,8 +1640,10 @@ Consequently, the OS loader is a trustee domain of the OS.
 Alternatively, trust in a peripheral device might depend on trustworthy operation of a peripheral device's bus controller.
 The bus controller is therefore a trustee domain of the peripheral device.
 
-TDTs cannot create domains.
-Instead, TDT processing first checks that a `domain-id` has already been accepted into the ACS before adding trust dependencies.
+TDTs cannot instantiate domains.
+Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust-dependency triples.
+Environments that have been accepted into the ACE are automatically considered Domains.
+Consequently, TDTs may describe trust-dependency semantics for any Environment that has been accepted into the ACS.
 
 The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
@@ -2146,7 +2150,8 @@ The authority of a given ECT is typically established through a digital signatur
 For instance, a signature of the authoritative supply chain entity over the CoRIM containing the triple from which the ECT was obtained, or the Attesting Environment that signed the Evidence from which the ECT is derived.
 It is represented as the key material by which the authority (and corresponding provenance) of the tuple can be determined.
 A typical example is the authority's PKIX certificate.
-This is a mandatory attribute in an ECT.
+This attribute is mandatory in an addition ECT, and therefore in every ECT held in the ACS.
+`ECT-common` ({{fig-ect-common}}) itself defines `authority` as optional because it is also the basis for condition ECTs, and not every relation uses `authority` as a matching criterion.
 
 * `profile`: The profile that defines the domain of interpretation of this tuple.
 This is the `profile` attribute of the CoRIM that contained the original triple from which this ECT was obtained.
@@ -3542,7 +3547,7 @@ The Verifier is effectively part of the Attesters' and Relying Parties' trusted 
 Any mistake in the appraisal procedure conducted by the Verifier could have security implications.
 For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
 
-Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
+Therefore, the Verifier's code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
 
 The protection of the Verifier system should be considered throughout its entire lifecycle, from design to operation.
 This includes the following aspects:
