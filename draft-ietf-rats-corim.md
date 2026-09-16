@@ -664,7 +664,7 @@ The CoRIM signer authority is taken from the authenticated credential (e.g., OAU
 For example, this entity could be the sending peer in a secure channel.
 A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
 If the authority cannot be expressed directly via the existing authority types, the receiver SHOULD establish a local authority in one of the supported authority formats (e.g., if an unsigned CoRIM is received over a secure channel where authentication is token- or password-based).
-If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier’s authority as the CoRIM origin.
+If it is impossible to assert the authority of the origin, the Verifier's appraisal policy MAY assert the Verifier's authority as the CoRIM origin.
 
 It is out of scope of this document to specify a method of delegating the signer role in the case that an unsigned CoRIM is conveyed through multiple secured links with different notions of authenticity without end-to-end integrity protection.
 
@@ -1003,7 +1003,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 {::include cddl/instance-id-type-choice.cddl}
 ~~~
 
-#### Environment Group {#sec-comid-group}
+#### Environment Group {#sec-comid-group}
 
 A group carries an identifier that is reliably bound to a group of
 Attesters, for example when a number of Attester are hidden in the same
@@ -1388,7 +1388,7 @@ The signed integer range representation is an inclusive range unless either `min
 
 #### Type Matchers {#sec-comid-matchers}
 
-The `measurement-values-map` entries at indices 16–19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
+The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
 Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
 
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
@@ -1608,7 +1608,7 @@ Domain structure is defined in terms of directed acyclic graphs (DAG) describing
 #### Domain Membership Triple {#sec-comid-triple-domain-membership}
 
 A Domain Membership Triple (DMT) links a domain identifier to its member Environments.
-The triple's subject is the domain identifier while the triple’s object lists all the member Environments within the domain.
+The triple's subject is the domain identifier while the triple's object lists all the member Environments within the domain.
 
 The Domain Membership Triple allows an Endorser (for example, an Integrator) to issue an authoritative statement about the composition of an Attester as a collection of Environments.
 This allows a topological description of an Attester to be expressed by linking a parent Environment (e.g., a lead Attester) to its child Environments (e.g., one or more sub-Attesters).
@@ -1648,9 +1648,9 @@ Alternatively, trust in a peripheral device might depend on trustworthy operatio
 The bus controller is therefore a trustee domain of the peripheral device.
 
 TDTs cannot instantiate domains.
-Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust‑dependency triples.
+Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust-dependency triples.
 Environments that have been accepted into the ACE are automatically considered Domains.
-Consequently, TDTs may describe trust‑dependency semantics for any Environment that has been accepted into the ACS.
+Consequently, TDTs may describe trust-dependency semantics for any Environment that has been accepted into the ACS.
 
 The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
 The triple object `trustees` lists the domains that are trustees of the subject domain.
@@ -3544,7 +3544,7 @@ The Verifier is effectively part of the Attesters' and Relying Parties' trusted 
 Any mistake in the appraisal procedure conducted by the Verifier could have security implications.
 For instance, it could lead to the subversion of an access control function, which creates a chance for privilege escalation.
 
-Therefore, the Verifier’s code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
+Therefore, the Verifier's code and configuration, especially those of the CoRIM processor, are primary security assets that must be built and maintained as securely as possible.
 
 The protection of the Verifier system should be considered throughout its entire lifecycle, from design to operation.
 This includes the following aspects:
