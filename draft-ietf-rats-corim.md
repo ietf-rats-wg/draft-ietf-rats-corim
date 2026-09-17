@@ -3298,7 +3298,8 @@ The comparison MUST return true if and only if all the following conditions are 
 The value stored under `measurement-values-map` codepoint 16 is of type `bool-matcher`, which is a bare `bool`.
 An equality comparison is performed between the C-ECT value and the ACS-ECT value.
 
-Set match (CBOR tag 566) is not defined for `bool`: since `bool` has only two possible values, a set of two (or more) elements represents the full domain, which can be already expressed by omitting the entry.
+Set match (CBOR tag 566) is not defined for `bool` since `bool` has only two possible values.
+A set of two or more elements represents the full domain, which can be already expressed by omitting the entry.
 
 ###### Comparison for number entries {#sec-match-number}
 
