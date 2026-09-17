@@ -1392,7 +1392,8 @@ The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} f
 
 The range and set forms are meaningful only as a condition, when the `measurement-values-map` entry appears in a C-ECT.
 `measurement-values-map` is also used, unmodified, for ACS-ECTs (the values asserted by Evidence, Reference Values and Endorsements); the CDDL does not by itself distinguish the two uses.
-An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form; the range and set forms MUST NOT be used outside a condition.
+An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form.
+The range and set forms MUST NOT be used outside a condition.
 The comparison rules in {{sec-match-bool}}, {{sec-match-number}}, {{sec-match-text}} and {{sec-match-bytes}} are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.
 
 ~~~ cddl
