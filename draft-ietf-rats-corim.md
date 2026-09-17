@@ -1390,6 +1390,11 @@ For the numeric, text and byte-string entries, matching semantics are configurab
 
 The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
 
+The range and set forms are meaningful only as a condition, i.e., when the `measurement-values-map` entry appears in a C-ECT.
+`measurement-values-map` is also used, unmodified, for ACS-ECTs (the values asserted by Evidence, Reference Values and Endorsements); the CDDL does not by itself distinguish the two uses.
+An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form; the range and set forms MUST NOT be used outside a condition.
+The comparison rules in {{sec-match-bool}}, {{sec-match-number}}, {{sec-match-text}} and {{sec-match-bytes}} are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.
+
 ~~~ cddl
 {::include cddl/matcher.cddl}
 ~~~
@@ -3306,6 +3311,7 @@ A set of two or more elements represents the full domain, which can be already e
 ###### Comparison for number entries {#sec-match-number}
 
 The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
+The ACS-ECT value at this codepoint is always a bare `number` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3320,6 +3326,7 @@ If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST 
 ###### Comparison for text entries {#sec-match-text}
 
 The value stored under `measurement-values-map` codepoint 18 is of type `text-matcher`.
+The ACS-ECT value at this codepoint is always a bare `text` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `text`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3328,6 +3335,7 @@ If the C-ECT value is a `tagged-text-set` (CBOR tag 566), the comparison MUST re
 ###### Comparison for bytes entries {#sec-match-bytes}
 
 The value stored under `measurement-values-map` codepoint 19 is of type `bytes-matcher`.
+The ACS-ECT value at this codepoint is always a bare `bytes` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `bytes`, an equality comparison is performed with the ACS-ECT value.
 
