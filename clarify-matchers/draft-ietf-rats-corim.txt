@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 21 March 2027                                            NVIDIA
+Expires: 22 March 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       17 September 2026
+                                                       18 September 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 March 2027.
+   This Internet-Draft will expire on 22 March 2027.
 
 Copyright Notice
 
@@ -1585,9 +1585,9 @@ Table of Contents
       Section 5.1.4.8.  Comparison rules are defined in
       Section 8.3.4.4.5.8.
 
-   *  bool (index 16): A boolean value with configurable matching
-      semantics.  Described in Section 5.1.4.9.  Comparison rules are
-      defined in Section 8.3.4.4.5.9.
+   *  bool (index 16): A boolean value, compared for exact match.
+      Described in Section 5.1.4.9.  Comparison rules are defined in
+      Section 8.3.4.4.5.9.
 
    *  number (index 17): A numeric value with configurable matching
       semantics, including range and set matching.  Described in
@@ -1912,11 +1912,11 @@ Table of Contents
 5.1.4.9.  Type Matchers
 
    The measurement-values-map entries at indices 16-19 support generic
-   boolean, numeric, text, and byte-string measurements with
-   configurable matching semantics.  Rather than adding a separate
-   codepoint for each desired matching criterion, these entries use
-   CBOR-tagged wrappers to encode the matching logic alongside the
-   value:
+   boolean, numeric, text, and byte-string measurements.  For the
+   numeric, text and byte-string entries, matching semantics are
+   configurable: rather than adding a separate codepoint for each
+   desired matching criterion, these entries use CBOR-tagged wrappers to
+   encode the matching logic alongside the value:
 
    *  Bare (untagged) value means exact match: the target value must
       equal the entry's value.
@@ -1928,6 +1928,9 @@ Table of Contents
    *  CBOR tag 565 (tagged-number-range, numeric types only) means range
       match: the target value must lie within the inclusive [min, max]
       interval; null means unbounded.
+
+   The boolean entry (index 16) supports only exact match; see
+   Section 8.3.4.4.5.9 for why this is the case.
 
    The range and set forms are meaningful only as a condition, when the
    measurement-values-map entry appears in a C-ECT. measurement-values-
@@ -4619,8 +4622,8 @@ Table of Contents
    bool-matcher, which is a bare bool.  An equality comparison is
    performed between the C-ECT value and the ACS-ECT value.
 
-   Set match (CBOR tag 566) is not defined for bool: since bool has only
-   two possible values, a set of two (or more) elements represents the
+   Set match (CBOR tag 566) is not defined for bool since bool has only
+   two possible values.  A set of two or more elements represents the
    full domain, which can be already expressed by omitting the entry.
 
 8.3.4.4.5.10.  Comparison for number entries
