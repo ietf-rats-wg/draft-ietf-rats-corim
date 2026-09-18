@@ -1131,7 +1131,7 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-int-range}}.
   Comparison rules are defined in {{sec-match-int-range}}.
 
-* `bool` (index 16): A boolean value with configurable matching semantics.
+* `bool` (index 16): A boolean value, compared for exact match.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bool}}.
 
@@ -1381,12 +1381,14 @@ A `min` or `max` of `null` means that the range is effectively unbounded in that
 
 #### Type Matchers {#sec-comid-matchers}
 
-The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
-Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
+The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements.
+For the numeric, text and byte-string entries, matching semantics are configurable: rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
 
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
 * CBOR tag 566 (`tagged-*-set`, numeric, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
 * CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
 
 ~~~ cddl
 {::include cddl/matcher.cddl}
