@@ -1131,7 +1131,7 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-int-range}}.
   Comparison rules are defined in {{sec-match-int-range}}.
 
-* `bool` (index 16): A boolean value with configurable matching semantics.
+* `bool` (index 16): A boolean value, compared for exact match.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bool}}.
 
@@ -1381,12 +1381,20 @@ A `min` or `max` of `null` means that the range is effectively unbounded in that
 
 #### Type Matchers {#sec-comid-matchers}
 
-The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
-Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
+The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements.
+For the numeric, text and byte-string entries, matching semantics are configurable: rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
 
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
-* CBOR tag 566 (`tagged-*-set`) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
+* CBOR tag 566 (`tagged-*-set`, numeric, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
 * CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
+
+The range and set forms are meaningful only as a condition, when the `measurement-values-map` entry appears in a C-ECT.
+`measurement-values-map` is also used, unmodified, for ACS-ECTs (the values asserted by Evidence, Reference Values and Endorsements); the CDDL does not by itself distinguish the two uses.
+An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form.
+The range and set forms MUST NOT be used outside a condition.
+The comparison rules in {{sec-match-bool}}, {{sec-match-number}}, {{sec-match-text}} and {{sec-match-bytes}} are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.
 
 ~~~ cddl
 {::include cddl/matcher.cddl}
@@ -3295,15 +3303,16 @@ The comparison MUST return true if and only if all the following conditions are 
 
 ###### Comparison for bool entries {#sec-match-bool}
 
-The value stored under `measurement-values-map` codepoint 16 is of type `bool-matcher`.
+The value stored under `measurement-values-map` codepoint 16 is of type `bool-matcher`, which is a bare `bool`.
+An equality comparison is performed between the C-ECT value and the ACS-ECT value.
 
-If the C-ECT value is a bare `bool`, an equality comparison is performed with the ACS-ECT value.
-
-If the C-ECT value is a `tagged-bool-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+Set match (CBOR tag 566) is not defined for `bool` since `bool` has only two possible values.
+A set of two or more elements represents the full domain, which can be already expressed by omitting the entry.
 
 ###### Comparison for number entries {#sec-match-number}
 
 The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
+The ACS-ECT value at this codepoint is always a bare `number` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3318,6 +3327,7 @@ If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST 
 ###### Comparison for text entries {#sec-match-text}
 
 The value stored under `measurement-values-map` codepoint 18 is of type `text-matcher`.
+The ACS-ECT value at this codepoint is always a bare `text` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `text`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3326,6 +3336,7 @@ If the C-ECT value is a `tagged-text-set` (CBOR tag 566), the comparison MUST re
 ###### Comparison for bytes entries {#sec-match-bytes}
 
 The value stored under `measurement-values-map` codepoint 19 is of type `bytes-matcher`.
+The ACS-ECT value at this codepoint is always a bare `bytes` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `bytes`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3590,7 +3601,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
 |     565 | `array`             | tagged-number-range, see {{sec-comid-matchers}}                 | {{&SELF}} |
-|     566 | `array`             | tagged-{bool,number,text,bytes}-set, see {{sec-comid-matchers}} | {{&SELF}} |
+|     566 | `array`             | tagged-{number,text,bytes}-set, see {{sec-comid-matchers}} | {{&SELF}} |
 | 567-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
