@@ -17,23 +17,23 @@ Therefore that burden is typically offloaded to a Verifier.
 In order to conduct Evidence appraisal, a Verifier requires not only fresh Evidence from an Attester, but also trusted Endorsements and Reference Values from Endorsers and Reference Value Providers, such as manufacturers, distributors, or device owners.
 This document specifies the information elements for representing Endorsements and Reference Values in CBOR format. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="RIM, RATS, attestation, verifier, supply chain" name="keyword">
 <meta content="draft-ietf-rats-corim-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
+  xml2rfc 3.34.1
     Python 3.14.7
-    ConfigArgParse 1.7.5
+    ConfigArgParse 1.7.7
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.11.7
+    platformdirs 4.11.10
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.3
+    wcwidth 0.8.4
 -->
 <link href="draft-ietf-rats-corim.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1053,7 +1053,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 21 March 2027</td>
+<td class="center">Expires 22 March 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1066,12 @@ svg {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-17" class="published">17 September 2026</time>
+<time datetime="2026-09-18" class="published">18 September 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-21">21 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-03-22">22 March 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1133,7 +1133,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 21 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3049,7 +3049,7 @@ Described in <a href="#sec-comid-int-range" class="auto internal xref">Section 5
 Comparison rules are defined in <a href="#sec-match-int-range" class="auto internal xref">Section 8.3.4.4.5.8</a>.<a href="#section-5.1.4.5.2-5.15.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.5.2-5.16">
-                  <p id="section-5.1.4.5.2-5.16.1"><code>bool</code> (index 16): A boolean value with configurable matching semantics.
+                  <p id="section-5.1.4.5.2-5.16.1"><code>bool</code> (index 16): A boolean value, compared for exact match.
 Described in <a href="#sec-comid-matchers" class="auto internal xref">Section 5.1.4.9</a>.
 Comparison rules are defined in <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a>.<a href="#section-5.1.4.5.2-5.16.1" class="pilcrow">¶</a></p>
 </li>
@@ -3427,8 +3427,8 @@ A <code>min</code> or <code>max</code> of <code>null</code> means that the range
             <h5 id="name-type-matchers">
 <a href="#section-5.1.4.9" class="section-number selfRef">5.1.4.9. </a><a href="#name-type-matchers" class="section-name selfRef">Type Matchers</a>
             </h5>
-<p id="section-5.1.4.9-1">The <code>measurement-values-map</code> entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements with configurable matching semantics.
-Rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:<a href="#section-5.1.4.9-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-1">The <code>measurement-values-map</code> entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements.
+For the numeric, text and byte-string entries, matching semantics are configurable: rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:<a href="#section-5.1.4.9-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.4.9-2.1">
                 <p id="section-5.1.4.9-2.1.1">Bare (untagged) value means exact match: the target value must equal the entry's value.<a href="#section-5.1.4.9-2.1.1" class="pilcrow">¶</a></p>
@@ -3440,7 +3440,8 @@ Rather than adding a separate codepoint for each desired matching criterion, the
                 <p id="section-5.1.4.9-2.3.1">CBOR tag 565 (<code>tagged-number-range</code>, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; <code>null</code> means unbounded.<a href="#section-5.1.4.9-2.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<div class="lang-cddl sourcecode" id="section-5.1.4.9-3">
+<p id="section-5.1.4.9-3">The boolean entry (index 16) supports only exact match; see <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a> for why this is the case.<a href="#section-5.1.4.9-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.9-4">
 <pre>
 ; Set match: target value must equal one of the listed alternatives (two or more)
 tagged-number-set = #6.566([2* number])
@@ -3456,9 +3457,9 @@ bool-matcher = bool
 number-matcher = number / tagged-number-range / tagged-number-set
 text-matcher = text / tagged-text-set
 bytes-matcher = bytes / tagged-bytes-set
-</pre><a href="#section-5.1.4.9-3" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.9-4" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.9-4">Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-5">Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.<a href="#section-5.1.4.9-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
