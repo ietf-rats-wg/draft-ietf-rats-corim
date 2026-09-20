@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-17T04:33:28.593547+00:00",
+  "timestamp": "2026-09-20T04:34:24.980004+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -16799,6 +16799,24 @@
       "body": "- **Location:** [L2605](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2605), [L2640](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2640), [L2670](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2670), [L2708](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2708), [L2747](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2747), [L2792](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2792), [L2819](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819)\n\nSeven distinct functions all named `FUNC transform(...)`, distinguished only by the CDDL type of their first parameter. The document never states that the pseudocode language supports overloading, and `algo-key-transform` already relies on `TYPEOF` dispatch *inside* one of them, showing that the intent is not uniform.\n\n**Fix:** Give each a distinct name (`transform_rv`, `transform_ev`, \u2026) or state that dispatch is on the first parameter's type.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:42:29Z",
       "updatedAt": "2026-09-11T19:42:29Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 714,
+      "id": "I_kwDOH6-tI88AAAABRu6xNA",
+      "title": "`tagged-bool-set` in `bool-matcher` is useless",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/714",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "thomas-fossati"
+      ],
+      "labels": [],
+      "body": "`tagged-bool-set` requires two or more elements, but bool has only two possible values :-) So, the only non-degenerate instance of a boolean set is `[true, false]` which, as a matching condition, is a tautology and can already be expressed by omitting the entry.\n\nWe can safely remove `tagged-bool-set` from the union, and drop the corresponding paragraph in the \"how to match\" section.\n\n(Originally noted and reported by @sgilson)",
+      "createdAt": "2026-09-17T08:39:25Z",
+      "updatedAt": "2026-09-17T08:42:16Z",
       "closedAt": null,
       "comments": []
     }
@@ -95898,7 +95916,7 @@
       "labels": [],
       "body": "PR updates key triple transformation and processing sections. \r\nSee Issue #590.\r\nAlso see [PR #28 in draft-ietf-rats-evidence-trans repo. ](https://github.com/ietf-rats-wg/draft-ietf-rats-evidence-trans/pull/28)",
       "createdAt": "2026-09-04T22:12:33Z",
-      "updatedAt": "2026-09-16T15:04:59Z",
+      "updatedAt": "2026-09-17T12:46:55Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9522de0d705bf7b943a4e0085a446c4e9e50ef9a",
@@ -95918,7 +95936,21 @@
           "updatedAt": "2026-09-04T23:14:11Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOBQglQ",
+          "commit": {
+            "abbreviatedOid": "4729ef7"
+          },
+          "author": "fchinchilla",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-09-17T12:46:55Z",
+          "updatedAt": "2026-09-17T12:46:55Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 630,
@@ -97115,6 +97147,228 @@
           "createdAt": "2026-09-16T13:58:45Z",
           "updatedAt": "2026-09-16T13:58:45Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 715,
+      "id": "PR_kwDOH6-tI88AAAABD5tGgw",
+      "title": "Drop `tagged-bool-set`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/715",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A set of two or more booleans is [true, false] which can be already expressed by omitting the entry.\r\n\r\nFix #714 ",
+      "createdAt": "2026-09-17T09:22:45Z",
+      "updatedAt": "2026-09-18T15:47:20Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d5e590c90c878d308027f3458b43ea735b81f056",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "bool-matcher-fix",
+      "headRefOid": "b9b46ec42f1c1adf84adbe5294fa5920475b1302",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d5e590c90c878d308027f3458b43ea735b81f056/draft-ietf-rats-corim.md?plain=1#L1134 is no longer true, as nothing is configurable.",
+          "createdAt": "2026-09-17T17:37:59Z",
+          "updatedAt": "2026-09-17T17:37:59Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d5e590c90c878d308027f3458b43ea735b81f056/draft-ietf-rats-corim.md?plain=1#L1134\r\n> \r\n> is no longer true, as nothing is configurable.\r\n\r\ngood catch!",
+          "createdAt": "2026-09-17T17:46:25Z",
+          "updatedAt": "2026-09-17T17:46:25Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d5e590c90c878d308027f3458b43ea735b81f056/draft-ietf-rats-corim.md?plain=1#L1134\r\n> \r\n> is no longer true, as nothing is configurable.\r\n\r\naddressed in [b9b46ec](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/715/commits/b9b46ec42f1c1adf84adbe5294fa5920475b1302)",
+          "createdAt": "2026-09-18T07:53:37Z",
+          "updatedAt": "2026-09-18T07:53:37Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCfP2g",
+          "commit": {
+            "abbreviatedOid": "c5a0144"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-17T14:26:57Z",
+          "updatedAt": "2026-09-17T14:26:57Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\r\nSet match (CBOR tag 566) is not defined for `bool` since `bool` has only two possible values.\r\nA set of two or more elements represents the full domain, which can be already expressed by omitting the entry.\r\n```",
+              "createdAt": "2026-09-17T14:26:57Z",
+              "updatedAt": "2026-09-17T14:38:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCqCCQ",
+          "commit": {
+            "abbreviatedOid": "c5a0144"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-17T14:39:44Z",
+          "updatedAt": "2026-09-17T14:39:45Z",
+          "comments": [
+            {
+              "originalPosition": 20,
+              "body": "Note that I have edited the suggestion to match the NSNL convention.",
+              "createdAt": "2026-09-17T14:39:45Z",
+              "updatedAt": "2026-09-17T14:39:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCxO5Q",
+          "commit": {
+            "abbreviatedOid": "4cb7387"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "DISMISSED",
+          "body": "",
+          "createdAt": "2026-09-17T14:48:11Z",
+          "updatedAt": "2026-09-17T17:35:38Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOOjv1Q",
+          "commit": {
+            "abbreviatedOid": "b9b46ec"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-09-18T15:47:20Z",
+          "updatedAt": "2026-09-18T15:47:20Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 716,
+      "id": "PR_kwDOH6-tI88AAAABD6DPEw",
+      "title": "Clarify matchers scope",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/716",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Clarify that the tagged (i.e., range/set) forms for codepoints 16-19 are only meaningful in conditions -- i.e., the corresponding entries in ACS-ECT MUST use the \"bare\" form.\r\n\r\nFix #649\r\n\r\n**NOTE**: this sits on top of PR #715 \r\n",
+      "createdAt": "2026-09-17T10:06:57Z",
+      "updatedAt": "2026-09-18T07:52:12Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d5e590c90c878d308027f3458b43ea735b81f056",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "clarify-matchers",
+      "headRefOid": "6fc2537c3e73f14aa4a8d6ebed4f98340f1e48a0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCSjeg",
+          "commit": {
+            "abbreviatedOid": "e768a07"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-17T14:13:41Z",
+          "updatedAt": "2026-09-17T14:13:42Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\nThe range and set forms are meaningful only as a condition, when the `measurement-values-map` entry appears in a C-ECT.\n```",
+              "createdAt": "2026-09-17T14:13:41Z",
+              "updatedAt": "2026-09-17T14:13:42Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCTq0w",
+          "commit": {
+            "abbreviatedOid": "e768a07"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-17T14:14:52Z",
+          "updatedAt": "2026-09-17T14:14:52Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "Note also that I will remove all the `i.e.` and `e.g.`s before ratification, so best to nip them in the bud.",
+              "createdAt": "2026-09-17T14:14:52Z",
+              "updatedAt": "2026-09-17T14:14:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCUfDQ",
+          "commit": {
+            "abbreviatedOid": "e768a07"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-17T14:15:41Z",
+          "updatedAt": "2026-09-17T14:15:42Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\nAn ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form.\r\nThe range and set forms MUST NOT be used outside a condition.\r\n```",
+              "createdAt": "2026-09-17T14:15:42Z",
+              "updatedAt": "2026-09-17T14:36:26Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABOCoRSw",
+          "commit": {
+            "abbreviatedOid": "e768a07"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-17T14:37:32Z",
+          "updatedAt": "2026-09-17T14:37:33Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "Note that I have edited the suggestion to conform to the \"new sentence, new line\" (NSNL) convention we have been using for a while.",
+              "createdAt": "2026-09-17T14:37:32Z",
+              "updatedAt": "2026-09-17T14:37:33Z"
+            }
+          ]
         }
       ]
     }
