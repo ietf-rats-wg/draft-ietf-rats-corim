@@ -1384,7 +1384,8 @@ An int range is represented with either major type 0 or major type 1 ints.
 {::include cddl/int-range-type-choice.cddl}
 ~~~
 
-The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is necessarily exclusive.
+The signed integer range representation is an inclusive range.
+A `min` or `max` of `null` means that the range is effectively unbounded in that direction.
 
 #### Type Matchers {#sec-comid-matchers}
 
