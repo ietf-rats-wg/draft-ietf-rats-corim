@@ -1419,7 +1419,7 @@ The `endorsed-triple-record` has the following parameters:
 * `condition`: A search criterion used to locate an Environment in existing ACS entries.
 * `endorsement`: Additional Claims to be associated with the located Environment.
 
-To process an `endorsed-triple-record`, its condition is evaluated against existing ACS entries.
+To process an `endorsed-triple-record`, its `condition` is evaluated against existing ACS entries.
 When matching using the `authorized-by` attribute, it is compared with the `authority` attribute of the ACS entry.
 If the search criterion is satisfied — including the authority match, if applicable — the endorsement Claims are added to the Attester's actual state under the Endorser's authority.
 
