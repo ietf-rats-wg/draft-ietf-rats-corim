@@ -251,6 +251,13 @@ Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
+Collision-Resistant Name:
+: As defined in {{Section 2 of -jwt}}:
+_"A name in a namespace that enables names to be allocated in a manner such that they are highly unlikely to collide with other names.
+Examples of collision-resistant namespaces include: Domain Names, Object Identifiers (OIDs) as defined in the ITU-T X.660 and X.670 Recommendation series, and Universally Unique IDentifiers (UUIDs) [RFC4122].
+When using an administratively delegated namespace, the definer of a name needs to take reasonable precautions to ensure they are in control of the portion of the namespace they use to define the name."_
+CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.
+
 Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
@@ -792,13 +799,14 @@ The following describes each member of the `tag-identity-map`.
 ~~~
 
 A Tag ID is either a 16-byte binary string, or a textual identifier
-referencing the CoMID. The tag identifier MUST be globally unique. Failure to
-ensure global uniqueness can create ambiguity in tag use since the tag-id
+referencing the CoMID. The tag identifier MUST be a Collision-Resistant Name (see {{sec-glossary}}). Failure to
+ensure collision resistance can create ambiguity in tag use since the tag-id
 serves as the global key for matching, lookups and linking. If represented as a
 16-byte binary string, the identifier MUST be a valid universally unique
-identifier as defined by {{-uuid}}. There are no strict guidelines on how the
+identifier as defined by {{-uuid}}, and SHOULD follow the local uniqueness
+guidance of {{Section 6.8 of -uuid}}. There are no strict guidelines on how the
 identifier is structured, but examples include a 16-byte GUID (e.g., class 4
-UUID) {{-uuid}}, or a URI {{-uri}}.
+UUID) {{-uuid}}, or a URI {{-uri}}, for example `urn:example:widget:firmware:1.0.0`.
 
 #### Tag Version {#sec-tag-version}
 
@@ -924,8 +932,8 @@ context (triple) in which the environment is used.
 An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
-An environment MUST be globally unique.
-The combination of values within `class-map` MUST combine to form a globally unique identifier.
+An environment MUST be identified by a Collision-Resistant Name (see {{sec-glossary}}).
+The combination of values within `class-map` MUST combine to form a Collision-Resistant Name.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
@@ -1864,7 +1872,7 @@ Each entry in the `digests-type` MUST have a unique `alg` value.
 An opaque, variable-length byte string.
 It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
 Its semantics are defined by the context in which it is found, and by the overarching CoRIM profile.
-When used as an identifier the responsible allocator entity SHOULD ensure uniqueness within the context that it is used.
+When used as an identifier, the value MUST be a Collision-Resistant Name (see {{sec-glossary}}); the responsible allocator entity is responsible for ensuring this property holds within the context in which the identifier is used.
 
 ~~~ cddl
 {::include cddl/tagged-bytes.cddl}
@@ -1960,6 +1968,12 @@ A RETURN statement exits the enclosing function and yields the specified value t
 RETURN value
 ~~~
 
+A FAIL statement immediately aborts the enclosing top-level FUNC without yielding a value, signaling to the caller that the operation did not complete successfully:
+
+~~~ pseudocode
+FAIL
+~~~
+
 ### Expressions
 
 The TYPEOF operator yields the CDDL type of a value at runtime.
@@ -2015,8 +2029,7 @@ All operation names are uppercase.
 | `T::NEW()` | Construct a new zero-value instance of CDDL type T |
 | `collection::APPEND(item)` | Append item to a collection; when item is itself a list, all its elements are appended |
 | `acs::MATCH(condition)` | Test whether condition matches any entry in the ACS; the matching rules are relation-specific and defined in {{sec-comparison-rules}} |
-| `acs::CHECK(addition)` | Run consistency checks on addition before appending it to the ACS |
-| `acs::APPEND(addition)` | Atomically append addition to the ACS |
+| `acs::APPEND(addition)` | Attempt to atomically append addition to the ACS; returns TRUE on success, or FALSE (leaving the ACS unchanged) if the relation-specific pre-condition on addition or post-condition on the resulting ACS, both defined in {{sec-match-and-augment}}, is not satisfied |
 | `x::MEMBEROF(collection)` | Test whether x is a member of collection |
 | `INDEXOF(x)` | Return the position of x within its enclosing sequence |
 {: #tbl-pseudocode-ops title="Primitive Operations"}
@@ -2896,8 +2909,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                IF acs::CHECK(item.addition):
-                        acs::APPEND(item.addition)
+                IF !acs::APPEND(item.addition):
+                    FAIL
 
     RETURN acs
 }
@@ -2906,12 +2919,17 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
 
 The `acs::MATCH` operation depends on the type of relation.
 The matching logic for each type of relation is described in the following sections.
-The `acs::CHECK` operation does consistency checks.
-The checking logic for each type of relation is described in the following sections.
-The `acs::APPEND` operation also depends on the type of relation.
-This could involve simply appending the addition ECT.
 
-The addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.
+The `acs::APPEND` operation is defined by a pre-condition and a post-condition:
+
+* Pre-condition: `addition` is eligible to be appended.
+* Post-condition: the ACS resulting from the append satisfies the required consistency invariants (e.g., that a graph encoded across ACS entries remains acyclic).
+
+Both conditions are relation-specific; the concrete criteria for each relation are described in the following sections.
+If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a null operation (i.e., always satisfied) for that relation.
+
+`acs::APPEND` fails, leaving the ACS unchanged, if either the pre-condition or the post-condition does not hold.
+A failure of `acs::APPEND` MUST cause `match_and_augment` to terminate immediately, without processing any further relations or items: the appraisal that invoked it is thereby considered to have failed.
 
 #### Ordering of Relations
 
@@ -2962,7 +2980,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF ser-add = SERIES-MATCH(acs, item.series):
-                acs::APPEND(ser-add)
+                IF !acs::APPEND(ser-add):
+                    FAIL
 
     RETURN acs
 }
@@ -2998,12 +3017,12 @@ Domain Membership relations describe the expected topological arrangement of the
 
 Domains are matched with ACS entries by iterating through the `dm` list, in the staging area.
 
-The acs::CHECK() does acyclic graph consistency checks of the condition ECTs in the `dm` relation.
-
 For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
 
 If all the `member` environments in the condition ECT have a matching ECT in the ACS, the `addition ECT` is added to the ACS.
 The matching dm entry is pruned from the dm list.
+
+The post-condition of `acs::APPEND` for `dm` relations is that the domain-membership graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
 
 If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.
 
@@ -3035,11 +3054,10 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
 ~~~
 {: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
 
-The ACS::CHECK() function does acyclic graph consistency checks of the condition ECTs in the `td` relation.
+The pre-condition of `acs::APPEND` for `td` relations is that `item.addition` corresponds to a domain already present in the ACS.
 
-The ACS:: APPEND() function adds the dm-item.addition to the ACS.
-
-Subsequent to the append, the ACS acyclic consistency check needs to be performed.
+The post-condition of `acs::APPEND` for `td` relations is that the trust-dependency graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
+Since TDGs need not be isomorphs of DMGs, this post-condition is independent of the one defined for `dm` relations in {{sec-proc-dm}}.
 
 Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
 For example, a Target Environment (TE-1) with corroborated Evidence that has another trustee Target Environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
@@ -3621,7 +3639,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 3 | profile | {{&SELF}}
 | 4 | rim-validity | {{&SELF}}
 | 5 | entities | {{&SELF}}
-| 3-255 | Unassigned
+| 6-255 | Unassigned
 {: #tbl-iana-corim-map-items title="CoRIM Map Items Initial Registrations"}
 
 ## CoRIM Entity Map Registry {#sec-iana-corim-entity-map}
@@ -3706,8 +3724,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 
 ## CoMID Entity Map Registry {#sec-iana-comid-entity-map}
 
-This document defines a new registry titled "CoRIM Entity Map".
-The registry uses integer values as index values for items in `corim-entity-map` CBOR maps.
+This document defines a new registry titled "CoMID Entity Map".
+The registry uses integer values as index values for items in `comid-entity-map` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
@@ -3825,7 +3843,7 @@ Future registrations for this registry are to be made based on {{?RFC8126}} as f
 
 All negative values are reserved for Private Use.
 
-Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
+Initial registrations for the "CoMID Flags Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
 | Index | Item Name                    | Specification |
