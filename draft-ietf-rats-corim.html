@@ -1493,13 +1493,13 @@ This document specifies the information elements for representing Endorsements a
       </h2>
 <p id="section-1-1">The RATS Architecture <span><a href="https://rfc-editor.org/rfc/rfc9334#section-4" class="relref">Section 4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span> specifies several roles, including Endorsers and Reference Value Providers.
 These two roles are typically fulfilled by supply chain actors, such as manufacturers, distributors, or device owners.
-Endorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., digest ) relating to an Attester.
+Endorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., digests) relating to an Attester.
 This information is used by a Verifier to appraise Evidence received from an Attester which describes Attester operational state.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">In a complex supply chain, multiple actors will likely produce these values over several points in time.
 As such, one supply chain actor might only supply a portion of the Reference Values or Endorsements that otherwise fully characterizes an Attester.
 Ideally, only the supply chain actor who is the most knowledgeable entity regarding a particular component will supply Reference Values or Endorsements for that component.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">Attesters vary across vendors and even across products from a single vendor.
-Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.<a href="#section-1-3" class="pilcrow">¶</a></p>
+Not only can Attesters evolve, requiring new measurement types to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">In order to promote interoperability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR <span>[<a href="#STD94" class="cite xref">STD94</a>]</span> encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
 Additionally, this document describes multiple phases of a Verifier Appraisal and provides an example of a possible use of CoRIM messages from multiple supply chain actors to represent a homogeneous representation of Attester state.
@@ -1607,7 +1607,7 @@ CoRIM identifiers that function as global keys, such as Tag IDs and Environment 
 <dt id="section-1.1.1-2.19">Domain:</dt>
             <dd style="margin-left: 1.5em" id="section-1.1.1-2.20">
               <p id="section-1.1.1-2.20.1">A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
-Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.<a href="#section-1.1.1-2.20.1" class="pilcrow">¶</a></p>
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the Attester, not to introduce additional semantic entities.<a href="#section-1.1.1-2.20.1" class="pilcrow">¶</a></p>
 </dd>
             <dd class="break"></dd>
 <dt id="section-1.1.1-2.21">Endorsed values:</dt>
@@ -1754,7 +1754,7 @@ Once the ACS is built and the conversation is consistent, the ACS is available f
       <h2 id="name-typographical-conventions-f">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-typographical-conventions-f" class="section-name selfRef">Typographical Conventions for CDDL</a>
       </h2>
-<p id="section-3-1">The CDDL definitions in this document follows the naming conventions illustrated in <a href="#tbl-typography" class="auto internal xref">Table 2</a>.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">The CDDL definitions in this document follow the naming conventions illustrated in <a href="#tbl-typography" class="auto internal xref">Table 2</a>.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <span id="name-type-traits-and-typographic"></span><div id="tbl-typography">
 <table class="center" id="table-2">
         <caption>
@@ -2033,7 +2033,7 @@ A profile MUST NOT alter the syntax or semantics of CoRIM types defined in this 
 A profile MAY extend the set of a given CoRIM type using the defined extension points (<a href="#sec-extensibility" class="auto internal xref">Section 5.2</a>).
 Exercised extension points SHOULD preserve the intent of the original semantics.<a href="#section-4.1.4-3" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-4">CoRIM profiles SHOULD be specified in a publicly available document.<a href="#section-4.1.4-4" class="pilcrow">¶</a></p>
-<p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media type defined in <a href="#sec-mt-rim-cbor" class="auto internal xref">Section 11.12.1</a> with the <code>profile</code> parameter set to the appropriate value.
+<p id="section-4.1.4-5">A CoRIM profile can use one of the base CoRIM media types defined in <a href="#sec-mt-rim-cbor" class="auto internal xref">Section 11.12.1</a> and <a href="#sec-mt-rim-cose" class="auto internal xref">Section 11.12.2</a> with the <code>profile</code> parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.<a href="#section-4.1.4-5" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-6">A profile identifier is either an OID <span>[<a href="#RFC9090" class="cite xref">RFC9090</a>]</span> or a URL <span>[<a href="#STD66" class="cite xref">STD66</a>]</span>.<a href="#section-4.1.4-6" class="pilcrow">¶</a></p>
 <p id="section-4.1.4-7">The profile identifier identifies a documented profile.  Any changes
@@ -2309,7 +2309,7 @@ unprotected-corim-header-map = {
         <h3 id="name-signer-authority-of-securel">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-signer-authority-of-securel" class="section-name selfRef">Signer authority of securely conveyed unsigned CoRIM</a>
         </h3>
-<p id="section-4.3-1">An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span> or it may be conveyed unsigned within the protection scope of a secure channel.
+<p id="section-4.3-1">An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document (e.g., <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>), or it may be conveyed unsigned within the protection scope of a secure channel.
 The CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.
 For example, this entity could be the sending peer in a secure channel.
 A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the <code>manifest-signer</code> role MUST be added to <code>corim-entity-map</code>.
@@ -2345,7 +2345,7 @@ CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence <
 It is RECOMMENDED that a CoRIM with a <code>uuid-type</code> tag-id be referenced with URI <code>urn:uuid:</code><em>tag-id-uuid-string</em>.
 It is RECOMMENDED that a CoRIM with a <code>tstr</code> tag-id be referenced with <code>tag:{{&amp;SELF}}:local,</code><em>tag-id-tstr</em>.
 It is RECOMMENDED for a <code>corim-locator-map</code> containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.<a href="#section-4.3.1-5" class="pilcrow">¶</a></p>
-<p id="section-4.3.1-6">The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.<a href="#section-4.3.1-6" class="pilcrow">¶</a></p>
+<p id="section-4.3.1-6">The following example demonstrates these recommendations for bundling CoRIMs with a common signer but with different profiles.<a href="#section-4.3.1-6" class="pilcrow">¶</a></p>
 <div class="lang-cbor-diag sourcecode" id="section-4.3.1-7">
 <pre>
 =============== NOTE: '\' line wrapping per RFC 8792 ================
@@ -2503,7 +2503,7 @@ Described in <a href="#sec-comid-entity" class="auto internal xref">Section 5.1.
           <li class="normal" id="section-5.1-4.4">
             <p id="section-5.1-4.4.1"><code>linked-tags</code> (index 3): A list of one or more <code>linked-tag-map</code> providing typed relationships between this and
 other CoMIDs.
-Described in <a href="#sec-comid-linked-tag" class="auto internal xref">Section 5.1.3</a>).<a href="#section-5.1-4.4.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-comid-linked-tag" class="auto internal xref">Section 5.1.3</a>.<a href="#section-5.1-4.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-4.5">
             <p id="section-5.1-4.5.1"><code>triples</code> (index 4): One or more triples providing information specific to
@@ -2632,7 +2632,7 @@ linked-tag-map = {
 }
 </pre><a href="#section-5.1.3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.3-3">The following describes each member of the <code>tag-identity-map</code>.<a href="#section-5.1.3-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-3">The following describes each member of the <code>linked-tag-map</code>.<a href="#section-5.1.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1.3-4.1">
               <p id="section-5.1.3-4.1.1"><code>linked-tag-id</code> (index 0): Identifier for the target tag.
@@ -2669,7 +2669,7 @@ disregarded.<a href="#section-5.1.3-7.2.1" class="pilcrow">¶</a></p>
 <a href="#section-5.1.4" class="section-number selfRef">5.1.4. </a><a href="#name-triples" class="section-name selfRef">Triples</a>
           </h4>
 <p id="section-5.1.4-1">The <code>triples-map</code> contains all the CoMID triples broken down per category.  Not
-all category need to be present but at least one category MUST be present and
+all categories need to be present but at least one category MUST be present and
 contain at least one entry.<a href="#section-5.1.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4-2">In most cases, the supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values) is by default the CoRIM signer.
 The signer of a triple is said to be its <em>authority</em>.
@@ -2869,7 +2869,7 @@ $instance-id-type-choice /= tagged-pkix-asn1der-cert-type
 <a href="#section-5.1.4.4" class="section-number selfRef">5.1.4.4. </a><a href="#name-environment-group" class="section-name selfRef">Environment Group</a>
             </h5>
 <p id="section-5.1.4.4-1">A group carries an identifier that is reliably bound to a group of
-Attesters, for example when a number of Attester are hidden in the same
+Attesters, for example when a number of Attesters are hidden in the same
 anonymity set.<a href="#section-5.1.4.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.4.4-2">The types defined for a group identifier are UUID and variable-length opaque byte string (<a href="#sec-common-tagged-bytes" class="auto internal xref">Section 7.8</a>).<a href="#section-5.1.4.4-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.4.4-3">
@@ -3016,7 +3016,7 @@ Described in <a href="#sec-comid-flags" class="auto internal xref">Section 5.1.4
                   <p id="section-5.1.4.5.2-5.5.1"><code>raw-value</code> (index 4): Contains the actual (not hashed) value of the element.
 The vendor determines the encoding of <code>raw-value</code>.
 When used for comparison, the <code>tagged-masked-raw-value</code> variant includes a mask indicating which bits in the value to compare.
-Described in <a href="#sec-comid-raw-value-types" class="auto internal xref">Section 5.1.4.5.6</a><a href="#section-5.1.4.5.2-5.5.1" class="pilcrow">¶</a></p>
+Described in <a href="#sec-comid-raw-value-types" class="auto internal xref">Section 5.1.4.5.6</a>.<a href="#section-5.1.4.5.2-5.5.1" class="pilcrow">¶</a></p>
 </li>
                 <li class="normal" id="section-5.1.4.5.2-5.6">
                   <p id="section-5.1.4.5.2-5.6.1"><code>raw-value-mask-DEPRECATED</code> (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the <code>tagged-masked-raw-value</code> on index 4 instead of using index 5.<a href="#section-5.1.4.5.2-5.6.1" class="pilcrow">¶</a></p>
@@ -3740,7 +3740,7 @@ The Verifier SHOULD verify keys contained in Attest Key triples.<a href="#sectio
 <p id="section-5.1.10-4">Additional details about how a key was provisioned or is protected may be asserted using Endorsements such as <code>endorsed-triples</code>.<a href="#section-5.1.10-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.10-5">Depending on key formatting, as defined by <code>$crypto-key-type-choice</code>, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing, the Verifier SHOULD enforce key use restrictions.
-For example, see Section 5.1.5.3 in <span>[<a href="#DICE.cert" class="cite xref">DICE.cert</a>]</span>).<a href="#section-5.1.10-5" class="pilcrow">¶</a></p>
+For example, see Section 5.1.5.3 in <span>[<a href="#DICE.cert" class="cite xref">DICE.cert</a>]</span>.<a href="#section-5.1.10-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.10-6">Each successful verification of a key in <code>key-list</code> SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
 The Verifier MAY report key verification results as part of an error reporting function.<a href="#section-5.1.10-6" class="pilcrow">¶</a></p>
@@ -3770,7 +3770,7 @@ attest-key-triple-record = [
           <h4 id="name-triples-for-domain-definiti">
 <a href="#section-5.1.11" class="section-number selfRef">5.1.11. </a><a href="#name-triples-for-domain-definiti" class="section-name selfRef">Triples for domain definition</a>
           </h4>
-<p id="section-5.1.11-1">Domain triples assert graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.<a href="#section-5.1.11-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.11-1">Domain triples assert a graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.<a href="#section-5.1.11-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.11-2">The following CDDL describes domain type.<a href="#section-5.1.11-2" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-5.1.11-3">
 <pre>
@@ -3830,7 +3830,7 @@ Alternatively, trust in a peripheral device might depend on trustworthy operatio
 The bus controller is therefore a trustee domain of the peripheral device.<a href="#section-5.1.11.2-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.11.2-5">TDTs cannot instantiate domains.
 Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust-dependency triples.
-Environments that have been accepted into the ACE are automatically considered Domains.
+Environments that have been accepted into the ACS are automatically considered Domains.
 Consequently, TDTs may describe trust-dependency semantics for any Environment that has been accepted into the ACS.<a href="#section-5.1.11.2-5" class="pilcrow">¶</a></p>
 <p id="section-5.1.11.2-6">The trust dependency triple subject (<code>domain-id</code>) identifies the member domain (see <a href="#sec-comid-triple-domain-membership" class="auto internal xref">Section 5.1.11.1</a>) that has trustees.
 The triple object <code>trustees</code> lists the domains that are trustees of the subject domain.
@@ -3947,8 +3947,8 @@ All the tags listed in the CoTL MUST be activated atomically. If any tag activat
 <p id="section-6-3">The number of CoTLs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.<a href="#section-6-3" class="pilcrow">¶</a></p>
 <p id="section-6-4">If a Verifier Owner has a policy that does not require CoTL, tags within a CoRIM received by a Verifier
-are activated immediately and treated valid for appraisal.<a href="#section-6-4" class="pilcrow">¶</a></p>
-<p id="section-6-5">There may be cases when Verifier receives CoRIMs from multiple
+are activated immediately and treated as valid for appraisal.<a href="#section-6-4" class="pilcrow">¶</a></p>
+<p id="section-6-5">There may be cases when the Verifier receives CoRIMs from multiple
 Reference Value providers and Endorsers. In such cases, a supplier (or other authorities, such as integrators)
 may be designated to issue a single CoTL to activate all the tags submitted to the Verifier
 in these CoRIMs.<a href="#section-6-5" class="pilcrow">¶</a></p>
@@ -3959,7 +3959,7 @@ An Appraisal Policy for Evidence may dictate how multiple CoTLs are to be proces
         <h3 id="name-structure-2">
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-structure-2" class="section-name selfRef">Structure</a>
         </h3>
-<p id="section-6.1-1">The CDDL specification for the <code>concise-tl-tag</code> map and additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag are given below:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-1">The CDDL specification for the <code>concise-tl-tag</code> map is as follows, and this rule and the additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-6.1-2">
 <pre>
 concise-tl-tag = {
@@ -4184,7 +4184,7 @@ tagged-bytes = #6.560(bytes)
       <h2 id="name-reference-verifier">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-reference-verifier" class="section-name selfRef">Reference Verifier</a>
       </h2>
-<p id="section-8-1">This section outlines the behaviour of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>).<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">This section outlines the behavior of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier (<span><a href="https://rfc-editor.org/rfc/rfc9334#section-7.4" class="relref">Section 7.4</a> of [<a href="#RFC9334" class="cite xref">RFC9334</a>]</span>).<a href="#section-8-1" class="pilcrow">¶</a></p>
 <p id="section-8-2">In the remainder of this section, the terms
 Environment,
 Claim,
@@ -4275,7 +4275,7 @@ item.addition.cmtype = reference-values
           <h4 id="name-functions">
 <a href="#section-8.1.4" class="section-number selfRef">8.1.4. </a><a href="#name-functions" class="section-name selfRef">Functions</a>
           </h4>
-<p id="section-8.1.4-1">A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:<a href="#section-8.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-8.1.4-1">A function is introduced by the FUNC keyword, followed by its name, a parenthesized parameter list with CDDL type annotations, and a return type:<a href="#section-8.1.4-1" class="pilcrow">¶</a></p>
 <div class="lang-pseudocode sourcecode" id="section-8.1.4-2">
 <pre>
 FUNC name(param: type, ...) -&gt; return-type {
@@ -4465,7 +4465,7 @@ The CoRIM processor described in <a href="#sec-corim-processor" class="auto inte
 <a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-the-corim-processor" class="section-name selfRef">The CoRIM Processor</a>
         </h3>
 <p id="section-8.3-1">This document assumes that Verifier implementations will differ.
-In order to describe normative Verifier behaviour, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in <a href="#sec-appraisal-phases" class="auto internal xref">Section 8.2</a>.
+In order to describe normative Verifier behavior, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in <a href="#sec-appraisal-phases" class="auto internal xref">Section 8.2</a>.
 If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 <div id="high-level-view">
 <section id="section-8.3.1">
@@ -4690,7 +4690,7 @@ If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows t
 <p id="section-8.3.1-3">The CoRIM processor accepts Reference Values and Endorsements in the form of CoRIM documents, as well as Evidence that has been converted into a CoRIM-compatible format using transforms such as those described in <span>[<a href="#I-D.ietf-rats-evidence-trans" class="cite xref">I-D.ietf-rats-evidence-trans</a>]</span>.
 Before the appraisal can begin, all Conceptual Messages must be broken down and reshaped into a common internal representation.
 The internal representations of Reference Values and Endorsements are stored in a staging area prior to appraisal initiation.
-Instead, the internal representation of Evidence is used to initialize the ACS.
+In contrast, the internal representation of Evidence is used to initialize the ACS.
 A Verifier can have multiple simultaneous sessions with different Attesters.
 Each Attester has a different ACS.
 The Verifier ensures that Evidence inputs are associated with the correct ACS.
@@ -4878,7 +4878,7 @@ These are effectively two different acceptable states that need to be processed 
 <a href="#section-8.3.2.1.2" class="section-number selfRef">8.3.2.1.2. </a><a href="#name-domain-membership-ect" class="section-name selfRef">Domain Membership ECT</a>
               </h6>
 <p id="section-8.3.2.1.2-1">A Domain Membership ECT (<code>M-ECT</code>) is used to represent domain membership Claims between environments.
-It describes the direct relationship between a specific node in the membership (i.e., the parent <code>environment</code>) and the <code>member</code> nodes that comprises the domain.<a href="#section-8.3.2.1.2-1" class="pilcrow">¶</a></p>
+It describes the direct relationship between a specific node in the membership (i.e., the parent <code>environment</code>) and the <code>members</code> nodes that comprise the domain.<a href="#section-8.3.2.1.2-1" class="pilcrow">¶</a></p>
 <span id="name-domain-membership-ect-2"></span><div id="fig-d-ect">
 <figure id="figure-15">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.1.2-2.1">
@@ -4901,7 +4901,7 @@ M-ECT = {
               </ul>
 <p id="section-8.3.2.1.2-5">A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
 In a Domain ECT, the <code>environment</code> attribute encodes the name of the Claim.
-The value of the Claim is encoded in the <code>members</code> attributes.<a href="#section-8.3.2.1.2-5" class="pilcrow">¶</a></p>
+The value of the Claim is encoded in the <code>members</code> attribute.<a href="#section-8.3.2.1.2-5" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.2-6"><strong>Merge Rules.</strong><a href="#section-8.3.2.1.2-6" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.2-7">If two Domain ECTs have the same <code>environment</code>, <code>authority</code> and <code>profile</code> then their <code>members</code> are merged.
 Any duplicates MUST be pruned.<a href="#section-8.3.2.1.2-7" class="pilcrow">¶</a></p>
@@ -4913,7 +4913,7 @@ Any duplicates MUST be pruned.<a href="#section-8.3.2.1.2-7" class="pilcrow">¶<
 <a href="#section-8.3.2.1.3" class="section-number selfRef">8.3.2.1.3. </a><a href="#name-trust-dependency-ect" class="section-name selfRef">Trust Dependency ECT</a>
               </h6>
 <p id="section-8.3.2.1.3-1">A Trust Dependency ECT (<code>T-ECT</code>) is used to represent trust dependency Claims between environments.
-It describes the direct relationship between a specific node in the trust domain (i.e., the parent <code>environment</code>) and the <code>trustees</code> nodes that comprises the trust chain.<a href="#section-8.3.2.1.3-1" class="pilcrow">¶</a></p>
+It describes the direct relationship between a specific node in the trust domain (i.e., the parent <code>environment</code>) and the <code>trustees</code> nodes that comprise the trust chain.<a href="#section-8.3.2.1.3-1" class="pilcrow">¶</a></p>
 <span id="name-trust-dependency-ect-2"></span><div id="fig-t-ect">
 <figure id="figure-16">
                 <div class="lang-cddl sourcecode" id="section-8.3.2.1.3-2.1">
@@ -4936,7 +4936,7 @@ T-ECT = {
               </ul>
 <p id="section-8.3.2.1.3-5">A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
 In a Trust ECT, the <code>environment</code> attribute encodes the name of the Claim.
-The value of the Claim is encoded in the <code>trustees</code> attributes.<a href="#section-8.3.2.1.3-5" class="pilcrow">¶</a></p>
+The value of the Claim is encoded in the <code>trustees</code> attribute.<a href="#section-8.3.2.1.3-5" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.3-6"><strong>Merge Rules.</strong><a href="#section-8.3.2.1.3-6" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.3-7">If two Trust ECTs have the same <code>environment</code>, <code>authority</code> and <code>profile</code> then their <code>trustees</code> are merged.
 Any duplicates MUST be pruned.<a href="#section-8.3.2.1.3-7" class="pilcrow">¶</a></p>
@@ -4983,7 +4983,7 @@ key-type = &amp;(
               </ul>
 <p id="section-8.3.2.1.4-5"><strong>Claim Names.</strong><a href="#section-8.3.2.1.4-5" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.4-6">A Key Claim specifies one or more keys associated with the <code>environment</code>, as well as the semantics of these keys.<a href="#section-8.3.2.1.4-6" class="pilcrow">¶</a></p>
-<p id="section-8.3.2.1.4-7">In a Key ECT, the <code>environment</code>, <code>key-type</code> and optional <code>key-id</code> attributes encodes the name of the Claim.
+<p id="section-8.3.2.1.4-7">In a Key ECT, the <code>environment</code>, <code>key-type</code> and optional <code>key-id</code> attributes encode the name of the Claim.
 The value of the Claim is encoded in the <code>key-list</code> attribute.<a href="#section-8.3.2.1.4-7" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.4-8"><strong>Merge Rules.</strong><a href="#section-8.3.2.1.4-8" class="pilcrow">¶</a></p>
 <p id="section-8.3.2.1.4-9">No merge rules are specified for a Key ECT.<a href="#section-8.3.2.1.4-9" class="pilcrow">¶</a></p>
@@ -4998,7 +4998,7 @@ The value of the Claim is encoded in the <code>key-list</code> attribute.<a href
             </h5>
 <p id="section-8.3.2.2-1">This section describes how the relevant RATS Conceptual Messages are represented within the CoRIM processor.
 This internal representation is based on the concept of "relations", which in turn are based on ECTs.
-Typically, a relation is structured as a "condition" ECT that specifies the matching criteria used to compare entries in the ACS, along with an "addition" ECT that is appended to the ACS if the specified condition are met.
+Typically, a relation is structured as a "condition" ECT that specifies the matching criteria used to compare entries in the ACS, along with an "addition" ECT that is appended to the ACS if the specified conditions are met.
 While this is the common structure, some relations may differ slightly from the condition/addition pattern.
 This is because they either do not require a condition (e.g., Evidence) or they require more sophisticated matching criteria that cannot be expressed solely via a condition (e.g., Conditional Endorsement Series).<a href="#section-8.3.2.2-1" class="pilcrow">¶</a></p>
 <div id="sec-ir-evidence">
@@ -5225,7 +5225,7 @@ key-item = {
 </div>
 <p id="section-8.3.2.2.4-3"><span class="cref">
 [TODO]
-Specialise condition/addition ECTs.
+Specialize condition/addition ECTs.
 Define constraints.
 </span><a href="#section-8.3.2.2.4-3" class="pilcrow">¶</a></p>
 </section>
@@ -5443,7 +5443,7 @@ The primary goal of this phase is to ensure that all necessary information is av
             <h5 id="name-corim-selection">
 <a href="#section-8.3.3.1" class="section-number selfRef">8.3.3.1. </a><a href="#name-corim-selection" class="section-name selfRef">CoRIM Selection</a>
             </h5>
-<p id="section-8.3.3.1-1">All available CoRIMs tags are collected.<a href="#section-8.3.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.1-1">All available CoRIM tags are collected.<a href="#section-8.3.3.1-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.1-2">CoRIM tags MUST be discarded if they have expired, or if they are not associated with an authenticated and authorized source, or if they have been revoked by an authorized source.
 Any CoRIM secured by a cryptographic mechanism that fails validation MUST be discarded.<a href="#section-8.3.3.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.1-3">Other selection criteria MAY be applied.
@@ -5507,14 +5507,14 @@ Verifiers may rely on conveyance protocol-specific context to identify an Eviden
 <a href="#section-8.3.3.6" class="section-number selfRef">8.3.3.6. </a><a href="#name-cryptographic-validation-of" class="section-name selfRef">Cryptographic Validation of Evidence</a>
             </h5>
 <p id="section-8.3.3.6-1">If Evidence is cryptographically signed, it is validated before being transformed into an internal representation.<a href="#section-8.3.3.6-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.6-2">If Evidence is not cryptographically signed, the conveyance protocol used to collected it MUST provide the required security.
+<p id="section-8.3.3.6-2">If Evidence is not cryptographically signed, the conveyance protocol used to collect it MUST provide the required security.
 In such cases, the cryptographic validation of Evidence depends on the security offered by the conveyance protocol.<a href="#section-8.3.3.6-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.6-3">How cryptographic signature validation works depends on the specific Evidence collection method used.
 For example, in DICE, a proof of liveness is carried out on the final key in the certificate chain (i.e., the "alias" certificate).
 If this is successful, a suitable certification path is looked up in the Verifier trust anchor store based on the linking information obtained from the DeviceID certificate.
 See Section 9.2.1 of <span>[<a href="#DICE.Layer" class="cite xref">DICE.Layer</a>]</span>.
 If a trusted root certificate is found, X.509 certificate validation is performed.<a href="#section-8.3.3.6-3" class="pilcrow">¶</a></p>
-<p id="section-8.3.3.6-4">As a second example, the verification public key use to verify <span>[<a href="#RFC9783" class="cite xref">RFC9783</a>]</span> Evidence is looked up in the appraisal context using the <code>ueid</code> claim found in the PSA claims-set.
+<p id="section-8.3.3.6-4">As a second example, the verification public key used to verify <span>[<a href="#RFC9783" class="cite xref">RFC9783</a>]</span> Evidence is looked up in the appraisal context using the <code>ueid</code> claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed.<a href="#section-8.3.3.6-4" class="pilcrow">¶</a></p>
 <p id="section-8.3.3.6-5">Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence that is not successfully validated.<a href="#section-8.3.3.6-5" class="pilcrow">¶</a></p>
 </section>
@@ -5755,7 +5755,7 @@ FUNC transform(
 <a href="#name-key-triple-transformation" class="selfRef">Key Triple Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.3.7.4-4">Note that keys are added under the authority of the verifier.<a href="#section-8.3.3.7.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.4-4">Note that keys are added under the authority of the Verifier.<a href="#section-8.3.3.7.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-trans-domain-mem">
@@ -5792,7 +5792,7 @@ FUNC transform(
 <a href="#name-domain-membership-transforma" class="selfRef">Domain Membership Transformation</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.3.7.5-4">Subsequent to transformation the domain membership relations are processed using the domain membershp processing algorithm <a href="#sec-proc-dm" class="auto internal xref">Section 8.3.4.3.4</a>.<a href="#section-8.3.3.7.5-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.3.7.5-4">Subsequent to transformation the domain membership relations are processed using the domain membership processing algorithm <a href="#sec-proc-dm" class="auto internal xref">Section 8.3.4.3.4</a>.<a href="#section-8.3.3.7.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-trans-trust-dep">
@@ -5943,8 +5943,8 @@ A failure of <code>acs::APPEND</code> MUST cause <code>match_and_augment</code> 
 <a href="#section-8.3.4.1" class="section-number selfRef">8.3.4.1. </a><a href="#name-ordering-of-relations" class="section-name selfRef">Ordering of Relations</a>
             </h5>
 <p id="section-8.3.4.1-1">The order in which items within relations are processed is important.
-Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
-The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an <code>environment</code> matching the condition.
+Processing a relation may result in ACS modifications that affect the matching behavior of other relations.
+The Verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an <code>environment</code> matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
 The "match and augment" algorithm described in <a href="#algo-match-and-augment" class="auto internal xref">Figure 47</a> assumes that relations have been topologically sorted prior to loading into the staging area (<a href="#algo-init-sa" class="auto internal xref">Figure 46</a>).<a href="#section-8.3.4.1-1" class="pilcrow">¶</a></p>
 </section>
@@ -6061,13 +6061,13 @@ If they match, perform the following steps for each key in the condition ECT <co
 <p id="section-8.3.4.3.4-1">Domain Membership relations describe the expected topological arrangement of the Attester.<a href="#section-8.3.4.3.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-2">Domains are matched with ACS entries by iterating through the <code>dm</code> list, in the staging area.<a href="#section-8.3.4.3.4-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-3">For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.<a href="#section-8.3.4.3.4-3" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.4-4">If all the <code>member</code> environments in the condition ECT have a matching ECT in the ACS, the <code>addition ECT</code> is added to the ACS.
+<p id="section-8.3.4.3.4-4">If all the <code>members</code> environments in the condition ECT have a matching ECT in the ACS, the <code>addition</code> ECT is added to the ACS.
 The matching dm entry is pruned from the dm list.<a href="#section-8.3.4.3.4-4" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-5">The post-condition of <code>acs::APPEND</code> for <code>dm</code> relations is that the domain-membership graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.<a href="#section-8.3.4.3.4-5" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.4-6">If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.<a href="#section-8.3.4.3.4-6" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.4-6">If there is no match, processing moves to the next dm entry, till the list is exhausted; a single pass over the entire dm list constitutes one complete iteration.<a href="#section-8.3.4.3.4-6" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-7">If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
 The algorithm is terminated when there are no more additions to ACS.<a href="#section-8.3.4.3.4-7" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.4-8">This algorithm can be optimised to complete in a single iteration, if the <code>dm</code> entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
+<p id="section-8.3.4.3.4-8">This algorithm can be optimized to complete in a single iteration, if the <code>dm</code> entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.<a href="#section-8.3.4.3.4-8" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -6104,9 +6104,9 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -&gt; bool {
 <p id="section-8.3.4.3.5-5">The post-condition of <code>acs::APPEND</code> for <code>td</code> relations is that the trust-dependency graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
 Since TDGs need not be isomorphs of DMGs, this post-condition is independent of the one defined for <code>dm</code> relations in <a href="#sec-proc-dm" class="auto internal xref">Section 8.3.4.3.4</a>.<a href="#section-8.3.4.3.5-5" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.5-6">Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
-For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
+For example, a Target Environment (TE-1) with corroborated Evidence that has another trustee Target Environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
 Additionally, a trust dependency might specify a strength of function requirement for TE-1.
-The trust dependency implies TE-2 should have a minimum strength of function as TE-1.<a href="#section-8.3.4.3.5-6" class="pilcrow">¶</a></p>
+The trust dependency implies TE-2 should have at least the same strength of function as TE-1.<a href="#section-8.3.4.3.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -6145,7 +6145,7 @@ If any attributes do not match, the C-ECT does not match the ACS-ECT.<a href="#s
               </h6>
 <p id="section-8.3.4.4.1-1">The processor MUST compare each attribute which is present in the C-ECT's <code>environment</code> with the corresponding attribute in the ACS-ECT's <code>environment</code> using binary comparison.
 Before performing the binary comparison, the processor SHOULD convert the attributes in both <code>environment</code>s into a form that meets the CBOR core deterministic encoding requirements described in <span><a href="https://rfc-editor.org/rfc/rfc8949#section-4.2" class="relref">Section 4.2</a> of [<a href="#STD94" class="cite xref">STD94</a>]</span>.<a href="#section-8.3.4.4.1-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.4.1-2">If all the attributes which are present in the C-ECT <code>environment</code> (e.g., <code>instance-id</code> or <code>group-id</code>) are also present in the ACS-ECT and are binary identical, the two environments match.
+<p id="section-8.3.4.4.1-2">If all the attributes which are present in the C-ECT <code>environment</code> (e.g., <code>instance</code> or <code>group</code>) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.<a href="#section-8.3.4.4.1-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.4.1-3">In other words, a match succeeds when the C-ECT's <code>environment</code> is contained in the ACS-ECT's <code>environment</code> as defined by Attribute Path Containment (see <a href="#sec-glossary" class="auto internal xref">Section 1.1.1</a>) - i.e., for every Attribute Path defined in the C-ECT's <code>environment</code>, the ACS-ECT's <code>environment</code> defines the same path with an equal value.
 Any attribute that is present in the ACS-ECT but not in the C-ECT is ignored in the comparison.<a href="#section-8.3.4.4.1-3" class="pilcrow">¶</a></p>
@@ -6167,7 +6167,7 @@ Otherwise, the authorities do not match.<a href="#section-8.3.4.4.2-1" class="pi
               <h6 id="name-element-list-comparison">
 <a href="#section-8.3.4.4.3" class="section-number selfRef">8.3.4.4.3. </a><a href="#name-element-list-comparison" class="section-name selfRef">Element List Comparison</a>
               </h6>
-<p id="section-8.3.4.4.3-1">A C-ECT's <code>element-list</code> matches an ACS-ETC's <code>element-list</code> if all the <code>element-map</code>s in the C-ECT's <code>element-list</code> match the <code>element-map</code>s in the ACS-ECT's <code>element-list</code>.<a href="#section-8.3.4.4.3-1" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.4.3-1">A C-ECT's <code>element-list</code> matches an ACS-ECT's <code>element-list</code> if all the <code>element-map</code>s in the C-ECT's <code>element-list</code> match the <code>element-map</code>s in the ACS-ECT's <code>element-list</code>.<a href="#section-8.3.4.4.3-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.4.3-2">Any <code>element-map</code> that is present in the ACS-ECT's <code>element-list</code> but not in the C-ECT's is ignored in the comparison.<a href="#section-8.3.4.4.3-2" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.4.3-3">The rules for matching <code>element-map</code>s are described in <a href="#sec-compare-element-map" class="auto internal xref">Section 8.3.4.4.4</a>.<a href="#section-8.3.4.4.3-3" class="pilcrow">¶</a></p>
 </section>
@@ -6472,7 +6472,7 @@ The profile MUST specify how to compare the CBOR tagged value against the ACS.<a
           <h4 id="name-handoff">
 <a href="#section-8.3.5" class="section-number selfRef">8.3.5. </a><a href="#name-handoff" class="section-name selfRef">Handoff</a>
           </h4>
-<p id="section-8.3.5-1">Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the verifier for further processing in subsequent phases.
+<p id="section-8.3.5-1">Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the Verifier for further processing in subsequent phases.
 Typically, the ACS is passed to a policy engine that applies a policy to deduce high-level characteristics of the Attester from the low-level information contained in the ACS.
 This information can then be encoded in an Attestation Result that can be understood by a Relying Party, which does not need to know all the details in order to make a trust decision.<a href="#section-8.3.5-1" class="pilcrow">¶</a></p>
 </section>
@@ -6904,7 +6904,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETl4iCZ47zrRbRG0TVf0dw7VFlHtv
 <a href="#name-ae-item" class="selfRef">ae-item</a>
               </figcaption></figure>
 </div>
-<p id="section-8.3.6.3-13">Note the authority in the ECT, which is set to <code>MFkw..Lg=="</code>, and corresponds to the Attester's PEM-encoded SPKI.<a href="#section-8.3.6.3-13" class="pilcrow">¶</a></p>
+<p id="section-8.3.6.3-13">Note the authority in the ECT, which is set to <code>MFkw..Lg==</code>, and corresponds to the Attester's PEM-encoded SPKI.<a href="#section-8.3.6.3-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="appraisal">
@@ -7660,6 +7660,7 @@ Assignments consist of an integer index value, the item name, and a reference to
               <th class="text-left" rowspan="1" colspan="1">Index</th>
               <th class="text-left" rowspan="1" colspan="1">Item Name</th>
               <th class="text-left" rowspan="1" colspan="1">Value Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
               <th class="text-left" rowspan="1" colspan="1">Specification</th>
             </tr>
           </thead>
@@ -7671,6 +7672,7 @@ Assignments consist of an integer index value, the item name, and a reference to
                 <code>text</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">Name of the entity responsible for the actions of the role.</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">1</td>
@@ -7679,6 +7681,7 @@ Assignments consist of an integer index value, the item name, and a reference to
                 <code>uri</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">A URI associated with the organization that owns the entity name.</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">2</td>
@@ -7687,10 +7690,12 @@ Assignments consist of an integer index value, the item name, and a reference to
                 <code>[ + role-type-choice ]</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">A type choice defining the roles that the entity is claiming.</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">3-255</td>
               <td class="text-left" rowspan="1" colspan="1">Unassigned</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
@@ -7898,6 +7903,7 @@ Assignments consist of an integer index value, the item name, and a reference to
               <th class="text-left" rowspan="1" colspan="1">Index</th>
               <th class="text-left" rowspan="1" colspan="1">Item Name</th>
               <th class="text-left" rowspan="1" colspan="1">Value Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
               <th class="text-left" rowspan="1" colspan="1">Specification</th>
             </tr>
           </thead>
@@ -7909,6 +7915,7 @@ Assignments consist of an integer index value, the item name, and a reference to
                 <code>text</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">Name of the entity responsible for the actions of the role.</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">1</td>
@@ -7917,6 +7924,7 @@ Assignments consist of an integer index value, the item name, and a reference to
                 <code>uri</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">A URI associated with the organization that owns the entity name.</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">2</td>
@@ -7925,10 +7933,12 @@ Assignments consist of an integer index value, the item name, and a reference to
                 <code>[ + role-type-choice ]</code>
 </td>
               <td class="text-left" rowspan="1" colspan="1">A type choice defining the roles that the entity is claiming.</td>
+              <td class="text-left" rowspan="1" colspan="1">RFCthis</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">3-255</td>
               <td class="text-left" rowspan="1" colspan="1">Unassigned</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
               <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
@@ -8061,7 +8071,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 <a href="#section-11.9" class="section-number selfRef">11.9. </a><a href="#name-comid-measurement-values-ma" class="section-name selfRef">CoMID Measurement Values Map Registry</a>
         </h3>
 <p id="section-11.9-1">This document defines a new registry titled "CoMID Measurement Values Map".
-The registry uses integer values as index values for items in multiple triples' representations.<a href="#section-11.9-1" class="pilcrow">¶</a></p>
+The registry uses integer values as index values for items in <code>measurement-values-map</code>.<a href="#section-11.9-1" class="pilcrow">¶</a></p>
 <p id="section-11.9-2">Future registrations for this registry are to be made based on <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span> as follows:<a href="#section-11.9-2" class="pilcrow">¶</a></p>
 <span id="name-comid-measurement-values-map"></span><div id="tbl-iana-comid-measurement-values-map-items-reg-procedures">
 <table class="center" id="table-17">
@@ -8540,7 +8550,7 @@ transports.<a href="#section-11.12.1-1.18.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.12.1-1.35">Provisional registration?</dt>
             <dd style="margin-left: 1.5em" id="section-11.12.1-1.36">
-              <p id="section-11.12.1-1.36.1">Maybe<a href="#section-11.12.1-1.36.1" class="pilcrow">¶</a></p>
+              <p id="section-11.12.1-1.36.1">no<a href="#section-11.12.1-1.36.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 </dl>
@@ -8642,7 +8652,7 @@ transports.<a href="#section-11.12.2-1.18.1" class="pilcrow">¶</a></p>
             <dd class="break"></dd>
 <dt id="section-11.12.2-1.35">Provisional registration?</dt>
             <dd style="margin-left: 1.5em" id="section-11.12.2-1.36">
-              <p id="section-11.12.2-1.36.1">Maybe<a href="#section-11.12.2-1.36.1" class="pilcrow">¶</a></p>
+              <p id="section-11.12.2-1.36.1">no<a href="#section-11.12.2-1.36.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 </dl>

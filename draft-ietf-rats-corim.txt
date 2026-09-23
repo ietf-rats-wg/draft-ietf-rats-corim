@@ -175,7 +175,7 @@ Table of Contents
    are typically fulfilled by supply chain actors, such as
    manufacturers, distributors, or device owners.  Endorsers and
    Reference Value Providers supply Endorsements (e.g., test results or
-   certification data) and Reference Values (e.g., digest ) relating to
+   certification data) and Reference Values (e.g., digests) relating to
    an Attester.  This information is used by a Verifier to appraise
    Evidence received from an Attester which describes Attester
    operational state.
@@ -189,10 +189,10 @@ Table of Contents
    that component.
 
    Attesters vary across vendors and even across products from a single
-   vendor.  Not only Attesters can evolve and therefore new measurement
-   types need to be expressed, but an Endorser may also want to provide
-   new security relevant attributes about an Attester at a future point
-   in time.
+   vendor.  Not only can Attesters evolve, requiring new measurement
+   types to be expressed, but an Endorser may also want to provide new
+   security relevant attributes about an Attester at a future point in
+   time.
 
    In order to promote interoperability, consistency and accuracy in the
    representation of Endorsements and Reference Values this document
@@ -339,7 +339,7 @@ Table of Contents
       the compositional relationships among them.  Every Environment
       implicitly defines a Domain; therefore, any triple that creates an
       Environment also creates a corresponding Domain.  Domains exist to
-      organize the structural composition of the attester, not to
+      organize the structural composition of the Attester, not to
       introduce additional semantic entities.
 
    Endorsed values:
@@ -478,7 +478,7 @@ Table of Contents
 
 3.  Typographical Conventions for CDDL
 
-   The CDDL definitions in this document follows the naming conventions
+   The CDDL definitions in this document follow the naming conventions
    illustrated in Table 2.
 
    +========================+===============+==========================+
@@ -685,9 +685,10 @@ Table of Contents
 
    CoRIM profiles SHOULD be specified in a publicly available document.
 
-   A CoRIM profile can use one of the base CoRIM media type defined in
-   Section 11.12.1 with the profile parameter set to the appropriate
-   value.  Alternatively, it MAY define and register its own media type.
+   A CoRIM profile can use one of the base CoRIM media types defined in
+   Section 11.12.1 and Section 11.12.2 with the profile parameter set to
+   the appropriate value.  Alternatively, it MAY define and register its
+   own media type.
 
    A profile identifier is either an OID [RFC9090] or a URL [STD66].
 
@@ -915,21 +916,21 @@ Table of Contents
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
    An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping
-   signed document, [RFC5280] or it may be conveyed unsigned within the
-   protection scope of a secure channel.  The CoRIM signer authority is
-   taken from the authenticated credential (e.g., OAUTH token) of the
-   entity that originates the CoRIM.  For example, this entity could be
-   the sending peer in a secure channel.  A CoRIM role entry expressing
-   the origin of the unsigned CoRIM (i.e., the enveloping signed
-   document or the origin endpoint of the secure channel) via the
-   manifest-signer role MUST be added to corim-entity-map.  If the
-   authority cannot be expressed directly via the existing authority
-   types, the receiver SHOULD establish a local authority in one of the
-   supported authority formats (e.g., if an unsigned CoRIM is received
-   over a secure channel where authentication is token- or password-
-   based).  If it is impossible to assert the authority of the origin,
-   the Verifier's appraisal policy MAY assert the Verifier's authority
-   as the CoRIM origin.
+   signed document (e.g., [RFC5280]), or it may be conveyed unsigned
+   within the protection scope of a secure channel.  The CoRIM signer
+   authority is taken from the authenticated credential (e.g., OAUTH
+   token) of the entity that originates the CoRIM.  For example, this
+   entity could be the sending peer in a secure channel.  A CoRIM role
+   entry expressing the origin of the unsigned CoRIM (i.e., the
+   enveloping signed document or the origin endpoint of the secure
+   channel) via the manifest-signer role MUST be added to corim-entity-
+   map.  If the authority cannot be expressed directly via the existing
+   authority types, the receiver SHOULD establish a local authority in
+   one of the supported authority formats (e.g., if an unsigned CoRIM is
+   received over a secure channel where authentication is token- or
+   password-based).  If it is impossible to assert the authority of the
+   origin, the Verifier's appraisal policy MAY assert the Verifier's
+   authority as the CoRIM origin.
 
    It is out of scope of this document to specify a method of delegating
    the signer role in the case that an unsigned CoRIM is conveyed
@@ -982,7 +983,7 @@ Table of Contents
    references.
 
    The following example demonstrates these recommendations for bundling
-   CoRIMs with a common signer but have different profiles.
+   CoRIMs with a common signer but with different profiles.
 
    =============== NOTE: '\' line wrapping per RFC 8792 ================
 
@@ -1144,7 +1145,7 @@ Table of Contents
 
    *  linked-tags (index 3): A list of one or more linked-tag-map
       providing typed relationships between this and other CoMIDs.
-      Described in Section 5.1.3).
+      Described in Section 5.1.3.
 
    *  triples (index 4): One or more triples providing information
       specific to the described module, e.g.: reference or endorsed
@@ -1234,7 +1235,7 @@ Table of Contents
      &(tag-rel: 1) => $tag-rel-type-choice
    }
 
-   The following describes each member of the tag-identity-map.
+   The following describes each member of the linked-tag-map.
 
    *  linked-tag-id (index 0): Identifier for the target tag.  See
       Section 5.1.1.1.
@@ -1257,7 +1258,7 @@ Table of Contents
 5.1.4.  Triples
 
    The triples-map contains all the CoMID triples broken down per
-   category.  Not all category need to be present but at least one
+   category.  Not all categories need to be present but at least one
    category MUST be present and contain at least one entry.
 
    In most cases, the supply chain entity that is responsible for
@@ -1425,7 +1426,7 @@ Table of Contents
 5.1.4.4.  Environment Group
 
    A group carries an identifier that is reliably bound to a group of
-   Attesters, for example when a number of Attester are hidden in the
+   Attesters, for example when a number of Attesters are hidden in the
    same anonymity set.
 
    The types defined for a group identifier are UUID and variable-length
@@ -1561,7 +1562,7 @@ Table of Contents
       element.  The vendor determines the encoding of raw-value.  When
       used for comparison, the tagged-masked-raw-value variant includes
       a mask indicating which bits in the value to compare.  Described
-      in Section 5.1.4.5.6
+      in Section 5.1.4.5.6.
 
    *  raw-value-mask-DEPRECATED (index 5): Is an obsolete method of
       indicating which bits in a raw value to compare.  New CoMID files
@@ -2261,7 +2262,7 @@ Table of Contents
    the Verifier may take different steps to locate and verify the key.
    If a key has usage restrictions that limits its use to Evidence
    signing, the Verifier SHOULD enforce key use restrictions.  For
-   example, see Section 5.1.5.3 in [DICE.cert]).
+   example, see Section 5.1.5.3 in [DICE.cert].
 
    Each successful verification of a key in key-list SHALL produce
    Endorsement Claims that are added to the Attester's Claim set.
@@ -2284,7 +2285,7 @@ Table of Contents
 
 5.1.11.  Triples for domain definition
 
-   Domain triples assert graphical description of Attester composition
+   Domain triples assert a graphical description of Attester composition
    in terms of its constituent Environments and their compositional
    relationships.
 
@@ -2368,7 +2369,7 @@ Table of Contents
    TDTs cannot instantiate domains.  Instead, TDT processing first
    verifies that a domain-id has already been accepted into the ACS
    before adding any trust-dependency triples.  Environments that have
-   been accepted into the ACE are automatically considered Domains.
+   been accepted into the ACS are automatically considered Domains.
    Consequently, TDTs may describe trust-dependency semantics for any
    Environment that has been accepted into the ACS.
 
@@ -2478,9 +2479,9 @@ Table of Contents
 
    If a Verifier Owner has a policy that does not require CoTL, tags
    within a CoRIM received by a Verifier are activated immediately and
-   treated valid for appraisal.
+   treated as valid for appraisal.
 
-   There may be cases when Verifier receives CoRIMs from multiple
+   There may be cases when the Verifier receives CoRIMs from multiple
    Reference Value providers and Endorsers.  In such cases, a supplier
    (or other authorities, such as integrators) may be designated to
    issue a single CoTL to activate all the tags submitted to the
@@ -2493,9 +2494,10 @@ Table of Contents
 
 6.1.  Structure
 
-   The CDDL specification for the concise-tl-tag map and additional
-   grammatical requirements specified in the text of this Section MUST
-   be followed when creating or validating a CoTL tag are given below:
+   The CDDL specification for the concise-tl-tag map is as follows, and
+   this rule and the additional grammatical requirements specified in
+   the text of this Section MUST be followed when creating or validating
+   a CoTL tag:
 
    concise-tl-tag = {
      &(tag-identity: 0) => tag-identity-map
@@ -2649,7 +2651,7 @@ Table of Contents
 
 8.  Reference Verifier
 
-   This section outlines the behaviour of a "CoRIM processor" within the
+   This section outlines the behavior of a "CoRIM processor" within the
    Evidence appraisal procedure carried out by the RATS Verifier
    (Section 7.4 of [RFC9334]).
 
@@ -2714,7 +2716,7 @@ Table of Contents
 8.1.4.  Functions
 
    A function is introduced by the FUNC keyword, followed by its name, a
-   parenthesised parameter list with CDDL type annotations, and a return
+   parenthesized parameter list with CDDL type annotations, and a return
    type:
 
    FUNC name(param: type, ...) -> return-type {
@@ -2878,7 +2880,7 @@ Table of Contents
 8.3.  The CoRIM Processor
 
    This document assumes that Verifier implementations will differ.  In
-   order to describe normative Verifier behaviour, this section presents
+   order to describe normative Verifier behavior, this section presents
    a reference Verifier and illustrates how the data is utilized within
    the appraisal phases detailed in Section 8.2.  If the Verifier
    operates on CoRIM documents, it is RECOMMENDED that it follows this
@@ -2954,23 +2956,23 @@ Table of Contents
    can begin, all Conceptual Messages must be broken down and reshaped
    into a common internal representation.  The internal representations
    of Reference Values and Endorsements are stored in a staging area
-   prior to appraisal initiation.  Instead, the internal representation
-   of Evidence is used to initialize the ACS.  A Verifier can have
-   multiple simultaneous sessions with different Attesters.  Each
-   Attester has a different ACS.  The Verifier ensures that Evidence
-   inputs are associated with the correct ACS.  All the internal
-   representations are based on the Environment-Claim Tuple (ECT).  The
-   ECT is the core data structure used to represent both Claims and
-   matching conditions during appraisal by the CoRIM processor.  The
-   CoRIM processor algorithm loads items from the staging area one by
-   one and applies the required condition-matching rules against the
-   ECTs in the ACS.  If the match is successful, the ACS is "augmented"
-   with Claims from the matched item.  Once all the items in the staging
-   area have been processed, the state of the Attester, as understood by
-   the CoRIM processor, is reflected in the ACS.  The computed ACS can
-   then be handed over to subsequent appraisal phases, such as Appraisal
-   Policy evaluation and Attestation Results computation, repackaging
-   and signing.
+   prior to appraisal initiation.  In contrast, the internal
+   representation of Evidence is used to initialize the ACS.  A Verifier
+   can have multiple simultaneous sessions with different Attesters.
+   Each Attester has a different ACS.  The Verifier ensures that
+   Evidence inputs are associated with the correct ACS.  All the
+   internal representations are based on the Environment-Claim Tuple
+   (ECT).  The ECT is the core data structure used to represent both
+   Claims and matching conditions during appraisal by the CoRIM
+   processor.  The CoRIM processor algorithm loads items from the
+   staging area one by one and applies the required condition-matching
+   rules against the ECTs in the ACS.  If the match is successful, the
+   ACS is "augmented" with Claims from the matched item.  Once all the
+   items in the staging area have been processed, the state of the
+   Attester, as understood by the CoRIM processor, is reflected in the
+   ACS.  The computed ACS can then be handed over to subsequent
+   appraisal phases, such as Appraisal Policy evaluation and Attestation
+   Results computation, repackaging and signing.
 
 8.3.2.  Data Structures
 
@@ -3136,7 +3138,7 @@ Table of Contents
    A Domain Membership ECT (M-ECT) is used to represent domain
    membership Claims between environments.  It describes the direct
    relationship between a specific node in the membership (i.e., the
-   parent environment) and the member nodes that comprises the domain.
+   parent environment) and the members nodes that comprise the domain.
 
    M-ECT = {
      ECT-common
@@ -3153,7 +3155,7 @@ Table of Contents
    A Domain Claim specifies the type of relationship that the parent
    domain is expected to have with its child environments.  In a Domain
    ECT, the environment attribute encodes the name of the Claim.  The
-   value of the Claim is encoded in the members attributes.
+   value of the Claim is encoded in the members attribute.
 
    *Merge Rules.*
 
@@ -3165,7 +3167,7 @@ Table of Contents
    A Trust Dependency ECT (T-ECT) is used to represent trust dependency
    Claims between environments.  It describes the direct relationship
    between a specific node in the trust domain (i.e., the parent
-   environment) and the trustees nodes that comprises the trust chain.
+   environment) and the trustees nodes that comprise the trust chain.
 
    T-ECT = {
      ECT-common
@@ -3182,7 +3184,7 @@ Table of Contents
    A Trust Claim specifies the type of relationship that the parent
    domain is expected to have with its trustee environments.  In a Trust
    ECT, the environment attribute encodes the name of the Claim.  The
-   value of the Claim is encoded in the trustees attributes.
+   value of the Claim is encoded in the trustees attribute.
 
    *Merge Rules.*
 
@@ -3224,7 +3226,7 @@ Table of Contents
    environment, as well as the semantics of these keys.
 
    In a Key ECT, the environment, key-type and optional key-id
-   attributes encodes the name of the Claim.  The value of the Claim is
+   attributes encode the name of the Claim.  The value of the Claim is
    encoded in the key-list attribute.
 
    *Merge Rules.*
@@ -3239,7 +3241,7 @@ Table of Contents
    ECTs.  Typically, a relation is structured as a "condition" ECT that
    specifies the matching criteria used to compare entries in the ACS,
    along with an "addition" ECT that is appended to the ACS if the
-   specified condition are met.  While this is the common structure,
+   specified conditions are met.  While this is the common structure,
    some relations may differ slightly from the condition/addition
    pattern.  This is because they either do not require a condition
    (e.g., Evidence) or they require more sophisticated matching criteria
@@ -3418,7 +3420,7 @@ Table of Contents
                           Figure 27: Keys Relation
 
 
-   // [TODO] Specialise condition/addition ECTs.  Define constraints.
+   // [TODO] Specialize condition/addition ECTs.  Define constraints.
 
 8.3.2.2.5.  Domain Memberships
 
@@ -3589,7 +3591,7 @@ Table of Contents
 
 8.3.3.1.  CoRIM Selection
 
-   All available CoRIMs tags are collected.
+   All available CoRIM tags are collected.
 
    CoRIM tags MUST be discarded if they have expired, or if they are not
    associated with an authenticated and authorized source, or if they
@@ -3669,7 +3671,7 @@ Table of Contents
    transformed into an internal representation.
 
    If Evidence is not cryptographically signed, the conveyance protocol
-   used to collected it MUST provide the required security.  In such
+   used to collect it MUST provide the required security.  In such
    cases, the cryptographic validation of Evidence depends on the
    security offered by the conveyance protocol.
 
@@ -3682,7 +3684,7 @@ Table of Contents
    certificate.  See Section 9.2.1 of [DICE.Layer].  If a trusted root
    certificate is found, X.509 certificate validation is performed.
 
-   As a second example, the verification public key use to verify
+   As a second example, the verification public key used to verify
    [RFC9783] Evidence is looked up in the appraisal context using the
    ueid claim found in the PSA claims-set.  If found, COSE Sign1
    verification is performed.
@@ -3908,7 +3910,7 @@ Table of Contents
 
                     Figure 42: Key Triple Transformation
 
-   Note that keys are added under the authority of the verifier.
+   Note that keys are added under the authority of the Verifier.
 
 8.3.3.7.5.  Domain Membership Transformation
 
@@ -3941,7 +3943,7 @@ Table of Contents
                 Figure 43: Domain Membership Transformation
 
    Subsequent to transformation the domain membership relations are
-   processed using the domain membershp processing algorithm
+   processed using the domain membership processing algorithm
    Section 8.3.4.3.4.
 
 8.3.3.7.6.  Trust Dependency Transformation
@@ -4078,7 +4080,7 @@ Table of Contents
 
    The order in which items within relations are processed is important.
    Processing a relation may result in ACS modifications that affect the
-   matching behaviour of other relations.  The verifier MUST ensure that
+   matching behavior of other relations.  The Verifier MUST ensure that
    any relation including a matching condition is processed after any
    other relation that modifies or adds an ACS entry with an environment
    matching the condition.  This can be achieved by sorting the
@@ -4193,7 +4195,7 @@ Table of Contents
    an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT
    (M-ECT).  All other ECTs are ignored.
 
-   If all the member environments in the condition ECT have a matching
+   If all the members environments in the condition ECT have a matching
    ECT in the ACS, the addition ECT is added to the ACS.  The matching
    dm entry is pruned from the dm list.
 
@@ -4202,13 +4204,14 @@ Table of Contents
    append does not take effect if this does not hold.
 
    If there is no match, processing moves to the next dm entry, till the
-   list is exhausted and is known as one complete iteration.
+   list is exhausted; a single pass over the entire dm list constitutes
+   one complete iteration.
 
    If there are additions to ACS, then the above algorithm is repeated
    until there are no more additions.  The algorithm is terminated when
    there are no more additions to ACS.
 
-   This algorithm can be optimised to complete in a single iteration, if
+   This algorithm can be optimized to complete in a single iteration, if
    the dm entries in the staging area and the ACS entries are
    topologically sorted (bottom up, from leaves to root).  This
    specification does not mandate any specific topological sorting
@@ -4250,12 +4253,13 @@ Table of Contents
 
    Subsequent processing phases SHOULD evaluate the Trust Domain Graph
    against ACS corroborated Evidence to ensure trustee graphs are also
-   trusted.  For example, a target environment (TE-1) with corroborated
-   Evidence that has another trustee target environment (TE-2), should
+   trusted.  For example, a Target Environment (TE-1) with corroborated
+   Evidence that has another trustee Target Environment (TE-2), should
    ensure TE-2 also has corroborated Evidence before TE-1 is considered
    trustworthy.  Additionally, a trust dependency might specify a
    strength of function requirement for TE-1.  The trust dependency
-   implies TE-2 should have a minimum strength of function as TE-1.
+   implies TE-2 should have at least the same strength of function as
+   TE-1.
 
 8.3.4.4.  Rules of Comparison
 
@@ -4318,8 +4322,8 @@ Table of Contents
    encoding requirements described in Section 4.2 of [STD94].
 
    If all the attributes which are present in the C-ECT environment
-   (e.g., instance-id or group-id) are also present in the ACS-ECT and
-   are binary identical, the two environments match.  Otherwise, the
+   (e.g., instance or group) are also present in the ACS-ECT and are
+   binary identical, the two environments match.  Otherwise, the
    environments do not match.
 
    In other words, a match succeeds when the C-ECT's environment is
@@ -4345,7 +4349,7 @@ Table of Contents
 
 8.3.4.4.3.  Element List Comparison
 
-   A C-ECT's element-list matches an ACS-ETC's element-list if all the
+   A C-ECT's element-list matches an ACS-ECT's element-list if all the
    element-maps in the C-ECT's element-list match the element-maps in
    the ACS-ECT's element-list.
 
@@ -4721,7 +4725,7 @@ Table of Contents
 8.3.5.  Handoff
 
    Once all the relations in the staging area have been processed, the
-   computed ACS is ready to be handed over to the verifier for further
+   computed ACS is ready to be handed over to the Verifier for further
    processing in subsequent phases.  Typically, the ACS is passed to a
    policy engine that applies a policy to deduce high-level
    characteristics of the Attester from the low-level information
@@ -5138,7 +5142,7 @@ Table of Contents
 
                              Figure 56: ae-item
 
-   Note the authority in the ECT, which is set to MFkw..Lg==", and
+   Note the authority in the ECT, which is set to MFkw..Lg==, and
    corresponds to the Attester's PEM-encoded SPKI.
 
 8.3.6.4.  Appraisal
@@ -5678,25 +5682,33 @@ Table of Contents
    provided below.  Assignments consist of an integer index value, the
    item name, and a reference to the defining specification.
 
-    +=======+=============+==================+========================+
-    | Index | Item Name   | Value Type       | Specification          |
-    +=======+=============+==================+========================+
-    | 0     | entity-name | text             | Name of the entity     |
-    |       |             |                  | responsible for the    |
-    |       |             |                  | actions of the role.   |
-    +-------+-------------+------------------+------------------------+
-    | 1     | reg-id      | uri              | A URI associated with  |
-    |       |             |                  | the organization that  |
-    |       |             |                  | owns the entity name.  |
-    +-------+-------------+------------------+------------------------+
-    | 2     | role        | [ + role-type-   | A type choice defining |
-    |       |             | choice ]         | the roles that the     |
-    |       |             |                  | entity is claiming.    |
-    +-------+-------------+------------------+------------------------+
-    | 3-255 | Unassigned  |                  |                        |
-    +-------+-------------+------------------+------------------------+
+   +=====+===========+==================+=============+===============+
+   |Index|Item Name  | Value Type       |Description  | Specification |
+   +=====+===========+==================+=============+===============+
+   |0    |entity-name| text             |Name of the  | RFCthis       |
+   |     |           |                  |entity       |               |
+   |     |           |                  |responsible  |               |
+   |     |           |                  |for the      |               |
+   |     |           |                  |actions of   |               |
+   |     |           |                  |the role.    |               |
+   +-----+-----------+------------------+-------------+---------------+
+   |1    |reg-id     | uri              |A URI        | RFCthis       |
+   |     |           |                  |associated   |               |
+   |     |           |                  |with the     |               |
+   |     |           |                  |organization |               |
+   |     |           |                  |that owns the|               |
+   |     |           |                  |entity name. |               |
+   +-----+-----------+------------------+-------------+---------------+
+   |2    |role       | [ + role-type-   |A type choice| RFCthis       |
+   |     |           | choice ]         |defining the |               |
+   |     |           |                  |roles that   |               |
+   |     |           |                  |the entity is|               |
+   |     |           |                  |claiming.    |               |
+   +-----+-----------+------------------+-------------+---------------+
+   |3-255|Unassigned |                  |             |               |
+   +-----+-----------+------------------+-------------+---------------+
 
-           Table 8: CoRIM Entity Map Items Initial Registrations
+          Table 8: CoRIM Entity Map Items Initial Registrations
 
 11.5.  CoRIM Signer Map Registry
 
@@ -5808,25 +5820,33 @@ Table of Contents
    provided below.  Assignments consist of an integer index value, the
    item name, and a reference to the defining specification.
 
-    +=======+=============+==================+========================+
-    | Index | Item Name   | Value Type       | Specification          |
-    +=======+=============+==================+========================+
-    | 0     | entity-name | text             | Name of the entity     |
-    |       |             |                  | responsible for the    |
-    |       |             |                  | actions of the role.   |
-    +-------+-------------+------------------+------------------------+
-    | 1     | reg-id      | uri              | A URI associated with  |
-    |       |             |                  | the organization that  |
-    |       |             |                  | owns the entity name.  |
-    +-------+-------------+------------------+------------------------+
-    | 2     | role        | [ + role-type-   | A type choice defining |
-    |       |             | choice ]         | the roles that the     |
-    |       |             |                  | entity is claiming.    |
-    +-------+-------------+------------------+------------------------+
-    | 3-255 | Unassigned  |                  |                        |
-    +-------+-------------+------------------+------------------------+
+   +=====+===========+==================+=============+===============+
+   |Index|Item Name  | Value Type       |Description  | Specification |
+   +=====+===========+==================+=============+===============+
+   |0    |entity-name| text             |Name of the  | RFCthis       |
+   |     |           |                  |entity       |               |
+   |     |           |                  |responsible  |               |
+   |     |           |                  |for the      |               |
+   |     |           |                  |actions of   |               |
+   |     |           |                  |the role.    |               |
+   +-----+-----------+------------------+-------------+---------------+
+   |1    |reg-id     | uri              |A URI        | RFCthis       |
+   |     |           |                  |associated   |               |
+   |     |           |                  |with the     |               |
+   |     |           |                  |organization |               |
+   |     |           |                  |that owns the|               |
+   |     |           |                  |entity name. |               |
+   +-----+-----------+------------------+-------------+---------------+
+   |2    |role       | [ + role-type-   |A type choice| RFCthis       |
+   |     |           | choice ]         |defining the |               |
+   |     |           |                  |roles that   |               |
+   |     |           |                  |the entity is|               |
+   |     |           |                  |claiming.    |               |
+   +-----+-----------+------------------+-------------+---------------+
+   |3-255|Unassigned |                  |             |               |
+   +-----+-----------+------------------+-------------+---------------+
 
-           Table 14: CoMID Entity Map Items Initial Registrations
+          Table 14: CoMID Entity Map Items Initial Registrations
 
 11.8.  CoMID Triples Map Registry
 
@@ -5900,7 +5920,7 @@ Table of Contents
 
    This document defines a new registry titled "CoMID Measurement Values
    Map".  The registry uses integer values as index values for items in
-   multiple triples' representations.
+   measurement-values-map.
 
    Future registrations for this registry are to be made based on
    [RFC8126] as follows:
@@ -6109,7 +6129,7 @@ Table of Contents
    Intended usage:  COMMON
    Restrictions on usage:  none
    Author/Change controller:  IETF
-   Provisional registration?  Maybe
+   Provisional registration?  no
 
 11.12.2.  rim+cose
 
@@ -6136,7 +6156,7 @@ Table of Contents
    Intended usage:  COMMON
    Restrictions on usage:  none
    Author/Change controller:  IETF
-   Provisional registration?  Maybe
+   Provisional registration?  no
 
 11.13.  CoAP Content-Formats Registration
 
