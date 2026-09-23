@@ -3024,7 +3024,7 @@ The matching dm entry is pruned from the dm list.
 
 The post-condition of `acs::APPEND` for `dm` relations is that the domain-membership graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
 
-If there is no match, processing moves to the next dm entry; a single pass over the entire dm list constitutes one complete iteration.
+If there is no match, processing moves to the next dm entry, till the list is exhausted; a single pass over the entire dm list constitutes one complete iteration.
 
 If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
 The algorithm is terminated when there are no more additions to ACS.
@@ -3786,7 +3786,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 ## CoMID Measurement Values Map Registry {#sec-iana-comid-measurement-values-map}
 
 This document defines a new registry titled "CoMID Measurement Values Map".
-The registry uses integer values as index values for items in `measurement-values-map` CBOR maps.
+The registry uses integer values as index values for items in `measurement-values-map`.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
