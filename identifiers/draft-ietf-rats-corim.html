@@ -4289,6 +4289,12 @@ FUNC name(param: type, ...) -&gt; return-type {
 RETURN value
 </pre><a href="#section-8.1.4-4" class="pilcrow">¶</a>
 </div>
+<p id="section-8.1.4-5">A FAIL statement immediately aborts the enclosing top-level FUNC without yielding a value, signaling to the caller that the operation did not complete successfully:<a href="#section-8.1.4-5" class="pilcrow">¶</a></p>
+<div class="lang-pseudocode sourcecode" id="section-8.1.4-6">
+<pre>
+FAIL
+</pre><a href="#section-8.1.4-6" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="expressions">
@@ -4391,15 +4397,9 @@ All operation names are uppercase.<a href="#section-8.1.8-1" class="pilcrow">¶<
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
-                  <code>acs::CHECK(addition)</code>
-</td>
-                <td class="text-left" rowspan="1" colspan="1">Run consistency checks on addition before appending it to the ACS</td>
-              </tr>
-              <tr>
-                <td class="text-left" rowspan="1" colspan="1">
                   <code>acs::APPEND(addition)</code>
 </td>
-                <td class="text-left" rowspan="1" colspan="1">Atomically append addition to the ACS</td>
+                <td class="text-left" rowspan="1" colspan="1">Attempt to atomically append addition to the ACS; returns TRUE on success, or FALSE (leaving the ACS unchanged) if the relation-specific pre-condition on addition or post-condition on the resulting ACS, both defined in <a href="#sec-match-and-augment" class="auto internal xref">Section 8.3.4</a>, is not satisfied</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -5911,8 +5911,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                IF acs::CHECK(item.addition):
-                        acs::APPEND(item.addition)
+                IF !acs::APPEND(item.addition):
+                    FAIL
 
     RETURN acs
 }
@@ -5923,12 +5923,20 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
             </figcaption></figure>
 </div>
 <p id="section-8.3.4-4">The <code>acs::MATCH</code> operation depends on the type of relation.
-The matching logic for each type of relation is described in the following sections.
-The <code>acs::CHECK</code> operation does consistency checks.
-The checking logic for each type of relation is described in the following sections.
-The <code>acs::APPEND</code> operation also depends on the type of relation.
-This could involve simply appending the addition ECT.<a href="#section-8.3.4-4" class="pilcrow">¶</a></p>
-<p id="section-8.3.4-5">The addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.<a href="#section-8.3.4-5" class="pilcrow">¶</a></p>
+The matching logic for each type of relation is described in the following sections.<a href="#section-8.3.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.4-5">The <code>acs::APPEND</code> operation is defined by a pre-condition and a post-condition:<a href="#section-8.3.4-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.3.4-6.1">
+              <p id="section-8.3.4-6.1.1">Pre-condition: <code>addition</code> is eligible to be appended.<a href="#section-8.3.4-6.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.3.4-6.2">
+              <p id="section-8.3.4-6.2.1">Post-condition: the ACS resulting from the append satisfies the required consistency invariants (e.g., that a graph encoded across ACS entries remains acyclic).<a href="#section-8.3.4-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-8.3.4-7">Both conditions are relation-specific; the concrete criteria for each relation are described in the following sections.
+If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a null operation (i.e., always satisfied) for that relation.<a href="#section-8.3.4-7" class="pilcrow">¶</a></p>
+<p id="section-8.3.4-8"><code>acs::APPEND</code> fails, leaving the ACS unchanged, if either the pre-condition or the post-condition does not hold.
+A failure of <code>acs::APPEND</code> MUST cause <code>match_and_augment</code> to terminate immediately, without processing any further relations or items: the appraisal that invoked it is thereby considered to have failed.<a href="#section-8.3.4-8" class="pilcrow">¶</a></p>
 <div id="ordering-of-relations">
 <section id="section-8.3.4.1">
             <h5 id="name-ordering-of-relations">
@@ -6001,7 +6009,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -&gt; ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF ser-add = SERIES-MATCH(acs, item.series):
-                acs::APPEND(ser-add)
+                IF !acs::APPEND(ser-add):
+                    FAIL
 
     RETURN acs
 }
@@ -6051,10 +6060,10 @@ If they match, perform the following steps for each key in the condition ECT <co
               </h6>
 <p id="section-8.3.4.3.4-1">Domain Membership relations describe the expected topological arrangement of the Attester.<a href="#section-8.3.4.3.4-1" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-2">Domains are matched with ACS entries by iterating through the <code>dm</code> list, in the staging area.<a href="#section-8.3.4.3.4-2" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.4-3">The acs::CHECK() does acyclic graph consistency checks of the condition ECTs in the <code>dm</code> relation.<a href="#section-8.3.4.3.4-3" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.4-4">For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.<a href="#section-8.3.4.3.4-4" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.4-5">If all the <code>member</code> environments in the condition ECT have a matching ECT in the ACS, the <code>addition ECT</code> is added to the ACS.
-The matching dm entry is pruned from the dm list.<a href="#section-8.3.4.3.4-5" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.4-3">For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.<a href="#section-8.3.4.3.4-3" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.4-4">If all the <code>member</code> environments in the condition ECT have a matching ECT in the ACS, the <code>addition ECT</code> is added to the ACS.
+The matching dm entry is pruned from the dm list.<a href="#section-8.3.4.3.4-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.4-5">The post-condition of <code>acs::APPEND</code> for <code>dm</code> relations is that the domain-membership graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.<a href="#section-8.3.4.3.4-5" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-6">If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.<a href="#section-8.3.4.3.4-6" class="pilcrow">¶</a></p>
 <p id="section-8.3.4.3.4-7">If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
 The algorithm is terminated when there are no more additions to ACS.<a href="#section-8.3.4.3.4-7" class="pilcrow">¶</a></p>
@@ -6091,13 +6100,13 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -&gt; bool {
 <a href="#name-process-trust-dependency-al" class="selfRef">Process Trust Dependency Algorithm</a>
                 </figcaption></figure>
 </div>
-<p id="section-8.3.4.3.5-4">The ACS::CHECK() function does acyclic graph consistency checks of the condition ECTs in the <code>td</code> relation.<a href="#section-8.3.4.3.5-4" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.5-5">The ACS:: APPEND() function adds the dm-item.addition to the ACS.<a href="#section-8.3.4.3.5-5" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.5-6">Subsequent to the append, the ACS acyclic consistency check needs to be performed.<a href="#section-8.3.4.3.5-6" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.5-7">Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
+<p id="section-8.3.4.3.5-4">The pre-condition of <code>acs::APPEND</code> for <code>td</code> relations is that <code>item.addition</code> corresponds to a domain already present in the ACS.<a href="#section-8.3.4.3.5-4" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.5-5">The post-condition of <code>acs::APPEND</code> for <code>td</code> relations is that the trust-dependency graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
+Since TDGs need not be isomorphs of DMGs, this post-condition is independent of the one defined for <code>dm</code> relations in <a href="#sec-proc-dm" class="auto internal xref">Section 8.3.4.3.4</a>.<a href="#section-8.3.4.3.5-5" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.5-6">Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
 For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
 Additionally, a trust dependency might specify a strength of function requirement for TE-1.
-The trust dependency implies TE-2 should have a minimum strength of function as TE-1.<a href="#section-8.3.4.3.5-7" class="pilcrow">¶</a></p>
+The trust dependency implies TE-2 should have a minimum strength of function as TE-1.<a href="#section-8.3.4.3.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
